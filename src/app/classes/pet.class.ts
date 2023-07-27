@@ -6,15 +6,19 @@ import { LogService } from "../services/log.servicee";
 import { SummonedService } from "../services/summoned.service";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
+import { Peanut } from "./equipment/peanut.class";
+import { Coconut } from "./equipment/coconut.class";
+import { Melon } from "./equipment/melon.class";
 
 export class Pet {
     name: string;
     parent: Player;
     health: number;
     attack: number;
+    equipment?: Equipment;
     originalHealth: number;
     originalAttack: number;
-    equipment?: Equipment;
+    originalEquipment?: Equipment;
     exp?: number = 0;
     passive?: () => void;
     startOfBattle?: (gameApi: GameAPI) => void;
@@ -33,11 +37,26 @@ export class Pet {
     }
 
     attackPet(pet: Pet) {
-        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' ? pet.equipment : null;
+        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
+        || pet.equipment?.equipmentClass == 'shield' ? pet.equipment : null;
+
         let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack' ? this.equipment : null;
         let attackAmt = this.attack + (attackEquipment?.power ?? 0);
         let defenseAmt = defenseEquipment?.power ?? 0;
-        let damage = Math.max(1, attackAmt - defenseAmt);
+        let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
+        let damage = Math.max(min, attackAmt - defenseAmt);
+
+        // peanut death
+        if (attackEquipment instanceof Peanut && damage > 0) {
+            this.logService.createLog({
+                message: `${this.name} attacks ${pet.name} for ${pet.health} (Peanut)`,
+                type: 'attack',
+                player: this.parent
+            })
+
+            pet.health = 0;
+            return;
+        }
 
         pet.health -= damage;
 
@@ -53,6 +72,12 @@ export class Pet {
             type: "attack",
             player: this.parent
         });
+
+        let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
+        if (skewerEquipment == null) {
+            return;
+        }
+        skewerEquipment.attackCallback(this, pet);
     }
 
     snipePet(pet: Pet, power: number, randomEvent?: boolean) {
@@ -68,6 +93,8 @@ export class Pet {
     resetPet() {
         this.health = this.originalHealth;
         this.attack = this.originalAttack;
+        this.equipment = this.originalEquipment;
+        this.equipment?.reset();
     }
 
     alive() {
@@ -81,9 +108,36 @@ export class Pet {
                     }
                 )
             }
+            if (this.equipment?.equipmentClass == 'faint') {
+                this.faintService.setFaintEvent(
+                    {
+                        priority: -1, // ensures equipment faint ability occurs after pet faint abilities. Might need to be revisited
+                        callback: () => { this.equipment.callback(this) }
+                    }
+                )
+            }
             return false;
         }
         return true;
+    }
+
+    useAttackDefenseEquipment() {
+        if (this.equipment == null) {
+            return;
+        }
+        if (this.equipment.uses == null) {
+            return;
+        }
+        if (this.equipment.equipmentClass != 'attack'
+            && this.equipment.equipmentClass != 'defense'
+            && this.equipment.equipmentClass != 'shield'
+        ) {
+            return;
+        }
+        this.equipment.uses -= 1;
+        if (this.equipment.uses == 0) {
+            this.equipment = null;
+        }
     }
 
     get level() {

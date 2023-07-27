@@ -120,6 +120,25 @@ export class Player {
         
     }
 
+    // TODO - no room logic
+    spawnPet(spawnPet: Pet, sourcePet: Pet) {
+        if (sourcePet.savedPosition == 0) {
+            sourcePet.parent.pet0 = spawnPet;
+        }
+        if (sourcePet.savedPosition == 1) {
+            sourcePet.parent.pet1 = spawnPet;
+        }
+        if (sourcePet.savedPosition == 2) {
+            sourcePet.parent.pet2 = spawnPet;
+        }
+        if (sourcePet.savedPosition == 3) {
+            sourcePet.parent.pet3 = spawnPet;
+        }
+        if (sourcePet.savedPosition == 4) {
+            sourcePet.parent.pet4 = spawnPet;
+        }
+    }
+
     get petArray(): Pet[] {
         let petArray: Pet[] = [];
 
@@ -196,5 +215,14 @@ export class Player {
         }
         let index = getRandomInt(0, pets.length - 1);
         return pets[index];
+    }
+
+    getPetAtPosition(position: number) {
+        for (let pet of this.petArray) {
+            if (pet.position == position) {
+                return pet;
+            }
+        }
+        return null;
     }
 }

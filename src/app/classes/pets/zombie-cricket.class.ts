@@ -18,11 +18,12 @@ export class ZombieCricket extends Pet {
         exp?: number,
         equipment?: Equipment) {
         super(logService, faintService, summonedService, parent);
-        this.health = health ?? this.health;
-        this.attack = attack ?? this.attack;
         this.exp = exp ?? this.exp;
+        this.health = this.level;
+        this.attack = this.level;
         this.originalHealth = this.health;
         this.originalAttack = this.attack;
         this.equipment = equipment;
+        this.originalEquipment = equipment;
     }
 }

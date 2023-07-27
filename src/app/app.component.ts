@@ -54,7 +54,7 @@ export class AppComponent {
   }
 
   initPlayerPets(player: Player) {
-    player.setPet(0, new Ant(this.logService, this.faintService, this.summonedService, player, 5, 5), true);
+    player.setPet(0, new Ant(this.logService, this.faintService, this.summonedService, player), true);
     player.setPet(1, new Cricket(this.logService, this.faintService, this.summonedService, player), true);
     player.setPet(2, new Fish(this.logService, this.faintService, this.summonedService, player), true);
     player.setPet(3, new Horse(this.logService, this.faintService, this.summonedService, player), true);
@@ -171,6 +171,9 @@ export class AppComponent {
 
     playerPet.attackPet(opponentPet);
     opponentPet.attackPet(playerPet);
+
+    playerPet.useAttackDefenseEquipment();
+    opponentPet.useAttackDefenseEquipment();
 
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();

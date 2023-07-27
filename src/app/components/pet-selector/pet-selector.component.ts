@@ -43,7 +43,6 @@ export class PetSelectorComponent implements OnInit {
     })
 
     this.formGroup.get('name').valueChanges.subscribe((value) => {
-      console.log(value)
       if (value == null) {
         this.removePet();
         return;
@@ -74,7 +73,6 @@ export class PetSelectorComponent implements OnInit {
       if (nameChange) {
         formValue.attack = null;
         formValue.health = null;
-        formValue.equipment = null;
       }
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);

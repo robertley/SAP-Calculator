@@ -24,5 +24,6 @@ export class Fish extends Pet {
         this.originalHealth = this.health;
         this.originalAttack = this.attack;
         this.equipment = equipment;
+        this.originalEquipment = equipment;
     }
 }
