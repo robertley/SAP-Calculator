@@ -1,0 +1,42 @@
+
+<div class="card p-3">
+    <div class="row form-group" [formGroup]="formGroup">
+        <div class="col-12 d-flex level-bar-numbers mb-1">
+            <span>1</span>
+            <span></span>
+            <span>2</span>
+            <span></span>
+            <span class="level-3">3</span>
+        </div>
+        <div class="col-12 d-flex level-bar mb-2">
+            <span (click)="setExp(0)" class="remove-exp" *ngIf="showRemoveExp()">x</span>
+            <span (click)="setExp(1)" [class]="getIsSelected(1) ? 'selected' : ''"></span>
+            <span (click)="setExp(2)" [class]="getIsSelected(2) ? 'selected' : ''"></span>
+            <span (click)="setExp(3)" [class]="getIsSelected(3) ? 'selected' : ''"></span>
+            <span (click)="setExp(4)" [class]="getIsSelected(4) ? 'selected' : ''"></span>
+            <span (click)="setExp(5)" [class]="getIsSelected(5) ? 'selected' : ''"></span>
+        </div>
+        <div class="col-12 mb-2">
+            <select class="form-control" formControlName="name">
+                <option [ngValue]="null">None</option>
+                <option value="Ant">Ant</option>
+                <option value="Cricket">Cricket</option>
+                <option value="Fish">Fish</option>
+                <option value="Horse">Horse</option>
+                <option value="Mosquito">Mosquito</option>
+            </select>
+        </div>
+        <div class="col-12 mb-2">
+            <select class="form-control" formControlName="equipment">
+                <option [ngValue]="null">None</option>
+                <option *ngFor="let equip of equipment | keyvalue" [ngValue]="equip.value">{{equip.key}}</option>
+            </select>
+        </div>
+        <div class="col-6">
+            <input class="form-control select-attack" formControlName="attack" type="number" min="1" max="50">
+        </div>
+        <div class="col-6">
+            <input class="form-control select-health" formControlName="health" type="number" min="1" max="50">
+        </div>
+    </div>
+</div>

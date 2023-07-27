@@ -1,0 +1,73 @@
+.player-card {
+    background-color: #e9c137;
+}
+
+.battle-row {
+    background-color: #5ebe09;
+}
+
+.button-bar {
+    background-color: whitesmoke;
+}
+
+.stats {
+    label {
+        margin-right: .25em;
+    }
+    span {
+        margin-right: 1em;
+    }
+}
+
+.battle-container, .log-container {
+    height: 500px;
+    overflow: scroll;
+}
+
+.battle-no {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.battle-row {
+    cursor: pointer;
+}
+
+.results-bar, .draw-bar, .lose-bar {
+    display: inline-block;
+}
+
+.draw-bar, .lose-bar {
+    height: 100%;
+    position: absolute;
+    right: 0;
+}
+
+.results-bar {
+    border: .2em solid black;
+    height: 2em;
+    width: 30em;
+    background-color: lime;
+    position: relative;
+}
+
+.draw-bar {
+    background-color: lightgray;
+}
+
+.lose-bar {
+    background-color: red;
+}
+
+.log-player {
+    background-color: rgb(228, 255, 224);;
+}
+
+.log-opponent {
+    background-color: rgb(255, 224, 224);
+}
+
+.random-event {
+    color: purple;
+    font-weight: 500;
+}

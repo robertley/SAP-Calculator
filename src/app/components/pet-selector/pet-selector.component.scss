@@ -1,0 +1,50 @@
+.select-attack {
+    background-color: gray;
+    color: white;
+}
+.select-health {
+    background-color: #ca0202;
+    color: white;
+}
+
+.select-attack, .select-health {
+    font-size: 1.5em;
+    padding-right: 0;
+}
+
+.level-bar, .level-bar-numbers {
+    height: 1em;
+    span {
+        width: calc(100% / 5);
+        height: 100%;
+    }
+}
+
+.level-bar {
+    position: relative;
+    span {
+        cursor: pointer;
+        border: 2px solid black;
+        background-color: #9c5900;
+        border-radius: 20%;
+    }
+
+    
+    .remove-exp {
+        border: initial;
+        background-color: initial;
+        border-radius: initial;
+        width: initial;
+        position: absolute;
+        left: 0;
+        bottom: .33em;
+    }
+
+    span.selected {
+        background-color: #feb900;
+    }
+}
+
+.level-3 {
+    text-align: right;
+}
