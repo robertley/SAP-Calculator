@@ -1,0 +1,67 @@
+import { Power } from "../../../../interfaces/power.interface";
+import { AbilityService } from "../../../../services/ability.service";
+import { LogService } from "../../../../services/log.servicee";
+import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
+
+export class Flamingo extends Pet {
+    name = "Flamingo";
+    tier = 2;
+    pack: Pack = 'Turtle';
+    health = 2;
+    attack = 3;
+
+    faint = () => {
+        let power: Power = {
+            attack: this.level,
+            health: this.level
+        }
+        let pets = this.parent.petArray;
+
+        let index;
+        for (let i in pets) {
+            let pet = pets[+i]
+            if (pet == this) {
+                index = +i;
+            }
+        }
+        // console.log(index)
+        if (pets[index + 1] != null) {
+            let boostPet = pets[index + 1];
+            boostPet.increaseAttack(this.level);
+            boostPet.increaseHealth(this.level);
+            this.logService.createLog({
+                message: `Flamingo gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
+                type: 'ability',
+                player: this.parent
+            })
+        }
+        if (pets[index + 2] != null) {
+            let boostPet = pets[index + 2];
+            boostPet.increaseAttack(this.level);
+            boostPet.increaseHealth(this.level);
+            this.logService.createLog({
+                message: `Flamingo gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
+                type: 'ability',
+                player: this.parent
+            })
+        }
+    }
+    constructor(protected logService: LogService,
+        protected abilityService: AbilityService,
+        parent: Player,
+        health?: number,
+        attack?: number,
+        exp?: number,
+        equipment?: Equipment) {
+        super(logService, abilityService, parent);
+        this.health = health ?? this.health;
+        this.attack = attack ?? this.attack;
+        this.exp = exp ?? this.exp;
+        this.originalHealth = this.health;
+        this.originalAttack = this.attack;
+        this.equipment = equipment;
+        this.originalEquipment = equipment;
+    }
+}

@@ -1,20 +1,19 @@
 import { Component } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
-import { Ant } from './classes/pets/ant.class';
-import { Cricket } from './classes/pets/cricket.class';
-import { Fish } from './classes/pets/fish.class';
-import { Horse } from './classes/pets/horse.class';
-import { Mosquito } from './classes/pets/mosquito.class';
+import { Ant } from './classes/pets/turtle/tier-1/ant.class';
+import { Cricket } from './classes/pets/turtle/tier-1/cricket.class';
+import { Fish } from './classes/pets/turtle/tier-1/fish.class';
+import { Horse } from './classes/pets/turtle/tier-1/horse.class';
+import { Mosquito } from './classes/pets/turtle/tier-1/mosquito.class';
 import { cloneDeep } from 'lodash';
 import { LogService } from './services/log.servicee';
 import { Battle } from './interfaces/battle.interface';
-import { FaintService } from './services/faint.service';
 import { money_round } from './util/helper-functions';
-import { SummonedService } from './services/summoned.service';
 import { GameService } from './services/game.service';
 import { StartOfBattleService } from './services/start-of-battle.service';
 import { Log } from './interfaces/log.interface';
+import { AbilityService } from './services/ability.service';
 
 @Component({
   selector: 'app-root',
@@ -39,13 +38,12 @@ export class AppComponent {
   simulated = false;
 
   constructor(private logService: LogService,
-    private faintService: FaintService,
-    private summonedService: SummonedService,
+    private abilityService: AbilityService,
     private gameService: GameService,
     private startOfBattleService: StartOfBattleService
   ) {
-    this.player = new Player(logService);
-    this.opponent = new Player(logService);
+    this.player = new Player(logService, abilityService);
+    this.opponent = new Player(logService, abilityService);
     this.initPlayerPets(this.player);
     this.initPlayerPets(this.opponent);
     this.gameService.init(this.player, this.opponent);
@@ -54,11 +52,24 @@ export class AppComponent {
   }
 
   initPlayerPets(player: Player) {
-    player.setPet(0, new Ant(this.logService, this.faintService, this.summonedService, player), true);
-    player.setPet(1, new Cricket(this.logService, this.faintService, this.summonedService, player), true);
-    player.setPet(2, new Fish(this.logService, this.faintService, this.summonedService, player), true);
-    player.setPet(3, new Horse(this.logService, this.faintService, this.summonedService, player), true);
-    player.setPet(4, new Mosquito(this.logService, this.faintService, this.summonedService, player), true);
+    player.setPet(0, new Ant(this.logService, this.abilityService, player), true);
+    player.setPet(1, new Cricket(this.logService, this.abilityService, player), true);
+    player.setPet(2, new Fish(this.logService, this.abilityService, player), true);
+    player.setPet(3, new Horse(this.logService, this.abilityService, player), true);
+    player.setPet(4, new Mosquito(this.logService, this.abilityService, player), true);
+  }
+
+  abilityCycle() {
+    this.abilityService.executeHurtEvents();
+    this.abilityService.executeFaintEvents();
+    this.abilityService.executeFriendAheadFaintsEvents();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
+    this.removeDeadPets();
+    this.abilityService.executeSpawnEvents();
+    this.abilityService.executeSummonedEvents();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
   }
 
   simulate() {
@@ -70,8 +81,12 @@ export class AppComponent {
       this.startOfBattleService.initStartOfBattleEvents();
       this.player.checkPetsAlive();
       this.opponent.checkPetsAlive();
-      this.faintService.executeEvents();
-      this.summonedService.executeEvents();
+      if (!this.abilityService.hasAbilityCycleEvents) {
+        this.removeDeadPets();
+      }
+      while (this.abilityService.hasAbilityCycleEvents) {
+        this.abilityCycle();
+      }
 
       this.printState();
 
@@ -81,6 +96,11 @@ export class AppComponent {
       this.reset();
     }
     this.simulated = true;
+  }
+
+  removeDeadPets() {
+    this.player.removeDeadPets();
+    this.opponent.removeDeadPets();
   }
 
   startBattle() {
@@ -148,8 +168,12 @@ export class AppComponent {
 
     this.pushPetsForwards();
     this.fight();
-    this.faintService.executeEvents();
-    this.summonedService.executeEvents();
+    
+    this.abilityCycle();
+
+    while (this.abilityService.hasAbilityCycleEvents) {
+      this.abilityCycle();
+    }
     this.printState();
   }
 
@@ -177,6 +201,9 @@ export class AppComponent {
 
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
+
+    this.abilityService.executeAfterAttackEvents();
+    this.abilityService.executeFriendAheadAttacksEvents();
   }
 
   endLog(winner?: Player) {
@@ -188,7 +215,10 @@ export class AppComponent {
     } else {
       message = 'Opponent is the winner'
     }
-    this.logService.createLog(message)
+    this.logService.createLog({
+      message: message,
+      type: 'board'
+    })
   }
 
   get logs() {
@@ -222,6 +252,7 @@ export class AppComponent {
       return '___ (-/-) ';
     }
     let abbrev = pet.name.substring(0, 3);
+    // return `${abbrev}${pet.equipment ? `<${pet.equipment.name.substring(0,2)}>` : ''} (${pet.attack}/${pet.health}) `;
     return `${abbrev} (${pet.attack}/${pet.health}) `;
   }
 

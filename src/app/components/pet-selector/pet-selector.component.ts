@@ -22,6 +22,7 @@ export class PetSelectorComponent implements OnInit {
 
   formGroup: FormGroup;
   equipment: Map<string, Equipment>;
+  turtlePackPets: string[];
 
 
   constructor(private petService: PetService, private equipmentService: EquipmentService) {
@@ -29,6 +30,13 @@ export class PetSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.turtlePackPets = [];
+    for (let [key, value] of this.petService.turtlePackPets) {
+      this.turtlePackPets = [
+        ...this.turtlePackPets,
+        ...value
+      ]
+    }
     this.initForm();
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
   }

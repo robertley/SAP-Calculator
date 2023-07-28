@@ -1,17 +1,17 @@
-import { cloneDeep } from "lodash";
-import { PetType } from "../enums/pet-type.enum";
 import { GameAPI } from "../interfaces/gameAPI.interface";
-import { FaintService } from "../services/faint.service";
 import { LogService } from "../services/log.servicee";
-import { SummonedService } from "../services/summoned.service";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
 import { Peanut } from "./equipment/peanut.class";
-import { Coconut } from "./equipment/coconut.class";
-import { Melon } from "./equipment/melon.class";
+import { AbilityService } from "../services/ability.service";
+
+export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
 export class Pet {
     name: string;
+    tier: number;
+    pack: Pack;
+    hidden: boolean = false;
     parent: Player;
     health: number;
     attack: number;
@@ -24,27 +24,33 @@ export class Pet {
     startOfBattle?: (gameApi: GameAPI) => void;
     // startOfTurn?: () => void;
     hurt?: () => void;
-    faint?: () => void;
+    faint?: (gameApi: GameAPI) => void;
     friendSummoned?: (pet: Pet) => void;
+    friendAheadAttacks?: (pet: Pet) => void;
+    friendAheadFaints?: () => void;
+    friendFaints?: () => void;
+    afterAttack?: () => void;
+    beforeAttack?: () => void;
+    knockOut?: () => void;
+    summoned?: () => void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
+    // flags to make sure events/logs are not triggered multiple times
+    done = false;
+    seenDead = false;
 
     constructor(
         protected logService: LogService,
-        protected faintService: FaintService,
-        protected summonedService: SummonedService,
+        protected abilityService: AbilityService,
         parent: Player) {
         this.parent = parent;
     }
 
     attackPet(pet: Pet) {
-        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
-        || pet.equipment?.equipmentClass == 'shield' ? pet.equipment : null;
 
-        let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack' ? this.equipment : null;
-        let attackAmt = this.attack + (attackEquipment?.power ?? 0);
-        let defenseAmt = defenseEquipment?.power ?? 0;
-        let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
-        let damage = Math.max(min, attackAmt - defenseAmt);
+        let damageResp = this.calculateDamgae(pet);
+        let attackEquipment = damageResp.attackEquipment;
+        let defenseEquipment = damageResp.defenseEquipment;
+        let damage = damageResp.damage;
 
         // peanut death
         if (attackEquipment instanceof Peanut && damage > 0) {
@@ -55,70 +61,136 @@ export class Pet {
             })
 
             pet.health = 0;
-            return;
+        } else {
+            pet.health -= damage;
+
+            let message = `${this.name} attacks ${pet.name} for ${damage}.`;
+            if (attackEquipment != null) {
+                message += ` (${attackEquipment.name} +${attackEquipment.power})`;
+            }
+            if (defenseEquipment != null) {
+                message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+            }
+            this.logService.createLog({
+                message: message,
+                type: "attack",
+                player: this.parent
+            });
+    
+            let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
+            if (skewerEquipment != null) {
+                skewerEquipment.attackCallback(this, pet);
+            }
         }
 
-        pet.health -= damage;
+        // hurt ability
+        if (pet.hurt != null) {
+            this.abilityService.setHurtEvent({
+                callback: pet.hurt,
+                priority: pet.attack,
+                player: pet.parent
+            })
+        }
 
-        let message = `${this.name} attacks ${pet.name} for ${damage}.`;
-        if (attackEquipment != null) {
-            message += ` (${attackEquipment.name} +${attackEquipment.power})`;
+        // after attack
+        if (this.afterAttack != null) {
+            this.abilityService.setAfterAttackEvent({
+                callback: this.afterAttack,
+                priority: this.attack
+            })
         }
-        if (defenseEquipment != null) {
-            message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
-        }
-        this.logService.createLog({
-            message: message,
-            type: "attack",
-            player: this.parent
-        });
 
-        let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
-        if (skewerEquipment == null) {
-            return;
+        // friend ahead attacks
+        if (this.petBehind?.friendAheadAttacks != null) {
+            this.abilityService.setFriendAheadAttacksEvents({
+                callback: this.petBehind.friendAheadAttacks,
+                priority: this.petBehind.attack
+            });
         }
-        skewerEquipment.attackCallback(this, pet);
+
     }
 
     snipePet(pet: Pet, power: number, randomEvent?: boolean) {
-        pet.health -= power;
+
+        let damageResp = this.calculateDamgae(pet, power);
+        let attackEquipment = damageResp.attackEquipment;
+        let defenseEquipment = damageResp.defenseEquipment;
+        let damage = damageResp.damage;
+
+        pet.health -= damage;
+
+        // TODO Attack Equipment (pineapple)
+        let message = `${this.name} sniped ${pet.name} for ${damage}.`;
+        if (defenseEquipment != null) {
+            message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+        }
+
         this.logService.createLog({
-            message: `${this.name} sniped ${pet.name} for ${power}.`,
+            message: message,
             type: "attack",
             randomEvent: randomEvent,
             player: this.parent
         });
+        
+        // hurt ability
+        if (pet.hurt != null) {
+            this.abilityService.setHurtEvent({
+                callback: pet.hurt,
+                priority: pet.attack,
+                player: pet.parent
+            })
+        }
     }
+
+    calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
+        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
+        || pet.equipment?.equipmentClass == 'shield' ? pet.equipment : null;
+
+        let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack' ? this.equipment : null;
+        let attackAmt = power ?? this.attack + (attackEquipment?.power ?? 0);
+        let defenseAmt = defenseEquipment?.power ?? 0;
+        let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
+        let damage = Math.max(min, attackAmt - defenseAmt);
+        return {
+            defenseEquipment: defenseEquipment,
+            attackEquipment: attackEquipment,
+            damage: damage
+        }
+    } 
 
     resetPet() {
         this.health = this.originalHealth;
         this.attack = this.originalAttack;
         this.equipment = this.originalEquipment;
+        this.done = false;
+        this.seenDead = false;
         this.equipment?.reset();
     }
 
-    alive() {
-        if (this.health <= 0) {
+    get alive() {
+        return this.health > 0;
+    }
+    
 
-            if (this.faint != null) {
-                this.faintService.setFaintEvent(
-                    {
-                        priority: this.attack,
-                        callback: this.faint
-                    }
-                )
-            }
-            if (this.equipment?.equipmentClass == 'faint') {
-                this.faintService.setFaintEvent(
-                    {
-                        priority: -1, // ensures equipment faint ability occurs after pet faint abilities. Might need to be revisited
-                        callback: () => { this.equipment.callback(this) }
-                    }
-                )
-            }
-            return false;
+    setFaintEventIfPresent() {
+
+        if (this.faint != null) {
+            this.abilityService.setFaintEvent(
+                {
+                    priority: this.attack,
+                    callback: this.faint
+                }
+            )
         }
-        return true;
+        if (this.equipment?.equipmentClass == 'faint') {
+            this.abilityService.setFaintEvent(
+                {
+                    priority: -1, // ensures equipment faint ability occurs after pet faint abilities. Might need to be revisited
+                    callback: () => { this.equipment.callback(this) }
+                }
+            )
+        }
+
     }
 
     useAttackDefenseEquipment() {
@@ -138,6 +210,14 @@ export class Pet {
         if (this.equipment.uses == 0) {
             this.equipment = null;
         }
+    }
+
+    increaseAttack(amt) {
+        this.attack = Math.min(this.attack + amt, 50);
+    }
+
+    increaseHealth(amt) {
+        this.health = Math.min(this.health + amt, 50);
     }
 
     get level() {
@@ -166,5 +246,28 @@ export class Pet {
         if (this == this.parent.pet4) {
             return 4;
         }
+    }
+
+    get petBehind() {
+        for (let i = this.position + 1; i < 5; i++) {
+            let pet = this.parent.getPetAtPosition(i);
+            if (pet != null) {
+                return pet;
+            }
+        }
+        return null;
+    }
+    get petAhead() {
+        for (let i = this.position - 1; i > -1; i--) {
+            let pet = this.parent.getPetAtPosition(i);
+            if (pet != null) {
+                return pet;
+            }
+        }
+        return null;
+    }
+
+    get minExpForLevel() {
+        return this.level == 1 ? 0 : this.level == 2 ? 2 : 5;
     }
 }

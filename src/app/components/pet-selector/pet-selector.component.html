@@ -19,11 +19,7 @@
         <div class="col-12 mb-2">
             <select class="form-control" formControlName="name">
                 <option [ngValue]="null">None</option>
-                <option value="Ant">Ant</option>
-                <option value="Cricket">Cricket</option>
-                <option value="Fish">Fish</option>
-                <option value="Horse">Horse</option>
-                <option value="Mosquito">Mosquito</option>
+                <option *ngFor="let pet of turtlePackPets" [ngValue]="pet">{{pet}}</option>
             </select>
         </div>
         <div class="col-12 mb-2">

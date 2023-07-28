@@ -1,23 +1,23 @@
-import { FaintService } from "../../services/faint.service";
-import { LogService } from "../../services/log.servicee";
-import { SummonedService } from "../../services/summoned.service";
-import { Equipment } from "../equipment.class";
-import { Pet } from "../pet.class";
-import { Player } from "../player.class";
+import { AbilityService } from "../../../../services/ability.service";
+import { LogService } from "../../../../services/log.servicee";
+import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
 
 export class Fish extends Pet {
-    name = "Fish"
+    name = "Fish";
+    tier = 1;
+    pack: Pack = 'Turtle';
     health = 3;
     attack = 2;
     constructor(protected logService: LogService,
-        protected faintService: FaintService,
-        protected summonedService: SummonedService,
+        protected abilityService: AbilityService,
         parent: Player,
         health?: number,
         attack?: number,
         exp?: number,
         equipment?: Equipment) {
-        super(logService, faintService, summonedService, parent);
+        super(logService, abilityService, parent);
         this.health = health ?? this.health;
         this.attack = attack ?? this.attack;
         this.exp = exp ?? this.exp;

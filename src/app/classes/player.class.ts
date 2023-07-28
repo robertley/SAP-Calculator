@@ -2,6 +2,7 @@ import { clone, cloneDeep } from "lodash";
 import { Pet } from "./pet.class";
 import { LogService } from "../services/log.servicee";
 import { getRandomInt } from "../util/helper-functions";
+import { AbilityService } from "../services/ability.service";
 
 export class Player {
     pet0?: Pet;
@@ -16,7 +17,7 @@ export class Player {
     private orignalPet3?: Pet;
     private orignalPet4?: Pet;
 
-    constructor(private logService: LogService) {
+    constructor(private logService: LogService, private abilityService: AbilityService) {
     }
 
     alive(): boolean {
@@ -121,22 +122,92 @@ export class Player {
     }
 
     // TODO - no room logic
-    spawnPet(spawnPet: Pet, sourcePet: Pet) {
-        if (sourcePet.savedPosition == 0) {
-            sourcePet.parent.pet0 = spawnPet;
+    spawnPet(spawnPet: Pet, position: number): boolean {
+        if (this.petArray.length == 5) {
+            this.logService.createLog({
+                message: `No room to spawn ${spawnPet.name}!`,
+                type: 'ability',
+                player: this
+            })
+            return false;
         }
-        if (sourcePet.savedPosition == 1) {
-            sourcePet.parent.pet1 = spawnPet;
+        if (position == 0) {
+            if (this.pet0 != null) {
+                this.makeRoomForSlot(0)
+            }
+            this.pet0 = spawnPet;
         }
-        if (sourcePet.savedPosition == 2) {
-            sourcePet.parent.pet2 = spawnPet;
+        if (position == 1) {
+            if (this.pet1 != null) {
+                this.makeRoomForSlot(1)
+            }
+            this.pet1 = spawnPet;
         }
-        if (sourcePet.savedPosition == 3) {
-            sourcePet.parent.pet3 = spawnPet;
+        if (position == 2) {
+            if (this.pet2 != null) {
+                this.makeRoomForSlot(2)
+            }
+            this.pet2 = spawnPet;
         }
-        if (sourcePet.savedPosition == 4) {
-            sourcePet.parent.pet4 = spawnPet;
+        if (position == 3) {
+            if (this.pet3 != null) {
+                this.makeRoomForSlot(3)
+            }
+            this.pet3 = spawnPet;
         }
+        if (position == 4) {
+            if (this.pet4 != null) {
+                this.makeRoomForSlot(4)
+            }
+            this.pet4 = spawnPet;
+        }
+
+        return true;
+    }
+
+    // TODO - Revise Logic -- might not be consistent with game
+    makeRoomForSlot(slot: number) {
+        if (this.petArray.length == 5) {
+            console.warn("No room to Make Room") // should never happen
+            return;
+        }
+
+        let isSpaceBehind = false;
+        let slotWithSpace = null;
+        if (slot < 4) {
+            if (this.pet4 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 4;
+            }
+        }
+        if (slot < 3) {
+            if (this.pet3 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 3;
+            }
+        }
+        if (slot < 2) {
+            if (this.pet2 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 2;
+            }
+        }
+        if (slot < 1) {
+            if (this.pet1 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 1;
+            }
+        }
+        if (isSpaceBehind) {
+            for (let i = slotWithSpace; i > slot; i--) {
+                this[`pet${i}`] = this[`pet${i-1}`];
+            }
+        }
+        
+        // TODO
+        // isSpaceAhead
+        // might not be necessary?
+
     }
 
     get petArray(): Pet[] {
@@ -165,25 +236,56 @@ export class Player {
         return petArray;
     }
 
+    handleDeath(pet: Pet) {
+        pet.seenDead = true;
+        pet.setFaintEventIfPresent();
+        if (pet.petBehind?.friendAheadFaints != null) {
+            this.abilityService.setFriendAheadFaintsEvent({
+                    callback: pet.petBehind.friendAheadFaints,
+                    priority: pet.petBehind.attack,
+                    player: this
+                })
+        }
+        this.createDeathLog(pet);
+    }
+
     checkPetsAlive() {
-        if (this.pet0 && !this.pet0.alive()) {
-            this.createDeathLog(this.pet0);
+        if (this.pet0 && !this.pet0.alive && !this.pet0.seenDead) {
+            this.handleDeath(this.pet0)
+            // this.pet0 = null;
+        }
+        if (this.pet1 && !this.pet1.alive && !this.pet1.seenDead) {
+            this.handleDeath(this.pet1)
+            // this.pet1 = null;
+        }
+        if (this.pet2 && !this.pet2.alive && !this.pet2.seenDead) {
+            this.handleDeath(this.pet2)
+            // this.pet2 = null;
+        }
+        if (this.pet3 && !this.pet3.alive && !this.pet3.seenDead) {
+            this.handleDeath(this.pet3)
+            // this.pet3 = null;
+        }
+        if (this.pet4 && !this.pet4.alive && !this.pet4.seenDead) {
+            this.handleDeath(this.pet4)
+            // this.pet4 = null;
+        }
+    }
+
+    removeDeadPets() {
+        if (!this.pet0?.alive) {
             this.pet0 = null;
         }
-        if (this.pet1 && !this.pet1.alive()) {
-            this.createDeathLog(this.pet1);
+        if (!this.pet1?.alive) {
             this.pet1 = null;
         }
-        if (this.pet2 && !this.pet2.alive()) {
-            this.createDeathLog(this.pet2);
+        if (!this.pet2?.alive) {
             this.pet2 = null;
         }
-        if (this.pet3 && !this.pet3.alive()) {
-            this.createDeathLog(this.pet3);
+        if (!this.pet3?.alive) {
             this.pet3 = null;
         }
-        if (this.pet4 && !this.pet4.alive()) {
-            this.createDeathLog(this.pet4);
+        if (!this.pet4?.alive) {
             this.pet4 = null;
         }
     }
@@ -225,4 +327,75 @@ export class Player {
         }
         return null;
     }
+
+    /**
+     * Returns highest health pet. Returns a random pet of highest health if there are multiple.
+     * @param excludePet
+     * @returns 
+     */
+    getHighestHealthPet(excludePet?: Pet) {
+        let highestHealthPets: Pet[];
+        for (let i in this.petArray) {
+            let index = +i;
+            let pet = this.petArray[index];
+            if (pet == excludePet) {
+                continue;
+            }
+            if (highestHealthPets == null) {
+                highestHealthPets = [pet];
+                continue;
+            }
+            if (pet.health == highestHealthPets[0].health) {
+                highestHealthPets.push(pet);
+                continue;
+            }
+            if (pet.health > highestHealthPets[0].health) {
+                highestHealthPets = [pet];
+            }
+        }
+        return highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)];
+    }
+
+    /**
+     * Returns lowest health pet. Returns a random pet of lowest health if there are multiple. Will only return alive pets.
+     * @param excludePet
+     * @returns 
+     */
+    getLowestHealthPet(excludePet?: Pet) {
+        let lowestHealthPets: Pet[];
+        for (let i in this.petArray) {
+            let index = +i;
+            let pet = this.petArray[index];
+            if (pet == excludePet) {
+                continue;
+            }
+            if (!pet.alive) {
+                continue;
+            }
+            if (lowestHealthPets == null) {
+                lowestHealthPets = [pet];
+                continue;
+            }
+            if (pet.health == lowestHealthPets[0].health) {
+                lowestHealthPets.push(pet);
+                continue;
+            }
+            if (pet.health < lowestHealthPets[0].health) {
+                lowestHealthPets = [pet];
+            }
+        }
+        return lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
+    }
+
+
+
+    get furthestUpPet() {
+        for (let pet of this.petArray) {
+            if (pet.alive) {
+                return pet;
+            }
+        }
+        return null;
+    }
+
 }
