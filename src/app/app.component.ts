@@ -16,6 +16,8 @@ import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
 import { Tiger } from './classes/pets/turtle/tier-6/tiger.class';
 import { Duck } from './classes/pets/turtle/tier-1/duck.class';
+import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
+import { PetService } from './services/pet.service';
 
 @Component({
   selector: 'app-root',
@@ -39,6 +41,10 @@ export class AppComponent {
   viewBattle: Battle;
   simulated = false;
 
+  // TODO -
+  // Bug with petService, cannot import into this component.
+  // everything works fine currently, but cannot have a pet that imports that service as a default pet for the initPlayerPets method
+  // something to do with the initialization order of the services
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
@@ -55,8 +61,8 @@ export class AppComponent {
 
   initPlayerPets(player: Player) {
     player.setPet(0, new Ant(this.logService, this.abilityService, player), true);
-    player.setPet(1, new Duck(this.logService, this.abilityService, player), true);
-    player.setPet(2, new Tiger(this.logService, this.abilityService, player), true);
+    player.setPet(1, new Horse(this.logService, this.abilityService, player), true);
+    player.setPet(2, new Duck(this.logService, this.abilityService, player), true);
     player.setPet(3, new Horse(this.logService, this.abilityService, player), true);
     player.setPet(4, new Mosquito(this.logService, this.abilityService, player), true);
   }
@@ -76,9 +82,13 @@ export class AppComponent {
 
   simulate() {
     this.resetSimulation();
+
     for (let i = 0; i < this.simulationBattleAmt; i++) {
       this.initBattle();
       this.startBattle();
+
+      this.abilityService.initEndTurnEvents(this.player);
+      this.abilityService.initEndTurnEvents(this.opponent);
 
       this.startOfBattleService.initStartOfBattleEvents();
       this.player.checkPetsAlive();

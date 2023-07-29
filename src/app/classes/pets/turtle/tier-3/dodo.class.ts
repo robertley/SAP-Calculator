@@ -11,12 +11,12 @@ export class Dodo extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 4;
-    startOfBattle = (gameApi, tiger) =>{
+    startOfBattle(gameApi, tiger) {
         let boostPet = this.petAhead;
         let boostAmt = Math.floor(this.attack * (this.level * .5));
         boostPet.increaseAttack(boostAmt);
         this.logService.createLog({
-            message: `Dodo gave ${boostPet.name} ${boostAmt} attack.`,
+            message: `${this.name} gave ${boostPet.name} ${boostAmt} attack.`,
             player: this.parent,
             type: 'ability',
             tiger: tiger

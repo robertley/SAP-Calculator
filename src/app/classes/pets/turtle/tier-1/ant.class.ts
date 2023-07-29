@@ -13,28 +13,6 @@ export class Ant extends Pet {
     health = 2;
     attack = 2;
 
-    faint = (gameApi, tiger) => {
-        let power: Power = this.level == 1 ? { health: 1, attack: 1 } :
-            this.level == 2 ? { health: 2, attack: 2 } : { health: 3, attack: 3 };
-
-        let boostPet = this.parent.getRandomPet(this);
-        if (boostPet == null) {
-            return;
-        }
-        boostPet.health += power.health;
-        boostPet.attack += power.attack;
-        this.logService.createLog({
-            message: `Ant gave ${boostPet.name} ${power.attack} attack and ${power.health} health.`,
-            type: "ability",
-            randomEvent: true,
-            player: this.parent,
-            tiger: tiger
-        })
-
-        this.superFaint(gameApi, tiger);
-        this.done = true;
-    }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -51,4 +29,27 @@ export class Ant extends Pet {
         this.equipment = equipment;
         this.originalEquipment = equipment;
     }
+
+    faint(gameApi, tiger) {
+        let power: Power = this.level == 1 ? { health: 1, attack: 1 } :
+            this.level == 2 ? { health: 2, attack: 2 } : { health: 3, attack: 3 };
+
+        let boostPet = this.parent.getRandomPet(this);
+        if (boostPet == null) {
+            return;
+        }
+        boostPet.health += power.health;
+        boostPet.attack += power.attack;
+        this.logService.createLog({
+            message: `${this.name} gave ${boostPet.name} ${power.attack} attack and ${power.health} health.`,
+            type: "ability",
+            randomEvent: true,
+            player: this.parent,
+            tiger: tiger
+        })
+
+        this.superFaint(gameApi, tiger);
+        this.done = true;
+    }
+
 }

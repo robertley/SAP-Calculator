@@ -10,9 +10,7 @@ export class Camel extends Pet {
     pack: Pack = 'Turtle';
     health = 4;
     attack = 2;
-    hurt = (gameApi, tiger) => {
-        console.log('camel hurt ability')
-
+    hurt(gameApi, tiger) {
         let boostPet = this.petBehind;
         let boostAmt = this.level * 2;
         if (boostPet) {
@@ -20,7 +18,7 @@ export class Camel extends Pet {
             boostPet.increaseHealth(boostAmt);
         }
         this.logService.createLog({
-            message: `Camel gave ${boostPet.name} ${boostAmt} attack and ${boostAmt} health.`,
+            message: `${this.name} gave ${boostPet.name} ${boostAmt} attack and ${boostAmt} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

@@ -11,7 +11,7 @@ export class Dolphin extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 4;
-    startOfBattle = (gameApi, tiger) =>{
+    startOfBattle(gameApi, tiger) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;

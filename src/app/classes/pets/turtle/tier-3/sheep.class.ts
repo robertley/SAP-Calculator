@@ -11,7 +11,7 @@ export class Sheep extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    faint = (gameApi, tiger) => {
+    faint(gameApi, tiger) {
 
         for (let i = 0; i < 2; i++) {
             this.abilityService.setSpawnEvent({
@@ -20,7 +20,7 @@ export class Sheep extends Pet {
             
                     this.logService.createLog(
                         {
-                            message: `Sheep spawned Ram (${ram.attack}/${ram.health}).`,
+                            message: `${this.name} spawned Ram (${ram.attack}/${ram.health}).`,
                             type: "ability",
                             player: this.parent,
                             tiger: tiger

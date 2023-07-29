@@ -12,7 +12,7 @@ export class Mosquito extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    startOfBattle = (gameApi: GameAPI, tiger: boolean) => {
+    startOfBattle(gameApi: GameAPI, tiger: boolean) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;

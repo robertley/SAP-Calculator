@@ -241,7 +241,7 @@ export class Player {
         pet.setFaintEventIfPresent();
         if (pet.petBehind?.friendAheadFaints != null) {
             this.abilityService.setFriendAheadFaintsEvent({
-                    callback: pet.petBehind.friendAheadFaints,
+                    callback: pet.petBehind.friendAheadFaints.bind(pet),
                     priority: pet.petBehind.attack,
                     player: this
                 })

@@ -8,7 +8,7 @@ import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
-export class Pet {
+export abstract class Pet {
     name: string;
     tier: number;
     pack: Pack;
@@ -21,25 +21,26 @@ export class Pet {
     originalAttack: number;
     originalEquipment?: Equipment;
     exp?: number = 0;
-    startOfBattle?: (gameApi: GameAPI, tiger?: boolean) => void;
+    startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
-    hurt?: (gameApi: GameAPI, tiger?: boolean) => void;
-    faint?: (gameApi: GameAPI, tiger?: boolean) => void;
-    friendSummoned?: (pet: Pet, tiger?: boolean) => void;
-    friendAheadAttacks?: (gameApi: GameAPI, tiger?: boolean) => void;
-    friendAheadFaints?: (gameApi: GameAPI, tiger?: boolean) => void;
-    friendFaints?: (gameApi: GameAPI, tiger?: boolean) => void;
-    afterAttack?: (gameApi: GameAPI, tiger?: boolean) => void;
-    beforeAttack?: (gameApi: GameAPI, tiger?: boolean) => void;
+    hurt?(gameApi: GameAPI, tiger?: boolean): void;
+    faint?(gameApi?: GameAPI, tiger?: boolean): void;
+    friendSummoned?(pet: Pet, tiger?: boolean): void;
+    friendAheadAttacks?(gameApi: GameAPI, tiger?: boolean): void;
+    friendAheadFaints?(gameApi: GameAPI, tiger?: boolean): void;
+    friendFaints?(gameApi: GameAPI, tiger?: boolean): void;
+    afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
     // example of pet that SHOULD be defined: Parrot.
-    endTurn?: (gameApi: GameAPI) => void;
-    knockOut?: (gameApi: GameAPI, tiger?: boolean) => void;
-    summoned?: (gameApi: GameAPI, tiger?: boolean) => void;
+    endTurn?(gameApi: GameAPI): void;
+    knockOut?(gameApi: GameAPI, tiger?: boolean): void;
+    summoned?(gameApi: GameAPI, tiger?: boolean): void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
     seenDead = false;
+
 
     constructor(
         protected logService: LogService,
@@ -170,7 +171,7 @@ export class Pet {
         // hurt ability
         if (pet.hurt != null) {
             this.abilityService.setHurtEvent({
-                callback: pet.hurt,
+                callback: pet.hurt.bind(pet),
                 priority: pet.attack,
                 player: pet.parent
             })
@@ -179,7 +180,7 @@ export class Pet {
         // after attack
         if (this.afterAttack != null) {
             this.abilityService.setAfterAttackEvent({
-                callback: this.afterAttack,
+                callback: this.afterAttack.bind(this),
                 priority: this.attack
             })
         }
@@ -187,7 +188,7 @@ export class Pet {
         // friend ahead attacks
         if (this.petBehind?.friendAheadAttacks != null) {
             this.abilityService.setFriendAheadAttacksEvents({
-                callback: this.petBehind.friendAheadAttacks,
+                callback: this.petBehind.friendAheadAttacks.bind(this),
                 priority: this.petBehind.attack
             });
         }
@@ -223,7 +224,7 @@ export class Pet {
         // hurt ability
         if (pet.hurt != null) {
             this.abilityService.setHurtEvent({
-                callback: pet.hurt,
+                callback: pet.hurt.bind(pet),
                 priority: pet.attack,
                 player: pet.parent
             })
@@ -266,7 +267,7 @@ export class Pet {
             this.abilityService.setFaintEvent(
                 {
                     priority: this.attack,
-                    callback: this.faint
+                    callback: this.faint.bind(this)
                 }
             )
         }

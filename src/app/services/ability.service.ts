@@ -31,6 +31,29 @@ export class AbilityService {
             this.hasHurtEvents
     }
 
+    // End of Turn Events
+
+    initEndTurnEvents(player: Player) {
+        let endTurnEvents: AbilityEvent[] = [];
+        for (let pet of player.petArray) {
+            if (pet.endTurn) {
+                endTurnEvents.push({
+                    callback: pet.endTurn,
+                    priority: pet.attack,
+                    player: player
+                })
+            }
+        }
+
+        endTurnEvents = shuffle(endTurnEvents);
+
+        endTurnEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of endTurnEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+    }
+
     // Start of Battle
     
     initStartOfBattleEvents() {

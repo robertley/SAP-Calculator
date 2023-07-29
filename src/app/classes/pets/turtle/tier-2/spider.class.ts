@@ -13,7 +13,7 @@ export class Spider extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    faint = (gameApi: GameAPI, tiger) => {
+    faint(gameApi: GameAPI, tiger) {
         let possibleSpawnPets = this.petService.tier3Pets.filter(pet => {
             return pet != 'Spider'
         });
@@ -31,7 +31,7 @@ export class Spider extends Pet {
             callback: () => {
                 this.logService.createLog(
                     {
-                        message: `Spider spawned ${spawnPet.name} level ${level} (${power}/${power})`,
+                        message: `${this.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
                         type: "ability",
                         player: this.parent,
                         randomEvent: true,

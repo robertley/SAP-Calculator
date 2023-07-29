@@ -11,13 +11,13 @@ export class Dog extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 3;
-    friendSummoned = (pet, tiger) => {
+    friendSummoned(pet, tiger) {
         let boostAtkAmt = this.level * 2;
         let boostHealthAmt = this.level;
         this.increaseAttack(boostAtkAmt);
         this.increaseHealth(boostHealthAmt);
         this.logService.createLog({
-            message: `Dog gained ${boostAtkAmt} attack and ${boostHealthAmt} health.`,
+            message: `${this.name} gained ${boostAtkAmt} attack and ${boostHealthAmt} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

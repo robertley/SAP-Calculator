@@ -171,7 +171,7 @@ export class PetService {
         
             // tier 4
             case 'Parrot':
-                return new Parrot(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Parrot(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
 
             // tier 6

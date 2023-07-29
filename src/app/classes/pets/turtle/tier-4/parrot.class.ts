@@ -1,3 +1,4 @@
+import { PetService } from "app/services/pet.service";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
@@ -14,17 +15,17 @@ export class Parrot extends Pet {
     health = 2;
     endTurn = (gameApi: GameAPI) => {
         let copyPet = this.petAhead;
-        this.startOfBattle = copyPet.startOfBattle;
-        this.hurt = copyPet.hurt;
-        this.faint = copyPet.faint;
-        this.friendSummoned = copyPet.friendSummoned;
-        this.friendAheadAttacks = copyPet.friendAheadAttacks;
-        this.friendAheadFaints = copyPet.friendAheadFaints;
-        this.friendFaints = copyPet.friendFaints;
-        this.afterAttack = copyPet.afterAttack;
-        this.beforeAttack = copyPet.beforeAttack;
-        this.knockOut = copyPet.knockOut;
-        this.summoned = copyPet.summoned;
+        this.startOfBattle = copyPet.startOfBattle?.bind(this);
+        this.hurt = copyPet.hurt?.bind(this);
+        this.faint = copyPet.faint?.bind(this);
+        this.friendSummoned = copyPet.friendSummoned?.bind(this);
+        this.friendAheadAttacks = copyPet.friendAheadAttacks?.bind(this);
+        this.friendAheadFaints = copyPet.friendAheadFaints?.bind(this);
+        this.friendFaints = copyPet.friendFaints?.bind(this);
+        this.afterAttack = copyPet.afterAttack?.bind(this);
+        this.beforeAttack = copyPet.beforeAttack?.bind(this);
+        this.knockOut = copyPet.knockOut?.bind(this);
+        this.summoned = copyPet.summoned?.bind(this);
 
         this.logService.createLog({
             message: `Parrot copied ${copyPet.name}`,
@@ -35,6 +36,7 @@ export class Parrot extends Pet {
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
+        protected petService: PetService,
         parent: Player,
         health?: number,
         attack?: number,

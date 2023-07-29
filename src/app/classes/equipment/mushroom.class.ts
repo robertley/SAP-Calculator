@@ -138,7 +138,7 @@ export class Mushroom extends Equipment {
         
         // tier 4
         if (pet instanceof Parrot) {
-            newPet = new Parrot(this.logService, this.abilityService, pet.parent, 1, 1, levelToExp(pet.level));
+            newPet = new Parrot(this.logService, this.abilityService, this.petService, pet.parent, 1, 1, levelToExp(pet.level));
         }
 
         // tier 6

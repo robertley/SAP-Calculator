@@ -11,7 +11,7 @@ export class Badger extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 6;
-    faint = (gameApi, tiger) => {
+    faint(gameApi, tiger) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;

@@ -10,7 +10,7 @@ export class Elephant extends Pet {
     pack: Pack = 'Turtle';
     health = 7;
     attack = 3;
-    afterAttack = (gameApi, tiger) => {
+    afterAttack(gameApi, tiger) {
         for (let i = 0; i < this.level; i++) {
             this.snipePet(this.petBehind, 1, false, tiger);
         }

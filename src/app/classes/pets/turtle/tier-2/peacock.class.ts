@@ -10,14 +10,14 @@ export class Peacock extends Pet {
     pack: Pack = 'Turtle';
     health = 5;
     attack = 2;
-    hurt = (gameApi, tiger) => {
+    hurt(gameApi, tiger) {
         if (this.health < 1) {
             return;
         }
         let boost = this.level * 4;
         this.increaseAttack(boost);
         this.logService.createLog({
-            message: `Peacock increased attack by ${boost} (${this.attack})`,
+            message: `${this.name} increased attack by ${boost} (${this.attack})`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

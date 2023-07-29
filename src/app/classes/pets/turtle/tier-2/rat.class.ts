@@ -13,7 +13,7 @@ export class Rat extends Pet {
     health = 6;
     attack = 3;
     // TODO broken with a pet that is fainted but not yet removed
-    faint = (gameApi: GameAPI, tiger) => {
+    faint(gameApi: GameAPI, tiger) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;
@@ -25,7 +25,7 @@ export class Rat extends Pet {
             this.abilityService.setSpawnEvent({
                 callback: () => {
                     this.logService.createLog({
-                        message: `Rat Summoned Dirty Rat on Opponent`,
+                        message: `${this.name} Summoned Dirty Rat on Opponent`,
                         type: 'ability',
                         player: this.parent,
                         tiger: tiger

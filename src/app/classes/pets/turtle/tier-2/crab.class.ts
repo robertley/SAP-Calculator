@@ -11,13 +11,13 @@ export class Crab extends Pet {
     pack: Pack = 'Turtle';
     health = 1;
     attack = 4;
-    startOfBattle = (gameApi: GameAPI, tiger) => {
+    startOfBattle(gameApi: GameAPI, tiger) {
         let highestHealthPet = this.parent.getHighestHealthPet(this);
         let copyAmmt = .5 * this.level;
         let crabHealth = Math.floor(highestHealthPet.health * copyAmmt);
         this.health = crabHealth;
         this.logService.createLog({
-            message: `Crab copied ${copyAmmt * 100}% of ${highestHealthPet.name}'s health (${crabHealth})`,
+            message: `${this.name} copied ${copyAmmt * 100}% of ${highestHealthPet.name}'s health (${crabHealth})`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
