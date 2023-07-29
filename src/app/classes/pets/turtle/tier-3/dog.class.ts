@@ -4,13 +4,14 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
+// TODO fix bug when spawned out of spider getting bonus
 export class Dog extends Pet {
     name = "Dog";
     tier = 3;
     pack: Pack = 'Turtle';
     attack = 2;
     health = 3;
-    friendSummoned = () => {
+    friendSummoned = (pet, tiger) => {
         let boostAtkAmt = this.level * 2;
         let boostHealthAmt = this.level;
         this.increaseAttack(boostAtkAmt);
@@ -18,8 +19,10 @@ export class Dog extends Pet {
         this.logService.createLog({
             message: `Dog gained ${boostAtkAmt} attack and ${boostHealthAmt} health.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger: tiger
         })
+        super.superFriendSummoned(pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

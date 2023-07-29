@@ -11,7 +11,7 @@ export class Hedgehog extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 3;
-    faint = (gameApi: GameAPI) => {
+    faint = (gameApi: GameAPI, tiger) => {
         let targetPets = gameApi.player.petArray.filter((pet) => {
             return pet != this && pet.alive;
         })
@@ -24,8 +24,10 @@ export class Hedgehog extends Pet {
         ];
         let damage = this.level * 2;
         for (let pet of targetPets) {
-            this.snipePet(pet, damage);
+            this.snipePet(pet, damage, false, tiger);
         }
+
+        super.superFaint(gameApi, tiger);
         this.done = true;
     }
     constructor(protected logService: LogService,

@@ -13,7 +13,7 @@ export class Ant extends Pet {
     health = 2;
     attack = 2;
 
-    faint = () => {
+    faint = (gameApi, tiger) => {
         let power: Power = this.level == 1 ? { health: 1, attack: 1 } :
             this.level == 2 ? { health: 2, attack: 2 } : { health: 3, attack: 3 };
 
@@ -27,8 +27,11 @@ export class Ant extends Pet {
             message: `Ant gave ${boostPet.name} ${power.attack} attack and ${power.health} health.`,
             type: "ability",
             randomEvent: true,
-            player: this.parent
+            player: this.parent,
+            tiger: tiger
         })
+
+        this.superFaint(gameApi, tiger);
         this.done = true;
     }
 

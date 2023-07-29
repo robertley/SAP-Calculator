@@ -4,6 +4,7 @@ import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
 import { Peanut } from "./equipment/peanut.class";
 import { AbilityService } from "../services/ability.service";
+import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
@@ -20,19 +21,21 @@ export class Pet {
     originalAttack: number;
     originalEquipment?: Equipment;
     exp?: number = 0;
-    passive?: () => void;
-    startOfBattle?: (gameApi: GameAPI) => void;
+    startOfBattle?: (gameApi: GameAPI, tiger?: boolean) => void;
     // startOfTurn?: () => void;
-    hurt?: () => void;
-    faint?: (gameApi: GameAPI) => void;
-    friendSummoned?: (pet: Pet) => void;
-    friendAheadAttacks?: (pet: Pet) => void;
-    friendAheadFaints?: () => void;
-    friendFaints?: () => void;
-    afterAttack?: () => void;
-    beforeAttack?: () => void;
-    knockOut?: () => void;
-    summoned?: () => void;
+    hurt?: (gameApi: GameAPI, tiger?: boolean) => void;
+    faint?: (gameApi: GameAPI, tiger?: boolean) => void;
+    friendSummoned?: (pet: Pet, tiger?: boolean) => void;
+    friendAheadAttacks?: (gameApi: GameAPI, tiger?: boolean) => void;
+    friendAheadFaints?: (gameApi: GameAPI, tiger?: boolean) => void;
+    friendFaints?: (gameApi: GameAPI, tiger?: boolean) => void;
+    afterAttack?: (gameApi: GameAPI, tiger?: boolean) => void;
+    beforeAttack?: (gameApi: GameAPI, tiger?: boolean) => void;
+    // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
+    // example of pet that SHOULD be defined: Parrot.
+    endTurn?: (gameApi: GameAPI) => void;
+    knockOut?: (gameApi: GameAPI, tiger?: boolean) => void;
+    summoned?: (gameApi: GameAPI, tiger?: boolean) => void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -44,6 +47,87 @@ export class Pet {
         parent: Player) {
         this.parent = parent;
     }
+
+    tigerCheck(tiger) {
+        if (this.petBehind == null) {
+            return false;
+        }
+        if (this.petBehind.name == 'Tiger' && (tiger == null || tiger == false)) {
+            return true;
+        }
+    }
+
+    protected superStartOfBattle(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.startOfBattle(gameApi,true)
+        this.exp = exp;
+    
+    }
+
+    protected superHurt(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.hurt(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superFaint(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.faint(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superFriendSummoned(pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.friendSummoned(pet, true)
+        this.exp = exp;
+    }
+
+    protected superFriendAheadAttacks(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.friendAheadAttacks(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superFriendAheadFaints(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.friendAheadFaints(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superAfterAttack(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.afterAttack(gameApi, true)
+        this.exp = exp;
+    }
+
 
     attackPet(pet: Pet) {
 
@@ -110,7 +194,7 @@ export class Pet {
 
     }
 
-    snipePet(pet: Pet, power: number, randomEvent?: boolean) {
+    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean) {
 
         let damageResp = this.calculateDamgae(pet, power);
         let attackEquipment = damageResp.attackEquipment;
@@ -123,6 +207,10 @@ export class Pet {
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
             message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+        }
+
+        if (tiger) {
+            message += ' (Tiger)'
         }
 
         this.logService.createLog({
@@ -251,7 +339,7 @@ export class Pet {
     get petBehind() {
         for (let i = this.position + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
-            if (pet != null) {
+            if (pet != null && pet.alive) {
                 return pet;
             }
         }

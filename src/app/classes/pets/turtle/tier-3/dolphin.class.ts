@@ -11,7 +11,7 @@ export class Dolphin extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 4;
-    startOfBattle = (gameApi) =>{
+    startOfBattle = (gameApi, tiger) =>{
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;
@@ -21,8 +21,10 @@ export class Dolphin extends Pet {
 
         for (let i = 0; i < this.level; i++) {
             let snipePet = opponent.getLowestHealthPet();
-            this.snipePet(snipePet, 3, true);
+            this.snipePet(snipePet, 3, true, tiger);
         }
+        
+        super.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

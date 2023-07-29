@@ -35,6 +35,8 @@ import { Ox } from "../classes/pets/turtle/tier-3/ox.class";
 import { Dog } from "../classes/pets/turtle/tier-3/dog.class";
 import { Sheep } from "../classes/pets/turtle/tier-3/sheep.class";
 import { GameService } from "./game.service";
+import { Tiger } from "../classes/pets/turtle/tier-6/tiger.class";
+import { Parrot } from "../classes/pets/turtle/tier-4/parrot.class";
 
 @Injectable({
     providedIn: 'root'
@@ -88,6 +90,16 @@ export class PetService {
                 "Ox",
                 "Dog",
                 "Sheep"
+            ]);
+        
+        this.turtlePackPets.set(4,
+            [
+                "Parrot"
+            ]);
+
+        this.turtlePackPets.set(6,
+            [
+                "Tiger"
             ]);
 
         this.tier3Pets = this.turtlePackPets.get(3);
@@ -156,6 +168,15 @@ export class PetService {
                 return new Dog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Sheep':
                 return new Sheep(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+        
+            // tier 4
+            case 'Parrot':
+                return new Parrot(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+
+
+            // tier 6
+            case 'Tiger':
+                return new Tiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
         }
     }
 }

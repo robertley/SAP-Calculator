@@ -11,14 +11,16 @@ export class Ox extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 1;
-    friendAheadFaints = () => {
+    friendAheadFaints = (gameApi, tiger) => {
         this.increaseAttack(this.level);
         this.equipment = new Melon();
         this.logService.createLog({
             message: `Ox gained Melon and ${this.level} attack`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger: tiger
         })
+        super.superFriendAheadFaints(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

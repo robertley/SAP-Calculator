@@ -5,4 +5,5 @@ export interface Log {
     type: 'attack' | 'move' | 'board' | 'death' | 'ability',
     player?: Player;
     randomEvent?: boolean; // assumed false if undefined
+    tiger?: boolean;
 }

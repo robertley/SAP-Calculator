@@ -5,25 +5,33 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Crab extends Pet {
-    name = "Crab";
-    tier = 2;
+// TODO - verify parrot has all ability methods
+export class Parrot extends Pet {
+    name = "Parrot";
+    tier = 4;
     pack: Pack = 'Turtle';
-    health = 1;
     attack = 4;
-    startOfBattle = (gameApi: GameAPI, tiger) => {
-        let highestHealthPet = this.parent.getHighestHealthPet(this);
-        let copyAmmt = .5 * this.level;
-        let crabHealth = Math.floor(highestHealthPet.health * copyAmmt);
-        this.health = crabHealth;
+    health = 2;
+    endTurn = (gameApi: GameAPI) => {
+        let copyPet = this.petAhead;
+        this.startOfBattle = copyPet.startOfBattle;
+        this.hurt = copyPet.hurt;
+        this.faint = copyPet.faint;
+        this.friendSummoned = copyPet.friendSummoned;
+        this.friendAheadAttacks = copyPet.friendAheadAttacks;
+        this.friendAheadFaints = copyPet.friendAheadFaints;
+        this.friendFaints = copyPet.friendFaints;
+        this.afterAttack = copyPet.afterAttack;
+        this.beforeAttack = copyPet.beforeAttack;
+        this.knockOut = copyPet.knockOut;
+        this.summoned = copyPet.summoned;
+
         this.logService.createLog({
-            message: `Crab copied ${copyAmmt * 100}% of ${highestHealthPet.name}'s health (${crabHealth})`,
+            message: `Parrot copied ${copyPet.name}`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
-        }),
-        
-        super.superStartOfBattle(gameApi, tiger);
+            randomEvent: true
+        })
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

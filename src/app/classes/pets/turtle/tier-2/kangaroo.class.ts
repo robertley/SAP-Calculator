@@ -10,14 +10,16 @@ export class Kangaroo extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 2;
-    friendAheadAttacks = () => {
+    friendAheadAttacks = (gameApi, tiger) => {
         this.increaseAttack(this.level)
         this.increaseHealth(this.level)
         this.logService.createLog({
             message: `Kangaroo gained ${this.level} attack and ${this.level} health.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger
         })
+        super.superFriendAheadAttacks(gameApi, tiger)
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

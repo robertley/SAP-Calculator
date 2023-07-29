@@ -94,7 +94,7 @@ export class AbilityService {
         this.hurtEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.hurtEvents) {
-            event.callback(this.gameService.gameApi);
+            event.callback(this.gameApi);
         }
         
         this.resetHurtEvents();
@@ -211,7 +211,7 @@ export class AbilityService {
         this.friendAheadAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendAheadAttacksEvents) {
-            event.callback();
+            event.callback(this.gameApi);
         }
         
         this.resetFriendAheadAttacksEvents();

@@ -11,7 +11,7 @@ export class Cricket extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 1;
-    faint = () => {
+    faint = (gameApi, tiger) => {
         let level = 1;
         let exp = 0;
         if (this.level == 2) {
@@ -29,7 +29,8 @@ export class Cricket extends Pet {
                     {
                         message: `Cricket Spawned Zombie Cricket Level ${level}`,
                         type: "ability",
-                        player: this.parent
+                        player: this.parent,
+                        tiger: tiger
                     }
                 )
 
@@ -39,6 +40,8 @@ export class Cricket extends Pet {
             },
             priority: this.attack
         })
+
+        super.superFaint(gameApi, tiger);
         
     };
     constructor(protected logService: LogService,

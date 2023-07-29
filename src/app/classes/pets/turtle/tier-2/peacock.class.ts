@@ -10,7 +10,7 @@ export class Peacock extends Pet {
     pack: Pack = 'Turtle';
     health = 5;
     attack = 2;
-    hurt = () => {
+    hurt = (gameApi, tiger) => {
         if (this.health < 1) {
             return;
         }
@@ -19,8 +19,11 @@ export class Peacock extends Pet {
         this.logService.createLog({
             message: `Peacock increased attack by ${boost} (${this.attack})`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger: tiger
         })
+
+        super.superHurt(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

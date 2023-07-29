@@ -34,6 +34,8 @@ import { Ox } from "../pets/turtle/tier-3/ox.class";
 import { Dog } from "../pets/turtle/tier-3/dog.class";
 import { Sheep } from "../pets/turtle/tier-3/sheep.class";
 import { PetService } from "../../services/pet.service";
+import { Tiger } from "../pets/turtle/tier-6/tiger.class";
+import { Parrot } from "../pets/turtle/tier-4/parrot.class";
 
 export class Mushroom extends Equipment {
     name = 'Mushroom';
@@ -132,6 +134,16 @@ export class Mushroom extends Equipment {
         }
         if (pet instanceof Sheep) {
             newPet = new Sheep(this.logService, this.abilityService, pet.parent, 1, 1, levelToExp(pet.level));
+        }
+        
+        // tier 4
+        if (pet instanceof Parrot) {
+            newPet = new Parrot(this.logService, this.abilityService, pet.parent, 1, 1, levelToExp(pet.level));
+        }
+
+        // tier 6
+        if (pet instanceof Tiger) {
+            newPet = new Tiger(this.logService, this.abilityService, pet.parent, 1, 1, levelToExp(pet.level));
         }
 
         this.abilityService.setSpawnEvent({

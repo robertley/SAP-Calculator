@@ -12,7 +12,7 @@ export class Flamingo extends Pet {
     health = 2;
     attack = 3;
 
-    faint = () => {
+    faint = (gameApi, tiger) => {
         let power: Power = {
             attack: this.level,
             health: this.level
@@ -34,7 +34,8 @@ export class Flamingo extends Pet {
             this.logService.createLog({
                 message: `Flamingo gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                tiger: tiger
             })
         }
         if (pets[index + 2] != null) {
@@ -44,9 +45,12 @@ export class Flamingo extends Pet {
             this.logService.createLog({
                 message: `Flamingo gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                tiger: tiger
             })
         }
+
+        super.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

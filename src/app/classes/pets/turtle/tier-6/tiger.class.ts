@@ -1,30 +1,20 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Crab extends Pet {
-    name = "Crab";
-    tier = 2;
+// TODO bug 
+// - Elephant in front of tiger,
+// - if kills tiger, extra triggers dont go off
+
+// - verify tiger behaviors, in general
+export class Tiger extends Pet {
+    name = "Tiger";
+    tier = 6;
     pack: Pack = 'Turtle';
-    health = 1;
-    attack = 4;
-    startOfBattle = (gameApi: GameAPI, tiger) => {
-        let highestHealthPet = this.parent.getHighestHealthPet(this);
-        let copyAmmt = .5 * this.level;
-        let crabHealth = Math.floor(highestHealthPet.health * copyAmmt);
-        this.health = crabHealth;
-        this.logService.createLog({
-            message: `Crab copied ${copyAmmt * 100}% of ${highestHealthPet.name}'s health (${crabHealth})`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        }),
-        
-        super.superStartOfBattle(gameApi, tiger);
-    }
+    attack = 6;
+    health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

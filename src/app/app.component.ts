@@ -14,6 +14,8 @@ import { GameService } from './services/game.service';
 import { StartOfBattleService } from './services/start-of-battle.service';
 import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
+import { Tiger } from './classes/pets/turtle/tier-6/tiger.class';
+import { Duck } from './classes/pets/turtle/tier-1/duck.class';
 
 @Component({
   selector: 'app-root',
@@ -53,8 +55,8 @@ export class AppComponent {
 
   initPlayerPets(player: Player) {
     player.setPet(0, new Ant(this.logService, this.abilityService, player), true);
-    player.setPet(1, new Cricket(this.logService, this.abilityService, player), true);
-    player.setPet(2, new Fish(this.logService, this.abilityService, player), true);
+    player.setPet(1, new Duck(this.logService, this.abilityService, player), true);
+    player.setPet(2, new Tiger(this.logService, this.abilityService, player), true);
     player.setPet(3, new Horse(this.logService, this.abilityService, player), true);
     player.setPet(4, new Mosquito(this.logService, this.abilityService, player), true);
   }

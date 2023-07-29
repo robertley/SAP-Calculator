@@ -12,7 +12,7 @@ export class Mosquito extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    startOfBattle = (gameApi: GameAPI) => {
+    startOfBattle = (gameApi: GameAPI, tiger: boolean) => {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;
@@ -22,8 +22,10 @@ export class Mosquito extends Pet {
 
         for (let i = 0; i < this.level; i++) {
             let attackPet = opponent.getRandomPet();
-            this.snipePet(attackPet, 1, true)
+            this.snipePet(attackPet, 1, true, tiger)
         }
+
+        super.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
