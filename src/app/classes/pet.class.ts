@@ -185,6 +185,14 @@ export abstract class Pet {
             })
         }
 
+        // knockout
+        if (pet.health < 1 && this.knockOut != null) {
+            this.abilityService.setKnockOutEvent({
+                callback: this.knockOut.bind(this),
+                priority: this.attack
+            })
+        }
+
         // friend ahead attacks
         if (this.petBehind?.friendAheadAttacks != null) {
             this.abilityService.setFriendAheadAttacksEvents({

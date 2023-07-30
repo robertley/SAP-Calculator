@@ -1,3 +1,7 @@
+import { Pet } from "app/classes/pet.class";
+import { Player } from "app/classes/player.class";
+import { GameAPI } from "app/interfaces/gameAPI.interface";
+
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 export function shuffle(array) {
     let currentIndex = array.length,  randomIndex;
@@ -35,4 +39,14 @@ export function getRandomInt(min, max) {
 //to round up to two decimal places
 export function money_round(num) {
   return Math.ceil(num * 100) / 100;
+}
+
+export function getOpponent(gameApi: GameAPI, pet: Pet) {
+  let opponent: Player;
+  if (gameApi.player == pet.parent) {
+      opponent = gameApi.opponet;
+  } else {
+      opponent = gameApi.player;
+  }
+  return opponent;
 }

@@ -20,6 +20,7 @@ export class AbilityService {
     private friendAheadAttacksEvents: AbilityEvent[]= [];
     private afterAttackEvents: AbilityEvent[]= [];
     private friendAheadFaintsEvents: AbilityEvent[]= [];
+    private knockOutEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -117,7 +118,7 @@ export class AbilityService {
         this.hurtEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.hurtEvents) {
-            event.callback(this.gameApi);
+            event.callback(this.gameService.gameApi);
         }
         
         this.resetHurtEvents();
@@ -284,6 +285,29 @@ export class AbilityService {
         }
         
         this.resetFriendAheadFaintsEvents();
+    }
+
+    // knockout events
+    
+    setKnockOutEvent(event: AbilityEvent) {
+        this.knockOutEvents.push(event);
+    }
+
+    resetKnockOutEvents() {
+        this.knockOutEvents = [];
+    }
+
+    executeKnockOutEvents() {
+        // shuffle, so that same priority events are in random order
+        this.knockOutEvents = shuffle(this.knockOutEvents);
+
+        this.knockOutEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.knockOutEvents) {
+            event.callback();
+        }
+        
+        this.resetKnockOutEvents();
     }
 
 }

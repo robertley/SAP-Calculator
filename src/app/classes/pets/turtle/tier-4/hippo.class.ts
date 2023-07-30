@@ -6,36 +6,28 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-// TODO - verify parrot has all ability methods
-export class Parrot extends Pet {
-    name = "Parrot";
+export class Hippo extends Pet {
+    name = "Hippo";
     tier = 4;
     pack: Pack = 'Turtle';
     attack = 4;
-    health = 2;
-    endTurn = (gameApi: GameAPI) => {
-        let copyPet = this.petAhead;
-        this.startOfBattle = copyPet.startOfBattle?.bind(this);
-        this.hurt = copyPet.hurt?.bind(this);
-        this.faint = copyPet.faint?.bind(this);
-        this.friendSummoned = copyPet.friendSummoned?.bind(this);
-        this.friendAheadAttacks = copyPet.friendAheadAttacks?.bind(this);
-        this.friendAheadFaints = copyPet.friendAheadFaints?.bind(this);
-        this.friendFaints = copyPet.friendFaints?.bind(this);
-        this.afterAttack = copyPet.afterAttack?.bind(this);
-        this.beforeAttack = copyPet.beforeAttack?.bind(this);
-        this.knockOut = copyPet.knockOut?.bind(this);
-        this.summoned = copyPet.summoned?.bind(this);
-
+    health = 5;
+    knockOut(gameAPI, tiger) {
+        if (this.health < 1) {
+            return;
+        }
+        let power = 3 * this.level;
+        this.increaseAttack(power);
+        this.increaseHealth(power);
         this.logService.createLog({
-            message: `Parrot copied ${copyPet.name}`,
+            message: `${this.name} gained ${power} attack and ${power} health.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger: tiger
         })
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
-        protected petService: PetService,
         parent: Player,
         health?: number,
         attack?: number,

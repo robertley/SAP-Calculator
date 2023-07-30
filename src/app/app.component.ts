@@ -69,7 +69,14 @@ export class AppComponent {
 
   abilityCycle() {
     this.abilityService.executeHurtEvents();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
     this.abilityService.executeFaintEvents();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
+    this.abilityService.executeKnockOutEvents();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
     this.abilityService.executeFriendAheadFaintsEvents();
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();

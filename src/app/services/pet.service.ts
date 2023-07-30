@@ -37,6 +37,14 @@ import { Sheep } from "../classes/pets/turtle/tier-3/sheep.class";
 import { GameService } from "./game.service";
 import { Tiger } from "../classes/pets/turtle/tier-6/tiger.class";
 import { Parrot } from "../classes/pets/turtle/tier-4/parrot.class";
+import { Skunk } from "app/classes/pets/turtle/tier-4/skunk.class";
+import { Hippo } from "app/classes/pets/turtle/tier-4/hippo.class";
+import { Bison } from "app/classes/pets/turtle/tier-4/bison.class";
+import { Blowfish } from "app/classes/pets/turtle/tier-4/blowfish.class";
+import { Turtle } from "app/classes/pets/turtle/tier-4/turtle.class";
+import { Squirrel } from "app/classes/pets/turtle/tier-4/squirrel.class";
+import { Penguin } from "app/classes/pets/turtle/tier-4/penguin.class";
+import { Deer } from "app/classes/pets/turtle/tier-4/deer.class";
 
 @Injectable({
     providedIn: 'root'
@@ -94,7 +102,15 @@ export class PetService {
         
         this.turtlePackPets.set(4,
             [
-                "Parrot"
+                "Skunk",
+                "Hippo",
+                "Bison",
+                "Blowfish",
+                "Turtle",
+                "Squirrel",
+                "Penguin",
+                "Deer",
+                "Parrot",
             ]);
 
         this.turtlePackPets.set(6,
@@ -170,9 +186,24 @@ export class PetService {
                 return new Sheep(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
         
             // tier 4
+            case 'Skunk':
+                return new Skunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Hippo':
+                return new Hippo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Bison':
+                return new Bison(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Blowfish':
+                return new Blowfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Turtle':
+                return new Turtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Squirrel':
+                return new Squirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Penguin':
+                return new Penguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Deer':
+                return new Deer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Parrot':
                 return new Parrot(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
-
 
             // tier 6
             case 'Tiger':

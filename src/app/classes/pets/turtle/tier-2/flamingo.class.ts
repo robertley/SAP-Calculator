@@ -26,9 +26,24 @@ export class Flamingo extends Pet {
                 index = +i;
             }
         }
-        // console.log(index)
-        if (pets[index + 1] != null) {
-            let boostPet = pets[index + 1];
+        let pet1;
+        let pet2;
+        for (let i = index; i < 5; i++) {
+            let pet = pets[i];
+            if (pet == null) {
+                continue;
+            }
+            if (pet.health > 0) {
+                if (pet1 == null) {
+                    pet1 = pet;
+                    continue;
+                }
+                pet2 = pet;
+                break;
+            }
+        }
+        if (pet1) {
+            let boostPet = pet1;
             boostPet.increaseAttack(this.level);
             boostPet.increaseHealth(this.level);
             this.logService.createLog({
@@ -38,8 +53,8 @@ export class Flamingo extends Pet {
                 tiger: tiger
             })
         }
-        if (pets[index + 2] != null) {
-            let boostPet = pets[index + 2];
+        if (pet2) {
+            let boostPet = pet2;
             boostPet.increaseAttack(this.level);
             boostPet.increaseHealth(this.level);
             this.logService.createLog({
