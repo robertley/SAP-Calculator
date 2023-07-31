@@ -40,6 +40,7 @@ export abstract class Pet {
     // flags to make sure events/logs are not triggered multiple times
     done = false;
     seenDead = false;
+    swallowedPets?: Pet[] = [];
 
 
     constructor(
@@ -47,6 +48,16 @@ export abstract class Pet {
         protected abilityService: AbilityService,
         parent: Player) {
         this.parent = parent;
+    }
+
+    initPet(exp, health, attack, equipment) {
+        this.exp = exp ?? this.exp;
+        this.health = health ?? this.health * this.level;
+        this.attack = attack ?? this.attack * this.level;
+        this.originalHealth = this.health;
+        this.originalAttack = this.attack;
+        this.equipment = equipment;
+        this.originalEquipment = equipment;
     }
 
     tigerCheck(tiger) {
@@ -126,6 +137,36 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind.minExpForLevel;
         this.afterAttack(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superSummoned(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.summoned(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superKnockOut(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.knockOut(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superFriendFaints(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.friendFaints(gameApi, true)
         this.exp = exp;
     }
 
@@ -237,6 +278,14 @@ export abstract class Pet {
                 player: pet.parent
             })
         }
+
+        // knockout
+        if (pet.health < 1 && this.knockOut != null) {
+            this.abilityService.setKnockOutEvent({
+                callback: this.knockOut.bind(this),
+                priority: this.attack
+            })
+        }
     }
 
     calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
@@ -262,6 +311,7 @@ export abstract class Pet {
         this.done = false;
         this.seenDead = false;
         this.equipment?.reset();
+        this.swallowedPets = [];
     }
 
     get alive() {
@@ -357,7 +407,7 @@ export abstract class Pet {
     get petAhead() {
         for (let i = this.position - 1; i > -1; i--) {
             let pet = this.parent.getPetAtPosition(i);
-            if (pet != null) {
+            if (pet != null && pet.alive) {
                 return pet;
             }
         }

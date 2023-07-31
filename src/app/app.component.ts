@@ -80,6 +80,9 @@ export class AppComponent {
     this.abilityService.executeFriendAheadFaintsEvents();
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
+    this.abilityService.executeFriendFaintsEvents();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
     this.removeDeadPets();
     this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();

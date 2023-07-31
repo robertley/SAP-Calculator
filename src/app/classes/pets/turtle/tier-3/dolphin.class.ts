@@ -34,12 +34,6 @@ export class Dolphin extends Pet {
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.health = health ?? this.health;
-        this.attack = attack ?? this.attack;
-        this.exp = exp ?? this.exp;
-        this.originalHealth = this.health;
-        this.originalAttack = this.attack;
-        this.equipment = equipment;
-        this.originalEquipment = equipment;
+        this.initPet(exp, health, attack, equipment);
     }
 }

@@ -19,12 +19,6 @@ export class Ram extends Pet {
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.exp = exp ?? this.exp;
-        this.health = health ?? this.health * this.level;
-        this.attack = attack ?? this.attack * this.level;
-        this.originalHealth = this.health;
-        this.originalAttack = this.attack;
-        this.equipment = equipment;
-        this.originalEquipment = equipment;
+        this.initPet(exp, health, attack, equipment);
     }
 }

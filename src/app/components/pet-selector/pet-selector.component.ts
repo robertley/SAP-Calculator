@@ -23,6 +23,7 @@ export class PetSelectorComponent implements OnInit {
   formGroup: FormGroup;
   equipment: Map<string, Equipment>;
   turtlePackPets: string[];
+  pets: Map<number, string[]>;
 
 
   constructor(private petService: PetService, private equipmentService: EquipmentService) {
@@ -37,6 +38,7 @@ export class PetSelectorComponent implements OnInit {
         ...value
       ]
     }
+    this.pets = this.petService.turtlePackPets;
     this.initForm();
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
   }

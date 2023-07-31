@@ -1,30 +1,33 @@
-import { getOpponent } from "app/util/helper-functions";
+import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
+import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Skunk extends Pet {
-    name = "Skunk";
-    tier = 4;
+export class Turkey extends Pet {
+    name = "Turkey";
+    tier = 5;
     pack: Pack = 'Turtle';
     attack = 3;
-    health = 5;
-    startOfBattle(gameApi, tiger) {
-        let opponent = getOpponent(gameApi, this);
-        let targetPet = opponent.getHighestHealthPet();
-        let power = .33 * this.level;
-        let reducedTo =  Math.ceil(targetPet.health * (1 - power));
-        targetPet.health = reducedTo;
+    health = 4;
+    friendSummoned(pet: Pet, tiger?: boolean): void {
+        let power: Power = {
+            attack: 2 * this.level,
+            health: 3 * this.level
+        }
+        pet.increaseAttack(power.attack);
+        pet.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})`,
+            message: `${this.name} gave ${pet.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
-            tiger
-        });
+            tiger: tiger
+        })
 
-        this.superStartOfBattle(gameApi, tiger);
+        super.superFriendSummoned(pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

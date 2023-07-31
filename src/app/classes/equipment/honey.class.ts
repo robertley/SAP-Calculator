@@ -9,7 +9,7 @@ export class Honey extends Equipment {
     equipmentClass = 'faint' as EquipmentClass;
     callback = (pet: Pet) => {
         let bee = new Bee(this.logService, this.abilityService, pet.parent, null, null, 0);
-        pet.parent.spawnPet(bee, pet.savedPosition);
+        pet.parent.summonPet(bee, pet.savedPosition);
 
         this.logService.createLog(
             {

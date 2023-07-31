@@ -16,6 +16,7 @@ export class AbilityService {
     private hurtEvents: AbilityEvent[] = [];
     private faintEvents: AbilityEvent[] = [];
     private summonedEvents: AbilityEvent[] = [];
+    private friendFaintsEvents: AbilityEvent[] = [];
     private spawnEvents: AbilityEvent[] = [];
     private friendAheadAttacksEvents: AbilityEvent[]= [];
     private afterAttackEvents: AbilityEvent[]= [];
@@ -155,7 +156,6 @@ export class AbilityService {
     }
 
     // Summoned
-
     
     triggerSummonedEvents(summonedPet: Pet) {
         for (let pet of summonedPet.parent.petArray) {
@@ -304,10 +304,46 @@ export class AbilityService {
         this.knockOutEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.knockOutEvents) {
-            event.callback();
+            event.callback(this.gameService.gameApi);
         }
         
         this.resetKnockOutEvents();
     }
+
+    // friend faints
+
+    triggerFriendFaintsEvents(faintedPet: Pet) {
+        for (let pet of faintedPet.parent.petArray) {
+            // this works because summoned pets will never have a 'summoned' ability
+            if (pet.friendFaints != null) {
+                this.setFriendFaintsEvent({
+                    callback: pet.friendFaints.bind(pet),
+                    priority: pet.attack
+                })
+            }
+        }
+    }
+
+    setFriendFaintsEvent(event: AbilityEvent) {
+        this.friendFaintsEvents.push(event);
+    }
+
+    resetFriendFaintsEvents() {
+        this.friendFaintsEvents = [];
+    }
+
+    executeFriendFaintsEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendFaintsEvents = shuffle(this.friendFaintsEvents);
+
+        this.friendFaintsEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendFaintsEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetFriendFaintsEvents();
+    }
+    
 
 }

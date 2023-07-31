@@ -1,23 +1,26 @@
-import { getOpponent } from "app/util/helper-functions";
+import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
+import { Peanut } from "../../../equipment/peanut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Blowfish extends Pet {
-    name = "Blowfish";
-    tier = 4;
+export class Scorpion extends Pet {
+    name = "Scorpion";
+    tier = 5;
     pack: Pack = 'Turtle';
-    attack = 3;
-    health = 6;
-    hurt(gameApi, tiger) {
-        let power = this.level * 3;
-        let targetPet = getOpponent(gameApi, this).getRandomPet();
-        if (targetPet)
-            this.snipePet(targetPet, power, true, tiger);
-        
-        this.superHurt(gameApi, tiger)
+    attack = 1;
+    health = 1;
+    summoned(gameApi: GameAPI, tiger?: boolean): void {
+        this.equipment = new Peanut();
+        this.logService.createLog({
+            message: `${this.name} gained the Peanut perk.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+        this.superSummoned(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

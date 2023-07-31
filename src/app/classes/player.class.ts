@@ -122,7 +122,7 @@ export class Player {
     }
 
     // TODO - no room logic
-    spawnPet(spawnPet: Pet, position: number): boolean {
+    summonPet(spawnPet: Pet, position: number): boolean {
         if (this.petArray.length == 5) {
             this.logService.createLog({
                 message: `No room to spawn ${spawnPet.name}!`,
@@ -160,6 +160,10 @@ export class Player {
                 this.makeRoomForSlot(4)
             }
             this.pet4 = spawnPet;
+        }
+
+        if (spawnPet.summoned) {
+            spawnPet.summoned(null);
         }
 
         return true;
@@ -246,6 +250,7 @@ export class Player {
                     player: this
                 })
         }
+        this.abilityService.triggerFriendFaintsEvents(pet);
         this.createDeathLog(pet);
     }
 
@@ -326,6 +331,14 @@ export class Player {
             }
         }
         return null;
+    }
+
+    getLastPet() {
+        for (let pet of this.petArray.reverse()) {
+            if (pet.alive) {
+                return pet;
+            }
+        }
     }
 
     /**

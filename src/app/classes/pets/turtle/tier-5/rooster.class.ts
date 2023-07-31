@@ -1,47 +1,39 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
+import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { DirtyRat } from "../../hidden/dirty-rat.class";
+import { Chick } from "../../hidden/chick.class";
 
-export class Rat extends Pet {
-    name = "Rat";
-    tier = 2;
+export class Rooster extends Pet {
+    name = "Rooster";
+    tier = 5;
     pack: Pack = 'Turtle';
-    health = 6;
-    attack = 3;
-    // TODO broken with a pet that is fainted but not yet removed
-    faint(gameApi: GameAPI, tiger) {
-        let opponent: Player;
-        if (gameApi.player == this.parent) {
-            opponent = gameApi.opponet;
-        } else {
-            opponent = gameApi.player;
-        }
-
+    attack = 6;
+    health = 4;
+    faint(gameApi?: GameAPI, tiger?: boolean): void {
+        let attack = Math.floor(this.attack * .5);
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
                     this.logService.createLog({
-                        message: `${this.name} Summoned Dirty Rat on Opponent`,
+                        message: `${this.name} summoned Chick (${attack}).`,
                         type: 'ability',
                         player: this.parent,
                         tiger: tiger
                     })
-                    let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0);
-        
-                    let spawned = opponent.summonPet(dirtyRat, 0);
-                    if (spawned) {
-                        this.abilityService.triggerSummonedEvents(dirtyRat);
-                    }
+                    this.parent.summonPet(
+                        new Chick(this.logService, this.abilityService, this.parent, 1, attack, this.minExpForLevel),
+                        this.savedPosition
+                    )
                 },
-                priority: this.attack
+                priority: this.attack,
+                player: this.parent
             })
         }
-
-        super.superFaint(gameApi, tiger);
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1,26 +1,33 @@
+import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
+import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Melon } from "../../../equipment/melon.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Ox extends Pet {
-    name = "Ox";
-    tier = 3;
+// TODO - fix bug with late trigger on start of battle abilities knocking out pets
+export class Shark extends Pet {
+    name = "Shark";
+    tier = 5;
     pack: Pack = 'Turtle';
-    health = 3;
-    attack = 1;
-    friendAheadFaints(gameApi, tiger) {
-        this.increaseAttack(this.level);
-        this.equipment = new Melon();
+    attack = 4;
+    health = 2;
+    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+        let power: Power = {
+            attack: this.level,
+            health: this.level * 2
+        }
+        this.increaseAttack(power.attack);
+        this.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${this.name} gained Melon and ${this.level} attack`,
+            message: `${this.name} gained ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
-        super.superFriendAheadFaints(gameApi, tiger);
+        super.superFriendFaints(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
