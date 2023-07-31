@@ -277,6 +277,7 @@ export abstract class Pet {
         // TODO Attack Equipment (pineapple)
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
+            pet.useDefenseEquipment()
             message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
         }
 
@@ -363,6 +364,19 @@ export abstract class Pet {
             )
         }
 
+    }
+
+    useDefenseEquipment() {
+        if (this.equipment == null) {
+            return;
+        }
+        if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield') {
+            return;
+        }
+        this.equipment.uses -= 1;
+        if (this.equipment.uses == 0) {
+            this.equipment = null;
+        }
     }
 
     useAttackDefenseEquipment() {
