@@ -22,6 +22,7 @@ export class AbilityService {
     private afterAttackEvents: AbilityEvent[]= [];
     private friendAheadFaintsEvents: AbilityEvent[]= [];
     private knockOutEvents: AbilityEvent[]= [];
+    private beforeAttackEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -235,7 +236,7 @@ export class AbilityService {
         this.friendAheadAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendAheadAttacksEvents) {
-            event.callback(this.gameApi);
+            event.callback(this.gameService.gameApi);
         }
         
         this.resetFriendAheadAttacksEvents();
@@ -318,7 +319,8 @@ export class AbilityService {
             if (pet.friendFaints != null) {
                 this.setFriendFaintsEvent({
                     callback: pet.friendFaints.bind(pet),
-                    priority: pet.attack
+                    priority: pet.attack,
+                    callbackPet: faintedPet
                 })
             }
         }
@@ -339,10 +341,34 @@ export class AbilityService {
         this.friendFaintsEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendFaintsEvents) {
-            event.callback(this.gameService.gameApi);
+            event.callback(this.gameService.gameApi, null, event.callbackPet);
         }
         
         this.resetFriendFaintsEvents();
+    }
+    
+
+    // before attack
+
+    setBeforeAttackEvent(event: AbilityEvent) {
+        this.beforeAttackEvents.push(event);
+    }
+
+    resetBeforeAttackEvents() {
+        this.beforeAttackEvents = [];
+    }
+
+    executeBeforeAttackEvents() {
+        // shuffle, so that same priority events are in random order
+        this.beforeAttackEvents = shuffle(this.beforeAttackEvents);
+
+        this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.beforeAttackEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetBeforeAttackEvents();
     }
     
 

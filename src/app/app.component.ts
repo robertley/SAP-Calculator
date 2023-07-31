@@ -213,6 +213,25 @@ export class AppComponent {
     let playerPet = this.player.pet0;
     let opponentPet = this.opponent.pet0;
 
+    // before attack events
+    if (playerPet.beforeAttack) {
+      this.abilityService.setBeforeAttackEvent({
+        callback: playerPet.beforeAttack.bind(playerPet),
+        priority: playerPet.attack,
+        player: this.player
+      })
+    }
+
+    if (opponentPet.beforeAttack) {
+      this.abilityService.setBeforeAttackEvent({
+        callback: opponentPet.beforeAttack.bind(opponentPet),
+        priority: opponentPet.attack,
+        player: this.opponent
+      })
+    }
+
+    this.abilityService.executeBeforeAttackEvents();
+
     // console.log(playerPet, 'vs', opponentPet)
 
     playerPet.attackPet(opponentPet);

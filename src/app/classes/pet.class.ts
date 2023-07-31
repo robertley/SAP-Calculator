@@ -5,6 +5,7 @@ import { Player } from "./player.class";
 import { Peanut } from "./equipment/peanut.class";
 import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
+import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
@@ -170,6 +171,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superBeforeAttack(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.beforeAttack(gameApi, true)
+        this.exp = exp;
+    }
+
 
     attackPet(pet: Pet) {
 
@@ -237,7 +248,7 @@ export abstract class Pet {
         // friend ahead attacks
         if (this.petBehind?.friendAheadAttacks != null) {
             this.abilityService.setFriendAheadAttacksEvents({
-                callback: this.petBehind.friendAheadAttacks.bind(this),
+                callback: this.petBehind.friendAheadAttacks.bind(this.petBehind),
                 priority: this.petBehind.attack
             });
         }
@@ -245,6 +256,16 @@ export abstract class Pet {
     }
 
     snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean) {
+
+        let wolverine = false;
+        if (this.petAhead?.name == 'Wolverine') {
+            power += this.petAhead.level * 3;
+            wolverine = true;
+        }
+        if (this.petBehind?.name == 'Wolverine') {
+            power += this.petBehind.level * 3;
+            wolverine = true;
+        }
 
         let damageResp = this.calculateDamgae(pet, power);
         let attackEquipment = damageResp.attackEquipment;
@@ -261,6 +282,10 @@ export abstract class Pet {
 
         if (tiger) {
             message += ' (Tiger)'
+        }
+
+        if (wolverine) {
+            message += ' (Wolverine)'
         }
 
         this.logService.createLog({

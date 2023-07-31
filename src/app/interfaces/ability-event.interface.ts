@@ -3,7 +3,7 @@ import { Player } from "../classes/player.class";
 
 export interface AbilityEvent {
     priority: number;
-    callback: (arg?: any) => void;
+    callback: (arg0?: any, arg1?: any, arg2?: any) => void;
     callbackPet?: Pet;
     player?: Player;
 }
