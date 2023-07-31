@@ -13,6 +13,9 @@ export class Dodo extends Pet {
     attack = 4;
     startOfBattle(gameApi, tiger) {
         let boostPet = this.petAhead;
+        if (boostPet == null) {
+            return;
+        }
         let boostAmt = Math.floor(this.attack * (this.level * .5));
         boostPet.increaseAttack(boostAmt);
         this.logService.createLog({

@@ -1,7 +1,8 @@
-<div class="container-fluid app-wrapper flex-col">
+<div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup">
   <div class="row mt-2">
-    <div class="col-12">
+    <div class="col-12 header">
       <h1>SAP Calculator</h1>
+      <span>Version: {{version}}</span>
     </div>
   </div>
 
@@ -95,6 +96,7 @@
   <div class="row button-bar py-3 border">
     <div class="col-12">
       <button class="btn btn-primary me-2" (click)="simulate()">Simulate</button>
+      <button class="btn btn-primary me-2" (click)="randomize()">Randomize</button>
       <!-- <button class="btn btn-primary" *ngIf="!battleStarted" (click)="startBattle()">Start Single Battle</button> -->
       <button class="btn btn-primary" *ngIf="battleStarted" (click)="nextTurn()">Next Turn</button>
     </div>
@@ -118,18 +120,44 @@
   <div class="row flex-1 bottom-container">
     <div class="col-6 border h-100 flex-col">
       <h3>Battles</h3>
+      <div class="row">
+        <div class="col-12">
+          <label for="logFilter" class="form-label">Filter Battles By Winner</label>
+        </div>
+        <div class="col-12">
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio1" [value]="null">
+            <label class="form-check-label" for="inlineRadio1">None</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio2" value="player">
+            <label class="form-check-label" for="inlineRadio2">Player</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio3" value="opponent">
+            <label class="form-check-label" for="inlineRadio3">Opponent</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio4" value="draw">
+            <label class="form-check-label" for="inlineRadio4">Draw</label>
+          </div>
+        </div>
+      </div>
+
       <div class="battle-container flex-1 scroll">
         <table class="table">
           <thead>
             <tr>
               <th class="battle-no">Battle No.</th>
               <th>Winner</th>
+              <th>Random Events</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let battle of battles; index as i" (click)="setViewBattle(battle)" class="battle-row">
+            <tr *ngFor="let battle of filteredBattles; index as i" (click)="setViewBattle(battle)" class="table-battle-row">
               <td>{{i}}</td>
               <td>{{battle.winner}}</td>
+              <td class="pre">{{getRandomEvents(battle)}}</td>
             </tr>
           </tbody>
         </table>

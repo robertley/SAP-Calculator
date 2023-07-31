@@ -20,6 +20,9 @@ export class Fly extends Pet {
         if (this.flyCounter > 2) {
             return;
         }
+        if (!this.alive) {
+            return;
+        }
         this.abilityService.setSpawnEvent({
             callback: () => {
                 let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);

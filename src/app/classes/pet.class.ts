@@ -396,7 +396,7 @@ export abstract class Pet {
         if (this.exp < 2) {
             return 1;
         }
-        if (this.exp < 4) {
+        if (this.exp < 5) {
             return 2;
         }
         return 3;

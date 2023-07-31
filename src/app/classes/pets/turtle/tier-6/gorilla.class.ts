@@ -28,7 +28,7 @@ export class Gorilla extends Pet {
             })
         }
 
-        super.superFaint(gameApi, tiger);
+        super.superHurt(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -39,5 +39,10 @@ export class Gorilla extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
+    }
+
+    resetPet(): void {
+        super.resetPet();
+        this.coconutCounter = 0;
     }
 }

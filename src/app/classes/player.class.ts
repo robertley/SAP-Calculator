@@ -309,12 +309,12 @@ export class Player {
      * @param excludePet pet we want to exclude from being chosen
      * @returns Pet or null
      */
-    getRandomPet(excludePet?: Pet) {
+    getRandomPet(excludePets?: Pet[]) {
         let pets = this.petArray;
         pets = pets.filter((pet) => {
             let keep = true;
-            if (excludePet)
-                keep = pet != excludePet;
+            if (excludePets)
+                keep = !excludePets.includes(pet);
             return keep && pet.health > 0;
         });
         if (pets.length == 0) {

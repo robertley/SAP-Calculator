@@ -21,6 +21,9 @@ export class Turtle extends Pet {
             }
             break;
         }
+        if (targetPet == null) {
+            return;
+        }
         targetPet.equipment = new Melon();
         this.logService.createLog({
             message: `${this.name} gave ${targetPet.name} Melon.`,

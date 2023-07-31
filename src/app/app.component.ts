@@ -1,12 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChildren, QueryList } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
-import { Ant } from './classes/pets/turtle/tier-1/ant.class';
-import { Cricket } from './classes/pets/turtle/tier-1/cricket.class';
-import { Fish } from './classes/pets/turtle/tier-1/fish.class';
-import { Horse } from './classes/pets/turtle/tier-1/horse.class';
-import { Mosquito } from './classes/pets/turtle/tier-1/mosquito.class';
-import { cloneDeep } from 'lodash';
+
 import { LogService } from './services/log.servicee';
 import { Battle } from './interfaces/battle.interface';
 import { money_round } from './util/helper-functions';
@@ -14,10 +9,10 @@ import { GameService } from './services/game.service';
 import { StartOfBattleService } from './services/start-of-battle.service';
 import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
-import { Tiger } from './classes/pets/turtle/tier-6/tiger.class';
-import { Duck } from './classes/pets/turtle/tier-1/duck.class';
-import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
+
 import { PetService } from './services/pet.service';
+import { FormControl, FormGroup } from '@angular/forms';
+import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +20,12 @@ import { PetService } from './services/pet.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
+
+  @ViewChildren(PetSelectorComponent)
+  petSelectors: QueryList<PetSelectorComponent>;
+
+  version = '0.1.0';
+
   title = 'sap-calculator';
   player: Player;
   opponent: Player;
@@ -40,31 +41,34 @@ export class AppComponent {
   currBattle: Battle;
   viewBattle: Battle;
   simulated = false;
+  formGroup: FormGroup;
 
-  // TODO -
-  // Bug with petService, cannot import into this component.
-  // everything works fine currently, but cannot have a pet that imports that service as a default pet for the initPlayerPets method
-  // something to do with the initialization order of the services
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
+    private petService: PetService,
     private startOfBattleService: StartOfBattleService
   ) {
     this.player = new Player(logService, abilityService);
     this.opponent = new Player(logService, abilityService);
+    this.gameService.init(this.player, this.opponent);
+    this.petService.init();
+    this.initFormGroup();
+
     this.initPlayerPets(this.player);
     this.initPlayerPets(this.opponent);
-    this.gameService.init(this.player, this.opponent);
-
-    console.log(this)
   }
 
   initPlayerPets(player: Player) {
-    player.setPet(0, new Ant(this.logService, this.abilityService, player), true);
-    player.setPet(1, new Horse(this.logService, this.abilityService, player), true);
-    player.setPet(2, new Duck(this.logService, this.abilityService, player), true);
-    player.setPet(3, new Horse(this.logService, this.abilityService, player), true);
-    player.setPet(4, new Mosquito(this.logService, this.abilityService, player), true);
+    for (let i = 0; i < 5; i++) {
+      player.setPet(i, this.petService.getRandomPet(player), true);
+    }
+  }
+
+  initFormGroup() {
+    this.formGroup = new FormGroup({
+      logFilter: new FormControl(null)
+    })
   }
 
   abilityCycle() {
@@ -137,6 +141,7 @@ export class AppComponent {
   resetSimulation() {
     this.playerWinner = 0;
     this.opponentWinner = 0;
+    this.viewBattle = null;
     this.draw = 0;
     this.battles = [];
     this.currBattle = null;
@@ -166,7 +171,7 @@ export class AppComponent {
 
     if (!this.player.alive() && this.opponent.alive()) {
       winner = this.opponent;
-      this.currBattle.winner = 'opponet';
+      this.currBattle.winner = 'opponent';
       this.opponentWinner++;
       finished = true;
     }
@@ -322,6 +327,38 @@ export class AppComponent {
     } else {
       return 'log-opponent'
     }
+  }
+
+  getRandomEvents(battle: Battle) {
+    let events = ""
+    let randomLogs = battle.logs.filter((log) => {return log.randomEvent == true});
+    for (let log of randomLogs) {
+      events += log.message;
+      if (log != randomLogs[randomLogs.length - 1]) {
+        events += '\n';
+      }
+    }
+    return events;
+  }
+
+  randomize() {
+    this.initPlayerPets(this.player);
+    this.initPlayerPets(this.opponent);
+    setTimeout(() => {
+      this.petSelectors.forEach(selector => {
+        selector.initForm();
+      })
+    })
+  }
+
+  get filteredBattles() {
+    return this.battles.filter(battle => {
+      let filter = this.formGroup.get('logFilter').value;
+      if (filter == null) {
+        return true;
+      }
+      return battle.winner == filter;
+    })
   }
 
   get winPercent() {

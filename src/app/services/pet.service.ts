@@ -67,6 +67,7 @@ import { Mammoth } from "app/classes/pets/turtle/tier-6/mammoth.class";
 import { Cat } from "app/classes/pets/turtle/tier-6/cat.class";
 import { Snake } from "app/classes/pets/turtle/tier-6/snake.class";
 import { Fly } from "app/classes/pets/turtle/tier-6/fly.class";
+import { getRandomInt } from "../util/helper-functions";
 
 @Injectable({
     providedIn: 'root'
@@ -82,6 +83,10 @@ export class PetService {
         private abilityService: AbilityService,
         private gameService: GameService
     ) {
+
+    }
+
+    init() {
         this.turtlePackPets.set(1,
             [
                 "Ant",
@@ -493,6 +498,23 @@ export class PetService {
         }
 
         return newPet;
+    }
+
+    getRandomPet(parent: Player) {
+        let tier = getRandomInt(1, 6);
+        let pets = this.turtlePackPets.get(tier);
+        let petNum = getRandomInt(0, pets.length - 1);
+        let pet = pets[petNum];
+        return this.createPet(
+            {
+                attack: null,
+                equipment: null,
+                exp: getRandomInt(0, 5),
+                health: null,
+                name: pet
+            },
+            parent
+        )
     }
 }
 

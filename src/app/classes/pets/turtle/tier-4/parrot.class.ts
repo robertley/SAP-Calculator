@@ -7,6 +7,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
 // TODO - verify parrot has all ability methods
+// fix bug with parrot copying parrot working despite order
 export class Parrot extends Pet {
     name = "Parrot";
     tier = 4;
@@ -15,6 +16,9 @@ export class Parrot extends Pet {
     health = 2;
     endTurn = (gameApi: GameAPI) => {
         let copyPet = this.petAhead;
+        if (this.petAhead == null) {
+            return;
+        }
         this.startOfBattle = copyPet.startOfBattle?.bind(this);
         this.hurt = copyPet.hurt?.bind(this);
         this.faint = copyPet.faint?.bind(this);

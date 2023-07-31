@@ -2,6 +2,12 @@
     height: 100vh;
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
 .flex-col {
     display: flex;
     flex-direction: column;
@@ -33,9 +39,8 @@
     white-space: nowrap;
 }
 
-.battle-row {
-    
-
+.table-battle-row {
+    cursor: pointer;
 }
 
 .results-bar, .draw-bar, .lose-bar {
@@ -72,6 +77,11 @@
     background-color: rgb(255, 224, 224);
 }
 
+.log-container {
+    display: flex;
+    align-content: flex-start;
+}
+
 .random-event {
     color: purple;
     font-weight: 500;
@@ -91,4 +101,8 @@
 
 .h-100 {
     height: 100%;
+}
+
+.pre {
+    white-space: pre;
 }

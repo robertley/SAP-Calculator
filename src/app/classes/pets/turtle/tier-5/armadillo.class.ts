@@ -18,6 +18,9 @@ export class Armadillo extends Pet {
             ...getOpponent(gameApi, this).petArray
         ];
         for (let pet of boostPets) {
+            if (!pet.alive) {
+                continue;
+            }
             let power = 8 * this.level;
             pet.increaseHealth(power);
             this.logService.createLog({
