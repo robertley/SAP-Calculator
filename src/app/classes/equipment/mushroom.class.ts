@@ -7,7 +7,7 @@ export class Mushroom extends Equipment {
     name = 'Mushroom';
     equipmentClass = 'faint' as EquipmentClass;
     callback = (pet: Pet) => {
-        let newPet = this.petService.createDefaultVersionOfPet(pet);
+        let newPet = this.petService.createDefaultVersionOfPet(pet, 1, 1);
         this.abilityService.setSpawnEvent({
             callback: () => {
                 this.logService.createLog(
