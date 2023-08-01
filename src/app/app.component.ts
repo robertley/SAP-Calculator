@@ -67,8 +67,22 @@ export class AppComponent {
 
   initFormGroup() {
     this.formGroup = new FormGroup({
+      playerPack: new FormControl(this.player.pack),
+      opponentPack: new FormControl(this.opponent.pack),
       logFilter: new FormControl(null)
     })
+
+    this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
+      this.updatePlayerPack(this.player, value);
+    })
+    this.formGroup.get('opponentPack').valueChanges.subscribe((value) => {
+      this.updatePlayerPack(this.opponent, value);
+    })
+  }
+
+  updatePlayerPack(player: Player, pack) {
+    player.pack = pack;
+    this.randomize(player);
   }
 
   abilityCycle() {
@@ -341,12 +355,20 @@ export class AppComponent {
     return events;
   }
 
-  randomize() {
-    this.initPlayerPets(this.player);
-    this.initPlayerPets(this.opponent);
+  /**
+   * Randomizes both player and opponent if no player is provided.
+   * @param player 
+   */
+  randomize(player?: Player) {
+    if (player) {
+      this.initPlayerPets(player);
+    } else {
+      this.initPlayerPets(this.player);
+      this.initPlayerPets(this.opponent);
+    }
     setTimeout(() => {
       this.petSelectors.forEach(selector => {
-        selector.initForm();
+        selector.initSelector();
       })
     })
   }

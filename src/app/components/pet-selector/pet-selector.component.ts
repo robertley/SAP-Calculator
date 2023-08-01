@@ -31,15 +31,24 @@ export class PetSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.turtlePackPets = [];
-    for (let [key, value] of this.petService.turtlePackPets) {
-      this.turtlePackPets = [
-        ...this.turtlePackPets,
-        ...value
-      ]
-    }
-    this.pets = this.petService.turtlePackPets;
+    this.initSelector();    
+  }
+
+  initSelector() {
+    this.initPets();
+    this.initEquipment();
     this.initForm();
+  }
+
+  initPets() {
+    if (this.player.pack == 'Turtle') {
+      this.pets = this.petService.turtlePackPets;
+    } else if (this.player.pack == 'Puppy') {
+      this.pets = this.petService.puppyPackPets;
+    }
+  }
+
+  initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
   }
 

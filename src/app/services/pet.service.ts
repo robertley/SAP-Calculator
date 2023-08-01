@@ -68,6 +68,7 @@ import { Cat } from "app/classes/pets/turtle/tier-6/cat.class";
 import { Snake } from "app/classes/pets/turtle/tier-6/snake.class";
 import { Fly } from "app/classes/pets/turtle/tier-6/fly.class";
 import { getRandomInt } from "../util/helper-functions";
+import { Moth } from "../classes/pets/puppy/tier-1/moth.class";
 
 @Injectable({
     providedIn: 'root'
@@ -75,6 +76,7 @@ import { getRandomInt } from "../util/helper-functions";
 export class PetService {
 
     turtlePackPets: Map<number, string[]> = new Map();
+    puppyPackPets: Map<number, string[]> = new Map();
     // used for spider / stork
     // TODO configurable
     tier3Pets: string[];
@@ -168,6 +170,16 @@ export class PetService {
                 "Snake",
                 "Fly"
             ]);
+
+        this.puppyPackPets.set(1, [
+            "Duck",
+            "Beaver",
+            "Moth"
+        ])
+
+        this.puppyPackPets.set(6, [
+            "Tiger" // temp
+        ])
 
         this.tier3Pets = this.turtlePackPets.get(3);
         this.gameService.setTierGroupPets(this.tier3Pets);
@@ -301,6 +313,11 @@ export class PetService {
                 return new Snake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Fly':
                 return new Fly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+        
+            // Puppy
+            // Tier 1
+            case 'Moth':
+                return new Moth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
         }
     }
 
@@ -497,12 +514,23 @@ export class PetService {
             newPet = new Fly(this.logService, this.abilityService, pet.parent, 1, 1, levelToExp(pet.level));
         }
 
+        // Puppy
+        // Tier 1
+        if (pet instanceof Moth) {
+            newPet = new Moth(this.logService, this.abilityService, pet.parent, 1, 1, levelToExp(pet.level));
+        }
+
         return newPet;
     }
 
     getRandomPet(parent: Player) {
         let tier = getRandomInt(1, 6);
-        let pets = this.turtlePackPets.get(tier);
+        let pets;
+        if (parent.pack == 'Turtle') {
+            pets = this.turtlePackPets.get(tier);
+        } else if (parent.pack == 'Puppy') {
+            pets = this.puppyPackPets.get(1);
+        }
         let petNum = getRandomInt(0, pets.length - 1);
         let pet = pets[petNum];
         return this.createPet(

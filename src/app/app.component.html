@@ -8,7 +8,17 @@
 
   <div class="row battle-row pb-5 pt-3">
     <div class="col-6 px-4">
-      <h2>Player</h2>
+      <div class="row">
+        <div class="col-12 d-flex align-items-center">
+          <h2 class="me-4">Player</h2>
+          <div class="form-group">
+            <select class="form-control" id="playerPack" formControlName="playerPack">
+              <option value="Turtle">Turtle</option>
+              <option value="Puppy">Puppy</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="card p-2 player-card">
         <div class="row">
           <div class="col">
@@ -50,7 +60,15 @@
       </div>
     </div>
     <div class="col-6 px-4">
-      <h2>Opponent</h2>
+      <div class="col-12 d-flex align-items-center">
+        <h2 class="me-4">Opponent</h2>
+        <div class="form-group">
+          <select class="form-control" id="opponentPack" formControlName="opponentPack">
+            <option value="Turtle">Turtle</option>
+            <option value="Puppy">Puppy</option>
+          </select>
+        </div>
+      </div>
       <div class="card p-2 player-card">
         <div class="row">
           <div class="col">
