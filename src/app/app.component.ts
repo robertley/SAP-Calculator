@@ -24,7 +24,7 @@ export class AppComponent {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.1.1';
+  version = '0.1.2';
 
   title = 'sap-calculator';
   player: Player;
