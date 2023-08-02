@@ -11,7 +11,7 @@ export class Camel extends Pet {
     health = 4;
     attack = 2;
     hurt(gameApi, tiger) {
-        let boostPet = this.petBehind;
+        let boostPet = this.petBehind();
         if (boostPet == null) {
             return;
         }

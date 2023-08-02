@@ -20,8 +20,8 @@ export class Badger extends Pet {
         }
 
         let attackAmt = this.attack * (this.level * .5);
-        if (this.petBehind) {
-            this.snipePet(this.petBehind, attackAmt, false, tiger);
+        if (this.petBehind()) {
+            this.snipePet(this.petBehind(), attackAmt, false, tiger);
         }
         let snipeAhead;
         if (this.petAhead) {

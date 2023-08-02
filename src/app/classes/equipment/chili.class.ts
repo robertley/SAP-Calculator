@@ -12,10 +12,20 @@ export class Chili extends Equipment {
             return;
         }
         
-        attackPet.health -= 5;
+        let damageResp = pet.calculateDamgae(attackPet, 5);
+        let defenseEquipment = damageResp.defenseEquipment;
+        let damage = damageResp.damage;
+
+        attackPet.health -= damage;
+
+        let message = `${pet.name} attacks ${attackPet.name} for ${damage}`;
+        if (defenseEquipment != null) {
+            attackPet.useDefenseEquipment();
+            message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+        }
 
         this.logService.createLog({
-            message: `${pet.name} attacked ${attackPet.name} for 5 (Chili)`,
+            message: message += ` (Chili).`,
             type: 'attack',
             player: pet.parent
         })

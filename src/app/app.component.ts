@@ -13,6 +13,11 @@ import { AbilityService } from './services/ability.service';
 import { PetService } from './services/pet.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
+import { Deer } from './classes/pets/turtle/tier-4/deer.class';
+import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
+import { Ox } from './classes/pets/turtle/tier-3/ox.class';
+import { Kangaroo } from './classes/pets/turtle/tier-2/kangaroo.class';
+import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +29,7 @@ export class AppComponent {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.1.2';
+  version = '0.1.5';
 
   title = 'sap-calculator';
   player: Player;
