@@ -14,7 +14,7 @@ export class Rhino extends Pet {
     attack = 3;
     health = 6;
     knockOut(gameApi: GameAPI, tiger?: boolean): void {
-        let target = getOpponent(gameApi, this).furthestUpPet;
+        let target = getOpponent(gameApi, this.parent).furthestUpPet;
         if (target == null) {
             return;
         }

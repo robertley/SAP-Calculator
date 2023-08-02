@@ -87,23 +87,39 @@ export class AppComponent {
 
   abilityCycle() {
     this.abilityService.executeHurtEvents();
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
+    this.abilityService.executeFriendGainedPerkEvents();
+    
+    this.checkPetsAlive();
+
     this.abilityService.executeFaintEvents();
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
+    this.abilityService.executeFriendGainedPerkEvents();
+
+    this.checkPetsAlive();
+
     this.abilityService.executeKnockOutEvents();
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
+    this.abilityService.executeFriendGainedPerkEvents();
+
+    this.checkPetsAlive();
+
     this.abilityService.executeFriendAheadFaintsEvents();
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
+    this.abilityService.executeFriendGainedPerkEvents();
+
+    this.checkPetsAlive();
+
     this.abilityService.executeFriendFaintsEvents();
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
+    this.abilityService.executeFriendGainedPerkEvents();
+
+    this.checkPetsAlive();
     this.removeDeadPets();
+
     this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();
+    this.abilityService.executeFriendGainedPerkEvents();
+
+    this.checkPetsAlive();
+  }
+
+  checkPetsAlive() {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
   }
@@ -119,6 +135,7 @@ export class AppComponent {
       this.abilityService.initEndTurnEvents(this.opponent);
 
       this.startOfBattleService.initStartOfBattleEvents();
+      this.abilityService.executeFriendGainedPerkEvents();
       this.player.checkPetsAlive();
       this.opponent.checkPetsAlive();
       if (!this.abilityService.hasAbilityCycleEvents) {

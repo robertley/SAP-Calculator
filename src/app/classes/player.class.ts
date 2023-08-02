@@ -3,6 +3,7 @@ import { Pet } from "./pet.class";
 import { LogService } from "../services/log.servicee";
 import { getRandomInt } from "../util/helper-functions";
 import { AbilityService } from "../services/ability.service";
+import { Toy } from "./toy.class";
 
 export class Player {
     pet0?: Pet;
@@ -18,6 +19,8 @@ export class Player {
     private orignalPet4?: Pet;
 
     pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Puppy';
+
+    toy: Toy;
 
     constructor(private logService: LogService, private abilityService: AbilityService) {
     }

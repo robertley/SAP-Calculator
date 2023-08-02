@@ -30,6 +30,7 @@ export abstract class Pet {
     friendAheadAttacks?(gameApi: GameAPI, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, tiger?: boolean): void;
+    friendGainedPerk?(gameApi: GameAPI, tiger?: boolean): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
@@ -178,6 +179,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind.minExpForLevel;
         this.beforeAttack(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superFriendGainedPerk(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind.minExpForLevel;
+        this.friendGainedPerk(gameApi, true)
         this.exp = exp;
     }
 

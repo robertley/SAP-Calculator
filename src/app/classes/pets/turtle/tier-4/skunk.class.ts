@@ -12,7 +12,7 @@ export class Skunk extends Pet {
     attack = 3;
     health = 5;
     startOfBattle(gameApi, tiger) {
-        let opponent = getOpponent(gameApi, this);
+        let opponent = getOpponent(gameApi, this.parent);
         let targetPet = opponent.getHighestHealthPet();
         let power = .33 * this.level;
         let reducedTo =  Math.ceil(targetPet.health * (1 - power));

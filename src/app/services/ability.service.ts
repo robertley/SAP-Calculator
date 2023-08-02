@@ -23,6 +23,7 @@ export class AbilityService {
     private friendAheadFaintsEvents: AbilityEvent[]= [];
     private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
+    private friendGainedPerkEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -369,6 +370,43 @@ export class AbilityService {
         }
         
         this.resetBeforeAttackEvents();
+    }
+
+    // friend gained perk
+
+    triggerFriendGainedPerkEvents(perkPet: Pet) {
+        for (let pet of perkPet.parent.petArray) {
+            // if (pet == perkPet) {
+            //     return;
+            // }
+            if (pet.friendGainedPerk != null) {
+                this.setFriendGainedPerkEvent({
+                    callback: pet.friendGainedPerk.bind(pet),
+                    priority: pet.attack
+                })
+            }
+        }
+    }
+
+    setFriendGainedPerkEvent(event: AbilityEvent) {
+        this.friendGainedPerkEvents.push(event);
+    }
+
+    resetFriendGainedPerkEvents() {
+        this.friendGainedPerkEvents = [];
+    }
+
+    executeFriendGainedPerkEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendGainedPerkEvents = shuffle(this.friendGainedPerkEvents);
+
+        this.friendGainedPerkEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendGainedPerkEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetFriendGainedPerkEvents();
     }
     
 

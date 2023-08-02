@@ -41,9 +41,9 @@ export function money_round(num) {
   return Math.ceil(num * 100) / 100;
 }
 
-export function getOpponent(gameApi: GameAPI, pet: Pet) {
-  let opponent: Player;
-  if (gameApi.player == pet.parent) {
+export function getOpponent(gameApi: GameAPI, player: Player): Player {
+  let opponent;
+  if (gameApi.player == player) {
       opponent = gameApi.opponet;
   } else {
       opponent = gameApi.player;

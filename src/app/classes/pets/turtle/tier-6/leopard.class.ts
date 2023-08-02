@@ -16,7 +16,7 @@ export class Leopard extends Pet {
         let power = Math.floor(this.attack * .5);
         let previousTargets = [];
         for (let i = 0; i < this.level; i++) {
-            let target = getOpponent(gameApi, this).getRandomPet(previousTargets);
+            let target = getOpponent(gameApi, this.parent).getRandomPet(previousTargets);
             if (target == null) {
                 return;
             }

@@ -15,7 +15,7 @@ export class Armadillo extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let boostPets = [
             ...this.parent.petArray.filter(pet => {return pet != this}),
-            ...getOpponent(gameApi, this).petArray
+            ...getOpponent(gameApi, this.parent).petArray
         ];
         for (let pet of boostPets) {
             if (!pet.alive) {

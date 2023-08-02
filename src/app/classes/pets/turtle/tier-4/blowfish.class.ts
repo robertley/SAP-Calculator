@@ -13,7 +13,7 @@ export class Blowfish extends Pet {
     health = 6;
     hurt(gameApi, tiger) {
         let power = this.level * 3;
-        let targetPet = getOpponent(gameApi, this).getRandomPet();
+        let targetPet = getOpponent(gameApi, this.parent).getRandomPet();
         if (targetPet)
             this.snipePet(targetPet, power, true, tiger);
         
