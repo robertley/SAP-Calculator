@@ -29,7 +29,7 @@ export class AppComponent {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.1.3';
+  version = '0.1.4';
 
   title = 'sap-calculator';
   player: Player;
@@ -65,14 +65,9 @@ export class AppComponent {
   }
 
   initPlayerPets(player: Player) {
-    // for (let i = 0; i < 5; i++) {
-    //   player.setPet(i, this.petService.getRandomPet(player), true);
-    // }
-    player.setPet(0, new Deer(this.logService, this.abilityService, player, 5, 4, 1, null), true);
-    player.setPet(1, new Parrot(this.logService, this.abilityService, this.petService, player, 7, 8, 2, null), true);
-    player.setPet(2, new Ox(this.logService, this.abilityService, player, 7, 5, 2, null), true);
-    player.setPet(3, new Kangaroo(this.logService, this.abilityService, player, 7, 6, 4, null), true);
-    player.setPet(4, new Turkey(this.logService, this.abilityService, player, 4, 3, 0, null), true);
+    for (let i = 0; i < 5; i++) {
+      player.setPet(i, this.petService.getRandomPet(player), true);
+    }
   }
 
   initFormGroup() {
