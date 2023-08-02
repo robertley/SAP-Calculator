@@ -75,7 +75,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.startOfBattle(gameApi,true)
         this.exp = exp;
     
@@ -86,7 +86,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.hurt(gameApi, true)
         this.exp = exp;
     }
@@ -96,7 +96,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.faint(gameApi, true)
         this.exp = exp;
     }
@@ -106,7 +106,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.friendSummoned(pet, true)
         this.exp = exp;
     }
@@ -116,7 +116,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.friendAheadAttacks(gameApi, true)
         this.exp = exp;
     }
@@ -126,7 +126,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.friendAheadFaints(gameApi, true)
         this.exp = exp;
     }
@@ -136,7 +136,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.afterAttack(gameApi, true)
         this.exp = exp;
     }
@@ -146,7 +146,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.summoned(gameApi, true)
         this.exp = exp;
     }
@@ -156,7 +156,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.knockOut(gameApi, true)
         this.exp = exp;
     }
@@ -166,7 +166,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.friendFaints(gameApi, true)
         this.exp = exp;
     }
@@ -176,7 +176,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.beforeAttack(gameApi, true)
         this.exp = exp;
     }
@@ -246,10 +246,10 @@ export abstract class Pet {
         }
 
         // friend ahead attacks
-        if (this.petBehind?.friendAheadAttacks != null) {
+        if (this.petBehind(true)?.friendAheadAttacks != null) {
             this.abilityService.setFriendAheadAttacksEvents({
-                callback: this.petBehind.friendAheadAttacks.bind(this.petBehind),
-                priority: this.petBehind.attack
+                callback: this.petBehind(true).friendAheadAttacks.bind(this.petBehind(true)),
+                priority: this.petBehind(true).attack
             });
         }
 
@@ -262,8 +262,8 @@ export abstract class Pet {
             power += this.petAhead.level * 3;
             wolverine = true;
         }
-        if (this.petBehind?.name == 'Wolverine') {
-            power += this.petBehind.level * 3;
+        if (this.petBehind()?.name == 'Wolverine') {
+            power += this.petBehind().level * 3;
             wolverine = true;
         }
 
@@ -434,9 +434,21 @@ export abstract class Pet {
         }
     }
 
-    get petBehind() {
+    /**
+     * 
+     * @param seenDead if true, consider pets that are not seenDead. if the pet is dead, but not seen, return null.
+     * @returns 
+     */
+    petBehind(seenDead = false) {
         for (let i = this.position + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
+            if (seenDead) {
+                if (pet != null) {
+                    if (!pet.alive && !pet.seenDead) {
+                        return null;
+                    }
+                }
+            }
             if (pet != null && pet.alive) {
                 return pet;
             }

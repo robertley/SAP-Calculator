@@ -13,10 +13,10 @@ export class Turtle extends Pet {
     attack = 2;
     health = 5;
     faint(gameApi, tiger) {
-        let targetPet = this.petBehind;
+        let targetPet = this.petBehind();
         while(targetPet) {
             if (targetPet.equipment instanceof Melon) {
-                targetPet = targetPet.petBehind;
+                targetPet = targetPet.petBehind();
                 continue;
             }
             break;

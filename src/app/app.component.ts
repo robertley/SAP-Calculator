@@ -13,6 +13,11 @@ import { AbilityService } from './services/ability.service';
 import { PetService } from './services/pet.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
+import { Deer } from './classes/pets/turtle/tier-4/deer.class';
+import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
+import { Ox } from './classes/pets/turtle/tier-3/ox.class';
+import { Kangaroo } from './classes/pets/turtle/tier-2/kangaroo.class';
+import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
 
 @Component({
   selector: 'app-root',
@@ -60,9 +65,14 @@ export class AppComponent {
   }
 
   initPlayerPets(player: Player) {
-    for (let i = 0; i < 5; i++) {
-      player.setPet(i, this.petService.getRandomPet(player), true);
-    }
+    // for (let i = 0; i < 5; i++) {
+    //   player.setPet(i, this.petService.getRandomPet(player), true);
+    // }
+    player.setPet(0, new Deer(this.logService, this.abilityService, player, 5, 4, 1, null), true);
+    player.setPet(1, new Parrot(this.logService, this.abilityService, this.petService, player, 7, 8, 2, null), true);
+    player.setPet(2, new Ox(this.logService, this.abilityService, player, 7, 5, 2, null), true);
+    player.setPet(3, new Kangaroo(this.logService, this.abilityService, player, 7, 6, 4, null), true);
+    player.setPet(4, new Turkey(this.logService, this.abilityService, player, 4, 3, 0, null), true);
   }
 
   initFormGroup() {

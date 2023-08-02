@@ -17,8 +17,8 @@ export class Camel extends Pet {
         }
         let boostAmt = this.level * 2;
         if (boostPet) {
-            boostPet.increaseAttack(boostAmt);
-            boostPet.increaseHealth(boostAmt);
+            boostPet().increaseAttack(boostAmt);
+            boostPet().increaseHealth(boostAmt);
         }
         this.logService.createLog({
             message: `${this.name} gave ${boostPet.name} ${boostAmt} attack and ${boostAmt} health.`,
