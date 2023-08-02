@@ -62,10 +62,10 @@ export abstract class Pet {
     }
 
     tigerCheck(tiger) {
-        if (this.petBehind == null) {
+        if (this.petBehind() == null) {
             return false;
         }
-        if (this.petBehind.name == 'Tiger' && (tiger == null || tiger == false)) {
+        if (this.petBehind().name == 'Tiger' && (tiger == null || tiger == false)) {
             return true;
         }
     }
