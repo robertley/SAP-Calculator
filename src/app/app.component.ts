@@ -29,7 +29,7 @@ export class AppComponent {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.1.2';
+  version = '0.1.3';
 
   title = 'sap-calculator';
   player: Player;
