@@ -2,7 +2,7 @@ import { GameAPI } from "../interfaces/gameAPI.interface";
 import { LogService } from "../services/log.servicee";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
-import { Peanut } from "./equipment/peanut.class";
+import { Peanut } from "./equipment/turtle/peanut.class";
 import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
@@ -31,6 +31,7 @@ export abstract class Pet {
     friendAheadFaints?(gameApi: GameAPI, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, tiger?: boolean): void;
+    friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
@@ -43,6 +44,7 @@ export abstract class Pet {
     done = false;
     seenDead = false;
     swallowedPets?: Pet[] = [];
+    toyPet = false;
 
 
     constructor(
@@ -187,7 +189,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind.minExpForLevel;
+        this.exp = this.petBehind().minExpForLevel;
         this.friendGainedPerk(gameApi, true)
         this.exp = exp;
     }
@@ -217,7 +219,12 @@ export abstract class Pet {
                 message += ` (${attackEquipment.name} +${attackEquipment.power})`;
             }
             if (defenseEquipment != null) {
-                message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+                let power = Math.abs(defenseEquipment.power);
+                let sign = '-';
+                if (defenseEquipment.power < 0) {
+                    sign = '+';
+                }
+                message += ` (${defenseEquipment.name} ${sign}${power})`;
             }
             this.logService.createLog({
                 message: message,
@@ -289,7 +296,12 @@ export abstract class Pet {
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
             pet.useDefenseEquipment()
-            message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+            let power = Math.abs(defenseEquipment.power);
+            let sign = '-';
+            if (defenseEquipment.power < 0) {
+                sign = '+';
+            }
+            message += ` (${defenseEquipment.name} ${sign}${power})`;
         }
 
         if (tiger) {
@@ -327,9 +339,11 @@ export abstract class Pet {
 
     calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
         let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
-        || pet.equipment?.equipmentClass == 'shield' ? pet.equipment : null;
+        || pet.equipment?.equipmentClass == 'shield'
+        || pet.equipment?.equipmentClass == 'ailment-defense' ? pet.equipment : null;
 
-        let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack' ? this.equipment : null;
+        let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack'
+        || pet.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
         let attackAmt = power ?? this.attack + (attackEquipment?.power ?? 0);
         let defenseAmt = defenseEquipment?.power ?? 0;
         let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
@@ -400,10 +414,12 @@ export abstract class Pet {
         if (this.equipment.equipmentClass != 'attack'
             && this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
+            && this.equipment.equipmentClass != 'snipe'
         ) {
             return;
         }
         this.equipment.uses -= 1;
+        console.log(this.equipment.uses)
         if (this.equipment.uses == 0) {
             this.equipment = null;
         }
@@ -415,6 +431,13 @@ export abstract class Pet {
 
     increaseHealth(amt) {
         this.health = Math.min(this.health + amt, 50);
+    }
+
+    givePetEquipment(equipment: Equipment) {
+        if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense') {
+            this.abilityService.triggerFriendGainedAilmentEvents(this);
+        }
+        this.equipment = equipment;
     }
 
     get level() {

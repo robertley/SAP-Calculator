@@ -1,6 +1,6 @@
-import { LogService } from "../../services/log.servicee";
-import { Equipment, EquipmentClass } from "../equipment.class";
-import { Pet } from "../pet.class";
+import { LogService } from "../../../services/log.servicee";
+import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Pet } from "../../pet.class";
 
 export class Chili extends Equipment {
     name = 'Chili';
@@ -21,7 +21,12 @@ export class Chili extends Equipment {
         let message = `${pet.name} attacks ${attackPet.name} for ${damage}`;
         if (defenseEquipment != null) {
             attackPet.useDefenseEquipment();
-            message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+            let power = Math.abs(defenseEquipment.power);
+            let sign = '-';
+            if (defenseEquipment.power < 0) {
+                sign = '+';
+            }
+            message += ` (${defenseEquipment.name} ${sign}${power})`;
         }
 
         this.logService.createLog({

@@ -1,9 +1,10 @@
-import { GameAPI } from "../../interfaces/gameAPI.interface";
-import { getOpponent } from "../../util/helper-functions";
-import { Toy } from "../toy.class";
+import { GameAPI } from "../../../interfaces/gameAPI.interface";
+import { getOpponent } from "../../../util/helper-functions";
+import { Toy } from "../../toy.class";
 
 export class TennisBall extends Toy {
-    name = "TennisBall";
+    name = "Tennis Ball";
+    tier = 1;
     startOfBattle(gameApi?: GameAPI) {
         let opponent = getOpponent(gameApi, this.parent);
         let target = opponent.getRandomPet();

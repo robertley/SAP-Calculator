@@ -17,4 +17,4 @@ export class Equipment {
     }
 }
 
-export type EquipmentClass = 'defense' | 'shield' | 'attack' | 'ailment' | 'faint' | 'skewer';
+export type EquipmentClass = 'shop' | 'defense' | 'shield' | 'attack' | 'ailment-defense' | 'ailment-attack' | 'faint' | 'skewer' | 'snipe';

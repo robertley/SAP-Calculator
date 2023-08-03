@@ -16,7 +16,7 @@ export class Moth extends Pet {
         let power = 2 * this.level;
         target.increaseAttack(power);
         this.logService.createLog({
-            message: `${this.name} game ${target.name} ${power} attack.`,
+            message: `${this.name} gave ${target.name} ${power} attack.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

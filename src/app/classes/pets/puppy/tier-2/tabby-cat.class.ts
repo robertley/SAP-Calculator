@@ -5,29 +5,12 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Gecko extends Pet {
-    name = "Gecko";
-    tier = 1;
+export class TabbyCat extends Pet {
+    name = "Tabby Cat";
+    tier = 2;
     pack: Pack = 'Puppy';
-    attack = 3;
-    health = 1;
-    toyPet: boolean = true;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
-            return;
-        }
-
-        let power = this.level * 2;
-        this.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gained ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-
-        this.superStartOfBattle(gameApi, tiger);
-    }
+    attack = 4;
+    health = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

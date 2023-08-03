@@ -1,31 +1,35 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
+import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
+import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Gecko extends Pet {
-    name = "Gecko";
-    tier = 1;
+export class Bat extends Pet {
+    name = "Bat";
+    tier = 2;
     pack: Pack = 'Puppy';
-    attack = 3;
-    health = 1;
-    toyPet: boolean = true;
+    attack = 1;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
-            return;
+        let opponent = getOpponent(gameApi, this.parent);
+        for (let i = 0; i < this.level; i++) {
+            let excludePets = opponent.getPetsWithEquipment('Weak');
+            let target = opponent.getRandomPet(excludePets);
+            if (target == null) {
+                return;
+            }
+            target.givePetEquipment(new Weak());
+            this.logService.createLog({
+                message: `${this.name} made ${target.name} weak.`,
+                type: 'ability',
+                player: this.parent,
+                randomEvent: true,
+                tiger: tiger
+            })
         }
-
-        let power = this.level * 2;
-        this.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gained ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

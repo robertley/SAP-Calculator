@@ -8,8 +8,9 @@ export class Toy {
     onBreak?(gameApi?: GameAPI);
     startOfBattle?(gameApi?: GameAPI);
     parent: Player;
-    level: 1 | 2 | 3
-    constructor(protected logService: LogService, protected toyService: ToyService, parent: Player, level: 1 | 2 | 3) {
+    level: number;
+    tier: number;
+    constructor(protected logService: LogService, protected toyService: ToyService, parent: Player, level: number) {
         this.parent = parent;
         this.level = level;
     }

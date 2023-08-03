@@ -4,6 +4,7 @@ import { LogService } from "../services/log.servicee";
 import { getRandomInt } from "../util/helper-functions";
 import { AbilityService } from "../services/ability.service";
 import { Toy } from "./toy.class";
+import { Equipment } from "./equipment.class";
 
 export class Player {
     pet0?: Pet;
@@ -21,6 +22,7 @@ export class Player {
     pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Puppy';
 
     toy: Toy;
+    originalToy: Toy;
 
     constructor(private logService: LogService, private abilityService: AbilityService) {
     }
@@ -46,6 +48,8 @@ export class Player {
         this.orignalPet2 = this.pet2;
         this.orignalPet3 = this.pet3;
         this.orignalPet4 = this.pet4;
+
+        this.toy = this.originalToy;
     }
 
     setPet(index: number, pet: Pet, init=false) {
@@ -213,9 +217,37 @@ export class Player {
             }
         }
         
-        // TODO
         // isSpaceAhead
-        // might not be necessary?
+        let isSpaceAhead = false;
+        if (slot > 0) {
+            if (this.pet0 == null) {
+                isSpaceAhead = true;
+                slotWithSpace = 0;
+            }
+        }
+        if (slot > 1) {
+            if (this.pet1 == null) {
+                isSpaceAhead = true;
+                slotWithSpace = 1;
+            }
+        }
+        if (slot > 2) {
+            if (this.pet2 == null) {
+                isSpaceAhead = true;
+                slotWithSpace = 2;
+            }
+        }
+        if (slot > 3) {
+            if (this.pet3 == null) {
+                isSpaceAhead = true;
+                slotWithSpace = 3;
+            }
+        }
+        if (isSpaceAhead) {
+            for (let i = slotWithSpace; i < slot; i++) {
+                this[`pet${i}`] = this[`pet${i+1}`];
+            }
+        }
 
     }
 
@@ -329,6 +361,16 @@ export class Player {
         return pets[index];
     }
 
+    getPetsWithEquipment(equipmentName: string) {
+        let pets = [];
+        for (let pet of this.petArray) {
+            if (pet.equipment?.name == equipmentName) {
+                pets.push(pet);
+            }
+        }
+        return pets;
+    }
+
     getPetAtPosition(position: number) {
         for (let pet of this.petArray) {
             if (pet.position == position) {
@@ -405,8 +447,6 @@ export class Player {
         return lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
     }
 
-
-
     get furthestUpPet() {
         for (let pet of this.petArray) {
             if (pet.alive) {
@@ -414,6 +454,32 @@ export class Player {
             }
         }
         return null;
+    }
+
+    breakToy(respawn=false) {
+        if (this.toy == null) {
+            return;
+        }
+        if (this.toy.onBreak == null) {
+            return;
+        }
+        this.logService.createLog({
+            message: `${this.toy.name} broke!`,
+            type: 'ability',
+            player: this,
+            randomEvent: false
+        })
+        this.toy.onBreak();
+        let toyCopy = cloneDeep(this.toy);
+        this.toy = null;
+        if (respawn) {
+            this.setToy(toyCopy);
+        }
+    }
+
+    setToy(toy: Toy) {
+        this.toy = toy;
+        // do on toy abilities
     }
 
 }

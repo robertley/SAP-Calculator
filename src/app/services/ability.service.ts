@@ -23,7 +23,9 @@ export class AbilityService {
     private friendAheadFaintsEvents: AbilityEvent[]= [];
     private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
-    private friendGainedPerkEvents: AbilityEvent[]= [];
+    private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
+    private friendGainedPerkEvents: AbilityEvent[]= []; // TODO refactor to work like friendGainedAilment
+    private friendGainedAilmentEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -32,7 +34,8 @@ export class AbilityService {
     get hasAbilityCycleEvents() {
         return this.hasFaintEvents ||
             this.hasSummonedEvents ||
-            this.hasHurtEvents
+            this.hasHurtEvents ||
+            this.hasEquipmentBeforeAttackEvents
     }
 
     // End of Turn Events
@@ -372,6 +375,35 @@ export class AbilityService {
         this.resetBeforeAttackEvents();
     }
 
+    // equipment before attack
+
+    setEqiupmentBeforeAttackEvent(event: AbilityEvent) {
+        this.equipmentBeforeAttackEvents.push(event);
+    }
+
+    resetEqiupmentBeforeAttackEvents() {
+        this.equipmentBeforeAttackEvents = [];
+    }
+
+    executeEqiupmentBeforeAttackEvents() {
+        // shuffle, so that same priority events are in random order
+        this.equipmentBeforeAttackEvents = shuffle(this.equipmentBeforeAttackEvents);
+
+        this.equipmentBeforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.equipmentBeforeAttackEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetEqiupmentBeforeAttackEvents();
+    }
+
+    
+    get hasEquipmentBeforeAttackEvents() {
+        return this.hurtEvents.length > 0;
+    }
+
+
     // friend gained perk
 
     triggerFriendGainedPerkEvents(perkPet: Pet) {
@@ -407,7 +439,46 @@ export class AbilityService {
         }
         
         this.resetFriendGainedPerkEvents();
+
+        
     }
+
+    // friend gained ailment
     
+    triggerFriendGainedAilmentEvents(perkPet: Pet) {
+        for (let pet of perkPet.parent.petArray) {
+            if (pet.friendGainedAilment != null) {
+                this.setFriendGainedAilmentEvent({
+                    callback: pet.friendGainedAilment.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: perkPet
+                })
+            }
+        }
+    }
+
+    setFriendGainedAilmentEvent(event: AbilityEvent) {
+        this.friendGainedAilmentEvents.push(event);
+    }
+
+    resetFriendGainedAilmentEvents() {
+        this.friendGainedAilmentEvents = [];
+    }
+
+    executeFriendGainedAilmentEvents() {
+        // shuffle, so that same priority events are in random order
+        // dont shuffle, want to execute in the order they happen (frigatebird)
+        // this.friendGainedAilmentEvents = shuffle(this.friendGainedAilmentEvents);
+
+        this.friendGainedAilmentEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendGainedAilmentEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet);
+        }
+        
+        this.resetFriendGainedAilmentEvents();
+
+        
+    }
 
 }

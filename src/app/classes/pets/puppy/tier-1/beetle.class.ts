@@ -2,9 +2,9 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
-import { Garlic } from "../../../equipment/garlic.class";
-import { Honey } from "../../../equipment/honey.class";
-import { MeatBone } from "../../../equipment/meat-bone.class";
+import { Garlic } from "../../../equipment/turtle/garlic.class";
+import { Honey } from "../../../equipment/turtle/honey.class";
+import { MeatBone } from "../../../equipment/turtle/meat-bone.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 

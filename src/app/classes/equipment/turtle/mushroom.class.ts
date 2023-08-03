@@ -1,8 +1,8 @@
-import { LogService } from "../../services/log.servicee";
-import { Equipment, EquipmentClass } from "../equipment.class";
-import { Pet } from "../pet.class";
-import { AbilityService } from "../../services/ability.service";
-import { PetService } from "../../services/pet.service";
+import { LogService } from "../../../services/log.servicee";
+import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Pet } from "../../pet.class";
+import { AbilityService } from "../../../services/ability.service";
+import { PetService } from "../../../services/pet.service";
 export class Mushroom extends Equipment {
     name = 'Mushroom';
     equipmentClass = 'faint' as EquipmentClass;

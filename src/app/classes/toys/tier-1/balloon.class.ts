@@ -1,9 +1,11 @@
-import { GameAPI } from "../../interfaces/gameAPI.interface";
-import { Toy } from "../toy.class";
+import { GameAPI } from "../../../interfaces/gameAPI.interface";
+import { ToyService } from "../../../services/toy.service";
+import { Toy } from "../../toy.class";
 
 export class Balloon extends Toy {
     name = "Balloon";
-    onBreak(gameApi?: GameAPI) {
+    tier = 1;
+    onBreak() {
         let target = this.parent.furthestUpPet;
         let power = this.level;
         target.increaseAttack(power);

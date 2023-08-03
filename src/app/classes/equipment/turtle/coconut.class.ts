@@ -1,4 +1,4 @@
-import { Equipment, EquipmentClass } from "../equipment.class";
+import { Equipment, EquipmentClass } from "../../equipment.class";
 
 // TODO - better log language related to power?
 export class Coconut extends Equipment {

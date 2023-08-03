@@ -10,7 +10,8 @@ import { GameService } from "./game.service";
 })
 export class StartOfBattleService {
 
-    private events: AbilityEvent[] = [];
+    private toyPetEvents: AbilityEvent[] = [];
+    private nonToyPetEvents: AbilityEvent[] = [];
     private gameApi: GameAPI;
     constructor(private gameService: GameService) {
 
@@ -20,7 +21,11 @@ export class StartOfBattleService {
         this.gameApi = this.gameService.gameApi;
         for (let pet of this.gameApi.player.petArray) {
             if (pet.startOfBattle != null) {
-                this.events.push({
+                let events = this.toyPetEvents;
+                if (!pet.toyPet) {
+                    events = this.nonToyPetEvents;
+                }
+                events.push({
                     callback: () => { pet.startOfBattle(this.gameApi) },
                     priority: pet.attack,
                     player: this.gameApi.player
@@ -29,35 +34,51 @@ export class StartOfBattleService {
         }
         for (let pet of this.gameApi.opponet.petArray) {
             if (pet.startOfBattle != null) {
-                this.events.push({
+                let events = this.toyPetEvents;
+                if (!pet.toyPet) {
+                    events = this.nonToyPetEvents;
+                }
+                events.push({
                     callback: () => { pet.startOfBattle(this.gameApi) },
                     priority: pet.attack,
                     player: this.gameApi.opponet
                 })
             }
         }
-
-        this.executeEvents();
     }
 
-    private setEvent(event: AbilityEvent) {
-        this.events.push(event);
+
+    private resetToyPetEvents() {
+        this.toyPetEvents = [];
     }
 
-    private reset() {
-        this.events = [];
+    private resetNonToyPetEvents() {
+        this.nonToyPetEvents = [];
     }
 
-    private executeEvents() {
+    executeToyPetEvents() {
         // shuffle, so that same priority events are in random order
-        this.events = shuffle(this.events);
+        this.toyPetEvents = shuffle(this.toyPetEvents);
 
-        this.events.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        this.toyPetEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
-        for (let event of this.events) {
+        for (let event of this.toyPetEvents) {
+            event.callback(this.gameApi);
+        }
+
+        this.resetToyPetEvents();
+    }
+
+    executeNonToyPetEvents() {
+        // shuffle, so that same priority events are in random order
+        this.nonToyPetEvents = shuffle(this.nonToyPetEvents);
+
+        this.nonToyPetEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.nonToyPetEvents) {
             event.callback(this.gameApi);
         }
         
-        this.reset();
+        this.resetNonToyPetEvents();
     }
 }

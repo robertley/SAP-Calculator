@@ -21,8 +21,12 @@
     background-color: #5ebe09;
 }
 
-.button-bar {
+.button-bar, .battle-controller {
     background-color: whitesmoke;
+}
+
+.battle-controller .form-group {
+    min-width: 100px;
 }
 
 .stats {

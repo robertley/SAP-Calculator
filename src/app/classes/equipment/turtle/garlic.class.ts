@@ -1,4 +1,4 @@
-import { Equipment, EquipmentClass } from "../equipment.class";
+import { Equipment, EquipmentClass } from "../../equipment.class";
 
 export class Garlic extends Equipment {
     equipmentClass = 'defense' as EquipmentClass;

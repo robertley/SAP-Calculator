@@ -1,4 +1,4 @@
-import { Chili } from "app/classes/equipment/chili.class";
+import { Chili } from "app/classes/equipment/turtle/chili.class";
 import { getOpponent } from "app/util/helper-functions";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";

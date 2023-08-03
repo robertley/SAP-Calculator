@@ -1,7 +1,7 @@
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
-import { Melon } from "../../../equipment/melon.class";
+import { Melon } from "../../../equipment/turtle/melon.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 

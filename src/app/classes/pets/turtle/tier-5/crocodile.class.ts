@@ -3,7 +3,7 @@ import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Peanut } from "../../../equipment/peanut.class";
+import { Peanut } from "../../../equipment/turtle/peanut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 

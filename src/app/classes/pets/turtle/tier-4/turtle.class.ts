@@ -1,4 +1,4 @@
-import { Melon } from "app/classes/equipment/melon.class";
+import { Melon } from "app/classes/equipment/turtle/melon.class";
 import { getOpponent } from "app/util/helper-functions";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
@@ -24,7 +24,7 @@ export class Turtle extends Pet {
         if (targetPet == null) {
             return;
         }
-        targetPet.equipment = new Melon();
+        targetPet.givePetEquipment(new Melon());
         this.logService.createLog({
             message: `${this.name} gave ${targetPet.name} Melon.`,
             type: 'ability',

@@ -1,4 +1,4 @@
-import { Component, ViewChildren, QueryList } from '@angular/core';
+import { Component, ViewChildren, QueryList, OnInit } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
@@ -18,13 +18,15 @@ import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
 import { Ox } from './classes/pets/turtle/tier-3/ox.class';
 import { Kangaroo } from './classes/pets/turtle/tier-2/kangaroo.class';
 import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
+import { ToyService } from './services/toy.service';
+import { Egg } from './classes/equipment/puppy/egg.class';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
@@ -47,11 +49,13 @@ export class AppComponent {
   viewBattle: Battle;
   simulated = false;
   formGroup: FormGroup;
+  toys: Map<number, string[]>;
 
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
     private petService: PetService,
+    private toyService: ToyService,
     private startOfBattleService: StartOfBattleService
   ) {
     this.player = new Player(logService, abilityService);
@@ -64,6 +68,10 @@ export class AppComponent {
     this.initPlayerPets(this.opponent);
   }
 
+  ngOnInit(): void {
+      this.toys = this.toyService.toys;
+  }
+
   initPlayerPets(player: Player) {
     for (let i = 0; i < 5; i++) {
       player.setPet(i, this.petService.getRandomPet(player), true);
@@ -74,14 +82,24 @@ export class AppComponent {
     this.formGroup = new FormGroup({
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
+      playerToy: new FormControl(this.player.toy?.name),
+      opponentToy: new FormControl(this.opponent.toy?.name),
       logFilter: new FormControl(null)
     })
+
+    console.log(this.formGroup)
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       this.updatePlayerPack(this.player, value);
     })
     this.formGroup.get('opponentPack').valueChanges.subscribe((value) => {
       this.updatePlayerPack(this.opponent, value);
+    })
+    this.formGroup.get('playerToy').valueChanges.subscribe((value) => {
+      this.updatePlayerToy(this.player, value);
+    })
+    this.formGroup.get('opponentToy').valueChanges.subscribe((value) => {
+      this.updatePlayerToy(this.opponent, value);
     })
   }
 
@@ -90,43 +108,64 @@ export class AppComponent {
     this.randomize(player);
   }
 
+  updatePlayerToy(player: Player, toy) {
+    player.toy = this.toyService.createToy(toy, player);
+    player.originalToy = player.toy;
+  }
+
   abilityCycle() {
     this.abilityService.executeHurtEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-    
+    this.executeFrequentEvents();
     this.checkPetsAlive();
 
     this.abilityService.executeFaintEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-
+    this.executeFrequentEvents();
     this.checkPetsAlive();
 
     this.abilityService.executeKnockOutEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-
+    this.executeFrequentEvents();
     this.checkPetsAlive();
 
     this.abilityService.executeFriendAheadFaintsEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-
+    this.executeFrequentEvents();
     this.checkPetsAlive();
 
     this.abilityService.executeFriendFaintsEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-
+    this.executeFrequentEvents();
     this.checkPetsAlive();
+    
     this.removeDeadPets();
 
     this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-
+    this.executeFrequentEvents();
     this.checkPetsAlive();
+
+  }
+
+  executeFrequentEvents() {
+    this.abilityService.executeFriendGainedPerkEvents();
+    this.abilityService.executeFriendGainedAilmentEvents();
   }
 
   checkPetsAlive() {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
+  }
+
+  initToys() {
+    if (this.player.toy?.startOfBattle) {
+      this.toyService.setStartOfBattleEvent({
+        callback: this.player.toy.startOfBattle.bind(this.player.toy),
+        priority: this.player.toy.tier
+      })
+    }
+    if (this.opponent.toy?.startOfBattle) {
+      this.toyService.setStartOfBattleEvent({
+        callback: this.opponent.toy.startOfBattle.bind(this.opponent.toy),
+        priority: this.opponent.toy.tier
+      })
+    }
   }
 
   simulate() {
@@ -135,14 +174,19 @@ export class AppComponent {
     for (let i = 0; i < this.simulationBattleAmt; i++) {
       this.initBattle();
       this.startBattle();
+      this.initToys();
 
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
 
       this.startOfBattleService.initStartOfBattleEvents();
-      this.abilityService.executeFriendGainedPerkEvents();
-      this.player.checkPetsAlive();
-      this.opponent.checkPetsAlive();
+      this.startOfBattleService.executeToyPetEvents();
+      this.executeFrequentEvents();
+      this.toyService.executeStartOfBattleEvents();
+      this.executeFrequentEvents();
+      this.startOfBattleService.executeNonToyPetEvents();
+      this.executeFrequentEvents();
+      this.checkPetsAlive();
       if (!this.abilityService.hasAbilityCycleEvents) {
         this.removeDeadPets();
       }
@@ -230,6 +274,14 @@ export class AppComponent {
     }
 
     this.pushPetsForwards();
+
+    this.doBeforeAttackEquipment();
+    while(this.abilityService.hasAbilityCycleEvents) {
+      this.abilityCycle();
+    }
+
+    this.pushPetsForwards();
+
     this.fight();
     
     this.abilityCycle();
@@ -248,6 +300,38 @@ export class AppComponent {
 
     this.player.pushPetsForward();
     this.opponent.pushPetsForward();
+  }
+
+  doBeforeAttackEquipment() {
+    let playerPet = this.player.pet0;
+    let opponentPet = this.opponent.pet0;
+
+    let playerEquipment = playerPet.equipment;
+    let opponentEquipment = opponentPet.equipment;
+
+    if (playerEquipment instanceof Egg) {
+      this.abilityService.setEqiupmentBeforeAttackEvent({
+        callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
+        priority: playerPet.attack,
+        player: this.player
+      })
+    }
+
+    if (opponentEquipment instanceof Egg) {
+      this.abilityService.setEqiupmentBeforeAttackEvent({
+        callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
+        priority: opponentPet.attack,
+        player: this.opponent
+      })
+    }
+
+    this.abilityService.executeEqiupmentBeforeAttackEvents();
+    playerPet.useAttackDefenseEquipment();
+    opponentPet.useAttackDefenseEquipment();
+
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
+    
   }
 
   fight() {

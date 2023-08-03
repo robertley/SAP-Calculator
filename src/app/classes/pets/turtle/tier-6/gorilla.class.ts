@@ -4,7 +4,7 @@ import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Coconut } from "app/classes/equipment/coconut.class";
+import { Coconut } from "app/classes/equipment/turtle/coconut.class";
 
 export class Gorilla extends Pet {
     name = "Gorilla";

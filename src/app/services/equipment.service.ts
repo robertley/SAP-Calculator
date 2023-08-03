@@ -1,17 +1,20 @@
 import { Injectable } from "@angular/core";
 import { Equipment } from "../classes/equipment.class";
-import { Garlic } from "../classes/equipment/garlic.class";
-import { MeatBone } from "../classes/equipment/meat-bone.class";
-import { Steak } from "../classes/equipment/steak.class";
-import { Melon } from "../classes/equipment/melon.class";
-import { Honey } from "../classes/equipment/honey.class";
+import { Garlic } from "../classes/equipment/turtle/garlic.class";
+import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
+import { Steak } from "../classes/equipment/turtle/steak.class";
+import { Melon } from "../classes/equipment/turtle/melon.class";
+import { Honey } from "../classes/equipment/turtle/honey.class";
 import { LogService } from "./log.servicee";
-import { Chili } from "../classes/equipment/chili.class";
-import { Mushroom } from "../classes/equipment/mushroom.class";
-import { Coconut } from "../classes/equipment/coconut.class";
-import { Peanut } from "../classes/equipment/peanut.class";
+import { Chili } from "../classes/equipment/turtle/chili.class";
+import { Mushroom } from "../classes/equipment/turtle/mushroom.class";
+import { Coconut } from "../classes/equipment/turtle/coconut.class";
+import { Peanut } from "../classes/equipment/turtle/peanut.class";
 import { AbilityService } from "./ability.service";
 import { PetService } from "./pet.service";
+import { Croissant } from "../classes/equipment/puppy/croissant.class";
+import { Rice } from "../classes/equipment/puppy/rice.class";
+import { Egg } from "../classes/equipment/puppy/egg.class";
 
 @Injectable({
     providedIn: "root"
@@ -31,6 +34,10 @@ export class EquipmentService {
         map.set('Mushroom', new Mushroom(this.logService, this.abilityService, this.petService));
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
+        map.set('Croissant', new Croissant());
+        map.set('Rice', new Rice());
+        map.set('Egg', new Egg(this.logService));
         return map;
     }
+
 }
