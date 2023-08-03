@@ -39,6 +39,7 @@ export abstract class Pet {
     endTurn?(gameApi: GameAPI): void;
     knockOut?(gameApi: GameAPI, tiger?: boolean): void;
     summoned?(gameApi: GameAPI, tiger?: boolean): void;
+    friendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -191,6 +192,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
         this.friendGainedPerk(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superFriendlyToyBroke(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.friendlyToyBroke(gameApi, true)
         this.exp = exp;
     }
 

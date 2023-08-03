@@ -14,7 +14,7 @@ export class Parrot extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 2;
-    endTurn = (gameApi: GameAPI) => {
+    endTurn(gameApi: GameAPI) {
         let copyPet = this.petAhead;
         if (this.petAhead == null) {
             return;

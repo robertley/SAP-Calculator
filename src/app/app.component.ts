@@ -83,7 +83,9 @@ export class AppComponent implements OnInit {
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
       playerToy: new FormControl(this.player.toy?.name),
+      playerToyLevel: new FormControl(this.player.toy?.level ?? 1),
       opponentToy: new FormControl(this.opponent.toy?.name),
+      opponentToyLevel: new FormControl(this.opponent.toy?.level ?? 1),
       logFilter: new FormControl(null)
     })
 
@@ -101,6 +103,12 @@ export class AppComponent implements OnInit {
     this.formGroup.get('opponentToy').valueChanges.subscribe((value) => {
       this.updatePlayerToy(this.opponent, value);
     })
+    this.formGroup.get('playerToyLevel').valueChanges.subscribe((value) => {
+      this.updateToyLevel(this.player, value);
+    })
+    this.formGroup.get('opponentToyLevel').valueChanges.subscribe((value) => {
+      this.updateToyLevel(this.opponent, value);
+    })
   }
 
   updatePlayerPack(player: Player, pack) {
@@ -109,8 +117,22 @@ export class AppComponent implements OnInit {
   }
 
   updatePlayerToy(player: Player, toy) {
-    player.toy = this.toyService.createToy(toy, player);
+    let levelControlName;
+    if (player == this.player) {
+      levelControlName = 'playerToyLevel';
+    }
+    if (player == this.opponent) {
+      levelControlName = 'opponentToyLevel';
+    }
+    let level = this.formGroup.get(levelControlName).value;
+    player.toy = this.toyService.createToy(toy, player, level);
     player.originalToy = player.toy;
+  }
+
+  updateToyLevel(player: Player, level) {
+    if (player.toy) {
+      player.toy.level = level;
+    }
   }
 
   abilityCycle() {
@@ -146,6 +168,7 @@ export class AppComponent implements OnInit {
   executeFrequentEvents() {
     this.abilityService.executeFriendGainedPerkEvents();
     this.abilityService.executeFriendGainedAilmentEvents();
+    this.abilityService.executeFriendlyToyBrokeEvents();
   }
 
   checkPetsAlive() {
@@ -326,8 +349,6 @@ export class AppComponent implements OnInit {
     }
 
     this.abilityService.executeEqiupmentBeforeAttackEvents();
-    playerPet.useAttackDefenseEquipment();
-    opponentPet.useAttackDefenseEquipment();
 
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();

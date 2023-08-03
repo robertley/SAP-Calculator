@@ -1,31 +1,30 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
+import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { FlyingSquirrel } from "../tier-3/flying-squirrel.class";
 
-export class Mandrill extends Pet {
-    name = "Mandrill";
-    tier = 2;
+export class Pangolin extends Pet {
+    name = "Pangolin";
+    tier = 3;
     pack: Pack = 'Puppy';
-    attack = 3;
-    health = 4;
+    attack = 2;
+    health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean): void {
-        let toyLevelMax = this.level * 2;
-        if (this.parent.toy?.tier <= toyLevelMax) {
-            // check if parent has instance of flying squirrel
-            let hasFlyingSquirrel = false;
-            for (let pet of this.parent.petArray) {
-                if (pet instanceof FlyingSquirrel) {
-                    hasFlyingSquirrel = true;
-                    break;
-                }
-            }
-            this.parent.breakToy(hasFlyingSquirrel);
-            this.abilityService.triggerFriendlyToyBrokeEvents(this.parent);
+        if (this.parent.toy == null) {
+            return;
         }
+        let power = this.level * 5;
+        this.petBehind().increaseHealth(power);
+        this.logService.createLog({
+            message: `${this.name} gave ${this.petBehind().name} ${power} health.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        });
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

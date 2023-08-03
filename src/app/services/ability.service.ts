@@ -26,6 +26,7 @@ export class AbilityService {
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
     private friendGainedPerkEvents: AbilityEvent[]= []; // TODO refactor to work like friendGainedAilment
     private friendGainedAilmentEvents: AbilityEvent[]= [];
+    private friendlyToyBrokeEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -45,7 +46,7 @@ export class AbilityService {
         for (let pet of player.petArray) {
             if (pet.endTurn) {
                 endTurnEvents.push({
-                    callback: pet.endTurn,
+                    callback: pet.endTurn.bind(pet),
                     priority: pet.attack,
                     player: player
                 })
@@ -478,7 +479,42 @@ export class AbilityService {
         
         this.resetFriendGainedAilmentEvents();
 
+    }
+
+    
+    // friendly toy broke
+    
+    triggerFriendlyToyBrokeEvents(player: Player) {
+        for (let pet of player.petArray) {
+            if (pet.friendlyToyBroke != null) {
+                this.setFriendlyToyBrokeEvent({
+                    callback: pet.friendlyToyBroke.bind(pet),
+                    priority: pet.attack
+                })
+            }
+        }
+    }
+
+    setFriendlyToyBrokeEvent(event: AbilityEvent) {
+        this.friendlyToyBrokeEvents.push(event);
+    }
+
+    resetFriendlyToyBrokeEvents() {
+        this.friendlyToyBrokeEvents = [];
+    }
+
+    executeFriendlyToyBrokeEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendlyToyBrokeEvents = shuffle(this.friendlyToyBrokeEvents);
+
+        this.friendlyToyBrokeEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendlyToyBrokeEvents) {
+            event.callback(this.gameService.gameApi, false);
+        }
         
+        this.resetFriendlyToyBrokeEvents();
+
     }
 
 }

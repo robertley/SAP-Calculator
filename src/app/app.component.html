@@ -9,7 +9,7 @@
   <div class="row battle-controller border">
     <div class="col-12 d-flex pb-2">
 
-      <div class="form-group me-3">
+      <div class="form-group min-w-input me-3">
         <label for="playerPack">Player Pack</label>
         <select class="form-control" id="playerPack" formControlName="playerPack">
           <option value="Turtle">Turtle</option>
@@ -17,7 +17,7 @@
         </select>
       </div>
 
-      <div class="form-group me-3">
+      <div class="form-group min-w-input me-3">
         <label for="playerPack">Opponent Pack</label>
         <select class="form-control" id="opponentPack" formControlName="opponentPack">
           <option value="Turtle">Turtle</option>
@@ -25,7 +25,7 @@
         </select>
       </div>
 
-      <div class="form-group me-3">
+      <div class="form-group min-w-input me-3">
         <label for="playerPack">Player Toy</label>
         <select class="form-control" id="playerToy" formControlName="playerToy">
           <option [ngValue]="null">None</option>
@@ -36,12 +36,30 @@
       </div>
 
       <div class="form-group me-3">
+        <label for="playerToyLevel">Toy Level</label>
+        <select class="form-control" id="playerToyLevel" formControlName="playerToyLevel">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+      </div>
+
+      <div class="form-group min-w-input me-3">
         <label for="playerPack">Opponent Toy</label>
         <select class="form-control" id="opponentToy" formControlName="opponentToy">
           <option [ngValue]="null">None</option>
           <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of toys | keyvalue">
               <option *ngFor="let toy of toyGroup.value" [ngValue]="toy">{{toy}}</option>
           </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group me-3">
+        <label for="opponentToyLevel">Toy Level</label>
+        <select class="form-control" id="opponentToyLevel" formControlName="opponentToyLevel">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
         </select>
       </div>
     </div>
