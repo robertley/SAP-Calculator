@@ -7,6 +7,7 @@ import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
 import { Salt } from "./equipment/puppy/salt.class";
+import { Panther } from "./pets/puppy/tier-5/panther.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
@@ -32,7 +33,7 @@ export abstract class Pet {
     friendAheadAttacks?(gameApi: GameAPI, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, tiger?: boolean): void;
-    friendGainedPerk?(gameApi: GameAPI, tiger?: boolean): void;
+    friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
@@ -187,13 +188,13 @@ export abstract class Pet {
         this.exp = exp;
     }
 
-    protected superFriendGainedPerk(gameApi, tiger=false) {
+    protected superFriendGainedPerk(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
-        this.friendGainedPerk(gameApi, true)
+        this.friendGainedPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -225,6 +226,15 @@ export abstract class Pet {
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
+        let attackMultiplier = 1;
+        let defenseMultiplier = 1;
+        if (this.name == 'Panther') {
+            attackMultiplier = this.level + 1;
+        }
+        if (pet.name == 'Panther') {
+            defenseMultiplier = pet.level + 1;
+        }
+
         // peanut death
         if (attackEquipment instanceof Peanut && damage > 0) {
             this.logService.createLog({
@@ -248,6 +258,10 @@ export abstract class Pet {
                     }
                 }
                 message += ` (${attackEquipment.name} ${powerAmt})`;
+
+                if (attackMultiplier > 1) {
+                    message += ` x${attackMultiplier} (Panther)`;
+                }
             }
             if (defenseEquipment != null) {
                 let power = Math.abs(defenseEquipment.power);
@@ -256,6 +270,10 @@ export abstract class Pet {
                     sign = '+';
                 }
                 message += ` (${defenseEquipment.name} ${sign}${power})`;
+
+                if (defenseMultiplier > 1) {
+                    message += ` x${defenseMultiplier} (Panther)`;
+                }
             }
             this.logService.createLog({
                 message: message,
@@ -369,14 +387,23 @@ export abstract class Pet {
     }
 
     calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
+        let attackMultiplier = 1;
+        let defenseMultiplier = 1;
+        if (this.name == 'Panther') {
+            attackMultiplier = this.level + 1;
+        }
+        if (pet.name == 'Panther') {
+            defenseMultiplier = pet.level + 1;
+        }
+
         let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
         || pet.equipment?.equipmentClass == 'shield'
         || pet.equipment?.equipmentClass == 'ailment-defense' ? pet.equipment : null;
 
         let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack'
         || pet.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
-        let attackAmt = power ?? this.attack + (attackEquipment?.power ?? 0);
-        let defenseAmt = defenseEquipment?.power ?? 0;
+        let attackAmt = power ?? this.attack + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0);
+        let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
 
         if (attackEquipment instanceof Salt) {
@@ -384,6 +411,7 @@ export abstract class Pet {
                 attackAmt *= 2;
             }
         }
+
         let damage = Math.max(min, attackAmt - defenseAmt);
         return {
             defenseEquipment: defenseEquipment,
@@ -455,6 +483,9 @@ export abstract class Pet {
         ) {
             return;
         }
+        if (isNaN(this.equipment.uses)) {
+            console.warn('uses is NaN', this.equipment)
+        }
         this.equipment.uses -= 1;
         if (this.equipment.uses == 0) {
             this.equipment = null;
@@ -472,7 +503,12 @@ export abstract class Pet {
     givePetEquipment(equipment: Equipment) {
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense') {
             this.abilityService.triggerFriendGainedAilmentEvents(this);
+            this.abilityService.executeFriendGainedAilmentEvents();
+        } else {
+            this.abilityService.triggerFriendGainedPerkEvents(this);
+            this.abilityService.executeFriendGainedPerkEvents();
         }
+
         this.equipment = equipment;
     }
 

@@ -14,7 +14,13 @@ export class Spider extends Pet {
     health = 2;
     attack = 2;
     faint(gameApi: GameAPI, tiger) {
-        let possibleSpawnPets = this.petService.tier3Pets.filter(pet => {
+        let tier3Pets;
+        if (this.parent = gameApi.player) {
+            tier3Pets = gameApi.playerPetPool.get(3);
+        } else {
+            tier3Pets = gameApi.opponentPetPool.get(3);
+        }
+        let possibleSpawnPets = tier3Pets.filter(pet => {
             return pet != 'Spider'
         });
         let spawnPetName = possibleSpawnPets[getRandomInt(0, possibleSpawnPets.length - 1)];

@@ -21,6 +21,8 @@ import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
 import { ToyService } from './services/toy.service';
 import { Egg } from './classes/equipment/puppy/egg.class';
 import { Pie } from './classes/equipment/puppy/pie.class';
+import { cloneDeep } from 'lodash';
+import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 
 @Component({
   selector: 'app-root',
@@ -64,9 +66,6 @@ export class AppComponent implements OnInit {
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
-
-    this.initPlayerPets(this.player);
-    this.initPlayerPets(this.opponent);
   }
 
   ngOnInit(): void {
@@ -80,6 +79,7 @@ export class AppComponent implements OnInit {
   }
 
   initFormGroup() {
+    let defaultTurn = 11;
     this.formGroup = new FormGroup({
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
@@ -87,10 +87,13 @@ export class AppComponent implements OnInit {
       playerToyLevel: new FormControl(this.player.toy?.level ?? 1),
       opponentToy: new FormControl(this.opponent.toy?.name),
       opponentToyLevel: new FormControl(this.opponent.toy?.level ?? 1),
+      turn: new FormControl(defaultTurn),
       logFilter: new FormControl(null)
     })
 
-    console.log(this.formGroup)
+    this.updatePlayerPack(this.player, this.player.pack);
+    this.updatePlayerPack(this.opponent, this.opponent.pack);
+    this.updatePreviousShopTier(defaultTurn);
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       this.updatePlayerPack(this.player, value);
@@ -110,10 +113,27 @@ export class AppComponent implements OnInit {
     this.formGroup.get('opponentToyLevel').valueChanges.subscribe((value) => {
       this.updateToyLevel(this.opponent, value);
     })
+    this.formGroup.get('turn').valueChanges.subscribe((value) => {
+      this.updatePreviousShopTier(value);
+    })
   }
 
   updatePlayerPack(player: Player, pack) {
     player.pack = pack;
+    let petPool;
+    switch (pack) {
+      case 'Turtle':
+        petPool = this.petService.turtlePackPets;
+        break;
+      case 'Puppy':
+        petPool = this.petService.puppyPackPets;
+        break;
+    }
+    if (player == this.player) {
+      this.gameService.setTierGroupPets(petPool, null);
+    } else {
+      this.gameService.setTierGroupPets(null, petPool);
+    }
     this.randomize(player);
   }
 
@@ -128,6 +148,26 @@ export class AppComponent implements OnInit {
     let level = this.formGroup.get(levelControlName).value;
     player.toy = this.toyService.createToy(toy, player, level);
     player.originalToy = player.toy;
+  }
+
+  updatePreviousShopTier(turn) {
+    let tier = 1;
+    if (turn > 2) {
+      tier = 2;
+    }
+    if (turn > 4) {
+      tier = 3;
+    }
+    if (turn > 6) {
+      tier = 4;
+    }
+    if (turn > 8) {
+      tier = 5;
+    }
+    if (turn > 10) {
+      tier = 6;
+    }
+    this.gameService.setPreviousShopTier(tier);
   }
 
   updateToyLevel(player: Player, level) {
@@ -325,12 +365,16 @@ export class AppComponent implements OnInit {
   executeBeforeStartOfBattleEquipment() {
     for (let pet of this.player.petArray) {
       let multiplier = 1;
-      // if pet panther x2
+      let pantherMessage = '';
+      if (pet instanceof Panther) {
+        multiplier = pet.level + 1;
+        pantherMessage = ` x${multiplier} (Panther)`;
+      }
       if (pet.equipment instanceof Pie) {
         pet.increaseAttack(4 * multiplier);
         pet.increaseHealth(4 * multiplier);
         this.logService.createLog({
-          message: `${pet.name} gained 4 attack and 4 health (Pie)`,
+          message: `${pet.name} gained ${4 * multiplier} attack and ${4 * multiplier} health (Pie)${pantherMessage}`,
           type: 'equipment',
           player: this.player
         })

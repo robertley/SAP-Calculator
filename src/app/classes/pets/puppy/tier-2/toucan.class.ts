@@ -36,11 +36,6 @@ export class Toucan extends Pet {
             if (target == null) {
                 break;
             }
-            // TODO
-            // might need a new instance
-            // deep copy might actually be correct.
-            // lemon with one use will copy a one use lemon behind
-            target.givePetEquipment(cloneDeep(this.equipment));
 
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} ${this.equipment.name}`,
@@ -49,6 +44,12 @@ export class Toucan extends Pet {
                 randomEvent: false,
                 tiger: tiger
             })
+
+            // TODO
+            // might need a new instance
+            // deep copy might actually be correct.
+            // lemon with one use will copy a one use lemon behind
+            target.givePetEquipment(cloneDeep(this.equipment));
         }
         this.superFaint(gameApi, tiger);
     }

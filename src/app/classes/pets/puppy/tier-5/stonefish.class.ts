@@ -6,33 +6,19 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Raccoon extends Pet {
-    name = "Raccoon";
-    tier = 3;
+export class Stonefish extends Pet {
+    name = "Stonefish";
+    tier = 5;
     pack: Pack = 'Puppy';
-    attack = 3;
-    health = 2;
-    stealCounter = 0;
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
+    attack = 7;
+    health = 4;
+    faint(gameApi?: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
-        let target = opponent.getPetAtPosition(0);
-        if (target == null) {
+        if (opponent.pet0 == null || !opponent.pet0.alive) {
             return;
         }
-        if (target.equipment == null) {
-            return;
-        }
-        if (this.stealCounter > this.level) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} stole ${target.name}'s equipment. (${target.equipment.name})`,
-            type: 'ability',
-            player: this.parent
-        })
-        this.givePetEquipment(target.equipment);
-        target.equipment = null;
-        this.stealCounter++;
+        this.snipePet(opponent.pet0, this.attack * this.level, false, tiger);
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -43,9 +29,5 @@ export class Raccoon extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
-    }
-    resetPet(): void {
-        this.stealCounter = 0;
-        super.resetPet();
     }
 }

@@ -7,7 +7,7 @@
   </div>
 
   <div class="row battle-controller border">
-    <div class="col-12 d-flex pb-2">
+    <div class="col-12 d-flex py-2">
 
       <div class="form-group min-w-input me-3">
         <label for="playerPack">Player Pack</label>
@@ -17,7 +17,7 @@
         </select>
       </div>
 
-      <div class="form-group min-w-input me-3">
+      <div class="form-group min-w-input pe-3 border-end">
         <label for="playerPack">Opponent Pack</label>
         <select class="form-control" id="opponentPack" formControlName="opponentPack">
           <option value="Turtle">Turtle</option>
@@ -25,7 +25,12 @@
         </select>
       </div>
 
-      <div class="form-group min-w-input me-3">
+      <div class="form-group small-w-input ms-3 pe-3 border-end">
+        <label for="turn">Turn</label>
+        <input class="form-control" id="turn" type="number" formControlName="turn" max="99"/>
+      </div>
+
+      <div class="form-group min-w-input mx-3">
         <label for="playerPack">Player Toy</label>
         <select class="form-control" id="playerToy" formControlName="playerToy">
           <option [ngValue]="null">None</option>

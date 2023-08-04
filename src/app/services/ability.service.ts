@@ -416,7 +416,8 @@ export class AbilityService {
             if (pet.friendGainedPerk != null) {
                 this.setFriendGainedPerkEvent({
                     callback: pet.friendGainedPerk.bind(pet),
-                    priority: pet.attack
+                    priority: pet.attack,
+                    callbackPet: perkPet
                 })
             }
         }
@@ -437,7 +438,7 @@ export class AbilityService {
         this.friendGainedPerkEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendGainedPerkEvents) {
-            event.callback(this.gameService.gameApi);
+            event.callback(this.gameService.gameApi, event.callbackPet);
         }
         
         this.resetFriendGainedPerkEvents();

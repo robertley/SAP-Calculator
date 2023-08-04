@@ -106,6 +106,16 @@ import { Tahr } from "../classes/pets/puppy/tier-4/tahr.class";
 import { WhaleShark } from "../classes/pets/puppy/tier-4/whale-shark.class";
 import { Chameleon } from "../classes/pets/puppy/tier-4/chameleon.class";
 import { Gharial } from "../classes/pets/puppy/tier-4/gharial.class";
+import { Stonefish } from "../classes/pets/puppy/tier-5/stonefish.class";
+import { Poodle } from "../classes/pets/puppy/tier-5/poodle.class";
+import { Chicken } from "../classes/pets/puppy/tier-5/chicken.class";
+import { Eagle } from "../classes/pets/puppy/tier-5/eagles.class";
+import { Panther } from "../classes/pets/puppy/tier-5/panther.class";
+import { Axolotl } from "../classes/pets/puppy/tier-5/axolotl.class";
+import { Goat } from "../classes/pets/puppy/tier-5/goat.class";
+import { SnappingTurtle } from "../classes/pets/puppy/tier-5/snapping-turtle.class";
+import { Mosasaurus } from "../classes/pets/puppy/tier-5/mosasaurus.class";
+import { StringRay } from "../classes/pets/puppy/tier-5/string-ray.class";
 
 @Injectable({
     providedIn: 'root'
@@ -114,9 +124,6 @@ export class PetService {
 
     turtlePackPets: Map<number, string[]> = new Map();
     puppyPackPets: Map<number, string[]> = new Map();
-    // used for spider / stork
-    // TODO configurable
-    tier3Pets: string[];
 
     constructor(private logService: LogService,
         private abilityService: AbilityService,
@@ -260,12 +267,22 @@ export class PetService {
             "Gharial"
         ])
 
+        this.puppyPackPets.set(5, [
+            "Stonefish",
+            "Poodle",
+            "Goat",
+            "Chicken",
+            "Eagle",
+            "Panther",
+            "Axolotl",
+            "Snapping Turtle",
+            "Mosasaurus",
+            "String Ray"
+        ])
+
         this.puppyPackPets.set(6, [
             "Tiger" // temp
         ])
-
-        this.tier3Pets = this.turtlePackPets.get(3);
-        this.gameService.setTierGroupPets(this.tier3Pets);
     }
 
     createPet(petForm: PetForm, parent: Player): Pet {
@@ -479,7 +496,29 @@ export class PetService {
                 return new Chameleon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Gharial':
                 return new Gharial(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
-        }
+            
+            // tier 5
+            case 'Stonefish':
+                return new Stonefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Poodle':
+                return new Poodle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Goat':
+                return new Goat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Chicken':
+                return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Eagle':
+                return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Panther':
+                return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Axolotl':
+                return new Axolotl(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Snapping Turtle':
+                return new SnappingTurtle(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Mosasaurus':
+                return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'String Ray':
+                return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+          }
     }
 
     createDefaultVersionOfPet(pet: Pet, attack: number = null, health: number = null) {
@@ -797,11 +836,43 @@ export class PetService {
             newPet = new Gharial(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
+        // Tier 5
+        if (pet instanceof Stonefish) {
+            newPet = new Stonefish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Poodle) {
+            newPet = new Poodle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Goat) {
+            newPet = new Goat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Chicken) {
+            newPet = new Chicken(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Eagle) {
+            newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Panther) {
+            newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Axolotl) {
+            newPet = new Axolotl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SnappingTurtle) {
+            newPet = new SnappingTurtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Mosasaurus) {
+            newPet = new Mosasaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof StringRay) {
+            newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
         return newPet;
     }
 
     getRandomPet(parent: Player) {
-        let tier = getRandomInt(1, 3);
+        let tier = getRandomInt(1, 6);
         let pets;
         if (parent.pack == 'Turtle') {
             pets = this.turtlePackPets.get(tier);

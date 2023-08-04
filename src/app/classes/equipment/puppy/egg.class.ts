@@ -2,6 +2,7 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.servicee";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Egg extends Equipment {
     name = 'Egg';
@@ -22,6 +23,10 @@ export class Egg extends Equipment {
         attackPet.health -= damage;
 
         let message = `${pet.name} snipes ${attackPet.name} for ${damage}`;
+        if (pet instanceof Panther) {
+            let multiplier = 1 + pet.level;
+            message += ` x${multiplier} (Panther)`;
+        }
 
         if (defenseEquipment != null) {
             attackPet.useDefenseEquipment();

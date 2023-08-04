@@ -17,6 +17,8 @@ import { Rice } from "../classes/equipment/puppy/rice.class";
 import { Egg } from "../classes/equipment/puppy/egg.class";
 import { Salt } from "../classes/equipment/puppy/salt.class";
 import { Pie } from "../classes/equipment/puppy/pie.class";
+import { Skewer } from "../classes/equipment/puppy/skewer.class";
+import { Lemon } from "../classes/equipment/puppy/lemon.class";
 
 @Injectable({
     providedIn: "root"
@@ -41,6 +43,8 @@ export class EquipmentService {
         map.set('Egg', new Egg(this.logService));
         map.set('Salt', new Salt());
         map.set('Pie', new Pie());
+        map.set('Skewer', new Skewer(this.logService));
+        map.set('Lemon', new Lemon());
         return map;
     }
 

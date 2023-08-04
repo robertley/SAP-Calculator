@@ -1,19 +1,17 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
-import { Chili } from "../../../equipment/turtle/chili.class";
+import { Skewer } from "../../../equipment/puppy/skewer.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Tahr extends Pet {
-    name = "Tahr";
-    tier = 4;
+export class SnappingTurtle extends Pet {
+    name = "Snapping Turtle";
+    tier = 5;
     pack: Pack = 'Puppy';
-    attack = 5;
-    health = 3;
+    attack = 4;
+    health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean): void {
         if (this.petBehind() == null) {
             return;
@@ -29,16 +27,16 @@ export class Tahr extends Pet {
             if (count > this.level) {
                 break;
             }
-            if (pet.equipment instanceof Chili) {
+            if (pet.equipment instanceof Skewer) {
                 continue;
             }
             this.logService.createLog({
-                message: `${this.name} gave ${pet.name} Chili.`,
+                message: `${this.name} gave ${pet.name} Skewer.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger
             })
-            pet.givePetEquipment(new Chili(this.logService));
+            pet.givePetEquipment(new Skewer(this.logService));
             count++;
         }
         this.superFaint(gameApi, tiger);

@@ -1,7 +1,10 @@
+import { Pet } from "../classes/pet.class";
 import { Player } from "../classes/player.class";
 
 export interface GameAPI {
     player: Player;
     opponet: Player;
-    tier3Pets?: string[];
+    playerPetPool?: Map<number, string[]>;
+    opponentPetPool?: Map<number, string[]>;
+    previousShopTier?: number;
 }

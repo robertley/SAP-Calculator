@@ -3,12 +3,21 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
-export class Chili extends Equipment {
-    name = 'Chili';
+export class Skewer extends Equipment {
+    name = 'Skewer';
     equipmentClass = 'skewer' as EquipmentClass;
     power = 0;
     attackCallback = (pet: Pet, attackedPet: Pet) => {
-        let attackPet = attackedPet.parent.getPetAtPosition(1);
+        this.skewer(pet, attackedPet, 1);
+        this.skewer(pet, attackedPet, 2);
+    }
+
+    constructor(private logService: LogService) {
+        super()
+    }
+
+    skewer(pet: Pet, attackedPet: Pet, position: number) {
+        let attackPet = attackedPet.parent.getPetAtPosition(position);
         if (attackPet == null) {
             return;
         }
@@ -18,7 +27,7 @@ export class Chili extends Equipment {
             multiplier = 1 + pet.level;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 5);
+        let damageResp = pet.calculateDamgae(attackPet, 3);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage * multiplier;
 
@@ -47,13 +56,9 @@ export class Chili extends Equipment {
         }
 
         this.logService.createLog({
-            message: message += ` (Chili).`,
+            message: message += ` (Skewer).`,
             type: 'attack',
             player: pet.parent
         })
-    }
-
-    constructor(private logService: LogService) {
-        super()
     }
 }

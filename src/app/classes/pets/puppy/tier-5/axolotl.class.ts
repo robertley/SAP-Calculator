@@ -5,21 +5,25 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Ladybug extends Pet {
-    name = "Ladybug";
-    tier = 1;
+export class Axolotl extends Pet {
+    name = "Axolotl";
+    tier = 5;
     pack: Pack = 'Puppy';
-    attack = 1;
-    health = 2;
-    friendGainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
-        let power = this.level * 2;
-        this.increaseAttack(power);
+    attack = 2;
+    health = 3;
+    friendGainedPerk(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
+        if (pet == this) {
+            return;
+        }
+        let power = this.level;
+        pet.increaseAttack(power);
+        pet.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gained ${power} attack.`,
+            message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
-        })
+        });
         this.superFriendGainedPerk(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
