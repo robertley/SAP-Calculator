@@ -3,31 +3,43 @@ import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
+import { Weak } from "../../../equipment/ailments/weak.class";
+import { Coconut } from "../../../equipment/turtle/coconut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Pangolin extends Pet {
-    name = "Pangolin";
-    tier = 3;
+export class Doberman extends Pet {
+    name = "Doberman";
+    tier = 4;
     pack: Pack = 'Puppy';
-    attack = 2;
+    attack = 4;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        // determine if lowest tier pet
+        let lowestTierPet = true;
+        for (let pet of this.parent.petArray) {
+            if (pet == this) {
+                continue
+            }
+            if (pet.tier <= this.tier) {
+                lowestTierPet = false;
+                break;
+            }
+        }
+        if (!lowestTierPet) {
             return;
         }
-        if (this.petBehind() == null) {
-            return;
-        }
-        let power = this.level * 5;
-        this.petBehind().increaseHealth(power);
+
+        let power = this.level * 8;
+        this.increaseAttack(power);
+        this.givePetEquipment(new Coconut());
         this.logService.createLog({
-            message: `${this.name} gave ${this.petBehind().name} ${power} health.`,
+            message: `${this.name} gained ${power} attack and gained a Coconut.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
-        });
-        this.superFaint(gameApi, tiger);
+        })
+        this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

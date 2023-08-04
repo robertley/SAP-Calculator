@@ -1,4 +1,4 @@
-import { clone, cloneDeep } from "lodash";
+import { clone, cloneDeep, shuffle } from "lodash";
 import { Pet } from "./pet.class";
 import { LogService } from "../services/log.servicee";
 import { getRandomInt } from "../util/helper-functions";
@@ -480,6 +480,21 @@ export class Player {
     setToy(toy: Toy) {
         this.toy = toy;
         // do on toy abilities
+    }
+
+    getStrongestPet() {
+        let strongestPet: Pet;
+        let pets = shuffle(this.petArray);
+        for (let pet of pets) {
+            if (strongestPet == null) {
+                strongestPet = pet;
+                continue;
+            }
+            if (pet.attack + pet.health > strongestPet.attack + strongestPet.health) {
+                strongestPet = pet;
+            }
+        }
+        return strongestPet;
     }
 
 }

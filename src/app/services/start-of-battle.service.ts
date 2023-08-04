@@ -26,7 +26,7 @@ export class StartOfBattleService {
                     events = this.nonToyPetEvents;
                 }
                 events.push({
-                    callback: () => { pet.startOfBattle(this.gameApi) },
+                    callback: pet.startOfBattle.bind(pet),
                     priority: pet.attack,
                     player: this.gameApi.player
                 })
@@ -39,7 +39,7 @@ export class StartOfBattleService {
                     events = this.nonToyPetEvents;
                 }
                 events.push({
-                    callback: () => { pet.startOfBattle(this.gameApi) },
+                    callback: pet.startOfBattle.bind(pet),
                     priority: pet.attack,
                     player: this.gameApi.opponet
                 })

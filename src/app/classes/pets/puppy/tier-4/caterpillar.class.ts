@@ -1,33 +1,31 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
+import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { Butterfly } from "../../hidden/butterfly.class";
 
-export class Pangolin extends Pet {
-    name = "Pangolin";
-    tier = 3;
+export class Caterpillar extends Pet {
+    name = "Caterpillar";
+    tier = 4;
     pack: Pack = 'Puppy';
-    attack = 2;
-    health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
+    attack = 1;
+    health = 1;
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.level < 3) {
             return;
         }
-        if (this.petBehind() == null) {
-            return;
-        }
-        let power = this.level * 5;
-        this.petBehind().increaseHealth(power);
+        let butterfly = new Butterfly(this.logService, this.abilityService, this.parent, 1, 1, this.exp);
+        this.parent.setPet(this.position, butterfly);
         this.logService.createLog({
-            message: `${this.name} gave ${this.petBehind().name} ${power} health.`,
+            message: `${this.name} transformed into a Butterfly.`,
             type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-        this.superFaint(gameApi, tiger);
+            player: this.parent
+        })
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

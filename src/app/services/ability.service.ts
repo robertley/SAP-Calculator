@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Player } from "../classes/player.class";
 import { GameAPI } from "../interfaces/gameAPI.interface";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
-import { shuffle } from "lodash";
+import { clone, shuffle } from "lodash";
 import { GameService } from "./game.service";
 import { Pet } from "../classes/pet.class";
 
@@ -27,6 +27,7 @@ export class AbilityService {
     private friendGainedPerkEvents: AbilityEvent[]= []; // TODO refactor to work like friendGainedAilment
     private friendGainedAilmentEvents: AbilityEvent[]= [];
     private friendlyToyBrokeEvents: AbilityEvent[]= [];
+    private transformEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -514,6 +515,41 @@ export class AbilityService {
         }
         
         this.resetFriendlyToyBrokeEvents();
+
+    }
+
+    // trnasform
+
+    triggerTransformEvents(player: Player) {
+        for (let pet of player.petArray) {
+            if (pet.transform != null) {
+                this.setTransformEvent({
+                    callback: pet.transform.bind(pet),
+                    priority: pet.attack
+                })
+            }
+        }
+    }
+    
+    setTransformEvent(event: AbilityEvent) {
+        this.transformEvents.push(event);
+    }
+
+    resetTransformEvents() {
+        this.transformEvents = [];
+    }
+
+    executeTransformEvents() {
+        // shuffle, so that same priority events are in random order
+        this.transformEvents = shuffle(this.transformEvents);
+
+        this.transformEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.transformEvents) {
+            event.callback(this.gameService.gameApi, false);
+        }
+        
+        this.resetTransformEvents();
 
     }
 

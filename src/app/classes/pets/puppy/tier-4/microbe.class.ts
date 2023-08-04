@@ -3,30 +3,34 @@ import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
+import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Pangolin extends Pet {
-    name = "Pangolin";
-    tier = 3;
+export class Microbe extends Pet {
+    name = "Microbe";
+    tier = 4;
     pack: Pack = 'Puppy';
-    attack = 2;
-    health = 5;
+    attack = 1;
+    health = 1;
     faint(gameApi?: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
-            return;
+        let targetPets = this.parent.petArray.filter(pet => pet != this);
+        targetPets = [
+            ...targetPets,
+            ...getOpponent(gameApi, this.parent).petArray
+        ];
+        for (let pet of targetPets) {
+            if (!pet.alive) {
+                continue;
+            }
+            this.logService.createLog({
+                message: `${this.name} gave ${pet.name} Weak.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            })
+            pet.givePetEquipment(new Weak());
         }
-        if (this.petBehind() == null) {
-            return;
-        }
-        let power = this.level * 5;
-        this.petBehind().increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${this.petBehind().name} ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

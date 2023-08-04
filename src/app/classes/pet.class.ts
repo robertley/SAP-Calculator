@@ -6,6 +6,7 @@ import { Peanut } from "./equipment/turtle/peanut.class";
 import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
+import { Salt } from "./equipment/puppy/salt.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
@@ -23,6 +24,7 @@ export abstract class Pet {
     originalEquipment?: Equipment;
     exp?: number = 0;
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
+    transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
     hurt?(gameApi: GameAPI, tiger?: boolean): void;
     faint?(gameApi?: GameAPI, tiger?: boolean): void;
@@ -205,6 +207,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superTransform(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.transform(gameApi, true)
+        this.exp = exp;
+    }
+
 
     attackPet(pet: Pet) {
 
@@ -227,7 +239,15 @@ export abstract class Pet {
 
             let message = `${this.name} attacks ${pet.name} for ${damage}.`;
             if (attackEquipment != null) {
-                message += ` (${attackEquipment.name} +${attackEquipment.power})`;
+                let powerAmt = `+${attackEquipment.power}`;
+                if (attackEquipment instanceof Salt) {
+                    if (pet.tier < this.tier) {
+                        powerAmt = `x2`;
+                    } else {
+                        powerAmt = `x1`;
+                    }
+                }
+                message += ` (${attackEquipment.name} ${powerAmt})`;
             }
             if (defenseEquipment != null) {
                 let power = Math.abs(defenseEquipment.power);
@@ -358,6 +378,12 @@ export abstract class Pet {
         let attackAmt = power ?? this.attack + (attackEquipment?.power ?? 0);
         let defenseAmt = defenseEquipment?.power ?? 0;
         let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
+
+        if (attackEquipment instanceof Salt) {
+            if (pet.tier < this.tier) {
+                attackAmt *= 2;
+            }
+        }
         let damage = Math.max(min, attackAmt - defenseAmt);
         return {
             defenseEquipment: defenseEquipment,
@@ -430,7 +456,6 @@ export abstract class Pet {
             return;
         }
         this.equipment.uses -= 1;
-        console.log(this.equipment.uses)
         if (this.equipment.uses == 0) {
             this.equipment = null;
         }

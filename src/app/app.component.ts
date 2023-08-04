@@ -20,6 +20,7 @@ import { Kangaroo } from './classes/pets/turtle/tier-2/kangaroo.class';
 import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
 import { ToyService } from './services/toy.service';
 import { Egg } from './classes/equipment/puppy/egg.class';
+import { Pie } from './classes/equipment/puppy/pie.class';
 
 @Component({
   selector: 'app-root',
@@ -202,6 +203,8 @@ export class AppComponent implements OnInit {
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
 
+      this.executeBeforeStartOfBattleEquipment();
+
       this.startOfBattleService.initStartOfBattleEvents();
       this.startOfBattleService.executeToyPetEvents();
       this.executeFrequentEvents();
@@ -209,6 +212,10 @@ export class AppComponent implements OnInit {
       this.executeFrequentEvents();
       this.startOfBattleService.executeNonToyPetEvents();
       this.executeFrequentEvents();
+
+      this.abilityService.triggerTransformEvents(this.player);
+      this.abilityService.triggerTransformEvents(this.opponent);
+      this.abilityService.executeTransformEvents();
       this.checkPetsAlive();
       if (!this.abilityService.hasAbilityCycleEvents) {
         this.removeDeadPets();
@@ -313,6 +320,23 @@ export class AppComponent implements OnInit {
       this.abilityCycle();
     }
     this.printState();
+  }
+
+  executeBeforeStartOfBattleEquipment() {
+    for (let pet of this.player.petArray) {
+      let multiplier = 1;
+      // if pet panther x2
+      if (pet.equipment instanceof Pie) {
+        pet.increaseAttack(4 * multiplier);
+        pet.increaseHealth(4 * multiplier);
+        this.logService.createLog({
+          message: `${pet.name} gained 4 attack and 4 health (Pie)`,
+          type: 'equipment',
+          player: this.player
+        })
+      }
+      // if pancake
+    }
   }
 
   pushPetsForwards() {
