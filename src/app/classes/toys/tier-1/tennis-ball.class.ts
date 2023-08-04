@@ -5,11 +5,11 @@ import { Toy } from "../../toy.class";
 export class TennisBall extends Toy {
     name = "Tennis Ball";
     tier = 1;
-    startOfBattle(gameApi?: GameAPI) {
+    startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         let target = opponent.getRandomPet();
-        this.toyService.snipePet(target, this.level, this.parent, this.name, true);
+        this.toyService.snipePet(target, this.level, this.parent, this.name, true, puma);
         target = opponent.getRandomPet();
-        this.toyService.snipePet(target, this.level, this.parent, this.name, true);
+        this.toyService.snipePet(target, this.level, this.parent, this.name, true, puma);
     }
 }

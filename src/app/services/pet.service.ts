@@ -116,6 +116,15 @@ import { Goat } from "../classes/pets/puppy/tier-5/goat.class";
 import { SnappingTurtle } from "../classes/pets/puppy/tier-5/snapping-turtle.class";
 import { Mosasaurus } from "../classes/pets/puppy/tier-5/mosasaurus.class";
 import { StringRay } from "../classes/pets/puppy/tier-5/string-ray.class";
+import { MantisShrimp } from "../classes/pets/puppy/tier-6/mantis-shrimp.class";
+import { Lionfish } from "../classes/pets/puppy/tier-6/lion-fish.class";
+import { Tyrannosaurus } from "../classes/pets/puppy/tier-6/tyrannosaurus.class";
+import { Octopus } from "../classes/pets/puppy/tier-6/octopus.class";
+import { Anglerfish } from "../classes/pets/puppy/tier-6/anglerfish.class";
+import { Sauropod } from "../classes/pets/puppy/tier-6/sauropod.class";
+import { ElephantSeal } from "../classes/pets/puppy/tier-6/elephant-seal.class";
+import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
+import { Mongoose } from "../classes/pets/puppy/tier-6/mongoose.class";
 
 @Injectable({
     providedIn: 'root'
@@ -281,7 +290,16 @@ export class PetService {
         ])
 
         this.puppyPackPets.set(6, [
-            "Tiger" // temp
+            "Dragon",
+            "Mantis Shrimp",
+            "Lionfish",
+            "Tyrannosaurus",
+            "Octopus",
+            "Anglerfish",
+            "Sauropod",
+            "Elephant Seal",
+            "Puma",
+            "Mongoose"
         ])
     }
 
@@ -518,7 +536,28 @@ export class PetService {
                 return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'String Ray':
                 return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
-          }
+
+            // tier 6
+            case 'Mantis Shrimp':
+                return new MantisShrimp(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Lionfish':
+                return new Lionfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Tyrannosaurus':
+                return new Tyrannosaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Octopus':
+                return new Octopus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Anglerfish':
+                return new Anglerfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Sauropod':
+                return new Sauropod(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Elephant Seal':
+                return new ElephantSeal(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Puma':
+                return new Puma(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Mongoose':
+                return new Mongoose(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+    
+        }
     }
 
     createDefaultVersionOfPet(pet: Pet, attack: number = null, health: number = null) {
@@ -866,6 +905,35 @@ export class PetService {
         }
         if (pet instanceof StringRay) {
             newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
+        // Tier 6
+        if (pet instanceof MantisShrimp) {
+            newPet = new MantisShrimp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Lionfish) {
+            newPet = new Lionfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Tyrannosaurus) {
+            newPet = new Tyrannosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Octopus) {
+            newPet = new Octopus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Anglerfish) {
+            newPet = new Anglerfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Sauropod) {
+            newPet = new Sauropod(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof ElephantSeal) {
+            newPet = new ElephantSeal(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Puma) {
+            newPet = new Puma(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Mongoose) {
+            newPet = new Mongoose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         return newPet;

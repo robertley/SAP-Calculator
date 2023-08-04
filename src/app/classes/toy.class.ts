@@ -5,8 +5,8 @@ import { Player } from "./player.class";
 
 export class Toy {
     name: string;
-    onBreak?(gameApi?: GameAPI);
-    startOfBattle?(gameApi?: GameAPI);
+    onBreak?(gameApi?: GameAPI, puma?: boolean);
+    startOfBattle?(gameApi?: GameAPI, puma?: boolean);
     parent: Player;
     level: number;
     tier: number;

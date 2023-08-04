@@ -265,7 +265,7 @@ export class AbilityService {
         this.afterAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.afterAttackEvents) {
-            event.callback();
+            event.callback(this.gameService.gameApi);
         }
         
         this.resetAfterAttackEvents();

@@ -5,6 +5,7 @@ import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'app-pet-selector',
@@ -18,7 +19,11 @@ export class PetSelectorComponent implements OnInit {
   @Input()
   player: Player;
   @Input()
+  opponent: Player;
+  @Input()
   index: number;
+  @Input()
+  angler: boolean;
 
   formGroup: FormGroup;
   equipment: Map<string, Equipment>;
@@ -41,11 +46,27 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initPets() {
-    if (this.player.pack == 'Turtle') {
-      this.pets = this.petService.turtlePackPets;
-    } else if (this.player.pack == 'Puppy') {
-      this.pets = this.petService.puppyPackPets;
+    this.pets = this.getPack(this.player);
+    if (!this.angler) {
+      return;
     }
+    if (this.player.pack == this.opponent.pack) {
+      return;
+    }
+    let opponentPack = this.getPack(this.opponent);
+    for (let [tier, pets] of opponentPack) {
+      this.pets.get(tier).push(...pets);
+    }
+  }
+
+  getPack(player: Player) {
+    let pack;
+    if (player.pack == 'Turtle') {
+      pack = this.petService.turtlePackPets;
+    } else if (player.pack == 'Puppy') {
+      pack = this.petService.puppyPackPets;
+    }
+    return cloneDeep(pack);
   }
 
   initEquipment() {

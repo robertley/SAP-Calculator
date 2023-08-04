@@ -3,37 +3,15 @@ import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Chameleon extends Pet {
-    name = "Chameleon";
-    tier = 4;
+export class Sauropod extends Pet {
+    name = "Sauropod";
+    tier = 6;
     pack: Pack = 'Puppy';
-    attack = 1;
-    health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
-            return;
-        }
-
-        let toy = this.parent.toy;
-        let toyLevel = toy.level;
-        toy.level = this.level;
-        this.logService.createLog({
-            message: `${this.name} activated ${toy.name}.`,
-            type: 'ability',
-            player: this.parent,
-        })
-        if (toy.onBreak) {
-            this.parent.breakToy(true)
-        }
-        if (toy.startOfBattle) {
-            toy.startOfBattle(gameApi);
-        }
-        toy.level = toyLevel;
-    }
+    attack = 4;
+    health = 12;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

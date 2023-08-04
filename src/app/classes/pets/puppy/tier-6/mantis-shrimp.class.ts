@@ -3,36 +3,25 @@ import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Chameleon extends Pet {
-    name = "Chameleon";
-    tier = 4;
+export class MantisShrimp extends Pet {
+    name = "Mantis Shrimp";
+    tier = 6;
     pack: Pack = 'Puppy';
-    attack = 1;
+    attack = 9;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
-            return;
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let opponent = getOpponent(gameApi, this.parent);
+        for (let i = 0; i < this.level; i++) {
+            let target = opponent.furthestUpPet;
+            if (target == null) {
+                return;
+            }
+            this.snipePet(target, 10, false, tiger);
         }
-
-        let toy = this.parent.toy;
-        let toyLevel = toy.level;
-        toy.level = this.level;
-        this.logService.createLog({
-            message: `${this.name} activated ${toy.name}.`,
-            type: 'ability',
-            player: this.parent,
-        })
-        if (toy.onBreak) {
-            this.parent.breakToy(true)
-        }
-        if (toy.startOfBattle) {
-            toy.startOfBattle(gameApi);
-        }
-        toy.level = toyLevel;
+        this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

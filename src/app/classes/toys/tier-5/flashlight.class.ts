@@ -6,7 +6,7 @@ import { Toy } from "../../toy.class";
 export class Flashlight extends Toy {
     name = "Flashlight";
     tier = 5;
-    onBreak(gameApi?: GameAPI) {
+    onBreak(gameApi?: GameAPI, puma?: boolean) {
         let power = this.level * 6;
         let target = this.parent.furthestUpPet;
         target.increaseAttack(power);
@@ -14,7 +14,8 @@ export class Flashlight extends Toy {
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            puma: puma
         })
     }
 }

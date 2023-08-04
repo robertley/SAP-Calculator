@@ -5,6 +5,9 @@ import { getRandomInt } from "../util/helper-functions";
 import { AbilityService } from "../services/ability.service";
 import { Toy } from "./toy.class";
 import { Equipment } from "./equipment.class";
+import { AbilityEvent } from "../interfaces/ability-event.interface";
+import { Puma } from "./pets/puppy/tier-6/puma.class";
+import { GameService } from "../services/game.service";
 
 export class Player {
     pet0?: Pet;
@@ -19,12 +22,12 @@ export class Player {
     private orignalPet3?: Pet;
     private orignalPet4?: Pet;
 
-    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Puppy';
+    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Turtle';
 
     toy: Toy;
     originalToy: Toy;
 
-    constructor(private logService: LogService, private abilityService: AbilityService) {
+    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {
     }
 
     alive(): boolean {
@@ -469,7 +472,33 @@ export class Player {
             player: this,
             randomEvent: false
         })
-        this.toy.onBreak();
+
+        let events: AbilityEvent[] = [{
+            callback: this.toy.onBreak.bind(this.toy),
+            priority: 99
+        }];
+        let toyLevel = this.toy.level;
+        for (let pet of this.petArray) {
+            if (pet instanceof Puma) {
+                let callback = () => {
+                    this.toy.level = pet.level;
+                    this.toy.onBreak(this.gameService.gameApi, true);
+                    this.toy.level = toyLevel;
+                }
+                events.push({
+                    callback: callback,
+                    priority: pet.attack,
+                });
+            }
+        }
+        events.sort((a, b) => {
+            return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0;
+        });
+        console.log(events)
+        for (let event of events) {
+            event.callback(this.gameService.gameApi);
+        }
+
         let toyCopy = cloneDeep(this.toy);
         this.toy = null;
         if (respawn) {

@@ -501,6 +501,8 @@ export abstract class Pet {
     }
 
     givePetEquipment(equipment: Equipment) {
+        this.equipment = equipment;
+        
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense') {
             this.abilityService.triggerFriendGainedAilmentEvents(this);
             this.abilityService.executeFriendGainedAilmentEvents();
@@ -509,7 +511,6 @@ export abstract class Pet {
             this.abilityService.executeFriendGainedPerkEvents();
         }
 
-        this.equipment = equipment;
     }
 
     get level() {

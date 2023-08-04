@@ -6,7 +6,7 @@ import { Toy } from "../../toy.class";
 export class ToiletPaper extends Toy {
     name = "Toilet Paper";
     tier = 3;
-    startOfBattle(gameApi?: GameAPI) {
+    startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         let weakTargets = opponent.petArray.slice(0, this.level);
         for (let pet of weakTargets) {
@@ -14,7 +14,8 @@ export class ToiletPaper extends Toy {
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} Weak.`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                puma: puma
             })
         }
     }

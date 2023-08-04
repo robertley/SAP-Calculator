@@ -14,6 +14,7 @@ export class Frigatebird extends Pet {
     health = 1;
     abilityCounter = 0;
     friendGainedAilment(gameApi: GameAPI, pet?: Pet): void {
+        console.log(pet)
         if (this.abilityCounter >= this.level) {
             return;
         }

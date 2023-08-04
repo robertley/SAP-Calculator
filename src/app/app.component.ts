@@ -23,6 +23,7 @@ import { Egg } from './classes/equipment/puppy/egg.class';
 import { Pie } from './classes/equipment/puppy/pie.class';
 import { cloneDeep } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
+import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +35,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.1.5';
+  version = '0.2.0';
 
   title = 'sap-calculator';
   player: Player;
@@ -61,8 +62,8 @@ export class AppComponent implements OnInit {
     private toyService: ToyService,
     private startOfBattleService: StartOfBattleService
   ) {
-    this.player = new Player(logService, abilityService);
-    this.opponent = new Player(logService, abilityService);
+    this.player = new Player(logService, abilityService, gameService);
+    this.opponent = new Player(logService, abilityService, gameService);
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
@@ -88,6 +89,7 @@ export class AppComponent implements OnInit {
       opponentToy: new FormControl(this.opponent.toy?.name),
       opponentToyLevel: new FormControl(this.opponent.toy?.level ?? 1),
       turn: new FormControl(defaultTurn),
+      angler: new FormControl(false),
       logFilter: new FormControl(null)
     })
 
@@ -116,6 +118,11 @@ export class AppComponent implements OnInit {
     this.formGroup.get('turn').valueChanges.subscribe((value) => {
       this.updatePreviousShopTier(value);
     })
+    this.formGroup.get('angler').valueChanges.subscribe((value) => {
+      setTimeout(() => {
+        this.updateSelectorPets();
+      })
+    })
   }
 
   updatePlayerPack(player: Player, pack) {
@@ -135,6 +142,12 @@ export class AppComponent implements OnInit {
       this.gameService.setTierGroupPets(null, petPool);
     }
     this.randomize(player);
+  }
+
+  updateSelectorPets() {
+    this.petSelectors.forEach((petSelector) => {
+      petSelector.initPets();
+    })
   }
 
   updatePlayerToy(player: Player, toy) {
@@ -220,13 +233,33 @@ export class AppComponent implements OnInit {
   initToys() {
     if (this.player.toy?.startOfBattle) {
       this.toyService.setStartOfBattleEvent({
-        callback: this.player.toy.startOfBattle.bind(this.player.toy),
+        callback: () => {
+          this.player.toy.startOfBattle(this.gameService.gameApi);
+          let toyLevel = this.player.toy.level;
+          for (let pet of this.player.petArray) {
+            if (pet instanceof Puma) {
+              this.player.toy.level = pet.level;
+              this.player.toy.startOfBattle(this.gameService.gameApi, true);
+              this.player.toy.level = toyLevel;
+            }
+          }
+        },
         priority: this.player.toy.tier
       })
     }
     if (this.opponent.toy?.startOfBattle) {
       this.toyService.setStartOfBattleEvent({
-        callback: this.opponent.toy.startOfBattle.bind(this.opponent.toy),
+        callback: () => {
+          this.opponent.toy.startOfBattle(this.gameService.gameApi);
+          let toyLevel = this.opponent.toy.level;
+          for (let pet of this.opponent.petArray) {
+            if (pet instanceof Puma) {
+              this.opponent.toy.level = pet.level;
+              this.opponent.toy.startOfBattle(this.gameService.gameApi, true);
+              this.opponent.toy.level = toyLevel;
+            }
+          }
+        },
         priority: this.opponent.toy.tier
       })
     }

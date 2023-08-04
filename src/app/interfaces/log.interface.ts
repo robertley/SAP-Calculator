@@ -6,4 +6,5 @@ export interface Log {
     player?: Player;
     randomEvent?: boolean; // assumed false if undefined
     tiger?: boolean;
+    puma?: boolean;
 }

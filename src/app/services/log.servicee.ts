@@ -14,6 +14,9 @@ export class LogService {
         if (log.tiger) {
             log.message += " (Tiger)"
         }
+        if (log.puma) {
+            log.message += " (Puma)"
+        }
         this.logs.push(log);
     }
 

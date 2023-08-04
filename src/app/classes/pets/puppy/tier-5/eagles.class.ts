@@ -37,7 +37,8 @@ export class Eagle extends Pet {
                         message: `${this.name} spawned ${pet.name} Level ${pet.level}`,
                         type: "ability",
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        randomEvent: true
                     }
                 )
 

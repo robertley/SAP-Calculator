@@ -59,13 +59,20 @@
         </select>
       </div>
 
-      <div class="form-group me-3">
+      <div class="form-group pe-3 border-end">
         <label for="opponentToyLevel">Toy Level</label>
         <select class="form-control" id="opponentToyLevel" formControlName="opponentToyLevel">
           <option>1</option>
           <option>2</option>
           <option>3</option>
         </select>
+      </div>
+
+      <div class="form-check ms-3" title="Opponent's pack pets are included in the pet pool.">
+        <input class="form-check-input" type="checkbox" value="" id="angler" formControlName="angler">
+        <label class="form-check-label" for="angler" >
+          Angler
+        </label>
       </div>
     </div>
   </div>
@@ -84,35 +91,45 @@
             <app-pet-selector
               [pet]="player.pet4"
               [player]="player"
+              [opponent]="opponent"
               [index]="4"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="player.pet3"
               [player]="player"
+              [opponent]="opponent"
               [index]="3"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="player.pet2"
               [player]="player"
+              [opponent]="opponent"
               [index]="2"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="player.pet1"
               [player]="player"
+              [opponent]="opponent"
               [index]="1"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="player.pet0"
               [player]="player"
+              [opponent]="opponent"
               [index]="0"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
         </div>
@@ -126,35 +143,45 @@
             <app-pet-selector
               [pet]="opponent.pet0"
               [player]="opponent"
+              [opponent]="player"
               [index]="0"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="opponent.pet1"
               [player]="opponent"
+              [opponent]="player"
               [index]="1"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="opponent.pet2"
               [player]="opponent"
+              [opponent]="player"
               [index]="2"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="opponent.pet3"
               [player]="opponent"
+              [opponent]="player"
               [index]="3"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
           <div class="col">
             <app-pet-selector
               [pet]="opponent.pet4"
               [player]="opponent"
+              [opponent]="player"
               [index]="4"
+              [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
         </div>

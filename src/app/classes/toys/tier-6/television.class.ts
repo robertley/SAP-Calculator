@@ -1,18 +1,19 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { Toy } from "../../toy.class";
 
-export class Radio extends Toy {
-    name = "Radio";
-    tier = 2;
+export class Television extends Toy {
+    name = "Television";
+    tier = 6;
     onBreak(gameApi?: GameAPI, puma?: boolean) {
-        let pets = this.parent.petArray;
-        for (let pet of pets) {
+        let power = this.level * 2;
+        for (let pet of this.parent.petArray) {
             if (!pet.alive) {
                 continue;
             }
-            pet.increaseHealth(this.level);
+            pet.increaseAttack(power);
+            pet.increaseHealth(power);
             this.logService.createLog({
-                message: `${this.name} gave ${pet.name} ${this.level} health.`,
+                message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
                 type: 'ability',
                 player: this.parent,
                 puma: puma

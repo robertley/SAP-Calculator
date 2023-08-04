@@ -18,6 +18,9 @@ import { FoamSword } from "../classes/toys/tier-4/foam-sword.class";
 import { ToyGun } from "../classes/toys/tier-4/toy-gun.class";
 import { Flashlight } from "../classes/toys/tier-5/flashlight.class";
 import { StrinkySock } from "../classes/toys/tier-5/stinky-sock.class";
+import { Television } from "../classes/toys/tier-6/television.class";
+import { PeanutJar } from "../classes/toys/tier-6/peanut-jar.class";
+import { AirPalmTree } from "../classes/toys/tier-6/air-palm-tree.class";
 
 @Injectable({
     providedIn: 'root'
@@ -54,6 +57,11 @@ export class ToyService {
             'Flashlight',
             'Stinky Sock'
         ])
+        this.toys.set(6, [
+            'Television',
+            'Peanut Jar',
+            'Air Palm Tree'
+        ])
     }
 
     createToy(toyName: string, parent: Player, level: number = 1) {
@@ -80,10 +88,16 @@ export class ToyService {
                 return new Flashlight(this.logService, this, parent, level);
             case 'Stinky Sock':
                 return new StrinkySock(this.logService, this, parent, level);
+            case 'Television':
+                return new Television(this.logService, this, parent, level);
+            case 'Peanut Jar':
+                return new PeanutJar(this.logService, this, parent, level);
+            case 'Air Palm Tree':
+                return new AirPalmTree(this.logService, this, parent, level);
         }
     }
 
-    snipePet(pet: Pet, power: number, parent: Player, toyName: string, randomEvent=false) {
+    snipePet(pet: Pet, power: number, parent: Player, toyName: string, randomEvent=false, puma=false) {
         let damageResp = this.calculateDamgae(pet, power);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
@@ -95,6 +109,9 @@ export class ToyService {
             message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
         }
 
+        if (puma) {
+            message += ` (Puma)`;
+        }
         this.logService.createLog({
             message: message,
             type: "attack",

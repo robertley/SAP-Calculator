@@ -5,7 +5,7 @@ import { Toy } from "../../toy.class";
 export class StrinkySock extends Toy {
     name = "Strinky Sock";
     tier = 5;
-    startOfBattle(gameApi?: GameAPI) {
+    startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
             let target = opponent.getHighestHealthPet();
@@ -15,7 +15,8 @@ export class StrinkySock extends Toy {
             this.logService.createLog({
                 message: `${this.name} reduced ${target.name} health by ${power * 100}% (${reducedTo})`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                puma: puma
             });
         }
     }
