@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
   petSelectors: QueryList<PetSelectorComponent>;
 
   version = '0.2.0';
+  sapVersion = '0.27.30-124 BETA'
 
   title = 'sap-calculator';
   player: Player;

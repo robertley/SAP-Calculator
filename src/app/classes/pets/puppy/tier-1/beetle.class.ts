@@ -27,13 +27,13 @@ export class Beetle extends Pet {
                 equipment = new Garlic();
                 break;
         }
-        this.givePetEquipment(equipment);
         this.logService.createLog({
             message: `${this.name} gained ${equipment.name} perk.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
+        this.givePetEquipment(equipment);
         super.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

@@ -12,6 +12,9 @@ export class Dog extends Pet {
     attack = 2;
     health = 3;
     friendSummoned(pet, tiger) {
+        if (pet == this) {
+            return;
+        }
         let boostAtkAmt = this.level * 2;
         let boostHealthAmt = this.level;
         this.increaseAttack(boostAtkAmt);
