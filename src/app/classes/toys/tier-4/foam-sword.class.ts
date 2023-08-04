@@ -4,7 +4,7 @@ import { Toy } from "../../toy.class";
 
 export class FoamSword extends Toy {
     name = "Foam Sword";
-    tier = 3;
+    tier = 4;
     startOfBattle(gameApi?: GameAPI) {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {

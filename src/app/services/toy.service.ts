@@ -16,6 +16,8 @@ import { OvenMitts } from "../classes/toys/tier-3/oven-mitts.class";
 import { MelonHelmet } from "../classes/toys/tier-4/melon-helmet.class";
 import { FoamSword } from "../classes/toys/tier-4/foam-sword.class";
 import { ToyGun } from "../classes/toys/tier-4/toy-gun.class";
+import { Flashlight } from "../classes/toys/tier-5/flashlight.class";
+import { StrinkySock } from "../classes/toys/tier-5/stinky-sock.class";
 
 @Injectable({
     providedIn: 'root'
@@ -48,6 +50,10 @@ export class ToyService {
             'Foam Sword',
             'Toy Gun'
         ])
+        this.toys.set(5, [
+            'Flashlight',
+            'Stinky Sock'
+        ])
     }
 
     createToy(toyName: string, parent: Player, level: number = 1) {
@@ -70,6 +76,10 @@ export class ToyService {
                 return new FoamSword(this.logService, this, parent, level);
             case 'Toy Gun':
                 return new ToyGun(this.logService, this, parent, level);
+            case 'Flashlight':
+                return new Flashlight(this.logService, this, parent, level);
+            case 'Stinky Sock':
+                return new StrinkySock(this.logService, this, parent, level);
         }
     }
 

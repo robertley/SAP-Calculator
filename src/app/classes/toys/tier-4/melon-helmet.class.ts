@@ -5,7 +5,7 @@ import { Toy } from "../../toy.class";
 
 export class MelonHelmet extends Toy {
     name = "Melon Helmet";
-    tier = 3;
+    tier = 4;
     onBreak(gameApi?: GameAPI) {
         let targetPets = this.parent.petArray.filter(pet => {
             return pet.alive;
