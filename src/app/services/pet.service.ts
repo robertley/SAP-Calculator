@@ -125,6 +125,10 @@ import { Sauropod } from "../classes/pets/puppy/tier-6/sauropod.class";
 import { ElephantSeal } from "../classes/pets/puppy/tier-6/elephant-seal.class";
 import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
 import { Mongoose } from "../classes/pets/puppy/tier-6/mongoose.class";
+import { Pillbug } from "../classes/pets/star/pillbug.class";
+import { Duckling } from "../classes/pets/star/duckling.class";
+import { Cockroach } from "../classes/pets/star/cockroach.class";
+import { Frog } from "../classes/pets/star/frog.class";
 
 @Injectable({
     providedIn: 'root'
@@ -133,6 +137,7 @@ export class PetService {
 
     turtlePackPets: Map<number, string[]> = new Map();
     puppyPackPets: Map<number, string[]> = new Map();
+    starPackPets: Map<number, string[]> = new Map();
 
     constructor(private logService: LogService,
         private abilityService: AbilityService,
@@ -300,6 +305,14 @@ export class PetService {
             "Elephant Seal",
             "Puma",
             "Mongoose"
+        ])
+
+        this.starPackPets.set(1, [
+            "Mouse",
+            "Pillbug",
+            "Duckling",
+            "Cockroach",
+            "Frog"
         ])
     }
 
@@ -557,6 +570,16 @@ export class PetService {
             case 'Mongoose':
                 return new Mongoose(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
     
+            // Star
+            // Tier 1
+            case 'Pillbug':
+                return new Pillbug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Duckling':
+                return new Duckling(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Cockroach':
+                return new Cockroach(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Frog':
+                return new Frog(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
         }
     }
 
@@ -936,16 +959,33 @@ export class PetService {
             newPet = new Mongoose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
+        // Star
+        // Tier 1
+        if (pet instanceof Pillbug) {
+            newPet = new Pillbug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Duckling) {
+            newPet = new Duckling(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Cockroach) {
+            newPet = new Cockroach(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Frog) {
+            newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
         return newPet;
     }
 
     getRandomPet(parent: Player) {
-        let tier = getRandomInt(1, 6);
+        let tier = getRandomInt(1, 1);
         let pets;
         if (parent.pack == 'Turtle') {
             pets = this.turtlePackPets.get(tier);
         } else if (parent.pack == 'Puppy') {
             pets = this.puppyPackPets.get(tier);
+        } else if (parent.pack == 'Star') {
+            pets = this.starPackPets.get(tier);
         }
         let petNum = getRandomInt(0, pets.length - 1);
         let pet = pets[petNum];

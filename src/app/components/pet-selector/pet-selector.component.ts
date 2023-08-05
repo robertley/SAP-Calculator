@@ -65,6 +65,8 @@ export class PetSelectorComponent implements OnInit {
       pack = this.petService.turtlePackPets;
     } else if (player.pack == 'Puppy') {
       pack = this.petService.puppyPackPets;
+    } else if (player.pack == 'Star') {
+      pack = this.petService.starPackPets;
     }
     return cloneDeep(pack);
   }
