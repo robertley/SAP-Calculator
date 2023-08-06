@@ -24,6 +24,7 @@ import { Pie } from './classes/equipment/puppy/pie.class';
 import { cloneDeep } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
+import { Pancakes } from './classes/equipment/puppy/pancakes.class';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.2.0';
+  version = '0.2.1';
   sapVersion = '0.27.30-124 BETA'
 
   title = 'sap-calculator';
@@ -277,7 +278,8 @@ export class AppComponent implements OnInit {
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
 
-      this.executeBeforeStartOfBattleEquipment();
+      this.executeBeforeStartOfBattleEquipment(this.player);
+      this.executeBeforeStartOfBattleEquipment(this.opponent);
 
       this.startOfBattleService.initStartOfBattleEvents();
       this.startOfBattleService.executeToyPetEvents();
@@ -396,8 +398,8 @@ export class AppComponent implements OnInit {
     this.printState();
   }
 
-  executeBeforeStartOfBattleEquipment() {
-    for (let pet of this.player.petArray) {
+  executeBeforeStartOfBattleEquipment(player) {
+    for (let pet of player.petArray) {
       let multiplier = 1;
       let pantherMessage = '';
       if (pet instanceof Panther) {
@@ -410,10 +412,23 @@ export class AppComponent implements OnInit {
         this.logService.createLog({
           message: `${pet.name} gained ${4 * multiplier} attack and ${4 * multiplier} health (Pie)${pantherMessage}`,
           type: 'equipment',
-          player: this.player
+          player: player
         })
       }
-      // if pancake
+      if (pet.equipment instanceof Pancakes) {
+        for (let pett of player.petArray) {
+          if (pet == pett) {
+            continue;
+          }
+          pet.increaseAttack(2 * multiplier);
+          pet.increaseHealth(2 * multiplier);
+          this.logService.createLog({
+            message: `${pett.name} gained ${2 * multiplier} attack and ${2 * multiplier} health (Pancake)${pantherMessage}`,
+            type: 'equipment',
+            player: player
+          })
+        }
+      }
     }
   }
 
