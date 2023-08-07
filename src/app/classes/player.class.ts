@@ -538,7 +538,7 @@ export class Player {
         player.summonPet(pet, destination);
     }
 
-    getRandomStrawberryPet(excludePet?: Pet) {
+    getRandomStrawberryPet(excludePet?: Pet): Pet {
         let pets = this.getPetsWithEquipment('Strawberry');
         let filterPets = pets.filter((pet) => {
             return pet != excludePet;
