@@ -8,6 +8,7 @@ import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
 import { Salt } from "./equipment/puppy/salt.class";
 import { Panther } from "./pets/puppy/tier-5/panther.class";
+import { getOpponent } from "../util/helper-functions";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
@@ -19,11 +20,14 @@ export abstract class Pet {
     parent: Player;
     health: number;
     attack: number;
+    maxAbilityUses: number = null;
+    abilityUses: number = 0;
     equipment?: Equipment;
     originalHealth: number;
     originalAttack: number;
     originalEquipment?: Equipment;
     exp?: number = 0;
+    originalExp?: number = 0;
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
@@ -35,14 +39,18 @@ export abstract class Pet {
     friendFaints?(gameApi: GameAPI, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
+    friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    anyoneLevelUp?(gameApi: GameAPI, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
     // example of pet that SHOULD be defined: Parrot.
     endTurn?(gameApi: GameAPI): void;
     knockOut?(gameApi: GameAPI, tiger?: boolean): void;
     summoned?(gameApi: GameAPI, tiger?: boolean): void;
     friendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
+    enemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    enemyPushed?(gameApi: GameAPI, tiger?: boolean): void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -66,6 +74,7 @@ export abstract class Pet {
         this.originalAttack = this.attack;
         this.equipment = equipment;
         this.originalEquipment = equipment;
+        this.originalExp = this.exp;
     }
 
     tigerCheck(tiger) {
@@ -218,6 +227,36 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superEnemySummoned(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.enemySummoned(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superFriendHurt(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.friendHurt(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superAnyoneLevelUp(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.anyoneLevelUp(gameApi, true)
+        this.exp = exp;
+    }
+
 
     attackPet(pet: Pet) {
 
@@ -320,6 +359,11 @@ export abstract class Pet {
             });
         }
 
+        // friend hurt ability
+        if (pet.alive) {
+            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+        }
+
     }
 
     snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean) {
@@ -384,6 +428,11 @@ export abstract class Pet {
                 priority: this.attack
             })
         }
+
+        // friend hurt ability
+        if (pet.alive) {
+            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+        }
     }
 
     calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
@@ -424,6 +473,7 @@ export abstract class Pet {
         this.health = this.originalHealth;
         this.attack = this.originalAttack;
         this.equipment = this.originalEquipment;
+        this.exp = this.originalExp;
         this.done = false;
         this.seenDead = false;
         this.equipment?.reset();
@@ -498,6 +548,25 @@ export abstract class Pet {
 
     increaseHealth(amt) {
         this.health = Math.min(this.health + amt, 50);
+    }
+
+    increaseExp(amt) {
+        let level = this.level;
+        this.increaseAttack(amt);
+        this.increaseHealth(amt);
+        this.exp = Math.min(this.exp + amt, 5);
+        if (this.level > level) {
+            this.logService.createLog({
+                message: `${this.name} leveled up to level ${this.level}.`,
+                type: 'ability',
+                player: this.parent
+            });
+            this.abilityService.triggerLevelUpEvents(this.parent);
+            this.abilityService.triggerLevelUpEvents(this.parent.opponent);
+            this.abilityService.executeLevelUpEvents();
+        }
+
+        
     }
 
     givePetEquipment(equipment: Equipment) {

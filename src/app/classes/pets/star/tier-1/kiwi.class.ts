@@ -1,11 +1,11 @@
-import { AbilityService } from "../../../services/ability.service";
-import { LogService } from "../../../services/log.servicee";
-import { Equipment } from "../../equipment.class";
-import { Pack, Pet } from "../../pet.class";
-import { Player } from "../../player.class";
+import { AbilityService } from "../../../../services/ability.service";
+import { LogService } from "../../../../services/log.servicee";
+import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
 
-export class Pillbug extends Pet {
-    name = "Pillbug";
+export class Kiwi extends Pet {
+    name = "Kiwi";
     tier = 1;
     pack: Pack = 'Star';
     attack = 2;

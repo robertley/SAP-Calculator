@@ -1,32 +1,35 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
-import { Egg } from "../../../equipment/puppy/egg.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Nest } from "../../hidden/nest.class";
 
-export class Robin extends Pet {
-    name = "Robin";
-    tier = 2;
-    pack: Pack = 'Puppy';
+export class Hummingbird extends Pet {
+    name = "Hummingbird";
+    tier = 1;
+    pack: Pack = 'Star';
     attack = 2;
-    health = 3;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let nest = new Nest(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Egg(this.logService, this.abilityService));
+        let target = this.parent.getRandomStrawberryPet(this);
+        if (target == null) {
+            return;
+        }
+        let power: Power = {
+            attack: this.level * 2,
+            health: this.level,
+        }
+        target.increaseHealth(power.health);
+        target.increaseAttack(power.attack);
         this.logService.createLog({
-            message: `${this.name} summoned a Nest (level ${this.level}).`,
+            message: `${this.name} increased ${target.name}'s attack by ${power.attack} and health by ${power.health}.`,
             type: 'ability',
             player: this.parent,
-            randomEvent: false,
-            tiger: tiger
-        });
-
-        this.parent.summonPet(nest, this.position - 1);
-
+            tiger: tiger,
+            randomEvent: true
+        })
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

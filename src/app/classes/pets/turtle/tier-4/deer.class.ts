@@ -14,7 +14,7 @@ export class Deer extends Pet {
     attack = 1;
     health = 1;
     faint(gameApi, tiger) {
-        let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Chili(this.logService));
+        let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
         this.abilityService.setSpawnEvent({
             callback: () => {
         

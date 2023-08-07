@@ -43,10 +43,33 @@ export class Egg extends Equipment {
             type: 'attack',
             player: pet.parent
         })
+
+        // hurt ability
+        if (attackPet.hurt != null) {
+            this.abilityService.setHurtEvent({
+                callback: attackPet.hurt.bind(attackPet),
+                priority: attackPet.attack,
+                player: attackPet.parent
+            })
+        }
+        // knockout
+        if (attackPet.health < 1 && pet.knockOut != null) {
+            console.log('knock out!')
+            this.abilityService.setKnockOutEvent({
+                callback: pet.knockOut.bind(pet),
+                priority: pet.attack
+            })
+        }
+
+        // friend hurt ability
+        if (attackPet.alive) {
+            this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackedPet);
+        }
     }
 
     constructor(
-        protected logService: LogService
+        protected logService: LogService,
+        protected abilityService: AbilityService 
     ) {
         super()
     }

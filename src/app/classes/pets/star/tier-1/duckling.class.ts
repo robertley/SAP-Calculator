@@ -1,8 +1,8 @@
-import { AbilityService } from "../../../services/ability.service";
-import { LogService } from "../../../services/log.servicee";
-import { Equipment } from "../../equipment.class";
-import { Pack, Pet } from "../../pet.class";
-import { Player } from "../../player.class";
+import { AbilityService } from "../../../../services/ability.service";
+import { LogService } from "../../../../services/log.servicee";
+import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
 
 export class Duckling extends Pet {
     name = "Duckling";

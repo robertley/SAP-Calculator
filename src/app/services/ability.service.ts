@@ -28,6 +28,9 @@ export class AbilityService {
     private friendGainedAilmentEvents: AbilityEvent[]= [];
     private friendlyToyBrokeEvents: AbilityEvent[]= [];
     private transformEvents: AbilityEvent[]= [];
+    private enemySummonedEvents: AbilityEvent[]= [];
+    private friendHurtEvents: AbilityEvent[]= [];
+    private levelUpEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -37,7 +40,9 @@ export class AbilityService {
         return this.hasFaintEvents ||
             this.hasSummonedEvents ||
             this.hasHurtEvents ||
-            this.hasEquipmentBeforeAttackEvents
+            this.hasEquipmentBeforeAttackEvents || 
+            this.hasFriendHurtEvents ||
+            this.hasKnockOutEvents
     }
 
     // End of Turn Events
@@ -317,6 +322,10 @@ export class AbilityService {
         this.resetKnockOutEvents();
     }
 
+    get hasKnockOutEvents() {
+        return this.knockOutEvents.length > 0;
+    }
+
     // friend faints
 
     triggerFriendFaintsEvents(faintedPet: Pet) {
@@ -554,4 +563,114 @@ export class AbilityService {
 
     }
 
+    // enemy summoned
+
+    triggerEnemySummonedEvents(player: Player, summonPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.enemySummoned != null) {
+                this.setEnemySummonedEvent({
+                    callback: pet.enemySummoned.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: summonPet
+                })
+            }
+        }
+    }
+    
+    setEnemySummonedEvent(event: AbilityEvent) {
+        this.enemySummonedEvents.push(event);
+    }
+
+    resetEnemySummonedEvents() {
+        this.enemySummonedEvents = [];
+    }
+
+    executeEnemySummonedEvents() {
+        // shuffle, so that same priority events are in random order
+        this.enemySummonedEvents = shuffle(this.enemySummonedEvents);
+
+        this.enemySummonedEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.enemySummonedEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
+        }
+        
+        this.resetEnemySummonedEvents();
+
+    }
+
+    // friend hurt events
+
+    triggerFriendHurtEvents(player: Player, hurtPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.friendHurt != null) {
+                this.setFriendHurtEvent({
+                    callback: pet.friendHurt.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: hurtPet
+                })
+            }
+        }
+    }
+    
+    setFriendHurtEvent(event: AbilityEvent) {
+        this.friendHurtEvents.push(event);
+    }
+
+    resetFriendHurtEvents() {
+        this.friendHurtEvents = [];
+    }
+
+    executeFriendHurtEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendHurtEvents = shuffle(this.friendHurtEvents);
+
+        this.friendHurtEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendHurtEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
+        }
+        
+        this.resetFriendHurtEvents();
+
+    }
+
+    get hasFriendHurtEvents() {
+        return this.friendHurtEvents.length > 0;
+    }
+
+    // levl up events
+
+    triggerLevelUpEvents(player: Player) {
+        for (let pet of player.petArray) {
+            if (pet.anyoneLevelUp != null) {
+                this.setLevelUpEvent({
+                    callback: pet.anyoneLevelUp.bind(pet),
+                    priority: pet.attack,
+                })
+            }
+        }
+    }
+    
+    setLevelUpEvent(event: AbilityEvent) {
+        this.levelUpEvents.push(event);
+    }
+
+    resetLevelUpEvents() {
+        this.levelUpEvents = [];
+    }
+
+    executeLevelUpEvents() {
+        // shuffle, so that same priority events are in random order
+        this.levelUpEvents = shuffle(this.levelUpEvents);
+
+        this.levelUpEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.levelUpEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
+        }
+        
+        this.resetLevelUpEvents();
+
+    }
 }

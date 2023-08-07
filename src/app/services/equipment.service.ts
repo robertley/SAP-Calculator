@@ -20,6 +20,7 @@ import { Pie } from "../classes/equipment/puppy/pie.class";
 import { Skewer } from "../classes/equipment/puppy/skewer.class";
 import { Lemon } from "../classes/equipment/puppy/lemon.class";
 import { Pancakes } from "../classes/equipment/puppy/pancakes.class";
+import { Strawberry } from "../classes/equipment/star/strawberry.class";
 
 @Injectable({
     providedIn: "root"
@@ -35,18 +36,19 @@ export class EquipmentService {
         map.set('Steak', new Steak());
         map.set('Melon', new Melon())
         map.set('Honey', new Honey(this.logService, this.abilityService))
-        map.set('Chili', new Chili(this.logService))
+        map.set('Chili', new Chili(this.logService, this.abilityService))
         map.set('Mushroom', new Mushroom(this.logService, this.abilityService, this.petService));
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
-        map.set('Egg', new Egg(this.logService));
+        map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Salt', new Salt());
         map.set('Pie', new Pie());
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
         map.set('Pancakes', new Pancakes());
+        map.set('Strawberry', new Strawberry());
         return map;
     }
 

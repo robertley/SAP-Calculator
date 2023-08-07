@@ -38,7 +38,7 @@ export class Tahr extends Pet {
                 player: this.parent,
                 tiger: tiger
             })
-            pet.givePetEquipment(new Chili(this.logService));
+            pet.givePetEquipment(new Chili(this.logService, this.abilityService));
             count++;
         }
         this.superFaint(gameApi, tiger);

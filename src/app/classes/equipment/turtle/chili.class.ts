@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash";
+import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.servicee";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
@@ -51,9 +53,31 @@ export class Chili extends Equipment {
             type: 'attack',
             player: pet.parent
         })
+
+        // hurt ability
+        if (attackPet.hurt != null) {
+            this.abilityService.setHurtEvent({
+                callback: attackPet.hurt.bind(attackPet),
+                priority: attackPet.attack,
+                player: attackPet.parent
+            })
+        }
+        // knockout
+        if (attackPet.health < 1 && pet.knockOut != null) {
+            console.log('knock out!')
+            this.abilityService.setKnockOutEvent({
+                callback: pet.knockOut.bind(pet),
+                priority: pet.attack
+            })
+        }
+
+        // friend hurt ability
+        if (attackPet.alive) {
+            this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackedPet);
+        }
     }
 
-    constructor(private logService: LogService) {
+    constructor(private logService: LogService, private abilityService: AbilityService) {
         super()
     }
 }

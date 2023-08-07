@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
   }
 
   initFormGroup() {
-    let defaultTurn = 11;
+    let defaultTurn = 3;
     this.formGroup = new FormGroup({
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
@@ -136,6 +136,9 @@ export class AppComponent implements OnInit {
         break;
       case 'Puppy':
         petPool = this.petService.puppyPackPets;
+        break;
+      case 'Star':
+        petPool = this.petService.starPackPets;
         break;
     }
     if (player == this.player) {
@@ -196,6 +199,10 @@ export class AppComponent implements OnInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
+    this.abilityService.executeFriendHurtEvents();
+    this.executeFrequentEvents();
+    this.checkPetsAlive();
+
     this.abilityService.executeFaintEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
@@ -216,6 +223,8 @@ export class AppComponent implements OnInit {
 
     this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();
+    this.abilityService.executeEnemySummonedEvents();
+
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
@@ -289,6 +298,8 @@ export class AppComponent implements OnInit {
       this.startOfBattleService.executeNonToyPetEvents();
       this.executeFrequentEvents();
 
+      this.abilityService.executeEnemySummonedEvents();
+      
       this.abilityService.triggerTransformEvents(this.player);
       this.abilityService.triggerTransformEvents(this.opponent);
       this.abilityService.executeTransformEvents();
@@ -384,6 +395,12 @@ export class AppComponent implements OnInit {
     this.doBeforeAttackEquipment();
     while(this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
+    }
+    this.checkPetsAlive();
+    this.removeDeadPets();
+
+    if (!this.player.alive() || !this.opponent.alive()) {
+      return;
     }
 
     this.pushPetsForwards();

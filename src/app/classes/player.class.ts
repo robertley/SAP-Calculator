@@ -1,7 +1,7 @@
 import { clone, cloneDeep, shuffle } from "lodash";
 import { Pet } from "./pet.class";
 import { LogService } from "../services/log.servicee";
-import { getRandomInt } from "../util/helper-functions";
+import { getOpponent, getRandomInt } from "../util/helper-functions";
 import { AbilityService } from "../services/ability.service";
 import { Toy } from "./toy.class";
 import { Equipment } from "./equipment.class";
@@ -177,6 +177,10 @@ export class Player {
         if (spawnPet.summoned) {
             spawnPet.summoned(null);
         }
+
+        let opponent = getOpponent(this.gameService.gameApi, this);
+
+        this.abilityService.triggerEnemySummonedEvents(opponent, spawnPet);
 
         return true;
     }
@@ -526,4 +530,27 @@ export class Player {
         return strongestPet;
     }
 
+    pushPet(pet: Pet, spaces = 1) {
+        let player = pet.parent;
+        let position = pet.position;
+        player[`pet${position}`] = null;
+        let destination = position - spaces;
+        player.summonPet(pet, destination);
+    }
+
+    getRandomStrawberryPet(excludePet?: Pet) {
+        let pets = this.getPetsWithEquipment('Strawberry');
+        let filterPets = pets.filter((pet) => {
+            return pet != excludePet;
+        });
+        if (filterPets.length == 0) {
+            return null;
+        }
+        return pets[getRandomInt(0, filterPets.length - 1)];
+    }
+
+    get opponent() {
+        return getOpponent(this.gameService.gameApi, this);
+
+    }
 }

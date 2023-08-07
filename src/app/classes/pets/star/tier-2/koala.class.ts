@@ -1,33 +1,29 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
-import { Egg } from "../../../equipment/puppy/egg.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Nest } from "../../hidden/nest.class";
 
-export class Robin extends Pet {
-    name = "Robin";
+export class Koala extends Pet {
+    name = "Koala";
     tier = 2;
-    pack: Pack = 'Puppy';
-    attack = 2;
-    health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let nest = new Nest(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Egg(this.logService, this.abilityService));
+    pack: Pack = 'Star';
+    attack = 1;
+    health = 2;
+    abilityUses = 1;
+    friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (this.abilityUses <= 0 && !tiger) return;
+        pet.increaseAttack(this.level);
+        pet.increaseHealth(this.level);
         this.logService.createLog({
-            message: `${this.name} summoned a Nest (level ${this.level}).`,
+            message: `${this.name} gave ${pet.name} ${this.level} attack and ${this.level} health.`,
             type: 'ability',
             player: this.parent,
-            randomEvent: false,
             tiger: tiger
-        });
-
-        this.parent.summonPet(nest, this.position - 1);
-
-        this.superStartOfBattle(gameApi, tiger);
+        })
+        this.abilityUses -= 1;
+        this.superFriendHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
