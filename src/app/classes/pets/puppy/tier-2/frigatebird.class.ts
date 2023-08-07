@@ -12,10 +12,8 @@ export class Frigatebird extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 1;
-    abilityCounter = 0;
     friendGainedAilment(gameApi: GameAPI, pet?: Pet): void {
-        console.log(pet)
-        if (this.abilityCounter >= this.level) {
+        if (this.abilityUses >= this.level) {
             return;
         }
         if (pet == this) {
@@ -23,7 +21,7 @@ export class Frigatebird extends Pet {
         }
         let equipment = pet.equipment;
         pet.equipment = null;
-        this.abilityCounter++;
+        this.abilityUses++;
         this.logService.createLog({
             message: `${this.name} removed ${equipment.name} from ${pet.name}.`,
             type: 'ability',
@@ -42,7 +40,11 @@ export class Frigatebird extends Pet {
     }
 
     resetPet(): void {
-        this.abilityCounter = 0;
         super.resetPet();
+    }
+
+    setAbilityUses() {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

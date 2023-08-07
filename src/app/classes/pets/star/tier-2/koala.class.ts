@@ -11,9 +11,9 @@ export class Koala extends Pet {
     pack: Pack = 'Star';
     attack = 1;
     health = 2;
-    abilityUses = 1;
+    maxAbilityUses = 1;
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.abilityUses <= 0 && !tiger) return;
+        if (this.abilityUses >= this.maxAbilityUses && !tiger) return;
         pet.increaseAttack(this.level);
         pet.increaseHealth(this.level);
         this.logService.createLog({
@@ -22,7 +22,7 @@ export class Koala extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.abilityUses -= 1;
+        this.abilityUses += 1;
         this.superFriendHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

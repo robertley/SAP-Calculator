@@ -65,6 +65,11 @@ export class Egg extends Equipment {
         if (attackPet.alive) {
             this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackedPet);
         }
+
+        // enemy hurt ability
+        if (attackPet.alive && damage > 0) {
+            this.abilityService.triggerEnemyHurtEvents(pet.parent, attackPet);
+        }
     }
 
     constructor(

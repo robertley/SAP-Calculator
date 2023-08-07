@@ -55,7 +55,7 @@ export class Chili extends Equipment {
         })
 
         // hurt ability
-        if (attackPet.hurt != null) {
+        if (attackPet.hurt != null && damage > 0) {
             this.abilityService.setHurtEvent({
                 callback: attackPet.hurt.bind(attackPet),
                 priority: attackPet.attack,
@@ -64,7 +64,6 @@ export class Chili extends Equipment {
         }
         // knockout
         if (attackPet.health < 1 && pet.knockOut != null) {
-            console.log('knock out!')
             this.abilityService.setKnockOutEvent({
                 callback: pet.knockOut.bind(pet),
                 priority: pet.attack
@@ -72,8 +71,13 @@ export class Chili extends Equipment {
         }
 
         // friend hurt ability
-        if (attackPet.alive) {
+        if (attackPet.alive && damage > 0) {
             this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackedPet);
+        }
+
+        // enemy hurt ability
+        if (pet.alive && damage > 0) {
+            this.abilityService.triggerEnemyHurtEvents(pet.parent, attackPet);
         }
     }
 

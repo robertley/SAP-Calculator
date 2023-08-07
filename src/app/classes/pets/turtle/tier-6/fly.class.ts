@@ -12,12 +12,12 @@ export class Fly extends Pet {
     pack: Pack = 'Turtle';
     attack = 5;
     health = 5;
-    flyCounter = 0;
+    maxAbilityUses: number = 2;
     friendFaints(gameApi: GameAPI, tiger?: boolean, faintedPet?: Pet): void {
         if (faintedPet instanceof ZombieFly) {
             return;
         }
-        if (this.flyCounter > 2) {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         if (!this.alive) {
@@ -42,7 +42,7 @@ export class Fly extends Pet {
             },
             priority: this.attack
         })
-        this.flyCounter++;
+        this.abilityUses++;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -55,8 +55,4 @@ export class Fly extends Pet {
         this.initPet(exp, health, attack, equipment);
     }
 
-    resetPet(): void {
-        super.resetPet();
-        this.flyCounter = 0;
-    }
 }

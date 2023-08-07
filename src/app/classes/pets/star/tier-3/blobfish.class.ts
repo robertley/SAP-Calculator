@@ -5,23 +5,34 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Jellyfish extends Pet {
-    name = "Jellyfish";
-    tier = 2;
+export class Blobfish extends Pet {
+    name = "Blobfish";
+    tier = 3;
     pack: Pack = 'Star';
     attack = 2;
-    health = 3;
-    anyoneLevelUp(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
+    health = 4;
+    faint(gameApi?: GameAPI, tiger?: boolean): void {
+        let target = this.petBehind();
+        if (target == null) {
+            return;
+        }
         let power = this.level;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} increased attack by ${power} and health by ${power}`,
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
-        })
-        this.superAnyoneLevelUp(gameApi, pet, tiger);
+        });
+        target.increaseAttack(power);
+        target.increaseHealth(power);
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} ${power} exp.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        });
+        target.increaseExp(power);
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

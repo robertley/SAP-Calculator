@@ -203,6 +203,10 @@ export class AppComponent implements OnInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
+    this.abilityService.executeEnemyHurtEvents();
+    this.executeFrequentEvents();
+    this.checkPetsAlive();
+
     this.abilityService.executeFaintEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();

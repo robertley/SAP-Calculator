@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Player } from "../classes/player.class";
 import { GameAPI } from "../interfaces/gameAPI.interface";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
-import { clone, shuffle } from "lodash";
+import { clone, cloneDeep, shuffle } from "lodash";
 import { GameService } from "./game.service";
 import { Pet } from "../classes/pet.class";
 
@@ -31,6 +31,7 @@ export class AbilityService {
     private enemySummonedEvents: AbilityEvent[]= [];
     private friendHurtEvents: AbilityEvent[]= [];
     private levelUpEvents: AbilityEvent[]= [];
+    private enemyHurtEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -42,6 +43,7 @@ export class AbilityService {
             this.hasHurtEvents ||
             this.hasEquipmentBeforeAttackEvents || 
             this.hasFriendHurtEvents ||
+            this.hasEnemyHurtEvents ||
             this.hasKnockOutEvents
     }
 
@@ -641,12 +643,13 @@ export class AbilityService {
 
     // levl up events
 
-    triggerLevelUpEvents(player: Player) {
+    triggerLevelUpEvents(player: Player, levelUpPet: Pet) {
         for (let pet of player.petArray) {
             if (pet.anyoneLevelUp != null) {
                 this.setLevelUpEvent({
                     callback: pet.anyoneLevelUp.bind(pet),
                     priority: pet.attack,
+                    callbackPet: levelUpPet
                 })
             }
         }
@@ -672,5 +675,50 @@ export class AbilityService {
         
         this.resetLevelUpEvents();
 
+    }
+
+    // enemy hurt events
+
+    /**
+     * 
+     * @param player opposite player of the pet that was hurt
+     * @param pet pet that was hurt
+     */
+    triggerEnemyHurtEvents(player: Player, hurtPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.enemyHurt != null) {
+                this.setEnemyHurtEvent({
+                    callback: pet.enemyHurt.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: hurtPet
+                })
+            }
+        }
+    }
+    
+    setEnemyHurtEvent(event: AbilityEvent) {
+        this.enemyHurtEvents.push(event);
+    }
+
+    resetEnemyHurtEvents() {
+        this.enemyHurtEvents = [];
+    }
+
+    executeEnemyHurtEvents() {
+        // shuffle, so that same priority events are in random order
+        this.enemyHurtEvents = shuffle(this.enemyHurtEvents);
+
+        this.enemyHurtEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.enemyHurtEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
+        }
+        
+        this.resetEnemyHurtEvents();
+
+    }
+
+    get hasEnemyHurtEvents() {
+        return this.enemyHurtEvents.length > 0;
     }
 }

@@ -12,13 +12,12 @@ export class Gorilla extends Pet {
     pack: Pack = 'Turtle';
     attack = 7;
     health = 10;
-    coconutCounter = 0;
     hurt(gameApi: GameAPI, tiger?: boolean): void {
         if (!this.alive) {
             return;
         }
-        if (this.coconutCounter < this.level) {
-            this.coconutCounter++;
+        if (this.abilityUses < this.maxAbilityUses) {
+            this.abilityUses++;
             this.equipment = new Coconut();
             this.logService.createLog({
                 message: `${this.name} gained a Coconut.`,
@@ -41,8 +40,8 @@ export class Gorilla extends Pet {
         this.initPet(exp, health, attack, equipment);
     }
 
-    resetPet(): void {
-        super.resetPet();
-        this.coconutCounter = 0;
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

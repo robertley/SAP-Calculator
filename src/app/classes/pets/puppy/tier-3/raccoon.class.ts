@@ -12,7 +12,6 @@ export class Raccoon extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 2;
-    stealCounter = 0;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let target = opponent.getPetAtPosition(0);
@@ -22,7 +21,7 @@ export class Raccoon extends Pet {
         if (target.equipment == null) {
             return;
         }
-        if (this.stealCounter > this.level) {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         this.logService.createLog({
@@ -32,7 +31,7 @@ export class Raccoon extends Pet {
         })
         this.givePetEquipment(target.equipment);
         target.equipment = null;
-        this.stealCounter++;
+        this.abilityUses++;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -44,8 +43,8 @@ export class Raccoon extends Pet {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
     }
-    resetPet(): void {
-        this.stealCounter = 0;
-        super.resetPet();
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

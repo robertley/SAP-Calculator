@@ -5,18 +5,21 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Jellyfish extends Pet {
-    name = "Jellyfish";
-    tier = 2;
+export class Clownfish extends Pet {
+    name = "Clownfish";
+    tier = 3;
     pack: Pack = 'Star';
     attack = 2;
     health = 3;
     anyoneLevelUp(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let power = this.level;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
+        if (pet.parent !== this.parent) {
+            return;
+        }
+        let power = this.level * 2;
+        pet.increaseAttack(power);
+        pet.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} increased attack by ${power} and health by ${power}`,
+            message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

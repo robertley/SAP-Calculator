@@ -42,7 +42,7 @@ export abstract class Pet {
     friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    anyoneLevelUp?(gameApi: GameAPI, tiger?: boolean): void;
+    anyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
     // example of pet that SHOULD be defined: Parrot.
     endTurn?(gameApi: GameAPI): void;
@@ -51,6 +51,7 @@ export abstract class Pet {
     friendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
     enemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     enemyPushed?(gameApi: GameAPI, tiger?: boolean): void;
+    enemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -75,6 +76,12 @@ export abstract class Pet {
         this.equipment = equipment;
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
+        this.setAbilityUses();
+    }
+
+    // overrwrite this method if maxAbilityUses is determined by level
+    setAbilityUses() {
+        this.abilityUses = 0;
     }
 
     tigerCheck(tiger) {
@@ -247,13 +254,23 @@ export abstract class Pet {
         this.exp = exp;
     }
 
-    protected superAnyoneLevelUp(gameApi, tiger=false) {
+    protected superAnyoneLevelUp(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
-        this.anyoneLevelUp(gameApi, true)
+        this.anyoneLevelUp(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superEnemyHurt(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.enemyHurt(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -327,7 +344,7 @@ export abstract class Pet {
         }
 
         // hurt ability
-        if (pet.hurt != null) {
+        if (pet.hurt != null && damage > 0) {
             this.abilityService.setHurtEvent({
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
@@ -360,8 +377,13 @@ export abstract class Pet {
         }
 
         // friend hurt ability
-        if (pet.alive) {
+        if (pet.alive && damage > 0) {
             this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+        }
+
+        // enemy hurt ability
+        if (pet.alive && damage > 0) {
+            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
         }
 
     }
@@ -413,7 +435,7 @@ export abstract class Pet {
         });
         
         // hurt ability
-        if (pet.hurt != null) {
+        if (pet.hurt != null && damage > 0) {
             this.abilityService.setHurtEvent({
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
@@ -430,8 +452,13 @@ export abstract class Pet {
         }
 
         // friend hurt ability
-        if (pet.alive) {
+        if (pet.alive && damage > 0) {
             this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+        }
+
+        // enemy hurt ability
+        if (pet.alive && damage > 0) {
+            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
         }
     }
 
@@ -478,6 +505,7 @@ export abstract class Pet {
         this.seenDead = false;
         this.equipment?.reset();
         this.swallowedPets = [];
+        this.setAbilityUses();
     }
 
     get alive() {
@@ -561,9 +589,10 @@ export abstract class Pet {
                 type: 'ability',
                 player: this.parent
             });
-            this.abilityService.triggerLevelUpEvents(this.parent);
-            this.abilityService.triggerLevelUpEvents(this.parent.opponent);
+            this.abilityService.triggerLevelUpEvents(this.parent, this);
+            this.abilityService.triggerLevelUpEvents(this.parent.opponent, this);
             this.abilityService.executeLevelUpEvents();
+            this.setAbilityUses();
         }
 
         
