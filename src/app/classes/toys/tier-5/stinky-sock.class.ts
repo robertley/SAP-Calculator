@@ -8,7 +8,8 @@ export class StrinkySock extends Toy {
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
-            let target = opponent.getHighestHealthPet();
+            let highestHealthPetResp = opponent.getHighestHealthPet();
+            let target = highestHealthPetResp.pet;
             let power = .40;
             let reducedTo =  Math.ceil(target.health * (1 - power));
             target.health = reducedTo;
@@ -16,7 +17,8 @@ export class StrinkySock extends Toy {
                 message: `${this.name} reduced ${target.name} health by ${power * 100}% (${reducedTo})`,
                 type: 'ability',
                 player: this.parent,
-                puma: puma
+                puma: puma,
+                randomEvent: highestHealthPetResp.random
             });
         }
     }

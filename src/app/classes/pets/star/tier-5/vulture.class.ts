@@ -5,25 +5,27 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Crab extends Pet {
-    name = "Crab";
-    tier = 2;
-    pack: Pack = 'Turtle';
-    health = 1;
+export class Vulture extends Pet {
+    name = "Vulture";
+    tier = 5;
+    pack: Pack = 'Star';
     attack = 4;
-    startOfBattle(gameApi: GameAPI, tiger) {
-        let highestHealthPet = this.parent.getHighestHealthPet(this).pet;
-        let copyAmmt = .5 * this.level;
-        let crabHealth = Math.floor(highestHealthPet.health * copyAmmt);
-        this.health = crabHealth;
-        this.logService.createLog({
-            message: `${this.name} copied ${copyAmmt * 100}% of ${highestHealthPet.name}'s health (${crabHealth})`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        }),
-        
-        super.superStartOfBattle(gameApi, tiger);
+    health = 3;
+    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+        if (!tiger) {
+            this.abilityUses++;
+        }
+        if (this.abilityUses % 2 == 1) {
+            return;
+        }
+        let opponent = this.parent.opponent;
+        let target = opponent.getRandomPet();
+        if (target == null) {
+            return;
+        }
+        let power = this.level * 4;
+        this.snipePet(target, power, true, tiger);
+        this.superFriendFaints(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -37,7 +37,8 @@ export class Stork extends Pet {
                         message: `${this.name} spawned ${summonPet.name} Level ${this.level}`,
                         type: "ability",
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        randomEvent: true
                     }
                 )
 

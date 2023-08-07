@@ -1,31 +1,23 @@
-import { getOpponent } from "app/util/helper-functions";
+import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Skunk extends Pet {
-    name = "Skunk";
-    tier = 4;
-    pack: Pack = 'Turtle';
-    attack = 3;
+export class SwordFish extends Pet {
+    name = "Sword Fish";
+    tier = 5;
+    pack: Pack = 'Star';
+    attack = 5;
     health = 5;
-    startOfBattle(gameApi, tiger) {
-        let opponent = getOpponent(gameApi, this.parent);
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let opponent = this.parent.opponent;
         let highestHealthPetResp = opponent.getHighestHealthPet();
-        let targetPet = highestHealthPetResp.pet;
-        let power = .33 * this.level;
-        let reducedTo =  Math.ceil(targetPet.health * (1 - power));
-        targetPet.health = reducedTo;
-        this.logService.createLog({
-            message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})`,
-            type: 'ability',
-            player: this.parent,
-            randomEvent: highestHealthPetResp.random,
-            tiger
-        });
-
+        let target = highestHealthPetResp.pet;
+        let power = this.attack * this.level;
+        this.snipePet(target, power, highestHealthPetResp.random, tiger);
+        this.snipePet(this, power, false, tiger);
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

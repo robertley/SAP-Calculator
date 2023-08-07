@@ -400,7 +400,10 @@ export class Player {
      * @param excludePet
      * @returns 
      */
-    getHighestHealthPet(excludePet?: Pet) {
+    getHighestHealthPet(excludePet?: Pet): {
+        pet: Pet,
+        random: boolean
+    } {
         let highestHealthPets: Pet[];
         for (let i in this.petArray) {
             let index = +i;
@@ -420,7 +423,10 @@ export class Player {
                 highestHealthPets = [pet];
             }
         }
-        return highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)];
+        return { 
+            pet: highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)],
+            random: highestHealthPets.length > 1
+        }
     }
 
     /**
