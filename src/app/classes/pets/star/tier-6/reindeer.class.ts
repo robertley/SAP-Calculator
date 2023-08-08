@@ -2,31 +2,29 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
+import { Melon } from "../../../equipment/turtle/melon.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Triceratops extends Pet {
-    name = "Triceratops";
-    tier = 5;
+export class Reindeer extends Pet {
+    name = "Reindeer";
+    tier = 6;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 6;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.getRandomPet([this]);
-        let power = this.level * 3;
-        if (target == null) {
+    attack = 6;
+    health = 4;
+    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        target.increaseAttack(power);
-        target.increaseHealth(power);
+        this.givePetEquipment(new Melon());
+        this.abilityUses++;
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gained Melon.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger,
-            randomEvent: true
-        });
-        this.superHurt(gameApi, tiger);
+            tiger: tiger
+        })
+        this.superAfterAttack(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -37,5 +35,10 @@ export class Triceratops extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

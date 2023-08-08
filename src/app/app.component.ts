@@ -82,7 +82,7 @@ export class AppComponent implements OnInit {
   }
 
   initFormGroup() {
-    let defaultTurn = 3;
+    let defaultTurn = 11;
     this.formGroup = new FormGroup({
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
@@ -186,6 +186,7 @@ export class AppComponent implements OnInit {
       tier = 6;
     }
     this.gameService.setPreviousShopTier(tier);
+    this.gameService.setTurnNumber(turn);
   }
 
   updateToyLevel(player: Player, level) {

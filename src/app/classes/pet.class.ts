@@ -9,6 +9,8 @@ import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
 import { Salt } from "./equipment/puppy/salt.class";
 import { Panther } from "./pets/puppy/tier-5/panther.class";
 import { getOpponent } from "../util/helper-functions";
+import { Cheese } from "./equipment/star/cheese.class";
+import { Pepper } from "./equipment/star/pepper.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
 
@@ -291,6 +293,10 @@ export abstract class Pet {
             defenseMultiplier = pet.level + 1;
         }
 
+        if (attackEquipment instanceof Cheese) {
+            damage *= 2;
+        }
+
         // peanut death
         if (attackEquipment instanceof Peanut && damage > 0) {
             this.logService.createLog({
@@ -313,6 +319,9 @@ export abstract class Pet {
                         powerAmt = `x1`;
                     }
                 }
+                if (attackEquipment instanceof Cheese) {
+                    powerAmt = `x2`;
+                }
                 message += ` (${attackEquipment.name} ${powerAmt})`;
 
                 if (attackMultiplier > 1) {
@@ -320,10 +329,18 @@ export abstract class Pet {
                 }
             }
             if (defenseEquipment != null) {
-                let power = Math.abs(defenseEquipment.power);
+                let power: any = Math.abs(defenseEquipment.power);
                 let sign = '-';
                 if (defenseEquipment.power < 0) {
                     sign = '+';
+                }
+                if (defenseEquipment instanceof Pepper) {
+                    if (pet.health == 1) {
+                        sign = '!';
+                    } else {
+                        sign = '-';
+                    }
+                    power = '';
                 }
                 message += ` (${defenseEquipment.name} ${sign}${power})`;
 
@@ -489,6 +506,11 @@ export abstract class Pet {
         }
 
         let damage = Math.max(min, attackAmt - defenseAmt);
+
+        if (defenseEquipment instanceof Pepper) {
+            damage = Math.min(damage, pet.health - 1);
+        }
+        
         return {
             defenseEquipment: defenseEquipment,
             attackEquipment: attackEquipment,
@@ -539,6 +561,9 @@ export abstract class Pet {
             return;
         }
         if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield') {
+            return;
+        }
+        if (this.equipment.uses == null) {
             return;
         }
         this.equipment.uses -= 1;

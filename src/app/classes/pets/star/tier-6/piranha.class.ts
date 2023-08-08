@@ -5,28 +5,28 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Triceratops extends Pet {
-    name = "Triceratops";
-    tier = 5;
+export class Piranha extends Pet {
+    name = "Piranha";
+    tier = 6;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 6;
+    attack = 10;
+    health = 2;
     hurt(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.getRandomPet([this]);
-        let power = this.level * 3;
-        if (target == null) {
-            return;
-        }
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: true
+        let targetPets = this.parent.petArray.filter(pet => {
+            return pet !== this && pet.alive
         });
+        let power = this.level * 3;
+        for (let target of targetPets) {
+            target.increaseAttack(power);
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} ${power} attack.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            })
+        }
         this.superHurt(gameApi, tiger);
+
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

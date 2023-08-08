@@ -5,29 +5,12 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Triceratops extends Pet {
-    name = "Triceratops";
-    tier = 5;
+export class Ostrich extends Pet {
+    name = "Ostrich";
+    tier = 6;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 6;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.getRandomPet([this]);
-        let power = this.level * 3;
-        if (target == null) {
-            return;
-        }
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: true
-        });
-        this.superHurt(gameApi, tiger);
-    }
+    attack = 2;
+    health = 8;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

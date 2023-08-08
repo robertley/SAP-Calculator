@@ -3,6 +3,7 @@ import { Player } from "../classes/player.class";
 import { GameAPI } from "../interfaces/gameAPI.interface";
 import { AbilityService } from "./ability.service";
 import { Pet } from "../classes/pet.class";
+import { PetService } from "./pet.service";
 
 @Injectable({
     providedIn: "root"
@@ -33,6 +34,10 @@ export class GameService {
 
     setPreviousShopTier(tier: number) {
         this.gameApi.previousShopTier = tier;
+    }
+
+    setTurnNumber(turnNumber: number) {
+        this.gameApi.turnNumber = turnNumber;
     }
 
 }

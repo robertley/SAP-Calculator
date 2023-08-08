@@ -7,4 +7,5 @@ export interface GameAPI {
     playerPetPool?: Map<number, string[]>;
     opponentPetPool?: Map<number, string[]>;
     previousShopTier?: number;
+    turnNumber?: number;
 }

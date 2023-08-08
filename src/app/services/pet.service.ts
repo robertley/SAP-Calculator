@@ -170,6 +170,16 @@ import { Fox } from "../classes/pets/star/tier-5/fox.class";
 import { Hamster } from "../classes/pets/star/tier-5/hamster.class";
 import { Shoebill } from "../classes/pets/star/tier-5/shoebill.class";
 import { Vulture } from "../classes/pets/star/tier-5/vulture.class";
+import { Komodo } from "../classes/pets/star/tier-6/komodo.class";
+import { Ostrich } from "../classes/pets/star/tier-6/ostrich.class";
+import { Reindeer } from "../classes/pets/star/tier-6/reindeer.class";
+import { Stegosaurus } from "../classes/pets/star/tier-6/stegosaurus.class";
+import { Piranha } from "../classes/pets/star/tier-6/piranha.class";
+import { HammerheadShark } from "../classes/pets/star/tier-6/hammerhead-shark.class";
+import { Velociraptor } from "../classes/pets/star/tier-6/velociraptor.class";
+import { SabertoothTiger } from "../classes/pets/star/tier-6/sabertooth-tiger.class";
+import { Orca } from "../classes/pets/star/tier-6/orca.class";
+import { Spinosaurus } from "../classes/pets/star/tier-6/spinosaurus.class";
 
 @Injectable({
     providedIn: 'root'
@@ -407,6 +417,19 @@ export class PetService {
             "Hamster",
             "Shoebill",
             "Vulture"
+        ])
+
+        this.starPackPets.set(6, [
+            "Komodo",
+            "Ostrich",
+            "Reindeer",
+            "Stegosaurus",
+            "Piranha",
+            "Hammerhead Shark",
+            "Velociraptor",
+            "Sabertooth Tiger",
+            "Orca",
+            "Spinosaurus"
         ])
     }
 
@@ -764,6 +787,28 @@ export class PetService {
                 return new Shoebill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Vulture':
                 return new Vulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            
+            // Tier 6
+            case 'Komodo':
+                return new Komodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Ostrich':
+                return new Ostrich(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Reindeer':
+                return new Reindeer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Stegosaurus':
+                return new Stegosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Piranha':
+                return new Piranha(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Hammerhead Shark':
+                return new HammerheadShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Velociraptor':
+                return new Velociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Sabertooth Tiger':
+                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Orca':
+                return new Orca(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Spinosaurus':
+                return new Spinosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
         }
     }
@@ -1293,12 +1338,44 @@ export class PetService {
             newPet = new Vulture(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
+        // Tier 6
+        if (pet instanceof Komodo) {
+            newPet = new Komodo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Ostrich) {
+            newPet = new Ostrich(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Reindeer) {
+            newPet = new Reindeer(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Stegosaurus) {
+            newPet = new Stegosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Piranha) {
+            newPet = new Piranha(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof HammerheadShark) {
+            newPet = new HammerheadShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Velociraptor) {
+            newPet = new Velociraptor(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SabertoothTiger) {
+            newPet = new SabertoothTiger(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Orca) {
+            newPet = new Orca(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Spinosaurus) {
+            newPet = new Spinosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
 
         return newPet;
     }
 
     getRandomPet(parent: Player) {
-        let tier = getRandomInt(1, 3);
+        let tier = getRandomInt(1, 6);
         let pets;
         if (parent.pack == 'Turtle') {
             pets = this.turtlePackPets.get(tier);
@@ -1319,6 +1396,46 @@ export class PetService {
             },
             parent
         )
+    }
+
+    getRandomFaintPet(parent: Player): Pet {
+        let faintPets = [
+            'Ant',
+            'Cricket',
+            'Rat',
+            'Hedgehog',
+            'Flamingo',
+            'Spider',
+            'Badger',
+            'Sheep',
+            'Turtle',
+            'Deer',
+            'Rooster',
+            'Mammoth',
+            'Beluga Sturgeon',
+            'Hoopoe Bird',
+            'Mole',
+            'Pangolin',
+            'Microbe',
+            'Tahr',
+            'Chameleon',
+            'Stonefish',
+            'Chicken',
+            'Eagle',
+            'Snapping Turtle',
+            'Lionfish',
+            'Stork',
+            'Blobfish',
+            'Anteater',
+        ];
+        let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
+        return this.createPet({
+            name: petName,
+            attack: null,
+            equipment: null,
+            exp: 0,
+            health: null,
+        }, parent);
     }
 }
 

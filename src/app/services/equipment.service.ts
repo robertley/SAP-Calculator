@@ -21,13 +21,20 @@ import { Skewer } from "../classes/equipment/puppy/skewer.class";
 import { Lemon } from "../classes/equipment/puppy/lemon.class";
 import { Pancakes } from "../classes/equipment/puppy/pancakes.class";
 import { Strawberry } from "../classes/equipment/star/strawberry.class";
+import { Cucumber } from "../classes/equipment/star/cucumber.class";
+import { Cheese } from "../classes/equipment/star/cheese.class";
+import { Grapes } from "../classes/equipment/star/grapes.class";
+import { Pepper } from "../classes/equipment/star/pepper.class";
+import { Carrot } from "../classes/equipment/star/carrot.class";
+import { Popcorn } from "../classes/equipment/star/popcorn.class";
+import { GameService } from "./game.service";
 
 @Injectable({
     providedIn: "root"
 })
 export class EquipmentService {
 
-    constructor(private logService: LogService, private abilityService: AbilityService, private petService: PetService) {}
+    constructor(private logService: LogService, private abilityService: AbilityService, private petService: PetService, private gameService: GameService) {}
 
     getInstanceOfAllEquipment() {
         let map: Map<string, Equipment> = new Map();
@@ -49,6 +56,13 @@ export class EquipmentService {
         map.set('Lemon', new Lemon());
         map.set('Pancakes', new Pancakes());
         map.set('Strawberry', new Strawberry());
+        map.set('Cucumber', new Cucumber());
+        map.set('Cheese', new Cheese());
+        map.set('Grapes', new Grapes());
+        map.set('Carrot', new Carrot());
+        map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
+
+
         return map;
     }
 

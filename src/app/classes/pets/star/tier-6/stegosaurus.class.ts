@@ -5,18 +5,19 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Triceratops extends Pet {
-    name = "Triceratops";
-    tier = 5;
+export class Stegosaurus extends Pet {
+    name = "Stegosaurus";
+    tier = 6;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 6;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.getRandomPet([this]);
-        let power = this.level * 3;
+    attack = 3;
+    health = 8;
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let nonEquipmentPets = this.parent.getPetsWithEquipment(null).filter(pet => pet !== this);
+        let target = nonEquipmentPets[Math.floor(Math.random() * nonEquipmentPets.length)];
         if (target == null) {
             return;
         }
+        let power = this.level * gameApi.turnNumber;
         target.increaseAttack(power);
         target.increaseHealth(power);
         this.logService.createLog({
@@ -24,9 +25,10 @@ export class Triceratops extends Pet {
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            randomEvent: true
-        });
-        this.superHurt(gameApi, tiger);
+            randomEvent: nonEquipmentPets.length > 1
+        })
+        this.superStartOfBattle(gameApi, tiger);
+
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

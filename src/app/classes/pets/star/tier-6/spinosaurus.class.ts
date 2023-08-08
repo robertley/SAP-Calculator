@@ -1,32 +1,35 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Triceratops extends Pet {
-    name = "Triceratops";
-    tier = 5;
+export class Spinosaurus extends Pet {
+    name = "Spinosaurus";
+    tier = 6;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 6;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
+    attack = 4;
+    health = 8;
+    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+        let power: Power = {
+            attack: this.level * 3,
+            health: this.level * 2
+        }
         let target = this.parent.getRandomPet([this]);
-        let power = this.level * 3;
         if (target == null) {
             return;
         }
-        target.increaseAttack(power);
-        target.increaseHealth(power);
+        target.increaseAttack(power.attack);
+        target.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
             randomEvent: true
-        });
-        this.superHurt(gameApi, tiger);
+        })
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
