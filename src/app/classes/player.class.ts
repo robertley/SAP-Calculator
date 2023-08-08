@@ -8,6 +8,7 @@ import { Equipment } from "./equipment.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Puma } from "./pets/puppy/tier-6/puma.class";
 import { GameService } from "../services/game.service";
+import { GoldenRetriever } from "./pets/hidden/golden-retriever.class";
 
 export class Player {
     pet0?: Pet;
@@ -22,10 +23,13 @@ export class Player {
     private orignalPet3?: Pet;
     private orignalPet4?: Pet;
 
-    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Turtle';
+    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Golden';
 
     toy: Toy;
     originalToy: Toy;
+
+    trumpets: number = 0;
+    spawnedGoldenRetiever: boolean = false;
 
     constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {
     }
@@ -53,6 +57,8 @@ export class Player {
         this.orignalPet4 = this.pet4;
 
         this.toy = this.originalToy;
+        this.trumpets = 0;
+        this.spawnedGoldenRetiever = false;
     }
 
     setPet(index: number, pet: Pet, init=false) {
@@ -561,5 +567,35 @@ export class Player {
     get opponent() {
         return getOpponent(this.gameService.gameApi, this);
 
+    }
+
+    gainTrumpets(amt: number) {
+        this.trumpets = Math.min(50, this.trumpets += amt);
+    }
+
+    checkGoldenSpawn() {
+        if (this.spawnedGoldenRetiever) {
+            return;
+        }
+        if (this.petArray.length > 1 || this.trumpets == 0) {
+            return;
+        }
+        let goldenRetriever = new GoldenRetriever(this.logService, this.abilityService, this, this.trumpets, this.trumpets);
+
+        let name = this == this.gameService.gameApi.player ? 'Player' : 'Opponent';
+
+        this.logService.createLog(
+            {
+                message: `${name} spawned Golden Retriever (${goldenRetriever.attack}/${goldenRetriever.health})`,
+                type: "ability",
+                player: this
+            }
+        )
+
+        if (this.summonPet(goldenRetriever, 0)) {
+            this.abilityService.triggerSummonedEvents(goldenRetriever);
+        }
+        this.trumpets = 0;
+        this.spawnedGoldenRetiever = true;
     }
 }

@@ -596,11 +596,11 @@ export abstract class Pet {
     }
 
     increaseAttack(amt) {
-        this.attack = Math.min(this.attack + amt, 50);
+        this.attack = Math.min(Math.max(this.attack + amt, 1), 50);
     }
 
     increaseHealth(amt) {
-        this.health = Math.min(this.health + amt, 50);
+        this.health = Math.min(Math.max(this.health  + amt, 1), 50);
     }
 
     increaseExp(amt) {

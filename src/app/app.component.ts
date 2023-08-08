@@ -140,6 +140,9 @@ export class AppComponent implements OnInit {
       case 'Star':
         petPool = this.petService.starPackPets;
         break;
+      case 'Golden':
+        petPool = this.petService.goldenPackPets;
+        break;
     }
     if (player == this.player) {
       this.gameService.setTierGroupPets(petPool, null);
@@ -364,6 +367,7 @@ export class AppComponent implements OnInit {
   }
 
   nextTurn() {
+
     let finished = false;
     let winner = null;
     this.turns++;
@@ -417,6 +421,10 @@ export class AppComponent implements OnInit {
     while (this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
     }
+    
+    this.player.checkGoldenSpawn();
+    this.opponent.checkGoldenSpawn();
+
     this.printState();
   }
 
