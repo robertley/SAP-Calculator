@@ -545,11 +545,15 @@ export class Player {
         return strongestPet;
     }
 
+    pushPetToFront(pet: Pet) {
+        this.pushPet(pet, 4);
+    }
+
     pushPet(pet: Pet, spaces = 1) {
         let player = pet.parent;
         let position = pet.position;
         player[`pet${position}`] = null;
-        let destination = position - spaces;
+        let destination = Math.max(position - spaces, 0);
         player.summonPet(pet, destination);
     }
 

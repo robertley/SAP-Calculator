@@ -32,6 +32,7 @@ export class AbilityService {
     private friendHurtEvents: AbilityEvent[]= [];
     private levelUpEvents: AbilityEvent[]= [];
     private enemyHurtEvents: AbilityEvent[]= [];
+    private emptyFrontSpaceEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -44,7 +45,8 @@ export class AbilityService {
             this.hasEquipmentBeforeAttackEvents || 
             this.hasFriendHurtEvents ||
             this.hasEnemyHurtEvents ||
-            this.hasKnockOutEvents
+            this.hasKnockOutEvents ||
+            this.hasEmptyFrontSpaceEvents
     }
 
     // End of Turn Events
@@ -677,6 +679,45 @@ export class AbilityService {
 
     }
 
+    // empty front space events
+
+
+    triggerEmptyFrontSpaceEvents(player: Player) {
+        for (let pet of player.petArray) {
+            if (pet.emptyFrontSpace != null) {
+                this.setEmptyFrontSpaceEvent({
+                    callback: pet.emptyFrontSpace.bind(pet),
+                    priority: pet.attack
+                })
+            }
+        }
+    }
+    
+    setEmptyFrontSpaceEvent(event: AbilityEvent) {
+        this.emptyFrontSpaceEvents.push(event);
+    }
+
+    resetEmptyFrontSpaceEvents() {
+        this.emptyFrontSpaceEvents = [];
+    }
+
+    executeEmptyFrontSpaceEvents() {
+        // shuffle, so that same priority events are in random order
+        this.emptyFrontSpaceEvents = shuffle(this.emptyFrontSpaceEvents);
+
+        this.emptyFrontSpaceEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.emptyFrontSpaceEvents) {
+            event.callback(this.gameService.gameApi, false);
+        }
+        
+        this.resetEmptyFrontSpaceEvents();
+
+    }
+
+    get hasEmptyFrontSpaceEvents() {
+        return this.emptyFrontSpaceEvents.length > 0;
+    }
     // enemy hurt events
 
     /**

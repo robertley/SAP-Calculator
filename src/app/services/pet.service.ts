@@ -188,6 +188,15 @@ import { PiedTamarin } from "../classes/pets/golden/tier-1/pied-tamarin.class";
 import { Opposum } from "../classes/pets/golden/tier-1/opposum.class";
 import { Silkmoth } from "../classes/pets/golden/tier-1/silkmoth.class";
 import { Magpie } from "../classes/pets/golden/tier-1/magpie.class";
+import { HerculesBeetle } from "../classes/pets/golden/tier-2/hercules-beetle.class";
+import { Stoat } from "../classes/pets/golden/tier-2/stoat.class";
+import { BlackNeckedStilt } from "../classes/pets/golden/tier-2/black-necked-stilt.class";
+import { Squid } from "../classes/pets/golden/tier-2/squid.class";
+import { SeaUrchin } from "../classes/pets/golden/tier-2/sea-urchin.class";
+import { DoorHeadAnt } from "../classes/pets/golden/tier-2/door-head-ant.class";
+import { Lizard } from "../classes/pets/golden/tier-2/lizard.class";
+import { SeaTurtle } from "../classes/pets/golden/tier-2/sea-turtle.class";
+import { AfricanPenguin } from "../classes/pets/golden/tier-2/african-penguin.class";
 
 @Injectable({
     providedIn: 'root'
@@ -451,6 +460,18 @@ export class PetService {
             "Opposum",
             "Silkmoth",
             "Magpie"
+        ])
+
+        this.goldenPackPets.set(2, [
+            "Hercules Beetle",
+            "Stoat",
+            "Black Necked Stilt",
+            "Squid",
+            "Sea Urchin",
+            "Door Head Ant",
+            "Lizard",
+            "Sea Turtle",
+            "African Penguin"
         ])
     }
 
@@ -849,6 +870,26 @@ export class PetService {
                 return new Silkmoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Magpie':
                 return new Magpie(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            
+            // Tier 2
+            case 'Hercules Beetle':
+                return new HerculesBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Stoat':
+                return new Stoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Black Necked Stilt':
+                return new BlackNeckedStilt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Squid':
+                return new Squid(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Sea Urchin':
+                return new SeaUrchin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Door Head Ant':
+                return new DoorHeadAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Lizard':
+                return new Lizard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Sea Turtle':
+                return new SeaTurtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'African Penguin':
+                return new AfricanPenguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
         }
     }
@@ -1437,6 +1478,35 @@ export class PetService {
             newPet = new Magpie(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
+        // Tier 2
+        if (pet instanceof HerculesBeetle) {
+            newPet = new HerculesBeetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Stoat) {
+            newPet = new Stoat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof BlackNeckedStilt) {
+            newPet = new BlackNeckedStilt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Squid) {
+            newPet = new Squid(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SeaUrchin) {
+            newPet = new SeaUrchin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof DoorHeadAnt) {
+            newPet = new DoorHeadAnt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Lizard) {
+            newPet = new Lizard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SeaTurtle) {
+            newPet = new SeaTurtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof AfricanPenguin) {
+            newPet = new AfricanPenguin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
         return newPet;
     }
 
@@ -1497,6 +1567,8 @@ export class PetService {
             'Anteater',
             'Groundhog',
             'Pied Tamarin',
+            'Black Necked Stilt',
+            'Squid'
         ];
         let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
         return this.createPet({

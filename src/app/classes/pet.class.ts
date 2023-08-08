@@ -54,6 +54,7 @@ export abstract class Pet {
     enemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     enemyPushed?(gameApi: GameAPI, tiger?: boolean): void;
     enemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    emptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -311,7 +312,12 @@ export abstract class Pet {
 
             let message = `${this.name} attacks ${pet.name} for ${damage}.`;
             if (attackEquipment != null) {
-                let powerAmt = `+${attackEquipment.power}`;
+                let power: any = Math.abs(attackEquipment.power);
+                let sign = '-';
+                if (attackEquipment.power > 0) {
+                    sign = '+';
+                }
+                let powerAmt = `${sign}${power}`;
                 if (attackEquipment instanceof Salt) {
                     if (pet.tier < this.tier) {
                         powerAmt = `x2`;
@@ -348,6 +354,17 @@ export abstract class Pet {
                     message += ` x${defenseMultiplier} (Panther)`;
                 }
             }
+            // if (attackEquipment != null) {
+            //     let power = Math.abs(attackEquipment.power);
+            //     let sign = '-';
+            //     if (attackEquipment.power < 0) {
+            //         sign = '+';
+            //     }
+            //     if (attackMultiplier > 1) {
+            //         message += ` x${attackMultiplier} (Panther)`;
+            //     }
+            //     message += ` (${attackEquipment.name} ${sign}${power})`;
+            // }
             this.logService.createLog({
                 message: message,
                 type: "attack",
@@ -435,6 +452,14 @@ export abstract class Pet {
             }
             message += ` (${defenseEquipment.name} ${sign}${power})`;
         }
+        if (attackEquipment != null) {
+            let power = Math.abs(attackEquipment.power);
+            let sign = '-';
+            if (attackEquipment.power > 0) {
+                sign = '+';
+            }
+            message += ` (${attackEquipment.name} ${sign}${power})`;
+        }
 
         if (tiger) {
             message += ' (Tiger)'
@@ -494,8 +519,8 @@ export abstract class Pet {
         || pet.equipment?.equipmentClass == 'ailment-defense' ? pet.equipment : null;
 
         let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack'
-        || pet.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
-        let attackAmt = power ?? this.attack + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0);
+        || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
+        let attackAmt = power != null ? power + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0) : this.attack + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0);
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
 

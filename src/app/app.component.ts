@@ -332,6 +332,16 @@ export class AppComponent implements OnInit {
   removeDeadPets() {
     this.player.removeDeadPets();
     this.opponent.removeDeadPets();
+
+    if (this.player.pet0 == null) {
+      this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
+    }
+
+    if (this.player.pet1 == null) {
+      this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
+    }
+
+    this.abilityService.executeEmptyFrontSpaceEvents();
   }
 
   startBattle() {
