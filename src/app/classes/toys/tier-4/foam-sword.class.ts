@@ -8,8 +8,8 @@ export class FoamSword extends Toy {
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
-            let target = opponent.getLowestHealthPet();
-            this.toyService.snipePet(target, 6, this.parent, this.name, true, puma);
+            let lowestHealthResp = opponent.getLowestHealthPet();
+            this.toyService.snipePet(lowestHealthResp.pet, 6, this.parent, this.name, lowestHealthResp.random, puma);
         }
     }
 }

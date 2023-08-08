@@ -434,7 +434,7 @@ export class Player {
      * @param excludePet
      * @returns 
      */
-    getLowestHealthPet(excludePet?: Pet) {
+    getLowestHealthPet(excludePet?: Pet): {pet: Pet, random: boolean} {
         let lowestHealthPets: Pet[];
         for (let i in this.petArray) {
             let index = +i;
@@ -457,7 +457,10 @@ export class Player {
                 lowestHealthPets = [pet];
             }
         }
-        return lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
+        return {
+            pet: lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)],
+            random: lowestHealthPets.length > 1
+        };
     }
 
     get furthestUpPet() {

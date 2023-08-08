@@ -20,8 +20,8 @@ export class Dolphin extends Pet {
         }
 
         for (let i = 0; i < this.level; i++) {
-            let snipePet = opponent.getLowestHealthPet();
-            this.snipePet(snipePet, 3, true, tiger);
+            let lowestHealthResp = opponent.getLowestHealthPet();
+            this.snipePet(lowestHealthResp.pet, 3, lowestHealthResp.random, tiger);
         }
         
         super.superStartOfBattle(gameApi, tiger);
