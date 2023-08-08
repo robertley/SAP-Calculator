@@ -60,6 +60,7 @@ export class EquipmentService {
         map.set('Cheese', new Cheese());
         map.set('Grapes', new Grapes());
         map.set('Carrot', new Carrot());
+        map.set('Pepper', new Pepper());
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
 
 
