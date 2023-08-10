@@ -573,8 +573,22 @@ export class Player {
 
     }
 
-    gainTrumpets(amt: number) {
+    gainTrumpets(amt: number, pet: Pet) {
         this.trumpets = Math.min(50, this.trumpets += amt);
+        this.logService.createLog({
+            message: `${pet.name} gained ${amt} trumpets. (${this.trumpets})`,
+            type: 'trumpets',
+            player: this
+        })
+    }
+
+    spendTrumpets(amt: number, pet: Pet) {
+        this.trumpets = Math.max(0, this.trumpets -= amt);
+        this.logService.createLog({
+            message: `${pet.name} spent ${amt} trumpets. (${this.trumpets})`,
+            type: 'trumpets',
+            player: this
+        })
     }
 
     checkGoldenSpawn() {

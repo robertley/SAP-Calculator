@@ -1,44 +1,39 @@
-import { cloneDeep } from "lodash";
+import { clone, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
-import { Ink } from "../../../equipment/ailments/ink.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { Weak } from "../../../equipment/ailments/weak.class";
 
-export class Squid extends Pet {
-    name = "Squid";
-    tier = 2;
+export class Flea extends Pet {
+    name = "Flea";
+    tier = 3;
     pack: Pack = 'Golden';
-    attack = 5;
-    health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        if (this.parent.trumpets < 1) {
-            return;
-        }
-        let hasTarget = false;
-        let targets = this.parent.opponent.petArray.filter(pet => {
-            return pet.health > 0 && pet.equipment?.name != 'Ink';
-        })
-        console.log(targets);
+    attack = 3;
+    health = 1;
+    faint(gameApi: GameAPI, tiger?: boolean): void {
+        let targets = clone(this.parent.opponent.petArray);
+        shuffle(targets);
+        targets = targets.sort((a, b) => {
+            return a.health > b.health ? -1 : b.health > a.health ? 1 : 0;
+        }).filter((target) => {
+            return target.equipment?.name != 'Weak';
+        });
         for (let i = 0; i < this.level; i++) {
             let target = targets[i];
             if (target == null) {
                 break;
             }
-            hasTarget = true;
-            target.givePetEquipment(new Ink());
+            target.givePetEquipment(new Weak());
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} Ink.`,
+                message: `${this.name} gave ${target.name} Weak.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger
             })
-            console.log(cloneDeep(target));
-        }
-        if (hasTarget) {
-            this.parent.spendTrumpets(1, this);
         }
         this.superFaint(gameApi, tiger);
     }

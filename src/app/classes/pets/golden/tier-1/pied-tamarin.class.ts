@@ -25,7 +25,7 @@ export class PiedTamarin extends Pet {
             this.snipePet(target, 3, true, tiger);
         }
         if (hasTarget) {
-            this.parent.gainTrumpets(-1);
+            this.parent.spendTrumpets(1, this);
         }
     }
     constructor(protected logService: LogService,

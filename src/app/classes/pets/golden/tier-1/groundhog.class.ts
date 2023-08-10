@@ -12,13 +12,7 @@ export class Groundhog extends Pet {
     attack = 2;
     health = 1;
     faint(gameApi?: GameAPI, tiger?: boolean): void {
-        this.parent.gainTrumpets(this.level);
-        this.logService.createLog({
-            message: `${this.name} gained ${this.level} trumpets. (${this.parent.trumpets})`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
+        this.parent.gainTrumpets(this.level, this);
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

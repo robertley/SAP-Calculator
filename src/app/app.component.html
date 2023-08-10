@@ -32,10 +32,23 @@
         </select>
       </div>
 
-      <div class="form-group small-w-input ms-3 pe-3 border-end">
-        <label for="turn">Turn</label>
-        <input class="form-control" id="turn" type="number" formControlName="turn" max="99"/>
+      <div class="border-end d-flex pe-3">
+        <div class="form-group small-w-input ms-3">
+          <label for="turn">Turn</label>
+          <input class="form-control" id="turn" type="number" formControlName="turn" max="99"/>
+        </div>
+  
+        <div class="form-group small-w-input ms-3">
+          <label for="playerGoldSpent" title="Player Gold Spent">PGS</label>
+          <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99"/>
+        </div>
+  
+        <div class="form-group small-w-input ms-3">
+          <label for="opponentGoldSpent" title="Opponent Gold Spent">OGS</label>
+          <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99"/>
+        </div>
       </div>
+
 
       <div class="form-group min-w-input mx-3">
         <label for="playerPack">Player Toy</label>

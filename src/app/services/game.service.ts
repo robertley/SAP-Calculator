@@ -40,4 +40,13 @@ export class GameService {
         this.gameApi.turnNumber = turnNumber;
     }
 
+    setGoldSpent(playerGoldSpent: number, opponentGoldSpent: number) {
+        if (playerGoldSpent != null) {
+            this.gameApi.playerGoldSpent = playerGoldSpent;
+        }
+        if (opponentGoldSpent != null) {
+            this.gameApi.opponentGoldSpent = opponentGoldSpent;
+        }
+    }
+
 }

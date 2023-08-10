@@ -15,6 +15,9 @@ export class SeaUrchin extends Pet {
     health = 2;
     faint(gameApi?: GameAPI, tiger?: boolean): void {
         let targets = [this.parent.opponent.furthestUpPet];
+        if (targets[0] == null) {
+            return;
+        }
         for (let i = 0; i < this.level - 1; i++) {
             let currTarget = targets[i];
             let target = currTarget.petBehind();

@@ -197,6 +197,13 @@ import { DoorHeadAnt } from "../classes/pets/golden/tier-2/door-head-ant.class";
 import { Lizard } from "../classes/pets/golden/tier-2/lizard.class";
 import { SeaTurtle } from "../classes/pets/golden/tier-2/sea-turtle.class";
 import { AfricanPenguin } from "../classes/pets/golden/tier-2/african-penguin.class";
+import { MuskOx } from "../classes/pets/golden/tier-3/musk-ox.class";
+import { Flea } from "../classes/pets/golden/tier-3/flea.class";
+import { RotalFlycatcher } from "../classes/pets/golden/tier-3/royal-flycatcher.class";
+import { SurgeonFish } from "../classes/pets/golden/tier-3/surgeon-fish.class";
+import { Weasel } from "../classes/pets/golden/tier-3/weasel.class";
+import { Guineafowl } from "../classes/pets/golden/tier-3/guineafowl.class";
+import { BetaFish } from "../classes/pets/golden/tier-3/betta-fish.class";
 
 @Injectable({
     providedIn: 'root'
@@ -473,6 +480,16 @@ export class PetService {
             "Sea Turtle",
             "African Penguin"
         ])
+
+        this.goldenPackPets.set(3, [
+            "Musk Ox",
+            "Flea",
+            "Rotal Flycatcher",
+            "Surgeon Fish",
+            "Weasel",
+            "Guineafowl",
+            "Beta Fish"
+        ]);
     }
 
     createPet(petForm: PetForm, parent: Player): Pet {
@@ -890,6 +907,22 @@ export class PetService {
                 return new SeaTurtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'African Penguin':
                 return new AfricanPenguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            
+            // Tier 3
+            case 'Musk Ox':
+                return new MuskOx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Flea':
+                return new Flea(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Rotal Flycatcher':
+                return new RotalFlycatcher(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Surgeon Fish':
+                return new SurgeonFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Weasel':
+                return new Weasel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Guineafowl':
+                return new Guineafowl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Beta Fish':
+                return new BetaFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
         }
     }
@@ -1507,11 +1540,34 @@ export class PetService {
             newPet = new AfricanPenguin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
+        // Tier 3
+        if (pet instanceof MuskOx) {
+            newPet = new MuskOx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Flea) {
+            newPet = new Flea(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof RotalFlycatcher) {
+            newPet = new RotalFlycatcher(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SurgeonFish) {
+            newPet = new SurgeonFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Weasel) {
+            newPet = new Weasel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Guineafowl) {
+            newPet = new Guineafowl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof BetaFish) {
+            newPet = new BetaFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
         return newPet;
     }
 
     getRandomPet(parent: Player) {
-        let tier = getRandomInt(1, 6);
+        let tier = getRandomInt(1, 3);
         let pets;
         if (parent.pack == 'Turtle') {
             pets = this.turtlePackPets.get(tier);
@@ -1520,7 +1576,7 @@ export class PetService {
         } else if (parent.pack == 'Star') {
             pets = this.starPackPets.get(tier);
         } else if (parent.pack == 'Golden') {
-            pets = this.goldenPackPets.get(1);
+            pets = this.goldenPackPets.get(tier);
         }
         let petNum = getRandomInt(0, pets.length - 1);
         let pet = pets[petNum];

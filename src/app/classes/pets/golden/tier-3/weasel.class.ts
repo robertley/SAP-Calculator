@@ -1,19 +1,26 @@
+import { clone, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { Weak } from "../../../equipment/ailments/weak.class";
 
-export class BlackNeckedStilt extends Pet {
-    name = "Black Necked Stilt";
-    tier = 2;
+export class Weasel extends Pet {
+    name = "Weasel";
+    tier = 3;
     pack: Pack = 'Golden';
     attack = 3;
-    health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        let power = this.level * 2;
-        this.parent.gainTrumpets(power, this);
+    health = 4;
+    faint(gameApi: GameAPI, tiger?: boolean): void {
+        this.logService.createLog({
+            message: `${this.name} gained ${this.level} Gold.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
