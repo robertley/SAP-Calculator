@@ -66,7 +66,8 @@ export class Chili extends Equipment {
         if (attackPet.health < 1 && pet.knockOut != null) {
             this.abilityService.setKnockOutEvent({
                 callback: pet.knockOut.bind(pet),
-                priority: pet.attack
+                priority: pet.attack,
+                callbackPet: attackPet
             })
         }
 

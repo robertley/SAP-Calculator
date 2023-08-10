@@ -1,4 +1,3 @@
-import { clone, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
@@ -6,33 +5,31 @@ import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 
-export class BettaFish extends Pet {
-    name = "Betta Fish";
-    tier = 3;
+export class EgyptianVulture extends Pet {
+    name = "Egyptian Vulture";
+    tier = 4;
     pack: Pack = 'Golden';
-    attack = 2;
-    health = 3;
-    faint(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petBehind();
-        if (target == null) {
+    attack = 5;
+    health = 4;
+    knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let power: Power = {
-            health: this.level * 2,
-            attack: this.level * 4
+        let friendBehind = this.petBehind();
+        if (friendBehind == null) {
+            return;
         }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
+        if (friendBehind.faint == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
+            message: `${this.name} activated ${friendBehind.name}'s ability.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
-        
-        this.superFaint(gameApi, tiger);
+        friendBehind.faint(gameApi, false);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -43,5 +40,10 @@ export class BettaFish extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

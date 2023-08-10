@@ -320,7 +320,7 @@ export class AbilityService {
         this.knockOutEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.knockOutEvents) {
-            event.callback(this.gameService.gameApi);
+            event.callback(this.gameService.gameApi, event.callbackPet);
         }
         
         this.resetKnockOutEvents();

@@ -6,8 +6,8 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class RotalFlycatcher extends Pet {
-    name = "Rotal Flycatcher";
+export class RoyalFlycatcher extends Pet {
+    name = "Royal Flycatcher";
     tier = 3;
     pack: Pack = 'Golden';
     attack = 2;
@@ -15,7 +15,7 @@ export class RotalFlycatcher extends Pet {
     enemySummoned(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let target = this.parent.opponent.getRandomPet();
         let power = this.level * 3;
-        this.snipePet(target, power, tiger);
+        this.snipePet(target, power, true, tiger);
         this.superEnemySummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

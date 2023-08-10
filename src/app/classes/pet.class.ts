@@ -48,7 +48,7 @@ export abstract class Pet {
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
     // example of pet that SHOULD be defined: Parrot.
     endTurn?(gameApi: GameAPI): void;
-    knockOut?(gameApi: GameAPI, tiger?: boolean): void;
+    knockOut?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     summoned?(gameApi: GameAPI, tiger?: boolean): void;
     friendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
     enemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -177,13 +177,13 @@ export abstract class Pet {
         this.exp = exp;
     }
 
-    protected superKnockOut(gameApi, tiger=false) {
+    protected superKnockOut(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
-        this.knockOut(gameApi, true)
+        this.knockOut(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -398,7 +398,8 @@ export abstract class Pet {
         if (pet.health < 1 && this.knockOut != null) {
             this.abilityService.setKnockOutEvent({
                 callback: this.knockOut.bind(this),
-                priority: this.attack
+                priority: this.attack,
+                callbackPet: pet
             })
         }
 
@@ -489,7 +490,8 @@ export abstract class Pet {
         if (pet.health < 1 && this.knockOut != null) {
             this.abilityService.setKnockOutEvent({
                 callback: this.knockOut.bind(this),
-                priority: this.attack
+                priority: this.attack,
+                callbackPet: pet
             })
         }
 

@@ -1,30 +1,20 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Peanut } from "../../../equipment/turtle/peanut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Rhino extends Pet {
-    name = "Rhino";
-    tier = 5;
-    pack: Pack = 'Turtle';
+export class Vaquita extends Pet {
+    name = "Vaquita";
+    tier = 4;
+    pack: Pack = 'Golden';
     attack = 3;
-    health = 6;
-    knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let target = getOpponent(gameApi, this.parent).furthestUpPet;
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 4;
-        if (target.tier == 1) {
-            power *= 2;
-        }
-        this.snipePet(target, power, false, tiger);
-
-        this.superKnockOut(gameApi, tiger);
+    health = 4;
+    faint(gameApi?: GameAPI, tiger?: boolean): void {
+        let trumpetAmt = Math.floor((this.level * .5) * this.parent.trumpets);
+        this.parent.gainTrumpets(trumpetAmt, this);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

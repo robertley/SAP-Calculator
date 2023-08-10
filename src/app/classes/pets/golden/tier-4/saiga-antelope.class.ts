@@ -1,4 +1,3 @@
-import { clone, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
@@ -6,33 +5,18 @@ import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 
-export class BettaFish extends Pet {
-    name = "Betta Fish";
-    tier = 3;
+export class SaigaAntelope extends Pet {
+    name = "Saiga Antelope";
+    tier = 4;
     pack: Pack = 'Golden';
-    attack = 2;
+    attack = 4;
     health = 3;
-    faint(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petBehind();
-        if (target == null) {
+    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+        if (!this.alive) {
             return;
         }
-        let power: Power = {
-            health: this.level * 2,
-            attack: this.level * 4
-        }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        
-        this.superFaint(gameApi, tiger);
+        this.parent.gainTrumpets(this.level, this);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

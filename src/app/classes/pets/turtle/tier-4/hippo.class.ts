@@ -12,7 +12,7 @@ export class Hippo extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 5;
-    knockOut(gameAPI, tiger) {
+    knockOut(gameAPI, pet: Pet, tiger) {
         if (this.health < 1) {
             return;
         }

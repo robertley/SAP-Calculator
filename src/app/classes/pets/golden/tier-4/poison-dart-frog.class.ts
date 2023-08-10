@@ -1,30 +1,21 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Peanut } from "../../../equipment/turtle/peanut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Rhino extends Pet {
-    name = "Rhino";
-    tier = 5;
-    pack: Pack = 'Turtle';
-    attack = 3;
-    health = 6;
-    knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let target = getOpponent(gameApi, this.parent).furthestUpPet;
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 4;
-        if (target.tier == 1) {
-            power *= 2;
-        }
-        this.snipePet(target, power, false, tiger);
-
-        this.superKnockOut(gameApi, tiger);
+export class PoisonDartFrog extends Pet {
+    name = "Poison Dart Frog";
+    tier = 4;
+    pack: Pack = 'Golden';
+    attack = 5;
+    health = 2;
+    friendAheadFaints(gameApi: GameAPI, tiger?: boolean): void {
+        let highestHealthResp = this.parent.opponent.getHighestHealthPet();
+        let target = highestHealthResp.pet;
+        this.snipePet(target, 3 * this.level, highestHealthResp.random, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -57,7 +57,8 @@ export class Egg extends Equipment {
             console.log('knock out!')
             this.abilityService.setKnockOutEvent({
                 callback: pet.knockOut.bind(pet),
-                priority: pet.attack
+                priority: pet.attack,
+                callbackPet: attackPet
             })
         }
 
