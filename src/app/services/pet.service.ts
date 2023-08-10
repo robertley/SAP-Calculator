@@ -204,6 +204,10 @@ import { SurgeonFish } from "../classes/pets/golden/tier-3/surgeon-fish.class";
 import { Weasel } from "../classes/pets/golden/tier-3/weasel.class";
 import { Guineafowl } from "../classes/pets/golden/tier-3/guineafowl.class";
 import { BetaFish } from "../classes/pets/golden/tier-3/betta-fish.class";
+import { Meerkat } from "../classes/pets/golden/tier-3/meerkat.class";
+import { FlyingFish } from "../classes/pets/golden/tier-3/flying-fish.class";
+import { Baboon } from "../classes/pets/golden/tier-3/baboon.class";
+import { Osprey } from "../classes/pets/golden/tier-3/osprey.class";
 
 @Injectable({
     providedIn: 'root'
@@ -488,7 +492,11 @@ export class PetService {
             "Surgeon Fish",
             "Weasel",
             "Guineafowl",
-            "Beta Fish"
+            "Beta Fish",
+            "Meerkat",
+            "Flying Fish",
+            "Baboon",
+            "Osprey"
         ]);
     }
 
@@ -923,6 +931,14 @@ export class PetService {
                 return new Guineafowl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Beta Fish':
                 return new BetaFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Meerkat':
+                return new Meerkat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Flying Fish':
+                return new FlyingFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Baboon':
+                return new Baboon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Osprey':
+                return new Osprey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
         }
     }
@@ -1561,6 +1577,18 @@ export class PetService {
         }
         if (pet instanceof BetaFish) {
             newPet = new BetaFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Meerkat) {
+            newPet = new Meerkat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof FlyingFish) {
+            newPet = new FlyingFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Baboon) {
+            newPet = new Baboon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Osprey) {
+            newPet = new Osprey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         return newPet;

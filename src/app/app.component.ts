@@ -83,6 +83,7 @@ export class AppComponent implements OnInit {
 
   initFormGroup() {
     let defaultTurn = 11;
+    let defaultGoldSpent = 10;
     this.formGroup = new FormGroup({
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
@@ -91,8 +92,8 @@ export class AppComponent implements OnInit {
       opponentToy: new FormControl(this.opponent.toy?.name),
       opponentToyLevel: new FormControl(this.opponent.toy?.level ?? 1),
       turn: new FormControl(defaultTurn),
-      playerGoldSpent: new FormControl(10),
-      opponentGoldSpent: new FormControl(10),
+      playerGoldSpent: new FormControl(defaultGoldSpent),
+      opponentGoldSpent: new FormControl(defaultGoldSpent),
       angler: new FormControl(false),
       logFilter: new FormControl(null)
     })
@@ -100,6 +101,7 @@ export class AppComponent implements OnInit {
     this.updatePlayerPack(this.player, this.player.pack);
     this.updatePlayerPack(this.opponent, this.opponent.pack);
     this.updatePreviousShopTier(defaultTurn);
+    this.updateGoldSpent(defaultGoldSpent, defaultGoldSpent);
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       this.updatePlayerPack(this.player, value);
