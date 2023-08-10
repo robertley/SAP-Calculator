@@ -25,7 +25,9 @@ export class Robin extends Pet {
             tiger: tiger
         });
 
-        this.parent.summonPet(nest, this.position - 1);
+        if (this.parent.summonPet(nest, this.position)) {
+            this.abilityService.triggerSummonedEvents(nest);
+        }
 
         this.superStartOfBattle(gameApi, tiger);
     }

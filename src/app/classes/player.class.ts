@@ -109,6 +109,10 @@ export class Player {
           }
     }
 
+    getPet(index: number) {
+        return this[`pet${index}`];
+    }
+
     pushPetsForward() {
         let array = clone(this.petArray);
         try {

@@ -16,13 +16,24 @@
             <span (click)="setExp(4)" [class]="getIsSelected(4) ? 'selected' : ''"></span>
             <span (click)="setExp(5)" [class]="getIsSelected(5) ? 'selected' : ''"></span>
         </div>
-        <div class="col-12 mb-2">
+        <div class="col-12 mb-2 d-flex">
             <select class="form-control" formControlName="name">
                 <option [ngValue]="null">None</option>
                 <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                     <option *ngFor="let pet of petGroup.value" [ngValue]="pet">{{pet}}</option>
                 </optgroup>
             </select>
+            <button *ngIf="showFlyOutButton()" class="btn btn-secondary" (click)="toggleFlyOut()">></button>
+
+            <div class="fly-out border p-3" *ngIf="showFlyOut">
+                <label for="belugaSwallowedPet">Swallowed Pet</label>
+                <select class="form-control" formControlName="belugaSwallowedPet">
+                    <option [ngValue]="null">None</option>
+                    <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
+                        <option *ngFor="let pet of petGroup.value" [ngValue]="pet">{{pet}}</option>
+                    </optgroup>
+                </select>
+            </div>
         </div>
         <div class="col-12 mb-2">
             <select class="form-control" formControlName="equipment">

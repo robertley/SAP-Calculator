@@ -30,6 +30,7 @@ export class PetSelectorComponent implements OnInit {
   turtlePackPets: string[];
   pets: Map<number, string[]>;
 
+  showFlyOut = false;
 
   constructor(private petService: PetService, private equipmentService: EquipmentService) {
 
@@ -83,7 +84,8 @@ export class PetSelectorComponent implements OnInit {
       attack: new FormControl(this.pet?.attack),
       health: new FormControl(this.pet?.health),
       exp: new FormControl(this.pet?.exp),
-      equipment: new FormControl(this.pet?.equipment)
+      equipment: new FormControl(this.pet?.equipment),
+      belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
     })
 
     this.formGroup.get('name').valueChanges.subscribe((value) => {
@@ -97,6 +99,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('health').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('equipment').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
   }
 
   setExp(amt: number) {
@@ -128,6 +131,20 @@ export class PetSelectorComponent implements OnInit {
       }
     })
 
+  }
+
+  setBelugaSwallow(value: string) {
+    let pet = this.player.getPet(this.index);
+    pet.belugaSwallowedPet = value;
+    console.log(pet)
+  }
+
+  showFlyOutButton() {
+    return this.formGroup.get('name').value == 'Beluga Whale'
+  }
+
+  toggleFlyOut() {
+    this.showFlyOut = !this.showFlyOut;
   }
 
   removePet() {

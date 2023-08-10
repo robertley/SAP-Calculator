@@ -320,6 +320,7 @@ export class AppComponent implements OnInit {
       this.startOfBattleService.executeNonToyPetEvents();
       this.executeFrequentEvents();
 
+      this.abilityService.executeSummonedEvents();
       this.abilityService.executeEnemySummonedEvents();
       
       this.abilityService.triggerTransformEvents(this.player);

@@ -60,6 +60,7 @@ export abstract class Pet {
     done = false;
     seenDead = false;
     swallowedPets?: Pet[] = [];
+    belugaSwallowedPet: string;
     toyPet = false;
 
 

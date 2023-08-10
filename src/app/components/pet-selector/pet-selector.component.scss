@@ -48,3 +48,13 @@
 .level-3 {
     text-align: right;
 }
+
+.fly-out {
+    position: absolute;
+    left: 100%;
+    background-color: white;
+    width: 100%;
+    z-index: 1;
+    box-shadow: 12px 4px 9px 7px rgba(0,0,0,0.1);
+
+}
