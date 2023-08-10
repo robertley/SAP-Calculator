@@ -91,6 +91,8 @@ export class AppComponent implements OnInit {
       opponentToy: new FormControl(this.opponent.toy?.name),
       opponentToyLevel: new FormControl(this.opponent.toy?.level ?? 1),
       turn: new FormControl(defaultTurn),
+      playerGoldSpent: new FormControl(10),
+      opponentGoldSpent: new FormControl(10),
       angler: new FormControl(false),
       logFilter: new FormControl(null)
     })
@@ -119,6 +121,12 @@ export class AppComponent implements OnInit {
     })
     this.formGroup.get('turn').valueChanges.subscribe((value) => {
       this.updatePreviousShopTier(value);
+    })
+    this.formGroup.get('playerGoldSpent').valueChanges.subscribe((value) => {
+      this.updateGoldSpent(value, null);
+    })
+    this.formGroup.get('opponentGoldSpent').valueChanges.subscribe((value) => {
+      this.updateGoldSpent(null, value);
     })
     this.formGroup.get('angler').valueChanges.subscribe((value) => {
       setTimeout(() => {
@@ -190,6 +198,10 @@ export class AppComponent implements OnInit {
     }
     this.gameService.setPreviousShopTier(tier);
     this.gameService.setTurnNumber(turn);
+  }
+
+  updateGoldSpent(player, opponent) {
+    this.gameService.setGoldSpent(player, opponent);
   }
 
   updateToyLevel(player: Player, level) {
