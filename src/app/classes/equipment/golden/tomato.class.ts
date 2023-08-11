@@ -4,19 +4,19 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
-export class Egg extends Equipment {
-    name = 'Egg';
+export class Tomato extends Equipment {
+    name = 'Tomato';
     equipmentClass: EquipmentClass = 'snipe';
     uses = 1;
     originalUses = 1;
     attackCallback = (pet: Pet, attackedPet: Pet) => {
-        let attackPet = attackedPet.parent.getPetAtPosition(0);
+        let attackPet = attackedPet.parent.getLastPet();
         if (attackPet == null) {
-            console.warn("egg didn't find target") // p sure this should never happen?
+            console.warn("tomato didn't find target") // p sure this should never happen?
             return;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 2, true);
+        let damageResp = pet.calculateDamgae(attackPet, 8, true);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
@@ -39,7 +39,7 @@ export class Egg extends Equipment {
         }
 
         this.logService.createLog({
-            message: message += ` (Egg).`,
+            message: message += ` (Tomato).`,
             type: 'attack',
             player: pet.parent
         })

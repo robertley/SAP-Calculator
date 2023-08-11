@@ -8,4 +8,5 @@ export interface Log {
     tiger?: boolean;
     puma?: boolean;
     pteranodon?: boolean;
+    pantherMultiplier?: number;
 }

@@ -21,10 +21,13 @@ import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
 import { ToyService } from './services/toy.service';
 import { Egg } from './classes/equipment/puppy/egg.class';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
+import { ChocolateCake } from './classes/equipment/golden/chocolate-cake.class';
+import { Eggplant } from './classes/equipment/golden/eggplant.class';
+import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 
 @Component({
   selector: 'app-root',
@@ -309,6 +312,9 @@ export class AppComponent implements OnInit {
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
 
+      this.player.onionCheck();
+      this.opponent.onionCheck();
+
       this.executeBeforeStartOfBattleEquipment(this.player);
       this.executeBeforeStartOfBattleEquipment(this.opponent);
 
@@ -439,7 +445,12 @@ export class AppComponent implements OnInit {
 
     this.pushPetsForwards();
 
-    this.fight();
+    let chocoCakeCheck = this.chocolateCakePresent();
+    if (chocoCakeCheck.cake) {
+      this.doChocolateCakeEvents(chocoCakeCheck);
+    } else {
+      this.fight();
+    }
     
     this.abilityCycle();
 
@@ -451,6 +462,36 @@ export class AppComponent implements OnInit {
     this.opponent.checkGoldenSpawn();
 
     this.printState();
+  }
+
+  chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
+    let resp = {
+      player: false,
+      opponent: false,
+      cake: false
+    }
+    resp.player = this.player.pet0?.equipment instanceof ChocolateCake;
+    resp.opponent = this.opponent.pet0?.equipment instanceof ChocolateCake;
+    resp.cake = resp.player || resp.opponent;
+    return resp;
+  }
+
+  doChocolateCakeEvents(chocoCakeCheck: {player: boolean, opponent: boolean, cake: boolean}) {
+    let chocoCakePets = [];
+    if (chocoCakeCheck.player) {
+      chocoCakePets.push(this.player.pet0);
+    }
+    if (chocoCakeCheck.opponent) {
+      chocoCakePets.push(this.opponent.pet0);
+    }
+    // shuffle incase they have same priority
+    chocoCakePets = shuffle(chocoCakePets);
+    chocoCakePets.sort((a, b) => {
+      return a.attack < b.attack ? 1 : b.attack < a.attack ? -1 : 0;
+    });
+    for (let pet of chocoCakePets) {
+      pet.equipment.callback(pet);
+    }
   }
 
   executeBeforeStartOfBattleEquipment(player) {
@@ -484,6 +525,12 @@ export class AppComponent implements OnInit {
           })
         }
       }
+      if (pet.equipment instanceof Eggplant) {
+        pet.equipment.callback(pet);
+      }
+      if (pet.equipment instanceof PitaBread) {
+        pet.equipment.callback(pet);
+      }
     }
   }
 
@@ -495,6 +542,9 @@ export class AppComponent implements OnInit {
 
     this.player.pushPetsForward();
     this.opponent.pushPetsForward();
+
+    this.player.onionCheck();
+    this.opponent.onionCheck();
   }
 
   doBeforeAttackEquipment() {
@@ -504,7 +554,7 @@ export class AppComponent implements OnInit {
     let playerEquipment = playerPet.equipment;
     let opponentEquipment = opponentPet.equipment;
 
-    if (playerEquipment instanceof Egg) {
+    if (playerEquipment?.equipmentClass == 'snipe') {
       this.abilityService.setEqiupmentBeforeAttackEvent({
         callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
         priority: playerPet.attack,
@@ -512,7 +562,7 @@ export class AppComponent implements OnInit {
       })
     }
 
-    if (opponentEquipment instanceof Egg) {
+    if (opponentEquipment?.equipmentClass == 'snipe') {
       this.abilityService.setEqiupmentBeforeAttackEvent({
         callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
         priority: opponentPet.attack,

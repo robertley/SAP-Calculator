@@ -9,6 +9,7 @@ import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Puma } from "./pets/puppy/tier-6/puma.class";
 import { GameService } from "../services/game.service";
 import { GoldenRetriever } from "./pets/hidden/golden-retriever.class";
+import { Onion } from "./equipment/golden/onion.class";
 
 export class Player {
     pet0?: Pet;
@@ -140,7 +141,18 @@ export class Player {
         } catch {
             this.pet4 = null;
         }
+        this.onionCheck();
         
+    }
+
+    onionCheck() {
+        if (this.pet0?.equipment == null) {
+            return;
+        }
+        if (this.pet0.equipment instanceof Onion) {
+            this.pet0.equipment.callback(this.pet0);
+            this.pushPetsForward();
+        }
     }
 
     // TODO - no room logic
@@ -553,12 +565,23 @@ export class Player {
         this.pushPet(pet, 4);
     }
 
+    pushPetToBack(pet: Pet) {
+        this.pushPet(pet, -4);
+    }
+
     pushPet(pet: Pet, spaces = 1) {
         let player = pet.parent;
         let position = pet.position;
         player[`pet${position}`] = null;
-        let destination = Math.max(position - spaces, 0);
+        let destination;
+        if (spaces > 0) {
+            destination = Math.max(position - spaces, 0);
+        }
+        if (spaces < 0) {
+            destination = Math.max(position - spaces, 4);
+        }
         player.summonPet(pet, destination);
+        this.onionCheck();
     }
 
     getRandomStrawberryPet(excludePet?: Pet): Pet {
@@ -577,13 +600,14 @@ export class Player {
 
     }
 
-    gainTrumpets(amt: number, pet: Pet, pteranodon?: boolean) {
+    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number) {
         this.trumpets = Math.min(50, this.trumpets += amt);
         this.logService.createLog({
             message: `${pet.name} gained ${amt} trumpets. (${this.trumpets})`,
             type: 'trumpets',
             player: this,
-            pteranodon: pteranodon
+            pteranodon: pteranodon,
+            pantherMultiplier: pantherMultiplier
         })
     }
 

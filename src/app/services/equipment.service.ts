@@ -28,6 +28,14 @@ import { Pepper } from "../classes/equipment/star/pepper.class";
 import { Carrot } from "../classes/equipment/star/carrot.class";
 import { Popcorn } from "../classes/equipment/star/popcorn.class";
 import { GameService } from "./game.service";
+import { Cherry } from "../classes/equipment/golden/cherry.class";
+import { ChocolateCake } from "../classes/equipment/golden/chocolate-cake.class";
+import { Eggplant } from "../classes/equipment/golden/eggplant.class";
+import { Potato } from "../classes/equipment/golden/potato.class";
+import { Banana } from "../classes/equipment/golden/banana.class";
+import { Onion } from "../classes/equipment/golden/onion.class";
+import { PitaBread } from "../classes/equipment/golden/pita-bread.class";
+import { Tomato } from "../classes/equipment/golden/tomato.class";
 
 @Injectable({
     providedIn: "root"
@@ -62,6 +70,14 @@ export class EquipmentService {
         map.set('Carrot', new Carrot());
         map.set('Pepper', new Pepper());
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
+        map.set('Cherry', new Cherry());
+        map.set('Chocolate Cake', new ChocolateCake(this.logService));
+        map.set('Eggplant', new Eggplant(this.logService));
+        map.set('Potato', new Potato());
+        map.set('Banana', new Banana(this.logService, this.abilityService));
+        map.set('Onion', new Onion(this.logService));
+        map.set('Pita Bread', new PitaBread(this.logService));
+        map.set('Tomato', new Tomato(this.logService, this.abilityService));
 
 
         return map;

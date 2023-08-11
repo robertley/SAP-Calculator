@@ -19,4 +19,4 @@ export class Equipment {
 
 export type EquipmentClass = 
     'shop' | 'defense' | 'shield' | 'attack' | 'ailment-defense' | 'ailment-attack' | 'faint' 
-    | 'skewer' | 'snipe' | 'beforeStartOfBattle';
+    | 'skewer' | 'snipe' | 'beforeStartOfBattle' | 'beforeAttack' | 'startOfBattle' | 'shield-snipe' | 'hurt';

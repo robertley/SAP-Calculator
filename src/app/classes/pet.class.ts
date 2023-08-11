@@ -450,7 +450,7 @@ export abstract class Pet {
             wolverine = true;
         }
 
-        let damageResp = this.calculateDamgae(pet, power);
+        let damageResp = this.calculateDamgae(pet, power, true);
         let attackEquipment = damageResp.attackEquipment;
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
@@ -460,7 +460,7 @@ export abstract class Pet {
         // TODO Attack Equipment (pineapple)
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
-            pet.useDefenseEquipment()
+            pet.useDefenseEquipment(true)
             let power = Math.abs(defenseEquipment.power);
             let sign = '-';
             if (defenseEquipment.power < 0) {
@@ -522,7 +522,7 @@ export abstract class Pet {
         }
     }
 
-    calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
+    calculateDamgae(pet: Pet, power?: number, snipe=false): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
         let attackMultiplier = 1;
         let defenseMultiplier = 1;
         if (this.name == 'Panther') {
@@ -534,13 +534,14 @@ export abstract class Pet {
 
         let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
         || pet.equipment?.equipmentClass == 'shield'
-        || pet.equipment?.equipmentClass == 'ailment-defense' ? pet.equipment : null;
+        || pet.equipment?.equipmentClass == 'ailment-defense'
+        || (snipe && pet.equipment?.equipmentClass == 'shield-snipe') ? pet.equipment : null;
 
         let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack'
         || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
         let attackAmt = power != null ? power + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0) : this.attack + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0);
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
-        let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
+        let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
 
         if (attackEquipment instanceof Salt) {
             if (pet.tier < this.tier) {
@@ -599,11 +600,11 @@ export abstract class Pet {
 
     }
 
-    useDefenseEquipment() {
+    useDefenseEquipment(snipe=false) {
         if (this.equipment == null) {
             return;
         }
-        if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield') {
+        if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
             return;
         }
         if (this.equipment.uses == null) {
@@ -668,6 +669,10 @@ export abstract class Pet {
 
     givePetEquipment(equipment: Equipment) {
         this.equipment = equipment;
+
+        if (equipment == null) {
+            return;
+        }
         
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense') {
             this.abilityService.triggerFriendGainedAilmentEvents(this);

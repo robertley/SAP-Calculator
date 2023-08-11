@@ -20,6 +20,9 @@ export class LogService {
         if (log.pteranodon) {
             log.message += " (Pteranodon)"
         }
+        if (log.pantherMultiplier != null && log.pantherMultiplier > 1) {
+            log.message += ` x${log.pantherMultiplier} (Panther)`
+        }
         this.logs.push(log);
     }
 
