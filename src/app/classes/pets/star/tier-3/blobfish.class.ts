@@ -11,7 +11,7 @@ export class Blobfish extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let target = this.petBehind();
         if (target == null) {
             return;
@@ -21,7 +21,8 @@ export class Blobfish extends Pet {
             message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon,
         });
         target.increaseAttack(power);
         target.increaseHealth(power);

@@ -24,7 +24,7 @@ export class Ant extends Pet {
         this.initPet(exp, health, attack, equipment);
     }
 
-    faint(gameApi, tiger) {
+    faint(gameApi, tiger, pteranodon?: boolean) {
         let power: Power = this.level == 1 ? { health: 1, attack: 1 } :
             this.level == 2 ? { health: 2, attack: 2 } : { health: 3, attack: 3 };
 
@@ -39,7 +39,8 @@ export class Ant extends Pet {
             type: "ability",
             randomEvent: true,
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon
         })
 
         this.superFaint(gameApi, tiger);

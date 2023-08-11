@@ -11,7 +11,7 @@ export class Badger extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 6;
-    faint(gameApi, tiger) {
+    faint(gameApi, tiger, pteranodon?: boolean) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;
@@ -21,7 +21,7 @@ export class Badger extends Pet {
 
         let attackAmt = this.attack * (this.level * .5);
         if (this.petBehind()) {
-            this.snipePet(this.petBehind(), attackAmt, false, tiger);
+            this.snipePet(this.petBehind(), attackAmt, false, tiger, pteranodon);
         }
         let snipeAhead;
         if (this.petAhead) {
@@ -31,7 +31,7 @@ export class Badger extends Pet {
         }
 
         if (snipeAhead != null) {
-            this.snipePet(snipeAhead, attackAmt, false, tiger);
+            this.snipePet(snipeAhead, attackAmt, false, tiger, pteranodon);
         }
 
         super.superFaint(gameApi, tiger);

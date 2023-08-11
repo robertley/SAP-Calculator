@@ -11,9 +11,9 @@ export class BlackNeckedStilt extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 2;
-        this.parent.gainTrumpets(power, this);
+        this.parent.gainTrumpets(power, this, pteranodon);
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

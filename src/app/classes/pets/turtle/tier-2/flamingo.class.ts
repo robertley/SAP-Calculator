@@ -12,7 +12,7 @@ export class Flamingo extends Pet {
     health = 2;
     attack = 3;
 
-    faint(gameApi, tiger) {
+    faint(gameApi, tiger, pteranodon?: boolean) {
         let power: Power = {
             attack: this.level,
             health: this.level
@@ -50,7 +50,8 @@ export class Flamingo extends Pet {
                 message: `${this.name} gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon
             })
         }
         if (pet2) {
@@ -61,7 +62,8 @@ export class Flamingo extends Pet {
                 message: `Flamingo gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon
             })
         }
 

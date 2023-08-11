@@ -12,7 +12,7 @@ export class Toucan extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.equipment == null) {
             return;
         }
@@ -42,7 +42,8 @@ export class Toucan extends Pet {
                 type: 'ability',
                 player: this.parent,
                 randomEvent: false,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon
             })
 
             // TODO

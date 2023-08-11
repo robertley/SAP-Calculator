@@ -12,7 +12,7 @@ export class Turtle extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 5;
-    faint(gameApi, tiger) {
+    faint(gameApi, tiger, pteranodon?: boolean) {
         let targetPet = this.petBehind();
         while(targetPet) {
             if (targetPet.equipment instanceof Melon) {
@@ -29,7 +29,8 @@ export class Turtle extends Pet {
             message: `${this.name} gave ${targetPet.name} Melon.`,
             type: 'ability',
             tiger: tiger,
-            player: this.parent
+            player: this.parent,
+            pteranodon: pteranodon
         })
         this.superFaint(gameApi, tiger);
     }

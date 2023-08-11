@@ -13,7 +13,7 @@ export class SmallerSlug extends Pet {
     hidden: boolean = true;
     health = 2;
     attack = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         this.abilityService.setSpawnEvent({
             callback: () => {
                 let slug = new SmallestSlug(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
@@ -23,7 +23,8 @@ export class SmallerSlug extends Pet {
                         message: `${this.name} spawned Smallest Slug Level ${this.level}`,
                         type: "ability",
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     }
                 )
 

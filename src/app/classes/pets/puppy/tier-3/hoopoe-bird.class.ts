@@ -12,7 +12,7 @@ export class HoopoeBird extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let targetFront = opponent.furthestUpPet;
         let targetBack = opponent.getLastPet();
@@ -20,8 +20,8 @@ export class HoopoeBird extends Pet {
         if (!targetFront) {
             return;
         }
-        this.snipePet(targetFront, power, false, tiger);
-        this.snipePet(targetBack, power, false, tiger);
+        this.snipePet(targetFront, power, false, tiger, pteranodon);
+        this.snipePet(targetBack, power, false, tiger, pteranodon);
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

@@ -12,7 +12,7 @@ export class Dove extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targets = this.parent.getPetsWithEquipment('Strawberry').filter(pet => {
             return pet !== this && pet.alive;
         });
@@ -31,7 +31,8 @@ export class Dove extends Pet {
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: random
+                randomEvent: random,
+                pteranodon: pteranodon
             })
         }
         if (targets.length > 1) {

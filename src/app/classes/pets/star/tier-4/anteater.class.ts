@@ -12,7 +12,7 @@ export class Anteater extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < 2; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -23,7 +23,8 @@ export class Anteater extends Pet {
                             message: `${this.name} spawned Ant Level ${this.level}`,
                             type: "ability",
                             player: this.parent,
-                            tiger: tiger
+                            tiger: tiger,
+                            pteranodon: pteranodon
                         }
                     )
     

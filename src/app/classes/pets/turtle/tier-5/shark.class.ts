@@ -14,7 +14,7 @@ export class Shark extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 2;
-    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power: Power = {
             attack: this.level,
             health: this.level * 2

@@ -31,7 +31,7 @@ export class Whale extends Pet {
         });
         this.superStartOfBattle(gameApi, tiger);
     }
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let pet of this.swallowedPets) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -39,7 +39,8 @@ export class Whale extends Pet {
                         message: `${this.name} summoned ${pet.name} (level ${this.level}).`,
                         type: 'ability',
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     })
                     this.parent.summonPet(pet, this.savedPosition);
                 },

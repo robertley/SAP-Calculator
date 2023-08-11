@@ -13,7 +13,7 @@ export class Slug extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         this.abilityService.setSpawnEvent({
             callback: () => {
                 let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
@@ -23,7 +23,8 @@ export class Slug extends Pet {
                         message: `${this.name} spawned Smaller Slug Level ${this.level}`,
                         type: "ability",
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     }
                 )
 

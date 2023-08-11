@@ -11,8 +11,8 @@ export class Groundhog extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
-        this.parent.gainTrumpets(this.level, this);
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        this.parent.gainTrumpets(this.level, this, pteranodon);
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

@@ -12,7 +12,7 @@ export class Eagle extends Pet {
     pack: Pack = 'Puppy';
     attack = 6;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let tier = Math.min(6, gameApi.previousShopTier + 1);
         let pets;
         if (this.parent == gameApi.player) {
@@ -38,7 +38,8 @@ export class Eagle extends Pet {
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,
-                        randomEvent: true
+                        randomEvent: true,
+                        pteranodon: pteranodon
                     }
                 )
 

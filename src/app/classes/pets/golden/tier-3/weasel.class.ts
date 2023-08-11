@@ -14,12 +14,13 @@ export class Weasel extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 4;
-    faint(gameApi: GameAPI, tiger?: boolean): void {
+    faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         this.logService.createLog({
             message: `${this.name} gained ${this.level} Gold.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon
         })
         this.superFaint(gameApi, tiger);
     }

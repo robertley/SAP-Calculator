@@ -33,6 +33,7 @@ export class AbilityService {
     private levelUpEvents: AbilityEvent[]= [];
     private enemyHurtEvents: AbilityEvent[]= [];
     private emptyFrontSpaceEvents: AbilityEvent[]= [];
+    private friendAttacksEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -360,7 +361,7 @@ export class AbilityService {
         this.friendFaintsEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendFaintsEvents) {
-            event.callback(this.gameService.gameApi, null, event.callbackPet);
+            event.callback(this.gameService.gameApi, event.callbackPet, null);
         }
         
         this.resetFriendFaintsEvents();
@@ -762,4 +763,43 @@ export class AbilityService {
     get hasEnemyHurtEvents() {
         return this.enemyHurtEvents.length > 0;
     }
+
+    // friend attacks events
+
+    triggerFriendAttacksEvents(player: Player, attacksPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet == attacksPet) {
+                continue;
+            }
+            if (pet.friendAttacks != null) {
+                this.setFriendAttacksEvent({
+                    callback: pet.friendAttacks.bind(pet),
+                    priority: pet.attack,
+                })
+            }
+        }
+    }
+    
+    setFriendAttacksEvent(event: AbilityEvent) {
+        this.friendAttacksEvents.push(event);
+    }
+
+    resetFriendAttacksEvents() {
+        this.friendAttacksEvents = [];
+    }
+
+    executeFriendAttacksEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendAttacksEvents = shuffle(this.friendAttacksEvents);
+
+        this.friendAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendAttacksEvents) {
+            event.callback(this.gameService.gameApi, false);
+        }
+        
+        this.resetFriendAttacksEvents();
+
+    }
+
 }

@@ -11,7 +11,7 @@ export class Vulture extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 3;
-    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!tiger) {
             this.abilityUses++;
         }

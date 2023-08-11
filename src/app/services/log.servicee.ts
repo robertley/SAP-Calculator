@@ -17,6 +17,9 @@ export class LogService {
         if (log.puma) {
             log.message += " (Puma)"
         }
+        if (log.pteranodon) {
+            log.message += " (Pteranodon)"
+        }
         this.logs.push(log);
     }
 

@@ -34,14 +34,15 @@ export abstract class Pet {
     transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
     hurt?(gameApi: GameAPI, tiger?: boolean): void;
-    faint?(gameApi?: GameAPI, tiger?: boolean): void;
+    faint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
     friendSummoned?(pet: Pet, tiger?: boolean): void;
     friendAheadAttacks?(gameApi: GameAPI, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, tiger?: boolean): void;
-    friendFaints?(gameApi: GameAPI, tiger?: boolean): void;
+    friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    friendAttacks?(gameApi: GameAPI, tiger?: boolean): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
     anyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -188,13 +189,13 @@ export abstract class Pet {
         this.exp = exp;
     }
 
-    protected superFriendFaints(gameApi, tiger=false) {
+    protected superFriendFaints(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
-        this.friendFaints(gameApi, true)
+        this.friendFaints(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -275,6 +276,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
         this.enemyHurt(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superFriendAttacks(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.friendAttacks(gameApi, true)
         this.exp = exp;
     }
 
@@ -378,6 +389,9 @@ export abstract class Pet {
             }
         }
 
+        // friend attacks events
+        this.abilityService.triggerFriendAttacksEvents(this.parent, this);
+
         // hurt ability
         if (pet.hurt != null && damage > 0) {
             this.abilityService.setHurtEvent({
@@ -424,7 +438,7 @@ export abstract class Pet {
 
     }
 
-    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean) {
+    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean) {
 
         let wolverine = false;
         if (this.petAhead?.name == 'Wolverine') {
@@ -475,7 +489,8 @@ export abstract class Pet {
             message: message,
             type: "attack",
             randomEvent: randomEvent,
-            player: this.parent
+            player: this.parent,
+            pteranodon: pteranodon
         });
         
         // hurt ability

@@ -12,7 +12,7 @@ export class Stork extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let summonPetPool;
         let tier = Math.max(1, gameApi.previousShopTier - 1);
         if (this.parent == gameApi.player){
@@ -38,7 +38,8 @@ export class Stork extends Pet {
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,
-                        randomEvent: true
+                        randomEvent: true,
+                        pteranodon: pteranodon
                     }
                 )
 

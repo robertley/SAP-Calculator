@@ -11,7 +11,7 @@ export class PiedTamarin extends Pet {
     pack: Pack = 'Golden';
     attack = 1;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.trumpets < 1) {
             return;
         }
@@ -22,10 +22,10 @@ export class PiedTamarin extends Pet {
                 break;
             }
             hasTarget = true;
-            this.snipePet(target, 3, true, tiger);
+            this.snipePet(target, 3, true, tiger, pteranodon);
         }
         if (hasTarget) {
-            this.parent.spendTrumpets(1, this);
+            this.parent.spendTrumpets(1, this, pteranodon);
         }
     }
     constructor(protected logService: LogService,

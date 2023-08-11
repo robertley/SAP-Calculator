@@ -13,7 +13,7 @@ export class Deer extends Pet {
     pack: Pack = 'Turtle';
     attack = 1;
     health = 1;
-    faint(gameApi, tiger) {
+    faint(gameApi, tiger, pteranodon?: boolean) {
         let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
         this.abilityService.setSpawnEvent({
             callback: () => {
@@ -23,7 +23,8 @@ export class Deer extends Pet {
                         message: `${this.name} spawned Bus level ${this.level}`,
                         type: "ability",
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     }
                 )
 

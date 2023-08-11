@@ -577,21 +577,23 @@ export class Player {
 
     }
 
-    gainTrumpets(amt: number, pet: Pet) {
+    gainTrumpets(amt: number, pet: Pet, pteranodon?: boolean) {
         this.trumpets = Math.min(50, this.trumpets += amt);
         this.logService.createLog({
             message: `${pet.name} gained ${amt} trumpets. (${this.trumpets})`,
             type: 'trumpets',
-            player: this
+            player: this,
+            pteranodon: pteranodon
         })
     }
 
-    spendTrumpets(amt: number, pet: Pet) {
+    spendTrumpets(amt: number, pet: Pet, pteranodon?: boolean) {
         this.trumpets = Math.max(0, this.trumpets -= amt);
         this.logService.createLog({
             message: `${pet.name} spent ${amt} trumpets. (${this.trumpets})`,
             type: 'trumpets',
-            player: this
+            player: this,
+            pteranodon: pteranodon
         })
     }
 

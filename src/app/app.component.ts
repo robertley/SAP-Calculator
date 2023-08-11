@@ -563,6 +563,7 @@ export class AppComponent implements OnInit {
 
     this.abilityService.executeAfterAttackEvents();
     this.abilityService.executeFriendAheadAttacksEvents();
+    this.abilityService.executeFriendAttacksEvents();
   }
 
   endLog(winner?: Player) {

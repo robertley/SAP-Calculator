@@ -14,7 +14,7 @@ export class Cuttlefish extends Pet {
     pack: Pack = 'Golden';
     attack = 8;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let opponentPets = this.parent.opponent.petArray;
         let targets: Pet[] = [];
         for (let i = 0; i < this.level; i++) {
@@ -30,7 +30,8 @@ export class Cuttlefish extends Pet {
                 message: `${this.name} gave ${target.name} Ink.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon
             })
         }
         this.superFaint(gameApi, tiger);

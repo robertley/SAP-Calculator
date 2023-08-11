@@ -14,7 +14,7 @@ export class Flea extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 1;
-    faint(gameApi: GameAPI, tiger?: boolean): void {
+    faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targets = clone(this.parent.opponent.petArray);
         shuffle(targets);
         targets = targets.sort((a, b) => {
@@ -32,7 +32,8 @@ export class Flea extends Pet {
                 message: `${this.name} gave ${target.name} Weak.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon
             })
         }
         this.superFaint(gameApi, tiger);

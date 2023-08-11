@@ -12,7 +12,7 @@ export class Orca extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 8;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             let faintPet = this.petService.getRandomFaintPet(this.parent);
             this.abilityService.setSpawnEvent({
@@ -24,7 +24,8 @@ export class Orca extends Pet {
                             type: "ability",
                             player: this.parent,
                             tiger: tiger,
-                            randomEvent: true
+                            randomEvent: true,
+                            pteranodon: pteranodon
                         }
                     )
     

@@ -12,7 +12,7 @@ export class Lionfish extends Pet {
     pack: Pack = 'Puppy';
     attack = 8;
     health = 4;
-    faint(gameApi: GameAPI, tiger?: boolean): void {
+    faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let snipeAmt = 1 + Math.floor(this.attack / 10);
         for (let i = 0; i < snipeAmt; i++) {
@@ -21,7 +21,7 @@ export class Lionfish extends Pet {
                 return;
             }
             let power = this.level * 4;
-            this.snipePet(target, power, true, tiger);
+            this.snipePet(target, power, true, tiger, pteranodon);
         }
         this.superFaint(gameApi, tiger);
     }

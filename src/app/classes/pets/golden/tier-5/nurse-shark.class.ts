@@ -14,7 +14,7 @@ export class NurseShark extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 6;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.trumpets == 0) {
             return;
         }
@@ -27,11 +27,11 @@ export class NurseShark extends Pet {
                 break;
             }
             hasTarget = true;
-            this.snipePet(target, power, true, tiger);
+            this.snipePet(target, power, true, tiger, pteranodon);
         }
 
         if (hasTarget) {
-            this.parent.spendTrumpets(Math.min(this.parent.trumpets, 6), this);
+            this.parent.spendTrumpets(Math.min(this.parent.trumpets, 6), this, pteranodon);
         }
         this.superFaint(gameApi, tiger);
     }

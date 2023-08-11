@@ -13,7 +13,7 @@ export class Osprey extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -24,7 +24,8 @@ export class Osprey extends Pet {
                             message: `${this.name} summoned a 2/1 Groundhog`,
                             type: "ability",
                             player: this.parent,
-                            tiger: tiger
+                            tiger: tiger,
+                            pteranodon: pteranodon
                         }
                     )
 

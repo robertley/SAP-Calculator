@@ -12,7 +12,7 @@ export class Pangolin extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.toy == null) {
             return;
         }
@@ -25,7 +25,8 @@ export class Pangolin extends Pet {
             message: `${this.name} gave ${this.petBehind().name} ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon
         });
         this.superFaint(gameApi, tiger);
     }

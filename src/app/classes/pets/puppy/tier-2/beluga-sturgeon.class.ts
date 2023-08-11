@@ -14,7 +14,7 @@ export class BelugaSturgeon extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -24,7 +24,8 @@ export class BelugaSturgeon extends Pet {
                         type: 'ability',
                         player: this.parent,
                         randomEvent: false,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     })
                     if (this.parent.summonPet(dolphin, 4)) {
                         this.abilityService.triggerSummonedEvents(dolphin);

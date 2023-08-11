@@ -7,4 +7,5 @@ export interface Log {
     randomEvent?: boolean; // assumed false if undefined
     tiger?: boolean;
     puma?: boolean;
+    pteranodon?: boolean;
 }

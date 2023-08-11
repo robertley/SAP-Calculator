@@ -15,7 +15,7 @@ export class Wolf extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power: Power = {
             attack: this.level * 3,
             health: this.level * 2
@@ -36,7 +36,8 @@ export class Wolf extends Pet {
                             message: `${this.name} spawned ${pig.name} ${power.attack}/${power.health}`,
                             type: "ability",
                             player: this.parent,
-                            tiger: tiger
+                            tiger: tiger,
+                            pteranodon: pteranodon
                         }
                     )
     

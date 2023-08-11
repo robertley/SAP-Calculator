@@ -12,7 +12,7 @@ export class Mandrill extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let toyLevelMax = this.level * 2;
         if (this.parent.toy?.tier <= toyLevelMax) {
             // check if parent has instance of flying squirrel

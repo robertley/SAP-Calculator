@@ -13,7 +13,7 @@ export class Chameleon extends Pet {
     pack: Pack = 'Puppy';
     attack = 1;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.toy == null) {
             return;
         }
@@ -25,6 +25,7 @@ export class Chameleon extends Pet {
             message: `${this.name} activated ${toy.name}.`,
             type: 'ability',
             player: this.parent,
+            pteranodon: pteranodon,
         })
         if (toy.onBreak) {
             this.parent.breakToy(true)

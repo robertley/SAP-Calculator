@@ -12,7 +12,7 @@ export class SecretaryBird extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 5;
-    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!tiger) {
             this.abilityUses++;
         }

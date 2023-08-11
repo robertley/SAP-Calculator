@@ -13,7 +13,7 @@ export class Spider extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    faint(gameApi: GameAPI, tiger) {
+    faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
         let tier3Pets;
         if (this.parent = gameApi.player) {
             tier3Pets = gameApi.playerPetPool.get(3);
@@ -41,7 +41,8 @@ export class Spider extends Pet {
                         type: "ability",
                         player: this.parent,
                         randomEvent: true,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     }
                 )
 

@@ -13,7 +13,7 @@ export class Microbe extends Pet {
     pack: Pack = 'Puppy';
     attack = 1;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targetPets = this.parent.petArray.filter(pet => pet != this);
         targetPets = [
             ...targetPets,
@@ -27,7 +27,8 @@ export class Microbe extends Pet {
                 message: `${this.name} gave ${pet.name} Weak.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon,
             })
             pet.givePetEquipment(new Weak());
         }

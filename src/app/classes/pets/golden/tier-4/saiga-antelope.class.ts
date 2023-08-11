@@ -12,7 +12,7 @@ export class SaigaAntelope extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 3;
-    friendFaints(gameApi: GameAPI, tiger?: boolean): void {
+    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!this.alive) {
             return;
         }

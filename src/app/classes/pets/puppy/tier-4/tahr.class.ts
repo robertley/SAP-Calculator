@@ -14,7 +14,7 @@ export class Tahr extends Pet {
     pack: Pack = 'Puppy';
     attack = 5;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.petBehind() == null) {
             return;
         }
@@ -36,7 +36,8 @@ export class Tahr extends Pet {
                 message: `${this.name} gave ${pet.name} Chili.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon,
             })
             pet.givePetEquipment(new Chili(this.logService, this.abilityService));
             count++;

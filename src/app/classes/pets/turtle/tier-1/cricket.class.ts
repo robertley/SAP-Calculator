@@ -11,7 +11,7 @@ export class Cricket extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 1;
-    faint(gameApi, tiger) {
+    faint(gameApi, tiger, pteranodon?: boolean) {
         let level = 1;
         let exp = 0;
         if (this.level == 2) {
@@ -30,7 +30,8 @@ export class Cricket extends Pet {
                         message: `${this.name} spawned Zombie Cricket Level ${level}`,
                         type: "ability",
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     }
                 )
 

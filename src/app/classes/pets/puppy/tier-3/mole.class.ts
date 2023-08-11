@@ -12,7 +12,7 @@ export class Mole extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 8;
         let equipmentPets: Pet[] = [];
         for (let pet of this.parent.petArray) {
@@ -33,7 +33,8 @@ export class Mole extends Pet {
             this.logService.createLog({
                 message: `${this.name} removed ${pet.name}'s equipment.`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                pteranodon: pteranodon,
             })
         }
         this.abilityService.setSpawnEvent({
@@ -41,7 +42,8 @@ export class Mole extends Pet {
                 this.logService.createLog({
                     message: `${this.name} summoned a ${power}/${power} Mole.`,
                     type: 'ability',
-                    player: this.parent
+                    player: this.parent,
+                    pteranodon: pteranodon,
                 })
 
                 let mole = new Mole(this.logService, this.abilityService, this.parent, power, power);

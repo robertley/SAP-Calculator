@@ -13,7 +13,7 @@ export class SeaUrchin extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targets = [this.parent.opponent.furthestUpPet];
         if (targets[0] == null) {
             return;
@@ -32,7 +32,8 @@ export class SeaUrchin extends Pet {
                 message: `${this.name} removed 5 health from ${target.name}.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon,
             })
         }
 

@@ -13,7 +13,7 @@ export class Rooster extends Pet {
     pack: Pack = 'Turtle';
     attack = 6;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let attack = Math.floor(this.attack * .5);
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
@@ -22,7 +22,8 @@ export class Rooster extends Pet {
                         message: `${this.name} summoned Chick (${attack}).`,
                         type: 'ability',
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        pteranodon: pteranodon
                     })
                     this.parent.summonPet(
                         new Chick(this.logService, this.abilityService, this.parent, 1, attack, this.minExpForLevel),

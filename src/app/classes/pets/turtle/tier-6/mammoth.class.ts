@@ -11,7 +11,7 @@ export class Mammoth extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 12;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 2;
         for (let pet of this.parent.petArray.filter(pet => {return pet != this && pet.alive})) {
             pet.increaseAttack(power);
@@ -20,7 +20,8 @@ export class Mammoth extends Pet {
                 message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon,
             })
         }
         super.superFaint(gameApi, tiger);

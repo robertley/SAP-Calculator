@@ -14,7 +14,7 @@ export class BettaFish extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 3;
-    faint(gameApi: GameAPI, tiger?: boolean): void {
+    faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let target = this.petBehind();
         if (target == null) {
             return;
@@ -29,7 +29,8 @@ export class BettaFish extends Pet {
             message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon,
         })
         
         this.superFaint(gameApi, tiger);

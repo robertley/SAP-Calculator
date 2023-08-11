@@ -1,45 +1,35 @@
-import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
-import { Ink } from "../../../equipment/ailments/ink.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Squid extends Pet {
-    name = "Squid";
-    tier = 2;
+export class Warthog extends Pet {
+    name = "Warthog";
+    tier = 6;
     pack: Pack = 'Golden';
-    attack = 5;
-    health = 2;
+    attack = 9;
+    health = 6;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.parent.trumpets < 1) {
-            return;
-        }
-        let hasTarget = false;
-        let targets = this.parent.opponent.petArray.filter(pet => {
-            return pet.health > 0 && pet.equipment?.name != 'Ink';
-        })
-        for (let i = 0; i < this.level; i++) {
-            let target = targets[i];
+        let power = this.level;
+        let triggers = Math.floor(this.attack / 3);
+        for (let i = 0; i < triggers; i++) {
+            let target = this.parent.getRandomPet();
             if (target == null) {
                 break;
             }
-            hasTarget = true;
-            target.givePetEquipment(new Ink());
+            target.increaseAttack(power);
+            target.increaseHealth(power);
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} Ink.`,
+                message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
+                randomEvent: true
             })
         }
-        if (hasTarget) {
-            this.parent.spendTrumpets(1, this, pteranodon);
-        }
-        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

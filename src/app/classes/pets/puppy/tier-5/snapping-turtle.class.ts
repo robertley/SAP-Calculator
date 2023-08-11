@@ -12,7 +12,7 @@ export class SnappingTurtle extends Pet {
     pack: Pack = 'Puppy';
     attack = 4;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.petBehind() == null) {
             return;
         }
@@ -34,7 +34,8 @@ export class SnappingTurtle extends Pet {
                 message: `${this.name} gave ${pet.name} Skewer.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon,
             })
             pet.givePetEquipment(new Skewer(this.logService));
             count++;

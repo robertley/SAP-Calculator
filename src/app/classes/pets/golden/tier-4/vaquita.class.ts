@@ -12,9 +12,9 @@ export class Vaquita extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean): void {
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let trumpetAmt = Math.floor((this.level * .5) * this.parent.trumpets);
-        this.parent.gainTrumpets(trumpetAmt, this);
+        this.parent.gainTrumpets(trumpetAmt, this, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
