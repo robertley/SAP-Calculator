@@ -240,6 +240,17 @@ import { GrizzlyBear } from "../classes/pets/golden/tier-6/grizzly-bear.class";
 import { GermanShephard } from "../classes/pets/golden/tier-6/german-shephard.class";
 import { BirdOfParadise } from "../classes/pets/golden/tier-6/bird-of-paradise.class";
 import { Oyster } from "../classes/pets/golden/tier-6/oyster.class";
+import { Bus } from "../classes/pets/hidden/bus.class";
+import { Butterfly } from "../classes/pets/hidden/butterfly.class";
+import { Chick } from "../classes/pets/hidden/chick.class";
+import { DirtyRat } from "../classes/pets/hidden/dirty-rat.class";
+import { GoldenRetriever } from "../classes/pets/hidden/golden-retriever.class";
+import { LizardTail } from "../classes/pets/hidden/lizard-tail.class";
+import { Nest } from "../classes/pets/hidden/nest.class";
+import { Ram } from "../classes/pets/hidden/ram.class";
+import { SmallerSlug } from "../classes/pets/hidden/smaller-slug.class";
+import { SmallestSlug } from "../classes/pets/hidden/smallest-slug.class";
+import { ZombieFly } from "../classes/pets/hidden/zombie-fly.class";
 
 @Injectable({
     providedIn: 'root'
@@ -1083,6 +1094,34 @@ export class PetService {
                 return new BirdOfParadise(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Oyster':
                 return new Oyster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+
+            // Token Pets
+            case 'Bee':
+                return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Bus':
+                return new Bus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Butterfly':
+                return new Butterfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Chick':
+                return new Chick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Dirty Ray':
+                return new DirtyRat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Golden Retriever':
+                return new GoldenRetriever(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Lizard Tail':
+                return new LizardTail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Nest':
+                return new Nest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Ram':
+                return new Ram(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Smaller Slug':
+                return new SmallerSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Smallest Slug':
+                return new SmallestSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Zombie Cricket':
+                return new ZombieCricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Zombie Fly':
+                return new ZombieFly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
         }
     }
 
@@ -1834,6 +1873,47 @@ export class PetService {
         }
         if (pet instanceof Oyster) {
             newPet = new Oyster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
+        // Token pets
+        if (pet instanceof Bee) {
+            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Bus) {
+            newPet = new Bus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Butterfly) {
+            newPet = new Butterfly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Chick) {
+            newPet = new Chick(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof DirtyRat) {
+            newPet = new DirtyRat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof GoldenRetriever) {
+            newPet = new GoldenRetriever(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof LizardTail) {
+            newPet = new LizardTail(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Nest) {
+            newPet = new Nest(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Ram) {
+            newPet = new Ram(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SmallerSlug) {
+            newPet = new SmallerSlug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SmallestSlug) {
+            newPet = new SmallestSlug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof ZombieCricket) {
+            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof ZombieFly) {
+            newPet = new ZombieFly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         return newPet;
