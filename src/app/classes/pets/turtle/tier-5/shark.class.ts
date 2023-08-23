@@ -15,6 +15,9 @@ export class Shark extends Pet {
     attack = 4;
     health = 2;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (pet == this) {
+            return;
+        }
         let power: Power = {
             attack: this.level,
             health: this.level * 2
