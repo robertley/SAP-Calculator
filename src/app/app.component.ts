@@ -11,7 +11,7 @@ import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
 
 import { PetService } from './services/pet.service';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { Deer } from './classes/pets/turtle/tier-4/deer.class';
 import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
@@ -28,6 +28,7 @@ import { Pancakes } from './classes/equipment/puppy/pancakes.class';
 import { ChocolateCake } from './classes/equipment/golden/chocolate-cake.class';
 import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
+import { LocalStorageService } from './services/local-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -65,17 +66,26 @@ export class AppComponent implements OnInit {
     private gameService: GameService,
     private petService: PetService,
     private toyService: ToyService,
-    private startOfBattleService: StartOfBattleService
+    private startOfBattleService: StartOfBattleService,
+    private localStorageService: LocalStorageService
   ) {
     this.player = new Player(logService, abilityService, gameService);
     this.opponent = new Player(logService, abilityService, gameService);
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
+    this.loadLocalStorage();
   }
 
   ngOnInit(): void {
       this.toys = this.toyService.toys;
+  }
+
+  loadLocalStorage() {
+    let localStorage = this.localStorageService.getStorage();
+    if (localStorage) {
+      this.formGroup.setValue(JSON.parse(localStorage));
+    }
   }
 
   initPlayerPets(player: Player) {
@@ -84,9 +94,20 @@ export class AppComponent implements OnInit {
     }
   }
 
-  initFormGroup() {
+  makeFormGroup(control: AbstractControl) {
+    return control as FormGroup;
+  }
+
+  initFormGroup() {    
+    let petsDummyArray = [0,1,2,3,4]
     let defaultTurn = 11;
     let defaultGoldSpent = 10;
+
+    this.updatePlayerPack(this.player, this.player.pack);
+    this.updatePlayerPack(this.opponent, this.opponent.pack);
+    this.updatePreviousShopTier(defaultTurn);
+    this.updateGoldSpent(defaultGoldSpent, defaultGoldSpent);
+
     this.formGroup = new FormGroup({
       playerPack: new FormControl(this.player.pack),
       opponentPack: new FormControl(this.opponent.pack),
@@ -98,13 +119,12 @@ export class AppComponent implements OnInit {
       playerGoldSpent: new FormControl(defaultGoldSpent),
       opponentGoldSpent: new FormControl(defaultGoldSpent),
       angler: new FormControl(false),
-      logFilter: new FormControl(null)
+      logFilter: new FormControl(null),
+      playerPets: new FormArray([]),
+      opponentPets: new FormArray([]),
     })
 
-    this.updatePlayerPack(this.player, this.player.pack);
-    this.updatePlayerPack(this.opponent, this.opponent.pack);
-    this.updatePreviousShopTier(defaultTurn);
-    this.updateGoldSpent(defaultGoldSpent, defaultGoldSpent);
+    this.initPetForms();
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       this.updatePlayerPack(this.player, value);
@@ -138,6 +158,53 @@ export class AppComponent implements OnInit {
         this.updateSelectorPets();
       })
     })
+
+    this.formGroup.valueChanges.subscribe((value) => {
+      this.localStorageService.setStorage(value)
+    })
+  }
+
+  initPetForms() {
+    let petsDummyArray = [0,1,2,3,4];
+    let playerPetFormGroups = petsDummyArray.map(foo => {
+        return new FormGroup({
+          name: new FormControl(this.player[`pet${foo}`]?.name),
+          attack: new FormControl(this.player[`pet${foo}`]?.attack),
+          health: new FormControl(this.player[`pet${foo}`]?.health),
+          exp: new FormControl(this.player[`pet${foo}`]?.exp),
+          equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
+          belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet)
+        })
+      }
+    );
+    let playerFormArray = this.formGroup.get('playerPets') as FormArray;
+    playerFormArray.clear();
+    for (let formGroup of playerPetFormGroups) {
+      playerFormArray.push(formGroup);
+    }
+    let opponentFormGroups = petsDummyArray.map(foo => {
+        return new FormGroup({
+          name: new FormControl(this.opponent[`pet${foo}`]?.name),
+          attack: new FormControl(this.opponent[`pet${foo}`]?.attack),
+          health: new FormControl(this.opponent[`pet${foo}`]?.health),
+          exp: new FormControl(this.opponent[`pet${foo}`]?.exp),
+          equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
+          belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet)
+        })
+      }
+    );
+    let opponentFormArray = this.formGroup.get('opponentPets') as FormArray;
+    opponentFormArray.clear();
+    for (let formGroup of opponentFormGroups) {
+      opponentFormArray.push(formGroup);
+    }
+  }
+
+  getPlayerPetsFormArray(): AbstractControl[] {
+    return Array.from((this.formGroup.get('playerPets') as FormArray).controls.reverse())
+  }
+  getOpponentPetsFormArray(): AbstractControl[] {
+    return Array.from((this.formGroup.get('opponentPets') as FormArray).controls)
   }
 
   updatePlayerPack(player: Player, pack) {
@@ -715,6 +782,9 @@ export class AppComponent implements OnInit {
     } else {
       this.initPlayerPets(this.player);
       this.initPlayerPets(this.opponent);
+    }
+    if (this.formGroup) {
+      this.initPetForms();
     }
     setTimeout(() => {
       this.petSelectors.forEach(selector => {

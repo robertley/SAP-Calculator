@@ -107,48 +107,13 @@
       </div>
       <div class="card p-2 player-card">
         <div class="row">
-          <div class="col">
+          <div class="col" *ngFor="let pet of getPlayerPetsFormArray() ; index as i">
             <app-pet-selector
-              [pet]="player.pet4"
+              [pet]="player['pet' + (4 - i)]"
               [player]="player"
               [opponent]="opponent"
-              [index]="4"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="player.pet3"
-              [player]="player"
-              [opponent]="opponent"
-              [index]="3"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="player.pet2"
-              [player]="player"
-              [opponent]="opponent"
-              [index]="2"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="player.pet1"
-              [player]="player"
-              [opponent]="opponent"
-              [index]="1"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="player.pet0"
-              [player]="player"
-              [opponent]="opponent"
-              [index]="0"
+              [index]="4 - i"
+              [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>
@@ -159,48 +124,13 @@
       <h2 class="me-4">Opponent</h2>
       <div class="card p-2 player-card">
         <div class="row">
-          <div class="col">
+          <div class="col" *ngFor="let pet of getOpponentPetsFormArray() ; index as i">
             <app-pet-selector
-              [pet]="opponent.pet0"
+              [pet]="opponent['pet' + i]"
               [player]="opponent"
               [opponent]="player"
-              [index]="0"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="opponent.pet1"
-              [player]="opponent"
-              [opponent]="player"
-              [index]="1"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="opponent.pet2"
-              [player]="opponent"
-              [opponent]="player"
-              [index]="2"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="opponent.pet3"
-              [player]="opponent"
-              [opponent]="player"
-              [index]="3"
-              [angler]="formGroup.get('angler').value"
-            ></app-pet-selector>
-          </div>
-          <div class="col">
-            <app-pet-selector
-              [pet]="opponent.pet4"
-              [player]="opponent"
-              [opponent]="player"
-              [index]="4"
+              [index]="i"
+              [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
             ></app-pet-selector>
           </div>

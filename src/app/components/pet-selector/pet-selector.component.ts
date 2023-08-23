@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet.service';
@@ -24,8 +24,9 @@ export class PetSelectorComponent implements OnInit {
   index: number;
   @Input()
   angler: boolean;
-
+  @Input()
   formGroup: FormGroup;
+
   equipment: Map<string, Equipment>;
   turtlePackPets: string[];
   pets: Map<number, string[]>;
@@ -37,7 +38,7 @@ export class PetSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initSelector();    
+    this.initSelector();
   }
 
   initSelector() {
@@ -79,14 +80,14 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initForm() {
-    this.formGroup = new FormGroup({
-      name: new FormControl(this.pet?.name),
-      attack: new FormControl(this.pet?.attack),
-      health: new FormControl(this.pet?.health),
-      exp: new FormControl(this.pet?.exp),
-      equipment: new FormControl(this.pet?.equipment),
-      belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
-    })
+    // this.formGroup = new FormGroup({
+    //   name: new FormControl(this.pet?.name),
+    //   attack: new FormControl(this.pet?.attack),
+    //   health: new FormControl(this.pet?.health),
+    //   exp: new FormControl(this.pet?.exp),
+    //   equipment: new FormControl(this.pet?.equipment),
+    //   belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
+    // })
 
     this.formGroup.get('name').valueChanges.subscribe((value) => {
       if (value == null) {
