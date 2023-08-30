@@ -3,7 +3,7 @@
     <div class="col-12 header">
       <h1>SAP Calculator</h1>
       <div class="d-flex flex-column align-items-end">
-        <span>Version: {{version}}</span>
+        <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch Notes</span></span>
         <span>SAP Version: {{sapVersion}}</span>
       </div>
     </div>
@@ -290,4 +290,21 @@
     </div>
   </div>
 
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="patchNotes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Patch Notes</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-patch-notes></app-patch-notes>
+      </div>
+    </div>
+  </div>
 </div>
