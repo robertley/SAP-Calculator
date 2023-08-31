@@ -64,6 +64,10 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.petService.goldenPackPets) {
       this.pets.get(tier).push(...pets);
     }
+    // remove duplicates from each tier
+    for (let [tier, pets] of this.pets) {
+      this.pets.set(tier, [...new Set(pets)]);
+    }
   }
 
   getPack(player: Player) {
