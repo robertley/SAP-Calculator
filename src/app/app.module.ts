@@ -6,12 +6,14 @@ import { PetSelectorComponent } from './components/pet-selector/pet-selector.com
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { PatchNotesComponent } from './components/patch-notes/patch-notes.component';
+import { CustomPackEditorComponent } from './components/custom-pack-editor/custom-pack-editor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PetSelectorComponent,
-    PatchNotesComponent
+    PatchNotesComponent,
+    CustomPackEditorComponent
   ],
   imports: [
     BrowserModule,
