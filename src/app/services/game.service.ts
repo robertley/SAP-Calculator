@@ -29,7 +29,7 @@ export class GameService {
         if (opponentPetPool != null)
             this.gameApi.opponentPetPool = opponentPetPool;
 
-        console.log(this.gameApi)
+        // console.log(this.gameApi)
     }
 
     setPreviousShopTier(tier: number) {

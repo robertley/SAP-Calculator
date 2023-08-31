@@ -22,6 +22,9 @@ export class Mosquito extends Pet {
 
         for (let i = 0; i < this.level; i++) {
             let attackPet = opponent.getRandomPet();
+            if (!attackPet) {
+                break;
+            }
             this.snipePet(attackPet, 1, true, tiger)
         }
 

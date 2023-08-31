@@ -21,4 +21,8 @@ export class LocalStorageService {
         }
         window.localStorage.setItem(this.key, value);
     }
+
+    clearStorage() {
+        window.localStorage.removeItem(this.key);
+    }
 }

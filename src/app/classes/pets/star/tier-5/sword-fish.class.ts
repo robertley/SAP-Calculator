@@ -16,7 +16,9 @@ export class SwordFish extends Pet {
         let highestHealthPetResp = opponent.getHighestHealthPet();
         let target = highestHealthPetResp.pet;
         let power = this.attack * this.level;
-        this.snipePet(target, power, highestHealthPetResp.random, tiger);
+        if (target != null) {
+            this.snipePet(target, power, highestHealthPetResp.random, tiger);
+        }
         this.snipePet(this, power, false, tiger);
         this.superStartOfBattle(gameApi, tiger);
     }

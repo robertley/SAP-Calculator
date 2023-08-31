@@ -48,15 +48,20 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initPets() {
-    this.pets = this.getPack(this.player);
-    if (!this.angler) {
-      return;
+    this.pets = new Map();
+    for (let i = 1; i <= 6; i++) {
+      this.pets.set(i, []);
     }
-    if (this.player.pack == this.opponent.pack) {
-      return;
+    for (let [tier, pets] of this.petService.turtlePackPets) {
+      this.pets.get(tier).push(...pets);
     }
-    let opponentPack = this.getPack(this.opponent);
-    for (let [tier, pets] of opponentPack) {
+    for (let [tier, pets] of this.petService.puppyPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.starPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.goldenPackPets) {
       this.pets.get(tier).push(...pets);
     }
   }
@@ -153,6 +158,29 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('attack').setValue(null, {emitEvent: false});
     this.formGroup.get('health').setValue(null, {emitEvent: false});
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
+  }
+
+  optionHidden(option: string) {
+    let pack = this.getPack(this.player);
+    for (let [tier, pets] of pack) {
+      if (pets.includes(option)) {
+        return false;
+      }
+    }
+    if (this.angler) {
+      let pack = this.getPack(this.opponent);
+      for (let [tier, pets] of pack) {
+        if (pets.includes(option)) {
+          return false;
+        }
+      }
+    }
+
+    if (this.player.getPet(this.index)?.name == option) {
+      return false;
+    }
+
+    return true;
   }
 
 

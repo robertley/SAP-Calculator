@@ -12,7 +12,7 @@ export class Fly extends Pet {
     pack: Pack = 'Turtle';
     attack = 5;
     health = 5;
-    maxAbilityUses: number = 2;
+    maxAbilityUses: number = 3;
     friendFaints(gameApi: GameAPI, faintedPet?: Pet, tiger?: boolean): void {
         if (faintedPet instanceof ZombieFly) {
             return;

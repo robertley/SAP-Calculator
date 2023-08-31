@@ -1,4 +1,4 @@
-import { Component, ViewChildren, QueryList, OnInit } from '@angular/core';
+import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
@@ -13,15 +13,9 @@ import { AbilityService } from './services/ability.service';
 import { PetService } from './services/pet.service';
 import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
-import { Deer } from './classes/pets/turtle/tier-4/deer.class';
-import { Parrot } from './classes/pets/turtle/tier-4/parrot.class';
-import { Ox } from './classes/pets/turtle/tier-3/ox.class';
-import { Kangaroo } from './classes/pets/turtle/tier-2/kangaroo.class';
-import { Turkey } from './classes/pets/turtle/tier-5/turkey.class';
 import { ToyService } from './services/toy.service';
-import { Egg } from './classes/equipment/puppy/egg.class';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { cloneDeep, shuffle } from 'lodash';
+import { shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
@@ -40,7 +34,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.1';
+  version = '0.4.2';
   sapVersion = '0.27.30-124 BETA'
 
   title = 'sap-calculator';
@@ -75,6 +69,14 @@ export class AppComponent implements OnInit {
     this.petService.init();
     this.initFormGroup();
     this.loadLocalStorage();
+    this.setFontSize();
+    this.initPlayerPets();
+    this.updatePlayerPack(this.player, this.player.pack, false);
+    this.updatePlayerPack(this.opponent, this.opponent.pack, false);
+  }
+
+  printFormGroup() {
+    console.log(this.formGroup)
   }
 
   ngOnInit(): void {
@@ -84,11 +86,31 @@ export class AppComponent implements OnInit {
   loadLocalStorage() {
     let localStorage = this.localStorageService.getStorage();
     if (localStorage) {
-      this.formGroup.setValue(JSON.parse(localStorage));
+      // console.log('loading local storage', localStorage)
+      this.formGroup.setValue(JSON.parse(localStorage), {emitEvent: false});
     }
   }
 
-  initPlayerPets(player: Player) {
+  initPlayerPets() {
+    for (let i = 0; i < 5; i++) {
+      let petForm = (this.formGroup.get('playerPets') as FormArray).controls[i] as FormGroup;
+      if (petForm.get('name').value == null) {
+        continue;
+      }
+      let pet = this.petService.createPet(petForm.value, this.player);
+      this.player.setPet(i, pet, true);
+    }
+    for (let i = 0; i < 5; i++) {
+      let petForm = (this.formGroup.get('opponentPets') as FormArray).controls[i] as FormGroup;
+      if (petForm.get('name').value == null) {
+        continue;
+      }
+      let pet = this.petService.createPet(petForm.value, this.opponent);
+      this.opponent.setPet(i, pet, true);
+    }
+  }
+
+  randomizePlayerPets(player: Player) {
     for (let i = 0; i < 5; i++) {
       player.setPet(i, this.petService.getRandomPet(player), true);
     }
@@ -103,8 +125,6 @@ export class AppComponent implements OnInit {
     let defaultTurn = 11;
     let defaultGoldSpent = 10;
 
-    this.updatePlayerPack(this.player, this.player.pack);
-    this.updatePlayerPack(this.opponent, this.opponent.pack);
     this.updatePreviousShopTier(defaultTurn);
     this.updateGoldSpent(defaultGoldSpent, defaultGoldSpent);
 
@@ -122,6 +142,7 @@ export class AppComponent implements OnInit {
       logFilter: new FormControl(null),
       playerPets: new FormArray([]),
       opponentPets: new FormArray([]),
+      fontSize: new FormControl(13),
     })
 
     this.initPetForms();
@@ -158,10 +179,6 @@ export class AppComponent implements OnInit {
         this.updateSelectorPets();
       })
     })
-
-    this.formGroup.valueChanges.subscribe((value) => {
-      this.localStorageService.setStorage(value)
-    })
   }
 
   initPetForms() {
@@ -169,9 +186,9 @@ export class AppComponent implements OnInit {
     let playerPetFormGroups = petsDummyArray.map(foo => {
         return new FormGroup({
           name: new FormControl(this.player[`pet${foo}`]?.name),
-          attack: new FormControl(this.player[`pet${foo}`]?.attack),
-          health: new FormControl(this.player[`pet${foo}`]?.health),
-          exp: new FormControl(this.player[`pet${foo}`]?.exp),
+          attack: new FormControl(this.player[`pet${foo}`]?.attack ?? 0),
+          health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
+          exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet)
         })
@@ -185,9 +202,9 @@ export class AppComponent implements OnInit {
     let opponentFormGroups = petsDummyArray.map(foo => {
         return new FormGroup({
           name: new FormControl(this.opponent[`pet${foo}`]?.name),
-          attack: new FormControl(this.opponent[`pet${foo}`]?.attack),
-          health: new FormControl(this.opponent[`pet${foo}`]?.health),
-          exp: new FormControl(this.opponent[`pet${foo}`]?.exp),
+          attack: new FormControl(this.opponent[`pet${foo}`]?.attack ?? 0),
+          health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
+          exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet)
         })
@@ -201,13 +218,13 @@ export class AppComponent implements OnInit {
   }
 
   getPlayerPetsFormArray(): AbstractControl[] {
-    return Array.from((this.formGroup.get('playerPets') as FormArray).controls.reverse())
+    return Array.from((this.formGroup.get('playerPets') as FormArray).controls).reverse()
   }
   getOpponentPetsFormArray(): AbstractControl[] {
     return Array.from((this.formGroup.get('opponentPets') as FormArray).controls)
   }
 
-  updatePlayerPack(player: Player, pack) {
+  updatePlayerPack(player: Player, pack, randomize = true) {
     player.pack = pack;
     let petPool;
     switch (pack) {
@@ -229,7 +246,9 @@ export class AppComponent implements OnInit {
     } else {
       this.gameService.setTierGroupPets(null, petPool);
     }
-    this.randomize(player);
+    if (randomize) {
+      this.randomize(player);
+    }
   }
 
   updateSelectorPets() {
@@ -369,6 +388,8 @@ export class AppComponent implements OnInit {
   }
 
   simulate() {
+    this.localStorageService.setStorage(this.formGroup.value);
+
     this.resetSimulation();
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
@@ -777,11 +798,12 @@ export class AppComponent implements OnInit {
    * @param player 
    */
   randomize(player?: Player) {
+    console.log('randomize', player)
     if (player) {
-      this.initPlayerPets(player);
+      this.randomizePlayerPets(player);
     } else {
-      this.initPlayerPets(this.player);
-      this.initPlayerPets(this.opponent);
+      this.randomizePlayerPets(this.player);
+      this.randomizePlayerPets(this.opponent);
     }
     if (this.formGroup) {
       this.initPetForms();
@@ -791,6 +813,26 @@ export class AppComponent implements OnInit {
         selector.initSelector();
       })
     })
+  }
+
+  zoomIn() {
+    this.formGroup.get('fontSize').setValue(Math.min(this.formGroup.get('fontSize').value + 1, 20));
+    this.setFontSize();
+  }
+
+  zoomOut() {
+    this.formGroup.get('fontSize').setValue(Math.max(this.formGroup.get('fontSize').value - 1, 8));
+    this.setFontSize();
+  }
+
+  setFontSize() {
+    // grab root html element and change the font size
+    document.documentElement.style.fontSize = `${this.formGroup.get('fontSize').value}px`;
+  }
+
+  clearCache() {
+    this.localStorageService.clearStorage();
+    alert('Cache cleared. Refresh page to see changes.');
   }
 
   get filteredBattles() {

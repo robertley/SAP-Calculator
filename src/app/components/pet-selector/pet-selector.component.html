@@ -20,7 +20,7 @@
             <select class="form-control" formControlName="name">
                 <option [ngValue]="null">None</option>
                 <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet">{{pet}}</option>
+                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)">{{pet}}</option>
                 </optgroup>
             </select>
             <button *ngIf="showFlyOutButton()" class="btn btn-secondary" (click)="toggleFlyOut()">></button>

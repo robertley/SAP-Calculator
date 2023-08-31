@@ -18,6 +18,9 @@ export class AtlanticPuffin extends Pet {
         for (let i = 0; i < this.level; i++) {
             for (let j = 0; j < strawPets.length; j++) {
                 let target = opponent.getRandomPet();
+                if (target == null) {
+                    break;
+                }
                 this.snipePet(target, 2, true, tiger);
             }
         }
