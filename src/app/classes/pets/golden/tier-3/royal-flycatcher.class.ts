@@ -15,6 +15,9 @@ export class RoyalFlycatcher extends Pet {
     enemySummoned(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let target = this.parent.opponent.getRandomPet();
         let power = this.level * 3;
+        if (target == null) {
+            return;
+        }
         this.snipePet(target, power, true, tiger);
         this.superEnemySummoned(gameApi, pet, tiger);
     }

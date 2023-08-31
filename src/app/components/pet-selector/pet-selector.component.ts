@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet.service';
@@ -24,8 +24,9 @@ export class PetSelectorComponent implements OnInit {
   index: number;
   @Input()
   angler: boolean;
-
+  @Input()
   formGroup: FormGroup;
+
   equipment: Map<string, Equipment>;
   turtlePackPets: string[];
   pets: Map<number, string[]>;
@@ -37,7 +38,7 @@ export class PetSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initSelector();    
+    this.initSelector();
   }
 
   initSelector() {
@@ -47,15 +48,20 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initPets() {
-    this.pets = this.getPack(this.player);
-    if (!this.angler) {
-      return;
+    this.pets = new Map();
+    for (let i = 1; i <= 6; i++) {
+      this.pets.set(i, []);
     }
-    if (this.player.pack == this.opponent.pack) {
-      return;
+    for (let [tier, pets] of this.petService.turtlePackPets) {
+      this.pets.get(tier).push(...pets);
     }
-    let opponentPack = this.getPack(this.opponent);
-    for (let [tier, pets] of opponentPack) {
+    for (let [tier, pets] of this.petService.puppyPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.starPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.goldenPackPets) {
       this.pets.get(tier).push(...pets);
     }
   }
@@ -79,14 +85,14 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initForm() {
-    this.formGroup = new FormGroup({
-      name: new FormControl(this.pet?.name),
-      attack: new FormControl(this.pet?.attack),
-      health: new FormControl(this.pet?.health),
-      exp: new FormControl(this.pet?.exp),
-      equipment: new FormControl(this.pet?.equipment),
-      belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
-    })
+    // this.formGroup = new FormGroup({
+    //   name: new FormControl(this.pet?.name),
+    //   attack: new FormControl(this.pet?.attack),
+    //   health: new FormControl(this.pet?.health),
+    //   exp: new FormControl(this.pet?.exp),
+    //   equipment: new FormControl(this.pet?.equipment),
+    //   belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
+    // })
 
     this.formGroup.get('name').valueChanges.subscribe((value) => {
       if (value == null) {
@@ -152,6 +158,29 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('attack').setValue(null, {emitEvent: false});
     this.formGroup.get('health').setValue(null, {emitEvent: false});
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
+  }
+
+  optionHidden(option: string) {
+    let pack = this.getPack(this.player);
+    for (let [tier, pets] of pack) {
+      if (pets.includes(option)) {
+        return false;
+      }
+    }
+    if (this.angler) {
+      let pack = this.getPack(this.opponent);
+      for (let [tier, pets] of pack) {
+        if (pets.includes(option)) {
+          return false;
+        }
+      }
+    }
+
+    if (this.player.getPet(this.index)?.name == option) {
+      return false;
+    }
+
+    return true;
   }
 
 

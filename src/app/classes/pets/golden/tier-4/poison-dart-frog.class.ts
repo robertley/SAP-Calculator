@@ -15,6 +15,9 @@ export class PoisonDartFrog extends Pet {
     friendAheadFaints(gameApi: GameAPI, tiger?: boolean): void {
         let highestHealthResp = this.parent.opponent.getHighestHealthPet();
         let target = highestHealthResp.pet;
+        if (target == null) {
+            return;
+        }
         this.snipePet(target, 3 * this.level, highestHealthResp.random, tiger);
     }
     constructor(protected logService: LogService,
