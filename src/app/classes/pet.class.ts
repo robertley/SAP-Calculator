@@ -468,7 +468,7 @@ export abstract class Pet {
             }
             message += ` (${defenseEquipment.name} ${sign}${power})`;
         }
-        if (attackEquipment != null) {
+        if (attackEquipment != null && attackEquipment.equipmentClass == 'snipe') {
             let power = Math.abs(attackEquipment.power);
             let sign = '-';
             if (attackEquipment.power > 0) {
@@ -539,7 +539,11 @@ export abstract class Pet {
 
         let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack'
         || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
-        let attackAmt = power != null ? power + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0) : this.attack + (attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0);
+        let attackAmt = power != null ? power + (
+            !snipe ? attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0 : 0
+        ) : this.attack + (
+            !snipe ? attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0 : 0
+        );
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
 
