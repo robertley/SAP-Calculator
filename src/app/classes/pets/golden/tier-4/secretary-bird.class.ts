@@ -32,7 +32,7 @@ export class SecretaryBird extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.superFriendFaints(gameApi, tiger);
+        this.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

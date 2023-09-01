@@ -45,7 +45,7 @@ export class Falcon extends Pet {
             priority: this.attack
         })
         this.abilityUses++;
-        super.superKnockOut(gameApi, tiger);
+        super.superKnockOut(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

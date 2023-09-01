@@ -25,7 +25,7 @@ export class Vulture extends Pet {
         }
         let power = this.level * 4;
         this.snipePet(target, power, true, tiger);
-        this.superFriendFaints(gameApi, tiger);
+        this.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
