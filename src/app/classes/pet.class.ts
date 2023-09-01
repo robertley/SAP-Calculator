@@ -279,7 +279,7 @@ export abstract class Pet {
         this.exp = exp;
     }
 
-    protected superFriendAttacks(gameApi, pet, tiger=false) {
+    protected superFriendAttacks(gameApi, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }

@@ -24,7 +24,7 @@ export class Rhino extends Pet {
         }
         this.snipePet(target, power, false, tiger);
 
-        this.superKnockOut(gameApi, tiger);
+        this.superKnockOut(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

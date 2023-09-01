@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.3';
+  version = '0.4.4';
   sapVersion = '0.27.30-124 BETA'
 
   title = 'sap-calculator';
@@ -86,8 +86,14 @@ export class AppComponent implements OnInit {
   loadLocalStorage() {
     let localStorage = this.localStorageService.getStorage();
     if (localStorage) {
-      // console.log('loading local storage', localStorage)
-      this.formGroup.setValue(JSON.parse(localStorage), {emitEvent: false});
+      try {
+        // console.log('loading local storage', localStorage)
+        this.formGroup.setValue(JSON.parse(localStorage), {emitEvent: false});
+      } catch {
+        console.log('error loading local storage')
+        this.localStorageService.clearStorage();
+      }
+
     }
   }
 

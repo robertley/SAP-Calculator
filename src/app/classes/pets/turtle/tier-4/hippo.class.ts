@@ -25,7 +25,7 @@ export class Hippo extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.superKnockOut(gameAPI, tiger);
+        this.superKnockOut(gameAPI, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
