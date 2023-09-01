@@ -23,6 +23,7 @@ import { ChocolateCake } from './classes/equipment/golden/chocolate-cake.class';
 import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 import { LocalStorageService } from './services/local-storage.service';
+import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +35,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.4';
+  version = '0.4.5';
   sapVersion = '0.27.30-124 BETA'
 
   title = 'sap-calculator';
@@ -841,6 +842,27 @@ export class AppComponent implements OnInit {
     alert('Cache cleared. Refresh page to see changes.');
   }
 
+  drop(event: CdkDragDrop<string[]>, playerString: string) {
+    let previousIndex = event.previousIndex;
+    let currentIndex = event.currentIndex;
+    let player = this.opponent;
+    if (playerString == 'player') {
+      // since the array is reversed, we need to revers the indexes
+      previousIndex = 4 - previousIndex;
+      currentIndex = 4 - currentIndex; 
+      player = this.player;
+    }
+    moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
+    
+    let pets = player.petArray;
+    moveItemInArray(pets, previousIndex, currentIndex);
+    player.setPet(0, pets[0], true);
+    player.setPet(1, pets[1], true);
+    player.setPet(2, pets[2], true);
+    player.setPet(3, pets[3], true);
+    player.setPet(4, pets[4], true);
+  
+  }
   get filteredBattles() {
     return this.battles.filter(battle => {
       let filter = this.formGroup.get('logFilter').value;

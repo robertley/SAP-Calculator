@@ -127,3 +127,20 @@
         // padding: 0;
     }
 }
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.drag-container {
+    position: relative;
+}
+
+.drag-handle {
+    width: 1.25em;
+    position: absolute;
+    right: 1em;
+    z-index: 1;
+    opacity: .5;
+    cursor: pointer;
+}
