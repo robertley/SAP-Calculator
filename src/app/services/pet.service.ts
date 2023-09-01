@@ -261,6 +261,7 @@ export class PetService {
     puppyPackPets: Map<number, string[]> = new Map();
     starPackPets: Map<number, string[]> = new Map();
     goldenPackPets: Map<number, string[]> = new Map();
+    allPets: Map<number, string[]> = new Map();
 
     constructor(private logService: LogService,
         private abilityService: AbilityService,
@@ -582,7 +583,32 @@ export class PetService {
             "Bird of Paradise",
             "Oyster"
         ])
+
+        this.setAllPets();
         
+    }
+
+    setAllPets() {
+        this.allPets = new Map();
+        for (let i = 1; i <= 6; i++) {
+          this.allPets.set(i, []);
+        }
+        for (let [tier, pets] of this.turtlePackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.puppyPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.starPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.goldenPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        // remove duplicates from each tier
+        for (let [tier, pets] of this.allPets) {
+          this.allPets.set(tier, [...new Set(pets)]);
+        }
     }
 
     createPet(petForm: PetForm, parent: Player): Pet {

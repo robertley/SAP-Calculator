@@ -19,6 +19,7 @@
             <option value="Puppy">Puppy</option>
             <option value="Star">Star</option>
             <option value="Golden">Golden</option>
+            <option value="Add Custom Pack">Add Custom Pack</option>
           </select>
         </div>
   
@@ -29,6 +30,7 @@
             <option value="Puppy">Puppy</option>
             <option value="Star">Star</option>
             <option value="Golden">Golden</option>
+            <option value="Add Custom Pack">Add Custom Pack</option>
           </select>
         </div>
   
@@ -234,11 +236,11 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="patchNotes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="patchNotes" tabindex="-1" aria-labelledby="patchNotesLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Patch Notes</h1>
+        <h1 class="modal-title fs-5" id="patchNotesLabel">Patch Notes</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -246,6 +248,23 @@
       </div>
       <div class="modal-footer">
         <span class="btn-link" (click)="clearCache()">Clear Cache</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Pack -->
+<div class="modal fade" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true" #customPackEditor>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="customPackEditorLabel">Custom Pack Editor</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-custom-pack-editor
+          [formGroup]="formGroup"
+        ></app-custom-pack-editor>
       </div>
     </div>
   </div>

@@ -48,22 +48,7 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initPets() {
-    this.pets = new Map();
-    for (let i = 1; i <= 6; i++) {
-      this.pets.set(i, []);
-    }
-    for (let [tier, pets] of this.petService.turtlePackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.puppyPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.starPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.goldenPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
+    this.pets = this.petService.allPets;
   }
 
   getPack(player: Player) {

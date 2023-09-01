@@ -1,1 +1,31 @@
-<p>custom-pack-editor works!</p>
+<div class="row" *ngIf="focusedGroup != null">
+    <div class="col-12">
+        <app-custom-pack-form
+            [formGroup]="makeFormGroup(focusedGroup)"
+            [petPackMap]="petPackMap"
+            (submitEvent)="submitEvent($event)"
+            (cancelEvent)="cancelEvent($event)"
+        ></app-custom-pack-form>
+    </div>
+</div>
+
+<div *ngIf="focusedGroup == null">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3>Custom Packs</h3>
+            <div class="row mb-3" *ngFor="let pack of customPacks.controls">
+                <div class="col-12 d-flex align-items-bottom">
+                    <h4>{{pack.get('name').value}}</h4>
+                    <button class="btn btn-primary mx-2" (click)="editPack(pack)">Edit</button>
+                    <button class="btn btn-danger" (click)="deletePack(pack)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-primary" (click)="createNewPack()">Create New Pack</button>
+        </div>
+    </div>
+    
+</div>
