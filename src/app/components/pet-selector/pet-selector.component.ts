@@ -39,6 +39,8 @@ export class PetSelectorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initSelector();
+
+    this.fixLoadEquipment();
   }
 
   initSelector() {
@@ -185,6 +187,15 @@ export class PetSelectorComponent implements OnInit {
     }
 
     return true;
+  }
+
+
+  fixLoadEquipment() {
+    let equipment = this.formGroup.get('equipment').value;
+    if (equipment == null) {
+      return;
+    }
+    this.formGroup.get('equipment').setValue(this.equipment.get(equipment.name));
   }
 
 

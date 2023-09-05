@@ -15,7 +15,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/for
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { shuffle } from 'lodash';
+import { cloneDeep, shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
@@ -24,6 +24,7 @@ import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 import { LocalStorageService } from './services/local-storage.service';
 import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import { EquipmentService } from './services/equipment.service';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.5';
+  version = '0.4.6';
   sapVersion = '0.27.30-124 BETA'
 
   title = 'sap-calculator';
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit {
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
+    private equipmentService: EquipmentService,
     private petService: PetService,
     private toyService: ToyService,
     private startOfBattleService: StartOfBattleService,
@@ -86,9 +88,9 @@ export class AppComponent implements OnInit {
 
   loadLocalStorage() {
     let localStorage = this.localStorageService.getStorage();
+
     if (localStorage) {
       try {
-        // console.log('loading local storage', localStorage)
         this.formGroup.setValue(JSON.parse(localStorage), {emitEvent: false});
       } catch {
         console.log('error loading local storage')
@@ -395,7 +397,7 @@ export class AppComponent implements OnInit {
   }
 
   simulate() {
-    this.localStorageService.setStorage(this.formGroup.value);
+    this.localStorageService.setFormStorage(this.formGroup);
 
     this.resetSimulation();
 
