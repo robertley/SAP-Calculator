@@ -9,13 +9,15 @@ import { PatchNotesComponent } from './components/patch-notes/patch-notes.compon
 import { CustomPackEditorComponent } from './components/custom-pack-editor/custom-pack-editor.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import { InfoComponent } from './components/info/info.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PetSelectorComponent,
     PatchNotesComponent,
-    CustomPackEditorComponent
+    CustomPackEditorComponent,
+    InfoComponent
   ],
   imports: [
     BrowserModule,

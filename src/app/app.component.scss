@@ -92,7 +92,7 @@
 
 .random-event {
     color: purple;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .flex-1 {
@@ -143,4 +143,9 @@
     z-index: 1;
     opacity: .5;
     cursor: pointer;
+}
+
+.info-link {
+    margin-left: 1em;
+    margin-bottom: .5em;
 }
