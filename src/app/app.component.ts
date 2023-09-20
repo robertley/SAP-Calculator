@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1;
+  simulationBattleAmt = 1000;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
