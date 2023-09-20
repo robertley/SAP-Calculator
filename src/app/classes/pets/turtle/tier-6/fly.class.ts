@@ -41,7 +41,7 @@ export class Fly extends Pet {
                     )
                 }
             },
-            priority: -1
+            priority: -1,
         })
     }
     constructor(protected logService: LogService,

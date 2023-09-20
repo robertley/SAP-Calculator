@@ -47,7 +47,8 @@ export class AbilityService {
             this.hasFriendHurtEvents ||
             this.hasEnemyHurtEvents ||
             this.hasKnockOutEvents ||
-            this.hasEmptyFrontSpaceEvents
+            this.hasEmptyFrontSpaceEvents ||
+            this.hasFriendFaintsEvents
     }
 
     // End of Turn Events
@@ -337,6 +338,7 @@ export class AbilityService {
         for (let pet of faintedPet.parent.petArray) {
             // this works because summoned pets will never have a 'summoned' ability
             if (pet.friendFaints != null) {
+                console.log('setting friend faints event', pet.name)
                 this.setFriendFaintsEvent({
                     callback: pet.friendFaints.bind(pet),
                     priority: pet.attack,
@@ -365,6 +367,10 @@ export class AbilityService {
         }
         
         this.resetFriendFaintsEvents();
+    }
+
+    get hasFriendFaintsEvents() {
+        return this.friendFaintsEvents.length > 0;
     }
     
 
