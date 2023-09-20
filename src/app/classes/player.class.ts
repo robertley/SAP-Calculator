@@ -311,6 +311,7 @@ export class Player {
     handleDeath(pet: Pet) {
         pet.seenDead = true;
         pet.setFaintEventIfPresent();
+        console.log('handleDeath', pet)
         if (pet.petBehind(true)?.friendAheadFaints != null) {
             this.abilityService.setFriendAheadFaintsEvent({
                     callback: pet.petBehind().friendAheadFaints.bind(pet.petBehind()),
