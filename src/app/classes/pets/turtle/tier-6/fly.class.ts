@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { ZombieFly } from "../../hidden/zombie-fly.class";
+import { cloneDeep } from "lodash";
 
 export class Fly extends Pet {
     name = "Fly";
@@ -27,22 +28,21 @@ export class Fly extends Pet {
             callback: () => {
                 let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
         
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Zombie Fly Level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger
-                    }
-                )
-
-                if (this.parent.summonPet(zombie, faintedPet.savedPosition)) {
+                if (this.parent.summonPet(zombie, faintedPet.savedPosition, true)) {
                     this.abilityService.triggerSummonedEvents(zombie);
+                    this.abilityUses++;
+                    this.logService.createLog(
+                        {
+                            message: `${this.name} spawned Zombie Fly Level ${this.level}`,
+                            type: "ability",
+                            player: this.parent,
+                            tiger: tiger
+                        }
+                    )
                 }
             },
-            priority: this.attack
+            priority: -1
         })
-        this.abilityUses++;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

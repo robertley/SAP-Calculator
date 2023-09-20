@@ -156,13 +156,15 @@ export class Player {
     }
 
     // TODO - no room logic
-    summonPet(spawnPet: Pet, position: number): boolean {
+    summonPet(spawnPet: Pet, position: number, fly=false): boolean {
         if (this.petArray.length == 5) {
-            this.logService.createLog({
-                message: `No room to spawn ${spawnPet.name}!`,
-                type: 'ability',
-                player: this
-            })
+            if (!fly) {
+                this.logService.createLog({
+                    message: `No room to spawn ${spawnPet.name}!`,
+                    type: 'ability',
+                    player: this
+                })
+            }
             return false;
         }
         if (position == 0) {
