@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.7';
+  version = '0.4.8';
   sapVersion = '0.28.20-130 BETA'
 
   title = 'sap-calculator';
