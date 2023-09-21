@@ -18,7 +18,7 @@ export class Leopard extends Pet {
         for (let i = 0; i < this.level; i++) {
             let target = getOpponent(gameApi, this.parent).getRandomPet(previousTargets);
             if (target == null) {
-                return;
+                break;
             }
             previousTargets.push(target)
             this.snipePet(target, power, true, tiger);

@@ -311,7 +311,6 @@ export class Player {
     handleDeath(pet: Pet) {
         pet.seenDead = true;
         pet.setFaintEventIfPresent();
-        console.log('handleDeath', pet)
         if (pet.petBehind(true)?.friendAheadFaints != null) {
             this.abilityService.setFriendAheadFaintsEvent({
                     callback: pet.petBehind().friendAheadFaints.bind(pet.petBehind()),
@@ -532,7 +531,6 @@ export class Player {
         events.sort((a, b) => {
             return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0;
         });
-        console.log(events)
         for (let event of events) {
             event.callback(this.gameService.gameApi);
         }
