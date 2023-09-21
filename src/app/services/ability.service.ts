@@ -338,7 +338,6 @@ export class AbilityService {
         for (let pet of faintedPet.parent.petArray) {
             // this works because summoned pets will never have a 'summoned' ability
             if (pet.friendFaints != null) {
-                console.log('setting friend faints event', pet.name)
                 this.setFriendFaintsEvent({
                     callback: pet.friendFaints.bind(pet),
                     priority: pet.attack,

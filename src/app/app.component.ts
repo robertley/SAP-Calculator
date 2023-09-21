@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.10';
+  version = '0.4.11';
   sapVersion = '0.28.20-130 BETA'
 
   title = 'sap-calculator';
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1;
+  simulationBattleAmt = 1000;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
