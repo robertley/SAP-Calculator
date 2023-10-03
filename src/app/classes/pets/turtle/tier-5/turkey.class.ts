@@ -15,8 +15,8 @@ export class Turkey extends Pet {
     health = 4;
     friendSummoned(pet: Pet, tiger?: boolean): void {
         let power: Power = {
-            attack: 2 * this.level,
-            health: 3 * this.level
+            attack: 3 * this.level,
+            health: 2 * this.level
         }
         pet.increaseAttack(power.attack);
         pet.increaseHealth(power.health);

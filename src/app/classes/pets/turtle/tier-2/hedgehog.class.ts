@@ -9,8 +9,8 @@ export class Hedgehog extends Pet {
     name = "Hedgehog";
     tier = 2;
     pack: Pack = 'Turtle';
+    attack = 4;
     health = 2;
-    attack = 3;
     faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
         let targetPets = gameApi.player.petArray.filter((pet) => {
             return pet != this && pet.alive;

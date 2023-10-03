@@ -1,10 +1,11 @@
-import { cloneDeep, shuffle } from "lodash";
+import { cloneDeep, shuffle, sum } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PetService } from "../../../../services/pet.service";
 
 export class Pteranodon extends Pet {
     name = "Pteranodon";
@@ -13,17 +14,38 @@ export class Pteranodon extends Pet {
     attack = 5;
     health = 3;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet.faint == null) {
-            return;
-        }
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        pet.faint(gameApi, false, true);
+        this.abilityService.setSpawnEvent({
+            callback: () => {
+                let summonPet = this.petService.createPet(
+                    {
+                        attack: 1,
+                        health: 1,
+                        equipment: null,
+                        exp: pet.exp,
+                        name: pet.name
+                    }, this.parent
+                );
+                this.logService.createLog({
+                    message: `${this.name} summoned a 1/1 ${pet.name} in the back.`,
+                    type: 'ability',
+                    player: this.parent,
+                    randomEvent: false,
+                    tiger: tiger
+                })
+                if (this.parent.summonPet(summonPet, 4)) {
+                    this.abilityService.triggerSummonedEvents(summonPet);
+                }
+            },
+            priority: this.attack
+        })
         this.abilityUses++;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
+        protected petService: PetService,
         parent: Player,
         health?: number,
         attack?: number,

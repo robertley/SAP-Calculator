@@ -12,8 +12,8 @@ export class Flea extends Pet {
     name = "Flea";
     tier = 3;
     pack: Pack = 'Golden';
-    attack = 3;
-    health = 1;
+    attack = 4;
+    health = 2;
     faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targets = clone(this.parent.opponent.petArray);
         shuffle(targets);

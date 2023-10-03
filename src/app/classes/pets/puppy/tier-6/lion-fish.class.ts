@@ -20,7 +20,7 @@ export class Lionfish extends Pet {
             if (target == null) {
                 return;
             }
-            let power = this.level * 4;
+            let power = this.level * 3;
             this.snipePet(target, power, true, tiger, pteranodon);
         }
         this.superFaint(gameApi, tiger);

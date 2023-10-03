@@ -10,8 +10,8 @@ export class AtlanticPuffin extends Pet {
     name = "Atlantic Puffin";
     tier = 2;
     pack: Pack = 'Star';
-    attack = 1;
-    health = 1;
+    attack = 2;
+    health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let strawPets = this.parent.getPetsWithEquipment('Strawberry').filter(pet => pet !== this);
         let opponent = getOpponent(gameApi, this.parent);

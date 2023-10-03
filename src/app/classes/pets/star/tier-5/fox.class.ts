@@ -9,8 +9,8 @@ export class Fox extends Pet {
     name = "Fox";
     tier = 5;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 3;
+    attack = 6;
+    health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
