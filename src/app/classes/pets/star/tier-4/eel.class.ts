@@ -7,9 +7,9 @@ import { Player } from "../../../player.class";
 
 export class Eel extends Pet {
     name = "Eel";
-    tier = 4;
+    tier = 3;
     pack: Pack = 'Star';
-    attack = 5;
+    attack = 3;
     health = 4;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let power = .5 * this.level;

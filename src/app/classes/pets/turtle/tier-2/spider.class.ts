@@ -15,7 +15,7 @@ export class Spider extends Pet {
     attack = 2;
     faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
         let tier3Pets;
-        if (this.parent = gameApi.player) {
+        if (this.parent == gameApi.player) {
             tier3Pets = gameApi.playerPetPool.get(3);
         } else {
             tier3Pets = gameApi.opponentPetPool.get(3);

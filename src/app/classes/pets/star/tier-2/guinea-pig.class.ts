@@ -8,8 +8,8 @@ export class GuineaPig extends Pet {
     name = "Guinea Pig";
     tier = 2;
     pack: Pack = 'Star';
-    attack = 1;
-    health = 1;
+    attack = 2;
+    health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

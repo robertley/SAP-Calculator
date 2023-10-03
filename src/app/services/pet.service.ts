@@ -1081,7 +1081,7 @@ export class PetService {
             case 'Catfish':
                 return new Catfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Pteranodon':
-                return new Pteranodon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pteranodon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Warthog':
                 return new Warthog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Cobra':
@@ -1854,7 +1854,7 @@ export class PetService {
             newPet = new Catfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
         if (pet instanceof Pteranodon) {
-            newPet = new Pteranodon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pteranodon(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
         }
         if (pet instanceof Warthog) {
             newPet = new Warthog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));

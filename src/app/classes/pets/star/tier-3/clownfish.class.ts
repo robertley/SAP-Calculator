@@ -7,10 +7,10 @@ import { Player } from "../../../player.class";
 
 export class Clownfish extends Pet {
     name = "Clownfish";
-    tier = 3;
+    tier = 4;
     pack: Pack = 'Star';
-    attack = 2;
-    health = 3;
+    attack = 3;
+    health = 4;
     anyoneLevelUp(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (pet.parent !== this.parent) {
             return;

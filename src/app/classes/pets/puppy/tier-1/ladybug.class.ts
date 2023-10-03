@@ -10,7 +10,7 @@ export class Ladybug extends Pet {
     tier = 1;
     pack: Pack = 'Puppy';
     attack = 1;
-    health = 2;
+    health = 3;
     friendGainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
         let power = this.level * 2;
         this.increaseAttack(power);
