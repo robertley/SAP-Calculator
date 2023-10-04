@@ -17,6 +17,9 @@ export class Pteranodon extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
+        if (pet.name == this.name) {
+            return;
+        }
         this.abilityService.setSpawnEvent({
             callback: () => {
                 let summonPet = this.petService.createPet(
@@ -29,13 +32,13 @@ export class Pteranodon extends Pet {
                     }, this.parent
                 );
                 this.logService.createLog({
-                    message: `${this.name} summoned a 1/1 ${pet.name} in the back.`,
+                    message: `${this.name} summoned a 1/1 ${pet.name} behind it.`,
                     type: 'ability',
                     player: this.parent,
                     randomEvent: false,
                     tiger: tiger
                 })
-                if (this.parent.summonPet(summonPet, 4)) {
+                if (this.parent.summonPet(summonPet, this.position)) {
                     this.abilityService.triggerSummonedEvents(summonPet);
                 }
             },
