@@ -6,6 +6,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { PetService } from "../../../../services/pet.service";
+import { clone } from "lodash";
 
 // TODO
 // Research tiger behavior
@@ -20,8 +21,9 @@ export class Whale extends Pet {
         if (!targetPet) {
             return;
         }
-        targetPet.exp = this.exp;
-        this.swallowedPets.push(this.petService.createDefaultVersionOfPet(targetPet));
+        let swallowPet = clone(targetPet);
+        swallowPet.exp = this.exp;
+        this.swallowedPets.push(this.petService.createDefaultVersionOfPet(swallowPet));
         targetPet.health = 0;
         this.logService.createLog({
             message: `${this.name} swallowed ${targetPet.name}`,
