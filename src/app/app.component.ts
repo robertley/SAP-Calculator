@@ -15,7 +15,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/for
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { cloneDeep, shuffle } from 'lodash';
+import { shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
@@ -23,7 +23,7 @@ import { ChocolateCake } from './classes/equipment/golden/chocolate-cake.class';
 import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 import { LocalStorageService } from './services/local-storage.service';
-import {CdkDragDrop, CdkDrag, CdkDropList, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { EquipmentService } from './services/equipment.service';
 
 @Component({
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.13';
+  version = '0.4.14';
   sapVersion = '0.29.6-135 BETA'
 
   title = 'sap-calculator';
