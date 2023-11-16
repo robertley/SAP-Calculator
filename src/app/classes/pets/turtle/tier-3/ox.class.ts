@@ -12,14 +12,17 @@ export class Ox extends Pet {
     health = 3;
     attack = 1;
     friendAheadFaints(gameApi, tiger) {
-        this.increaseAttack(this.level);
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
         this.equipment = new Melon();
         this.logService.createLog({
-            message: `${this.name} gained Melon and ${this.level} attack`,
+            message: `${this.name} gained Melon.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
+        this.abilityUses++;
         super.superFriendAheadFaints(gameApi, tiger);
     }
     constructor(protected logService: LogService,
@@ -31,5 +34,9 @@ export class Ox extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

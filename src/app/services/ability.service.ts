@@ -47,7 +47,8 @@ export class AbilityService {
             this.hasFriendHurtEvents ||
             this.hasEnemyHurtEvents ||
             this.hasKnockOutEvents ||
-            this.hasEmptyFrontSpaceEvents
+            this.hasEmptyFrontSpaceEvents ||
+            this.hasFriendFaintsEvents
     }
 
     // End of Turn Events
@@ -224,9 +225,9 @@ export class AbilityService {
 
     executeSpawnEvents() {
         // // shuffle, so that same priority events are in random order
-        // this.summonedEvents = shuffle(this.summonedEvents);
+        this.summonedEvents = shuffle(this.summonedEvents);
 
-        // this.summonedEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        this.summonedEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.spawnEvents) {
             event.callback();
@@ -365,6 +366,10 @@ export class AbilityService {
         }
         
         this.resetFriendFaintsEvents();
+    }
+
+    get hasFriendFaintsEvents() {
+        return this.friendFaintsEvents.length > 0;
     }
     
 

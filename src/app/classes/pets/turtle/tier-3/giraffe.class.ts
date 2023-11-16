@@ -9,7 +9,7 @@ export class Giraffe extends Pet {
     tier = 3;
     pack: Pack = 'Turtle';
     attack = 1;
-    health = 3;
+    health = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

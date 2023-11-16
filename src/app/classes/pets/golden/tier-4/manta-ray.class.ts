@@ -11,7 +11,7 @@ export class MantaRay extends Pet {
     tier = 4;
     pack: Pack = 'Golden';
     attack = 5;
-    health = 4;
+    health = 6;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

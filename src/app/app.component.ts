@@ -24,6 +24,8 @@ import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { EquipmentService } from './services/equipment.service';
 
 @Component({
   selector: 'app-root',
@@ -38,8 +40,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.4.3';
-  sapVersion = '0.27.30-124 BETA'
+  version = '0.4.16';
+  sapVersion = '0.29.6-135 BETA'
 
   title = 'sap-calculator';
   player: Player;
@@ -66,6 +68,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
+    private equipmentService: EquipmentService,
     private petService: PetService,
     private toyService: ToyService,
     private startOfBattleService: StartOfBattleService,
@@ -99,18 +102,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   loadLocalStorage() {
     let localStorage = this.localStorageService.getStorage();
+
     if (localStorage) {
-      // console.log('loading local storage', localStorage)
       try {
-        let localStorageObj = JSON.parse(localStorage);
-        for (let customPack of localStorageObj.customPacks) {
-          (this.formGroup.get('customPacks') as FormArray).push(createPack());
-        }
-        this.formGroup.setValue(localStorageObj, {emitEvent: false});
+        this.formGroup.setValue(JSON.parse(localStorage), {emitEvent: false});
       } catch {
-        console.log('error parsing local storage')
+        console.log('error loading local storage')
         this.localStorageService.clearStorage();
       }
+
     }
   }
 
@@ -422,9 +422,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   simulate() {
-    this.localStorageService.setStorage(this.formGroup.value);
+    this.localStorageService.setFormStorage(this.formGroup);
 
     this.resetSimulation();
+
+    this.setAbilityEquipments(this.player);
+    this.setAbilityEquipments(this.opponent);
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
       this.initBattle();
@@ -461,6 +464,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       while (this.abilityService.hasAbilityCycleEvents) {
         this.abilityCycle();
       }
+
+      this.pushPetsForwards();
 
       this.printState();
 
@@ -615,6 +620,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       pet.equipment.callback(pet);
     }
   }
+  setAbilityEquipments(player) {
+    for (let pet of player.petArray) {
+      if (pet.equipment instanceof Eggplant) {
+        pet.equipment.callback(pet);
+      }
+      if (pet.equipment instanceof PitaBread) {
+        pet.equipment.callback(pet);
+      }
+    }
+  }
 
   executeBeforeStartOfBattleEquipment(player) {
     for (let pet of player.petArray) {
@@ -646,12 +661,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             player: player
           })
         }
-      }
-      if (pet.equipment instanceof Eggplant) {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment instanceof PitaBread) {
-        pet.equipment.callback(pet);
       }
     }
   }
@@ -883,6 +892,27 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('opponentPack').setValue(this.previousPackOpponent, {emitEvent: false});
   }
 
+  drop(event: CdkDragDrop<string[]>, playerString: string) {
+    let previousIndex = event.previousIndex;
+    let currentIndex = event.currentIndex;
+    let player = this.opponent;
+    if (playerString == 'player') {
+      // since the array is reversed, we need to revers the indexes
+      previousIndex = 4 - previousIndex;
+      currentIndex = 4 - currentIndex; 
+      player = this.player;
+    }
+    moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
+    
+    let pets = player.petArray;
+    moveItemInArray(pets, previousIndex, currentIndex);
+    player.setPet(0, pets[0], true);
+    player.setPet(1, pets[1], true);
+    player.setPet(2, pets[2], true);
+    player.setPet(3, pets[3], true);
+    player.setPet(4, pets[4], true);
+  
+  }
   get filteredBattles() {
     return this.battles.filter(battle => {
       let filter = this.formGroup.get('logFilter').value;

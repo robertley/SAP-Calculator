@@ -12,6 +12,9 @@ export class Jellyfish extends Pet {
     attack = 2;
     health = 3;
     anyoneLevelUp(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
+        if (pet.parent != this.parent) {
+            return;
+        }
         let power = this.level;
         this.increaseAttack(power);
         this.increaseHealth(power);

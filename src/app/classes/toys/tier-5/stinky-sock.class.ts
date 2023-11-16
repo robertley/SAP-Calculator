@@ -11,7 +11,7 @@ export class StrinkySock extends Toy {
             let highestHealthPetResp = opponent.getHighestHealthPet();
             let target = highestHealthPetResp.pet;
             let power = .40;
-            let reducedTo =  Math.ceil(target.health * (1 - power));
+            let reducedTo =  Math.max(1, Math.floor(target.health * (1 - power)));
             target.health = reducedTo;
             this.logService.createLog({
                 message: `${this.name} reduced ${target.name} health by ${power * 100}% (${reducedTo})`,

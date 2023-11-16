@@ -39,6 +39,8 @@ export class PetSelectorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initSelector();
+
+    this.fixLoadEquipment();
   }
 
   initSelector() {
@@ -48,7 +50,26 @@ export class PetSelectorComponent implements OnInit {
   }
 
   initPets() {
-    this.pets = this.petService.allPets;
+    this.pets = new Map();
+    for (let i = 1; i <= 6; i++) {
+      this.pets.set(i, []);
+    }
+    for (let [tier, pets] of this.petService.turtlePackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.puppyPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.starPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    for (let [tier, pets] of this.petService.goldenPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
+    // remove duplicates from each tier
+    for (let [tier, pets] of this.pets) {
+      this.pets.set(tier, [...new Set(pets)]);
+    }
   }
 
   getPack(player: Player) {
@@ -166,6 +187,15 @@ export class PetSelectorComponent implements OnInit {
     }
 
     return true;
+  }
+
+
+  fixLoadEquipment() {
+    let equipment = this.formGroup.get('equipment').value;
+    if (equipment == null) {
+      return;
+    }
+    this.formGroup.get('equipment').setValue(this.equipment.get(equipment.name));
   }
 
 

@@ -27,7 +27,7 @@ export class Donkey extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.superFriendFaints(gameApi, tiger);
+        this.superFriendFaints(gameApi, pet, tiger);
         this.abilityUses++;
     }
     constructor(protected logService: LogService,

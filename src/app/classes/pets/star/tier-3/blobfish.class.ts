@@ -7,16 +7,16 @@ import { Player } from "../../../player.class";
 
 export class Blobfish extends Pet {
     name = "Blobfish";
-    tier = 3;
+    tier = 4;
     pack: Pack = 'Star';
     attack = 2;
-    health = 4;
+    health = 6;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let target = this.petBehind();
         if (target == null) {
             return;
         }
-        let power = this.level;
+        let power = this.level * 2;
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',

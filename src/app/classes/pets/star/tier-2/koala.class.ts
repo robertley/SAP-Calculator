@@ -9,7 +9,7 @@ export class Koala extends Pet {
     name = "Koala";
     tier = 2;
     pack: Pack = 'Star';
-    attack = 1;
+    attack = 3;
     health = 2;
     maxAbilityUses = 1;
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {

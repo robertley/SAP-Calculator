@@ -12,14 +12,17 @@ export class Shark extends Pet {
     name = "Shark";
     tier = 5;
     pack: Pack = 'Turtle';
-    attack = 4;
+    attack = 2;
     health = 2;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (this.health <= 0) {
+            return;
+        }
         if (pet == this) {
             return;
         }
         let power: Power = {
-            attack: this.level,
+            attack: this.level * 2,
             health: this.level * 2
         }
         this.increaseAttack(power.attack);
@@ -30,7 +33,7 @@ export class Shark extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        super.superFriendFaints(gameApi, tiger);
+        super.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

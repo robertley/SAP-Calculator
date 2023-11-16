@@ -13,7 +13,7 @@ export class Mole extends Pet {
     attack = 2;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let power = this.level * 8;
+        let power = this.level * 6;
         let equipmentPets: Pet[] = [];
         for (let pet of this.parent.petArray) {
             if (pet == this) {
@@ -24,8 +24,8 @@ export class Mole extends Pet {
             }
         }
         // grab first three equipment pets
-        equipmentPets = equipmentPets.slice(0, 3);
-        if (equipmentPets.length < 3) {
+        equipmentPets = equipmentPets.slice(0, 2);
+        if (equipmentPets.length < 2) {
             return;
         }
         for (let pet of equipmentPets) {

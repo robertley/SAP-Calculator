@@ -18,7 +18,7 @@ export class PoisonDartFrog extends Pet {
         if (target == null) {
             return;
         }
-        this.snipePet(target, 3 * this.level, highestHealthResp.random, tiger);
+        this.snipePet(target, 4 * this.level, highestHealthResp.random, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

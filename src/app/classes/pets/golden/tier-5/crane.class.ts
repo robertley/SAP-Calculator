@@ -11,8 +11,8 @@ export class Crane extends Pet {
     name = "Crane";
     tier = 5;
     pack: Pack = 'Golden';
-    attack = 9;
-    health = 2;
+    attack = 6;
+    health = 5;
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet != this.petAhead) {
             return;

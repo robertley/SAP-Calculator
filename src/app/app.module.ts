@@ -8,6 +8,9 @@ import { CommonModule } from '@angular/common';
 import { PatchNotesComponent } from './components/patch-notes/patch-notes.component';
 import { CustomPackEditorComponent } from './components/custom-pack-editor/custom-pack-editor.component';
 import { CustomPackFormComponent } from './components/custom-pack-editor/custom-pack-form/custom-pack-form.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import { InfoComponent } from './components/info/info.component';
 
 @NgModule({
   declarations: [
@@ -15,13 +18,16 @@ import { CustomPackFormComponent } from './components/custom-pack-editor/custom-
     PetSelectorComponent,
     PatchNotesComponent,
     CustomPackEditorComponent,
-    CustomPackFormComponent
+    CustomPackFormComponent,
+    InfoComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,10 @@
 <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" #container>
   <div class="row mt-2">
     <div class="col-12 header">
-      <h1 (click)="printFormGroup()">SAP Calculator</h1>
+      <div class="d-flex align-items-end">
+        <h1 (click)="printFormGroup()">SAP Calculator</h1>
+        <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link">Info/Guide</span>
+      </div>
       <div class="d-flex flex-column align-items-end">
         <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch Notes</span></span>
         <span>SAP Version: {{sapVersion}}</span>
@@ -117,9 +120,15 @@
         </div>
       </div>
       <div class="card p-2 player-card">
-        <div class="row">
-          <div class="col" *ngFor="let pet of getPlayerPetsFormArray() ; index as i">
-            <app-pet-selector
+        <div class="row" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'player')">
+          <div class="col drag-container" *ngFor="let pet of getPlayerPetsFormArray() ; index as i" cdkDrag>
+            <div class="drag-handle" cdkDragHandle>
+              <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+              </svg>
+            </div>
+            <app-pet-selector 
               [pet]="player['pet' + (4 - i)]"
               [player]="player"
               [opponent]="opponent"
@@ -134,8 +143,14 @@
     <div class="col-6 px-4">
       <h2 class="me-4">Opponent</h2>
       <div class="card p-2 player-card">
-        <div class="row">
-          <div class="col" *ngFor="let pet of getOpponentPetsFormArray() ; index as i">
+        <div class="row" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'opponent')">
+          <div class="col drag-container" *ngFor="let pet of getOpponentPetsFormArray() ; index as i" cdkDrag>
+            <div class="drag-handle" cdkDragHandle>
+              <svg fill="currentColor" viewBox="0 0 24 24">
+                <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+              </svg>
+            </div>
             <app-pet-selector
               [pet]="opponent['pet' + i]"
               [player]="opponent"
@@ -265,6 +280,20 @@
         <app-custom-pack-editor
           [formGroup]="formGroup"
         ></app-custom-pack-editor>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Info</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-info></app-info>
       </div>
     </div>
   </div>

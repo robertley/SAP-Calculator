@@ -2,6 +2,7 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
+import { Rice } from "../../../equipment/puppy/rice.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
@@ -20,10 +21,10 @@ export class Frigatebird extends Pet {
             return;
         }
         let equipment = pet.equipment;
-        pet.equipment = null;
+        pet.givePetEquipment(new Rice());
         this.abilityUses++;
         this.logService.createLog({
-            message: `${this.name} removed ${equipment.name} from ${pet.name}.`,
+            message: `${this.name} removed ${equipment.name} from ${pet.name} and gave ${pet.name} Rice.`,
             type: 'ability',
             player: this.parent
         })
