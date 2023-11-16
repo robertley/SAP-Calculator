@@ -9,7 +9,7 @@ export class Camel extends Pet {
     tier = 3;
     pack: Pack = 'Turtle';
     health = 4;
-    attack = 2;
+    attack = 3;
     hurt(gameApi, tiger) {
         let boostPet = this.petBehind();
         if (boostPet == null) {
@@ -17,7 +17,7 @@ export class Camel extends Pet {
         }
         let boostAmt = this.level * 2;
         if (boostPet) {
-            boostPet.increaseAttack(boostAmt);
+            boostPet.increaseAttack(this.level);
             boostPet.increaseHealth(boostAmt);
         }
         this.logService.createLog({

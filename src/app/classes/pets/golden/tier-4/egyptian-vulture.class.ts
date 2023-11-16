@@ -8,15 +8,22 @@ import { Player } from "../../../player.class";
 
 export class EgyptianVulture extends Pet {
     name = "Egyptian Vulture";
-    tier = 4;
+    tier = 5;
     pack: Pack = 'Golden';
-    attack = 5;
+    attack = 7;
     health = 4;
     knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         let friendBehind = this.petBehind();
+        while (friendBehind != null) {
+            if (friendBehind.faint == null) {
+                friendBehind = friendBehind.petBehind();
+                continue;
+            }
+            break;
+        }
         if (friendBehind == null) {
             return;
         }

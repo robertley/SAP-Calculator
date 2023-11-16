@@ -9,8 +9,8 @@ export class Eel extends Pet {
     name = "Eel";
     tier = 3;
     pack: Pack = 'Star';
-    attack = 3;
-    health = 4;
+    attack = 4;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let power = .5 * this.level;
         this.health = Math.min(50, Math.floor(this.health * (1 + power)));

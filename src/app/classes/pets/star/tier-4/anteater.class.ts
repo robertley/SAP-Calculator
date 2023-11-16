@@ -8,19 +8,19 @@ import { Ant } from "../../turtle/tier-1/ant.class";
 
 export class Anteater extends Pet {
     name = "Anteater";
-    tier = 4;
+    tier = 3;
     pack: Pack = 'Star';
     attack = 3;
     health = 2;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let ant = new Ant(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
+                    let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 5);
             
                     this.logService.createLog(
                         {
-                            message: `${this.name} spawned Ant Level ${this.level}`,
+                            message: `${this.name} spawned 1/1 Ant level 3`,
                             type: "ability",
                             player: this.parent,
                             tiger: tiger,

@@ -6,10 +6,10 @@ import { Player } from "../../../player.class";
 
 export class Starfish extends Pet {
     name = "Starfish";
-    tier = 3;
+    tier = 4;
     pack: Pack = 'Star';
     attack = 3;
-    health = 2;
+    health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

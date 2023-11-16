@@ -11,8 +11,8 @@ export class Chameleon extends Pet {
     name = "Chameleon";
     tier = 4;
     pack: Pack = 'Puppy';
-    attack = 1;
-    health = 3;
+    attack = 3;
+    health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.toy == null) {
             return;

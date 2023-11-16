@@ -7,9 +7,9 @@ import { Player } from "../../../player.class";
 
 export class Iguana extends Pet {
     name = "Iguana";
-    tier = 1;
+    tier = 2;
     pack: Pack = 'Star';
-    attack = 1;
+    attack = 3;
     health = 3;
     // Using the summonPet method when pushing, so this works on push, too.
     // might need to revisit later.
@@ -20,7 +20,7 @@ export class Iguana extends Pet {
         if (!pet.alive) {
             return;
         }
-        let power = this.level;
+        let power = this.level * 2;
         this.snipePet(pet, power, false, tiger);
         this.superEnemySummoned(gameApi, pet, tiger);
     }

@@ -8,8 +8,8 @@ export class Mouse extends Pet {
     name = "Mouse";
     tier = 1;
     pack: Pack = 'Turtle';
-    health = 2;
-    attack = 1;
+    health = 3;
+    attack = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
