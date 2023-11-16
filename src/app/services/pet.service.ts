@@ -251,6 +251,7 @@ import { Ram } from "../classes/pets/hidden/ram.class";
 import { SmallerSlug } from "../classes/pets/hidden/smaller-slug.class";
 import { SmallestSlug } from "../classes/pets/hidden/smallest-slug.class";
 import { ZombieFly } from "../classes/pets/hidden/zombie-fly.class";
+import { Marmoset } from "../classes/pets/star/tier-1/marmoset.class";
 
 @Injectable({
     providedIn: 'root'
@@ -437,8 +438,8 @@ export class PetService {
             "Cockroach",
             "Frog",
             "Seahorse",
-            "Iguana",
             "Hummingbird",
+            "Marmoset"
         ])
 
         this.starPackPets.set(2, [
@@ -451,19 +452,20 @@ export class PetService {
             "Pug",
             "Atlantic Puffin",
             "Dove",
-            "Stork"
+            "Stork",
+            "Iguana"
         ])
 
         this.starPackPets.set(3, [
             "Leech",
             "Woodpecker",
             "Toad",
-            "Starfish",
             "Clownfish",
             "Blobfish",
             "Cabybara",
             "Okapi",
-            "Cassowary"
+            "Cassowary",
+            "Anteater",
         ])
 
         this.starPackPets.set(4, [
@@ -475,7 +477,7 @@ export class PetService {
             "Crow",
             "Donkey",
             "Pelican",
-            "Anteater"
+            "Starfish",
         ])
 
         this.starPackPets.set(5, [
@@ -545,7 +547,6 @@ export class PetService {
         this.goldenPackPets.set(4, [
             "Manatee",
             "Cuttlefish",
-            "Egyptian Vulture",
             "Saiga Antelope",
             "Sealion",
             "Vaquita",
@@ -553,7 +554,8 @@ export class PetService {
             "Poison Dart Frog",
             "Secretary Bird",
             "Falcon",
-            "Manta Ray"
+            "Manta Ray",
+            "Cockatoo"
         ])
 
         this.goldenPackPets.set(5, [
@@ -564,10 +566,10 @@ export class PetService {
             "Wolf",
             "Silver Fox",
             "Fire Ant",
-            "Cockatoo",
             "Blue Ringed Octopus",
             "Crane",
-            "Emu"
+            "Emu",
+            "Egyptian Vulture",
         ])
 
         this.goldenPackPets.set(6, [
@@ -855,6 +857,8 @@ export class PetService {
                 return new Iguana(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Hummingbird':
                 return new Hummingbird(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Marmoset':
+                return new Marmoset(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             
             // Tier 2
             case 'Koala':

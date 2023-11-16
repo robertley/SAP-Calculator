@@ -10,10 +10,10 @@ export class SabertoothTiger extends Pet {
     name = "Sabertooth Tiger";
     tier = 6;
     pack: Pack = 'Star';
-    attack = 8;
+    attack = 6;
     health = 6;
     hurt(gameApi: GameAPI, tiger?: boolean): void {
-        let power = this.level * 6;
+        let power = this.level * 5;
         let petPool: string[];
         if (this.parent == gameApi.player) {
             petPool = gameApi.playerPetPool.get(1);

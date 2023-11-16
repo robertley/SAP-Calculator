@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.14';
+  version = '0.4.16';
   sapVersion = '0.29.6-135 BETA'
 
   title = 'sap-calculator';
@@ -401,6 +401,9 @@ export class AppComponent implements OnInit {
 
     this.resetSimulation();
 
+    this.setAbilityEquipments(this.player);
+    this.setAbilityEquipments(this.opponent);
+
     for (let i = 0; i < this.simulationBattleAmt; i++) {
       this.initBattle();
       this.startBattle();
@@ -592,6 +595,16 @@ export class AppComponent implements OnInit {
       pet.equipment.callback(pet);
     }
   }
+  setAbilityEquipments(player) {
+    for (let pet of player.petArray) {
+      if (pet.equipment instanceof Eggplant) {
+        pet.equipment.callback(pet);
+      }
+      if (pet.equipment instanceof PitaBread) {
+        pet.equipment.callback(pet);
+      }
+    }
+  }
 
   executeBeforeStartOfBattleEquipment(player) {
     for (let pet of player.petArray) {
@@ -623,12 +636,6 @@ export class AppComponent implements OnInit {
             player: player
           })
         }
-      }
-      if (pet.equipment instanceof Eggplant) {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment instanceof PitaBread) {
-        pet.equipment.callback(pet);
       }
     }
   }

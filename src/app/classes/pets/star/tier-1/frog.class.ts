@@ -10,7 +10,7 @@ export class Frog extends Pet {
     tier = 1;
     pack: Pack = 'Star';
     attack = 3;
-    health = 1;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         if (this.level > 1) {
             return;
