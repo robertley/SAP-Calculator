@@ -1,17 +1,17 @@
-import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
 import { LogService } from './services/log.servicee';
 import { Battle } from './interfaces/battle.interface';
-import { money_round } from './util/helper-functions';
+import { createPack, money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
 import { StartOfBattleService } from './services/start-of-battle.service';
 import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
 
 import { PetService } from './services/pet.service';
-import { AbstractControl, FormArray, FormControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
 import { Pie } from './classes/equipment/puppy/pie.class';
@@ -23,6 +23,7 @@ import { ChocolateCake } from './classes/equipment/golden/chocolate-cake.class';
 import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 import { LocalStorageService } from './services/local-storage.service';
+import { Modal } from 'bootstrap';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { EquipmentService } from './services/equipment.service';
 
@@ -31,12 +32,15 @@ import { EquipmentService } from './services/equipment.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
 
-  version = '0.4.16';
+  @ViewChild('customPackEditor')
+  customPackEditor: ElementRef;
+
+  version = '0.5.0';
   sapVersion = '0.29.6-135 BETA'
 
   title = 'sap-calculator';
@@ -56,6 +60,10 @@ export class AppComponent implements OnInit {
   simulated = false;
   formGroup: FormGroup;
   toys: Map<number, string[]>;
+  customPackEditorModal: Modal;
+
+  previousPackPlayer = null;
+  previousPackOpponent = null;
 
   constructor(private logService: LogService,
     private abilityService: AbilityService,
@@ -72,10 +80,13 @@ export class AppComponent implements OnInit {
     this.petService.init();
     this.initFormGroup();
     this.loadLocalStorage();
+    this.petService.buildCustomPackPets(this.formGroup.get('customPacks') as FormArray);
     this.setFontSize();
     this.initPlayerPets();
-    this.updatePlayerPack(this.player, this.player.pack, false);
-    this.updatePlayerPack(this.opponent, this.opponent.pack, false);
+    this.updatePlayerPack(this.player, this.formGroup.get('playerPack').value, false);
+    this.updatePlayerPack(this.opponent, this.formGroup.get('opponentPack').value, false);
+    this.previousPackOpponent = this.opponent.pack;
+    this.previousPackPlayer = this.player.pack;
   }
 
   printFormGroup() {
@@ -83,7 +94,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      this.toys = this.toyService.toys;
+    this.toys = this.toyService.toys;
+  }
+
+  ngAfterViewInit(): void {
+    this.initModals();
   }
 
   loadLocalStorage() {
@@ -91,13 +106,27 @@ export class AppComponent implements OnInit {
 
     if (localStorage) {
       try {
-        this.formGroup.setValue(JSON.parse(localStorage), {emitEvent: false});
-      } catch {
-        console.log('error loading local storage')
+        // all fields except for customPacks
+        let localStorage = JSON.parse(this.localStorageService.getStorage());
+        let customPacks = localStorage.customPacks;
+        localStorage.customPacks = [];
+        this.formGroup.setValue(localStorage, {emitEvent: false});
+        this.loadCustomPacks(customPacks);
+      } catch (e) {
+        console.log('error loading local storage', e)
         this.localStorageService.clearStorage();
       }
 
     }
+  }
+
+  loadCustomPacks(customPacks) {
+    let formArray = new FormArray([]);
+    for (let customPack of customPacks) {
+      let formGroup = createPack(customPack);
+      formArray.push(formGroup);
+    }
+    this.formGroup.setControl('customPacks', formArray);
   }
 
   initPlayerPets() {
@@ -148,18 +177,30 @@ export class AppComponent implements OnInit {
       playerGoldSpent: new FormControl(defaultGoldSpent),
       opponentGoldSpent: new FormControl(defaultGoldSpent),
       angler: new FormControl(false),
+      allPets: new FormControl(false),
       logFilter: new FormControl(null),
       playerPets: new FormArray([]),
       opponentPets: new FormArray([]),
       fontSize: new FormControl(13),
+      customPacks: new FormArray([])
     })
 
     this.initPetForms();
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
+      if (value == 'Add Custom Pack') { 
+        this.openCustomPackEditor();
+        return;
+      }
+      this.previousPackPlayer = value;
       this.updatePlayerPack(this.player, value);
     })
     this.formGroup.get('opponentPack').valueChanges.subscribe((value) => {
+      if (value == 'Add Custom Pack') { 
+        this.openCustomPackEditor();
+        return;
+      }
+      this.previousPackOpponent = value;
       this.updatePlayerPack(this.opponent, value);
     })
     this.formGroup.get('playerToy').valueChanges.subscribe((value) => {
@@ -248,6 +289,9 @@ export class AppComponent implements OnInit {
         break;
       case 'Golden':
         petPool = this.petService.goldenPackPets;
+        break;
+      default:
+        petPool = this.petService.playerCustomPackPets.get(pack);
         break;
     }
     if (player == this.player) {
@@ -853,6 +897,20 @@ export class AppComponent implements OnInit {
     alert('Cache cleared. Refresh page to see changes.');
   }
 
+  initModals() {
+    this.customPackEditorModal = new Modal(this.customPackEditor.nativeElement);
+    this.customPackEditor.nativeElement.addEventListener('hidden.bs.modal', (event) => {
+      // this.formGroup.get('playerPack').setValue(this.previousPackPlayer, {emitEvent: false});
+      // this.formGroup.get('opponentPack').setValue(this.previousPackOpponent, {emitEvent: false});
+    })
+  }
+
+  openCustomPackEditor() {
+    this.customPackEditorModal.show();
+    this.formGroup.get('playerPack').setValue(this.previousPackPlayer, {emitEvent: false});
+    this.formGroup.get('opponentPack').setValue(this.previousPackOpponent, {emitEvent: false});
+  }
+
   drop(event: CdkDragDrop<string[]>, playerString: string) {
     let previousIndex = event.previousIndex;
     let currentIndex = event.currentIndex;
@@ -894,5 +952,17 @@ export class AppComponent implements OnInit {
 
   get losePercent() {
     return money_round(this.opponentWinner / this.simulationBattleAmt * 100);
+  }
+
+  get validCustomPacks() {
+    // get all formGroups in formArray that are valid
+    let formArray = this.formGroup.get('customPacks') as FormArray;
+    let validFormGroups = [];
+    for (let formGroup of formArray.controls) {
+      if (formGroup.valid) {
+        validFormGroups.push(formGroup);
+      }
+    }
+    return validFormGroups;
   }
 }

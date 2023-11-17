@@ -252,6 +252,8 @@ import { SmallerSlug } from "../classes/pets/hidden/smaller-slug.class";
 import { SmallestSlug } from "../classes/pets/hidden/smallest-slug.class";
 import { ZombieFly } from "../classes/pets/hidden/zombie-fly.class";
 import { Marmoset } from "../classes/pets/star/tier-1/marmoset.class";
+import { FormArray } from "@angular/forms";
+import { Jerboa } from "../classes/pets/custom/tier-4/jerboa.class";
 
 @Injectable({
     providedIn: 'root'
@@ -262,12 +264,25 @@ export class PetService {
     puppyPackPets: Map<number, string[]> = new Map();
     starPackPets: Map<number, string[]> = new Map();
     goldenPackPets: Map<number, string[]> = new Map();
+    customPackPets: Map<number, string[]> = new Map();
+    playerCustomPackPets: Map<string, Map<number, string[]>> = new Map();
+    allPets: Map<number, string[]> = new Map();
 
     constructor(private logService: LogService,
         private abilityService: AbilityService,
         private gameService: GameService
     ) {
+        
+    }
 
+    buildCustomPackPets(customPacks: FormArray) {
+        for (let customPack of customPacks.controls) {
+            let pack = new Map<number, string[]>();
+            for (let i = 1; i <= 6; i++) {
+                pack.set(i, customPack.get(`tier${i}Pets`).value);
+            }
+            this.playerCustomPackPets.set(customPack.get('name').value, pack);
+        }
     }
 
     init() {
@@ -584,7 +599,41 @@ export class PetService {
             "Bird of Paradise",
             "Oyster"
         ])
+
+        this.customPackPets.set(1, []);
+        this.customPackPets.set(2, []);
+        this.customPackPets.set(3, []);
+        this.customPackPets.set(4, [
+            "Jerboa"
+        ]);
+        this.customPackPets.set(5, []);
+        this.customPackPets.set(6, []);
+
+        this.setAllPets();
         
+    }
+
+    setAllPets() {
+        this.allPets = new Map();
+        for (let i = 1; i <= 6; i++) {
+          this.allPets.set(i, []);
+        }
+        for (let [tier, pets] of this.turtlePackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.puppyPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.starPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.goldenPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        // remove duplicates from each tier
+        for (let [tier, pets] of this.allPets) {
+          this.allPets.set(tier, [...new Set(pets)]);
+        }
     }
 
     createPet(petForm: PetForm, parent: Player): Pet {
@@ -1099,6 +1148,10 @@ export class PetService {
             case 'Oyster':
                 return new Oyster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
+            // Custom Pets
+            case 'Jerboa':
+                return new Jerboa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+
             // Token Pets
             case 'Bee':
                 return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
@@ -1126,6 +1179,8 @@ export class PetService {
                 return new ZombieCricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Zombie Fly':
                 return new ZombieFly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+        
+        
         }
     }
 
@@ -1920,6 +1975,11 @@ export class PetService {
             newPet = new ZombieFly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
+        // Custom Pack Pets
+        if (pet instanceof Jerboa) {
+            newPet = new Jerboa(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
         return newPet;
     }
 
@@ -1934,6 +1994,8 @@ export class PetService {
             pets = this.starPackPets.get(tier);
         } else if (parent.pack == 'Golden') {
             pets = this.goldenPackPets.get(tier);
+        } else {
+            pets = this.playerCustomPackPets.get(parent.pack).get(tier);
         }
         let petNum = getRandomInt(0, pets.length - 1);
         let pet = pets[petNum];

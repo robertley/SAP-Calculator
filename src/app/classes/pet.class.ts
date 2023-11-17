@@ -11,8 +11,9 @@ import { Panther } from "./pets/puppy/tier-5/panther.class";
 import { getOpponent } from "../util/helper-functions";
 import { Cheese } from "./equipment/star/cheese.class";
 import { Pepper } from "./equipment/star/pepper.class";
+import { FortuneCookie } from "./equipment/custom/fortune-cookie.class";
 
-export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden';
+export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom';
 
 export abstract class Pet {
     name: string;
@@ -296,6 +297,7 @@ export abstract class Pet {
         let attackEquipment = damageResp.attackEquipment;
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
+        let randomEvent = false;
 
         let attackMultiplier = 1;
         let defenseMultiplier = 1;
@@ -340,6 +342,15 @@ export abstract class Pet {
                 if (attackEquipment instanceof Cheese) {
                     powerAmt = `x2`;
                 }
+                if (attackEquipment instanceof FortuneCookie) {
+                    randomEvent = true;
+                    if (damageResp.fortuneCookie) {
+                        powerAmt = `x2`;
+                    } else {
+                        powerAmt = `x1`;
+                    }
+                }
+                
                 message += ` (${attackEquipment.name} ${powerAmt})`;
 
                 if (attackMultiplier > 1) {
@@ -380,7 +391,8 @@ export abstract class Pet {
             this.logService.createLog({
                 message: message,
                 type: "attack",
-                player: this.parent
+                player: this.parent,
+                randomEvent: randomEvent
             });
     
             let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
@@ -522,7 +534,7 @@ export abstract class Pet {
         }
     }
 
-    calculateDamgae(pet: Pet, power?: number, snipe=false): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number} {
+    calculateDamgae(pet: Pet, power?: number, snipe=false): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number, fortuneCookie: boolean} {
         let attackMultiplier = 1;
         let defenseMultiplier = 1;
         if (this.name == 'Panther') {
@@ -547,9 +559,18 @@ export abstract class Pet {
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
 
-        if (attackEquipment instanceof Salt) {
+        if (attackEquipment instanceof Salt && !snipe) {
             if (pet.tier < this.tier) {
                 attackAmt *= 2;
+            }
+        }
+
+        let fortuneCookie = false;
+        if (attackEquipment instanceof FortuneCookie && !snipe) {
+            // flip a coin
+            if (Math.random() < 0.5) {
+                attackAmt *= 2;
+                fortuneCookie = true;
             }
         }
 
@@ -562,7 +583,8 @@ export abstract class Pet {
         return {
             defenseEquipment: defenseEquipment,
             attackEquipment: attackEquipment,
-            damage: damage
+            damage: damage,
+            fortuneCookie: fortuneCookie
         }
     } 
 

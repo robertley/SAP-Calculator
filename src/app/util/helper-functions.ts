@@ -1,3 +1,4 @@
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
 import { Pet } from "app/classes/pet.class";
 import { Player } from "app/classes/player.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
@@ -49,4 +50,34 @@ export function getOpponent(gameApi: GameAPI, player: Player): Player {
       opponent = gameApi.player;
   }
   return opponent;
+}
+
+
+export function createPack(customPack?) {
+  let formGroup = new FormGroup({
+    name: new FormControl(customPack.name ?? null, Validators.required),
+    tier1Pets: new FormControl(customPack.tier1Pets ?? [], controlArrayLengthOf10()),
+    // tier1Food: new FormControl([]),
+    tier2Pets: new FormControl(customPack.tier2Pets ?? [], controlArrayLengthOf10()),
+    // tier2Food: new FormControl([]),
+    tier3Pets: new FormControl(customPack.tier3Pets ?? [], controlArrayLengthOf10()),
+    // tier3Food: new FormControl([]),
+    tier4Pets: new FormControl(customPack.tier4Pets ?? [], controlArrayLengthOf10()),
+    // tier4Food: new FormControl([]),
+    tier5Pets: new FormControl(customPack.tier5Pets ?? [], controlArrayLengthOf10()),
+    // tier5Food: new FormControl([]),
+    tier6Pets: new FormControl(customPack.tier6Pets ?? [], controlArrayLengthOf10()),
+    // tier6Food: new FormControl([]),
+  })
+  return formGroup;
+}
+
+// custom angular validator
+function controlArrayLengthOf10(): ValidatorFn {
+  return (control:AbstractControl) : ValidationErrors | null => {
+    if (control.value.length !== 10) {
+      return {length: true};
+    }
+    return null;
+  }
 }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { FormGroup, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet.service';
@@ -25,7 +25,11 @@ export class PetSelectorComponent implements OnInit {
   @Input()
   angler: boolean;
   @Input()
+  allPets: boolean;
+  @Input()
   formGroup: FormGroup;
+  @Input()
+  customPacks: AbstractControl;//FormArray;
 
   equipment: Map<string, Equipment>;
   turtlePackPets: string[];
@@ -66,6 +70,9 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.petService.goldenPackPets) {
       this.pets.get(tier).push(...pets);
     }
+    for (let [tier, pets] of this.petService.customPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
     // remove duplicates from each tier
     for (let [tier, pets] of this.pets) {
       this.pets.set(tier, [...new Set(pets)]);
@@ -82,8 +89,26 @@ export class PetSelectorComponent implements OnInit {
       pack = this.petService.starPackPets;
     } else if (player.pack == 'Golden') {
       pack = this.petService.goldenPackPets;
+    } else {
+      pack = this.buildCustomPack(player.pack)
     }
     return cloneDeep(pack);
+  }
+
+  buildCustomPack(name: string) {
+    // find customPack with name
+    let customPack;
+    for (let pack of (this.customPacks as FormArray).controls) {
+      if (pack.get('name').value == name) {
+        customPack = pack;
+        break;
+      }
+    }
+    let pack = new Map<number, string[]>();
+    for (let i = 1; i <= 6; i++) {
+      pack.set(i, customPack.get(`tier${i}Pets`).value);
+    }
+    return pack;
   }
 
   initEquipment() {
@@ -167,6 +192,10 @@ export class PetSelectorComponent implements OnInit {
   }
 
   optionHidden(option: string) {
+    if (this.allPets) {
+      return false;
+    }
+
     let pack = this.getPack(this.player);
     for (let [tier, pets] of pack) {
       if (pets.includes(option)) {
