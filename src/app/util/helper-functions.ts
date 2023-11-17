@@ -53,20 +53,20 @@ export function getOpponent(gameApi: GameAPI, player: Player): Player {
 }
 
 
-export function createPack() {
+export function createPack(customPack?) {
   let formGroup = new FormGroup({
-    name: new FormControl(null, Validators.required),
-    tier1Pets: new FormControl([], controlArrayLengthOf10()),
+    name: new FormControl(customPack.name ?? null, Validators.required),
+    tier1Pets: new FormControl(customPack.tier1Pets ?? [], controlArrayLengthOf10()),
     // tier1Food: new FormControl([]),
-    tier2Pets: new FormControl([], controlArrayLengthOf10()),
+    tier2Pets: new FormControl(customPack.tier2Pets ?? [], controlArrayLengthOf10()),
     // tier2Food: new FormControl([]),
-    tier3Pets: new FormControl([], controlArrayLengthOf10()),
+    tier3Pets: new FormControl(customPack.tier3Pets ?? [], controlArrayLengthOf10()),
     // tier3Food: new FormControl([]),
-    tier4Pets: new FormControl([], controlArrayLengthOf10()),
+    tier4Pets: new FormControl(customPack.tier4Pets ?? [], controlArrayLengthOf10()),
     // tier4Food: new FormControl([]),
-    tier5Pets: new FormControl([], controlArrayLengthOf10()),
+    tier5Pets: new FormControl(customPack.tier5Pets ?? [], controlArrayLengthOf10()),
     // tier5Food: new FormControl([]),
-    tier6Pets: new FormControl([], controlArrayLengthOf10()),
+    tier6Pets: new FormControl(customPack.tier6Pets ?? [], controlArrayLengthOf10()),
     // tier6Food: new FormControl([]),
   })
   return formGroup;

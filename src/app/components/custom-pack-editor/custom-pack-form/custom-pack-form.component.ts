@@ -131,4 +131,8 @@ export class CustomPackFormComponent implements OnInit {
     }
   }
 
+  submitDisabled() {
+    return this.formGroup.get('name').invalid;
+  }
+
 }

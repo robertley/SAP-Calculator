@@ -13,13 +13,15 @@
     <div class="row mb-4">
         <div class="col-12">
             <h3>Custom Packs</h3>
-            <div class="row mb-3" *ngFor="let pack of customPacks.controls">
-                <div class="col-12 d-flex align-items-bottom">
-                    <h4>{{pack.get('name').value}}</h4>
-                    <button class="btn btn-primary mx-2" (click)="editPack(pack)">Edit</button>
-                    <button class="btn btn-danger" (click)="deletePack(pack)">Delete</button>
-                </div>
-            </div>
+            <table>
+                <tr *ngFor="let pack of customPacks.controls">
+                    <td class="text">{{pack.get('name').value}}</td>
+                    <td class="text"><span *ngIf="pack.valid" class="valid">Valid</span>
+                        <span *ngIf="!pack.valid" class="invalid">Invalid</span></td>
+                    <td><button class="btn btn-primary" (click)="editPack(pack)">Edit</button></td>
+                    <td><button class="btn btn-danger" (click)="deletePack(pack)">Delete</button></td>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="row">

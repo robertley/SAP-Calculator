@@ -37,6 +37,7 @@ import { Onion } from "../classes/equipment/golden/onion.class";
 import { PitaBread } from "../classes/equipment/golden/pita-bread.class";
 import { Tomato } from "../classes/equipment/golden/tomato.class";
 import { Durian } from "../classes/equipment/golden/durian.class";
+import { FortuneCookie } from "../classes/equipment/custom/fortune-cookie.class";
 
 @Injectable({
     providedIn: "root"
@@ -80,6 +81,7 @@ export class EquipmentService {
         map.set('Pita Bread', new PitaBread(this.logService));
         map.set('Tomato', new Tomato(this.logService, this.abilityService));
         map.set('Durian', new Durian(this.logService, this.abilityService));
+        map.set('Fortune Cookie', new FortuneCookie());
 
 
         return map;

@@ -35,6 +35,7 @@ export class CustomPackEditorComponent implements OnInit {
       packMap.set('Puppy', []);
       packMap.set('Star', []);
       packMap.set('Golden', []);
+      packMap.set('Custom', []);
       this.petPackMap.set(i, packMap);
     }
     for (let [tier, pets] of this.petService.turtlePackPets) {
@@ -49,6 +50,9 @@ export class CustomPackEditorComponent implements OnInit {
     for (let [tier, pets] of this.petService.goldenPackPets) {
       this.petPackMap.get(tier).get('Golden').push(...pets);
     }
+    for (let [tier, pets] of this.petService.customPackPets) {
+      this.petPackMap.get(tier).get('Custom').push(...pets);
+    }
     console.log(this.petPackMap)
   }
 
@@ -59,7 +63,7 @@ export class CustomPackEditorComponent implements OnInit {
 
   createPack() {
     let formGroup = new FormGroup({
-      name: new FormControl(null, Validators.required),
+      name: new FormControl(null, [Validators.required, this.forbiddenNameValidator()]),
       tier1Pets: new FormControl([], this.controlArrayLengthOf10()),
       // tier1Food: new FormControl([]),
       tier2Pets: new FormControl([], this.controlArrayLengthOf10()),
@@ -116,4 +120,22 @@ export class CustomPackEditorComponent implements OnInit {
     }
   }
 
+
+  forbiddenNameValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      let forbiddenNames = ['custom'];
+      for (let formGroup of this.customPacks.controls) {
+        let con = formGroup.get('name');
+        if (control == con) {
+          continue;
+        }
+        forbiddenNames.push(formGroup.get('name').value?.toLowerCase());
+      }
+      console.log(forbiddenNames, control.value)
+      if (forbiddenNames.includes(control.value?.toLowerCase())) {
+        return { forbiddenName: true };
+      }
+      return null;
+    }
+  }
 }
