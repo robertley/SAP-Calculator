@@ -1,0 +1,13 @@
+.editor-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 1rem;
+}
+
+.invalid {
+    color: red;
+}
+
+.valid {
+    color: rgb(10, 180, 10)
+}
