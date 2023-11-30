@@ -10,7 +10,7 @@
 </div>
 
 <div *ngIf="focusedGroup == null">
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col-12">
             <h3>Custom Packs</h3>
             <table>
@@ -24,10 +24,26 @@
             </table>
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-12">
             <button class="btn btn-primary" (click)="createNewPack()">Create New Pack</button>
         </div>
     </div>
+
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3>Import Custom Pack</h3>
+            <div class="form-group" [formGroup]="importFormGroup">
+                <textarea class="form-control" id="code" rows="3" formControlName="code"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <button class="btn btn-primary" (click)="importCustomPack()">Import</button>
+        </div>
+    </div>
+
     
 </div>

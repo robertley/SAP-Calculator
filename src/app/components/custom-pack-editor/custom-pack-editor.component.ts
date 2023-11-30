@@ -3,6 +3,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, V
 import { PetService } from '../../services/pet.service';
 import { remove } from 'lodash';
 import { LocalStorageService } from '../../services/local-storage.service';
+import * as petJson from '../../files/pets.json';
 
 @Component({
   selector: 'app-custom-pack-editor',
@@ -17,6 +18,10 @@ export class CustomPackEditorComponent implements OnInit {
   // Map<tier, Map<pack, pets>>
   petPackMap: Map<number, Map<string, string[]>>;
   focusedGroup: FormGroup = null;
+
+  importFormGroup = new FormGroup({
+    code: new FormControl(null)
+  });
 
   constructor(private petService: PetService, private localStorageService: LocalStorageService) {
     this.buildPetPackMap();
@@ -101,6 +106,7 @@ export class CustomPackEditorComponent implements OnInit {
     } else {
       this.customPacks.push(event);
     }
+    this.petService.buildCustomPackPets(this.customPacks);
     this.focusedGroup = null;
     this.localStorageService.setStorage(this.formGroup.value);
   }
@@ -115,7 +121,8 @@ export class CustomPackEditorComponent implements OnInit {
 
   deletePack(group: AbstractControl) {
     if (confirm('Are you sure you want to delete this pack?')) {
-      remove(this.customPacks.controls, (value) => value === group);
+      let index = this.customPacks.controls.indexOf(group);
+      this.customPacks.removeAt(index);
       this.localStorageService.setStorage(this.formGroup.value);
     }
   }
@@ -131,11 +138,47 @@ export class CustomPackEditorComponent implements OnInit {
         }
         forbiddenNames.push(formGroup.get('name').value?.toLowerCase());
       }
-      console.log(forbiddenNames, control.value)
       if (forbiddenNames.includes(control.value?.toLowerCase())) {
         return { forbiddenName: true };
       }
       return null;
     }
+  }
+
+  importCustomPack() {
+
+    let code = this.importFormGroup.get('code').value;
+    try {
+      code = JSON.parse(code);
+      let formValue = {
+        name: code.Title,
+        tier1Pets: this.getMinions(code.Minions, 1),
+        tier2Pets: this.getMinions(code.Minions, 2),
+        tier3Pets: this.getMinions(code.Minions, 3),
+        tier4Pets: this.getMinions(code.Minions, 4),
+        tier5Pets: this.getMinions(code.Minions, 5),
+        tier6Pets: this.getMinions(code.Minions, 6),
+      }
+      this.createNewPack();
+      this.focusedGroup.patchValue(formValue);
+    } catch (e) {
+      alert('Invalid code');
+      console.error(e);
+    }
+  }
+
+  getMinions(minions: number[], tier: number) {
+
+    let pets = petJson[`tier${tier}`];
+    let tierMinions = [];
+    for (let minion of minions) {
+      for (let pet of pets) {
+        if (pet.id == minion) {
+          tierMinions.push(pet.name);
+        }
+      } 
+    }
+
+    return tierMinions;
   }
 }
