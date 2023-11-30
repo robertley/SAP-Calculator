@@ -90,7 +90,11 @@ export class PetSelectorComponent implements OnInit {
     } else if (player.pack == 'Golden') {
       pack = this.petService.goldenPackPets;
     } else {
-      pack = this.buildCustomPack(player.pack)
+      try {
+        pack = this.buildCustomPack(player.pack)
+      } catch {
+        pack = this.petService.turtlePackPets;
+      }
     }
     return cloneDeep(pack);
   }
