@@ -10,7 +10,7 @@ export class Peacock extends Pet {
     pack: Pack = 'Turtle';
     health = 5;
     attack = 2;
-    hurt(gameApi, tiger) {
+    hurt(gameApi, pet, tiger) {
         if (this.health < 1) {
             return;
         }

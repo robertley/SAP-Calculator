@@ -17,7 +17,7 @@ export class AtlanticPuffin extends Pet {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
             for (let j = 0; j < strawPets.length; j++) {
-                let target = opponent.getRandomPet();
+                let target = opponent.getRandomPet(null, null, true);
                 if (target == null) {
                     break;
                 }

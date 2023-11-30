@@ -12,7 +12,7 @@ export class Gorilla extends Pet {
     pack: Pack = 'Turtle';
     attack = 7;
     health = 10;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
+    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!this.alive) {
             return;
         }

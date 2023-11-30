@@ -15,7 +15,7 @@ export class Octopus extends Pet {
     afterAttack(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
-            let target = opponent.getRandomPet();
+            let target = opponent.getRandomPet(null, null, true);
             if (target == null) {
                 return;
             }

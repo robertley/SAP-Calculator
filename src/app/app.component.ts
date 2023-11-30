@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.0';
+  version = '0.5.1';
   sapVersion = '0.29.6-135 BETA'
 
   title = 'sap-calculator';
@@ -643,6 +643,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let pet of player.petArray) {
       if (pet.equipment instanceof Eggplant) {
         pet.equipment.callback(pet);
+        pet.eggplantTouched = true;
       }
       if (pet.equipment instanceof PitaBread) {
         pet.equipment.callback(pet);

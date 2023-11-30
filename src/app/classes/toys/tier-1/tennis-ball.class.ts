@@ -7,9 +7,9 @@ export class TennisBall extends Toy {
     tier = 1;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
-        let target = opponent.getRandomPet();
+        let target = opponent.getRandomPet(null, null, true);
         this.toyService.snipePet(target, this.level, this.parent, this.name, true, puma);
-        target = opponent.getRandomPet();
+        target = opponent.getRandomPet(null, null, true);
         this.toyService.snipePet(target, this.level, this.parent, this.name, true, puma);
     }
 }

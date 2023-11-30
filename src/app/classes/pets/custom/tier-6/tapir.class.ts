@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
@@ -6,49 +7,43 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class SabertoothTiger extends Pet {
-    name = "Sabertooth Tiger";
+export class Tapir extends Pet {
+    name = "Tapir";
     tier = 6;
-    pack: Pack = 'Star';
-    attack = 6;
-    health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = this.level * 5;
-        let petPool: string[];
-        if (this.parent == gameApi.player) {
-            petPool = gameApi.playerPetPool.get(1);
-        } else {
-            petPool = gameApi.opponentPetPool.get(1);
+    pack: Pack = 'Custom';
+    attack = 4;
+    health = 3;
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        let excludePets = this.parent.petArray.filter(pet => {
+            return pet.name == "Tapir";
+        });
+        let target = this.parent.getRandomPet(excludePets, true);
+        if (target == null) {
+            return;
         }
-        let petName = petPool[Math.floor(Math.random() * petPool.length)];
+
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let pet = this.petService.createPet({
-                    name: petName,
-                    attack: power,
-                    health: power,
-                    equipment: null,
-                    exp: 0
-                }, this.parent)
-        
+                target = cloneDeep(target);
+                target.exp = this.minExpForLevel;
+                let spawnPet = this.petService.createDefaultVersionOfPet(target);
                 this.logService.createLog(
                     {
-                        message: `${this.name} spawned ${pet.name} (${power}/${power}).`,
+                        message: `${this.name} spawned a ${spawnPet.name} level ${spawnPet.level}.`,
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,
+                        pteranodon: pteranodon,
                         randomEvent: true
                     }
                 )
 
-                if (this.parent.summonPet(pet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(pet);
+                if (this.parent.summonPet(spawnPet, this.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(target);
                 }
             },
             priority: this.attack
         })
-
-        super.superHurt(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

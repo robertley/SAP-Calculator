@@ -28,7 +28,7 @@ export class Ant extends Pet {
         let power: Power = this.level == 1 ? { health: 1, attack: 1 } :
             this.level == 2 ? { health: 2, attack: 2 } : { health: 3, attack: 3 };
 
-        let boostPet = this.parent.getRandomPet([this]);
+        let boostPet = this.parent.getRandomPet([this], true);
         if (boostPet == null) {
             return;
         }

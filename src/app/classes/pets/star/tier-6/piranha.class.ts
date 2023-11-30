@@ -11,7 +11,7 @@ export class Piranha extends Pet {
     pack: Pack = 'Star';
     attack = 10;
     health = 4;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
+    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let targetPets = this.parent.petArray.filter(pet => {
             return pet !== this && pet.alive
         });

@@ -5,27 +5,28 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Vulture extends Pet {
-    name = "Vulture";
-    tier = 5;
-    pack: Pack = 'Star';
+export class WhiteTiger extends Pet {
+    name = "White Tiger";
+    tier = 6;
+    pack: Pack = 'Custom';
     attack = 4;
     health = 3;
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!tiger) {
-            this.abilityUses++;
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let targets: Pet[] = [];
+        let target = this.petBehind();
+        while (target && targets.length < this.level) {
+            targets.push(target);
+            target = target.petBehind();
         }
-        if (this.abilityUses % 2 == 1) {
-            return;
+        for (let target of targets) {
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} +3 experience.`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger
+            })
+            target.increaseExp(3);
         }
-        let opponent = this.parent.opponent;
-        let target = opponent.getRandomPet(null, null, true);
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 4;
-        this.snipePet(target, power, true, tiger);
-        this.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

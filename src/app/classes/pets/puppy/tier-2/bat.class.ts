@@ -15,12 +15,9 @@ export class Bat extends Pet {
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
-        for (let i = 0; i < this.level; i++) {
-            let excludePets = opponent.getPetsWithEquipment('Weak');
-            let target = opponent.getRandomPet(excludePets);
-            if (target == null) {
-                return;
-            }
+        let excludePets = opponent.getPetsWithEquipment('Weak');
+        let targets = opponent.getRandomPets(this.level, excludePets, null, true);
+        for (let target of targets) {
             target.givePetEquipment(new Weak());
             this.logService.createLog({
                 message: `${this.name} made ${target.name} weak.`,
