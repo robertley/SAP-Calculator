@@ -38,6 +38,8 @@ import { PitaBread } from "../classes/equipment/golden/pita-bread.class";
 import { Tomato } from "../classes/equipment/golden/tomato.class";
 import { Durian } from "../classes/equipment/golden/durian.class";
 import { FortuneCookie } from "../classes/equipment/custom/fortune-cookie.class";
+import { Blueberry } from "../classes/equipment/custom/blueberry.class";
+import { Donut } from "../classes/equipment/custom/donut.class";
 
 @Injectable({
     providedIn: "root"
@@ -46,6 +48,7 @@ export class EquipmentService {
 
     constructor(private logService: LogService, private abilityService: AbilityService, private petService: PetService, private gameService: GameService) {}
 
+    // Also update seagull !
     getInstanceOfAllEquipment() {
         let map: Map<string, Equipment> = new Map();
         map.set('Garlic', new Garlic());
@@ -82,7 +85,8 @@ export class EquipmentService {
         map.set('Tomato', new Tomato(this.logService, this.abilityService));
         map.set('Durian', new Durian(this.logService, this.abilityService));
         map.set('Fortune Cookie', new FortuneCookie());
-
+        map.set('Blueberry', new Blueberry());
+        map.set('Donut', new Donut());
 
         return map;
     }

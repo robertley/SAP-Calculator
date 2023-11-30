@@ -22,4 +22,4 @@ export class Equipment {
 // basically it is before attack. Cake is a special case that also has this class name so didnt want to change it
 export type EquipmentClass = 
     'shop' | 'defense' | 'shield' | 'attack' | 'ailment-defense' | 'ailment-attack' | 'faint' 
-    | 'skewer' | 'snipe' | 'beforeStartOfBattle' | 'beforeAttack' | 'startOfBattle' | 'shield-snipe' | 'hurt';
+    | 'skewer' | 'snipe' | 'beforeStartOfBattle' | 'beforeAttack' | 'startOfBattle' | 'shield-snipe' | 'hurt' | 'target';

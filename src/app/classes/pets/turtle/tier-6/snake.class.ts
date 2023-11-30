@@ -14,7 +14,7 @@ export class Snake extends Pet {
     health = 6;
     friendAheadAttacks(gameApi: GameAPI, tiger?: boolean): void {
         let power = this.level * 5;
-        let target = getOpponent(gameApi, this.parent).getRandomPet();
+        let target = getOpponent(gameApi, this.parent).getRandomPet(null, null, true);
         if (!target) {
             return;
         }

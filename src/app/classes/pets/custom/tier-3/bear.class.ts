@@ -37,7 +37,6 @@ export class Bear extends Pet {
             }
             petBehind = petBehind.petBehind();
         }
-        console.log(playerHoneyPets, opponentHoneyPets, [...playerHoneyPets, ...opponentHoneyPets])
         for (let pet of [...playerHoneyPets, ...opponentHoneyPets]) {
             pet.givePetEquipment(new Honey(this.logService, this.abilityService));
             this.logService.createLog({

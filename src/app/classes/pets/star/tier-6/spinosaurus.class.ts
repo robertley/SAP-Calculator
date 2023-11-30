@@ -17,7 +17,7 @@ export class Spinosaurus extends Pet {
             attack: this.level * 3,
             health: this.level * 2
         }
-        let target = this.parent.getRandomPet([this]);
+        let target = this.parent.getRandomPet([this], true);
         if (target == null) {
             return;
         }

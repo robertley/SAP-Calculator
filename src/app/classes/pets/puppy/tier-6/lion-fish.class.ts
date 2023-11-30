@@ -16,7 +16,7 @@ export class Lionfish extends Pet {
         let opponent = getOpponent(gameApi, this.parent);
         let snipeAmt = 1 + Math.floor(this.attack / 10);
         for (let i = 0; i < snipeAmt; i++) {
-            let target = opponent.getRandomPet();
+            let target = opponent.getRandomPet(null, null, true);
             if (target == null) {
                 return;
             }

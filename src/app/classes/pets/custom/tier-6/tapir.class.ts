@@ -1,37 +1,53 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
+import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
 export class Tapir extends Pet {
     name = "Tapir";
-    tier = 4;
+    tier = 6;
     pack: Pack = 'Custom';
     attack = 4;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let elligibleCopyPets = [];
-        let donutPets = [];
-        for (let pet of this.parent.petArray) {
-            if (pet instanceof Tapir) {
-                continue;
-            }
-            if (!pet.alive) {
-                continue;
-            }
-            elligibleCopyPets.push(pet);
-        }
-
-        if (elligibleCopyPets.length === 0) {
+        let excludePets = this.parent.petArray.filter(pet => {
+            return pet.name == "Tapir";
+        });
+        let target = this.parent.getRandomPet(excludePets, true);
+        if (target == null) {
             return;
         }
 
+        this.abilityService.setSpawnEvent({
+            callback: () => {
+                target = cloneDeep(target);
+                target.exp = this.minExpForLevel;
+                let spawnPet = this.petService.createDefaultVersionOfPet(target);
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned a ${spawnPet.name} level ${spawnPet.level}.`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: true
+                    }
+                )
 
+                if (this.parent.summonPet(spawnPet, this.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(target);
+                }
+            },
+            priority: this.attack
+        })
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
+        protected petService: PetService,
         parent: Player,
         health?: number,
         attack?: number,

@@ -5,27 +5,25 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Vulture extends Pet {
-    name = "Vulture";
+export class Alpaca extends Pet {
+    name = "Alpaca";
     tier = 5;
-    pack: Pack = 'Star';
-    attack = 4;
-    health = 3;
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!tiger) {
-            this.abilityUses++;
-        }
-        if (this.abilityUses % 2 == 1) {
+    pack: Pack = 'Custom';
+    attack = 3;
+    health = 7;
+    friendSummoned(pet: Pet, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let opponent = this.parent.opponent;
-        let target = opponent.getRandomPet(null, null, true);
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 4;
-        this.snipePet(target, power, true, tiger);
-        this.superFriendFaints(gameApi, pet, tiger);
+        pet.increaseExp(1);
+        this.logService.createLog({
+            message: `${this.name} gave ${pet.name} 1 exp.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+        this.abilityUses++;
+        this.superFriendSummoned(pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -36,5 +34,9 @@ export class Vulture extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

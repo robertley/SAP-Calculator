@@ -64,6 +64,9 @@ export abstract class Pet {
     swallowedPets?: Pet[] = [];
     belugaSwallowedPet: string;
     toyPet = false;
+    // fixes bug where eggplant ability is triggered multiple times
+    // if we already set eggplant ability make sure not to set it again
+    eggplantTouched = false;
 
 
     constructor(

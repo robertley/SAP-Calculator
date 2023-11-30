@@ -20,12 +20,9 @@ export class Mosquito extends Pet {
             opponent = gameApi.player;
         }
 
-        for (let i = 0; i < this.level; i++) {
-            let attackPet = opponent.getRandomPet();
-            if (!attackPet) {
-                break;
-            }
-            this.snipePet(attackPet, 1, true, tiger)
+        let targets = opponent.getRandomPets(this.level, null, null, true);
+        for (let target of targets) {
+            this.snipePet(target, 1, true, tiger)
         }
 
         super.superStartOfBattle(gameApi, tiger);

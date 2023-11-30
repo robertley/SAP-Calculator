@@ -377,8 +377,20 @@ export class Player {
      * @param excludePet pet we want to exclude from being chosen
      * @returns Pet or null
      */
-    getRandomPet(excludePets?: Pet[]) {
+    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean) {
         let pets = this.petArray;
+        if (donut) {
+            let donutPets = this.getPetsWithEquipment('Donut');
+            if (donutPets.length > 0) {
+                pets = donutPets;
+            }
+        }
+        if (blueberry) {
+            let blueberryPets = this.getPetsWithEquipment('Blueberry');
+            if (blueberryPets.length > 0) {
+                pets = blueberryPets;
+            }
+        }
         pets = pets.filter((pet) => {
             let keep = true;
             if (excludePets)
@@ -392,9 +404,45 @@ export class Player {
         return pets[index];
     }
 
+    /**
+     * Will prioritize donut or blueberry pets. does not expect both arguments to be true.
+     * @param amt amount of pets to return
+     * @param excludePets pets to exclude from the random selection
+     * @param donut find donut pets first
+     * @param blueberry fine blueberry pets first
+     * @returns pet array
+     */
+    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: Boolean) {
+        let pets = [];
+        excludePets = excludePets ?? [];
+        for (let i = 0; i < amt; i++) {
+            let pet = this.getRandomPet(excludePets, donut, blueberry);
+            if (pet == null) {
+                break;
+            }
+            excludePets.push(pet);
+            pets.push(pet);
+        }
+        // if we didn't get enough pets, try again without donut/blueberry
+        if (pets.length < amt) {
+            for (let i = pets.length; i < amt; i++) {
+                let pet = this.getRandomPet(excludePets);
+                if (pet == null) {
+                    break;
+                }
+                excludePets.push(pet);
+                pets.push(pet);
+            }
+        }
+        return pets;
+    }
+
     getPetsWithEquipment(equipmentName: string) {
         let pets = [];
         for (let pet of this.petArray) {
+            if (!pet.alive) {
+                continue;
+            }
             if (pet.equipment?.name == equipmentName) {
                 pets.push(pet);
             }
