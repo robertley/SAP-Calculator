@@ -11,7 +11,7 @@ export class Triceratops extends Pet {
     pack: Pack = 'Star';
     attack = 5;
     health = 6;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
+    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let target = this.parent.getRandomPet([this]);
         let power = this.level * 3;
         if (target == null) {

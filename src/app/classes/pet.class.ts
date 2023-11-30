@@ -34,7 +34,7 @@ export abstract class Pet {
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
-    hurt?(gameApi: GameAPI, tiger?: boolean): void;
+    hurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     faint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
     friendSummoned?(pet: Pet, tiger?: boolean): void;
     friendAheadAttacks?(gameApi: GameAPI, tiger?: boolean): void;
@@ -110,13 +110,13 @@ export abstract class Pet {
     
     }
 
-    protected superHurt(gameApi, tiger=false) {
+    protected superHurt(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }
         let exp = this.exp;
         this.exp = this.petBehind().minExpForLevel;
-        this.hurt(gameApi, true)
+        this.hurt(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -409,7 +409,8 @@ export abstract class Pet {
             this.abilityService.setHurtEvent({
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
-                player: pet.parent
+                player: pet.parent,
+                callbackPet: this
             })
         }
 
@@ -510,7 +511,8 @@ export abstract class Pet {
             this.abilityService.setHurtEvent({
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
-                player: pet.parent
+                player: pet.parent,
+                callbackPet: this
             })
         }
 

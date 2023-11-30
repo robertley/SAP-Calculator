@@ -1,23 +1,34 @@
-import { clone, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 
-export class Guineafowl extends Pet {
-    name = "Guineafowl";
-    tier = 3;
-    pack: Pack = 'Golden';
-    attack = 2;
-    health = 4;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = this.level * 2;
-        this.parent.gainTrumpets(power, this);
-        this.superHurt(gameApi, tiger);
+export class Tapir extends Pet {
+    name = "Tapir";
+    tier = 4;
+    pack: Pack = 'Custom';
+    attack = 4;
+    health = 3;
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        let elligibleCopyPets = [];
+        let donutPets = [];
+        for (let pet of this.parent.petArray) {
+            if (pet instanceof Tapir) {
+                continue;
+            }
+            if (!pet.alive) {
+                continue;
+            }
+            elligibleCopyPets.push(pet);
+        }
+
+        if (elligibleCopyPets.length === 0) {
+            return;
+        }
+
+
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

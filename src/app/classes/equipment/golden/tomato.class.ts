@@ -49,7 +49,8 @@ export class Tomato extends Equipment {
             this.abilityService.setHurtEvent({
                 callback: attackPet.hurt.bind(attackPet),
                 priority: attackPet.attack,
-                player: attackPet.parent
+                player: attackPet.parent,
+                callbackPet: attackedPet
             })
         }
         // knockout

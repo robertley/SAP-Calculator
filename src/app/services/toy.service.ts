@@ -124,7 +124,7 @@ export class ToyService {
             this.abilityService.setHurtEvent({
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
-                player: pet.parent
+                player: pet.parent,
             })
         }
     }

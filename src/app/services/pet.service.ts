@@ -254,6 +254,13 @@ import { ZombieFly } from "../classes/pets/hidden/zombie-fly.class";
 import { Marmoset } from "../classes/pets/star/tier-1/marmoset.class";
 import { FormArray } from "@angular/forms";
 import { Jerboa } from "../classes/pets/custom/tier-4/jerboa.class";
+import { FrilledDragon } from "app/classes/pets/custom/tier-1/frilled-dragon";
+import { Wombat } from "app/classes/pets/custom/tier-2/wombat.class";
+import { Aardvark } from "app/classes/pets/custom/tier-3/aardvark.class";
+import { Bear } from "app/classes/pets/custom/tier-3/bear.class";
+import { EmperorTamarin } from "app/classes/pets/custom/tier-3/emperor-tamarin";
+import { Porcupine } from "app/classes/pets/custom/tier-3/porcupine.class";
+import { Wasp } from "app/classes/pets/custom/tier-3/wasp.class";
 
 @Injectable({
     providedIn: 'root'
@@ -600,9 +607,19 @@ export class PetService {
             "Oyster"
         ])
 
-        this.customPackPets.set(1, []);
-        this.customPackPets.set(2, []);
-        this.customPackPets.set(3, []);
+        this.customPackPets.set(1, [
+            "Frilled Dragon"
+        ]);
+        this.customPackPets.set(2, [
+            "Wombat"
+        ]);
+        this.customPackPets.set(3, [
+            "Aardvark",
+            "Bear",
+            "Emperor Tamarin",
+            "Porcupine",
+            "Wasp"
+        ]);
         this.customPackPets.set(4, [
             "Jerboa"
         ]);
@@ -1151,6 +1168,20 @@ export class PetService {
             // Custom Pets
             case 'Jerboa':
                 return new Jerboa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Frilled Dragon':
+                return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Wombat':
+                return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Aardvark':
+                return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Bear':
+                return new Bear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Emperor Tamarin':
+                return new EmperorTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Porcupine':
+                return new Porcupine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Wasp':
+                return new Wasp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
 
             // Token Pets
             case 'Bee':
@@ -1978,6 +2009,27 @@ export class PetService {
         // Custom Pack Pets
         if (pet instanceof Jerboa) {
             newPet = new Jerboa(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof FrilledDragon) {
+            newPet = new FrilledDragon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Wombat) {
+            newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Aardvark) {
+            newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Bear) {
+            newPet = new Bear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof EmperorTamarin) {
+            newPet = new EmperorTamarin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Porcupine) {
+            newPet = new Porcupine(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Wasp) {
+            newPet = new Wasp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         return newPet;

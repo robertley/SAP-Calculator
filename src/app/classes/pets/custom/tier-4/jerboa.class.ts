@@ -7,7 +7,7 @@ import { Player } from "../../../player.class";
 
 export class Jerboa extends Pet {
     name = "Jerboa";
-    tier = 1;
+    tier = 4;
     pack: Pack = 'Custom';
     attack = 1;
     health = 3;

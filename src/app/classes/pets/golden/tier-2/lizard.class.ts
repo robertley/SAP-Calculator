@@ -13,7 +13,7 @@ export class Lizard extends Pet {
     attack = 1;
     health = 3;
     maxAbilityUses: number = 2;
-    hurt(gameApi: GameAPI, tiger?: boolean): void {
+    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
