@@ -1,4 +1,4 @@
-import { clone, cloneDeep, shuffle } from "lodash";
+import { clone, cloneDeep, shuffle, sum } from "lodash";
 import { Pet } from "./pet.class";
 import { LogService } from "../services/log.servicee";
 import { getOpponent, getRandomInt } from "../util/helper-functions";
@@ -171,31 +171,31 @@ export class Player {
             if (this.pet0 != null) {
                 this.makeRoomForSlot(0)
             }
-            this.pet0 = spawnPet;
+            this.setPet(0, spawnPet);
         }
         if (position == 1) {
             if (this.pet1 != null) {
                 this.makeRoomForSlot(1)
             }
-            this.pet1 = spawnPet;
+            this.setPet(1, spawnPet);
         }
         if (position == 2) {
             if (this.pet2 != null) {
                 this.makeRoomForSlot(2)
             }
-            this.pet2 = spawnPet;
+            this.setPet(2, spawnPet);
         }
         if (position == 3) {
             if (this.pet3 != null) {
                 this.makeRoomForSlot(3)
             }
-            this.pet3 = spawnPet;
+            this.setPet(3, spawnPet);
         }
         if (position == 4) {
             if (this.pet4 != null) {
                 this.makeRoomForSlot(4)
             }
-            this.pet4 = spawnPet;
+            this.setPet(4, spawnPet);
         }
 
         if (spawnPet.summoned) {
@@ -246,6 +246,7 @@ export class Player {
             for (let i = slotWithSpace; i > slot; i--) {
                 this[`pet${i}`] = this[`pet${i-1}`];
             }
+            return;
         }
         
         // isSpaceAhead

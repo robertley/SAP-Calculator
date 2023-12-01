@@ -20,6 +20,10 @@ export class Pteranodon extends Pet {
         if (pet.name == this.name) {
             return;
         }
+        // maybe this should be more generic and not just for pteranodon
+        if (!this.alive) {
+            return;
+        }
         this.abilityService.setSpawnEvent({
             callback: () => {
                 let summonPet = this.petService.createPet(
@@ -45,6 +49,8 @@ export class Pteranodon extends Pet {
             priority: this.attack
         })
         this.abilityUses++;
+        //debug 
+        // this.logService.printState(gameApi.player, gameApi.opponet);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -61,4 +67,5 @@ export class Pteranodon extends Pet {
         super.setAbilityUses();
         this.maxAbilityUses = this.level;
     }
+
 }

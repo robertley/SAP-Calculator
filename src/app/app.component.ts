@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.2';
+  version = '0.5.3';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';
@@ -80,13 +80,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.petService.init();
     this.initFormGroup();
     this.loadLocalStorage();
-    this.petService.buildCustomPackPets(this.formGroup.get('customPacks') as FormArray);
-    this.setFontSize();
-    this.initPlayerPets();
-    this.updatePlayerPack(this.player, this.formGroup.get('playerPack').value, false);
-    this.updatePlayerPack(this.opponent, this.formGroup.get('opponentPack').value, false);
-    this.previousPackOpponent = this.opponent.pack;
-    this.previousPackPlayer = this.player.pack;
+    this.initApp();
   }
 
   printFormGroup() {
@@ -108,16 +102,31 @@ export class AppComponent implements OnInit, AfterViewInit {
       try {
         // all fields except for customPacks
         let localStorage = JSON.parse(this.localStorageService.getStorage());
-        let customPacks = localStorage.customPacks;
-        localStorage.customPacks = [];
-        this.formGroup.setValue(localStorage, {emitEvent: false});
-        this.loadCustomPacks(customPacks);
+        this.loadCalculatorFromValue(localStorage);
       } catch (e) {
         console.log('error loading local storage', e)
         this.localStorageService.clearStorage();
       }
 
     }
+  }
+
+  loadCalculatorFromValue(calculator) {
+    let customPacks = calculator.customPacks;
+    calculator.customPacks = [];
+    this.formGroup.setValue(calculator, {emitEvent: false});
+    this.loadCustomPacks(customPacks);
+    this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
+  }
+
+  initApp() {
+    this.petService.buildCustomPackPets(this.formGroup.get('customPacks') as FormArray);
+    this.setFontSize();
+    this.initPlayerPets();
+    this.updatePlayerPack(this.player, this.formGroup.get('playerPack').value, false);
+    this.updatePlayerPack(this.opponent, this.formGroup.get('opponentPack').value, false);
+    this.previousPackOpponent = this.opponent.pack;
+    this.previousPackPlayer = this.player.pack;
   }
 
   loadCustomPacks(customPacks) {
@@ -182,7 +191,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       playerPets: new FormArray([]),
       opponentPets: new FormArray([]),
       fontSize: new FormControl(13),
-      customPacks: new FormArray([])
+      customPacks: new FormArray([]),
+      oldStork: new FormControl(false),
     })
 
     this.initPetForms();
@@ -229,6 +239,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.updateSelectorPets();
       })
     })
+    this.formGroup.get('oldStork').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.oldStork = value;
+    });
   }
 
   initPetForms() {
@@ -383,6 +396,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
     
+    // this might cause an issue with door head ant
+    // probably just move the functions in here that trigger the empty front space events
     this.removeDeadPets();
 
     this.abilityService.executeSpawnEvents();
@@ -483,11 +498,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       while (this.abilityService.hasAbilityCycleEvents) {
         this.abilityCycle();
       }
+      this.removeDeadPets();
 
       this.pushPetsForwards();
 
-      this.printState();
-
+      this.logService.printState(this.player, this.opponent);
+      
       while (this.battleStarted) {
         this.nextTurn();
       }
@@ -607,7 +623,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkGoldenSpawn();
     this.opponent.checkGoldenSpawn();
 
-    this.printState();
+    this.logService.printState(this.player, this.opponent);
   }
 
   chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
@@ -786,37 +802,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     return this.logService.getLogs();
   }
 
-
-  printState() {
-    let playerState = '';
-    playerState += this.getPetText(this.player.pet4);
-    playerState += this.getPetText(this.player.pet3);
-    playerState += this.getPetText(this.player.pet2);
-    playerState += this.getPetText(this.player.pet1);
-    playerState += this.getPetText(this.player.pet0);
-    let opponentState = '';
-    opponentState += this.getPetText(this.opponent.pet0);
-    opponentState += this.getPetText(this.opponent.pet1);
-    opponentState += this.getPetText(this.opponent.pet2);
-    opponentState += this.getPetText(this.opponent.pet3);
-    opponentState += this.getPetText(this.opponent.pet4);
-
-    this.logService.createLog({
-      message: `${playerState}| ${opponentState}`,
-      type: 'board'
-    });
-    
-  }
-
-  getPetText(pet?: Pet) {
-    if (pet == null) {
-      return '___ (-/-) ';
-    }
-    let abbrev = pet.name.substring(0, 3);
-    // return `${abbrev}${pet.equipment ? `<${pet.equipment.name.substring(0,2)}>` : ''} (${pet.attack}/${pet.health}) `;
-    return `${abbrev} (${pet.attack}/${pet.health}) `;
-  }
-
   setViewBattle(battle: Battle) {
     this.viewBattle = battle;
   }
@@ -933,6 +918,40 @@ export class AppComponent implements OnInit, AfterViewInit {
     player.setPet(4, pets[4], true);
   
   }
+
+  resetPlayer(player: 'player' | 'opponent') {
+    let petSelectors = this.petSelectors.toArray().slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
+    for (let petSelector of petSelectors) {
+      petSelector.removePet();
+    }
+  }
+
+  export() {
+    // fizes strange bug of export failing on load
+    if (this.battles.length == 0) {
+      this.simulate();
+    }
+    let calc = JSON.stringify(this.formGroup.value);
+    // copy to clipboard
+    navigator.clipboard.writeText(calc).then(() => {
+      alert('Copied to clipboard');
+    })
+  }
+
+  import(importVal): boolean {
+    let success = false;
+    let calculator = JSON.parse(importVal);
+    try {
+      this.loadCalculatorFromValue(calculator);
+      this.initApp();
+      success = true;
+    } catch (e) {
+      console.error(e);
+      // acceptable faliure
+    }
+    return success;
+  }
+
   get filteredBattles() {
     return this.battles.filter(battle => {
       let filter = this.formGroup.get('logFilter').value;

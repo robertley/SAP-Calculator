@@ -11,6 +11,7 @@ import { CustomPackFormComponent } from './components/custom-pack-editor/custom-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { InfoComponent } from './components/info/info.component';
+import { ImportCalculatorComponent } from './components/import-calculator/import-calculator.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { InfoComponent } from './components/info/info.component';
     PatchNotesComponent,
     CustomPackEditorComponent,
     CustomPackFormComponent,
-    InfoComponent
+    InfoComponent,
+    ImportCalculatorComponent
   ],
   imports: [
     BrowserModule,
