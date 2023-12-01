@@ -486,8 +486,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.pushPetsForwards();
 
-      this.printState();
-
+      this.logService.printState(this.player, this.opponent);
+      
       while (this.battleStarted) {
         this.nextTurn();
       }
@@ -607,7 +607,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkGoldenSpawn();
     this.opponent.checkGoldenSpawn();
 
-    this.printState();
+    this.logService.printState(this.player, this.opponent);
   }
 
   chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
@@ -784,37 +784,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   get logs() {
     return this.logService.getLogs();
-  }
-
-
-  printState() {
-    let playerState = '';
-    playerState += this.getPetText(this.player.pet4);
-    playerState += this.getPetText(this.player.pet3);
-    playerState += this.getPetText(this.player.pet2);
-    playerState += this.getPetText(this.player.pet1);
-    playerState += this.getPetText(this.player.pet0);
-    let opponentState = '';
-    opponentState += this.getPetText(this.opponent.pet0);
-    opponentState += this.getPetText(this.opponent.pet1);
-    opponentState += this.getPetText(this.opponent.pet2);
-    opponentState += this.getPetText(this.opponent.pet3);
-    opponentState += this.getPetText(this.opponent.pet4);
-
-    this.logService.createLog({
-      message: `${playerState}| ${opponentState}`,
-      type: 'board'
-    });
-    
-  }
-
-  getPetText(pet?: Pet) {
-    if (pet == null) {
-      return '___ (-/-) ';
-    }
-    let abbrev = pet.name.substring(0, 3);
-    // return `${abbrev}${pet.equipment ? `<${pet.equipment.name.substring(0,2)}>` : ''} (${pet.attack}/${pet.health}) `;
-    return `${abbrev} (${pet.attack}/${pet.health}) `;
   }
 
   setViewBattle(battle: Battle) {

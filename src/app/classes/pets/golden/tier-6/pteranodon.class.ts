@@ -45,6 +45,8 @@ export class Pteranodon extends Pet {
             priority: this.attack
         })
         this.abilityUses++;
+        //debug 
+        this.logService.printState(gameApi.player, gameApi.opponet);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -61,4 +63,5 @@ export class Pteranodon extends Pet {
         super.setAbilityUses();
         this.maxAbilityUses = this.level;
     }
+
 }
