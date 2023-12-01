@@ -190,8 +190,9 @@ export class PetSelectorComponent implements OnInit {
 
   removePet() {
     this.player.setPet(this.index, null, true);
-    this.formGroup.get('attack').setValue(null, {emitEvent: false});
-    this.formGroup.get('health').setValue(null, {emitEvent: false});
+    this.formGroup.get('name').setValue(null, {emitEvent: false});
+    this.formGroup.get('attack').setValue(0, {emitEvent: false});
+    this.formGroup.get('health').setValue(0, {emitEvent: false});
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
   }
 

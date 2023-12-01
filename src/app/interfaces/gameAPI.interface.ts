@@ -10,4 +10,5 @@ export interface GameAPI {
     turnNumber?: number;
     playerGoldSpent?: number;
     opponentGoldSpent?: number;
+    oldStork?: boolean;
 }

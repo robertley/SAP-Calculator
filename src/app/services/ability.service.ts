@@ -48,7 +48,10 @@ export class AbilityService {
             this.hasEnemyHurtEvents ||
             this.hasKnockOutEvents ||
             this.hasEmptyFrontSpaceEvents ||
-            this.hasFriendFaintsEvents
+            this.hasFriendFaintsEvents || 
+            this.hasSpawnEvents ||
+            this.hasFriendAheadFaintsEvents ||
+            this.hasEnemySummonedEvents
     }
 
     // End of Turn Events
@@ -177,6 +180,10 @@ export class AbilityService {
     
     triggerSummonedEvents(summonedPet: Pet) {
         for (let pet of summonedPet.parent.petArray) {
+            // fixes bug with mushroom
+            if (pet == summonedPet) {
+                continue;
+            }
             // this works because summoned pets will never have a 'summoned' ability
             if (pet.friendSummoned != null) {
                 this.setSummonedEvent({
@@ -225,15 +232,19 @@ export class AbilityService {
 
     executeSpawnEvents() {
         // // shuffle, so that same priority events are in random order
-        this.summonedEvents = shuffle(this.summonedEvents);
+        this.spawnEvents = shuffle(this.spawnEvents);
 
-        this.summonedEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        this.spawnEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.spawnEvents) {
             event.callback();
         }
         
         this.resetSpawnEvents();
+    }
+
+    get hasSpawnEvents() {
+        return this.spawnEvents.length > 0;
     }
 
     // friend ahead attacks events
@@ -303,6 +314,10 @@ export class AbilityService {
         }
         
         this.resetFriendAheadFaintsEvents();
+    }
+
+    get hasFriendAheadFaintsEvents() {
+        return this.friendAheadFaintsEvents.length > 0;
     }
 
     // knockout events
@@ -607,6 +622,10 @@ export class AbilityService {
         
         this.resetEnemySummonedEvents();
 
+    }
+
+    get hasEnemySummonedEvents() {
+        return this.enemySummonedEvents.length > 0;
     }
 
     // friend hurt events

@@ -24,12 +24,13 @@ export class Stork extends Pet {
         let summonPetName = summonPetPool[Math.floor(Math.random() * summonPetPool.length)];
         this.abilityService.setSpawnEvent({
             callback: () => {
+                let oldStork = gameApi.oldStork;
                 let summonPet = this.petService.createPet({
                     name: summonPetName,
-                    attack: null,
+                    attack: oldStork ? null : 3 * this.level,
                     equipment: null,
                     exp: this.minExpForLevel,
-                    health: null,
+                    health: oldStork ? null : 2 * this.level,
                 }, this.parent);
         
                 this.logService.createLog(

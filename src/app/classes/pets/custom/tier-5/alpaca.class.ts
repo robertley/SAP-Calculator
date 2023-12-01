@@ -12,6 +12,9 @@ export class Alpaca extends Pet {
     attack = 3;
     health = 7;
     friendSummoned(pet: Pet, tiger?: boolean): void {
+        if (pet instanceof Alpaca) {
+            return;
+        }
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

@@ -36,7 +36,13 @@ export class LogService {
         this.logs = [];
     }
 
-    printState(player: Player, opponent: Player) {
+    printState(player: Player, opponent: Player, message?: string) {
+        if (message) {
+            this.createLog({
+                message: message,
+                type: 'board'
+            });
+        }
         let playerState = '';
         playerState += this.getPetText(player.pet4);
         playerState += this.getPetText(player.pet3);
