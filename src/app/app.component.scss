@@ -15,6 +15,15 @@
 
 .player-card {
     background-color: #e9c137;
+    display: grid;
+    grid-auto-rows: minmax(min-content, max-content);
+    grid-template-columns: auto 1fr auto;
+}
+
+.back, .front {
+    transform: rotate(180deg);
+    writing-mode: vertical-lr;
+    text-align: center;
 }
 
 .battle-row {
@@ -101,9 +110,9 @@
 }
 
 .bottom-container {
-    min-height: 36em;
+    min-height: 30em;
     > div {
-        min-height: 18em;
+        min-height: 15em;
     }
 }
 
@@ -160,7 +169,17 @@
 @media (max-width: 767.98px) {
     .card {
         max-width: 18em;
-    }    
+    }
+
+    .back, .front {
+        // transform: rotate(180deg);
+        transform: initial;
+        writing-mode: initial;
+    }
+
+    .player-card {
+        grid-template-columns: none;
+    }
 }
 
 .ml-auto {

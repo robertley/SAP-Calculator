@@ -145,15 +145,16 @@
         <button class="btn btn-secondary mb-1" (click)="resetPlayer('player')">Reset</button>
       </div>
       <div class="card p-2 player-card">
+        <!-- <div class="back">BACK</div> -->
         <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'player')">
-          <div class="col drag-container mb-2 mb-sm-0" *ngFor="let pet of getPlayerPetsFormArray() ; index as i" cdkDrag>
+          <div class="col drag-container mb-2 mb-md-0" *ngFor="let pet of getPlayerPetsFormArray() ; index as i" cdkDrag>
             <div class="drag-handle" cdkDragHandle>
               <svg fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
                 <path d="M0 0h24v24H0z" fill="none"></path>
               </svg>
             </div>
-            <app-pet-selector 
+            <app-pet-selector
               [pet]="player['pet' + (4 - i)]"
               [player]="player"
               [opponent]="opponent"
@@ -165,6 +166,7 @@
             ></app-pet-selector>
           </div>
         </div>
+        <!-- <div class="front">FRONT</div> -->
       </div>
     </div>
     <div class="col-12 col-xl-6 px-4">
@@ -174,6 +176,7 @@
       </div>
 
       <div class="card p-2 player-card ml-auto">
+        <!-- <div class="front">FRONT</div> -->
         <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'opponent')">
           <div class="col drag-container mb-2 mb-sm-0" *ngFor="let pet of getOpponentPetsFormArray() ; index as i" cdkDrag>
             <div class="drag-handle" cdkDragHandle>
@@ -194,6 +197,7 @@
             ></app-pet-selector>
           </div>
         </div>
+        <!-- <div class="back">BACK</div> -->
       </div>
     </div> 
   </div>
