@@ -14,7 +14,7 @@
 
   <div class="row battle-controller border">
     <div class="col-12 d-flex justify-content-between py-2">
-      <div class="d-flex">
+      <div class="d-flex flex-wrap">
         <div class="form-group min-w-input me-3">
           <label for="playerPack">Player Pack</label>
           <select class="form-control" id="playerPack" formControlName="playerPack">
@@ -139,21 +139,22 @@
   </div>
 
   <div class="row battle-row pb-5 pt-3">
-    <div class="col-6 px-4">
+    <div class="col-12 col-xl-6 px-4 mb-2 mb-xl-0">
       <div class="d-flex justify-content-between">
         <h2 class="me-4">Player</h2>
         <button class="btn btn-secondary mb-1" (click)="resetPlayer('player')">Reset</button>
       </div>
       <div class="card p-2 player-card">
-        <div class="row" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'player')">
-          <div class="col drag-container" *ngFor="let pet of getPlayerPetsFormArray() ; index as i" cdkDrag>
+        <!-- <div class="back">BACK</div> -->
+        <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'player')">
+          <div class="col drag-container mb-2 mb-md-0" *ngFor="let pet of getPlayerPetsFormArray() ; index as i" cdkDrag>
             <div class="drag-handle" cdkDragHandle>
               <svg fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
                 <path d="M0 0h24v24H0z" fill="none"></path>
               </svg>
             </div>
-            <app-pet-selector 
+            <app-pet-selector
               [pet]="player['pet' + (4 - i)]"
               [player]="player"
               [opponent]="opponent"
@@ -165,17 +166,19 @@
             ></app-pet-selector>
           </div>
         </div>
+        <!-- <div class="front">FRONT</div> -->
       </div>
     </div>
-    <div class="col-6 px-4">
+    <div class="col-12 col-xl-6 px-4">
       <div class="d-flex justify-content-between">
         <h2 class="me-4">Opponent</h2>
         <button class="btn btn-secondary mb-1"(click)="resetPlayer('opponent')">Reset</button>
       </div>
 
-      <div class="card p-2 player-card">
-        <div class="row" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'opponent')">
-          <div class="col drag-container" *ngFor="let pet of getOpponentPetsFormArray() ; index as i" cdkDrag>
+      <div class="card p-2 player-card ml-auto">
+        <!-- <div class="front">FRONT</div> -->
+        <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'opponent')">
+          <div class="col drag-container mb-2 mb-sm-0" *ngFor="let pet of getOpponentPetsFormArray() ; index as i" cdkDrag>
             <div class="drag-handle" cdkDragHandle>
               <svg fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
@@ -194,19 +197,20 @@
             ></app-pet-selector>
           </div>
         </div>
+        <!-- <div class="back">BACK</div> -->
       </div>
     </div> 
   </div>
 
-  <div class="row button-bar py-3 border">
+  <div class="row button-bar pt-3 pb-1 border">
     <div class="col-12 d-flex justify-content-between">
       <div>
-        <button class="btn btn-primary me-2" (click)="simulate()">Simulate</button>
-        <button class="btn btn-primary me-2" (click)="randomize()">Randomize</button>
+        <button class="btn btn-primary me-2 mb-2" (click)="simulate()">Simulate</button>
+        <button class="btn btn-primary me-2 mb-2" (click)="randomize()">Randomize</button>
       </div>
       <div>
-        <button class="btn btn-secondary me-2" (click)="export()">Export Calculator</button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import">Import Calculator</button>
+        <button class="btn btn-secondary me-2 mb-2" (click)="export()">Export Calculator</button>
+        <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import Calculator</button>
       </div>
     </div>
   </div>
@@ -227,7 +231,7 @@
   </div>
 
   <div class="row flex-1 bottom-container">
-    <div class="col-6 border h-100 flex-col">
+    <div class="col-12 col-md-6 border h-100 flex-col pe-0">
       <h3>Battles</h3>
       <div class="row">
         <div class="col-12">
@@ -273,7 +277,7 @@
       </div>
     </div>
 
-    <div class="col-6 border h-100 flex-col">
+    <div class="col-12 col-md-6 border h-100 flex-col">
       <h3>Logs</h3>
       <div class="row log-container flex-1 scroll">
         <div class="col-12" *ngFor="let log of getViewBattleLogs()">

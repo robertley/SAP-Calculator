@@ -15,6 +15,15 @@
 
 .player-card {
     background-color: #e9c137;
+    display: grid;
+    grid-auto-rows: minmax(min-content, max-content);
+    grid-template-columns: auto 1fr auto;
+}
+
+.back, .front {
+    transform: rotate(180deg);
+    writing-mode: vertical-lr;
+    text-align: center;
 }
 
 .battle-row {
@@ -62,6 +71,7 @@
 }
 
 .results-bar {
+    max-width: 100%;
     border: .2em solid black;
     height: 2em;
     width: 30em;
@@ -100,7 +110,10 @@
 }
 
 .bottom-container {
-    overflow: auto;
+    min-height: 30em;
+    > div {
+        min-height: 15em;
+    }
 }
 
 .scroll {
@@ -126,6 +139,8 @@
         // height: 1.75em;
         // padding: 0;
     }
+
+    min-width: max-content;
 }
 
 .cdk-drag-placeholder {
@@ -148,4 +163,25 @@
 .info-link {
     margin-left: 1em;
     margin-bottom: .5em;
+}
+
+// if window is xs breakpoint
+@media (max-width: 767.98px) {
+    .card {
+        max-width: 18em;
+    }
+
+    .back, .front {
+        // transform: rotate(180deg);
+        transform: initial;
+        writing-mode: initial;
+    }
+
+    .player-card {
+        grid-template-columns: none;
+    }
+}
+
+.ml-auto {
+    margin-left: auto;
 }
