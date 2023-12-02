@@ -62,6 +62,7 @@
 }
 
 .results-bar {
+    max-width: 100%;
     border: .2em solid black;
     height: 2em;
     width: 30em;
@@ -100,7 +101,10 @@
 }
 
 .bottom-container {
-    overflow: auto;
+    min-height: 36em;
+    > div {
+        min-height: 18em;
+    }
 }
 
 .scroll {
@@ -126,6 +130,8 @@
         // height: 1.75em;
         // padding: 0;
     }
+
+    min-width: max-content;
 }
 
 .cdk-drag-placeholder {
@@ -148,4 +154,15 @@
 .info-link {
     margin-left: 1em;
     margin-bottom: .5em;
+}
+
+// if window is xs breakpoint
+@media (max-width: 767.98px) {
+    .card {
+        max-width: 18em;
+    }    
+}
+
+.ml-auto {
+    margin-left: auto;
 }
