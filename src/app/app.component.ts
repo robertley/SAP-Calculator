@@ -125,6 +125,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initPlayerPets();
     this.updatePlayerPack(this.player, this.formGroup.get('playerPack').value, false);
     this.updatePlayerPack(this.opponent, this.formGroup.get('opponentPack').value, false);
+    this.updatePlayerToy(this.player, this.formGroup.get('playerToy').value);
+    this.updatePlayerToy(this.opponent, this.formGroup.get('opponentToy').value);
     this.previousPackOpponent = this.opponent.pack;
     this.previousPackPlayer = this.player.pack;
   }
