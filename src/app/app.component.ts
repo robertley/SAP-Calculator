@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.3';
+  version = '0.5.4';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';
@@ -689,8 +689,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           if (pet == pett) {
             continue;
           }
-          pet.increaseAttack(2 * multiplier);
-          pet.increaseHealth(2 * multiplier);
+          pett.increaseAttack(2 * multiplier);
+          pett.increaseHealth(2 * multiplier);
           this.logService.createLog({
             message: `${pett.name} gained ${2 * multiplier} attack and ${2 * multiplier} health (Pancake)${pantherMessage}`,
             type: 'equipment',
