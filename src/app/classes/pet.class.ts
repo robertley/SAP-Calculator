@@ -29,6 +29,7 @@ export abstract class Pet {
     originalHealth: number;
     originalAttack: number;
     originalEquipment?: Equipment;
+    originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
     exp?: number = 0;
     originalExp?: number = 0;
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
@@ -608,6 +609,7 @@ export abstract class Pet {
         this.seenDead = false;
         this.equipment?.reset();
         this.swallowedPets = [];
+        this.savedPosition = this.originalSavedPosition;
         this.setAbilityUses();
     }
 
