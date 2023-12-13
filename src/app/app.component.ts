@@ -922,6 +922,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   resetPlayer(player: 'player' | 'opponent') {
+    console.log(this.formGroup);
+    return;
     let petSelectors = this.petSelectors.toArray().slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
     for (let petSelector of petSelectors) {
       petSelector.removePet();
@@ -943,6 +945,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   import(importVal): boolean {
     let success = false;
     let calculator = JSON.parse(importVal);
+    console.log(calculator);
     try {
       this.loadCalculatorFromValue(calculator);
       this.initApp();

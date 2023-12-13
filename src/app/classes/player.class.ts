@@ -108,7 +108,7 @@ export class Player {
                 this.orignalPet4 = pet;
             }
         }
-        if (init) {
+        if (init && pet != null) {
             pet.originalSavedPosition = pet.savedPosition;
         }
     }
