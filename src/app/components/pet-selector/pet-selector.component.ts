@@ -194,6 +194,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('attack').setValue(0, {emitEvent: false});
     this.formGroup.get('health').setValue(0, {emitEvent: false});
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
+    this.formGroup.get('equipment').setValue(null, {emitEvent: false});
   }
 
   optionHidden(option: string) {

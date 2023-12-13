@@ -107,7 +107,10 @@ export class Player {
             if (init) {
                 this.orignalPet4 = pet;
             }
-          }
+        }
+        if (init && pet != null) {
+            pet.originalSavedPosition = pet.savedPosition;
+        }
     }
 
     getPet(index: number) {

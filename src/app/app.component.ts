@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.4';
+  version = '0.5.9';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';
@@ -114,7 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   loadCalculatorFromValue(calculator) {
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
-    this.formGroup.setValue(calculator, {emitEvent: false});
+    this.formGroup.patchValue(calculator, {emitEvent: false});
     this.loadCustomPacks(customPacks);
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
   }
@@ -125,6 +125,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initPlayerPets();
     this.updatePlayerPack(this.player, this.formGroup.get('playerPack').value, false);
     this.updatePlayerPack(this.opponent, this.formGroup.get('opponentPack').value, false);
+    this.updatePlayerToy(this.player, this.formGroup.get('playerToy').value);
+    this.updatePlayerToy(this.opponent, this.formGroup.get('opponentToy').value);
     this.previousPackOpponent = this.opponent.pack;
     this.previousPackPlayer = this.player.pack;
   }
@@ -689,8 +691,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           if (pet == pett) {
             continue;
           }
-          pet.increaseAttack(2 * multiplier);
-          pet.increaseHealth(2 * multiplier);
+          pett.increaseAttack(2 * multiplier);
+          pett.increaseHealth(2 * multiplier);
           this.logService.createLog({
             message: `${pett.name} gained ${2 * multiplier} attack and ${2 * multiplier} health (Pancake)${pantherMessage}`,
             type: 'equipment',
@@ -928,9 +930,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   export() {
     // fizes strange bug of export failing on load
-    if (this.battles.length == 0) {
-      this.simulate();
-    }
+    // fixes strange bug with circular dependency
+    this.simulate();
+    
     let calc = JSON.stringify(this.formGroup.value);
     // copy to clipboard
     navigator.clipboard.writeText(calc).then(() => {
@@ -944,6 +946,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     try {
       this.loadCalculatorFromValue(calculator);
       this.initApp();
+      this.petSelectors.forEach((petSelector) => {
+        petSelector.fixLoadEquipment();
+      })
       success = true;
     } catch (e) {
       console.error(e);

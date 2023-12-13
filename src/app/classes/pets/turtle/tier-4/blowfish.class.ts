@@ -17,7 +17,7 @@ export class Blowfish extends Pet {
         if (targetPet)
             this.snipePet(targetPet, power, true, tiger);
         
-        this.superHurt(gameApi, tiger)
+        this.superHurt(gameApi, pet, tiger)
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

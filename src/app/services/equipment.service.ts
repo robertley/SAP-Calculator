@@ -40,6 +40,7 @@ import { Durian } from "../classes/equipment/golden/durian.class";
 import { FortuneCookie } from "../classes/equipment/custom/fortune-cookie.class";
 import { Blueberry } from "../classes/equipment/custom/blueberry.class";
 import { Donut } from "../classes/equipment/custom/donut.class";
+import { Pineapple } from "../classes/equipment/custom/pineapple.class";
 
 @Injectable({
     providedIn: "root"
@@ -87,6 +88,7 @@ export class EquipmentService {
         map.set('Fortune Cookie', new FortuneCookie());
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
+        map.set('Pineapple', new Pineapple());
 
         return map;
     }

@@ -11,8 +11,8 @@ export class Rhino extends Pet {
     name = "Rhino";
     tier = 5;
     pack: Pack = 'Turtle';
-    attack = 3;
-    health = 6;
+    attack = 6;
+    health = 9;
     knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let target = getOpponent(gameApi, this.parent).furthestUpPet;
         if (target == null) {

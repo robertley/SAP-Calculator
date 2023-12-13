@@ -27,7 +27,7 @@ export class Camel extends Pet {
             tiger: tiger
         })
 
-        super.superHurt(gameApi, tiger);
+        super.superHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

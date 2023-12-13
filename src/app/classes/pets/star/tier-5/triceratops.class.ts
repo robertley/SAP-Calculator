@@ -26,7 +26,7 @@ export class Triceratops extends Pet {
             tiger: tiger,
             randomEvent: true
         });
-        this.superHurt(gameApi, tiger);
+        this.superHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -29,6 +29,7 @@ export abstract class Pet {
     originalHealth: number;
     originalAttack: number;
     originalEquipment?: Equipment;
+    originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
     exp?: number = 0;
     originalExp?: number = 0;
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
@@ -473,7 +474,6 @@ export abstract class Pet {
 
         pet.health -= damage;
 
-        // TODO Attack Equipment (pineapple)
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
             pet.useDefenseEquipment(true)
@@ -484,7 +484,7 @@ export abstract class Pet {
             }
             message += ` (${defenseEquipment.name} ${sign}${power})`;
         }
-        if (attackEquipment != null && attackEquipment.equipmentClass == 'snipe') {
+        if (attackEquipment != null && attackEquipment.equipmentClass == 'attack-snipe') {
             let power = Math.abs(attackEquipment.power);
             let sign = '-';
             if (attackEquipment.power > 0) {
@@ -554,13 +554,20 @@ export abstract class Pet {
         || pet.equipment?.equipmentClass == 'ailment-defense'
         || (snipe && pet.equipment?.equipmentClass == 'shield-snipe') ? pet.equipment : null;
 
-        let attackEquipment: Equipment = this.equipment?.equipmentClass == 'attack'
-        || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
-        let attackAmt = power != null ? power + (
-            !snipe ? attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0 : 0
-        ) : this.attack + (
-            !snipe ? attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0 : 0
-        );
+        let attackEquipment: Equipment;
+        let attackAmt: number;
+        if (snipe) {
+            attackEquipment = this.equipment?.equipmentClass == 'attack-snipe' ? this.equipment : null;
+            attackAmt = attackEquipment != null ? power + attackEquipment.power : power;
+        } else {
+            attackEquipment = this.equipment?.equipmentClass == 'attack'
+            || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
+            attackAmt = power != null ? power + (
+                attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
+            ) : this.attack + (
+                attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
+            );
+        }
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
 
@@ -602,6 +609,7 @@ export abstract class Pet {
         this.seenDead = false;
         this.equipment?.reset();
         this.swallowedPets = [];
+        this.savedPosition = this.originalSavedPosition;
         this.setAbilityUses();
     }
 
