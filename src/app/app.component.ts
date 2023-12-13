@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.8';
+  version = '0.5.9';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';
@@ -114,7 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   loadCalculatorFromValue(calculator) {
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
-    this.formGroup.setValue(calculator, {emitEvent: false});
+    this.formGroup.patchValue(calculator, {emitEvent: false});
     this.loadCustomPacks(customPacks);
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
   }
@@ -922,8 +922,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   resetPlayer(player: 'player' | 'opponent') {
-    console.log(this.formGroup);
-    return;
     let petSelectors = this.petSelectors.toArray().slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
     for (let petSelector of petSelectors) {
       petSelector.removePet();
@@ -932,9 +930,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   export() {
     // fizes strange bug of export failing on load
-    if (this.battles.length == 0) {
-      this.simulate();
-    }
+    // fixes strange bug with circular dependency
+    this.simulate();
+    
     let calc = JSON.stringify(this.formGroup.value);
     // copy to clipboard
     navigator.clipboard.writeText(calc).then(() => {
@@ -945,10 +943,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   import(importVal): boolean {
     let success = false;
     let calculator = JSON.parse(importVal);
-    console.log(calculator);
     try {
       this.loadCalculatorFromValue(calculator);
       this.initApp();
+      this.petSelectors.forEach((petSelector) => {
+        petSelector.fixLoadEquipment();
+      })
       success = true;
     } catch (e) {
       console.error(e);
