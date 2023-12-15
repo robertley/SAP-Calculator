@@ -6,7 +6,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
 export class Marmoset extends Pet {
-    name = "Maromoset";
+    name = "Marmoset";
     tier = 1;
     pack: Pack = 'Star';
     attack = 2;
