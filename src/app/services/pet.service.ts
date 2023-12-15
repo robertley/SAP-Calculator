@@ -678,7 +678,6 @@ export class PetService {
     }
 
     createPet(petForm: PetForm, parent: Player): Pet {
-        console.log('create pet!', petForm)
         switch(petForm.name) {
             case 'Ant':
                 return new Ant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
@@ -1661,6 +1660,9 @@ export class PetService {
         }
         if (pet instanceof Hummingbird) {
             newPet = new Hummingbird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Marmoset) {
+            newPet = new Marmoset(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         // Tier 2
