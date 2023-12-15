@@ -12,8 +12,8 @@ export class Stegosaurus extends Pet {
     attack = 3;
     health = 8;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let nonEquipmentPets = this.parent.getPetsWithEquipment(null).filter(pet => pet !== this);
-        let target = nonEquipmentPets[Math.floor(Math.random() * nonEquipmentPets.length)];
+        let equipmentPets = this.parent.petArray.filter(pet => pet.equipment != null);
+        let target = this.parent.getRandomPet([...equipmentPets, this], true, false, true);
         if (target == null) {
             return;
         }
@@ -25,7 +25,7 @@ export class Stegosaurus extends Pet {
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            randomEvent: nonEquipmentPets.length > 1
+            randomEvent: true
         })
         this.superStartOfBattle(gameApi, tiger);
 

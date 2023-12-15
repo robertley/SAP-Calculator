@@ -27,7 +27,7 @@ export class Gorilla extends Pet {
             })
         }
 
-        super.superHurt(gameApi, tiger);
+        super.superHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

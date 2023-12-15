@@ -17,7 +17,7 @@ export class Guineafowl extends Pet {
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = this.level * 2;
         this.parent.gainTrumpets(power, this);
-        this.superHurt(gameApi, tiger);
+        this.superHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

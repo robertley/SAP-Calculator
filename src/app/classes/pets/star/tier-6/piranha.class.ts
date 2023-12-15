@@ -25,7 +25,7 @@ export class Piranha extends Pet {
                 tiger: tiger
             })
         }
-        this.superHurt(gameApi, tiger);
+        this.superHurt(gameApi, pet, tiger);
 
     }
     constructor(protected logService: LogService,

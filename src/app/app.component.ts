@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.8';
+  version = '0.5.10';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';
@@ -114,7 +114,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   loadCalculatorFromValue(calculator) {
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
-    this.formGroup.setValue(calculator, {emitEvent: false});
+    this.formGroup.patchValue(calculator, {emitEvent: false});
     this.loadCustomPacks(customPacks);
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
   }
@@ -930,9 +930,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   export() {
     // fizes strange bug of export failing on load
-    if (this.battles.length == 0) {
-      this.simulate();
-    }
+    // fixes strange bug with circular dependency
+    this.simulate();
+    
     let calc = JSON.stringify(this.formGroup.value);
     // copy to clipboard
     navigator.clipboard.writeText(calc).then(() => {
@@ -946,6 +946,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     try {
       this.loadCalculatorFromValue(calculator);
       this.initApp();
+      this.petSelectors.forEach((petSelector) => {
+        petSelector.fixLoadEquipment();
+      })
       success = true;
     } catch (e) {
       console.error(e);
