@@ -381,7 +381,7 @@ export class Player {
      * @param excludePet pet we want to exclude from being chosen
      * @returns Pet or null
      */
-    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean) {
+    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, notFiftyFifty?: boolean) {
         let pets = this.petArray;
         if (donut) {
             let donutPets = this.getPetsWithEquipment('Donut');
@@ -401,6 +401,17 @@ export class Player {
                 keep = !excludePets.includes(pet);
             return keep && pet.health > 0;
         });
+
+        if (notFiftyFifty) {
+            let beforeFilterPets = clone(pets);
+            pets = pets.filter((pet) => {
+                return pet.health != 50 || pet.attack != 50;
+            });
+            if (pets.length == 0) {
+                pets = beforeFilterPets;
+            }
+        }
+        
         if (pets.length == 0) {
             return null;
         }
