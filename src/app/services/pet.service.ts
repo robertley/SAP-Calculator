@@ -185,7 +185,6 @@ import { Groundhog } from "../classes/pets/golden/tier-1/groundhog.class";
 import { ConeSnail } from "../classes/pets/golden/tier-1/cone-snail.class";
 import { Goose } from "../classes/pets/golden/tier-1/goose.class";
 import { PiedTamarin } from "../classes/pets/golden/tier-1/pied-tamarin.class";
-import { Opposum } from "../classes/pets/golden/tier-1/opposum.class";
 import { Silkmoth } from "../classes/pets/golden/tier-1/silkmoth.class";
 import { Magpie } from "../classes/pets/golden/tier-1/magpie.class";
 import { HerculesBeetle } from "../classes/pets/golden/tier-2/hercules-beetle.class";
@@ -272,6 +271,7 @@ import { Lioness } from "../classes/pets/custom/tier-6/lioness.class";
 import { Tapir } from "../classes/pets/custom/tier-6/tapir.class";
 import { Walrus } from "../classes/pets/custom/tier-6/walrus.class";
 import { WhiteTiger } from "../classes/pets/custom/tier-6/white-tiger.class";
+import { Opossum } from "../classes/pets/golden/tier-1/oposum.class";
 
 @Injectable({
     providedIn: 'root'
@@ -547,7 +547,7 @@ export class PetService {
             "Cone Snail",
             "Goose",
             "Pied Tamarin",
-            "Opposum",
+            "Opossum",
             "Silkmoth",
             "Magpie"
         ])
@@ -678,6 +678,7 @@ export class PetService {
     }
 
     createPet(petForm: PetForm, parent: Player): Pet {
+        console.log('create pet!', petForm)
         switch(petForm.name) {
             case 'Ant':
                 return new Ant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
@@ -1068,8 +1069,8 @@ export class PetService {
                 return new Goose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Pied Tamarin':
                 return new PiedTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
-            case 'Opposum':
-                return new Opposum(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Opossum':
+                return new Opossum(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Silkmoth':
                 return new Silkmoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Magpie':
@@ -1833,8 +1834,8 @@ export class PetService {
         if (pet instanceof PiedTamarin) {
             newPet = new PiedTamarin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
-        if (pet instanceof Opposum) {
-            newPet = new Opposum(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        if (pet instanceof Opossum) {
+            newPet = new Opossum(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
         if (pet instanceof Silkmoth) {
             newPet = new Silkmoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));

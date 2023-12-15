@@ -35,7 +35,6 @@ export class Whale extends Pet {
     }
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let pet of this.swallowedPets) {
-            console.log(pet)
             this.abilityService.setSpawnEvent({
                 callback: () => {
                     this.logService.createLog({
