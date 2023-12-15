@@ -26,6 +26,7 @@ export class Tapir extends Pet {
             callback: () => {
                 target = cloneDeep(target);
                 target.exp = this.minExpForLevel;
+                console.log(target)
                 let spawnPet = this.petService.createDefaultVersionOfPet(target);
                 this.logService.createLog(
                     {
