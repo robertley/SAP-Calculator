@@ -388,6 +388,15 @@ export class Player {
             if (donutPets.length > 0) {
                 pets = donutPets;
             }
+            if (notFiftyFifty) {
+                pets = pets.filter((pet) => {
+                    return pet.health != 50 || pet.attack != 50;
+                });
+
+                if (pets.length == 0) {
+                    pets = this.petArray;
+                }
+            }
         }
         if (blueberry) {
             let blueberryPets = this.getPetsWithEquipment('Blueberry');
