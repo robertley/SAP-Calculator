@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.9';
+  version = '0.5.10';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';

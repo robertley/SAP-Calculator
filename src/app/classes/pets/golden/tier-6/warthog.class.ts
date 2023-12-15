@@ -15,7 +15,7 @@ export class Warthog extends Pet {
         let power = this.level;
         let triggers = Math.floor(this.attack / 3);
         for (let i = 0; i < triggers; i++) {
-            let target = this.parent.getRandomPet(null, true, null);
+            let target = this.parent.getRandomPet(null, true, null, true);
             if (target == null) {
                 break;
             }
