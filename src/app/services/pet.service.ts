@@ -272,6 +272,7 @@ import { Tapir } from "../classes/pets/custom/tier-6/tapir.class";
 import { Walrus } from "../classes/pets/custom/tier-6/walrus.class";
 import { WhiteTiger } from "../classes/pets/custom/tier-6/white-tiger.class";
 import { Opossum } from "../classes/pets/golden/tier-1/oposum.class";
+import { Kiwi } from "../classes/pets/star/tier-1/kiwi.class";
 
 @Injectable({
     providedIn: 'root'
@@ -472,7 +473,8 @@ export class PetService {
             "Frog",
             "Seahorse",
             "Hummingbird",
-            "Marmoset"
+            "Marmoset",
+            "Kiwi"
         ])
 
         this.starPackPets.set(2, [
@@ -482,7 +484,6 @@ export class PetService {
             "Panda",
             "Guinea Pig",
             "Jellyfish",
-            "Pug",
             "Atlantic Puffin",
             "Dove",
             "Stork",
@@ -498,6 +499,7 @@ export class PetService {
             "Okapi",
             "Cassowary",
             "Anteater",
+            "Pug"
         ])
 
         this.starPackPets.set(4, [
@@ -517,7 +519,7 @@ export class PetService {
         this.starPackPets.set(5, [
             "Sword Fish",
             "Polar Bear",
-            "Siberian Huskey",
+            "Siberian Husky",
             "Lion",
             "Triceratops",
             "Zebra",
@@ -949,6 +951,8 @@ export class PetService {
                 return new Hummingbird(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Marmoset':
                 return new Marmoset(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Kiwi':
+                return new Kiwi(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             
             // Tier 2
             case 'Koala':
@@ -1017,7 +1021,7 @@ export class PetService {
                 return new SwordFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Polar Bear':
                 return new PolarBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
-            case 'Siberian Huskey':
+            case 'Siberian Husky':
                 return new SiberianHuskey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Lion':
                 return new Lion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
@@ -1646,8 +1650,8 @@ export class PetService {
         if (pet instanceof Cockroach) {
             newPet = new Cockroach(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
-        if (pet instanceof Frog) {
-            newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        if (pet instanceof Kiwi) {
+            newPet = new Kiwi(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
         if (pet instanceof Frog) {
             newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
@@ -1664,6 +1668,7 @@ export class PetService {
         if (pet instanceof Marmoset) {
             newPet = new Marmoset(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
+
 
         // Tier 2
         if (pet instanceof Koala) {
