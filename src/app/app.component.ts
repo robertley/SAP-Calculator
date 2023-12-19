@@ -40,7 +40,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.12';
+  version = '0.5.13';
   sapVersion = '0.30.6-138 BETA'
 
   title = 'sap-calculator';
@@ -522,7 +522,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
     }
 
-    if (this.player.pet1 == null) {
+    if (this.opponent.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
     }
 
