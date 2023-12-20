@@ -1,10 +1,10 @@
 <div *ngIf="!reported">
     <p>
-        An export code of the current calculator will automatically be sent to the developer. Please make sure the calculator is currently relevant to the bug you are reporting. Provide a description of the bug below. (Player should have won, pet's ability is wrong, etc.) Name is optional. Provide your discord id if you want me to follow up with you.
+        An export code of the current calculator will automatically be sent to the developer. Please make sure the calculator is currently relevant to the bug you are reporting. Provide a description of the bug below. (Player should have won, pet's ability is wrong, etc.) Name is optional. Provide your Discord ID if you want me to follow up with you.
     </p>
     <div [ngClass]="['form-group', 'mb-3', submitted ? 'was-validated' : '']" [formGroup]="formGroup">
         <div class="mb-3">
-            <label for="name">Name</label>
+            <label for="name">Name/Alias/Discord ID</label>
             <input type="text" class="form-control" id="name" formControlName="name">
         </div>
         <div>
