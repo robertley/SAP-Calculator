@@ -26,6 +26,9 @@ import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { EquipmentService } from './services/equipment.service';
+import { Nest } from './classes/pets/hidden/nest.class';
+import { Egg } from './classes/equipment/puppy/egg.class';
+import { Fig } from './classes/equipment/golden/fig.class';
 
 @Component({
   selector: 'app-root',
@@ -40,8 +43,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.14';
-  sapVersion = '0.30.6-138 BETA'
+  version = '0.5.15';
+  sapVersion = '0.31.9-145 BETA'
 
   title = 'sap-calculator';
   player: Player;
@@ -666,6 +669,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment instanceof PitaBread) {
         pet.equipment.callback(pet);
       }
+      if (pet.equipment?.equipmentClass == 'startOfBattle') {
+        pet.equipment.callback(pet);
+      }
     }
   }
 
@@ -724,19 +730,31 @@ export class AppComponent implements OnInit, AfterViewInit {
     let opponentEquipment = opponentPet.equipment;
 
     if (playerEquipment?.equipmentClass == 'snipe') {
-      this.abilityService.setEqiupmentBeforeAttackEvent({
-        callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
-        priority: playerPet.attack,
-        player: this.player
-      })
+      let amt = 1;
+      if (playerPet instanceof Nest && playerEquipment instanceof Egg) {
+        amt = playerPet.level;
+      }
+      for (let i = 0; i < amt; i++) {
+        this.abilityService.setEqiupmentBeforeAttackEvent({
+          callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
+          priority: playerPet.attack,
+          player: this.player
+        })
+      }
     }
 
     if (opponentEquipment?.equipmentClass == 'snipe') {
-      this.abilityService.setEqiupmentBeforeAttackEvent({
-        callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
-        priority: opponentPet.attack,
-        player: this.opponent
-      })
+      let amt = 1;
+      if (opponentPet instanceof Nest && opponentEquipment instanceof Egg) {
+        amt = opponentPet.level;
+      }
+      for (let i = 0; i < amt; i++) {
+        this.abilityService.setEqiupmentBeforeAttackEvent({
+          callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
+          priority: opponentPet.attack,
+          player: this.opponent
+        })
+      }
     }
 
     this.abilityService.executeEqiupmentBeforeAttackEvents();

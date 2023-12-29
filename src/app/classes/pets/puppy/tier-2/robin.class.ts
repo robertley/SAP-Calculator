@@ -16,7 +16,7 @@ export class Robin extends Pet {
     attack = 2;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let nest = new Nest(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Egg(this.logService, this.abilityService));
+        let nest = new Nest(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, null);
         this.logService.createLog({
             message: `${this.name} summoned a Nest (level ${this.level}).`,
             type: 'ability',
@@ -25,8 +25,18 @@ export class Robin extends Pet {
             tiger: tiger
         });
 
-        if (this.parent.summonPet(nest, this.position)) {
+        if (this.parent.summonPet(nest, Math.max(0, this.position))) {
             this.abilityService.triggerSummonedEvents(nest);
+
+            this.logService.createLog({
+                message: `${this.name} gave Nest an Egg.`,
+                type: 'ability',
+                player: this.parent,
+                randomEvent: false,
+                tiger: tiger
+            })
+
+            nest.givePetEquipment(new Egg(this.logService, this.abilityService));
         }
 
         this.superStartOfBattle(gameApi, tiger);

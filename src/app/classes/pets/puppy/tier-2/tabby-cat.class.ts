@@ -11,6 +11,24 @@ export class TabbyCat extends Pet {
     pack: Pack = 'Puppy';
     attack = 4;
     health = 3;
+    friendGainedPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        let targets = this.parent.getRandomPets(2, [this], true, false);
+        if (targets.length == 0) {
+            return;
+        }
+        for (let target of targets) {
+            this.logService.createLog({
+                message: `${this.name} increased ${target.name}'s health by ${this.level}.`,
+                type: 'ability',
+                player: this.parent,
+                randomEvent: true,
+                tiger: tiger
+            });
+            target.increaseHealth(this.level);
+        }
+
+        this.superFriendGainedPerk(gameApi, pet, tiger);
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

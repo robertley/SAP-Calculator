@@ -12,7 +12,7 @@ import { Duck } from "../classes/pets/turtle/tier-1/duck.class";
 import { Beaver } from "../classes/pets/turtle/tier-1/beaver.class";
 import { Otter } from "../classes/pets/turtle/tier-1/otter.class";
 import { Pig } from "../classes/pets/turtle/tier-1/pig.class";
-import { Mouse } from "../classes/pets/turtle/tier-1/mouse.class";
+import { Mouse } from "../classes/pets/custom/tier-1/mouse.class";
 import { Snail } from "../classes/pets/turtle/tier-2/snail.class";
 import { Crab } from "../classes/pets/turtle/tier-2/crab.class";
 import { Swan } from "../classes/pets/turtle/tier-2/swan.class";
@@ -92,7 +92,7 @@ import { HatchingChick } from "../classes/pets/puppy/tier-3/hatching-chick.class
 import { Goldfish } from "../classes/pets/puppy/tier-3/goldfish.class";
 import { Owl } from "../classes/pets/puppy/tier-3/owl.class";
 import { Mole } from "../classes/pets/puppy/tier-3/mole.class";
-import { Raccoon } from "../classes/pets/puppy/tier-3/raccoon.class";
+import { Raccoon } from "../classes/pets/custom/tier-5/raccoon.class";
 import { FlyingSquirrel } from "../classes/pets/puppy/tier-3/flying-squirrel.class";
 import { Pangolin } from "../classes/pets/puppy/tier-3/pangolin.class";
 import { Puppy } from "../classes/pets/puppy/tier-3/puppy.class";
@@ -273,6 +273,8 @@ import { Walrus } from "../classes/pets/custom/tier-6/walrus.class";
 import { WhiteTiger } from "../classes/pets/custom/tier-6/white-tiger.class";
 import { Opossum } from "../classes/pets/golden/tier-1/oposum.class";
 import { Kiwi } from "../classes/pets/star/tier-1/kiwi.class";
+import { Pigeon } from "../classes/pets/turtle/tier-1/pigeon.class";
+import { Hare } from "../classes/pets/puppy/tier-3/hare.class";
 
 @Injectable({
     providedIn: 'root'
@@ -316,7 +318,7 @@ export class PetService {
                 "Beaver",
                 "Otter",
                 "Pig",
-                "Mouse",
+                "Pigeon"
             ]);
         this.turtlePackPets.set(2,
             [
@@ -420,10 +422,10 @@ export class PetService {
             "Goldfish",
             "Owl",
             "Mole",
-            "Raccoon",
             "Flying Squirrel",
             "Pangolin",
-            "Puppy"
+            "Puppy",
+            "Hare"
         ])
 
         this.puppyPackPets.set(4, [
@@ -622,7 +624,8 @@ export class PetService {
         ])
 
         this.customPackPets.set(1, [
-            "Frilled Dragon"
+            "Frilled Dragon",
+            "Mouse"
         ]);
         this.customPackPets.set(2, [
             "Wombat"
@@ -643,7 +646,8 @@ export class PetService {
         this.customPackPets.set(5, [
             "Alpaca",
             "Hyena",
-            "Moose"
+            "Moose",
+            "Raccoon"
         ]);
         this.customPackPets.set(6, [
             "Lioness",
@@ -701,6 +705,10 @@ export class PetService {
                 return new Pig(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Mouse':
                 return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Pigeon':
+                return new Pigeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+
+            // tier 2
             case 'Snail':
                 return new Snail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Crab':
@@ -868,6 +876,8 @@ export class PetService {
                 return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Puppy':
                 return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+            case 'Hare':
+                return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             
             // tier 4
             case 'Microbe':
@@ -1301,6 +1311,11 @@ export class PetService {
         if (pet instanceof Mouse) {
             newPet = new Mouse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
+        if (pet instanceof Pigeon) {
+            newPet = new Pigeon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
+        // tier 2
         if (pet instanceof Crab) {
             newPet = new Crab(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
@@ -1546,6 +1561,10 @@ export class PetService {
         if (pet instanceof Puppy) {
             newPet = new Puppy(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
+        if (pet instanceof Hare) {
+            newPet = new Hare(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        
         // Tier 4
         if (pet instanceof Microbe) {
             newPet = new Microbe(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));

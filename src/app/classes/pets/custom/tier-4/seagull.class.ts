@@ -45,6 +45,7 @@ import { GameService } from "../../../../services/game.service";
 import { Blueberry } from "../../../equipment/custom/blueberry.class";
 import { Donut } from "../../../equipment/custom/donut.class";
 import { Pineapple } from "../../../equipment/custom/pineapple.class";
+import { Fig } from "../../../equipment/golden/fig.class";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -129,7 +130,8 @@ export class Seagull extends Pet {
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
         map.set('Pineapple', new Pineapple());
-
+        map.set('Fig', new Fig());
+        
         return map;
     }
 }

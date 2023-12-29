@@ -7,9 +7,9 @@ import { Player } from "../../../player.class";
 export class Mouse extends Pet {
     name = "Mouse";
     tier = 1;
-    pack: Pack = 'Turtle';
-    health = 3;
-    attack = 2;
+    pack: Pack = 'Custom';
+    health = 2;
+    attack = 1;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

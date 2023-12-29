@@ -455,7 +455,7 @@ export abstract class Pet {
 
     }
 
-    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean) {
+    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean, fig?: boolean) {
 
         let wolverine = false;
         if (this.petAhead?.name == 'Wolverine') {
@@ -499,6 +499,10 @@ export abstract class Pet {
 
         if (wolverine) {
             message += ' (Wolverine)'
+        }
+
+        if (fig) {
+            message += ' (Fig)'
         }
 
         this.logService.createLog({
