@@ -16,8 +16,9 @@ export class Ox extends Pet {
             return;
         }
         this.equipment = new Melon();
+        this.increaseAttack(1);
         this.logService.createLog({
-            message: `${this.name} gained Melon.`,
+            message: `${this.name} gained Melon and 1 attack.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

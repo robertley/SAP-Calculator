@@ -2,6 +2,7 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.servicee";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { Nest } from "../../pets/hidden/nest.class";
 import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Egg extends Equipment {
@@ -10,7 +11,15 @@ export class Egg extends Equipment {
     uses = 1;
     originalUses = 1;
     attackCallback = (pet: Pet, attackedPet: Pet) => {
-        let attackPet = attackedPet.parent.getPetAtPosition(0);
+        let opponentPets = attackedPet.parent.petArray;
+        let attackPet: Pet = null;
+        for (pet of opponentPets) {
+            if (pet.alive) {
+                attackPet = pet;
+                break;
+            }
+        }
+
         if (attackPet == null) {
             console.warn("egg didn't find target") // p sure this should never happen?
             return;

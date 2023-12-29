@@ -9,8 +9,8 @@ export class Dog extends Pet {
     name = "Dog";
     tier = 3;
     pack: Pack = 'Turtle';
-    attack = 2;
-    health = 3;
+    attack = 3;
+    health = 2;
     friendSummoned(pet, tiger) {
         if (pet == this) {
             return;

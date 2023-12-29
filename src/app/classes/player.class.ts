@@ -436,7 +436,7 @@ export class Player {
      * @param blueberry fine blueberry pets first
      * @returns pet array
      */
-    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: Boolean) {
+    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: Boolean): Pet[] {
         let pets = [];
         excludePets = excludePets ?? [];
         for (let i = 0; i < amt; i++) {
@@ -673,10 +673,14 @@ export class Player {
 
     }
 
-    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number) {
+    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number, cherry?: boolean) {
         this.trumpets = Math.min(50, this.trumpets += amt);
+        let message = `${pet.name} gained ${amt} trumpets. (${this.trumpets})`;
+        if (cherry) {
+            message += ` (Cherry)`;
+        }
         this.logService.createLog({
-            message: `${pet.name} gained ${amt} trumpets. (${this.trumpets})`,
+            message: message,
             type: 'trumpets',
             player: this,
             pteranodon: pteranodon,
