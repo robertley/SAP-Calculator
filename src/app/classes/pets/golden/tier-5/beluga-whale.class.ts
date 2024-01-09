@@ -56,8 +56,10 @@ export class BelugaWhale extends Pet {
         health?: number,
         attack?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment,
+        swallowedPet?: string) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, equipment);
+        this.belugaSwallowedPet = swallowedPet;
     }
 }

@@ -8,7 +8,7 @@ export class Cherry extends Equipment {
     name = 'Cherry';
     equipmentClass = 'startOfBattle' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalStartOfBattle = pet.startOfBattle?.bind(pet);
+        let originalStartOfBattle = pet.originalStartOfBattle?.bind(pet);
         pet.startOfBattle = (gameApi) => {
             if (originalStartOfBattle != null) {
                 originalStartOfBattle(gameApi);
