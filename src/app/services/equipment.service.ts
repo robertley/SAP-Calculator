@@ -78,7 +78,7 @@ export class EquipmentService {
         map.set('Pepper', new Pepper());
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
         map.set('Cherry', new Cherry());
-        map.set('Chocolate Cake', new ChocolateCake(this.logService));
+        map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
         map.set('Eggplant', new Eggplant(this.logService));
         map.set('Potato', new Potato());
         map.set('Banana', new Banana(this.logService, this.abilityService));

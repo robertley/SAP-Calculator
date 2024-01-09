@@ -1165,7 +1165,7 @@ export class PetService {
             case 'Nurse Shark':
                 return new NurseShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Beluga Whale':
-                return new BelugaWhale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BelugaWhale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment, petForm.belugaSwallowedPet);
             case 'Wolf':
                 return new Wolf(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
             case 'Silver Fox':
@@ -2230,6 +2230,7 @@ export interface PetForm {
     health: number;
     exp: number;
     equipment: Equipment;
+    belugaSwallowedPet?: string;
 }
 
 function levelToExp(level: number) {

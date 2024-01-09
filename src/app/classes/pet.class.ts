@@ -58,6 +58,35 @@ export abstract class Pet {
     enemyPushed?(gameApi: GameAPI, tiger?: boolean): void;
     enemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     emptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
+
+    // orignal methods -- used when overrwriting methods
+    originalStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
+    originalTransform?(gameApi: GameAPI, tiger?: boolean): void;
+    // originalStartOfTurn?: () => void;
+    originalHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFaint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
+    originalFriendSummoned?(pet: Pet, tiger?: boolean): void;
+    originalFriendAheadAttacks?(gameApi: GameAPI, tiger?: boolean): void;
+    originalFriendAheadFaints?(gameApi: GameAPI, tiger?: boolean): void;
+    originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
+    originalFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFriendAttacks?(gameApi: GameAPI, tiger?: boolean): void;
+    originalAfterAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    originalBeforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    originalAnyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
+    // example of pet that SHOULD be defined: Parrot.
+    originalEndTurn?(gameApi: GameAPI): void;
+    originalKnockOut?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalSummoned?(gameApi: GameAPI, tiger?: boolean): void;
+    originalFriendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
+    originalEnemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalEnemyPushed?(gameApi: GameAPI, tiger?: boolean): void;
+    originalEnemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalEmptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
+
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -68,6 +97,7 @@ export abstract class Pet {
     // fixes bug where eggplant ability is triggered multiple times
     // if we already set eggplant ability make sure not to set it again
     eggplantTouched = false;
+    cherryTouched = false;
 
 
     constructor(
@@ -86,6 +116,32 @@ export abstract class Pet {
         this.equipment = equipment;
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
+
+        this.originalStartOfBattle = this.startOfBattle;
+        this.originalTransform = this.transform;
+        // this.originalStartOfTurn = this.startOfTurn;
+        this.originalHurt = this.hurt;
+        this.originalFaint = this.faint;
+        this.originalFriendSummoned = this.friendSummoned;
+        this.originalFriendAheadAttacks = this.friendAheadAttacks;
+        this.originalFriendAheadFaints = this.friendAheadFaints;
+        this.originalFriendFaints = this.friendFaints;
+        this.originalFriendGainedPerk = this.friendGainedPerk;
+        this.originalFriendGainedAilment = this.friendGainedAilment;
+        this.originalFriendHurt = this.friendHurt;
+        this.originalFriendAttacks = this.friendAttacks;
+        this.originalAfterAttack = this.afterAttack;
+        this.originalBeforeAttack = this.beforeAttack;
+        this.originalAnyoneLevelUp = this.anyoneLevelUp;
+        this.originalEndTurn = this.endTurn;
+        this.originalKnockOut = this.knockOut;
+        this.originalSummoned = this.summoned;
+        this.originalFriendlyToyBroke = this.friendlyToyBroke;
+        this.originalEnemySummoned = this.enemySummoned;
+        this.originalEnemyPushed = this.enemyPushed;
+        this.originalEnemyHurt = this.enemyHurt;
+        this.originalEmptyFrontSpace = this.emptyFrontSpace;
+        
         this.setAbilityUses();
     }
 
@@ -611,7 +667,12 @@ export abstract class Pet {
         this.exp = this.originalExp;
         this.done = false;
         this.seenDead = false;
-        this.equipment?.reset();
+        try {
+            this.equipment?.reset();
+        } catch {
+            console.warn('equipment reset failed', this.equipment)
+            window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
+        }
         this.swallowedPets = [];
         this.savedPosition = this.originalSavedPosition;
         this.setAbilityUses();

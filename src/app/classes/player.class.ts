@@ -553,9 +553,11 @@ export class Player {
                 lowestHealthPets = [pet];
             }
         }
+        let pet = lowestHealthPets == null ? null : lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
+
         return {
-            pet: lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)],
-            random: lowestHealthPets.length > 1
+            pet: pet,
+            random: pet == null ? false : lowestHealthPets.length > 1
         };
     }
 
