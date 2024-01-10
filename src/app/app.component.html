@@ -123,6 +123,13 @@
               Old Stork
             </label>
           </div>
+
+          <div class="form-check ms-3" title="Stork spawns with base stats.">
+            <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="tokenPets">
+            <label class="form-check-label" for="tokenPets" >
+              Token Pets
+            </label>
+          </div>
         </div>
   
 
@@ -162,6 +169,7 @@
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
               [allPets]="formGroup.get('allPets').value"
+              [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>
           </div>
@@ -193,6 +201,7 @@
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
               [allPets]="formGroup.get('allPets').value"
+              [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>
           </div>

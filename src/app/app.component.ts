@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.16';
+  version = '0.5.17';
   sapVersion = '0.31.9-145 BETA'
 
   title = 'sap-calculator';
@@ -198,6 +198,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       fontSize: new FormControl(13),
       customPacks: new FormArray([]),
       oldStork: new FormControl(false),
+      tokenPets: new FormControl(false)
     })
 
     this.initPetForms();
@@ -866,7 +867,14 @@ export class AppComponent implements OnInit, AfterViewInit {
    * @param player 
    */
   randomize(player?: Player) {
-    console.log('randomize', player)
+
+    // if button is pressed on HTML
+    if (player == null) {
+      if (!confirm('Are you sure you want to randomize?')) {
+        return
+      }
+    }
+
     if (player) {
       this.randomizePlayerPets(player);
     } else {
@@ -940,6 +948,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   resetPlayer(player: 'player' | 'opponent') {
+    if (!confirm(`Are you sure you want to reset ${player}?`)) {
+      return
+    }
     let petSelectors = this.petSelectors.toArray().slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
     for (let petSelector of petSelectors) {
       petSelector.removePet();
@@ -949,7 +960,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   export() {
     // fizes strange bug of export failing on load
     // fixes strange bug with circular dependency
-    this.simulate();
+    // this.simulate();
+
+    // added this and it is fixed?
+    this.localStorageService.setFormStorage(this.formGroup);
     
     let calc = JSON.stringify(this.formGroup.value);
     // copy to clipboard

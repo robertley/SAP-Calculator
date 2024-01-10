@@ -37,6 +37,21 @@ export class PetSelectorComponent implements OnInit {
 
   showFlyOut = false;
 
+  @Input()
+  showTokenPets = false;
+  tokenPets: string[] = [
+    'Bee',
+    'Bus',
+    'Chick',
+    'Dirty Rat',
+    'Lizard Tail',
+    'Ram',
+    'Smaller Slug',
+    'Smallest Slug',
+    'Zombie Cricket',
+    'Zombie Fly'
+  ];
+
   constructor(private petService: PetService, private equipmentService: EquipmentService) {
 
   }

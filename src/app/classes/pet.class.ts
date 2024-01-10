@@ -697,7 +697,14 @@ export abstract class Pet {
             this.abilityService.setFaintEvent(
                 {
                     priority: -1, // ensures equipment faint ability occurs after pet faint abilities. Might need to be revisited
-                    callback: () => { this.equipment.callback(this) }
+                    callback: () => { 
+                        try {
+                            this.equipment.callback(this);
+                        } catch {
+                            // this is an acceptable failure. example is microbe faint ability happening before other faint abilities, overwriting the equipment which could cause this issue.
+                            console.warn('equipment callback failed', this.equipment)
+                        }
+                    }
                 }
             )
         }
