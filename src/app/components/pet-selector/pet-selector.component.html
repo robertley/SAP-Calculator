@@ -19,6 +19,9 @@
         <div class="col-12 mb-2 d-flex">
             <select class="form-control" formControlName="name">
                 <option [ngValue]="null">None</option>
+                <optgroup label="Token Pets" [hidden]="!showTokenPets">
+                    <option *ngFor="let pet of tokenPets" [ngValue]="pet">{{pet}}</option>
+                </optgroup>
                 <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                     <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
                 </optgroup>
