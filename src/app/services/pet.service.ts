@@ -496,19 +496,18 @@ export class PetService {
             "Leech",
             "Woodpecker",
             "Toad",
-            "Clownfish",
             "Cabybara",
             "Okapi",
             "Cassowary",
             "Anteater",
-            "Pug"
+            "Pug",
+            "Eel",
         ])
 
         this.starPackPets.set(4, [
             "Orangutang",
-            "Eel",
             "Hawk",
-
+            "Clownfish",
             "Platypus",
             "Praying Mantis",
             "Crow",
