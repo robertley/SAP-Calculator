@@ -26,6 +26,9 @@ import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import { EquipmentService } from './services/equipment.service';
+import { Nest } from './classes/pets/hidden/nest.class';
+import { Egg } from './classes/equipment/puppy/egg.class';
+import { Fig } from './classes/equipment/golden/fig.class';
 
 @Component({
   selector: 'app-root',
@@ -40,8 +43,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.10';
-  sapVersion = '0.30.6-138 BETA'
+  version = '0.5.18';
+  sapVersion = '0.31.9-145 BETA'
 
   title = 'sap-calculator';
   player: Player;
@@ -195,6 +198,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       fontSize: new FormControl(13),
       customPacks: new FormArray([]),
       oldStork: new FormControl(false),
+      tokenPets: new FormControl(false)
     })
 
     this.initPetForms();
@@ -522,7 +526,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
     }
 
-    if (this.player.pet1 == null) {
+    if (this.opponent.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
     }
 
@@ -666,6 +670,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment instanceof PitaBread) {
         pet.equipment.callback(pet);
       }
+      if (pet.equipment?.equipmentClass == 'startOfBattle') {
+        pet.equipment.callback(pet);
+      }
     }
   }
 
@@ -724,19 +731,31 @@ export class AppComponent implements OnInit, AfterViewInit {
     let opponentEquipment = opponentPet.equipment;
 
     if (playerEquipment?.equipmentClass == 'snipe') {
-      this.abilityService.setEqiupmentBeforeAttackEvent({
-        callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
-        priority: playerPet.attack,
-        player: this.player
-      })
+      let amt = 1;
+      if (playerPet instanceof Nest && playerEquipment instanceof Egg) {
+        amt = playerPet.level;
+      }
+      for (let i = 0; i < amt; i++) {
+        this.abilityService.setEqiupmentBeforeAttackEvent({
+          callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
+          priority: playerPet.attack,
+          player: this.player
+        })
+      }
     }
 
     if (opponentEquipment?.equipmentClass == 'snipe') {
-      this.abilityService.setEqiupmentBeforeAttackEvent({
-        callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
-        priority: opponentPet.attack,
-        player: this.opponent
-      })
+      let amt = 1;
+      if (opponentPet instanceof Nest && opponentEquipment instanceof Egg) {
+        amt = opponentPet.level;
+      }
+      for (let i = 0; i < amt; i++) {
+        this.abilityService.setEqiupmentBeforeAttackEvent({
+          callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
+          priority: opponentPet.attack,
+          player: this.opponent
+        })
+      }
     }
 
     this.abilityService.executeEqiupmentBeforeAttackEvents();
@@ -848,7 +867,14 @@ export class AppComponent implements OnInit, AfterViewInit {
    * @param player 
    */
   randomize(player?: Player) {
-    console.log('randomize', player)
+
+    // if button is pressed on HTML
+    if (player == null) {
+      if (!confirm('Are you sure you want to randomize?')) {
+        return
+      }
+    }
+
     if (player) {
       this.randomizePlayerPets(player);
     } else {
@@ -922,6 +948,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   resetPlayer(player: 'player' | 'opponent') {
+    if (!confirm(`Are you sure you want to reset ${player}?`)) {
+      return
+    }
     let petSelectors = this.petSelectors.toArray().slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
     for (let petSelector of petSelectors) {
       petSelector.removePet();
@@ -931,7 +960,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   export() {
     // fizes strange bug of export failing on load
     // fixes strange bug with circular dependency
-    this.simulate();
+    // this.simulate();
+
+    // added this and it is fixed?
+    this.localStorageService.setFormStorage(this.formGroup);
     
     let calc = JSON.stringify(this.formGroup.value);
     // copy to clipboard

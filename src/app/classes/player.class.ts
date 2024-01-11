@@ -388,6 +388,15 @@ export class Player {
             if (donutPets.length > 0) {
                 pets = donutPets;
             }
+            if (notFiftyFifty) {
+                pets = pets.filter((pet) => {
+                    return pet.health != 50 || pet.attack != 50;
+                });
+
+                if (pets.length == 0) {
+                    pets = this.petArray;
+                }
+            }
         }
         if (blueberry) {
             let blueberryPets = this.getPetsWithEquipment('Blueberry');
@@ -427,7 +436,7 @@ export class Player {
      * @param blueberry fine blueberry pets first
      * @returns pet array
      */
-    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: Boolean) {
+    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: Boolean): Pet[] {
         let pets = [];
         excludePets = excludePets ?? [];
         for (let i = 0; i < amt; i++) {
@@ -544,9 +553,11 @@ export class Player {
                 lowestHealthPets = [pet];
             }
         }
+        let pet = lowestHealthPets == null ? null : lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
+
         return {
-            pet: lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)],
-            random: lowestHealthPets.length > 1
+            pet: pet,
+            random: pet == null ? false : lowestHealthPets.length > 1
         };
     }
 
@@ -664,10 +675,14 @@ export class Player {
 
     }
 
-    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number) {
+    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number, cherry?: boolean) {
         this.trumpets = Math.min(50, this.trumpets += amt);
+        let message = `${pet.name} gained ${amt} trumpets. (${this.trumpets})`;
+        if (cherry) {
+            message += ` (Cherry)`;
+        }
         this.logService.createLog({
-            message: `${pet.name} gained ${amt} trumpets. (${this.trumpets})`,
+            message: message,
             type: 'trumpets',
             player: this,
             pteranodon: pteranodon,

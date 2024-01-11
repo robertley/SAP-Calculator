@@ -123,6 +123,13 @@
               Old Stork
             </label>
           </div>
+
+          <div class="form-check ms-3" title="Stork spawns with base stats.">
+            <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="tokenPets">
+            <label class="form-check-label" for="tokenPets" >
+              Token Pets
+            </label>
+          </div>
         </div>
   
 
@@ -162,6 +169,7 @@
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
               [allPets]="formGroup.get('allPets').value"
+              [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>
           </div>
@@ -193,6 +201,7 @@
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
               [allPets]="formGroup.get('allPets').value"
+              [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>
           </div>
@@ -209,6 +218,7 @@
         <button class="btn btn-primary me-2 mb-2" (click)="randomize()">Randomize</button>
       </div>
       <div>
+        <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#reportABug">Report A Bug</button>
         <button class="btn btn-secondary me-2 mb-2" (click)="export()">Export Calculator</button>
         <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import Calculator</button>
       </div>
@@ -351,6 +361,20 @@
         <app-import-calculator
           [importFunc]="import.bind(this)"
         ></app-import-calculator>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABug" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="reportABug">Report A Bug</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
       </div>
     </div>
   </div>

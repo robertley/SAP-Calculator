@@ -24,7 +24,7 @@ export class Dolphin extends Pet {
             if (!lowestHealthResp.pet) {
                 break;
             }
-            this.snipePet(lowestHealthResp.pet, 3, lowestHealthResp.random, tiger);
+            this.snipePet(lowestHealthResp.pet, 4, lowestHealthResp.random, tiger);
         }
         
         super.superStartOfBattle(gameApi, tiger);

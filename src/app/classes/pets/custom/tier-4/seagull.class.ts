@@ -45,6 +45,7 @@ import { GameService } from "../../../../services/game.service";
 import { Blueberry } from "../../../equipment/custom/blueberry.class";
 import { Donut } from "../../../equipment/custom/donut.class";
 import { Pineapple } from "../../../equipment/custom/pineapple.class";
+import { Fig } from "../../../equipment/golden/fig.class";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -117,7 +118,7 @@ export class Seagull extends Pet {
         map.set('Pepper', new Pepper());
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
         map.set('Cherry', new Cherry());
-        map.set('Chocolate Cake', new ChocolateCake(this.logService));
+        map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
         map.set('Eggplant', new Eggplant(this.logService));
         map.set('Potato', new Potato());
         map.set('Banana', new Banana(this.logService, this.abilityService));
@@ -129,7 +130,8 @@ export class Seagull extends Pet {
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
         map.set('Pineapple', new Pineapple());
-
+        map.set('Fig', new Fig());
+        
         return map;
     }
 }

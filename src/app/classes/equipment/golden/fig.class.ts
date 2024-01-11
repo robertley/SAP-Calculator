@@ -4,8 +4,8 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
-export class Cherry extends Equipment {
-    name = 'Cherry';
+export class Fig extends Equipment {
+    name = 'Fig';
     equipmentClass = 'startOfBattle' as EquipmentClass;
     callback = (pet: Pet) => {
         let originalStartOfBattle = pet.originalStartOfBattle?.bind(pet);
@@ -13,11 +13,19 @@ export class Cherry extends Equipment {
             if (originalStartOfBattle != null) {
                 originalStartOfBattle(gameApi);
             }
-            let multiplier = 1;
+
+            let amt = 1;
             if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
+                amt = pet.level + 1;
             }
-            pet.parent.gainTrumpets(2 * multiplier, pet, false, multiplier, true);
+
+            for (let i = 0; i < amt; i++) {
+                let lowestHeathPetResp = pet.parent.opponent.getLowestHealthPet();
+                if (!lowestHeathPetResp.pet) {
+                    return;
+                }
+                pet.snipePet(lowestHeathPetResp.pet, 4, lowestHeathPetResp.random, false, false, true);
+            }
         }
     }
 

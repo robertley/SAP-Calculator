@@ -12,6 +12,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { InfoComponent } from './components/info/info.component';
 import { ImportCalculatorComponent } from './components/import-calculator/import-calculator.component';
+import { ReportABugComponent } from './components/report-a-bug/report-a-bug.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import { ImportCalculatorComponent } from './components/import-calculator/import
     CustomPackEditorComponent,
     CustomPackFormComponent,
     InfoComponent,
-    ImportCalculatorComponent
+    ImportCalculatorComponent,
+    ReportABugComponent
   ],
   imports: [
     BrowserModule,
@@ -29,7 +32,8 @@ import { ImportCalculatorComponent } from './components/import-calculator/import
     CommonModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    DragDropModule
+    DragDropModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

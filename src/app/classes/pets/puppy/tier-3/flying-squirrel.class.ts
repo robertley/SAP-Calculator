@@ -19,14 +19,6 @@ export class FlyingSquirrel extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        let power = this.level;
-        this.increaseAttack(power);
-        this.logService.createLog({
-            message: `${this.name} gained ${power} attack.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
         this.superFriendlyToyBroke(gameApi, tiger);
     }
     constructor(protected logService: LogService,

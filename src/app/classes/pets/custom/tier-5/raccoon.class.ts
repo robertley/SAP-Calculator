@@ -8,10 +8,10 @@ import { Player } from "../../../player.class";
 
 export class Raccoon extends Pet {
     name = "Raccoon";
-    tier = 3;
-    pack: Pack = 'Puppy';
-    attack = 3;
-    health = 2;
+    tier = 5;
+    pack: Pack = 'Custom';
+    attack = 4;
+    health = 5;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let target = opponent.getPetAtPosition(0);

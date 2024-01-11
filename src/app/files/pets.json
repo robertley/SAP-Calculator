@@ -211,6 +211,11 @@
             "id": "59"
         },
         {
+            "name": "Pigeon",
+            "tier": "1",
+            "id": "559"
+        },
+        {
             "name": "Pillbug",
             "tier": "1",
             "id": "149"
@@ -570,6 +575,11 @@
             "id": "228"
         },
         {
+            "name": "Hare",
+            "tier": "3",
+            "id": "551"
+        },
+        {
             "name": "Hatching Chick",
             "tier": "3",
             "id": "91"
@@ -643,11 +653,6 @@
             "name": "Rabbit",
             "tier": "3",
             "id": "60"
-        },
-        {
-            "name": "Raccoon",
-            "tier": "3",
-            "id": "158"
         },
         {
             "name": "Royal Flycatcher",
@@ -1052,6 +1057,11 @@
             "name": "Poodle",
             "tier": "5",
             "id": "96"
+        },
+        {
+            "name": "Raccoon",
+            "tier": "5",
+            "id": "158"
         },
         {
             "name": "Rhino",

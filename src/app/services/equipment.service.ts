@@ -41,6 +41,7 @@ import { FortuneCookie } from "../classes/equipment/custom/fortune-cookie.class"
 import { Blueberry } from "../classes/equipment/custom/blueberry.class";
 import { Donut } from "../classes/equipment/custom/donut.class";
 import { Pineapple } from "../classes/equipment/custom/pineapple.class";
+import { Fig } from "../classes/equipment/golden/fig.class";
 
 @Injectable({
     providedIn: "root"
@@ -77,7 +78,7 @@ export class EquipmentService {
         map.set('Pepper', new Pepper());
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
         map.set('Cherry', new Cherry());
-        map.set('Chocolate Cake', new ChocolateCake(this.logService));
+        map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
         map.set('Eggplant', new Eggplant(this.logService));
         map.set('Potato', new Potato());
         map.set('Banana', new Banana(this.logService, this.abilityService));
@@ -89,6 +90,7 @@ export class EquipmentService {
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
         map.set('Pineapple', new Pineapple());
+        map.set('Fig', new Fig())
 
         return map;
     }

@@ -12,23 +12,23 @@ export class HatchingChick extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 2;
-    endTurn(gameApi: GameAPI): void {
-        if (this.level > 1) {
-            return;
-        }
-        let target = this.petAhead;
-        if (target == null) {
-            return;
-        }
+    // endTurn(gameApi: GameAPI): void {
+    //     if (this.level > 1) {
+    //         return;
+    //     }
+    //     let target = this.petAhead;
+    //     if (target == null) {
+    //         return;
+    //     }
 
-        target.increaseAttack(4);
-        target.increaseHealth(4);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${4} attack and ${4} health.`,
-            type: 'ability',
-            player: this.parent
-        })
-    }
+    //     target.increaseAttack(3);
+    //     target.increaseHealth(3);
+    //     this.logService.createLog({
+    //         message: `${this.name} gave ${target.name} ${3} attack and ${3} health.`,
+    //         type: 'ability',
+    //         player: this.parent
+    //     })
+    // }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

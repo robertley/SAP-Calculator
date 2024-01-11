@@ -9,7 +9,7 @@ export class Cricket extends Pet {
     name = "Cricket";
     tier = 1;
     pack: Pack = 'Turtle';
-    health = 2;
+    health = 3;
     attack = 1;
     faint(gameApi, tiger, pteranodon?: boolean) {
         let level = 1;
