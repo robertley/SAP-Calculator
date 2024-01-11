@@ -11,6 +11,9 @@ export class Kangaroo extends Pet {
     health = 3;
     attack = 2;
     friendAheadAttacks(gameApi, tiger) {
+        if (!this.alive) {
+            return;
+        }
         this.increaseAttack(this.level)
         this.increaseHealth(this.level)
         this.logService.createLog({

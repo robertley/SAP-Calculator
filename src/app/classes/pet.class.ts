@@ -492,10 +492,10 @@ export abstract class Pet {
         }
 
         // friend ahead attacks
-        if (this.petBehind(true)?.friendAheadAttacks != null) {
+        if (this.petBehind(null, true)?.friendAheadAttacks != null) {
             this.abilityService.setFriendAheadAttacksEvents({
-                callback: this.petBehind(true).friendAheadAttacks.bind(this.petBehind(true)),
-                priority: this.petBehind(true).attack
+                callback: this.petBehind(null, true).friendAheadAttacks.bind(this.petBehind(null, true)),
+                priority: this.petBehind(null, true).attack
             });
         }
 
@@ -828,9 +828,14 @@ export abstract class Pet {
      * @param seenDead if true, consider pets that are not seenDead. if the pet is dead, but not seen, return null.
      * @returns 
      */
-    petBehind(seenDead = false) {
+    petBehind(seenDead = false, deadOrAlive = false) {
         for (let i = this.position + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
+            if (deadOrAlive) {
+                if (pet != null) {
+                    return pet;
+                }
+            }
             if (seenDead) {
                 if (pet != null) {
                     if (!pet.alive && !pet.seenDead) {

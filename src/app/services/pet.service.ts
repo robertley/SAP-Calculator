@@ -2205,7 +2205,6 @@ export class PetService {
             'Slug',
             'Nyala',
             'Nurse Shark',
-            'Beluga Whale',
             'Wolf',
             'Fire Ant',
             'Warthog',
