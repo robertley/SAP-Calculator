@@ -43,8 +43,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.19';
-  sapVersion = '0.31.9-145 BETA'
+  version = '0.5.20';
+  sapVersion = '0.31.10-147 BETA'
 
   title = 'sap-calculator';
   player: Player;
@@ -120,6 +120,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.patchValue(calculator, {emitEvent: false});
     this.loadCustomPacks(customPacks);
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
+    this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
   }
 
   initApp() {
@@ -198,7 +199,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       fontSize: new FormControl(13),
       customPacks: new FormArray([]),
       oldStork: new FormControl(false),
-      tokenPets: new FormControl(false)
+      tokenPets: new FormControl(false),
+      komodoShuffle: new FormControl(false),
     })
 
     this.initPetForms();
@@ -247,6 +249,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
     this.formGroup.get('oldStork').valueChanges.subscribe((value) => {
       this.gameService.gameApi.oldStork = value;
+    });
+    this.formGroup.get('komodoShuffle').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.komodoShuffle = value;
     });
   }
 
