@@ -24,8 +24,7 @@ export class Tomato extends Equipment {
 
         let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
         if (pet instanceof Panther) {
-            let multiplier = 1 + pet.level;
-            message += ` x${multiplier} (Panther)`;
+            message += ` (Panther)`;
         }
 
         if (defenseEquipment != null) {

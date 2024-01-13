@@ -13,7 +13,7 @@ export class Egg extends Equipment {
     attackCallback = (pet: Pet, attackedPet: Pet) => {
         let opponentPets = attackedPet.parent.petArray;
         let attackPet: Pet = null;
-        for (pet of opponentPets) {
+        for (let pet of opponentPets) {
             if (pet.alive) {
                 attackPet = pet;
                 break;
@@ -33,8 +33,7 @@ export class Egg extends Equipment {
 
         let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
         if (pet instanceof Panther) {
-            let multiplier = 1 + pet.level;
-            message += ` x${multiplier} (Panther)`;
+            message += ` (Panther)`;
         }
 
         if (defenseEquipment != null) {

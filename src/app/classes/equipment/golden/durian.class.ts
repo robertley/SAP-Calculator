@@ -9,7 +9,8 @@ export class Durian extends Equipment {
     uses = 1;
     originalUses = 1;
     attackCallback = (pet: Pet, attackedPet: Pet) => {
-        let targetPet = attackedPet.parent.getPetAtPosition(0);
+        let resp = attackedPet.parent.getHighestHealthPet();
+        let targetPet = resp.pet;
         if (targetPet == null) {
             console.warn("durian didn't find target") // p sure this should never happen?
             return;
@@ -21,7 +22,8 @@ export class Durian extends Equipment {
         this.logService.createLog({
             message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})`,
             type: 'ability',
-            player: pet.parent
+            player: pet.parent,
+            randomEvent: resp.random
         });
 
     }
