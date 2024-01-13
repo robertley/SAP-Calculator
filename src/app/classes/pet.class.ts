@@ -368,10 +368,6 @@ export abstract class Pet {
             defenseMultiplier = pet.level + 1;
         }
 
-        if (attackEquipment instanceof Cheese) {
-            damage *= 2;
-        }
-
         // peanut death
         if (attackEquipment instanceof Peanut && damage > 0) {
             this.logService.createLog({
@@ -633,7 +629,7 @@ export abstract class Pet {
 
         if (attackEquipment instanceof Salt && !snipe) {
             if (pet.tier < this.tier) {
-                attackAmt *= 2;
+                attackAmt *= (2 + attackMultiplier - 1);
             }
         }
 
@@ -645,6 +641,11 @@ export abstract class Pet {
                 fortuneCookie = true;
             }
         }
+
+        if (attackEquipment instanceof Cheese && !snipe) {
+            attackAmt *= (2 + attackMultiplier - 1);
+        }
+
 
         let damage = Math.max(min, attackAmt - defenseAmt);
 

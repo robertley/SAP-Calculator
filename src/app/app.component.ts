@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.20';
+  version = '0.5.21';
   sapVersion = '0.31.10-147 BETA'
 
   title = 'sap-calculator';
@@ -605,7 +605,26 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.pushPetsForwards();
 
-    this.doBeforeAttackEquipment();
+    let amt = 1;
+    if (this.player.pet0 instanceof Panther) {
+      amt = this.player.pet0.level + 1;
+    }
+    for (let i = 0; i < amt; i++) {
+      this.doBeforeAttackEquipment(this.player);
+    }
+    amt = 1;
+    if (this.opponent.pet0 instanceof Panther) {
+      amt = this.opponent.pet0.level + 1;
+    }
+    for (let i = 0; i < amt; i++) {
+      this.doBeforeAttackEquipment(this.opponent);
+    }
+
+    this.abilityService.executeEqiupmentBeforeAttackEvents();
+
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
+
     while(this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
     }
@@ -687,31 +706,34 @@ export class AppComponent implements OnInit, AfterViewInit {
       let pantherMessage = '';
       if (pet instanceof Panther) {
         multiplier = pet.level + 1;
-        pantherMessage = ` x${multiplier} (Panther)`;
+        pantherMessage = ` (Panther)`;
       }
-      if (pet.equipment instanceof Pie) {
-        pet.increaseAttack(4 * multiplier);
-        pet.increaseHealth(4 * multiplier);
-        this.logService.createLog({
-          message: `${pet.name} gained ${4 * multiplier} attack and ${4 * multiplier} health (Pie)${pantherMessage}`,
-          type: 'equipment',
-          player: player
-        })
-      }
-      if (pet.equipment instanceof Pancakes) {
-        for (let pett of player.petArray) {
-          if (pet == pett) {
-            continue;
-          }
-          pett.increaseAttack(2 * multiplier);
-          pett.increaseHealth(2 * multiplier);
+      for (let i = 0; i < multiplier; i++) {
+        if (pet.equipment instanceof Pie) {
+          pet.increaseAttack(4);
+          pet.increaseHealth(4);
           this.logService.createLog({
-            message: `${pett.name} gained ${2 * multiplier} attack and ${2 * multiplier} health (Pancake)${pantherMessage}`,
+            message: `${pet.name} gained ${4} attack and ${4} health (Pie)${pantherMessage}`,
             type: 'equipment',
             player: player
           })
         }
+        if (pet.equipment instanceof Pancakes) {
+          for (let pett of player.petArray) {
+            if (pet == pett) {
+              continue;
+            }
+            pett.increaseAttack(2);
+            pett.increaseHealth(2);
+            this.logService.createLog({
+              message: `${pett.name} gained ${2} attack and ${2} health (Pancake)${pantherMessage}`,
+              type: 'equipment',
+              player: player
+            })
+          }
+        }
       }
+      
     }
   }
 
@@ -728,12 +750,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponent.onionCheck();
   }
 
-  doBeforeAttackEquipment() {
-    let playerPet = this.player.pet0;
-    let opponentPet = this.opponent.pet0;
+  doBeforeAttackEquipment(player) {
+    let playerPet = player.pet0;
+    let opponentPet = player == this.player ? this.opponent.pet0 : this.player.pet0;
 
     let playerEquipment = playerPet.equipment;
-    let opponentEquipment = opponentPet.equipment;
 
     if (playerEquipment?.equipmentClass == 'snipe') {
       let amt = 1;
@@ -748,25 +769,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         })
       }
     }
-
-    if (opponentEquipment?.equipmentClass == 'snipe') {
-      let amt = 1;
-      if (opponentPet instanceof Nest && opponentEquipment instanceof Egg) {
-        amt = opponentPet.level;
-      }
-      for (let i = 0; i < amt; i++) {
-        this.abilityService.setEqiupmentBeforeAttackEvent({
-          callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
-          priority: opponentPet.attack,
-          player: this.opponent
-        })
-      }
-    }
-
-    this.abilityService.executeEqiupmentBeforeAttackEvents();
-
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
     
   }
 
