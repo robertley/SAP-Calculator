@@ -8,8 +8,8 @@ export class Pigeon extends Pet {
     name = "Pigeon";
     tier = 1;
     pack: Pack = 'Turtle';
-    health = 3;
-    attack = 1;
+    attack = 3;
+    health = 1;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
