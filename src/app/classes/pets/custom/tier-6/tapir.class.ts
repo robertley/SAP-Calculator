@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { clone, cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
@@ -22,9 +22,10 @@ export class Tapir extends Pet {
             return;
         }
 
+        target = clone(target);
+
         this.abilityService.setSpawnEvent({
             callback: () => {
-                target = cloneDeep(target);
                 target.exp = this.minExpForLevel;
                 let spawnPet = this.petService.createDefaultVersionOfPet(target);
                 this.logService.createLog(
