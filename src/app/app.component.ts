@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.22';
+  version = '0.5.23';
   sapVersion = '0.31.10-147 BETA'
 
   title = 'sap-calculator';
@@ -115,6 +115,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadCalculatorFromValue(calculator) {
+    this.formGroup.reset();
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
     this.formGroup.patchValue(calculator, {emitEvent: false});
