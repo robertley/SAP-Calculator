@@ -29,11 +29,28 @@ import { EquipmentService } from './services/equipment.service';
 import { Nest } from './classes/pets/hidden/nest.class';
 import { Egg } from './classes/equipment/puppy/egg.class';
 import { Fig } from './classes/equipment/golden/fig.class';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+
+const DAY = '#85ddf2';
+const NIGHT = '#33377a';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  animations: [
+    trigger('dayNight', [
+      state('day', style({
+        backgroundColor: DAY
+      })),
+      state('night', style({
+        backgroundColor: NIGHT
+      })),
+      transition('day <=> night', [
+        animate('0.5s')
+      ])
+    ])
+  ]
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
@@ -53,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1;
+  simulationBattleAmt = 1000;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
@@ -67,6 +84,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   previousPackPlayer = null;
   previousPackOpponent = null;
+
+  dayNight = true;
 
   constructor(private logService: LogService,
     private abilityService: AbilityService,
@@ -84,6 +103,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initFormGroup();
     this.loadLocalStorage();
     this.initApp();
+    this.setDayNight();
   }
 
   printFormGroup() {
@@ -123,6 +143,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
     this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
     this.gameService.gameApi.mana = this.formGroup.get('mana').value;
+  }
+
+  setDayNight() {
+    let turn = this.formGroup.get('turn').value;
+    let day = turn % 2 == 1;
+    this.dayNight = day;
+    this.gameService.gameApi.day = day;
   }
 
   initApp() {
@@ -238,6 +265,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
     this.formGroup.get('turn').valueChanges.subscribe((value) => {
       this.updatePreviousShopTier(value);
+      this.setDayNight();
     })
     this.formGroup.get('playerGoldSpent').valueChanges.subscribe((value) => {
       this.updateGoldSpent(value, null);
@@ -1037,4 +1065,5 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     return validFormGroups;
   }
+
 }

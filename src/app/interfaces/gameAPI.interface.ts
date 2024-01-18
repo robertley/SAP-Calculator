@@ -13,4 +13,5 @@ export interface GameAPI {
     oldStork?: boolean;
     komodoShuffle?: boolean;
     mana?: boolean;
+    day?: boolean;
 }
