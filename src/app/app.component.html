@@ -140,6 +140,13 @@
               Komodo Shuffle
             </label>
           </div>
+
+          <div class="form-check ms-3" title="Include Mana.">
+            <input class="form-check-input" type="checkbox" value="" id="mana" formControlName="mana">
+            <label class="form-check-label" for="mana" >
+              Mana
+            </label>
+          </div>
         </div>
 
       </div>
@@ -178,6 +185,7 @@
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
               [allPets]="formGroup.get('allPets').value"
+              [mana]="formGroup.get('mana').value"
               [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>
@@ -210,6 +218,7 @@
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
               [allPets]="formGroup.get('allPets').value"
+              [mana]="formGroup.get('mana').value"
               [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>

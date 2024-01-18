@@ -53,7 +53,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1000;
+  simulationBattleAmt = 1;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
@@ -121,6 +121,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.loadCustomPacks(customPacks);
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
     this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
+    this.gameService.gameApi.mana = this.formGroup.get('mana').value;
   }
 
   initApp() {
@@ -201,6 +202,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       oldStork: new FormControl(false),
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
+      mana: new FormControl(false),
     })
 
     this.initPetForms();
@@ -253,6 +255,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('komodoShuffle').valueChanges.subscribe((value) => {
       this.gameService.gameApi.komodoShuffle = value;
     });
+    this.formGroup.get('mana').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.mana = value;
+    });
   }
 
   initPetForms() {
@@ -264,7 +269,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
           exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
-          belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet)
+          belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
+          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0)
         })
       }
     );
@@ -280,7 +286,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
           exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
-          belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet)
+          belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
+          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0)
         })
       }
     );

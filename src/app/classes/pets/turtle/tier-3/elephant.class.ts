@@ -22,9 +22,10 @@ export class Elephant extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

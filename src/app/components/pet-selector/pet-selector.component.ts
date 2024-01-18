@@ -27,6 +27,8 @@ export class PetSelectorComponent implements OnInit {
   @Input()
   allPets: boolean;
   @Input()
+  mana: boolean;
+  @Input()
   formGroup: FormGroup;
   @Input()
   customPacks: AbstractControl;//FormArray;
@@ -156,6 +158,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('equipment').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
+    this.formGroup.get('mana').valueChanges.subscribe(() => { this.substitutePet(false) });
   }
 
   setExp(amt: number) {
@@ -176,6 +179,7 @@ export class PetSelectorComponent implements OnInit {
       if (nameChange) {
         formValue.attack = null;
         formValue.health = null;
+        formValue.mana = null;
       }
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
@@ -184,6 +188,7 @@ export class PetSelectorComponent implements OnInit {
       if (nameChange) {
         this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
         this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
+        this.formGroup.get('mana').setValue(pet.mana, {emitEvent: false});
       }
     })
 
@@ -210,6 +215,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('health').setValue(0, {emitEvent: false});
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
     this.formGroup.get('equipment').setValue(null, {emitEvent: false});
+    this.formGroup.get('mana').setValue(0, {emitEvent: false});
   }
 
   optionHidden(option: string) {

@@ -23,6 +23,7 @@ export abstract class Pet {
     parent: Player;
     health: number;
     attack: number;
+    mana: number = 0;
     maxAbilityUses: number = null;
     abilityUses: number = 0;
     equipment?: Equipment;
@@ -107,10 +108,11 @@ export abstract class Pet {
         this.parent = parent;
     }
 
-    initPet(exp, health, attack, equipment) {
+    initPet(exp, health, attack, mana, equipment) {
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
+        this.mana = mana ?? this.mana;
         this.originalHealth = this.health;
         this.originalAttack = this.attack;
         this.equipment = equipment;
@@ -141,6 +143,23 @@ export abstract class Pet {
         this.originalEnemyPushed = this.enemyPushed;
         this.originalEnemyHurt = this.enemyHurt;
         this.originalEmptyFrontSpace = this.emptyFrontSpace;
+
+        // set faint ability to handle mana ability
+        let faintCallback = this.faint?.bind(this);
+        this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
+            if (this.mana > 0) {
+                let target = getOpponent(gameApi, this.parent).getRandomPet([], false, true);
+                console.log('mana', this.mana, target)
+                if (target == null) {
+                    return;
+                }
+                this.snipePet(target, this.mana, true, false, false, false, true);
+
+            }
+            if (faintCallback != null) {
+                faintCallback(gameApi, tiger, pteranodon);
+            }
+        }
         
         this.setAbilityUses();
     }
@@ -507,7 +526,7 @@ export abstract class Pet {
 
     }
 
-    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean, fig?: boolean) {
+    snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean, fig?: boolean, mana?: boolean) {
 
         let wolverine = false;
         if (this.petAhead?.name == 'Wolverine') {
@@ -555,6 +574,10 @@ export abstract class Pet {
 
         if (fig) {
             message += ' (Fig)'
+        }
+
+        if (mana) {
+            message += ' (Mana)'
         }
 
         this.logService.createLog({

@@ -44,6 +44,9 @@
                 <option *ngFor="let equip of equipment | keyvalue" [ngValue]="equip.value">{{equip.key}}</option>
             </select>
         </div>
+        <div class="col-12 d-flex justify-content-center" *ngIf="mana">
+            <input class="form-control select-mana" formControlName="mana" type="number" min="0" max="100">
+        </div>
         <div class="col-6">
             <input class="form-control select-attack" formControlName="attack" type="number" min="1" max="50">
         </div>

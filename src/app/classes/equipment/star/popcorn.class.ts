@@ -31,7 +31,8 @@ export class Popcorn extends Equipment {
                         equipment: null,
                         exp: 0,
                         health: null,
-                        name: petName
+                        name: petName,
+                        mana: 0
                     }, pet.parent);
         
                     let pantherMessage = '';

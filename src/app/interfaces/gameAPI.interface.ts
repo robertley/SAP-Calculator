@@ -12,4 +12,5 @@ export interface GameAPI {
     opponentGoldSpent?: number;
     oldStork?: boolean;
     komodoShuffle?: boolean;
+    mana?: boolean;
 }

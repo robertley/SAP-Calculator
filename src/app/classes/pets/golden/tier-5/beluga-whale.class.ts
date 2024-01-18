@@ -27,7 +27,8 @@ export class BelugaWhale extends Pet {
                     equipment: null,
                     exp: this.minExpForLevel,
                     health: null,
-                    name: this.belugaSwallowedPet
+                    name: this.belugaSwallowedPet,
+                    mana: 0
                 }, this.parent);
         
                 this.logService.createLog(
@@ -55,11 +56,12 @@ export class BelugaWhale extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment,
         swallowedPet?: string) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
         this.belugaSwallowedPet = swallowedPet;
     }
 }

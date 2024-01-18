@@ -18,7 +18,7 @@ export class BelugaSturgeon extends Pet {
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let dolphin = new Dolphin(this.logService, this.abilityService, this.parent, 3, 2, 0, new Rice());
+                    let dolphin = new Dolphin(this.logService, this.abilityService, this.parent, 3, 2, 0, 0, new Rice());
                     this.logService.createLog({
                         message: `${this.name} summoned a 2/3 Dolphin with Rice in the back.`,
                         type: 'ability',
@@ -41,9 +41,10 @@ export class BelugaSturgeon extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

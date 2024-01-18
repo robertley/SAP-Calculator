@@ -685,588 +685,588 @@ export class PetService {
     createPet(petForm: PetForm, parent: Player): Pet {
         switch(petForm.name) {
             case 'Ant':
-                return new Ant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cricket':
-                return new Cricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fish':
-                return new Fish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Fish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Horse':
-                return new Horse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Horse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mosquito':
-                return new Mosquito(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mosquito(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Duck':
-                return new Duck(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Duck(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beaver':
-                return new Beaver(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Beaver(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Otter':
-                return new Otter(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Otter(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pig':
-                return new Pig(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pig(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mouse':
-                return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pigeon':
-                return new Pigeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pigeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 2
             case 'Snail':
-                return new Snail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Snail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crab':
-                return new Crab(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crab(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Swan':
-                return new Swan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Swan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rat':
-                return new Rat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hedgehog':
-                return new Hedgehog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hedgehog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Peacock':
-                return new Peacock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Peacock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flamingo':
-                return new Flamingo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Flamingo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Worm':
-                return new Worm(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Worm(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Kangaroo':
-                return new Kangaroo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Kangaroo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Spider':
-                return new Spider(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Spider(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dodo':
-                return new Dodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Badger':
-                return new Badger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Badger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dolphin':
-                return new Dolphin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dolphin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Giraffe':
-                return new Giraffe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Giraffe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Elephant':
-                return new Elephant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Elephant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Camel':
-                return new Camel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Camel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rabbit':
-                return new Rabbit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rabbit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ox':
-                return new Ox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dog':
-                return new Dog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sheep':
-                return new Sheep(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Sheep(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // tier 4
             case 'Skunk':
-                return new Skunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Skunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hippo':
-                return new Hippo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hippo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bison':
-                return new Bison(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bison(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blowfish':
-                return new Blowfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Blowfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Turtle':
-                return new Turtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Turtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Squirrel':
-                return new Squirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Squirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Penguin':
-                return new Penguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Penguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Deer':
-                return new Deer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Deer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Whale':
-                return new Whale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Whale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Parrot':
-                return new Parrot(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Parrot(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 5
             case 'Scorpion':
-                return new Scorpion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Scorpion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crocodile':
-                return new Crocodile(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crocodile(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rhino':
-                return new Rhino(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rhino(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Monkey':
-                return new Monkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Monkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Armadillo':
-                return new Armadillo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Armadillo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cow':
-                return new Cow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Seal':
-                return new Seal(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Seal(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rooster':
-                return new Rooster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rooster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shark':
-                return new Shark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Shark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Turkey':
-                return new Turkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Turkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 6
             case 'Leopard':
-                return new Leopard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Leopard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Boar':
-                return new Boar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Boar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tiger':
-                return new Tiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wolverine':
-                return new Wolverine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wolverine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Gorilla':
-                return new Gorilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Gorilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dragon':
-                return new Dragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mammoth':
-                return new Mammoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mammoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cat':
-                return new Cat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Snake':
-                return new Snake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Snake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fly':
-                return new Fly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Fly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // Puppy
             // Tier 1
             case 'Moth':
-                return new Moth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Moth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bluebird':
-                return new Bluebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bluebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chinchilla':
-                return new Chinchilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chinchilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beetle':
-                return new Beetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Beetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ladybug':
-                return new Ladybug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ladybug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chipmunk':
-                return new Chipmunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chipmunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Gecko':
-                return new Gecko(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Gecko(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ferret':
-                return new Ferret(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ferret(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // tier 2
             case 'Frigatebird':
-                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Robin':
-                return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bat':
-                return new Bat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dromedary':
-                return new Dromedary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dromedary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shrimp':
-                return new Shrimp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Shrimp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Toucan':
-                return new Toucan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Toucan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beluga Sturgeon':
-                return new BelugaSturgeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BelugaSturgeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tabby Cat':
-                return new TabbyCat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new TabbyCat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mandrill':
-                return new Mandrill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mandrill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lemur':
-                return new Lemur(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lemur(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hoopoe Bird':
-                return new HoopoeBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HoopoeBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tropical Fish':
-                return new TropicalFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new TropicalFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hatching Chick':
-                return new HatchingChick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HatchingChick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goldfish':
-                return new Goldfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Goldfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Owl':
-                return new Owl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Owl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mole':
-                return new Mole(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mole(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Raccoon':
-                return new Raccoon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Raccoon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flying Squirrel':
-                return new FlyingSquirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FlyingSquirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pangolin':
-                return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Puppy':
-                return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hare':
-                return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // tier 4
             case 'Microbe':
-                return new Microbe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Microbe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lobster':
-                return new Lobster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lobster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Buffalo':
-                return new Buffalo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Buffalo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Llama':
-                return new Llama(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Llama(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Caterpillar':
-                return new Caterpillar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Caterpillar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Doberman':
-                return new Doberman(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Doberman(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tahr':
-                return new Tahr(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tahr(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Whale Shark':
-                return new WhaleShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new WhaleShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chameleon':
-                return new Chameleon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chameleon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Gharial':
-                return new Gharial(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Gharial(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // tier 5
             case 'Stonefish':
-                return new Stonefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stonefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Poodle':
-                return new Poodle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Poodle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goat':
-                return new Goat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Goat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chicken':
-                return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Eagle':
-                return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Panther':
-                return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Axolotl':
-                return new Axolotl(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Axolotl(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Snapping Turtle':
-                return new SnappingTurtle(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SnappingTurtle(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mosasaurus':
-                return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'String Ray':
-                return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 6
             case 'Mantis Shrimp':
-                return new MantisShrimp(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new MantisShrimp(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lionfish':
-                return new Lionfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lionfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tyrannosaurus':
-                return new Tyrannosaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tyrannosaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Octopus':
-                return new Octopus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Octopus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Anglerfish':
-                return new Anglerfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Anglerfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sauropod':
-                return new Sauropod(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Sauropod(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Elephant Seal':
-                return new ElephantSeal(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ElephantSeal(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Puma':
-                return new Puma(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Puma(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mongoose':
-                return new Mongoose(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mongoose(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
     
             // Star
             // Tier 1
             case 'Pillbug':
-                return new Pillbug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pillbug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Duckling':
-                return new Duckling(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Duckling(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cockroach':
-                return new Cockroach(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cockroach(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Frog':
-                return new Frog(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Frog(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Seahorse':
-                return new Seahorse(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Seahorse(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Iguana':
-                return new Iguana(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Iguana(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hummingbird':
-                return new Hummingbird(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hummingbird(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Marmoset':
-                return new Marmoset(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Marmoset(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Kiwi':
-                return new Kiwi(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Kiwi(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 2
             case 'Koala':
-                return new Koala(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Koala(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Yak':
-                return new Yak(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Yak(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Salamander':
-                return new Salamander(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Salamander(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Panda':
-                return new Panda(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Panda(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Guinea Pig':
-                return new GuineaPig(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GuineaPig(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Jellyfish':
-                return new Jellyfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Jellyfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pug':
-                return new Pug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Atlantic Puffin':
-                return new AtlanticPuffin(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new AtlanticPuffin(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dove':
-                return new Dove(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dove(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stork':
-                return new Stork(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stork(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 3
             case 'Leech':
-                return new Leech(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Leech(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Woodpecker':
-                return new Woodpecker(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Woodpecker(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Toad':
-                return new Toad(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Toad(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Starfish':
-                return new Starfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Starfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Clownfish':
-                return new Clownfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Clownfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blobfish':
-                return new Blobfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Blobfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cabybara':
-                return new Cabybara(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cabybara(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Okapi':
-                return new Okapi(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Okapi(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cassowary':
-                return new Cassowary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cassowary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 4
             case 'Orangutang':
-                return new Orangutang(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Orangutang(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Eel':
-                return new Eel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Eel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hawk':
-                return new Hawk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hawk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Platypus':
-                return new Platypus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Platypus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Praying Mantis':
-                return new PrayingMantis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PrayingMantis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crow':
-                return new Crow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Donkey':
-                return new Donkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Donkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pelican':
-                return new Pelican(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pelican(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Anteater':
-                return new Anteater(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Anteater(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 5
             case 'Sword Fish':
-                return new SwordFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SwordFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Polar Bear':
-                return new PolarBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PolarBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Siberian Husky':
-                return new SiberianHuskey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SiberianHuskey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lion':
-                return new Lion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Triceratops':
-                return new Triceratops(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Triceratops(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Zebra':
-                return new Zebra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Zebra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fox':
-                return new Fox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Fox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hamster':
-                return new Hamster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hamster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shoebill':
-                return new Shoebill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Shoebill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Vulture':
-                return new Vulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Vulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 6
             case 'Komodo':
-                return new Komodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Komodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ostrich':
-                return new Ostrich(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ostrich(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Reindeer':
-                return new Reindeer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Reindeer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stegosaurus':
-                return new Stegosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stegosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Piranha':
-                return new Piranha(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Piranha(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hammerhead Shark':
-                return new HammerheadShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HammerheadShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Velociraptor':
-                return new Velociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Velociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sabertooth Tiger':
-                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Orca':
-                return new Orca(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Orca(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Spinosaurus':
-                return new Spinosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Spinosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Golden
             // Tier 1
             case 'Bulldog':
-                return new Bulldog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bulldog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Groundhog':
-                return new Groundhog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Groundhog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cone Snail':
-                return new ConeSnail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ConeSnail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goose':
-                return new Goose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Goose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pied Tamarin':
-                return new PiedTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PiedTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Opossum':
-                return new Opossum(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Opossum(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Silkmoth':
-                return new Silkmoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Silkmoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Magpie':
-                return new Magpie(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Magpie(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 2
             case 'Hercules Beetle':
-                return new HerculesBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HerculesBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stoat':
-                return new Stoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Black Necked Stilt':
-                return new BlackNeckedStilt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BlackNeckedStilt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Squid':
-                return new Squid(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Squid(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sea Urchin':
-                return new SeaUrchin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SeaUrchin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Door Head Ant':
-                return new DoorHeadAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new DoorHeadAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lizard':
-                return new Lizard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lizard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sea Turtle':
-                return new SeaTurtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SeaTurtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'African Penguin':
-                return new AfricanPenguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new AfricanPenguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 3
             case 'Musk Ox':
-                return new MuskOx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new MuskOx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flea':
-                return new Flea(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Flea(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Royal Flycatcher':
-                return new RoyalFlycatcher(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new RoyalFlycatcher(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Surgeon Fish':
-                return new SurgeonFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SurgeonFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Weasel':
-                return new Weasel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Weasel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Guineafowl':
-                return new Guineafowl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Guineafowl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Betta Fish':
-                return new BettaFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BettaFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Meerkat':
-                return new Meerkat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Meerkat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flying Fish':
-                return new FlyingFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FlyingFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Baboon':
-                return new Baboon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Baboon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Osprey':
-                return new Osprey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Osprey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 4
             case 'Manatee':
-                return new Manatee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Manatee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cuttlefish':
-                return new Cuttlefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cuttlefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Egyptian Vulture':
-                return new EgyptianVulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new EgyptianVulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Saiga Antelope':
-                return new SaigaAntelope(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SaigaAntelope(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sealion':
-                return new Sealion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Sealion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Vaquita':
-                return new Vaquita(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Vaquita(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Slug':
-                return new Slug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Slug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Poison Dart Frog':
-                return new PoisonDartFrog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PoisonDartFrog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Secretary Bird':
-                return new SecretaryBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SecretaryBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Falcon':
-                return new Falcon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Falcon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Manta Ray':
-                return new MantaRay(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new MantaRay(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 5
             case 'Macaque':
-                return new Macaque(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Macaque(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nyala':
-                return new Nyala(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Nyala(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nurse Shark':
-                return new NurseShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new NurseShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beluga Whale':
-                return new BelugaWhale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment, petForm.belugaSwallowedPet);
+                return new BelugaWhale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.belugaSwallowedPet);
             case 'Wolf':
-                return new Wolf(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wolf(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Silver Fox':
-                return new SilverFox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SilverFox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fire Ant':
-                return new FireAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FireAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cockatoo':
-                return new Cockatoo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cockatoo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blue Ringed Octopus':
-                return new BlueRingedOctopus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BlueRingedOctopus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crane':
-                return new Crane(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crane(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Emu':
-                return new Emu(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Emu(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 6
             case 'Wildebeast':
-                return new Wildebeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wildebeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Highland Cow':
-                return new HighlandCow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HighlandCow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Catfish':
-                return new Catfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Catfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pteranodon':
-                return new Pteranodon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pteranodon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Warthog':
-                return new Warthog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Warthog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cobra':
-                return new Cobra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cobra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Grizzly Bear':
-                return new GrizzlyBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GrizzlyBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'German Shephard':
-                return new GermanShephard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GermanShephard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bird of Paradise':
-                return new BirdOfParadise(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BirdOfParadise(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Oyster':
-                return new Oyster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Oyster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Custom Pets
             case 'Jerboa':
-                return new Jerboa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Jerboa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Frilled Dragon':
-                return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wombat':
-                return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Aardvark':
-                return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bear':
-                return new Bear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Emperor Tamarin':
-                return new EmperorTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new EmperorTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Porcupine':
-                return new Porcupine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Porcupine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wasp':
-                return new Wasp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wasp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dragonfly':
-                return new Dragonfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dragonfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lynx':
-                return new Lynx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lynx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Seagull':
-                return new Seagull(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Seagull(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Alpaca':
-                return new Alpaca(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Alpaca(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hyena':
-                return new Hyena(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hyena(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Moose':
-                return new Moose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Moose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lioness':
-                return new Lioness(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lioness(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tapir':
-                return new Tapir(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tapir(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Walrus':
-                return new Walrus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Walrus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'White Tiger':
-                return new WhiteTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new WhiteTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Token Pets
             case 'Bee':
-                return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bus':
-                return new Bus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Butterfly':
-                return new Butterfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Butterfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chick':
-                return new Chick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dirty Ray':
-                return new DirtyRat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new DirtyRat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Golden Retriever':
-                return new GoldenRetriever(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GoldenRetriever(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lizard Tail':
-                return new LizardTail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new LizardTail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nest':
-                return new Nest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Nest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ram':
-                return new Ram(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ram(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Smaller Slug':
-                return new SmallerSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SmallerSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Smallest Slug':
-                return new SmallestSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SmallestSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Zombie Cricket':
-                return new ZombieCricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ZombieCricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Zombie Fly':
-                return new ZombieFly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ZombieFly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
         
         }
@@ -2156,7 +2156,8 @@ export class PetService {
                 equipment: null,
                 exp: getRandomInt(0, 5),
                 health: null,
-                name: pet
+                name: pet,
+                mana: null
             },
             parent
         )
@@ -2218,6 +2219,7 @@ export class PetService {
             equipment: null,
             exp: 0,
             health: null,
+            mana: null
         }, parent);
     }
 }
@@ -2226,6 +2228,7 @@ export interface PetForm {
     name: string;
     attack: number;
     health: number;
+    mana: number;
     exp: number;
     equipment: Equipment;
     belugaSwallowedPet?: string;
