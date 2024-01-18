@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.23';
+  version = '0.5.24';
   sapVersion = '0.31.10-147 BETA'
 
   title = 'sap-calculator';
@@ -207,6 +207,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initPetForms();
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
+      // happens on import
+      if (value == null) {
+        return;
+      }
       if (value == 'Add Custom Pack') { 
         this.openCustomPackEditor();
         return;

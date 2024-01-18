@@ -155,7 +155,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('health').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('equipment').valueChanges.subscribe(() => { this.substitutePet(false) });
-    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
+    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { setTimeout(() => { this.setBelugaSwallow(value) })});
   }
 
   setExp(amt: number) {
