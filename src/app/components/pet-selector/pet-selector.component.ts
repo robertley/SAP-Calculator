@@ -155,7 +155,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('health').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('equipment').valueChanges.subscribe(() => { this.substitutePet(false) });
-    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { setTimeout(() => { this.setBelugaSwallow(value) })});
+    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
   }
 
   setExp(amt: number) {
@@ -180,7 +180,7 @@ export class PetSelectorComponent implements OnInit {
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
   
-      console.log('pet substituted', this.player);
+      // console.log('pet substituted', this.player);
       if (nameChange) {
         this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
         this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
@@ -191,8 +191,10 @@ export class PetSelectorComponent implements OnInit {
 
   setBelugaSwallow(value: string) {
     let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
     pet.belugaSwallowedPet = value;
-    console.log(pet)
   }
 
   showFlyOutButton() {
