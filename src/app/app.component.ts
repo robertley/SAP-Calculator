@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.25';
+  version = '0.5.26';
   sapVersion = '0.31.10-147 BETA'
 
   title = 'sap-calculator';
@@ -126,6 +126,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
     this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
+
   }
 
   fixCustomPackSelect() {
@@ -968,13 +969,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
     
-    let pets = player.petArray;
-    moveItemInArray(pets, previousIndex, currentIndex);
-    player.setPet(0, pets[0], true);
-    player.setPet(1, pets[1], true);
-    player.setPet(2, pets[2], true);
-    player.setPet(3, pets[3], true);
-    player.setPet(4, pets[4], true);
+    for (let selector of this.petSelectors.toArray()) {
+      selector.substitutePet();
+    }
   
   }
 
