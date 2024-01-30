@@ -15,7 +15,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { shuffle } from 'lodash';
+import { cloneDeep, shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
@@ -60,7 +60,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.23';
+  version = '0.5.26';
   sapVersion = '0.31.10-147 BETA'
 
   title = 'sap-calculator';
@@ -138,8 +138,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.reset();
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
-    this.formGroup.patchValue(calculator, {emitEvent: false});
     this.loadCustomPacks(customPacks);
+    this.formGroup.patchValue(calculator, {emitEvent: false});
+    // band aid for weird bug where the select switches to turtle when pack already exists
+    setTimeout(() => {
+      this.fixCustomPackSelect();
+    })
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
     this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
     this.gameService.gameApi.mana = this.formGroup.get('mana').value;
@@ -150,6 +154,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     let day = turn % 2 == 1;
     this.dayNight = day;
     this.gameService.gameApi.day = day;
+
+  }
+
+  fixCustomPackSelect() {
+    this.formGroup.get('playerPack').setValue(this.formGroup.get('playerPack').value, {emitEvent: false});
+    this.formGroup.get('opponentPack').setValue(this.formGroup.get('opponentPack').value, {emitEvent: false});
   }
 
   initApp() {
@@ -165,12 +175,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadCustomPacks(customPacks) {
-    let formArray = new FormArray([]);
+    let formArray = this.formGroup.get('customPacks') as FormArray;
+    formArray.clear();
     for (let customPack of customPacks) {
       let formGroup = createPack(customPack);
       formArray.push(formGroup);
     }
-    this.formGroup.setControl('customPacks', formArray);
   }
 
   initPlayerPets() {
@@ -236,6 +246,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initPetForms();
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
+      // happens on import
+      if (value == null) {
+        return;
+      }
+
       if (value == 'Add Custom Pack') { 
         this.openCustomPackEditor();
         return;
@@ -244,6 +259,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.updatePlayerPack(this.player, value);
     })
     this.formGroup.get('opponentPack').valueChanges.subscribe((value) => {
+      // happens on import
+      if (value == null) {
+        return;
+      }
+
       if (value == 'Add Custom Pack') { 
         this.openCustomPackEditor();
         return;
@@ -358,6 +378,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.gameService.setTierGroupPets(petPool, null);
     } else {
       this.gameService.setTierGroupPets(null, petPool);
+    }
+    // if on all pets do nothing
+    if (this.formGroup.get('allPets').value) {
+      return;
     }
     if (randomize) {
       this.randomize(player);
@@ -980,13 +1004,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
     
-    let pets = player.petArray;
-    moveItemInArray(pets, previousIndex, currentIndex);
-    player.setPet(0, pets[0], true);
-    player.setPet(1, pets[1], true);
-    player.setPet(2, pets[2], true);
-    player.setPet(3, pets[3], true);
-    player.setPet(4, pets[4], true);
+    for (let selector of this.petSelectors.toArray()) {
+      selector.substitutePet();
+    }
   
   }
 
