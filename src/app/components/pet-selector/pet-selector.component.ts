@@ -154,7 +154,13 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('attack').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('health').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
-    this.formGroup.get('equipment').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('equipment').valueChanges.subscribe((value) => {
+      if (value != null && value.reset == null) {
+        let equipment = this.equipment.get(value.name);
+        this.formGroup.get('equipment').setValue(equipment, {emitEvent: false});
+      }
+      this.substitutePet(false)
+    });
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
   }
 
@@ -177,6 +183,11 @@ export class PetSelectorComponent implements OnInit {
         formValue.attack = null;
         formValue.health = null;
       }
+      let equipment = formValue.equipment;
+      if (equipment != null) {
+        formValue.equipment = this.equipment.get(equipment.name);
+      }
+
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
   

@@ -670,9 +670,10 @@ export abstract class Pet {
         this.seenDead = false;
         try {
             this.equipment?.reset();
-        } catch {
+        } catch (error) {
             console.warn('equipment reset failed', this.equipment)
-            window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
+            console.error(error)
+            // window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
         }
         this.swallowedPets = [];
         this.savedPosition = this.originalSavedPosition;
