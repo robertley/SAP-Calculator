@@ -25,7 +25,7 @@ export class Egg extends Equipment {
             return;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 2, true);
+        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 2, true);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 

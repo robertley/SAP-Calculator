@@ -11,7 +11,7 @@ export class SeaTurtle extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 5;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         let power = this.level * 3
         pet.increaseHealth(power);
         this.logService.createLog({

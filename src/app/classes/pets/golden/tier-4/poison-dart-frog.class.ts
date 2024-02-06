@@ -12,7 +12,7 @@ export class PoisonDartFrog extends Pet {
     pack: Pack = 'Golden';
     attack = 5;
     health = 2;
-    friendAheadFaints(gameApi: GameAPI, tiger?: boolean): void {
+    friendAheadFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let highestHealthResp = this.parent.opponent.getHighestHealthPet();
         let target = highestHealthResp.pet;
         if (target == null) {

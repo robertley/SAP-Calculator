@@ -29,13 +29,29 @@
             <button *ngIf="showFlyOutButton()" class="btn btn-secondary" (click)="toggleFlyOut()">></button>
 
             <div class="fly-out border p-3" *ngIf="showFlyOut">
-                <label for="belugaSwallowedPet">Swallowed Pet</label>
-                <select class="form-control" formControlName="belugaSwallowedPet">
-                    <option [ngValue]="null">None</option>
-                    <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                        <option *ngFor="let pet of petGroup.value" [ngValue]="pet">{{pet}}</option>
-                    </optgroup>
-                </select>
+
+                <div *ngIf="pet.name == 'Beluga Whale'">
+                    <label for="belugaSwallowedPet">Swallowed Pet</label>
+                    <select class="form-control" formControlName="belugaSwallowedPet">
+                        <option [ngValue]="null">None</option>
+                        <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
+                            <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div *ngIf="pet.name == 'Abomination'">
+                    <div *ngFor = "let a of [].constructor(pet.level); index as i">
+                        <label for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
+                        <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}">
+                            <option [ngValue]="null">None</option>
+                            <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of startOfBattlePets | keyvalue">
+                                <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                
             </div>
         </div>
         <div class="col-12 mb-2">

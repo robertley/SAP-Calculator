@@ -42,6 +42,7 @@ import { Blueberry } from "../classes/equipment/custom/blueberry.class";
 import { Donut } from "../classes/equipment/custom/donut.class";
 import { Pineapple } from "../classes/equipment/custom/pineapple.class";
 import { Fig } from "../classes/equipment/golden/fig.class";
+import { Rambutan } from "../classes/equipment/unicorn/rambutan.class";
 
 @Injectable({
     providedIn: "root"
@@ -92,7 +93,11 @@ export class EquipmentService {
         map.set('Pineapple', new Pineapple());
         map.set('Fig', new Fig())
 
+        map.set('Rambutan', new Rambutan(this.logService));
+
         return map;
     }
+
+    
 
 }

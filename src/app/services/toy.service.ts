@@ -21,6 +21,8 @@ import { StrinkySock } from "../classes/toys/tier-5/stinky-sock.class";
 import { Television } from "../classes/toys/tier-6/television.class";
 import { PeanutJar } from "../classes/toys/tier-6/peanut-jar.class";
 import { AirPalmTree } from "../classes/toys/tier-6/air-palm-tree.class";
+import { PandorasBox } from "../classes/toys/unicorn/pandoras-box.class";
+import { EquipmentService } from "./equipment.service";
 
 @Injectable({
     providedIn: 'root'
@@ -31,7 +33,7 @@ export class ToyService {
 
     startOfBattleEvents: AbilityEvent[] = [];
 
-    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {
+    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService, private equipmentService: EquipmentService) {
         this.setToys();
     }
 
@@ -61,6 +63,10 @@ export class ToyService {
             'Television',
             'Peanut Jar',
             'Air Palm Tree'
+        ])
+
+        this.toys.set(7, [
+            'Pandoras Box'
         ])
     }
 
@@ -94,6 +100,9 @@ export class ToyService {
                 return new PeanutJar(this.logService, this, parent, level);
             case 'Air Palm Tree':
                 return new AirPalmTree(this.logService, this, parent, level);
+
+            case 'Pandoras Box':
+                return new PandorasBox(this.logService, this, parent, level, this.equipmentService);
         }
     }
 

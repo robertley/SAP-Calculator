@@ -22,6 +22,7 @@
             <option value="Puppy">Puppy</option>
             <option value="Star">Star</option>
             <option value="Golden">Golden</option>
+            <option value="Unicorn">Unicorn</option>
             <optgroup label="Custom Packs">
               <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
               <option value="Add Custom Pack">Add Custom Pack</option>
@@ -36,6 +37,7 @@
             <option value="Puppy">Puppy</option>
             <option value="Star">Star</option>
             <option value="Golden">Golden</option>
+            <option value="Unicorn">Unicorn</option>
             <optgroup label="Custom Packs">
               <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
               <option value="Add Custom Pack">Add Custom Pack</option>
@@ -57,6 +59,26 @@
           <div class="form-group small-w-input ms-3">
             <label for="opponentGoldSpent" title="Opponent Gold Spent">OGS</label>
             <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99"/>
+          </div>
+
+          <div class="form-group small-w-input ms-3">
+            <label for="playerRollAmount" title="Player Roll Amount">P Roll</label>
+            <input class="form-control" id="turn" type="number" formControlName="playerRollAmount" max="99"/>
+          </div>
+    
+          <div class="form-group small-w-input ms-3">
+            <label for="opponentRollAmount" title="Opponent Roll Amount">O Roll</label>
+            <input class="form-control" id="turn" type="number" formControlName="opponentRollAmount" max="99"/>
+          </div>
+
+          <div class="form-group small-w-input ms-3">
+            <label for="playerLevel3Sold" title="Player Level 3 Sold">PL3S</label>
+            <input class="form-control" id="turn" type="number" formControlName="playerLevel3Sold" max="99"/>
+          </div>
+    
+          <div class="form-group small-w-input ms-3">
+            <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">OL3S</label>
+            <input class="form-control" id="turn" type="number" formControlName="opponentLevel3Sold" max="99"/>
           </div>
         </div>
   

@@ -11,7 +11,7 @@ export class Cobra extends Pet {
     pack: Pack = 'Golden';
     attack = 12;
     health = 6;
-    friendAheadAttacks(gameApi: GameAPI, tiger?: boolean): void {
+    friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let target = this.parent.opponent.getRandomPet(null, null, true);
         if (target == null) {
             return;

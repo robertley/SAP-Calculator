@@ -36,6 +36,7 @@ export class PetSelectorComponent implements OnInit {
   equipment: Map<string, Equipment>;
   turtlePackPets: string[];
   pets: Map<number, string[]>;
+  startOfBattlePets: Map<number, string[]>;
 
   showFlyOut = false;
 
@@ -87,6 +88,9 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.petService.goldenPackPets) {
       this.pets.get(tier).push(...pets);
     }
+    for (let [tier, pets] of this.petService.unicornPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
     for (let [tier, pets] of this.petService.customPackPets) {
       this.pets.get(tier).push(...pets);
     }
@@ -94,7 +98,25 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.pets) {
       this.pets.set(tier, [...new Set(pets)]);
     }
+
+    this.initStartOfBattlePets();
+
+    console.log('pets', this.pets);
   }
+
+  initStartOfBattlePets() {
+    this.startOfBattlePets = new Map();
+    for (let i = 1; i <= 6; i++) {
+      let SOBpets = [];
+      for (let pet of this.pets.get(i)) {
+        if (this.petService.startOfBattlePets.includes(pet)) {
+          SOBpets.push(pet);
+        }
+      }
+      this.startOfBattlePets.set(i, SOBpets);
+    }
+  }
+
 
   getPack(player: Player) {
     let pack;
@@ -106,6 +128,8 @@ export class PetSelectorComponent implements OnInit {
       pack = this.petService.starPackPets;
     } else if (player.pack == 'Golden') {
       pack = this.petService.goldenPackPets;
+    } else if (player.pack == 'Unicorn') {
+      pack = this.petService.unicornPackPets;
     } else {
       try {
         pack = this.buildCustomPack(player.pack)
@@ -113,6 +137,8 @@ export class PetSelectorComponent implements OnInit {
         pack = this.petService.turtlePackPets;
       }
     }
+
+    // console.log('pack', pack);
     return cloneDeep(pack);
   }
 
@@ -164,6 +190,9 @@ export class PetSelectorComponent implements OnInit {
       this.substitutePet(false)
     });
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
+    this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('mana').valueChanges.subscribe(() => { this.substitutePet(false) });
   }
 
@@ -213,10 +242,31 @@ export class PetSelectorComponent implements OnInit {
     pet.belugaSwallowedPet = value;
   }
 
-  showFlyOutButton() {
-    return this.formGroup.get('name').value == 'Beluga Whale'
+  setSwallowedPets(value: string) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    let swallowedPets = [];
+    if (this.formGroup.get('abominationSwallowedPet1').value != null) {
+      swallowedPets.push(this.formGroup.get('abominationSwallowedPet1').value);
+    }
+    if (this.formGroup.get('abominationSwallowedPet2').value != null) {
+      swallowedPets.push(this.formGroup.get('abominationSwallowedPet2').value);
+    }
+    if (this.formGroup.get('abominationSwallowedPet3').value != null) {
+      swallowedPets.push(this.formGroup.get('abominationSwallowedPet3').value);
+    }
+    console.log(swallowedPets)
+    pet.abominationSwallowedPet1 = swallowedPets[0];
+    pet.abominationSwallowedPet2 = swallowedPets[1];
+    pet.abominationSwallowedPet3 = swallowedPets[2];
   }
 
+  showFlyOutButton() {
+    return this.formGroup.get('name').value == 'Beluga Whale' || this.formGroup.get('name').value == 'Abomination';
+  }
+bg
   toggleFlyOut() {
     this.showFlyOut = !this.showFlyOut;
   }
@@ -232,6 +282,7 @@ export class PetSelectorComponent implements OnInit {
   }
 
   optionHidden(option: string) {
+
     if (this.allPets) {
       return false;
     }

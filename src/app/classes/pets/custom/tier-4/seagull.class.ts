@@ -54,7 +54,7 @@ export class Seagull extends Pet {
     attack = 4;
     health = 3;
     abilityUses: number;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

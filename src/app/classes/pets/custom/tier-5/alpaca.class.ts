@@ -11,7 +11,7 @@ export class Alpaca extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 7;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (pet instanceof Alpaca) {
             return;
         }

@@ -1,3 +1,4 @@
+import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
@@ -10,7 +11,7 @@ export class GermanShephard extends Pet {
     pack: Pack = 'Golden';
     attack = 10;
     health = 4;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         let power = Math.floor(this.attack * this.level * .25);
         pet.increaseAttack(power);
         this.logService.createLog({

@@ -15,7 +15,7 @@ export class DoorHeadAnt extends Pet {
         if (this.parent.pet0 != null) {
             return;
         }
-        this.parent.pushPetToFront(this);
+        this.parent.pushPetToFront(this, true);
         this.logService.createLog({
             message: `${this.name} pushed itself to the front.`,
             type: 'ability',

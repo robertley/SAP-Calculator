@@ -15,7 +15,7 @@ export class FlyingFish extends Pet {
     attack = 3;
     health = 2;
     maxAbilityUses: number = 2;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

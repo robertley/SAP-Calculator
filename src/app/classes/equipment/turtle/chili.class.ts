@@ -20,7 +20,7 @@ export class Chili extends Equipment {
             multiplier = 1 + pet.level;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 5);
+        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 5);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage * multiplier;
 

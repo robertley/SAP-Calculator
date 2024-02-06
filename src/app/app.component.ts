@@ -30,10 +30,13 @@ import { Nest } from './classes/pets/hidden/nest.class';
 import { Egg } from './classes/equipment/puppy/egg.class';
 import { Fig } from './classes/equipment/golden/fig.class';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Dazed } from './classes/equipment/ailments/dazed.class';
+import { Rambutan } from './classes/equipment/unicorn/rambutan.class';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
 
+// TODO register all faint pets to be summoned by Orca
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -103,6 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initFormGroup();
     this.loadLocalStorage();
     this.initApp();
+    this.initGameApi();
     this.setDayNight();
   }
 
@@ -174,6 +178,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.previousPackPlayer = this.player.pack;
   }
 
+  initGameApi() {
+    this.gameService.gameApi.day = this.dayNight;
+    this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
+    this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
+    this.gameService.gameApi.mana = this.formGroup.get('mana').value;
+    this.gameService.gameApi.playerRollAmount = this.formGroup.get('playerRollAmount').value;
+    this.gameService.gameApi.opponentRollAmount = this.formGroup.get('opponentRollAmount').value;
+    this.gameService.gameApi.playerLevel3Sold = this.formGroup.get('playerLevel3Sold').value;
+    this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
+  }
+
   loadCustomPacks(customPacks) {
     let formArray = this.formGroup.get('customPacks') as FormArray;
     formArray.clear();
@@ -241,6 +256,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
       mana: new FormControl(false),
+      playerRollAmount: new FormControl(4),
+      opponentRollAmount: new FormControl(4),
+      playerLevel3Sold: new FormControl(0),
+      opponentLevel3Sold: new FormControl(0),
     })
 
     this.initPetForms();
@@ -307,6 +326,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('mana').valueChanges.subscribe((value) => {
       this.gameService.gameApi.mana = value;
     });
+    this.formGroup.get('playerRollAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerRollAmount = value;
+      console.log('playerRollAmount', value)
+    });
+    this.formGroup.get('opponentRollAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentRollAmount = value;
+      console.log('opponentRollAmount', value)
+    });
+    this.formGroup.get('playerLevel3Sold').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerLevel3Sold = value;
+    });
+    this.formGroup.get('opponentLevel3Sold').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentLevel3Sold = value;
+    });
   }
 
   initPetForms() {
@@ -319,7 +352,10 @@ export class AppComponent implements OnInit, AfterViewInit {
           exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
-          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0)
+          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
+          abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
+          abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
+          abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
         })
       }
     );
@@ -336,7 +372,10 @@ export class AppComponent implements OnInit, AfterViewInit {
           exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
-          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0)
+          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
+          abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
+          abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
+          abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
         })
       }
     );
@@ -370,10 +409,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       case 'Golden':
         petPool = this.petService.goldenPackPets;
         break;
+      case 'Unicorn':
+        petPool = this.petService.unicornPackPets;
+        break;
       default:
         petPool = this.petService.playerCustomPackPets.get(pack);
         break;
     }
+    // console.log('petPool', petPool)
     if (player == this.player) {
       this.gameService.setTierGroupPets(petPool, null);
     } else {
@@ -384,7 +427,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
     if (randomize) {
-      this.randomize(player);
+      // this.randomize(player);
     }
   }
 
@@ -466,6 +509,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.abilityService.executeFriendFaintsEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
+
+    this.abilityService.executeManaEvents();
+    this.executeFrequentEvents();
+    this.checkPetsAlive();
     
     // this might cause an issue with door head ant
     // probably just move the functions in here that trigger the empty front space events
@@ -535,9 +582,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setAbilityEquipments(this.opponent);
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
+
       this.initBattle();
       this.startBattle();
       this.initToys();
+
+      // // give all pets dazed equipment
+      // for (let pet of this.player.petArray) {
+      //   pet.equipment = new Dazed();
+      // }
+
+      // for (let pet of this.opponent.petArray) {
+      //   pet.equipment = new Dazed();
+      // }
+      
 
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
@@ -828,6 +886,15 @@ export class AppComponent implements OnInit, AfterViewInit {
           player: this.player
         })
       }
+    }
+
+    // probably should use equipmentClass beforeAttack but choco cake has its own method
+    if (playerEquipment instanceof Rambutan) {
+      this.abilityService.setEqiupmentBeforeAttackEvent({
+        callback: () => { playerEquipment.callback(playerPet) },
+        priority: playerPet.attack,
+        player: this.player
+      })
     }
     
   }

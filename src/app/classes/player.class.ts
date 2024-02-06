@@ -24,7 +24,7 @@ export class Player {
     private orignalPet3?: Pet;
     private orignalPet4?: Pet;
 
-    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Turtle';
+    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' = 'Turtle';
 
     toy: Toy;
     originalToy: Toy;
@@ -319,7 +319,8 @@ export class Player {
             this.abilityService.setFriendAheadFaintsEvent({
                     callback: pet.petBehind().friendAheadFaints.bind(pet.petBehind()),
                     priority: pet.petBehind().attack,
-                    player: this
+                    player: this,
+                    callbackPet: pet
                 })
         }
         this.abilityService.triggerFriendFaintsEvents(pet);
@@ -636,8 +637,13 @@ export class Player {
         return strongestPet;
     }
 
-    pushPetToFront(pet: Pet) {
+    pushPetToFront(pet: Pet, jump = false) {
         this.pushPet(pet, 4);
+
+        if (jump) {
+            this.abilityService.triggerFriendJumpedEvents(this, pet);
+            this.abilityService.executeFriendJumpedEvents();
+        }
     }
 
     pushPetToBack(pet: Pet) {

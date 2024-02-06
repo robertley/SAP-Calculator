@@ -14,4 +14,9 @@ export interface GameAPI {
     komodoShuffle?: boolean;
     mana?: boolean;
     day?: boolean;
+    playerRollAmount?: number;
+    opponentRollAmount?: number;
+    playerLevel3Sold?: number;
+    opponentLevel3Sold?: number;
+
 }

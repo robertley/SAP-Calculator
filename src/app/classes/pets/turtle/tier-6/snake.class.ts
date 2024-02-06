@@ -12,7 +12,7 @@ export class Snake extends Pet {
     pack: Pack = 'Turtle';
     attack = 6;
     health = 6;
-    friendAheadAttacks(gameApi: GameAPI, tiger?: boolean): void {
+    friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = this.level * 5;
         let target = getOpponent(gameApi, this.parent).getRandomPet(null, null, true);
         if (!target) {
