@@ -4,12 +4,15 @@ export class Equipment {
     equipmentClass: EquipmentClass;
     name: string;
     power?: number;
+    originalPower?: number;
     uses?: number;
     originalUses?: number;
     callback: (pet: Pet) => void;
     attackCallback?: (pet: Pet, attackedPet: Pet) => void;
+    
 
     constructor() {
+        this.originalPower = this.power;
     }
 
     reset() {

@@ -18,8 +18,10 @@ import { Exposed } from "./equipment/ailments/exposed.class";
 import { Crisp } from "./equipment/ailments/crisp.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Manticore } from "./pets/unicorn/tier-6/manticore.class";
+import { Behemoth } from "./pets/unicorn/tier-6/behemoth.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
+
 
 export abstract class Pet {
     name: string;
@@ -182,6 +184,8 @@ export abstract class Pet {
                     })
                     return;
                 }
+
+                console.log(this.name, 'faints', this)
                 
                 faintCallback(gameApi, tiger, pteranodon);
             }
@@ -803,11 +807,12 @@ export abstract class Pet {
                 if (defenseMultiplier > 1) {
                     message += ` x${defenseMultiplier} (Panther)`;
                 }
+
+                pet.useDefenseEquipment();
             }
             
             if (pet.equipment instanceof Exposed) {
                 message += 'x2 (Exposed)';
-                pet.useDefenseEquipment()
             }
             // if (attackEquipment != null) {
             //     let power = Math.abs(attackEquipment.power);
@@ -820,6 +825,20 @@ export abstract class Pet {
             //     }
             //     message += ` (${attackEquipment.name} ${sign}${power})`;
             // }
+
+            
+            let manticoreMult = this.getManticoreMult();
+            let manticoreAilments = [
+                'Weak',
+                'Cold',
+                'Exposed'
+            ]
+            let hasAilment = manticoreAilments.includes(pet.equipment?.name);
+
+            if (manticoreMult > 1 && hasAilment) {
+                message += ` x${manticoreMult} (Manticore)`;
+            }
+
             this.logService.createLog({
                 message: message,
                 type: "attack",
@@ -976,9 +995,13 @@ export abstract class Pet {
             message += ` (-${ghostKittenMitigation} Ghost Kitten)`;
         }
 
-        if (pet.equipment.name == 'Exposed') {
+        if (pet.equipment?.name == 'Exposed') {
             message += 'x2 (Exposed)';
-            pet.useDefenseEquipment()
+        }
+
+        let manticoreMult = this.getManticoreMult();
+        if (manticoreMult > 1) {
+            message += ` x${manticoreMult} (Manticore)`;
         }
 
         this.logService.createLog({
@@ -1049,9 +1072,16 @@ export abstract class Pet {
         || pet.equipment?.equipmentClass == 'ailment-defense'
         || (snipe && pet.equipment?.equipmentClass == 'shield-snipe') ? pet.equipment : null;
 
-        if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
-            defenseEquipment.power *= manticoreMult;
+        if (defenseEquipment != null) {
+
+            if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
+                defenseEquipment.power = defenseEquipment.originalPower * manticoreMult;
+            } else {
+                defenseEquipment.power = defenseEquipment.originalPower;
+            }
+
         }
+
 
         let attackEquipment: Equipment;
         let attackAmt: number;
@@ -1063,9 +1093,16 @@ export abstract class Pet {
             attackEquipment = this.equipment?.equipmentClass == 'attack'
             || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
 
-            if (manticoreAttackAilments.includes(attackEquipment?.name)) {
-                attackEquipment.power *= manticoreMult;
+            if (attackEquipment != null) {
+            
+                if (manticoreAttackAilments.includes(attackEquipment?.name)) {
+                    attackEquipment.power = attackEquipment.originalPower * manticoreMult;
+                } else {
+                    attackEquipment.power = attackEquipment.originalPower;
+                }
+
             }
+
 
             attackAmt = power != null ? power + (
                 attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
@@ -1169,10 +1206,12 @@ export abstract class Pet {
     }
 
     useDefenseEquipment(snipe=false) {
+
         if (this.equipment == null) {
             return;
         }
-        if (this.equipment.name == 'Exposed') {
+
+        if (this.equipment.name == 'Exposed' || this.equipment.name == 'Cold') {
             // skip the next if
         }
         else if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
@@ -1211,11 +1250,19 @@ export abstract class Pet {
     }
 
     increaseAttack(amt) {
-        this.attack = Math.min(Math.max(this.attack + amt, 1), 50);
+        let max = 50;
+        if (this.name == 'Behemoth') {
+            max = 100;
+        }
+        this.attack = Math.min(Math.max(this.attack + amt, 1), max);
     }
 
     increaseHealth(amt) {
-        this.health = Math.min(Math.max(this.health  + amt, 1), 50);
+        let max = 50;
+        if (this.name == 'Behemoth') {
+            max = 100;
+        }
+        this.health = Math.min(Math.max(this.health  + amt, 1), max);
     }
 
     increaseExp(amt) {

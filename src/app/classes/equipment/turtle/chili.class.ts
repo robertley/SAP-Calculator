@@ -9,6 +9,7 @@ export class Chili extends Equipment {
     name = 'Chili';
     equipmentClass = 'skewer' as EquipmentClass;
     power = 0;
+    originalPower = 0;
     attackCallback = (pet: Pet, attackedPet: Pet) => {
         let attackPet = attackedPet.parent.getPetAtPosition(1);
         if (attackPet == null) {

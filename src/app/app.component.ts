@@ -37,6 +37,7 @@ const DAY = '#85ddf2';
 const NIGHT = '#33377a';
 
 // TODO register all faint pets to be summoned by Orca
+// TODO fix bug with equipment being used an extra time
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -73,7 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1000;
+  simulationBattleAmt = 1;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
@@ -642,9 +643,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   removeDeadPets() {
-    this.player.removeDeadPets();
-    this.opponent.removeDeadPets();
+    let petRemoved = false;
+    petRemoved = this.player.removeDeadPets();
+    petRemoved = this.opponent.removeDeadPets() || petRemoved;
+    if (petRemoved) {
+      this.emptyFrontSpaceCheck();
+    }
+  }
 
+  emptyFrontSpaceCheck() {
+    
     if (this.player.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
     }

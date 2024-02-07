@@ -327,6 +327,18 @@ import { Nessie } from "../classes/pets/unicorn/tier-5/nessie.class";
 import { NessieQ } from "../classes/pets/hidden/nessie-q.class";
 import { BadDog } from "../classes/pets/unicorn/tier-5/bad-dog.class";
 import { Werewolf } from "../classes/pets/unicorn/tier-5/werewolf.class";
+import { Manticore } from "../classes/pets/unicorn/tier-6/manticore.class";
+import { Phoenix } from "../classes/pets/unicorn/tier-6/phoenix.class";
+import { YoungPhoenix } from "../classes/pets/hidden/young-phoenix.class";
+import { Quetzalcoatl } from "../classes/pets/unicorn/tier-6/quetzalcoatl.class";
+import { TeamSpirit } from "../classes/pets/unicorn/tier-6/team-spirit.class";
+import { Sleipnir } from "../classes/pets/unicorn/tier-6/sleipnir.class";
+import { SeaSerpent } from "../classes/pets/unicorn/tier-6/sea-serpent.class";
+import { Yeti } from "../classes/pets/unicorn/tier-6/yeti.class";
+import { Cerberus } from "../classes/pets/unicorn/tier-6/cerberus.class";
+import { FirePup } from "../classes/pets/hidden/fire-pup.class";
+import { Hydra } from "../classes/pets/unicorn/tier-6/hydra.class";
+import { Behemoth } from "../classes/pets/unicorn/tier-6/behemoth.class";
 
 @Injectable({
     providedIn: 'root'
@@ -796,6 +808,19 @@ export class PetService {
             "Nessie",
             "Bad Dog",
             "Werewolf"
+        ]);
+
+        this.unicornPackPets.set(6, [
+            "Manticore",
+            "Phoenix",
+            "Quetzalcoatl",
+            "Team Spirit",
+            "Sleipnir",
+            "Sea Serpent",
+            "Yeti",
+            "Cerberus",
+            "Hydra",
+            "Behemoth"
         ]);
 
         this.customPackPets.set(1, [
@@ -1450,7 +1475,10 @@ export class PetService {
                 return new CrackedEgg(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nessie?':
                 return new NessieQ(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-
+            case 'Young Phoenix':
+                return new YoungPhoenix(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Fire Pup':
+                return new FirePup(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Unicorn Pack
             // Tier 1
@@ -1561,6 +1589,29 @@ export class PetService {
                 return new BadDog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Werewolf':
                 return new Werewolf(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+        
+            // Tier 6
+            case 'Manticore':
+                return new Manticore(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Phoenix':
+                return new Phoenix(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Quetzalcoatl':
+                return new Quetzalcoatl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Team Spirit':
+                return new TeamSpirit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sleipnir':
+                return new Sleipnir(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sea Serpent':
+                return new SeaSerpent(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Yeti':
+                return new Yeti(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cerberus':
+                return new Cerberus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Hydra':
+                return new Hydra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Behemoth':
+                return new Behemoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+
         }
     }
 
@@ -2373,6 +2424,12 @@ export class PetService {
         if (pet instanceof NessieQ) {
             newPet = new NessieQ(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
+        if (pet instanceof YoungPhoenix) {
+            newPet = new YoungPhoenix(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof FirePup) {
+            newPet = new FirePup(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
 
         // Custom Pack Pets
         if (pet instanceof Jerboa) {
@@ -2589,6 +2646,38 @@ export class PetService {
         }
         if (pet instanceof Werewolf) {
             newPet = new Werewolf(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+
+        // Tier 6
+        if (pet instanceof Manticore) {
+            newPet = new Manticore(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Phoenix) {
+            newPet = new Phoenix(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Quetzalcoatl) {
+            newPet = new Quetzalcoatl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof TeamSpirit) {
+            newPet = new TeamSpirit(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Sleipnir) {
+            newPet = new Sleipnir(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof SeaSerpent) {
+            newPet = new SeaSerpent(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Yeti) {
+            newPet = new Yeti(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Cerberus) {
+            newPet = new Cerberus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Hydra) {
+            newPet = new Hydra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Behemoth) {
+            newPet = new Behemoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
 

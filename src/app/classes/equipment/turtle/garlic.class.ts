@@ -4,6 +4,7 @@ export class Garlic extends Equipment {
     equipmentClass = 'defense' as EquipmentClass;
     name = 'Garlic';
     power = 2;
+    originalPower = 2;
     callback: () => {
 
     }

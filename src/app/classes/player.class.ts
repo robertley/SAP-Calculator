@@ -351,21 +351,29 @@ export class Player {
     }
 
     removeDeadPets() {
-        if (!this.pet0?.alive) {
+        let petRemoved = false;
+        console.log(this.pet0, !this.pet0?.alive && this.pet0 !== undefined)
+        if (!this.pet0?.alive && this.pet0 !== undefined) {
             this.pet0 = null;
+            petRemoved = true;
         }
         if (!this.pet1?.alive) {
             this.pet1 = null;
+            petRemoved = true;
         }
         if (!this.pet2?.alive) {
             this.pet2 = null;
+            petRemoved = true;
         }
         if (!this.pet3?.alive) {
             this.pet3 = null;
+            petRemoved = true;
         }
         if (!this.pet4?.alive) {
             this.pet4 = null;
+            petRemoved = true;
         }
+        return petRemoved;
     }
 
     createDeathLog(pet: Pet) {
@@ -391,7 +399,7 @@ export class Player {
             }
             if (notFiftyFifty) {
                 pets = pets.filter((pet) => {
-                    return pet.health != 50 || pet.attack != 50;
+                    return pet.health != 50 || pet.attack != 50 || pet.name == 'Behemoth';
                 });
 
                 if (pets.length == 0) {

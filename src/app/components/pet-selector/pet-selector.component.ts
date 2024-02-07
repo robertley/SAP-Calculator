@@ -39,6 +39,7 @@ export class PetSelectorComponent implements OnInit {
   startOfBattlePets: Map<number, string[]>;
 
   showFlyOut = false;
+  attackHealthMax = 50;
 
   @Input()
   showTokenPets = false;
@@ -63,6 +64,10 @@ export class PetSelectorComponent implements OnInit {
     this.initSelector();
 
     this.fixLoadEquipment();
+
+    if (this.pet.name == 'Behemoth') {
+      this.attackHealthMax = 100;
+    }
   }
 
   initSelector() {
@@ -229,6 +234,12 @@ export class PetSelectorComponent implements OnInit {
         this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
         this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
         this.formGroup.get('mana').setValue(pet.mana, {emitEvent: false});
+      }
+
+      if (this.formGroup.get('name').value == 'Behemoth') {
+        this.attackHealthMax = 100;
+      } else {
+        this.attackHealthMax = 50;
       }
     })
 
