@@ -339,6 +339,7 @@ import { Cerberus } from "../classes/pets/unicorn/tier-6/cerberus.class";
 import { FirePup } from "../classes/pets/hidden/fire-pup.class";
 import { Hydra } from "../classes/pets/unicorn/tier-6/hydra.class";
 import { Behemoth } from "../classes/pets/unicorn/tier-6/behemoth.class";
+import { Monty } from "../classes/pets/hidden/monty.class";
 
 @Injectable({
     providedIn: 'root'
@@ -1479,6 +1480,8 @@ export class PetService {
                 return new YoungPhoenix(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fire Pup':
                 return new FirePup(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Monty':
+                return new Monty(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Unicorn Pack
             // Tier 1
@@ -1501,7 +1504,8 @@ export class PetService {
                 return new Bunyip(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sneaky Egg':
                 return new SneakyEgg(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-        
+            case 'Cuddle Toad':
+                return new CuddleToad(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             // Tier 2
             case 'Ghost Kitten':
                 return new GhostKitten(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
@@ -2429,6 +2433,9 @@ export class PetService {
         }
         if (pet instanceof FirePup) {
             newPet = new FirePup(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Monty) {
+            newPet = new Monty(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         // Custom Pack Pets

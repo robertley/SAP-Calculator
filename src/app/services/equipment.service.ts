@@ -43,6 +43,13 @@ import { Donut } from "../classes/equipment/custom/donut.class";
 import { Pineapple } from "../classes/equipment/custom/pineapple.class";
 import { Fig } from "../classes/equipment/golden/fig.class";
 import { Rambutan } from "../classes/equipment/unicorn/rambutan.class";
+import { LovePotion } from "../classes/equipment/unicorn/love-potion.class";
+import { FairyDust } from "../classes/equipment/unicorn/fairy-dust.class";
+import { GingerbreadMan } from "../classes/equipment/unicorn/gingerbread-man.class";
+import { EasterEgg } from "../classes/equipment/unicorn/easter-egg.class";
+import { HealthPotion } from "../classes/equipment/unicorn/health-potion.class";
+import { MagicBeans } from "../classes/equipment/unicorn/magic-beans.class";
+import { GoldenEgg } from "../classes/equipment/unicorn/golden-egg.class";
 
 @Injectable({
     providedIn: "root"
@@ -94,6 +101,13 @@ export class EquipmentService {
         map.set('Fig', new Fig())
 
         map.set('Rambutan', new Rambutan(this.logService));
+        map.set('Love Potion', new LovePotion(this.logService));
+        map.set('Fairy Dust', new FairyDust(this.logService));
+        map.set('Gingerbread Man', new GingerbreadMan(this.logService));
+        map.set('Easter Egg', new EasterEgg(this.logService, this.abilityService));
+        map.set('Health Potion', new HealthPotion(this.logService));
+        map.set('Magic Beans', new MagicBeans());
+        map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
 
         return map;
     }

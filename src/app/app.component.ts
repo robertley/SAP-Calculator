@@ -32,6 +32,10 @@ import { Fig } from './classes/equipment/golden/fig.class';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Dazed } from './classes/equipment/ailments/dazed.class';
 import { Rambutan } from './classes/equipment/unicorn/rambutan.class';
+import { LovePotion } from './classes/equipment/unicorn/love-potion.class';
+import { FairyDust } from './classes/equipment/unicorn/fairy-dust.class';
+import { GingerbreadMan } from './classes/equipment/unicorn/gingerbread-man.class';
+import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
@@ -74,7 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1;
+  simulationBattleAmt = 1000;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
@@ -823,6 +827,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment?.equipmentClass == 'startOfBattle') {
         pet.equipment.callback(pet);
       }
+      if (pet.equipment instanceof FairyDust) {
+        pet.equipment.callback(pet);
+      }
     }
   }
 
@@ -857,6 +864,15 @@ export class AppComponent implements OnInit, AfterViewInit {
               player: player
             })
           }
+        }
+        if (pet.equipment instanceof LovePotion) {
+          pet.equipment.callback(pet);
+        }
+        if (pet.equipment instanceof GingerbreadMan) {
+          pet.equipment.callback(pet);
+        }
+        if (pet.equipment instanceof HealthPotion) {
+          pet.equipment.callback(pet);
         }
       }
       

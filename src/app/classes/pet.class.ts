@@ -1103,10 +1103,14 @@ export abstract class Pet {
 
             }
 
+            let petAttack = this.attack;
+            if (this.name == 'Monty') {
+                petAttack *= 2;
+            }
 
             attackAmt = power != null ? power + (
                 attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
-            ) : this.attack + (
+            ) : petAttack + (
                 attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
             );
         }
