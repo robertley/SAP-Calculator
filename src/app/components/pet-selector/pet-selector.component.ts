@@ -65,7 +65,7 @@ export class PetSelectorComponent implements OnInit {
 
     this.fixLoadEquipment();
 
-    if (this.pet.name == 'Behemoth') {
+    if (this.pet?.name == 'Behemoth') {
       this.attackHealthMax = 100;
     }
   }

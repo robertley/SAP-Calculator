@@ -192,6 +192,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.opponentRollAmount = this.formGroup.get('opponentRollAmount').value;
     this.gameService.gameApi.playerLevel3Sold = this.formGroup.get('playerLevel3Sold').value;
     this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
+    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
+    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
   }
 
   loadCustomPacks(customPacks) {
@@ -265,6 +267,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       opponentRollAmount: new FormControl(4),
       playerLevel3Sold: new FormControl(0),
       opponentLevel3Sold: new FormControl(0),
+      playerSummonedAmount: new FormControl(0),
+      opponentSummonedAmount: new FormControl(0),
     })
 
     this.initPetForms();
@@ -344,6 +348,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.formGroup.get('opponentLevel3Sold').valueChanges.subscribe((value) => {
       this.gameService.gameApi.opponentLevel3Sold = value;
+    });
+    this.formGroup.get('playerSummonedAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerSummonedAmount = value;
+    });
+    this.formGroup.get('opponentSummonedAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentSummonedAmount = value;
     });
   }
 
@@ -693,6 +703,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       logs: this.logs
     }
     this.battles.push(this.currBattle);
+    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
   }
 
   reset() {

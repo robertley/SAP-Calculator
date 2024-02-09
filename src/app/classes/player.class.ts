@@ -170,6 +170,12 @@ export class Player {
             }
             return false;
         }
+        let isPlayer = this == this.gameService.gameApi.player;
+        if (isPlayer) {
+            this.gameService.gameApi.playerSummonedAmount++;
+        } else {
+            this.gameService.gameApi.opponentSummonedAmount++;
+        }
         if (position == 0) {
             if (this.pet0 != null) {
                 this.makeRoomForSlot(0)
@@ -352,7 +358,6 @@ export class Player {
 
     removeDeadPets() {
         let petRemoved = false;
-        console.log(this.pet0, !this.pet0?.alive && this.pet0 !== undefined)
         if (!this.pet0?.alive && this.pet0 !== undefined) {
             this.pet0 = null;
             petRemoved = true;

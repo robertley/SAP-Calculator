@@ -340,6 +340,14 @@ import { FirePup } from "../classes/pets/hidden/fire-pup.class";
 import { Hydra } from "../classes/pets/unicorn/tier-6/hydra.class";
 import { Behemoth } from "../classes/pets/unicorn/tier-6/behemoth.class";
 import { Monty } from "../classes/pets/hidden/monty.class";
+import { Rock } from "../classes/pets/hidden/rock.class";
+import { Basilisk } from "../classes/pets/custom/tier-1/basilisk.class";
+import { Daycrawler } from "../classes/pets/hidden/daycrawler.class";
+import { Nightcrawler } from "../classes/pets/custom/tier-2/nightcrawler.class";
+import { Sphinx } from "../classes/pets/custom/tier-2/sphinx.class";
+import { Chupacabra } from "../classes/pets/custom/tier-2/chupacabra.class";
+import { GoldenBeetle } from "../classes/pets/custom/tier-2/golden-beetle.class";
+import { FooDog } from "../classes/pets/custom/tier-3/foo-dog.class";
 
 @Injectable({
     providedIn: 'root'
@@ -826,17 +834,23 @@ export class PetService {
 
         this.customPackPets.set(1, [
             "Frilled Dragon",
-            "Mouse"
+            "Mouse",
+            "Basilisk",
         ]);
         this.customPackPets.set(2, [
-            "Wombat"
+            "Wombat",
+            "Nightcrawler",
+            "Sphinx",
+            "Chupacabra",
+            "Golden Beetle"
         ]);
         this.customPackPets.set(3, [
             "Aardvark",
             "Bear",
             "Emperor Tamarin",
             "Porcupine",
-            "Wasp"
+            "Wasp",
+            "Foo Dog"
         ]);
         this.customPackPets.set(4, [
             "Jerboa",
@@ -1444,6 +1458,18 @@ export class PetService {
                 return new Walrus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'White Tiger':
                 return new WhiteTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Basilisk':
+                return new Basilisk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Nightcrawler':
+                return new Nightcrawler(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sphinx':
+                return new Sphinx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chupacabra':
+                return new Chupacabra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Golden Beetle':
+                return new GoldenBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Foo Dog':
+                return new FooDog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Token Pets
             case 'Bee':
@@ -1482,6 +1508,10 @@ export class PetService {
                 return new FirePup(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Monty':
                 return new Monty(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Rock':
+                return new Rock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Daycrawler':
+                return new Daycrawler(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Unicorn Pack
             // Tier 1
@@ -2437,6 +2467,12 @@ export class PetService {
         if (pet instanceof Monty) {
             newPet = new Monty(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
+        if (pet instanceof Rock) {
+            newPet = new Rock(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Daycrawler) {
+            newPet = new Daycrawler(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
 
         // Custom Pack Pets
         if (pet instanceof Jerboa) {
@@ -2492,6 +2528,24 @@ export class PetService {
         }
         if (pet instanceof WhiteTiger) {
             newPet = new WhiteTiger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Basilisk) {
+            newPet = new Basilisk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Nightcrawler) {
+            newPet = new Nightcrawler(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Sphinx) {
+            newPet = new Sphinx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof Chupacabra) {
+            newPet = new Chupacabra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof GoldenBeetle) {
+            newPet = new GoldenBeetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+        }
+        if (pet instanceof FooDog) {
+            newPet = new FooDog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
         }
 
         // Unicorn
