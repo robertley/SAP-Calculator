@@ -21,7 +21,7 @@ export class Camel extends Pet {
             boostPet.increaseHealth(boostAmt);
         }
         this.logService.createLog({
-            message: `${this.name} gave ${boostPet.name} ${boostAmt} attack and ${boostAmt} health.`,
+            message: `${this.name} gave ${boostPet.name} ${this.level} attack and ${boostAmt} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
