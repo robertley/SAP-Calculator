@@ -53,7 +53,17 @@ export class PetSelectorComponent implements OnInit {
     'Smaller Slug',
     'Smallest Slug',
     'Zombie Cricket',
-    'Zombie Fly'
+    'Zombie Fly',
+    'Chim-Goat',
+    'Chim-Lion',
+    'Chim-Snake',
+    'Daycrawler',
+    'Head',
+    'Monty',
+    'Nessie?',
+    'Smaller Slime',
+    'Young Phoenix',
+    'Good Dog',
   ];
 
   constructor(private petService: PetService, private equipmentService: EquipmentService) {

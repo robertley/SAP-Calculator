@@ -57,7 +57,13 @@ export class Player {
         this.orignalPet3 = this.pet3;
         this.orignalPet4 = this.pet4;
 
+        this.originalToy = this.toy;
+
         this.toy = this.originalToy;
+        if (this.toy) {
+            this.toy.used = false;
+            this.toy.triggers = 0;
+        }
         this.trumpets = 0;
         this.spawnedGoldenRetiever = false;
     }
@@ -659,7 +665,9 @@ export class Player {
 
         if (jump) {
             this.abilityService.triggerFriendJumpedEvents(this, pet);
+            this.abilityService.triggerFriendJumpedToyEvents(this, pet);
             this.abilityService.executeFriendJumpedEvents();
+            this.abilityService.executeFriendJumpedToyEvents();
         }
     }
 

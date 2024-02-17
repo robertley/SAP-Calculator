@@ -40,9 +40,6 @@ import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
 
-// TODO register all faint pets to be summoned by Orca
-// TODO fix bug with equipment being used an extra time
-// TODO register pets for abomination
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -69,8 +66,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.27';
-  sapVersion = '0.31.10-147 BETA'
+  version = '0.6.0';
+  sapVersion = '0.32.1-150 BETA'
 
   title = 'sap-calculator';
   player: Player;
@@ -270,6 +267,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       opponentLevel3Sold: new FormControl(0),
       playerSummonedAmount: new FormControl(0),
       opponentSummonedAmount: new FormControl(0),
+      showAdvanced: new FormControl(false),
     })
 
     this.initPetForms();
@@ -356,6 +354,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('opponentSummonedAmount').valueChanges.subscribe((value) => {
       this.gameService.gameApi.opponentSummonedAmount = value;
     });
+  }
+
+  toggleAdvanced() {
+    let advanced = this.formGroup.get('showAdvanced').value;
+    this.formGroup.get('showAdvanced').setValue(!advanced);
   }
 
   initPetForms() {
@@ -525,6 +528,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.checkPetsAlive();
 
     this.abilityService.executeFriendFaintsEvents();
+    this.abilityService.executeFriendFaintsToyEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
@@ -532,13 +536,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
     
-    // this might cause an issue with door head ant
-    // probably just move the functions in here that trigger the empty front space events
-    this.removeDeadPets();
+    let petRemoved = this.removeDeadPets();
 
     this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();
+    this.abilityService.executeFriendSummonedToyEvents();
     this.abilityService.executeEnemySummonedEvents();
+
+    if (petRemoved) {
+      this.emptyFrontSpaceCheck();
+    }
 
     this.executeFrequentEvents();
     this.checkPetsAlive();
@@ -626,6 +633,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.startOfBattleService.initStartOfBattleEvents();
       this.startOfBattleService.executeToyPetEvents();
+
+      // empty front space toy events
+      this.emptyFrontSpaceCheck();
+
       this.executeFrequentEvents();
       this.toyService.executeStartOfBattleEvents();
       this.executeFrequentEvents();
@@ -633,6 +644,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.executeFrequentEvents();
 
       this.abilityService.executeSummonedEvents();
+      this.abilityService.executeFriendSummonedToyEvents();
       this.abilityService.executeEnemySummonedEvents();
       
       this.abilityService.triggerTransformEvents(this.player);
@@ -663,9 +675,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     let petRemoved = false;
     petRemoved = this.player.removeDeadPets();
     petRemoved = this.opponent.removeDeadPets() || petRemoved;
-    if (petRemoved) {
-      this.emptyFrontSpaceCheck();
-    }
+
+    return petRemoved;
   }
 
   emptyFrontSpaceCheck() {
@@ -679,6 +690,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.abilityService.executeEmptyFrontSpaceEvents();
+
+    if (this.player.pet0 == null) {
+      this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);
+    }
+
+    if (this.opponent.pet0 == null) {
+      this.abilityService.triggerEmptyFrontSpaceToyEvents(this.opponent);
+    }
+
+    this.abilityService.executeEmptyFrontSpaceToyEvents();
   }
 
   startBattle() {

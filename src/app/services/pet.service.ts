@@ -368,6 +368,11 @@ import { GreatOne } from "../classes/pets/custom/tier-6/great-one.class";
 import { Leviathan } from "../classes/pets/custom/tier-6/leviathan.class";
 import { QuestingBeast } from "../classes/pets/custom/tier-6/questing-beast.class";
 import { Cockatrice } from "../classes/pets/custom/tier-6/cockatrice.class";
+import { ChimGoat } from "../classes/pets/hidden/chim-goat.class";
+import { ChimLion } from "../classes/pets/hidden/chim-lion.class";
+import { ChimSnake } from "../classes/pets/hidden/chim-snake.class";
+import { Head } from "../classes/pets/hidden/head.class";
+import { GoodDog } from "../classes/pets/hidden/good-dog.class";
 
 @Injectable({
     providedIn: 'root'
@@ -437,8 +442,12 @@ export class PetService {
         "Roc",
         "Red Dragon",
         "Salmon of Knowledge",
-
-
+        "Werewolf",
+        "Sleipnir",
+        "Basilisk",
+        "Tree",
+        "Anubis",
+        "Cockatrice"
     ]
 
     constructor(private logService: LogService,
@@ -1592,8 +1601,18 @@ export class PetService {
                 return new Daycrawler(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Smaller Slime':
                 return new SmallerSlime(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-
-            // Unicorn Pack
+            case 'Chim-Goat':
+                return new ChimGoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chim-Lion':
+                return new ChimLion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chim-Snake':
+                return new ChimSnake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Head':
+                return new Head(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Good Dog':
+                return new GoodDog(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            
+                // Unicorn Pack
             // Tier 1
 
             case 'Baku':
@@ -2556,6 +2575,21 @@ export class PetService {
         if (pet instanceof SmallerSlime) {
             newPet = new SmallerSlime(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof ChimGoat) {
+            newPet = new ChimGoat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ChimLion) {
+            newPet = new ChimLion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ChimSnake) {
+            newPet = new ChimSnake(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Head) {
+            newPet = new Head(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof GoodDog) {
+            newPet = new GoodDog(this.logService, this.abilityService, this, this.gameService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
 
         // Custom Pack Pets
         if (pet instanceof Jerboa) {
@@ -2964,7 +2998,24 @@ export class PetService {
             'Warthog',
             'Bear',
             'Tapir',
-            'Walrus'
+            'Walrus',
+            'Frost Wolf',
+            'Mothman',
+            'Gargoyle',
+            'Bigfoot',
+            'Skeleton Dog',
+            'Fur-Bearing Trout',
+            'Calygreyhound',
+            'Visitor',
+            'Chimera',
+            'Pixiu',
+            'Nessie',
+            'Phoenix',
+            'Sea Serpent',
+            'Hydra',
+            'Nightcrawler',
+            'Slime',
+            'Kappa'
         ];
         let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
         return this.createPet({

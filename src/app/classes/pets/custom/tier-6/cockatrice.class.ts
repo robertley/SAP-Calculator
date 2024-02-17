@@ -25,7 +25,7 @@ export class Cockatrice extends Pet {
             return;
         }
         this.logService.createLog({
-            message: `${this.name} transformed ${target.name} into a rock.`,
+            message: `${this.name} transformed ${target.name} into a Rock.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

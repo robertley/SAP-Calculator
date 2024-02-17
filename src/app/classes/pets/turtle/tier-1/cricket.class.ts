@@ -23,7 +23,7 @@ export class Cricket extends Pet {
         }
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let zombie = new ZombieCricket(this.logService, this.abilityService, this.parent, null, null, exp);
+                let zombie = new ZombieCricket(this.logService, this.abilityService, this.parent, null, null, null, exp);
         
                 this.logService.createLog(
                     {

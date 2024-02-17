@@ -5,7 +5,6 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Rock } from "../../hidden/rock.class";
-import { Behemoth } from "../../unicorn/tier-6/behemoth.class";
 
 export class Basilisk extends Pet {
     name = "Basilisk";

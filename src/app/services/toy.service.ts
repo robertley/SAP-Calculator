@@ -5,7 +5,7 @@ import { Pet } from "../classes/pet.class";
 import { Equipment } from "../classes/equipment.class";
 import { AbilityService } from "./ability.service";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
-import { shuffle } from "lodash";
+import { cloneDeep, shuffle } from "lodash";
 import { GameService } from "./game.service";
 import { Balloon } from "../classes/toys/tier-1/balloon.class";
 import { TennisBall } from "../classes/toys/tier-1/tennis-ball.class";
@@ -23,6 +23,27 @@ import { PeanutJar } from "../classes/toys/tier-6/peanut-jar.class";
 import { AirPalmTree } from "../classes/toys/tier-6/air-palm-tree.class";
 import { PandorasBox } from "../classes/toys/unicorn/pandoras-box.class";
 import { EquipmentService } from "./equipment.service";
+import { WitchBroom } from "../classes/toys/unicorn/witch-broom.class";
+import { MagicWand } from "../classes/toys/unicorn/magic-wand.class";
+import { CrystalBall } from "../classes/toys/unicorn/crystal-ball.class";
+import { TreasureMap } from "../classes/toys/unicorn/treasure-map.class";
+import { TreasureChest } from "../classes/toys/unicorn/treasure-chest.class";
+import { EvilBook } from "../classes/toys/unicorn/evil-book.class";
+import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
+import { MagicCarpet } from "../classes/toys/unicorn/magic-carpet.class";
+import { MagicLamp } from "../classes/toys/unicorn/magic-lamp.class";
+import { Candleabra } from "../classes/toys/unicorn/candelabra.class";
+import { GlassShoes } from "../classes/toys/unicorn/glass-shoes.class";
+import { GoldenHarp } from "../classes/toys/unicorn/golden-harp.class";
+import { LockOfHair } from "../classes/toys/unicorn/lock-of-hair.class";
+import { MagicMirror } from "../classes/toys/unicorn/magic-mirror.class";
+import { Pickaxe } from "../classes/toys/unicorn/pickaxe.class";
+import { RedCape } from "../classes/toys/unicorn/red-cape.class";
+import { Rosebud } from "../classes/toys/unicorn/rosebud.class";
+import { Excalibur } from "../classes/toys/unicorn/excalibur.class";
+import { HolyGrail } from "../classes/toys/unicorn/holy-grail.class";
+import { Nutcracker } from "../classes/toys/unicorn/nutcraker.class";
+import { TinderBox } from "../classes/toys/unicorn/tinder-box.class";
 
 @Injectable({
     providedIn: 'root'
@@ -32,6 +53,8 @@ export class ToyService {
     toys: Map<number, string[]> = new Map();
 
     startOfBattleEvents: AbilityEvent[] = [];
+    emptyFrontSpaceEvents: AbilityEvent[] = [];
+    friendSummonedEvents: AbilityEvent[] = [];
 
     constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService, private equipmentService: EquipmentService) {
         this.setToys();
@@ -66,7 +89,27 @@ export class ToyService {
         ])
 
         this.toys.set(7, [
-            'Pandoras Box'
+            'Witch Broom',
+            'Pandoras Box',
+            'Magic Wand',
+            'Crystal Ball',
+            'Treasure Map',
+            'Treasure Chest',
+            'Evil Book',
+            'Magic Carpet',
+            'Magic Lamp',
+            'Nutcracker',
+            'Tinder Box',
+            'Candleabra',
+            'Glass Shoes',
+            'Golden Harp',
+            'Lock of Hair',
+            'Magic Mirror',
+            'Pickaxe',
+            'Red Cape',
+            'Rose Bud',
+            'Excalibur',
+            'Holy Grail'
         ])
     }
 
@@ -103,6 +146,46 @@ export class ToyService {
 
             case 'Pandoras Box':
                 return new PandorasBox(this.logService, this, parent, level, this.equipmentService);
+            case 'Witch Broom':
+                return new WitchBroom(this.logService, this, parent, level);
+            case 'Magic Wand':
+                return new MagicWand(this.logService, this, parent, level);
+            case 'Crystal Ball':
+                return new CrystalBall(this.logService, this, parent, level);
+            case 'Treasure Map':
+                return new TreasureMap(this.logService, this, parent, level);
+            case 'Treasure Chest':
+                return new TreasureChest(this.logService, this, parent, level);
+            case 'Evil Book':
+                return new EvilBook(this.logService, this, this.abilityService, parent, level);
+            case 'Magic Carpet':
+                return new MagicCarpet(this.logService, this, parent, level);
+            case 'Magic Lamp':
+                return new MagicLamp(this.logService, this, parent, level);
+            case 'Nutcracker':
+                return new Nutcracker(this.logService, this, this.abilityService, parent, level);
+            case 'Tinder Box':
+                return new TinderBox(this.logService, this, this.abilityService, parent, level);
+            case 'Candleabra':
+                return new Candleabra(this.logService, this, parent, level);
+            case 'Glass Shoes':
+                return new GlassShoes(this.logService, this, parent, level);
+            case 'Golden Harp':
+                return new GoldenHarp(this.logService, this, parent, level);
+            case 'Lock of Hair':
+                return new LockOfHair(this.logService, this, parent, level);
+            case 'Magic Mirror':
+                return new MagicMirror(this.logService, this, parent, level);
+            case 'Pickaxe':
+                return new Pickaxe(this.logService, this, parent, level);
+            case 'Red Cape':
+                return new RedCape(this.logService, this, parent, level);
+            case 'Rose Bud':
+                return new Rosebud(this.logService, this, parent, level);
+            case 'Excalibur':
+                return new Excalibur(this.logService, this, parent, level);
+            case 'Holy Grail':
+                return new HolyGrail(this.logService, this, parent, level);
         }
     }
 
@@ -171,25 +254,6 @@ export class ToyService {
         
         this.resetStartOfBattleEvents();
     }
-    // setToyEvent(event: AbilityEvent) {
-    //     this.toyEvents.push(event);
-    // }
 
-    // resetToyEvents() {
-    //     this.toyEvents = [];
-    // }
-
-    // executeToyEvents() {
-    //     // shuffle, so that same priority events are in random order
-    //     this.toyEvents = shuffle(this.toyEvents);
-
-    //     this.toyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-    //     for (let event of this.toyEvents) {
-    //         event.callback(this.gameService.gameApi);
-    //     }
-        
-    //     this.resetToyEvents();
-    // }
 
 }

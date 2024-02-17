@@ -1056,7 +1056,7 @@ export abstract class Pet {
 
             let petAttack = this.attack;
             if (this.name == 'Monty') {
-                petAttack *= 2;
+                petAttack *= this.level + 1;
             }
 
             attackAmt = power != null ? power + (
@@ -1065,7 +1065,6 @@ export abstract class Pet {
                 attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
             );
         }
-
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
 
@@ -1075,8 +1074,6 @@ export abstract class Pet {
             defenseAmt += nurikabe;
             pet.abilityUses++;
         }
-
-        console.log(nurikabe, defenseAmt)
 
         if (attackEquipment instanceof Salt && !snipe) {
             if (pet.tier < this.tier) {
@@ -1214,6 +1211,7 @@ export abstract class Pet {
     }
 
     increaseAttack(amt) {
+        console.log('increase attack called', amt)
         let max = 50;
         if (this.name == 'Behemoth') {
             max = 100;
@@ -1245,6 +1243,7 @@ export abstract class Pet {
             this.abilityService.triggerLevelUpEvents(this.parent, this);
             this.abilityService.triggerLevelUpEvents(this.parent.opponent, this);
             this.abilityService.executeLevelUpEvents();
+            this.abilityService.executeFriendlyLevelUpToyEvents();
             this.setAbilityUses();
         }
 
