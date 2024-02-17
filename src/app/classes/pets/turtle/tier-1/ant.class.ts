@@ -18,10 +18,11 @@ export class Ant extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 
     faint(gameApi, tiger, pteranodon?: boolean) {
@@ -32,8 +33,7 @@ export class Ant extends Pet {
         if (boostPet == null) {
             return;
         }
-        boostPet.increaseAttack(power.attack);
-        boostPet.increaseHealth(power.health);
+
         this.logService.createLog({
             message: `${this.name} gave ${boostPet.name} ${power.attack} attack and ${power.health} health.`,
             type: "ability",
@@ -42,6 +42,9 @@ export class Ant extends Pet {
             tiger: tiger,
             pteranodon: pteranodon
         })
+
+        boostPet.increaseAttack(power.attack);
+        boostPet.increaseHealth(power.health);
 
         this.superFaint(gameApi, tiger);
         this.done = true;

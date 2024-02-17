@@ -275,6 +275,104 @@ import { Opossum } from "../classes/pets/golden/tier-1/oposum.class";
 import { Kiwi } from "../classes/pets/star/tier-1/kiwi.class";
 import { Pigeon } from "../classes/pets/turtle/tier-1/pigeon.class";
 import { Hare } from "../classes/pets/puppy/tier-3/hare.class";
+import { Baku } from "../classes/pets/unicorn/tier-1/baku.class";
+import { AxehandleHound } from "../classes/pets/unicorn/tier-1/axehandle-hound.class";
+import { Barghest } from "../classes/pets/unicorn/tier-1/barghest.class";
+import { Tsuchinoko } from "../classes/pets/unicorn/tier-1/tsuchinoko.class";
+import { Murmel } from "../classes/pets/unicorn/tier-1/murmel.class";
+import { Alchemedes } from "../classes/pets/unicorn/tier-1/alchemedes.class";
+import { Warg } from "../classes/pets/unicorn/tier-1/warg.class";
+import { Bunyip } from "../classes/pets/unicorn/tier-1/bunyip.class";
+import { SneakyEgg } from "../classes/pets/unicorn/tier-1/sneaky-egg.class";
+import { CrackedEgg } from "../classes/pets/hidden/cracked-egg.class";
+import { CuddleToad } from "../classes/pets/unicorn/tier-1/cuddle-toad.class";
+import { GhostKitten } from "../classes/pets/unicorn/tier-2/ghost-kitten.class";
+import { FrostWolf } from "../classes/pets/unicorn/tier-2/frost-wolf.class";
+import { Mothman } from "../classes/pets/unicorn/tier-2/mothman.class";
+import { DropBear } from "../classes/pets/unicorn/tier-2/drop-bear.class";
+import { Jackalope } from "../classes/pets/unicorn/tier-2/jackalope.class";
+import { LuckyCat } from "../classes/pets/unicorn/tier-2/lucky-cat.class";
+import { Ogopogo } from "../classes/pets/unicorn/tier-2/ogopogo.class";
+import { Thunderbird } from "../classes/pets/unicorn/tier-2/thunderbird.class";
+import { Gargoyle } from "../classes/pets/unicorn/tier-2/gargoyle.class";
+import { Bigfoot } from "../classes/pets/unicorn/tier-2/bigfoot.class";
+import { SkeletonDog } from "../classes/pets/unicorn/tier-3/skeleton-dog.class";
+import { Mandrake } from "../classes/pets/unicorn/tier-3/mandrake.class";
+import { FurBearingTrout } from "../classes/pets/unicorn/tier-3/fur-bearing-trout.class";
+import { ManaHound } from "../classes/pets/unicorn/tier-3/mana-hound.class";
+import { Calygreyhound } from "../classes/pets/unicorn/tier-3/calygreyhound.class";
+import { BrainCramp } from "../classes/pets/unicorn/tier-3/brain-cramp.class";
+import { Minotaur } from "../classes/pets/unicorn/tier-3/minotaur.class";
+import { Wyvern } from "../classes/pets/unicorn/tier-3/wyvern.class";
+import { Ouroboros } from "../classes/pets/unicorn/tier-3/ouroboros.class";
+import { Griffin } from "../classes/pets/unicorn/tier-3/griffin.class";
+import { Kraken } from "../classes/pets/unicorn/tier-4/kraken.class";
+import { Visitor } from "../classes/pets/unicorn/tier-4/visitor.class";
+import { VampireBat } from "../classes/pets/unicorn/tier-4/vampire-bat.class";
+import { TigerBug } from "../classes/pets/unicorn/tier-4/tiger-bug.class";
+import { Tatzelwurm } from "../classes/pets/unicorn/tier-4/tatzelwurm.class";
+import { Cyclops } from "../classes/pets/unicorn/tier-4/cyclops.class";
+import { Chimera } from "../classes/pets/unicorn/tier-4/chimera.class";
+import { Roc } from "../classes/pets/unicorn/tier-4/roc.class";
+import { WormOfSand } from "../classes/pets/unicorn/tier-4/worm-of-sand.class";
+import { Abomination } from "../classes/pets/unicorn/tier-4/abomination.class";
+import { RedDragon } from "../classes/pets/unicorn/tier-5/red-dragon.class";
+import { Unicorn } from "../classes/pets/unicorn/tier-5/unicorn.class";
+import { LovelandFrogman } from "../classes/pets/unicorn/tier-5/loveland-frogman.class";
+import { SalmonOfKnowledge } from "../classes/pets/unicorn/tier-5/salmon-of-knowledge.class";
+import { JerseyDevil } from "../classes/pets/unicorn/tier-5/jersey-devil.class";
+import { Pixiu } from "../classes/pets/unicorn/tier-5/pixiu.class";
+import { Kitsune } from "../classes/pets/unicorn/tier-5/kitsune.class";
+import { Nessie } from "../classes/pets/unicorn/tier-5/nessie.class";
+import { NessieQ } from "../classes/pets/hidden/nessie-q.class";
+import { BadDog } from "../classes/pets/unicorn/tier-5/bad-dog.class";
+import { Werewolf } from "../classes/pets/unicorn/tier-5/werewolf.class";
+import { Manticore } from "../classes/pets/unicorn/tier-6/manticore.class";
+import { Phoenix } from "../classes/pets/unicorn/tier-6/phoenix.class";
+import { YoungPhoenix } from "../classes/pets/hidden/young-phoenix.class";
+import { Quetzalcoatl } from "../classes/pets/unicorn/tier-6/quetzalcoatl.class";
+import { TeamSpirit } from "../classes/pets/unicorn/tier-6/team-spirit.class";
+import { Sleipnir } from "../classes/pets/unicorn/tier-6/sleipnir.class";
+import { SeaSerpent } from "../classes/pets/unicorn/tier-6/sea-serpent.class";
+import { Yeti } from "../classes/pets/unicorn/tier-6/yeti.class";
+import { Cerberus } from "../classes/pets/unicorn/tier-6/cerberus.class";
+import { FirePup } from "../classes/pets/hidden/fire-pup.class";
+import { Hydra } from "../classes/pets/unicorn/tier-6/hydra.class";
+import { Behemoth } from "../classes/pets/unicorn/tier-6/behemoth.class";
+import { Monty } from "../classes/pets/hidden/monty.class";
+import { Rock } from "../classes/pets/hidden/rock.class";
+import { Basilisk } from "../classes/pets/custom/tier-1/basilisk.class";
+import { Daycrawler } from "../classes/pets/hidden/daycrawler.class";
+import { Nightcrawler } from "../classes/pets/custom/tier-2/nightcrawler.class";
+import { Sphinx } from "../classes/pets/custom/tier-2/sphinx.class";
+import { Chupacabra } from "../classes/pets/custom/tier-2/chupacabra.class";
+import { GoldenBeetle } from "../classes/pets/custom/tier-2/golden-beetle.class";
+import { FooDog } from "../classes/pets/custom/tier-3/foo-dog.class";
+import { Tree } from "../classes/pets/custom/tier-3/tree.class";
+import { SmallerSlime } from "../classes/pets/hidden/smaller-slime.class";
+import { Slime } from "../classes/pets/custom/tier-3/slime.class";
+import { Pegasus } from "../classes/pets/custom/tier-3/pegasus.class";
+import { DeerLord } from "../classes/pets/custom/tier-3/deer-lord.class";
+import { Fairy } from "../classes/pets/custom/tier-4/fairy.class";
+import { Rootling } from "../classes/pets/custom/tier-4/rootling.class";
+import { Anubis } from "../classes/pets/custom/tier-4/anubis.class";
+import { OldMouse } from "../classes/pets/custom/tier-4/old-mouse.class";
+import { Hippocampus } from "../classes/pets/custom/tier-4/hippocampus.class";
+import { Boitata } from "../classes/pets/custom/tier-5/boitata.class";
+import { Kappa } from "../classes/pets/custom/tier-5/kappa.class";
+import { Mimic } from "../classes/pets/custom/tier-5/mimic.class";
+import { Nurikabe } from "../classes/pets/custom/tier-5/nurikabe.class";
+import { Tandgnost } from "../classes/pets/custom/tier-5/tandgnost.class";
+import { Tandgrisner } from "../classes/pets/custom/tier-5/tandgrisner.class";
+import { GreatOne } from "../classes/pets/custom/tier-6/great-one.class";
+import { Leviathan } from "../classes/pets/custom/tier-6/leviathan.class";
+import { QuestingBeast } from "../classes/pets/custom/tier-6/questing-beast.class";
+import { Cockatrice } from "../classes/pets/custom/tier-6/cockatrice.class";
+import { ChimGoat } from "../classes/pets/hidden/chim-goat.class";
+import { ChimLion } from "../classes/pets/hidden/chim-lion.class";
+import { ChimSnake } from "../classes/pets/hidden/chim-snake.class";
+import { Head } from "../classes/pets/hidden/head.class";
+import { GoodDog } from "../classes/pets/hidden/good-dog.class";
 
 @Injectable({
     providedIn: 'root'
@@ -285,9 +383,72 @@ export class PetService {
     puppyPackPets: Map<number, string[]> = new Map();
     starPackPets: Map<number, string[]> = new Map();
     goldenPackPets: Map<number, string[]> = new Map();
+    unicornPackPets: Map<number, string[]> = new Map();
     customPackPets: Map<number, string[]> = new Map();
     playerCustomPackPets: Map<string, Map<number, string[]>> = new Map();
     allPets: Map<number, string[]> = new Map();
+    startOfBattlePets: string[] = [
+        "Beetle",
+        "Cone Snail",
+        "Frilled Dragon",
+        "Frog",
+        "Gecko",
+        "Goose",
+        "Hummigbird",
+        "Mosquito",
+        "Moth",
+        "Seahorse",
+        "Atlantic Puffin",
+        "Bat",
+        "Crab",
+        "Panda",
+        "Robin",
+        "Salamander",
+        "Wombat",
+        "Dodo",
+        "Dolphin",
+        "Eel",
+        "Meerkat",
+        "Pug",
+        "Woodpecker",
+        "Doberman",
+        "Hawk",
+        "Lynx",
+        "Pelican",
+        "Skunk",
+        "Whale",
+        "Armadillo",
+        "Crocodile",
+        "Hyena",
+        "Macaque",
+        "Sword Fish",
+        "Highland Cow",
+        "Leopard",
+        "Mantis Shrimp",
+        "Stegosaurus",
+        "Velociraptor",
+        "White Tiger",
+        "Alchemedes",
+        "Axehandle Hound",
+        "Barghest",
+        "Bunyip",
+        "Sneaky Egg",
+        "Tsuchinoko",
+        "Ogopogo",
+        "Thunderbird",
+        "Mana Hound",
+        "Mandrake",
+        "Kraken",
+        "Roc",
+        "Red Dragon",
+        "Salmon of Knowledge",
+        "Werewolf",
+        "Sleipnir",
+        "Basilisk",
+        "Tree",
+        "Anubis",
+        "Cockatrice"
+    ]
 
     constructor(private logService: LogService,
         private abilityService: AbilityService,
@@ -622,37 +783,140 @@ export class PetService {
             "Oyster"
         ])
 
+        this.unicornPackPets.set(1, [
+            "Baku",
+            "Axehandle Hound",
+            "Barghest",
+            "Tsuchinoko",
+            "Murmel",
+            "Alchemedes",
+            "Warg",
+            "Bunyip",
+            "Sneaky Egg",
+            "Cuddle Toad"
+        ])
+
+        this.unicornPackPets.set(2, [
+            "Ghost Kitten",
+            "Frost Wolf",
+            "Mothman",
+            "Drop Bear",
+            "Jackalope",
+            "Lucky Cat",
+            "Ogopogo",
+            "Thunderbird",
+            "Gargoyle",
+            "Bigfoot"
+        ])
+
+        this.unicornPackPets.set(3, [
+             "Skeleton Dog",
+             "Mandrake",
+             "Fur-Bearing Trout",
+             "Mana Hound",
+             "Calygreyhound",
+             "Brain Cramp",
+             "Minotaur",
+             "Wyvern",
+             "Ouroboros",
+             "Griffin"
+        ])
+
+        this.unicornPackPets.set(4, [
+            "Kraken",
+            "Visitor",
+            "Vampire Bat",
+            "Tiger Bug",
+            "Tatzelwurm",
+            "Cyclops",
+            "Chimera",
+            "Roc",
+            "Worm of Sand",
+            "Abomination"
+        ]);
+
+        this.unicornPackPets.set(5, [
+            "Red Dragon",
+            "Unicorn",
+            "Loveland Frogman",
+            "Salmon of Knowledge",
+            "Jersey Devil",
+            "Pixiu",
+            "Kitsune",
+            "Nessie",
+            "Bad Dog",
+            "Werewolf"
+        ]);
+
+        this.unicornPackPets.set(6, [
+            "Manticore",
+            "Phoenix",
+            "Quetzalcoatl",
+            "Team Spirit",
+            "Sleipnir",
+            "Sea Serpent",
+            "Yeti",
+            "Cerberus",
+            "Hydra",
+            "Behemoth"
+        ]);
+
         this.customPackPets.set(1, [
             "Frilled Dragon",
-            "Mouse"
+            "Mouse",
+            "Basilisk",
         ]);
         this.customPackPets.set(2, [
-            "Wombat"
+            "Wombat",
+            "Nightcrawler",
+            "Sphinx",
+            "Chupacabra",
+            "Golden Beetle"
         ]);
         this.customPackPets.set(3, [
             "Aardvark",
             "Bear",
             "Emperor Tamarin",
             "Porcupine",
-            "Wasp"
+            "Wasp",
+            "Foo Dog",
+            "Tree",
+            "Slime",
+            "Pegasus",
+            "Deer Lord"
         ]);
         this.customPackPets.set(4, [
             "Jerboa",
             "Dragonfly",
             "Lynx",
-            "Seagull"
+            "Seagull",
+            "Fairy",
+            "Rootling",
+            "Anubis",
+            "Old Mouse",
+            "Hippocampus"
         ]);
         this.customPackPets.set(5, [
             "Alpaca",
             "Hyena",
             "Moose",
-            "Raccoon"
+            "Raccoon",
+            "Boitata",
+            "Kappa",
+            "Mimic",
+            "Nurikabe",
+            "Tandgnost",
+            "Tandgrisner"
         ]);
         this.customPackPets.set(6, [
             "Lioness",
             "Tapir",
             "Walrus",
-            "White Tiger"
+            "White Tiger",
+            "Great One",
+            "Leviathan",
+            "Questing Beast",
+            "Cockatrice"
         ]);
 
         this.setAllPets();
@@ -676,6 +940,9 @@ export class PetService {
         for (let [tier, pets] of this.goldenPackPets) {
           this.allPets.get(tier).push(...pets);
         }
+        for (let [tier, pets] of this.unicornPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
         // remove duplicates from each tier
         for (let [tier, pets] of this.allPets) {
           this.allPets.set(tier, [...new Set(pets)]);
@@ -685,1452 +952,1971 @@ export class PetService {
     createPet(petForm: PetForm, parent: Player): Pet {
         switch(petForm.name) {
             case 'Ant':
-                return new Ant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cricket':
-                return new Cricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fish':
-                return new Fish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Fish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Horse':
-                return new Horse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Horse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mosquito':
-                return new Mosquito(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mosquito(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Duck':
-                return new Duck(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Duck(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beaver':
-                return new Beaver(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Beaver(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Otter':
-                return new Otter(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Otter(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pig':
-                return new Pig(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pig(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mouse':
-                return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pigeon':
-                return new Pigeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pigeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 2
             case 'Snail':
-                return new Snail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Snail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crab':
-                return new Crab(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crab(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Swan':
-                return new Swan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Swan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rat':
-                return new Rat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hedgehog':
-                return new Hedgehog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hedgehog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Peacock':
-                return new Peacock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Peacock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flamingo':
-                return new Flamingo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Flamingo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Worm':
-                return new Worm(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Worm(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Kangaroo':
-                return new Kangaroo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Kangaroo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Spider':
-                return new Spider(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Spider(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dodo':
-                return new Dodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Badger':
-                return new Badger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Badger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dolphin':
-                return new Dolphin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dolphin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Giraffe':
-                return new Giraffe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Giraffe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Elephant':
-                return new Elephant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Elephant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Camel':
-                return new Camel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Camel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rabbit':
-                return new Rabbit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rabbit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ox':
-                return new Ox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dog':
-                return new Dog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sheep':
-                return new Sheep(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Sheep(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // tier 4
             case 'Skunk':
-                return new Skunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Skunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hippo':
-                return new Hippo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hippo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bison':
-                return new Bison(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bison(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blowfish':
-                return new Blowfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Blowfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Turtle':
-                return new Turtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Turtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Squirrel':
-                return new Squirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Squirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Penguin':
-                return new Penguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Penguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Deer':
-                return new Deer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Deer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Whale':
-                return new Whale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Whale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Parrot':
-                return new Parrot(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Parrot(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 5
             case 'Scorpion':
-                return new Scorpion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Scorpion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crocodile':
-                return new Crocodile(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crocodile(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rhino':
-                return new Rhino(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rhino(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Monkey':
-                return new Monkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Monkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Armadillo':
-                return new Armadillo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Armadillo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cow':
-                return new Cow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Seal':
-                return new Seal(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Seal(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Rooster':
-                return new Rooster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Rooster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shark':
-                return new Shark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Shark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Turkey':
-                return new Turkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Turkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 6
             case 'Leopard':
-                return new Leopard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Leopard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Boar':
-                return new Boar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Boar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tiger':
-                return new Tiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wolverine':
-                return new Wolverine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wolverine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Gorilla':
-                return new Gorilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Gorilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dragon':
-                return new Dragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mammoth':
-                return new Mammoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mammoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cat':
-                return new Cat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Snake':
-                return new Snake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Snake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fly':
-                return new Fly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Fly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // Puppy
             // Tier 1
             case 'Moth':
-                return new Moth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Moth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bluebird':
-                return new Bluebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bluebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chinchilla':
-                return new Chinchilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chinchilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beetle':
-                return new Beetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Beetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ladybug':
-                return new Ladybug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ladybug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chipmunk':
-                return new Chipmunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chipmunk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Gecko':
-                return new Gecko(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Gecko(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ferret':
-                return new Ferret(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ferret(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // tier 2
             case 'Frigatebird':
-                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Robin':
-                return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bat':
-                return new Bat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dromedary':
-                return new Dromedary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dromedary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shrimp':
-                return new Shrimp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Shrimp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Toucan':
-                return new Toucan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Toucan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beluga Sturgeon':
-                return new BelugaSturgeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BelugaSturgeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tabby Cat':
-                return new TabbyCat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new TabbyCat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mandrill':
-                return new Mandrill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mandrill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lemur':
-                return new Lemur(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lemur(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hoopoe Bird':
-                return new HoopoeBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HoopoeBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tropical Fish':
-                return new TropicalFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new TropicalFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hatching Chick':
-                return new HatchingChick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HatchingChick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goldfish':
-                return new Goldfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Goldfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Owl':
-                return new Owl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Owl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mole':
-                return new Mole(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mole(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Raccoon':
-                return new Raccoon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Raccoon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flying Squirrel':
-                return new FlyingSquirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FlyingSquirrel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pangolin':
-                return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Puppy':
-                return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hare':
-                return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // tier 4
             case 'Microbe':
-                return new Microbe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Microbe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lobster':
-                return new Lobster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lobster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Buffalo':
-                return new Buffalo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Buffalo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Llama':
-                return new Llama(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Llama(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Caterpillar':
-                return new Caterpillar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Caterpillar(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Doberman':
-                return new Doberman(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Doberman(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tahr':
-                return new Tahr(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tahr(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Whale Shark':
-                return new WhaleShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new WhaleShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chameleon':
-                return new Chameleon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chameleon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Gharial':
-                return new Gharial(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Gharial(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // tier 5
             case 'Stonefish':
-                return new Stonefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stonefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Poodle':
-                return new Poodle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Poodle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goat':
-                return new Goat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Goat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chicken':
-                return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Eagle':
-                return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Panther':
-                return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Axolotl':
-                return new Axolotl(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Axolotl(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Snapping Turtle':
-                return new SnappingTurtle(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SnappingTurtle(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mosasaurus':
-                return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'String Ray':
-                return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 6
             case 'Mantis Shrimp':
-                return new MantisShrimp(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new MantisShrimp(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lionfish':
-                return new Lionfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lionfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tyrannosaurus':
-                return new Tyrannosaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tyrannosaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Octopus':
-                return new Octopus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Octopus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Anglerfish':
-                return new Anglerfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Anglerfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sauropod':
-                return new Sauropod(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Sauropod(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Elephant Seal':
-                return new ElephantSeal(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ElephantSeal(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Puma':
-                return new Puma(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Puma(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mongoose':
-                return new Mongoose(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Mongoose(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
     
             // Star
             // Tier 1
             case 'Pillbug':
-                return new Pillbug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pillbug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Duckling':
-                return new Duckling(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Duckling(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cockroach':
-                return new Cockroach(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cockroach(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Frog':
-                return new Frog(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Frog(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Seahorse':
-                return new Seahorse(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Seahorse(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Iguana':
-                return new Iguana(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Iguana(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hummingbird':
-                return new Hummingbird(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hummingbird(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Marmoset':
-                return new Marmoset(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Marmoset(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Kiwi':
-                return new Kiwi(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Kiwi(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 2
             case 'Koala':
-                return new Koala(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Koala(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Yak':
-                return new Yak(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Yak(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Salamander':
-                return new Salamander(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Salamander(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Panda':
-                return new Panda(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Panda(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Guinea Pig':
-                return new GuineaPig(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GuineaPig(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Jellyfish':
-                return new Jellyfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Jellyfish(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pug':
-                return new Pug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pug(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Atlantic Puffin':
-                return new AtlanticPuffin(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new AtlanticPuffin(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dove':
-                return new Dove(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dove(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stork':
-                return new Stork(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stork(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 3
             case 'Leech':
-                return new Leech(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Leech(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Woodpecker':
-                return new Woodpecker(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Woodpecker(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Toad':
-                return new Toad(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Toad(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Starfish':
-                return new Starfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Starfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Clownfish':
-                return new Clownfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Clownfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blobfish':
-                return new Blobfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Blobfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cabybara':
-                return new Cabybara(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cabybara(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Okapi':
-                return new Okapi(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Okapi(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cassowary':
-                return new Cassowary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cassowary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 4
             case 'Orangutang':
-                return new Orangutang(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Orangutang(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Eel':
-                return new Eel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Eel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hawk':
-                return new Hawk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hawk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Platypus':
-                return new Platypus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Platypus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Praying Mantis':
-                return new PrayingMantis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PrayingMantis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crow':
-                return new Crow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Donkey':
-                return new Donkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Donkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pelican':
-                return new Pelican(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pelican(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Anteater':
-                return new Anteater(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Anteater(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 5
             case 'Sword Fish':
-                return new SwordFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SwordFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Polar Bear':
-                return new PolarBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PolarBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Siberian Husky':
-                return new SiberianHuskey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SiberianHuskey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lion':
-                return new Lion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Triceratops':
-                return new Triceratops(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Triceratops(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Zebra':
-                return new Zebra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Zebra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fox':
-                return new Fox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Fox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hamster':
-                return new Hamster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hamster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shoebill':
-                return new Shoebill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Shoebill(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Vulture':
-                return new Vulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Vulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 6
             case 'Komodo':
-                return new Komodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Komodo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ostrich':
-                return new Ostrich(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ostrich(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Reindeer':
-                return new Reindeer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Reindeer(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stegosaurus':
-                return new Stegosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stegosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Piranha':
-                return new Piranha(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Piranha(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hammerhead Shark':
-                return new HammerheadShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HammerheadShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Velociraptor':
-                return new Velociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Velociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sabertooth Tiger':
-                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Orca':
-                return new Orca(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Orca(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Spinosaurus':
-                return new Spinosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Spinosaurus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Golden
             // Tier 1
             case 'Bulldog':
-                return new Bulldog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bulldog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Groundhog':
-                return new Groundhog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Groundhog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cone Snail':
-                return new ConeSnail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ConeSnail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goose':
-                return new Goose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Goose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pied Tamarin':
-                return new PiedTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PiedTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Opossum':
-                return new Opossum(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Opossum(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Silkmoth':
-                return new Silkmoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Silkmoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Magpie':
-                return new Magpie(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Magpie(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 2
             case 'Hercules Beetle':
-                return new HerculesBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HerculesBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stoat':
-                return new Stoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Stoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Black Necked Stilt':
-                return new BlackNeckedStilt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BlackNeckedStilt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Squid':
-                return new Squid(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Squid(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sea Urchin':
-                return new SeaUrchin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SeaUrchin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Door Head Ant':
-                return new DoorHeadAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new DoorHeadAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lizard':
-                return new Lizard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lizard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sea Turtle':
-                return new SeaTurtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SeaTurtle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'African Penguin':
-                return new AfricanPenguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new AfricanPenguin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             
             // Tier 3
             case 'Musk Ox':
-                return new MuskOx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new MuskOx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flea':
-                return new Flea(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Flea(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Royal Flycatcher':
-                return new RoyalFlycatcher(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new RoyalFlycatcher(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Surgeon Fish':
-                return new SurgeonFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SurgeonFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Weasel':
-                return new Weasel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Weasel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Guineafowl':
-                return new Guineafowl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Guineafowl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Betta Fish':
-                return new BettaFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BettaFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Meerkat':
-                return new Meerkat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Meerkat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Flying Fish':
-                return new FlyingFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FlyingFish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Baboon':
-                return new Baboon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Baboon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Osprey':
-                return new Osprey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Osprey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 4
             case 'Manatee':
-                return new Manatee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Manatee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cuttlefish':
-                return new Cuttlefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cuttlefish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Egyptian Vulture':
-                return new EgyptianVulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new EgyptianVulture(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Saiga Antelope':
-                return new SaigaAntelope(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SaigaAntelope(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sealion':
-                return new Sealion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Sealion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Vaquita':
-                return new Vaquita(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Vaquita(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Slug':
-                return new Slug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Slug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Poison Dart Frog':
-                return new PoisonDartFrog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new PoisonDartFrog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Secretary Bird':
-                return new SecretaryBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SecretaryBird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Falcon':
-                return new Falcon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Falcon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Manta Ray':
-                return new MantaRay(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new MantaRay(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 5
             case 'Macaque':
-                return new Macaque(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Macaque(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nyala':
-                return new Nyala(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Nyala(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nurse Shark':
-                return new NurseShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new NurseShark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Beluga Whale':
-                return new BelugaWhale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment, petForm.belugaSwallowedPet);
+                return new BelugaWhale(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.belugaSwallowedPet);
             case 'Wolf':
-                return new Wolf(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wolf(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Silver Fox':
-                return new SilverFox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SilverFox(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fire Ant':
-                return new FireAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FireAnt(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cockatoo':
-                return new Cockatoo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cockatoo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blue Ringed Octopus':
-                return new BlueRingedOctopus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BlueRingedOctopus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Crane':
-                return new Crane(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Crane(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Emu':
-                return new Emu(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Emu(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 6
             case 'Wildebeast':
-                return new Wildebeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wildebeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Highland Cow':
-                return new HighlandCow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new HighlandCow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Catfish':
-                return new Catfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Catfish(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pteranodon':
-                return new Pteranodon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Pteranodon(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Warthog':
-                return new Warthog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Warthog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Cobra':
-                return new Cobra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Cobra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Grizzly Bear':
-                return new GrizzlyBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GrizzlyBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'German Shephard':
-                return new GermanShephard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GermanShephard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bird of Paradise':
-                return new BirdOfParadise(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new BirdOfParadise(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Oyster':
-                return new Oyster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Oyster(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Custom Pets
             case 'Jerboa':
-                return new Jerboa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Jerboa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Frilled Dragon':
-                return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wombat':
-                return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Aardvark':
-                return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bear':
-                return new Bear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Emperor Tamarin':
-                return new EmperorTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new EmperorTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Porcupine':
-                return new Porcupine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Porcupine(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wasp':
-                return new Wasp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Wasp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dragonfly':
-                return new Dragonfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Dragonfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lynx':
-                return new Lynx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lynx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Seagull':
-                return new Seagull(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Seagull(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Alpaca':
-                return new Alpaca(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Alpaca(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hyena':
-                return new Hyena(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Hyena(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Moose':
-                return new Moose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Moose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lioness':
-                return new Lioness(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Lioness(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tapir':
-                return new Tapir(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Tapir(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Walrus':
-                return new Walrus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Walrus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'White Tiger':
-                return new WhiteTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new WhiteTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Basilisk':
+                return new Basilisk(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Nightcrawler':
+                return new Nightcrawler(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sphinx':
+                return new Sphinx(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chupacabra':
+                return new Chupacabra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Golden Beetle':
+                return new GoldenBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Foo Dog':
+                return new FooDog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tree':
+                return new Tree(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Slime':
+                return new Slime(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.battlesFought);
+            case 'Pegasus':
+                return new Pegasus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Deer Lord':
+                return new DeerLord(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Fairy':
+                return new Fairy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Rootling':
+                return new Rootling(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Anubis':
+                return new Anubis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Old Mouse':
+                return new OldMouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Hippocampus':
+                return new Hippocampus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Boitata':
+                return new Boitata(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Kappa':
+                return new Kappa(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Mimic':
+                return new Mimic(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Nurikabe':
+                return new Nurikabe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tandgnost':
+                return new Tandgnost(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tandgrisner':
+                return new Tandgrisner(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Great One':
+                return new GreatOne(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Leviathan':
+                return new Leviathan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Questing Beast':
+                return new QuestingBeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cockatrice':
+                return new Cockatrice(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+
 
             // Token Pets
             case 'Bee':
-                return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bus':
-                return new Bus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Bus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Butterfly':
-                return new Butterfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Butterfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chick':
-                return new Chick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Chick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dirty Ray':
-                return new DirtyRat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new DirtyRat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Golden Retriever':
-                return new GoldenRetriever(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new GoldenRetriever(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Lizard Tail':
-                return new LizardTail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new LizardTail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Nest':
-                return new Nest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Nest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Ram':
-                return new Ram(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new Ram(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Smaller Slug':
-                return new SmallerSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SmallerSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Smallest Slug':
-                return new SmallestSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new SmallestSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Zombie Cricket':
-                return new ZombieCricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ZombieCricket(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Zombie Fly':
-                return new ZombieFly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.exp, petForm.equipment);
+                return new ZombieFly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cracked Egg':
+                return new CrackedEgg(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Nessie?':
+                return new NessieQ(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Young Phoenix':
+                return new YoungPhoenix(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Fire Pup':
+                return new FirePup(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Monty':
+                return new Monty(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Rock':
+                return new Rock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Daycrawler':
+                return new Daycrawler(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Smaller Slime':
+                return new SmallerSlime(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chim-Goat':
+                return new ChimGoat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chim-Lion':
+                return new ChimLion(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chim-Snake':
+                return new ChimSnake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Head':
+                return new Head(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Good Dog':
+                return new GoodDog(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            
+                // Unicorn Pack
+            // Tier 1
+
+            case 'Baku':
+                return new Baku(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Axehandle Hound':
+                return new AxehandleHound(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Barghest':
+                return new Barghest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tsuchinoko':
+                return new Tsuchinoko(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);    
+            case 'Murmel':
+                return new Murmel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Alchemedes':
+                return new Alchemedes(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Warg':
+                return new Warg(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Bunyip':
+                return new Bunyip(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sneaky Egg':
+                return new SneakyEgg(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cuddle Toad':
+                return new CuddleToad(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            // Tier 2
+            case 'Ghost Kitten':
+                return new GhostKitten(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Frost Wolf':
+                return new FrostWolf(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Mothman':
+                return new Mothman(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Drop Bear':
+                return new DropBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Jackalope':
+                return new Jackalope(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Lucky Cat':
+                return new LuckyCat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Ogopogo':
+                return new Ogopogo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Thunderbird':
+                return new Thunderbird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Gargoyle':
+                return new Gargoyle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Bigfoot':
+                return new Bigfoot(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            
+            // Tier 3
+            case 'Skeleton Dog':
+                return new SkeletonDog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Mandrake':
+                return new Mandrake(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Fur-Bearing Trout':
+                return new FurBearingTrout(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Mana Hound':
+                return new ManaHound(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Calygreyhound':
+                return new Calygreyhound(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Brain Cramp':
+                return new BrainCramp(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Minotaur':
+                return new Minotaur(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Wyvern':
+                return new Wyvern(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Ouroboros':
+                return new Ouroboros(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Griffin':
+                return new Griffin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+
+            // Tier 4
+            case 'Kraken':
+                return new Kraken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Visitor':
+                return new Visitor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Vampire Bat':
+                return new VampireBat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tiger Bug':
+                return new TigerBug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tatzelwurm':
+                return new Tatzelwurm(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cyclops':
+                return new Cyclops(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Chimera':
+                return new Chimera(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Roc':
+                return new Roc(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Worm of Sand':
+                return new WormOfSand(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Abomination':
+                return new Abomination(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.abominationSwallowedPet1, petForm.abominationSwallowedPet2, petForm.abominationSwallowedPet3);
+
+            // Tier 5
+            case 'Red Dragon':
+                return new RedDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Unicorn':
+                return new Unicorn(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Loveland Frogman':
+                return new LovelandFrogman(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Salmon of Knowledge':
+                return new SalmonOfKnowledge(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Jersey Devil':
+                return new JerseyDevil(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Pixiu':
+                return new Pixiu(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Kitsune':
+                return new Kitsune(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Nessie':
+                return new Nessie(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Bad Dog':
+                return new BadDog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Werewolf':
+                return new Werewolf(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
-        
+            // Tier 6
+            case 'Manticore':
+                return new Manticore(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Phoenix':
+                return new Phoenix(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Quetzalcoatl':
+                return new Quetzalcoatl(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Team Spirit':
+                return new TeamSpirit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sleipnir':
+                return new Sleipnir(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sea Serpent':
+                return new SeaSerpent(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Yeti':
+                return new Yeti(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cerberus':
+                return new Cerberus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Hydra':
+                return new Hydra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Behemoth':
+                return new Behemoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+
         }
     }
 
     createDefaultVersionOfPet(pet: Pet, attack: number = null, health: number = null) {
         let newPet;
         if (pet instanceof Ant) {
-            newPet = new Ant(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ant(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bee) {
-            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cricket) {
-            newPet = new Cricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cricket(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Fish) {
-            newPet = new Fish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Fish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Horse) {
-            newPet = new Horse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Horse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mosquito) {
-            newPet = new Mosquito(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mosquito(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ZombieCricket) {
-            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Duck) {
-            newPet = new Duck(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Duck(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Beaver) {
-            newPet = new Beaver(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Beaver(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Otter) {
-            newPet = new Otter(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Otter(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pig) {
-            newPet = new Pig(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pig(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mouse) {
-            newPet = new Mouse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mouse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pigeon) {
-            newPet = new Pigeon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pigeon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // tier 2
         if (pet instanceof Crab) {
-            newPet = new Crab(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crab(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Swan) {
-            newPet = new Swan(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Swan(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rat) {
-            newPet = new Rat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hedgehog) {
-            newPet = new Hedgehog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hedgehog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Peacock) {
-            newPet = new Peacock(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Peacock(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Flamingo) {
-            newPet = new Flamingo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Flamingo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Worm) {
-            newPet = new Worm(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Worm(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Kangaroo) {
-            newPet = new Kangaroo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Kangaroo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Spider) {
-            newPet = new Spider(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Spider(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dodo) {
-            newPet = new Dodo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dodo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Badger) {
-            newPet = new Badger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Badger(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dolphin) {
-            newPet = new Dolphin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dolphin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Giraffe) {
-            newPet = new Giraffe(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Giraffe(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Elephant) {
-            newPet = new Elephant(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Elephant(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Camel) {
-            newPet = new Camel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Camel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rabbit) {
-            newPet = new Rabbit(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rabbit(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ox) {
-            newPet = new Ox(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ox(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dog) {
-            newPet = new Dog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sheep) {
-            newPet = new Sheep(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sheep(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         
         // tier 4
         if (pet instanceof Skunk) {
-            newPet = new Skunk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Skunk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hippo) {
-            newPet = new Hippo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hippo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bison) {
-            newPet = new Bison(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bison(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Blowfish) {
-            newPet = new Blowfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Blowfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Turtle) {
-            newPet = new Turtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Turtle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Squirrel) {
-            newPet = new Squirrel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Squirrel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Penguin) {
-            newPet = new Penguin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Penguin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Deer) {
-            newPet = new Deer(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Deer(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Whale) {
-            newPet = new Whale(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Whale(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Parrot) {
-            newPet = new Parrot(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Parrot(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // tier 5
 
         if (pet instanceof Scorpion) {
-            newPet = new Scorpion(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Scorpion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Crocodile) {
-            newPet = new Crocodile(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crocodile(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rhino) {
-            newPet = new Rhino(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rhino(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Monkey) {
-            newPet = new Monkey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Monkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Armadillo) {
-            newPet = new Armadillo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Armadillo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cow) {
-            newPet = new Cow(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Seal) {
-            newPet = new Seal(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Seal(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rooster) {
-            newPet = new Rooster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rooster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Shark) {
-            newPet = new Shark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Shark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Turkey) {
-            newPet = new Turkey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Turkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // tier 6
         if (pet instanceof Leopard) {
-            newPet = new Leopard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Leopard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Boar) {
-            newPet = new Boar(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Boar(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tiger) {
-            newPet = new Tiger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tiger(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wolverine) {
-            newPet = new Wolverine(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wolverine(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gorilla) {
-            newPet = new Gorilla(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gorilla(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dragon) {
-            newPet = new Dragon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dragon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mammoth) {
-            newPet = new Mammoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mammoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cat) {
-            newPet = new Cat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Snake) {
-            newPet = new Snake(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Snake(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Fly) {
-            newPet = new Fly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Fly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Puppy
         // Tier 1
         if (pet instanceof Moth) {
-            newPet = new Moth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Moth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bluebird) {
-            newPet = new Bluebird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bluebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chinchilla) {
-            newPet = new Chinchilla(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chinchilla(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Beetle) {
-            newPet = new Beetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Beetle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ladybug) {
-            newPet = new Ladybug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ladybug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chipmunk) {
-            newPet = new Chipmunk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chipmunk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gecko) {
-            newPet = new Gecko(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gecko(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ferret) {
-            newPet = new Ferret(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ferret(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 2
         if (pet instanceof Frigatebird) {
-            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Robin) {
-            newPet = new Robin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Robin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bat) {
-            newPet = new Bat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dromedary) {
-            newPet = new Dromedary(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dromedary(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Shrimp) {
-            newPet = new Shrimp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Shrimp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Toucan) {
-            newPet = new Toucan(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Toucan(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BelugaSturgeon) {
-            newPet = new BelugaSturgeon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BelugaSturgeon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof TabbyCat) {
-            newPet = new TabbyCat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new TabbyCat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mandrill) {
-            newPet = new Mandrill(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mandrill(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lemur) {
-            newPet = new Lemur(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lemur(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof HoopoeBird) {
-            newPet = new HoopoeBird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HoopoeBird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof TropicalFish) {
-            newPet = new TropicalFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new TropicalFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HatchingChick) {
-            newPet = new HatchingChick(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HatchingChick(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Goldfish) {
-            newPet = new Goldfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Goldfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Owl) {
-            newPet = new Owl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Owl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mole) {
-            newPet = new Mole(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mole(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Raccoon) {
-            newPet = new Raccoon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Raccoon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FlyingSquirrel) {
-            newPet = new FlyingSquirrel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FlyingSquirrel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pangolin) {
-            newPet = new Pangolin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pangolin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Puppy) {
-            newPet = new Puppy(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Puppy(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hare) {
-            newPet = new Hare(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hare(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         
         // Tier 4
         if (pet instanceof Microbe) {
-            newPet = new Microbe(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Microbe(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lobster) {
-            newPet = new Lobster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lobster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Buffalo) {
-            newPet = new Buffalo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Buffalo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Llama) {
-            newPet = new Llama(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Llama(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Caterpillar) {
-            newPet = new Caterpillar(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Caterpillar(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Doberman) {
-            newPet = new Doberman(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Doberman(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tahr) {
-            newPet = new Tahr(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tahr(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof WhaleShark) {
-            newPet = new WhaleShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new WhaleShark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chameleon) {
-            newPet = new Chameleon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chameleon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gharial) {
-            newPet = new Gharial(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gharial(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof Stonefish) {
-            newPet = new Stonefish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stonefish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Poodle) {
-            newPet = new Poodle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Poodle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Goat) {
-            newPet = new Goat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Goat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chicken) {
-            newPet = new Chicken(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chicken(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Eagle) {
-            newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Panther) {
-            newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Axolotl) {
-            newPet = new Axolotl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Axolotl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SnappingTurtle) {
-            newPet = new SnappingTurtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SnappingTurtle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mosasaurus) {
-            newPet = new Mosasaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mosasaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof StringRay) {
-            newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof MantisShrimp) {
-            newPet = new MantisShrimp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new MantisShrimp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lionfish) {
-            newPet = new Lionfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lionfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tyrannosaurus) {
-            newPet = new Tyrannosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tyrannosaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Octopus) {
-            newPet = new Octopus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Octopus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Anglerfish) {
-            newPet = new Anglerfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Anglerfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sauropod) {
-            newPet = new Sauropod(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sauropod(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ElephantSeal) {
-            newPet = new ElephantSeal(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ElephantSeal(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Puma) {
-            newPet = new Puma(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Puma(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mongoose) {
-            newPet = new Mongoose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mongoose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Star
         // Tier 1
         if (pet instanceof Pillbug) {
-            newPet = new Pillbug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pillbug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Duckling) {
-            newPet = new Duckling(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Duckling(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cockroach) {
-            newPet = new Cockroach(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cockroach(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Kiwi) {
-            newPet = new Kiwi(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Kiwi(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Frog) {
-            newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Seahorse) {
-            newPet = new Seahorse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Seahorse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Iguana) {
-            newPet = new Iguana(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Iguana(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hummingbird) {
-            newPet = new Hummingbird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hummingbird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Marmoset) {
-            newPet = new Marmoset(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Marmoset(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
 
         // Tier 2
         if (pet instanceof Koala) {
-            newPet = new Koala(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Koala(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Yak) {
-            newPet = new Yak(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Yak(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Salamander) {
-            newPet = new Salamander(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Salamander(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Panda) {
-            newPet = new Panda(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Panda(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GuineaPig) {
-            newPet = new GuineaPig(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GuineaPig(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Jellyfish) {
-            newPet = new Jellyfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Jellyfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pug) {
-            newPet = new Pug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof AtlanticPuffin) {
-            newPet = new AtlanticPuffin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new AtlanticPuffin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dove) {
-            newPet = new Dove(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dove(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Stork) {
-            newPet = new Stork(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stork(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof Leech) {
-            newPet = new Leech(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Leech(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Woodpecker) {
-            newPet = new Woodpecker(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Woodpecker(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Toad) {
-            newPet = new Toad(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Toad(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Starfish) {
-            newPet = new Starfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Starfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Clownfish) {
-            newPet = new Clownfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Clownfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Blobfish) {
-            newPet = new Blobfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Blobfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Cabybara) {
-            newPet = new Cabybara(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cabybara(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Okapi) {
-            newPet = new Okapi(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Okapi(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Cassowary) {
-            newPet = new Cassowary(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cassowary(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
 
         // Tier 4
         if (pet instanceof Orangutang) {
-            newPet = new Orangutang(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Orangutang(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Eel) {
-            newPet = new Eel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Eel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Hawk) {
-            newPet = new Hawk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hawk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Platypus) {
-            newPet = new Platypus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Platypus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof PrayingMantis) {
-            newPet = new PrayingMantis(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PrayingMantis(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Crow) {
-            newPet = new Crow(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Donkey) {
-            newPet = new Donkey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Donkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pelican) {
-            newPet = new Pelican(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pelican(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Anteater) {
-            newPet = new Anteater(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Anteater(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof SwordFish) {
-            newPet = new SwordFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SwordFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PolarBear) {
-            newPet = new PolarBear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PolarBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SiberianHuskey) {
-            newPet = new SiberianHuskey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SiberianHuskey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lion) {
-            newPet = new Lion(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Triceratops) {
-            newPet = new Triceratops(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Triceratops(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Zebra) {
-            newPet = new Zebra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Zebra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Fox) {
-            newPet = new Fox(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Fox(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hamster) {
-            newPet = new Hamster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hamster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Shoebill) {
-            newPet = new Shoebill(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Shoebill(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Vulture) {
-            newPet = new Vulture(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Vulture(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof Komodo) {
-            newPet = new Komodo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Komodo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ostrich) {
-            newPet = new Ostrich(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ostrich(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Reindeer) {
-            newPet = new Reindeer(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Reindeer(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Stegosaurus) {
-            newPet = new Stegosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stegosaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Piranha) {
-            newPet = new Piranha(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Piranha(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HammerheadShark) {
-            newPet = new HammerheadShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HammerheadShark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Velociraptor) {
-            newPet = new Velociraptor(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Velociraptor(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SabertoothTiger) {
-            newPet = new SabertoothTiger(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SabertoothTiger(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Orca) {
-            newPet = new Orca(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Orca(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Spinosaurus) {
-            newPet = new Spinosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Spinosaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Golden
         // Tier 1
         if (pet instanceof Bulldog) {
-            newPet = new Bulldog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bulldog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Groundhog) {
-            newPet = new Groundhog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Groundhog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ConeSnail) {
-            newPet = new ConeSnail(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ConeSnail(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Goose) {
-            newPet = new Goose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Goose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PiedTamarin) {
-            newPet = new PiedTamarin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PiedTamarin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Opossum) {
-            newPet = new Opossum(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Opossum(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Silkmoth) {
-            newPet = new Silkmoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Silkmoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Magpie) {
-            newPet = new Magpie(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Magpie(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 2
         if (pet instanceof HerculesBeetle) {
-            newPet = new HerculesBeetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HerculesBeetle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Stoat) {
-            newPet = new Stoat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stoat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BlackNeckedStilt) {
-            newPet = new BlackNeckedStilt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BlackNeckedStilt(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Squid) {
-            newPet = new Squid(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Squid(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SeaUrchin) {
-            newPet = new SeaUrchin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SeaUrchin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof DoorHeadAnt) {
-            newPet = new DoorHeadAnt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new DoorHeadAnt(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lizard) {
-            newPet = new Lizard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lizard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SeaTurtle) {
-            newPet = new SeaTurtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SeaTurtle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof AfricanPenguin) {
-            newPet = new AfricanPenguin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new AfricanPenguin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof MuskOx) {
-            newPet = new MuskOx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new MuskOx(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Flea) {
-            newPet = new Flea(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Flea(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof RoyalFlycatcher) {
-            newPet = new RoyalFlycatcher(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new RoyalFlycatcher(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SurgeonFish) {
-            newPet = new SurgeonFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SurgeonFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Weasel) {
-            newPet = new Weasel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Weasel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Guineafowl) {
-            newPet = new Guineafowl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Guineafowl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BettaFish) {
-            newPet = new BettaFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BettaFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Meerkat) {
-            newPet = new Meerkat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Meerkat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FlyingFish) {
-            newPet = new FlyingFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FlyingFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Baboon) {
-            newPet = new Baboon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Baboon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Osprey) {
-            newPet = new Osprey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Osprey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 4
         if (pet instanceof Manatee) {
-            newPet = new Manatee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Manatee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cuttlefish) {
-            newPet = new Cuttlefish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cuttlefish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof EgyptianVulture) {
-            newPet = new EgyptianVulture(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new EgyptianVulture(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SaigaAntelope) {
-            newPet = new SaigaAntelope(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SaigaAntelope(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sealion) {
-            newPet = new Sealion(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sealion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Vaquita) {
-            newPet = new Vaquita(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Vaquita(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Slug) {
-            newPet = new Slug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Slug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PoisonDartFrog) {
-            newPet = new PoisonDartFrog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PoisonDartFrog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SecretaryBird) {
-            newPet = new SecretaryBird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SecretaryBird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Falcon) {
-            newPet = new Falcon(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Falcon(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof MantaRay) {
-            newPet = new MantaRay(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new MantaRay(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof Macaque) {
-            newPet = new Macaque(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Macaque(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Nyala) {
-            newPet = new Nyala(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Nyala(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof NurseShark) {
-            newPet = new NurseShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new NurseShark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BelugaWhale) {
-            newPet = new BelugaWhale(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BelugaWhale(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wolf) {
-            newPet = new Wolf(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wolf(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SilverFox) {
-            newPet = new SilverFox(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SilverFox(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FireAnt) {
-            newPet = new FireAnt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FireAnt(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cockatoo) {
-            newPet = new Cockatoo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cockatoo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BlueRingedOctopus) {
-            newPet = new BlueRingedOctopus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BlueRingedOctopus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Crane) {
-            newPet = new Crane(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crane(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Emu) {
-            newPet = new Emu(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Emu(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof Wildebeast) {
-            newPet = new Wildebeast(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wildebeast(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HighlandCow) {
-            newPet = new HighlandCow(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HighlandCow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Catfish) {
-            newPet = new Catfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Catfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pteranodon) {
-            newPet = new Pteranodon(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pteranodon(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Warthog) {
-            newPet = new Warthog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Warthog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cobra) {
-            newPet = new Cobra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cobra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GrizzlyBear) {
-            newPet = new GrizzlyBear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GrizzlyBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GermanShephard) {
-            newPet = new GermanShephard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GermanShephard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BirdOfParadise) {
-            newPet = new BirdOfParadise(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BirdOfParadise(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Oyster) {
-            newPet = new Oyster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Oyster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Token pets
         if (pet instanceof Bee) {
-            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bus) {
-            newPet = new Bus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Butterfly) {
-            newPet = new Butterfly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Butterfly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chick) {
-            newPet = new Chick(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chick(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof DirtyRat) {
-            newPet = new DirtyRat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new DirtyRat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GoldenRetriever) {
-            newPet = new GoldenRetriever(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GoldenRetriever(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof LizardTail) {
-            newPet = new LizardTail(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new LizardTail(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Nest) {
-            newPet = new Nest(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Nest(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ram) {
-            newPet = new Ram(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ram(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SmallerSlug) {
-            newPet = new SmallerSlug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SmallerSlug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SmallestSlug) {
-            newPet = new SmallestSlug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SmallestSlug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ZombieCricket) {
-            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ZombieFly) {
-            newPet = new ZombieFly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ZombieFly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof CrackedEgg) {
+            newPet = new CrackedEgg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof NessieQ) {
+            newPet = new NessieQ(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof YoungPhoenix) {
+            newPet = new YoungPhoenix(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof FirePup) {
+            newPet = new FirePup(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Monty) {
+            newPet = new Monty(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Rock) {
+            newPet = new Rock(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Daycrawler) {
+            newPet = new Daycrawler(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof SmallerSlime) {
+            newPet = new SmallerSlime(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ChimGoat) {
+            newPet = new ChimGoat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ChimLion) {
+            newPet = new ChimLion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ChimSnake) {
+            newPet = new ChimSnake(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Head) {
+            newPet = new Head(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof GoodDog) {
+            newPet = new GoodDog(this.logService, this.abilityService, this, this.gameService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Custom Pack Pets
         if (pet instanceof Jerboa) {
-            newPet = new Jerboa(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Jerboa(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FrilledDragon) {
-            newPet = new FrilledDragon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FrilledDragon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wombat) {
-            newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Aardvark) {
-            newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bear) {
-            newPet = new Bear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof EmperorTamarin) {
-            newPet = new EmperorTamarin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new EmperorTamarin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Porcupine) {
-            newPet = new Porcupine(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Porcupine(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wasp) {
-            newPet = new Wasp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wasp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dragonfly) {
-            newPet = new Dragonfly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dragonfly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lynx) {
-            newPet = new Lynx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lynx(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Seagull) {
-            newPet = new Seagull(this.logService, this.abilityService, this, this.gameService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Seagull(this.logService, this.abilityService, this, this.gameService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Alpaca) {
-            newPet = new Alpaca(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Alpaca(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hyena) {
-            newPet = new Hyena(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hyena(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Moose) {
-            newPet = new Moose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Moose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lioness) {
-            newPet = new Lioness(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lioness(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tapir) {
-            newPet = new Tapir(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tapir(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Walrus) {
-            newPet = new Walrus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Walrus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof WhiteTiger) {
-            newPet = new WhiteTiger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new WhiteTiger(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof Basilisk) {
+            newPet = new Basilisk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Nightcrawler) {
+            newPet = new Nightcrawler(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Sphinx) {
+            newPet = new Sphinx(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Chupacabra) {
+            newPet = new Chupacabra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof GoldenBeetle) {
+            newPet = new GoldenBeetle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof FooDog) {
+            newPet = new FooDog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tree) {
+            newPet = new Tree(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Slime) {
+            newPet = new Slime(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Pegasus) {
+            newPet = new Pegasus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof DeerLord) {
+            newPet = new DeerLord(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Fairy) {
+            newPet = new Fairy(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Rootling) {
+            newPet = new Rootling(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Anubis) {
+            newPet = new Anubis(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof OldMouse) {
+            newPet = new OldMouse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Hippocampus) {
+            newPet = new Hippocampus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Boitata) {
+            newPet = new Boitata(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Kappa) {
+            newPet = new Kappa(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Mimic) {
+            newPet = new Mimic(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Nurikabe) {
+            newPet = new Nurikabe(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tandgnost) {
+            newPet = new Tandgnost(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tandgrisner) {
+            newPet = new Tandgrisner(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof GreatOne) {
+            newPet = new GreatOne(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Leviathan) {
+            newPet = new Leviathan(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof QuestingBeast) {
+            newPet = new QuestingBeast(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Cockatrice) {
+            newPet = new Cockatrice(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+
+        // Unicorn
+        // Tier 1
+        if (pet instanceof Baku) {
+            newPet = new Baku(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof AxehandleHound) {
+            newPet = new AxehandleHound(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Barghest) {
+            newPet = new Barghest(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tsuchinoko) {
+            newPet = new Tsuchinoko(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Murmel) {
+            newPet = new Murmel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Alchemedes) {
+            newPet = new Alchemedes(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Warg) {
+            newPet = new Warg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Bunyip) {
+            newPet = new Bunyip(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof SneakyEgg) {
+            newPet = new SneakyEgg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof CuddleToad) {
+            newPet = new CuddleToad(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+        // Tier 2
+        if (pet instanceof GhostKitten) {
+            newPet = new GhostKitten(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof FrostWolf) {
+            newPet = new FrostWolf(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Mothman) {
+            newPet = new Mothman(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof DropBear) {
+            newPet = new DropBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Jackalope) {
+            newPet = new Jackalope(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof LuckyCat) {
+            newPet = new LuckyCat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Ogopogo) {
+            newPet = new Ogopogo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Thunderbird) {
+            newPet = new Thunderbird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Gargoyle) {
+            newPet = new Gargoyle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Bigfoot) {
+            newPet = new Bigfoot(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+        // Tier 3
+        if (pet instanceof SkeletonDog) {
+            newPet = new SkeletonDog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Mandrake) {
+            newPet = new Mandrake(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof FurBearingTrout) {
+            newPet = new FurBearingTrout(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ManaHound) {
+            newPet = new ManaHound(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Calygreyhound) {
+            newPet = new Calygreyhound(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof BrainCramp) {
+            newPet = new BrainCramp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Minotaur) {
+            newPet = new Minotaur(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Wyvern) {
+            newPet = new Wyvern(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Ouroboros) {
+            newPet = new Ouroboros(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Griffin) {
+            newPet = new Griffin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+        // Tier 4
+        if (pet instanceof Kraken) {
+            newPet = new Kraken(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Visitor) {
+            newPet = new Visitor(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof VampireBat) {
+            newPet = new VampireBat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof TigerBug) {
+            newPet = new TigerBug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tatzelwurm) {
+            newPet = new Tatzelwurm(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Cyclops) {
+            newPet = new Cyclops(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Chimera) {
+            newPet = new Chimera(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Roc) {
+            newPet = new Roc(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof WormOfSand) {
+            newPet = new WormOfSand(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Abomination) {
+            newPet = new Abomination(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+        // Tier 5
+        if (pet instanceof RedDragon) {
+            newPet = new RedDragon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Unicorn) {
+            newPet = new Unicorn(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof LovelandFrogman) {
+            newPet = new LovelandFrogman(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof SalmonOfKnowledge) {
+            newPet = new SalmonOfKnowledge(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof JerseyDevil) {
+            newPet = new JerseyDevil(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Pixiu) {
+            newPet = new Pixiu(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Kitsune) {
+            newPet = new Kitsune(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Nessie) {
+            newPet = new Nessie(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof BadDog) {
+            newPet = new BadDog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Werewolf) {
+            newPet = new Werewolf(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+        // Tier 6
+        if (pet instanceof Manticore) {
+            newPet = new Manticore(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Phoenix) {
+            newPet = new Phoenix(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Quetzalcoatl) {
+            newPet = new Quetzalcoatl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof TeamSpirit) {
+            newPet = new TeamSpirit(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Sleipnir) {
+            newPet = new Sleipnir(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof SeaSerpent) {
+            newPet = new SeaSerpent(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Yeti) {
+            newPet = new Yeti(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Cerberus) {
+            newPet = new Cerberus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Hydra) {
+            newPet = new Hydra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Behemoth) {
+            newPet = new Behemoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
+
         return newPet;
     }
 
@@ -2145,6 +2931,8 @@ export class PetService {
             pets = this.starPackPets.get(tier);
         } else if (parent.pack == 'Golden') {
             pets = this.goldenPackPets.get(tier);
+        } else if (parent.pack == 'Unicorn') {
+            pets = this.unicornPackPets.get(tier);
         } else {
             pets = this.playerCustomPackPets.get(parent.pack).get(tier);
         }
@@ -2156,7 +2944,8 @@ export class PetService {
                 equipment: null,
                 exp: getRandomInt(0, 5),
                 health: null,
-                name: pet
+                name: pet,
+                mana: null
             },
             parent
         )
@@ -2209,7 +2998,24 @@ export class PetService {
             'Warthog',
             'Bear',
             'Tapir',
-            'Walrus'
+            'Walrus',
+            'Frost Wolf',
+            'Mothman',
+            'Gargoyle',
+            'Bigfoot',
+            'Skeleton Dog',
+            'Fur-Bearing Trout',
+            'Calygreyhound',
+            'Visitor',
+            'Chimera',
+            'Pixiu',
+            'Nessie',
+            'Phoenix',
+            'Sea Serpent',
+            'Hydra',
+            'Nightcrawler',
+            'Slime',
+            'Kappa'
         ];
         let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
         return this.createPet({
@@ -2218,6 +3024,7 @@ export class PetService {
             equipment: null,
             exp: 0,
             health: null,
+            mana: null
         }, parent);
     }
 }
@@ -2226,9 +3033,14 @@ export interface PetForm {
     name: string;
     attack: number;
     health: number;
+    mana: number;
     exp: number;
     equipment: Equipment;
     belugaSwallowedPet?: string;
+    abominationSwallowedPet1?: string;
+    abominationSwallowedPet2?: string;
+    abominationSwallowedPet3?: string;
+    battlesFought?: number;
 }
 
 function levelToExp(level: number) {

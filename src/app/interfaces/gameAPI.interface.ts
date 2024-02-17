@@ -12,4 +12,13 @@ export interface GameAPI {
     opponentGoldSpent?: number;
     oldStork?: boolean;
     komodoShuffle?: boolean;
+    mana?: boolean;
+    day?: boolean;
+    playerRollAmount?: number;
+    opponentRollAmount?: number;
+    playerLevel3Sold?: number;
+    opponentLevel3Sold?: number;
+    playerSummonedAmount?: number;
+    opponentSummonedAmount?: number;
+
 }

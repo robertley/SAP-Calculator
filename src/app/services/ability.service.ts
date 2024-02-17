@@ -5,6 +5,7 @@ import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { clone, cloneDeep, shuffle } from "lodash";
 import { GameService } from "./game.service";
 import { Pet } from "../classes/pet.class";
+import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
 
 @Injectable({
     providedIn: "root"
@@ -26,6 +27,7 @@ export class AbilityService {
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
     private friendGainedPerkEvents: AbilityEvent[]= []; // TODO refactor to work like friendGainedAilment
     private friendGainedAilmentEvents: AbilityEvent[]= [];
+    private enemyGainedAilmentEvents: AbilityEvent[]= [];
     private friendlyToyBrokeEvents: AbilityEvent[]= [];
     private transformEvents: AbilityEvent[]= [];
     private enemySummonedEvents: AbilityEvent[]= [];
@@ -34,6 +36,17 @@ export class AbilityService {
     private enemyHurtEvents: AbilityEvent[]= [];
     private emptyFrontSpaceEvents: AbilityEvent[]= [];
     private friendAttacksEvents: AbilityEvent[]= [];
+    private friendJumpedEvents: AbilityEvent[]= [];
+    private manaEvents: AbilityEvent[]= [];
+    private friendGainsHealthEvents: AbilityEvent[]= [];
+
+    // toy events
+    private emptyFrontSpaceToyEvents: AbilityEvent[]= [];
+    private friendSummonedToyEvents: AbilityEvent[]= [];
+    private friendlyLevelUpToyEvents: AbilityEvent[]= [];
+    private friendFaintsToyEvents: AbilityEvent[]= [];
+    private friendJumpedToyEvents: AbilityEvent[]= [];
+
     constructor(private gameService: GameService) {
         
     }
@@ -179,6 +192,7 @@ export class AbilityService {
     // Summoned
     
     triggerSummonedEvents(summonedPet: Pet) {
+        this.triggerFriendSummonedToyEvents(summonedPet.parent, summonedPet);
         for (let pet of summonedPet.parent.petArray) {
             // fixes bug with mushroom
             if (pet == summonedPet) {
@@ -187,8 +201,9 @@ export class AbilityService {
             // this works because summoned pets will never have a 'summoned' ability
             if (pet.friendSummoned != null) {
                 this.setSummonedEvent({
-                    callback: () => { pet.friendSummoned(summonedPet) },
-                    priority: pet.attack
+                    callback: pet.friendSummoned.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: summonedPet
                 })
             }
         }
@@ -209,7 +224,7 @@ export class AbilityService {
         this.summonedEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.summonedEvents) {
-            event.callback();
+            event.callback(this.gameService.gameApi, event.callbackPet);
         }
         
         this.resetSummonedEvents();
@@ -264,7 +279,7 @@ export class AbilityService {
         this.friendAheadAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendAheadAttacksEvents) {
-            event.callback(this.gameService.gameApi);
+            event.callback(this.gameService.gameApi, event.callbackPet);
         }
         
         this.resetFriendAheadAttacksEvents();
@@ -310,7 +325,7 @@ export class AbilityService {
         this.friendAheadFaintsEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendAheadFaintsEvents) {
-            event.callback();
+            event.callback(this.gameService.gameApi, event.callbackPet);
         }
         
         this.resetFriendAheadFaintsEvents();
@@ -350,6 +365,7 @@ export class AbilityService {
     // friend faints
 
     triggerFriendFaintsEvents(faintedPet: Pet) {
+        this.triggerFriendFaintsToyEvents(faintedPet.parent, faintedPet);
         for (let pet of faintedPet.parent.petArray) {
             // this works because summoned pets will never have a 'summoned' ability
             if (pet.friendFaints != null) {
@@ -517,6 +533,43 @@ export class AbilityService {
 
     }
 
+    // enemy gained ailment
+    
+    triggerEnemyGainedAilmentEvents(opponentPets: Pet[], perkPet: Pet) {
+        for (let pet of opponentPets) {
+            if (pet.enemyGainedAilment != null) {
+                this.setEnemyGainedAilmentEvent({
+                    callback: pet.enemyGainedAilment.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: perkPet
+                })
+            }
+        }
+    }
+
+    setEnemyGainedAilmentEvent(event: AbilityEvent) {
+        this.enemyGainedAilmentEvents.push(event);
+    }
+
+    resetEnemyGainedAilmentEvents() {
+        this.enemyGainedAilmentEvents = [];
+    }
+
+    executeEnemyGainedAilmentEvents() {
+        // shuffle, so that same priority events are in random order
+        // dont shuffle, want to execute in the order they happen (frigatebird)
+        // this.friendGainedAilmentEvents = shuffle(this.friendGainedAilmentEvents);
+
+        this.enemyGainedAilmentEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.enemyGainedAilmentEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet);
+        }
+        
+        this.resetEnemyGainedAilmentEvents();
+
+    }
+
     
     // friendly toy broke
     
@@ -671,6 +724,7 @@ export class AbilityService {
     // levl up events
 
     triggerLevelUpEvents(player: Player, levelUpPet: Pet) {
+        this.triggerFriendlyLevelUpToyEvents(player, levelUpPet);
         for (let pet of player.petArray) {
             if (pet.anyoneLevelUp != null) {
                 this.setLevelUpEvent({
@@ -826,4 +880,366 @@ export class AbilityService {
 
     }
 
+    // friend jumped events
+
+    triggerFriendJumpedEvents(player: Player, jumpPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet == jumpPet) {
+                continue;
+            }
+            if (pet.friendJumped != null) {
+                this.setFriendJumpedEvent({
+                    callback: pet.friendJumped.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: jumpPet
+                })
+            }
+        }
+    }
+    
+    setFriendJumpedEvent(event: AbilityEvent) {
+        this.friendJumpedEvents.push(event);
+    }
+
+    resetFriendJumpedEvents() {
+        this.friendJumpedEvents = [];
+    }
+
+    executeFriendJumpedEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendJumpedEvents = shuffle(this.friendJumpedEvents);
+
+        this.friendJumpedEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendJumpedEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
+        }
+        
+        this.resetFriendJumpedEvents();
+
+    }
+
+    // mana events
+    setManaEvent(event: AbilityEvent) {
+        this.manaEvents.push(event);
+    }
+
+    resetManaEvents() {
+        this.manaEvents = [];
+    }
+
+    executeManaEvents() {
+        // shuffle, so that same priority events are in random order
+        this.manaEvents = shuffle(this.manaEvents);
+
+        this.manaEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.manaEvents) {
+            event.callback();
+        }
+        
+        this.resetManaEvents();
+    }
+
+    // friend gains health events
+    triggerFriendGainsHealthEvents(player: Player, healthPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet == healthPet) {
+                continue;
+            }
+            if (pet.friendGainsHealth != null) {
+                this.setFriendGainsHealthEvent({
+                    callback: pet.friendGainsHealth.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: healthPet
+                })
+            }
+        }
+    }
+
+    setFriendGainsHealthEvent(event: AbilityEvent) {
+        this.friendGainsHealthEvents.push(event);
+    }
+
+    resetFriendGainsHealthEvents() {
+        this.friendGainsHealthEvents = [];
+    }
+
+    executeFriendGainsHealthEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendGainsHealthEvents = shuffle(this.friendGainsHealthEvents);
+
+        this.friendGainsHealthEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendGainsHealthEvents) {
+            event.callback(this.gameApi, event.callbackPet);
+        }
+
+        
+        this.resetFriendGainsHealthEvents();
+    }
+
+    // toy events
+
+
+    // empty front space events
+
+    triggerEmptyFrontSpaceToyEvents(player: Player) {
+        if (player.toy?.emptyFromSpace != null) {
+            if (player.toy.used) {
+                return;
+            }
+            this.setEmptyFrontSpaceToyEvent(
+                {
+                    callback: player.toy.emptyFromSpace.bind(player.toy),
+                    priority: 100,
+                    level: player.toy.level
+                }
+            );
+
+            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
+            for (let puma of pumas) {
+                this.setEmptyFrontSpaceToyEvent(
+                    {
+                        callback: player.toy.emptyFromSpace.bind(player.toy),
+                        priority: +puma.attack,
+                        level: puma.level
+                    }
+                );
+            }
+        }
+
+
+    }
+    
+
+    setEmptyFrontSpaceToyEvent(event: AbilityEvent) {
+        this.emptyFrontSpaceToyEvents.push(event);
+    }
+
+    private resetEmptyFrontSpaceToyEvents() {
+        this.emptyFrontSpaceToyEvents = [];
+    }
+
+    executeEmptyFrontSpaceToyEvents() {
+        // shuffle, so that same priority events are in random order
+        this.emptyFrontSpaceToyEvents = shuffle(this.emptyFrontSpaceToyEvents);
+
+        this.emptyFrontSpaceToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.emptyFrontSpaceToyEvents) {
+            event.callback(this.gameService.gameApi, event.priority < 100, event.level, event.priority);
+        }
+        
+        this.resetEmptyFrontSpaceToyEvents();
+    }
+
+    // Toy events
+
+
+    // friend summoned toy events
+
+    triggerFriendSummonedToyEvents(player: Player, pet: Pet) {
+        if (player.toy?.friendSummoned != null) {
+            this.setFriendSummonedToyEvent(
+                {
+                    callback: player.toy.friendSummoned.bind(player.toy),
+                    priority: 100,
+                    level: player.toy.level,
+                    callbackPet: pet
+                }
+            );
+
+            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
+            for (let puma of pumas) {
+                this.setFriendSummonedToyEvent(
+                    {
+                        callback: player.toy.friendSummoned.bind(player.toy),
+                        priority: +puma.attack,
+                        level: puma.level,
+                        callbackPet: pet
+                    }
+                );
+            }
+        }
+    }
+
+    setFriendSummonedToyEvent(event: AbilityEvent) {
+        this.friendSummonedToyEvents.push(event);
+    }
+
+    private resetFriendSummonedToyEvents() {
+        this.friendSummonedToyEvents = [];
+    }
+
+    executeFriendSummonedToyEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendSummonedToyEvents = shuffle(this.friendSummonedToyEvents);
+
+        this.friendSummonedToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendSummonedToyEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, event.priority < 100, event.level);
+        }
+        
+        this.resetFriendSummonedToyEvents();
+    }
+
+    // friendly level up toy events
+
+    triggerFriendlyLevelUpToyEvents(player: Player, pet: Pet) {
+        if (player != pet.parent) {
+            return;
+        }
+        if (player.toy?.friendlyLevelUp != null) {
+            this.setFriendlyLevelUpToyEvent(
+                {
+                    callback: player.toy.friendlyLevelUp.bind(player.toy),
+                    priority: 100,
+                    level: player.toy.level,
+                    callbackPet: pet
+                }
+            );
+
+            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
+            for (let puma of pumas) {
+                this.setFriendlyLevelUpToyEvent(
+                    {
+                        callback: player.toy.friendlyLevelUp.bind(player.toy),
+                        priority: +puma.attack,
+                        level: puma.level,
+                        callbackPet: pet
+                    }
+                );
+            }
+        }
+    }
+
+    setFriendlyLevelUpToyEvent(event: AbilityEvent) {
+        this.friendlyLevelUpToyEvents.push(event);
+    }
+
+    private resetFriendlyLevelUpToyEvents() {
+        this.friendlyLevelUpToyEvents = [];
+    }
+
+    executeFriendlyLevelUpToyEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendlyLevelUpToyEvents = shuffle(this.friendlyLevelUpToyEvents);
+
+        this.friendlyLevelUpToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendlyLevelUpToyEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, event.priority < 100, event.level);
+        }
+        
+        this.resetFriendlyLevelUpToyEvents();
+    }
+
+    // friend faints toy events
+
+    triggerFriendFaintsToyEvents(player: Player, pet: Pet) {
+        if (player != pet.parent) {
+            return;
+        }
+        if (player.toy?.friendFaints != null) {
+            this.setFriendFaintsToyEvent(
+                {
+                    callback: player.toy.friendFaints.bind(player.toy),
+                    priority: 100,
+                    level: player.toy.level,
+                    callbackPet: pet
+                }
+            );
+
+            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
+            for (let puma of pumas) {
+                this.setFriendFaintsToyEvent(
+                    {
+                        callback: player.toy.friendFaints.bind(player.toy),
+                        priority: +puma.attack,
+                        level: +puma.level,
+                        callbackPet: pet
+                    }
+                );
+            }
+        }
+    }
+
+    setFriendFaintsToyEvent(event: AbilityEvent) {
+        this.friendFaintsToyEvents.push(event);
+    }
+
+    private resetFriendFaintsToyEvents() {
+        this.friendFaintsToyEvents = [];
+    }
+
+    executeFriendFaintsToyEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendFaintsToyEvents = shuffle(this.friendFaintsToyEvents);
+
+        this.friendFaintsToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendFaintsToyEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, event.priority < 100, event.level);
+        }
+        
+        this.resetFriendFaintsToyEvents();
+    }
+
+    // friend jumped toy events
+
+    triggerFriendJumpedToyEvents(player: Player, pet: Pet) {
+        if (player != pet.parent) {
+            return;
+        }
+        if (player.toy?.friendJumped != null) {
+            this.setFriendJumpedToyEvent(
+                {
+                    callback: player.toy.friendJumped.bind(player.toy),
+                    priority: 100,
+                    level: player.toy.level,
+                    callbackPet: pet
+                }
+            );
+
+            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
+            for (let puma of pumas) {
+                this.setFriendJumpedToyEvent(
+                    {
+                        callback: player.toy.friendJumped.bind(player.toy),
+                        priority: +puma.attack,
+                        level: puma.level,
+                        callbackPet: pet
+                    }
+                );
+            }
+        }
+        
+    }
+
+    setFriendJumpedToyEvent(event: AbilityEvent) {
+        this.friendJumpedToyEvents.push(event);
+    }
+
+    private resetFriendJumpedToyEvents() {
+        this.friendJumpedToyEvents = [];
+    }
+
+    executeFriendJumpedToyEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendJumpedToyEvents = shuffle(this.friendJumpedToyEvents);
+
+        this.friendJumpedToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendJumpedToyEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet, event.priority < 100, event.level);
+        }
+        
+        this.resetFriendJumpedToyEvents();
+    }
+
+
+
+ 
 }

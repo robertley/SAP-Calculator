@@ -16,7 +16,7 @@ export class Macaque extends Pet {
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let power = this.level * 12;
-        let monke = new Orangutang(this.logService, this.abilityService, this.parent, power, power, this.minExpForLevel, cloneDeep(this.equipment));
+        let monke = new Orangutang(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel, cloneDeep(this.equipment));
 
         let message = `${this.name} spawned Orangutang ${monke.attack}/${monke.health}`;
         if (this.equipment != null) {
@@ -44,9 +44,10 @@ export class Macaque extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

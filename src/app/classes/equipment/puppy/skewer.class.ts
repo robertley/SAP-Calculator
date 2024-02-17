@@ -27,7 +27,7 @@ export class Skewer extends Equipment {
             multiplier = 1 + pet.level;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 3);
+        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 3);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage * multiplier;
 

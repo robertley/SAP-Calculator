@@ -31,7 +31,8 @@ export class Spider extends Pet {
             exp: this.minExpForLevel,
             equipment: null,
             health: power,
-            name: spawnPetName
+            name: spawnPetName,
+            mana: 0
         }, this.parent);
         this.abilityService.setSpawnEvent({
             callback: () => {
@@ -60,9 +61,10 @@ export class Spider extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

@@ -16,7 +16,7 @@ export class Tomato extends Equipment {
             return;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 8, true);
+        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 8, true);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
@@ -54,7 +54,6 @@ export class Tomato extends Equipment {
         }
         // knockout
         if (attackPet.health < 1 && pet.knockOut != null) {
-            console.log('knock out!')
             this.abilityService.setKnockOutEvent({
                 callback: pet.knockOut.bind(pet),
                 priority: pet.attack,

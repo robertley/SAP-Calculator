@@ -15,7 +15,7 @@ export class DoorHeadAnt extends Pet {
         if (this.parent.pet0 != null) {
             return;
         }
-        this.parent.pushPetToFront(this);
+        this.parent.pushPetToFront(this, true);
         this.logService.createLog({
             message: `${this.name} pushed itself to the front.`,
             type: 'ability',
@@ -36,9 +36,10 @@ export class DoorHeadAnt extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

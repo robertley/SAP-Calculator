@@ -14,7 +14,7 @@ export class Deer extends Pet {
     attack = 1;
     health = 1;
     faint(gameApi, tiger, pteranodon?: boolean) {
-        let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
+        let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
         this.abilityService.setSpawnEvent({
             callback: () => {
         
@@ -42,9 +42,10 @@ export class Deer extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

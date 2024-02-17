@@ -10,7 +10,7 @@ export class Horse extends Pet {
     pack: Pack = 'Turtle';
     health = 1;
     attack = 2;
-    friendSummoned(pet, tiger) {
+    friendSummoned(gameApi, pet, tiger) {
         pet.increaseAttack(this.level);
         this.logService.createLog({
             message: `${this.name} gave ${pet.name} ${this.level} attack`,
@@ -25,9 +25,10 @@ export class Horse extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-this.initPet(exp, health, attack, equipment);
+this.initPet(exp, health, attack, mana, equipment);
     }
 }
