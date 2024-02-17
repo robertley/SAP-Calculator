@@ -1,5 +1,12 @@
+$day: #85ddf2;
+$night: #33377a;
+
 .app-wrapper {
     height: 100vh;
+}
+
+.day-night-container {
+    min-height: 1em;
 }
 
 .header {
@@ -189,4 +196,10 @@
 .bug-button {
     margin-right: .5em;
     margin-bottom: .25em;
+}
+
+.advanced-input {
+    input {
+        width: 60px;
+    }
 }

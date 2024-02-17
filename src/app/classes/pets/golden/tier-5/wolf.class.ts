@@ -28,7 +28,8 @@ export class Wolf extends Pet {
                         equipment: null,
                         exp: this.minExpForLevel,
                         health: power.health,
-                        name: 'Pig'
+                        name: 'Pig',
+                        mana: 0
                     }, this.parent);
             
                     this.logService.createLog(
@@ -56,9 +57,10 @@ export class Wolf extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

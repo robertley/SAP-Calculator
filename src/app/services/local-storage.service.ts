@@ -13,7 +13,6 @@ export class LocalStorageService {
 
     getStorage() {
         let storage = window.localStorage.getItem(this.key);
-        console.log(JSON.parse(storage));
 
         return window.localStorage.getItem(this.key);
     }
@@ -39,7 +38,6 @@ export class LocalStorageService {
     }
 
     setStorage(value: any) {
-        console.log('setting storage', value);
         if (typeof value == 'object') {
             value = JSON.stringify(value);
         }

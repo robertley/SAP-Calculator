@@ -12,7 +12,7 @@ export class MuskOx extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 4;
-    friendAheadFaints(gameApi: GameAPI, tiger?: boolean): void {
+    friendAheadFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power: Power = {
             attack: this.level,
             health: this.level * 2
@@ -25,16 +25,17 @@ export class MuskOx extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.superFriendAheadFaints(gameApi, tiger);
+        this.superFriendAheadFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

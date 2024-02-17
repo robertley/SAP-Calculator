@@ -6,4 +6,5 @@ export class Pepper extends Equipment {
     uses = 1;
     originalUses = 1;
     power = 0;
+    originalPower = 0;
 }

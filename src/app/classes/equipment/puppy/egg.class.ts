@@ -25,7 +25,7 @@ export class Egg extends Equipment {
             return;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, 2, true);
+        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 2, true);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
@@ -63,7 +63,6 @@ export class Egg extends Equipment {
         }
         // knockout
         if (attackPet.health < 1 && pet.knockOut != null) {
-            console.log('knock out!')
             this.abilityService.setKnockOutEvent({
                 callback: pet.knockOut.bind(pet),
                 priority: pet.attack,
