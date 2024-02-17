@@ -42,6 +42,7 @@ const NIGHT = '#33377a';
 
 // TODO register all faint pets to be summoned by Orca
 // TODO fix bug with equipment being used an extra time
+// TODO register pets for abomination
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -368,9 +369,10 @@ export class AppComponent implements OnInit, AfterViewInit {
           equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
           mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
-          abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
-          abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
-          abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+          abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
+          abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
+          abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
+          battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
         })
       }
     );
@@ -387,10 +389,11 @@ export class AppComponent implements OnInit, AfterViewInit {
           exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
-          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
+          mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
           abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
           abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+          battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
         })
       }
     );

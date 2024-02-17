@@ -37,6 +37,7 @@ export class AbilityService {
     private friendAttacksEvents: AbilityEvent[]= [];
     private friendJumpedEvents: AbilityEvent[]= [];
     private manaEvents: AbilityEvent[]= [];
+    private friendGainsHealthEvents: AbilityEvent[]= [];
     constructor(private gameService: GameService) {
         
     }
@@ -926,5 +927,42 @@ export class AbilityService {
         }
         
         this.resetManaEvents();
+    }
+
+    // friend gains health events
+    triggerFriendGainsHealthEvents(player: Player, healthPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet == healthPet) {
+                continue;
+            }
+            if (pet.friendGainsHealth != null) {
+                this.setFriendGainsHealthEvent({
+                    callback: pet.friendGainsHealth.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: healthPet
+                })
+            }
+        }
+    }
+
+    setFriendGainsHealthEvent(event: AbilityEvent) {
+        this.friendGainsHealthEvents.push(event);
+    }
+
+    resetFriendGainsHealthEvents() {
+        this.friendGainsHealthEvents = [];
+    }
+
+    executeFriendGainsHealthEvents() {
+        // shuffle, so that same priority events are in random order
+        this.friendGainsHealthEvents = shuffle(this.friendGainsHealthEvents);
+
+        this.friendGainsHealthEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.friendGainsHealthEvents) {
+            event.callback(this.gameApi, event.callbackPet);
+        }
+        
+        this.resetFriendGainsHealthEvents();
     }
 }

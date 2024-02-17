@@ -199,6 +199,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('mana').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
   }
 
   setExp(amt: number) {
@@ -274,10 +275,19 @@ export class PetSelectorComponent implements OnInit {
     pet.abominationSwallowedPet3 = swallowedPets[2];
   }
 
-  showFlyOutButton() {
-    return this.formGroup.get('name').value == 'Beluga Whale' || this.formGroup.get('name').value == 'Abomination';
+  setBattlesFought(value: number) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    pet.battlesFought = value;
   }
-bg
+
+  showFlyOutButton() {
+    let flyOutPets = ['Beluga Whale', 'Abomination', 'Slime'];
+    return flyOutPets.includes(this.formGroup.get('name').value);
+  }
+
   toggleFlyOut() {
     this.showFlyOut = !this.showFlyOut;
   }

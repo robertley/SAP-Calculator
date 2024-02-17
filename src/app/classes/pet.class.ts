@@ -12,13 +12,11 @@ import { getOpponent } from "../util/helper-functions";
 import { Cheese } from "./equipment/star/cheese.class";
 import { Pepper } from "./equipment/star/pepper.class";
 import { FortuneCookie } from "./equipment/custom/fortune-cookie.class";
-import { GhostKitten } from "./pets/unicorn/tier-2/ghost-kitten.class";
 import { Dazed } from "./equipment/ailments/dazed.class";
 import { Exposed } from "./equipment/ailments/exposed.class";
 import { Crisp } from "./equipment/ailments/crisp.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
-import { Manticore } from "./pets/unicorn/tier-6/manticore.class";
-import { Behemoth } from "./pets/unicorn/tier-6/behemoth.class";
+import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -74,6 +72,7 @@ export abstract class Pet {
     gainedMana?(gameApi: GameAPI, tiger?: boolean): void;
     friendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     enemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    friendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
 
     // orignal methods -- used when overrwriting methods
     originalStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
@@ -105,6 +104,7 @@ export abstract class Pet {
     originalGainedMana?(gameApi: GameAPI, tiger?: boolean): void;
     originalFriendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalEnemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
 
     savedPosition: 0 | 1 | 2 | 3 | 4;
     // flags to make sure events/logs are not triggered multiple times
@@ -116,6 +116,7 @@ export abstract class Pet {
     abominationSwallowedPet3?: string;
     belugaSwallowedPet: string;
     toyPet = false;
+    battlesFought: number = 0;
     // fixes bug where eggplant ability is triggered multiple times
     // if we already set eggplant ability make sure not to set it again
     eggplantTouched = false;
@@ -168,6 +169,7 @@ export abstract class Pet {
         this.originalGainedMana = this.gainedMana;
         this.originalFriendJumped = this.friendJumped;
         this.originalEnemyGainedAilment = this.enemyGainedAilment;
+        this.originalFriendGainsHealth = this.friendGainsHealth;
 
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
@@ -176,18 +178,14 @@ export abstract class Pet {
         }
         this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
             if (faintCallback != null) {
-                if (this.equipment instanceof Dazed) {
-                    this.logService.createLog({
-                        message: `${this.name}'s ability was not activated because of Dazed.`,
-                        type: 'ability',
-                        player: this.parent
-                    })
+                if (!this.abilityValidCheck()) {
                     return;
                 }
-
-                console.log(this.name, 'faints', this)
-                
                 faintCallback(gameApi, tiger, pteranodon);
+            }
+
+            if (!this.abilityValidCheck()) {
+                return;
             }
             
             if (this.mana > 0) {
@@ -215,12 +213,7 @@ export abstract class Pet {
 
         let startOfBattleCallback = this.startOfBattle?.bind(this);
         this.startOfBattle = startOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             startOfBattleCallback(gameApi, tiger);
@@ -228,12 +221,7 @@ export abstract class Pet {
 
         let transformCallback = this.transform?.bind(this);
         this.transform = transformCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             transformCallback(gameApi, tiger);
@@ -241,12 +229,7 @@ export abstract class Pet {
 
         let endTurnCallback = this.endTurn?.bind(this);
         this.endTurn = endTurnCallback == null ? null : (gameApi: GameAPI) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             endTurnCallback(gameApi);
@@ -254,12 +237,7 @@ export abstract class Pet {
 
         let beforeAttackCallback = this.beforeAttack?.bind(this);
         this.beforeAttack = beforeAttackCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             beforeAttackCallback(gameApi, tiger);
@@ -267,12 +245,7 @@ export abstract class Pet {
 
         let afterAttackCallback = this.afterAttack?.bind(this);
         this.afterAttack = afterAttackCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             afterAttackCallback(gameApi, tiger);
@@ -280,12 +253,7 @@ export abstract class Pet {
 
         let friendAttacksCallback = this.friendAttacks?.bind(this);
         this.friendAttacks = friendAttacksCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendAttacksCallback(gameApi, tiger);
@@ -293,12 +261,7 @@ export abstract class Pet {
 
         let friendFaintsCallback = this.friendFaints?.bind(this);
         this.friendFaints = friendFaintsCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendFaintsCallback(gameApi, pet, tiger);
@@ -306,12 +269,7 @@ export abstract class Pet {
 
         let friendGainedPerkCallback = this.friendGainedPerk?.bind(this);
         this.friendGainedPerk = friendGainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendGainedPerkCallback(gameApi, pet, tiger);
@@ -319,12 +277,7 @@ export abstract class Pet {
 
         let friendHurtCallback = this.friendHurt?.bind(this);
         this.friendHurt = friendHurtCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendHurtCallback(gameApi, pet, tiger);
@@ -332,12 +285,7 @@ export abstract class Pet {
 
         let friendSummonedCallback = this.friendSummoned?.bind(this);
         this.friendSummoned = friendSummonedCallback == null ? null : (gameApi: GameAPI, pet: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendSummonedCallback(gameApi, pet, tiger);
@@ -345,12 +293,7 @@ export abstract class Pet {
 
         let anyoneLevelUpCallback = this.anyoneLevelUp?.bind(this);
         this.anyoneLevelUp = anyoneLevelUpCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             anyoneLevelUpCallback(gameApi, pet, tiger);
@@ -358,12 +301,7 @@ export abstract class Pet {
 
         let enemyHurtCallback = this.enemyHurt?.bind(this);
         this.enemyHurt = enemyHurtCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             enemyHurtCallback(gameApi, pet, tiger);
@@ -371,12 +309,7 @@ export abstract class Pet {
 
         let enemySummonedCallback = this.enemySummoned?.bind(this);
         this.enemySummoned = enemySummonedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             enemySummonedCallback(gameApi, pet, tiger);
@@ -384,12 +317,7 @@ export abstract class Pet {
 
         let emptyFrontSpaceCallback = this.emptyFrontSpace?.bind(this);
         this.emptyFrontSpace = emptyFrontSpaceCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             emptyFrontSpaceCallback(gameApi, tiger);
@@ -397,12 +325,7 @@ export abstract class Pet {
 
         let gainedManaCallback = this.gainedMana?.bind(this);
         this.gainedMana = gainedManaCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             gainedManaCallback(gameApi, tiger);
@@ -410,12 +333,7 @@ export abstract class Pet {
 
         let friendJumpedCallback = this.friendJumped?.bind(this);
         this.friendJumped = friendJumpedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendJumpedCallback(gameApi, pet, tiger);
@@ -423,12 +341,7 @@ export abstract class Pet {
 
         let friendlyToyBrokeCallback = this.friendlyToyBroke?.bind(this);
         this.friendlyToyBroke = friendlyToyBrokeCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             friendlyToyBrokeCallback(gameApi, tiger);
@@ -436,12 +349,7 @@ export abstract class Pet {
 
         let enemyPushedCallback = this.enemyPushed?.bind(this);
         this.enemyPushed = enemyPushedCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             enemyPushedCallback(gameApi, tiger);
@@ -449,25 +357,13 @@ export abstract class Pet {
 
         let summonedCallback = this.summoned?.bind(this);
         this.summoned = summonedCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
-                return;
-            }
+
             summonedCallback(gameApi, tiger);
         }
 
         let knockOutCallback = this.knockOut?.bind(this);
         this.knockOut = knockOutCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             knockOutCallback(gameApi, pet, tiger);
@@ -475,19 +371,37 @@ export abstract class Pet {
 
         let enemyGainedAilmentCallback = this.enemyGainedAilment?.bind(this);
         this.enemyGainedAilment = enemyGainedAilmentCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (this.equipment instanceof Dazed) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability was not activated because of Dazed.`,
-                    type: 'ability',
-                    player: this.parent
-                })
+            if (!this.abilityValidCheck()) {
                 return;
             }
             enemyGainedAilmentCallback(gameApi, pet, tiger);
         }
+
+        let friendGainsHealthCallback = this.friendGainsHealth?.bind(this);
+        this.friendGainsHealth = friendGainsHealthCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            friendGainsHealthCallback(gameApi, pet, tiger);
+        }
     
         
         this.setAbilityUses();
+    }
+
+    abilityValidCheck() {
+        if (this.savedPosition == null) {
+            return false;
+        }
+        if (this.equipment instanceof Dazed) {
+            this.logService.createLog({
+                message: `${this.name}'s ability was not activated because of Dazed.`,
+                type: 'ability',
+                player: this.parent
+            })
+            return false;
+        }
+        return true;
     }
 
     // overrwrite this method if maxAbilityUses is determined by level
@@ -725,6 +639,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superFriendGainsHealth(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind().minExpForLevel;
+        this.friendGainsHealth(gameApi, pet, true)
+        this.exp = exp;
+    }
+
 
     attackPet(pet: Pet) {
 
@@ -813,6 +737,10 @@ export abstract class Pet {
             
             if (pet.equipment instanceof Exposed) {
                 message += 'x2 (Exposed)';
+            }
+
+            if (damageResp.nurikabe > 0) {
+                message += ` -${damageResp.nurikabe} (Nurikabe)`;
             }
             // if (attackEquipment != null) {
             //     let power = Math.abs(attackEquipment.power);
@@ -908,8 +836,20 @@ export abstract class Pet {
     applyCrisp() {
         for (let pet of this.parent.petArray) {
             if (pet.equipment instanceof Crisp) {
+                let damage = 6;
+                let nurikabe = 0;
+                if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
+                    nurikabe = pet.level * 4;
+                    damage = Math.max(0, damage - nurikabe);
+                }
+                let message = `${pet.name} took ${damage} damage`;
+                if (nurikabe > 0) {
+                    message += ` -${nurikabe} (Nurikabe)`;
+                }
+                message += ` (Crisp).`;
+
                 this.logService.createLog({
-                    message: `${pet.name} took 6 damage (Crisp)`,
+                    message: message,
                     type: 'ability',
                     player: pet.parent
                 });
@@ -992,7 +932,7 @@ export abstract class Pet {
         }
 
         if (ghostKitten) {
-            message += ` (-${ghostKittenMitigation} Ghost Kitten)`;
+            message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
         }
 
         if (pet.equipment?.name == 'Exposed') {
@@ -1002,6 +942,10 @@ export abstract class Pet {
         let manticoreMult = this.getManticoreMult();
         if (manticoreMult > 1) {
             message += ` x${manticoreMult} (Manticore)`;
+        }
+
+        if (damageResp.nurikabe > 0) {
+            message += ` -${damageResp.nurikabe} (Nurikabe)`
         }
 
         this.logService.createLog({
@@ -1044,7 +988,14 @@ export abstract class Pet {
         return damage;
     }
 
-    calculateDamgae(pet: Pet, manticoreMult: number, power?: number, snipe=false): {defenseEquipment: Equipment, attackEquipment: Equipment, damage: number, fortuneCookie: boolean} {
+    calculateDamgae(pet: Pet, manticoreMult: number, power?: number, snipe=false):
+        {
+            defenseEquipment: Equipment,
+            attackEquipment: Equipment,
+            damage: number,
+            fortuneCookie: boolean,
+            nurikabe: number
+        } {
         let attackMultiplier = 1;
         let defenseMultiplier = 1;
         if (this.name == 'Panther') {
@@ -1118,6 +1069,14 @@ export abstract class Pet {
         let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
 
+        let nurikabe = 0;
+        if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
+            nurikabe = pet.level * 4;
+            defenseAmt += nurikabe;
+            pet.abilityUses++;
+        }
+
+        console.log(nurikabe, defenseAmt)
 
         if (attackEquipment instanceof Salt && !snipe) {
             if (pet.tier < this.tier) {
@@ -1152,7 +1111,8 @@ export abstract class Pet {
             defenseEquipment: defenseEquipment,
             attackEquipment: attackEquipment,
             damage: damage,
-            fortuneCookie: fortuneCookie
+            fortuneCookie: fortuneCookie,
+            nurikabe: nurikabe
         }
     } 
 
@@ -1267,6 +1227,8 @@ export abstract class Pet {
             max = 100;
         }
         this.health = Math.min(Math.max(this.health  + amt, 1), max);
+        this.abilityService.triggerFriendGainsHealthEvents(this.parent, this);
+        this.abilityService.executeFriendGainsHealthEvents();
     }
 
     increaseExp(amt) {

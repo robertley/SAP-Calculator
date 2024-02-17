@@ -63,6 +63,10 @@ export class Player {
     }
 
     setPet(index: number, pet: Pet, init=false) {
+        let oldPet = this.getPet(index);
+        if (oldPet != null) {
+            oldPet.savedPosition = null;
+        }
         if (index == 0) {
             this.pet0 = pet;
             if (pet != null) {

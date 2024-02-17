@@ -348,6 +348,26 @@ import { Sphinx } from "../classes/pets/custom/tier-2/sphinx.class";
 import { Chupacabra } from "../classes/pets/custom/tier-2/chupacabra.class";
 import { GoldenBeetle } from "../classes/pets/custom/tier-2/golden-beetle.class";
 import { FooDog } from "../classes/pets/custom/tier-3/foo-dog.class";
+import { Tree } from "../classes/pets/custom/tier-3/tree.class";
+import { SmallerSlime } from "../classes/pets/hidden/smaller-slime.class";
+import { Slime } from "../classes/pets/custom/tier-3/slime.class";
+import { Pegasus } from "../classes/pets/custom/tier-3/pegasus.class";
+import { DeerLord } from "../classes/pets/custom/tier-3/deer-lord.class";
+import { Fairy } from "../classes/pets/custom/tier-4/fairy.class";
+import { Rootling } from "../classes/pets/custom/tier-4/rootling.class";
+import { Anubis } from "../classes/pets/custom/tier-4/anubis.class";
+import { OldMouse } from "../classes/pets/custom/tier-4/old-mouse.class";
+import { Hippocampus } from "../classes/pets/custom/tier-4/hippocampus.class";
+import { Boitata } from "../classes/pets/custom/tier-5/boitata.class";
+import { Kappa } from "../classes/pets/custom/tier-5/kappa.class";
+import { Mimic } from "../classes/pets/custom/tier-5/mimic.class";
+import { Nurikabe } from "../classes/pets/custom/tier-5/nurikabe.class";
+import { Tandgnost } from "../classes/pets/custom/tier-5/tandgnost.class";
+import { Tandgrisner } from "../classes/pets/custom/tier-5/tandgrisner.class";
+import { GreatOne } from "../classes/pets/custom/tier-6/great-one.class";
+import { Leviathan } from "../classes/pets/custom/tier-6/leviathan.class";
+import { QuestingBeast } from "../classes/pets/custom/tier-6/questing-beast.class";
+import { Cockatrice } from "../classes/pets/custom/tier-6/cockatrice.class";
 
 @Injectable({
     providedIn: 'root'
@@ -850,25 +870,44 @@ export class PetService {
             "Emperor Tamarin",
             "Porcupine",
             "Wasp",
-            "Foo Dog"
+            "Foo Dog",
+            "Tree",
+            "Slime",
+            "Pegasus",
+            "Deer Lord"
         ]);
         this.customPackPets.set(4, [
             "Jerboa",
             "Dragonfly",
             "Lynx",
-            "Seagull"
+            "Seagull",
+            "Fairy",
+            "Rootling",
+            "Anubis",
+            "Old Mouse",
+            "Hippocampus"
         ]);
         this.customPackPets.set(5, [
             "Alpaca",
             "Hyena",
             "Moose",
-            "Raccoon"
+            "Raccoon",
+            "Boitata",
+            "Kappa",
+            "Mimic",
+            "Nurikabe",
+            "Tandgnost",
+            "Tandgrisner"
         ]);
         this.customPackPets.set(6, [
             "Lioness",
             "Tapir",
             "Walrus",
-            "White Tiger"
+            "White Tiger",
+            "Great One",
+            "Leviathan",
+            "Questing Beast",
+            "Cockatrice"
         ]);
 
         this.setAllPets();
@@ -1470,6 +1509,45 @@ export class PetService {
                 return new GoldenBeetle(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Foo Dog':
                 return new FooDog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tree':
+                return new Tree(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Slime':
+                return new Slime(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.battlesFought);
+            case 'Pegasus':
+                return new Pegasus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Deer Lord':
+                return new DeerLord(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Fairy':
+                return new Fairy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Rootling':
+                return new Rootling(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Anubis':
+                return new Anubis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Old Mouse':
+                return new OldMouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Hippocampus':
+                return new Hippocampus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Boitata':
+                return new Boitata(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Kappa':
+                return new Kappa(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Mimic':
+                return new Mimic(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Nurikabe':
+                return new Nurikabe(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tandgnost':
+                return new Tandgnost(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tandgrisner':
+                return new Tandgrisner(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Great One':
+                return new GreatOne(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Leviathan':
+                return new Leviathan(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Questing Beast':
+                return new QuestingBeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Cockatrice':
+                return new Cockatrice(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+
 
             // Token Pets
             case 'Bee':
@@ -1512,6 +1590,8 @@ export class PetService {
                 return new Rock(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Daycrawler':
                 return new Daycrawler(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Smaller Slime':
+                return new SmallerSlime(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Unicorn Pack
             // Tier 1
@@ -1652,1093 +1732,1154 @@ export class PetService {
     createDefaultVersionOfPet(pet: Pet, attack: number = null, health: number = null) {
         let newPet;
         if (pet instanceof Ant) {
-            newPet = new Ant(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ant(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bee) {
-            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cricket) {
-            newPet = new Cricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cricket(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Fish) {
-            newPet = new Fish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Fish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Horse) {
-            newPet = new Horse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Horse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mosquito) {
-            newPet = new Mosquito(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mosquito(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ZombieCricket) {
-            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Duck) {
-            newPet = new Duck(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Duck(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Beaver) {
-            newPet = new Beaver(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Beaver(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Otter) {
-            newPet = new Otter(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Otter(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pig) {
-            newPet = new Pig(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pig(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mouse) {
-            newPet = new Mouse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mouse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pigeon) {
-            newPet = new Pigeon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pigeon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // tier 2
         if (pet instanceof Crab) {
-            newPet = new Crab(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crab(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Swan) {
-            newPet = new Swan(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Swan(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rat) {
-            newPet = new Rat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hedgehog) {
-            newPet = new Hedgehog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hedgehog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Peacock) {
-            newPet = new Peacock(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Peacock(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Flamingo) {
-            newPet = new Flamingo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Flamingo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Worm) {
-            newPet = new Worm(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Worm(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Kangaroo) {
-            newPet = new Kangaroo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Kangaroo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Spider) {
-            newPet = new Spider(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Spider(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dodo) {
-            newPet = new Dodo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dodo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Badger) {
-            newPet = new Badger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Badger(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dolphin) {
-            newPet = new Dolphin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dolphin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Giraffe) {
-            newPet = new Giraffe(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Giraffe(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Elephant) {
-            newPet = new Elephant(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Elephant(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Camel) {
-            newPet = new Camel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Camel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rabbit) {
-            newPet = new Rabbit(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rabbit(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ox) {
-            newPet = new Ox(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ox(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dog) {
-            newPet = new Dog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sheep) {
-            newPet = new Sheep(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sheep(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         
         // tier 4
         if (pet instanceof Skunk) {
-            newPet = new Skunk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Skunk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hippo) {
-            newPet = new Hippo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hippo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bison) {
-            newPet = new Bison(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bison(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Blowfish) {
-            newPet = new Blowfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Blowfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Turtle) {
-            newPet = new Turtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Turtle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Squirrel) {
-            newPet = new Squirrel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Squirrel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Penguin) {
-            newPet = new Penguin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Penguin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Deer) {
-            newPet = new Deer(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Deer(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Whale) {
-            newPet = new Whale(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Whale(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Parrot) {
-            newPet = new Parrot(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Parrot(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // tier 5
 
         if (pet instanceof Scorpion) {
-            newPet = new Scorpion(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Scorpion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Crocodile) {
-            newPet = new Crocodile(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crocodile(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rhino) {
-            newPet = new Rhino(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rhino(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Monkey) {
-            newPet = new Monkey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Monkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Armadillo) {
-            newPet = new Armadillo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Armadillo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cow) {
-            newPet = new Cow(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Seal) {
-            newPet = new Seal(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Seal(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rooster) {
-            newPet = new Rooster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rooster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Shark) {
-            newPet = new Shark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Shark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Turkey) {
-            newPet = new Turkey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Turkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // tier 6
         if (pet instanceof Leopard) {
-            newPet = new Leopard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Leopard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Boar) {
-            newPet = new Boar(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Boar(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tiger) {
-            newPet = new Tiger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tiger(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wolverine) {
-            newPet = new Wolverine(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wolverine(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gorilla) {
-            newPet = new Gorilla(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gorilla(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dragon) {
-            newPet = new Dragon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dragon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mammoth) {
-            newPet = new Mammoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mammoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cat) {
-            newPet = new Cat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Snake) {
-            newPet = new Snake(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Snake(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Fly) {
-            newPet = new Fly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Fly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Puppy
         // Tier 1
         if (pet instanceof Moth) {
-            newPet = new Moth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Moth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bluebird) {
-            newPet = new Bluebird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bluebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chinchilla) {
-            newPet = new Chinchilla(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chinchilla(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Beetle) {
-            newPet = new Beetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Beetle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ladybug) {
-            newPet = new Ladybug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ladybug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chipmunk) {
-            newPet = new Chipmunk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chipmunk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gecko) {
-            newPet = new Gecko(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gecko(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ferret) {
-            newPet = new Ferret(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ferret(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 2
         if (pet instanceof Frigatebird) {
-            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Robin) {
-            newPet = new Robin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Robin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bat) {
-            newPet = new Bat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dromedary) {
-            newPet = new Dromedary(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dromedary(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Shrimp) {
-            newPet = new Shrimp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Shrimp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Toucan) {
-            newPet = new Toucan(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Toucan(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BelugaSturgeon) {
-            newPet = new BelugaSturgeon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BelugaSturgeon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof TabbyCat) {
-            newPet = new TabbyCat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new TabbyCat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mandrill) {
-            newPet = new Mandrill(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mandrill(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lemur) {
-            newPet = new Lemur(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lemur(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof HoopoeBird) {
-            newPet = new HoopoeBird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HoopoeBird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof TropicalFish) {
-            newPet = new TropicalFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new TropicalFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HatchingChick) {
-            newPet = new HatchingChick(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HatchingChick(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Goldfish) {
-            newPet = new Goldfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Goldfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Owl) {
-            newPet = new Owl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Owl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mole) {
-            newPet = new Mole(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mole(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Raccoon) {
-            newPet = new Raccoon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Raccoon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FlyingSquirrel) {
-            newPet = new FlyingSquirrel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FlyingSquirrel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pangolin) {
-            newPet = new Pangolin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pangolin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Puppy) {
-            newPet = new Puppy(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Puppy(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hare) {
-            newPet = new Hare(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hare(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         
         // Tier 4
         if (pet instanceof Microbe) {
-            newPet = new Microbe(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Microbe(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lobster) {
-            newPet = new Lobster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lobster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Buffalo) {
-            newPet = new Buffalo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Buffalo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Llama) {
-            newPet = new Llama(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Llama(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Caterpillar) {
-            newPet = new Caterpillar(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Caterpillar(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Doberman) {
-            newPet = new Doberman(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Doberman(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tahr) {
-            newPet = new Tahr(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tahr(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof WhaleShark) {
-            newPet = new WhaleShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new WhaleShark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chameleon) {
-            newPet = new Chameleon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chameleon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gharial) {
-            newPet = new Gharial(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gharial(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof Stonefish) {
-            newPet = new Stonefish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stonefish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Poodle) {
-            newPet = new Poodle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Poodle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Goat) {
-            newPet = new Goat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Goat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chicken) {
-            newPet = new Chicken(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chicken(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Eagle) {
-            newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Panther) {
-            newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Axolotl) {
-            newPet = new Axolotl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Axolotl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SnappingTurtle) {
-            newPet = new SnappingTurtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SnappingTurtle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mosasaurus) {
-            newPet = new Mosasaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mosasaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof StringRay) {
-            newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof MantisShrimp) {
-            newPet = new MantisShrimp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new MantisShrimp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lionfish) {
-            newPet = new Lionfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lionfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tyrannosaurus) {
-            newPet = new Tyrannosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tyrannosaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Octopus) {
-            newPet = new Octopus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Octopus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Anglerfish) {
-            newPet = new Anglerfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Anglerfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sauropod) {
-            newPet = new Sauropod(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sauropod(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ElephantSeal) {
-            newPet = new ElephantSeal(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ElephantSeal(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Puma) {
-            newPet = new Puma(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Puma(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mongoose) {
-            newPet = new Mongoose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mongoose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Star
         // Tier 1
         if (pet instanceof Pillbug) {
-            newPet = new Pillbug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pillbug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Duckling) {
-            newPet = new Duckling(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Duckling(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cockroach) {
-            newPet = new Cockroach(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cockroach(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Kiwi) {
-            newPet = new Kiwi(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Kiwi(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Frog) {
-            newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Frog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Seahorse) {
-            newPet = new Seahorse(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Seahorse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Iguana) {
-            newPet = new Iguana(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Iguana(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hummingbird) {
-            newPet = new Hummingbird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hummingbird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Marmoset) {
-            newPet = new Marmoset(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Marmoset(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
 
         // Tier 2
         if (pet instanceof Koala) {
-            newPet = new Koala(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Koala(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Yak) {
-            newPet = new Yak(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Yak(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Salamander) {
-            newPet = new Salamander(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Salamander(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Panda) {
-            newPet = new Panda(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Panda(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GuineaPig) {
-            newPet = new GuineaPig(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GuineaPig(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Jellyfish) {
-            newPet = new Jellyfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Jellyfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pug) {
-            newPet = new Pug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof AtlanticPuffin) {
-            newPet = new AtlanticPuffin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new AtlanticPuffin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dove) {
-            newPet = new Dove(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dove(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Stork) {
-            newPet = new Stork(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stork(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof Leech) {
-            newPet = new Leech(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Leech(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Woodpecker) {
-            newPet = new Woodpecker(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Woodpecker(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Toad) {
-            newPet = new Toad(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Toad(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Starfish) {
-            newPet = new Starfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Starfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Clownfish) {
-            newPet = new Clownfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Clownfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Blobfish) {
-            newPet = new Blobfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Blobfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Cabybara) {
-            newPet = new Cabybara(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cabybara(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Okapi) {
-            newPet = new Okapi(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Okapi(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Cassowary) {
-            newPet = new Cassowary(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cassowary(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
 
         // Tier 4
         if (pet instanceof Orangutang) {
-            newPet = new Orangutang(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Orangutang(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Eel) {
-            newPet = new Eel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Eel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Hawk) {
-            newPet = new Hawk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hawk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Platypus) {
-            newPet = new Platypus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Platypus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof PrayingMantis) {
-            newPet = new PrayingMantis(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PrayingMantis(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         } 
         if (pet instanceof Crow) {
-            newPet = new Crow(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Donkey) {
-            newPet = new Donkey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Donkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pelican) {
-            newPet = new Pelican(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pelican(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Anteater) {
-            newPet = new Anteater(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Anteater(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof SwordFish) {
-            newPet = new SwordFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SwordFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PolarBear) {
-            newPet = new PolarBear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PolarBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SiberianHuskey) {
-            newPet = new SiberianHuskey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SiberianHuskey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lion) {
-            newPet = new Lion(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Triceratops) {
-            newPet = new Triceratops(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Triceratops(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Zebra) {
-            newPet = new Zebra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Zebra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Fox) {
-            newPet = new Fox(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Fox(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hamster) {
-            newPet = new Hamster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hamster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Shoebill) {
-            newPet = new Shoebill(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Shoebill(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Vulture) {
-            newPet = new Vulture(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Vulture(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof Komodo) {
-            newPet = new Komodo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Komodo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ostrich) {
-            newPet = new Ostrich(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ostrich(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Reindeer) {
-            newPet = new Reindeer(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Reindeer(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Stegosaurus) {
-            newPet = new Stegosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stegosaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Piranha) {
-            newPet = new Piranha(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Piranha(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HammerheadShark) {
-            newPet = new HammerheadShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HammerheadShark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Velociraptor) {
-            newPet = new Velociraptor(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Velociraptor(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SabertoothTiger) {
-            newPet = new SabertoothTiger(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SabertoothTiger(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Orca) {
-            newPet = new Orca(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Orca(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Spinosaurus) {
-            newPet = new Spinosaurus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Spinosaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Golden
         // Tier 1
         if (pet instanceof Bulldog) {
-            newPet = new Bulldog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bulldog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Groundhog) {
-            newPet = new Groundhog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Groundhog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ConeSnail) {
-            newPet = new ConeSnail(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ConeSnail(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Goose) {
-            newPet = new Goose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Goose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PiedTamarin) {
-            newPet = new PiedTamarin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PiedTamarin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Opossum) {
-            newPet = new Opossum(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Opossum(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Silkmoth) {
-            newPet = new Silkmoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Silkmoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Magpie) {
-            newPet = new Magpie(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Magpie(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 2
         if (pet instanceof HerculesBeetle) {
-            newPet = new HerculesBeetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HerculesBeetle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Stoat) {
-            newPet = new Stoat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Stoat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BlackNeckedStilt) {
-            newPet = new BlackNeckedStilt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BlackNeckedStilt(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Squid) {
-            newPet = new Squid(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Squid(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SeaUrchin) {
-            newPet = new SeaUrchin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SeaUrchin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof DoorHeadAnt) {
-            newPet = new DoorHeadAnt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new DoorHeadAnt(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lizard) {
-            newPet = new Lizard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lizard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SeaTurtle) {
-            newPet = new SeaTurtle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SeaTurtle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof AfricanPenguin) {
-            newPet = new AfricanPenguin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new AfricanPenguin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof MuskOx) {
-            newPet = new MuskOx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new MuskOx(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Flea) {
-            newPet = new Flea(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Flea(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof RoyalFlycatcher) {
-            newPet = new RoyalFlycatcher(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new RoyalFlycatcher(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SurgeonFish) {
-            newPet = new SurgeonFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SurgeonFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Weasel) {
-            newPet = new Weasel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Weasel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Guineafowl) {
-            newPet = new Guineafowl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Guineafowl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BettaFish) {
-            newPet = new BettaFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BettaFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Meerkat) {
-            newPet = new Meerkat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Meerkat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FlyingFish) {
-            newPet = new FlyingFish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FlyingFish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Baboon) {
-            newPet = new Baboon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Baboon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Osprey) {
-            newPet = new Osprey(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Osprey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 4
         if (pet instanceof Manatee) {
-            newPet = new Manatee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Manatee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cuttlefish) {
-            newPet = new Cuttlefish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cuttlefish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof EgyptianVulture) {
-            newPet = new EgyptianVulture(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new EgyptianVulture(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SaigaAntelope) {
-            newPet = new SaigaAntelope(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SaigaAntelope(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sealion) {
-            newPet = new Sealion(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sealion(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Vaquita) {
-            newPet = new Vaquita(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Vaquita(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Slug) {
-            newPet = new Slug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Slug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PoisonDartFrog) {
-            newPet = new PoisonDartFrog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new PoisonDartFrog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SecretaryBird) {
-            newPet = new SecretaryBird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SecretaryBird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Falcon) {
-            newPet = new Falcon(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Falcon(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof MantaRay) {
-            newPet = new MantaRay(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new MantaRay(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof Macaque) {
-            newPet = new Macaque(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Macaque(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Nyala) {
-            newPet = new Nyala(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Nyala(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof NurseShark) {
-            newPet = new NurseShark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new NurseShark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BelugaWhale) {
-            newPet = new BelugaWhale(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BelugaWhale(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wolf) {
-            newPet = new Wolf(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wolf(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SilverFox) {
-            newPet = new SilverFox(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SilverFox(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FireAnt) {
-            newPet = new FireAnt(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FireAnt(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cockatoo) {
-            newPet = new Cockatoo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cockatoo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BlueRingedOctopus) {
-            newPet = new BlueRingedOctopus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BlueRingedOctopus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Crane) {
-            newPet = new Crane(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Crane(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Emu) {
-            newPet = new Emu(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Emu(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof Wildebeast) {
-            newPet = new Wildebeast(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wildebeast(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HighlandCow) {
-            newPet = new HighlandCow(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new HighlandCow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Catfish) {
-            newPet = new Catfish(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Catfish(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pteranodon) {
-            newPet = new Pteranodon(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pteranodon(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Warthog) {
-            newPet = new Warthog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Warthog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cobra) {
-            newPet = new Cobra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cobra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GrizzlyBear) {
-            newPet = new GrizzlyBear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GrizzlyBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GermanShephard) {
-            newPet = new GermanShephard(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GermanShephard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BirdOfParadise) {
-            newPet = new BirdOfParadise(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BirdOfParadise(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Oyster) {
-            newPet = new Oyster(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Oyster(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Token pets
         if (pet instanceof Bee) {
-            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bus) {
-            newPet = new Bus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Butterfly) {
-            newPet = new Butterfly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Butterfly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chick) {
-            newPet = new Chick(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chick(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof DirtyRat) {
-            newPet = new DirtyRat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new DirtyRat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GoldenRetriever) {
-            newPet = new GoldenRetriever(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GoldenRetriever(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof LizardTail) {
-            newPet = new LizardTail(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new LizardTail(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Nest) {
-            newPet = new Nest(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Nest(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ram) {
-            newPet = new Ram(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ram(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SmallerSlug) {
-            newPet = new SmallerSlug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SmallerSlug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SmallestSlug) {
-            newPet = new SmallestSlug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SmallestSlug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ZombieCricket) {
-            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ZombieCricket(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ZombieFly) {
-            newPet = new ZombieFly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ZombieFly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof CrackedEgg) {
-            newPet = new CrackedEgg(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new CrackedEgg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof NessieQ) {
-            newPet = new NessieQ(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new NessieQ(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof YoungPhoenix) {
-            newPet = new YoungPhoenix(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new YoungPhoenix(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FirePup) {
-            newPet = new FirePup(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FirePup(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Monty) {
-            newPet = new Monty(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Monty(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Rock) {
-            newPet = new Rock(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Rock(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Daycrawler) {
-            newPet = new Daycrawler(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Daycrawler(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof SmallerSlime) {
+            newPet = new SmallerSlime(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Custom Pack Pets
         if (pet instanceof Jerboa) {
-            newPet = new Jerboa(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Jerboa(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FrilledDragon) {
-            newPet = new FrilledDragon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FrilledDragon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wombat) {
-            newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Aardvark) {
-            newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bear) {
-            newPet = new Bear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof EmperorTamarin) {
-            newPet = new EmperorTamarin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new EmperorTamarin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Porcupine) {
-            newPet = new Porcupine(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Porcupine(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wasp) {
-            newPet = new Wasp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wasp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dragonfly) {
-            newPet = new Dragonfly(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Dragonfly(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lynx) {
-            newPet = new Lynx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lynx(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Seagull) {
-            newPet = new Seagull(this.logService, this.abilityService, this, this.gameService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Seagull(this.logService, this.abilityService, this, this.gameService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Alpaca) {
-            newPet = new Alpaca(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Alpaca(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hyena) {
-            newPet = new Hyena(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hyena(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Moose) {
-            newPet = new Moose(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Moose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Lioness) {
-            newPet = new Lioness(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Lioness(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tapir) {
-            newPet = new Tapir(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tapir(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Walrus) {
-            newPet = new Walrus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Walrus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof WhiteTiger) {
-            newPet = new WhiteTiger(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new WhiteTiger(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Basilisk) {
-            newPet = new Basilisk(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Basilisk(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Nightcrawler) {
-            newPet = new Nightcrawler(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Nightcrawler(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sphinx) {
-            newPet = new Sphinx(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sphinx(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chupacabra) {
-            newPet = new Chupacabra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chupacabra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GoldenBeetle) {
-            newPet = new GoldenBeetle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GoldenBeetle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FooDog) {
-            newPet = new FooDog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FooDog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof Tree) {
+            newPet = new Tree(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Slime) {
+            newPet = new Slime(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Pegasus) {
+            newPet = new Pegasus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof DeerLord) {
+            newPet = new DeerLord(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Fairy) {
+            newPet = new Fairy(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Rootling) {
+            newPet = new Rootling(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Anubis) {
+            newPet = new Anubis(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof OldMouse) {
+            newPet = new OldMouse(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Hippocampus) {
+            newPet = new Hippocampus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Boitata) {
+            newPet = new Boitata(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Kappa) {
+            newPet = new Kappa(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Mimic) {
+            newPet = new Mimic(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Nurikabe) {
+            newPet = new Nurikabe(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tandgnost) {
+            newPet = new Tandgnost(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Tandgrisner) {
+            newPet = new Tandgrisner(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof GreatOne) {
+            newPet = new GreatOne(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Leviathan) {
+            newPet = new Leviathan(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof QuestingBeast) {
+            newPet = new QuestingBeast(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Cockatrice) {
+            newPet = new Cockatrice(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
 
         // Unicorn
         // Tier 1
         if (pet instanceof Baku) {
-            newPet = new Baku(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Baku(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof AxehandleHound) {
-            newPet = new AxehandleHound(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new AxehandleHound(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Barghest) {
-            newPet = new Barghest(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Barghest(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tsuchinoko) {
-            newPet = new Tsuchinoko(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tsuchinoko(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Murmel) {
-            newPet = new Murmel(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Murmel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Alchemedes) {
-            newPet = new Alchemedes(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Alchemedes(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Warg) {
-            newPet = new Warg(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Warg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bunyip) {
-            newPet = new Bunyip(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bunyip(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SneakyEgg) {
-            newPet = new SneakyEgg(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SneakyEgg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof CuddleToad) {
-            newPet = new CuddleToad(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new CuddleToad(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 2
         if (pet instanceof GhostKitten) {
-            newPet = new GhostKitten(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new GhostKitten(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FrostWolf) {
-            newPet = new FrostWolf(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FrostWolf(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mothman) {
-            newPet = new Mothman(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mothman(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof DropBear) {
-            newPet = new DropBear(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new DropBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Jackalope) {
-            newPet = new Jackalope(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Jackalope(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof LuckyCat) {
-            newPet = new LuckyCat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new LuckyCat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ogopogo) {
-            newPet = new Ogopogo(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ogopogo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Thunderbird) {
-            newPet = new Thunderbird(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Thunderbird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Gargoyle) {
-            newPet = new Gargoyle(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Gargoyle(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bigfoot) {
-            newPet = new Bigfoot(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Bigfoot(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 3
         if (pet instanceof SkeletonDog) {
-            newPet = new SkeletonDog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SkeletonDog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Mandrake) {
-            newPet = new Mandrake(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Mandrake(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FurBearingTrout) {
-            newPet = new FurBearingTrout(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new FurBearingTrout(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof ManaHound) {
-            newPet = new ManaHound(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new ManaHound(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Calygreyhound) {
-            newPet = new Calygreyhound(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Calygreyhound(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BrainCramp) {
-            newPet = new BrainCramp(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BrainCramp(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Minotaur) {
-            newPet = new Minotaur(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Minotaur(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Wyvern) {
-            newPet = new Wyvern(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Wyvern(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Ouroboros) {
-            newPet = new Ouroboros(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Ouroboros(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Griffin) {
-            newPet = new Griffin(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Griffin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 4
         if (pet instanceof Kraken) {
-            newPet = new Kraken(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Kraken(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Visitor) {
-            newPet = new Visitor(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Visitor(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof VampireBat) {
-            newPet = new VampireBat(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new VampireBat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof TigerBug) {
-            newPet = new TigerBug(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new TigerBug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Tatzelwurm) {
-            newPet = new Tatzelwurm(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Tatzelwurm(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cyclops) {
-            newPet = new Cyclops(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cyclops(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Chimera) {
-            newPet = new Chimera(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Chimera(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Roc) {
-            newPet = new Roc(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Roc(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof WormOfSand) {
-            newPet = new WormOfSand(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new WormOfSand(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Abomination) {
-            newPet = new Abomination(this.logService, this.abilityService, this, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Abomination(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 5
         if (pet instanceof RedDragon) {
-            newPet = new RedDragon(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new RedDragon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Unicorn) {
-            newPet = new Unicorn(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Unicorn(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof LovelandFrogman) {
-            newPet = new LovelandFrogman(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new LovelandFrogman(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SalmonOfKnowledge) {
-            newPet = new SalmonOfKnowledge(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SalmonOfKnowledge(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof JerseyDevil) {
-            newPet = new JerseyDevil(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new JerseyDevil(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Pixiu) {
-            newPet = new Pixiu(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Pixiu(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Kitsune) {
-            newPet = new Kitsune(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Kitsune(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Nessie) {
-            newPet = new Nessie(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Nessie(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BadDog) {
-            newPet = new BadDog(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new BadDog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Werewolf) {
-            newPet = new Werewolf(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Werewolf(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
         if (pet instanceof Manticore) {
-            newPet = new Manticore(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Manticore(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Phoenix) {
-            newPet = new Phoenix(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Phoenix(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Quetzalcoatl) {
-            newPet = new Quetzalcoatl(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Quetzalcoatl(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof TeamSpirit) {
-            newPet = new TeamSpirit(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new TeamSpirit(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Sleipnir) {
-            newPet = new Sleipnir(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Sleipnir(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SeaSerpent) {
-            newPet = new SeaSerpent(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new SeaSerpent(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Yeti) {
-            newPet = new Yeti(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Yeti(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Cerberus) {
-            newPet = new Cerberus(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Cerberus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Hydra) {
-            newPet = new Hydra(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Hydra(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Behemoth) {
-            newPet = new Behemoth(this.logService, this.abilityService, pet.parent, attack, health, levelToExp(pet.level));
+            newPet = new Behemoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
 
@@ -2848,6 +2989,7 @@ export interface PetForm {
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    battlesFought?: number;
 }
 
 function levelToExp(level: number) {

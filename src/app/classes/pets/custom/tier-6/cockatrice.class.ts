@@ -5,40 +5,34 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Rock } from "../../hidden/rock.class";
-import { Behemoth } from "../../unicorn/tier-6/behemoth.class";
 
-export class Basilisk extends Pet {
-    name = "Basilisk";
-    tier = 1;
+export class Cockatrice extends Pet {
+    name = "Cockatrice";
+    tier = 6;
     pack: Pack = 'Custom';
-    health = 2;
-    attack = 1;
+    attack = 5;
+    health = 7;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petAhead;
-        if (target == null) {
-            target = this.parent.opponent.petArray[0];
+        let targets = this.parent.opponent.petArray.reverse();
+        let target = null;
+        for (let pet of targets) {
+            if (pet.level <= this.level) {
+                target = pet;
+                break;
+            }
         }
         if (target == null) {
             return;
         }
-                
-        let healthBonus = this.level * 2;
-
         this.logService.createLog({
-            message: `${this.name} turned ${target.name} into a Rock with + ${healthBonus} health.`,
-            type: "ability",
+            message: `${this.name} transformed ${target.name} into a rock.`,
+            type: 'ability',
             player: this.parent,
             tiger: tiger
-        })
-
-        let health = target.health + healthBonus;
-        let maxHealth = 50;
-        health = Math.min(health, maxHealth);
-
+        });
+        let rock = new Rock(this.logService, this.abilityService, target.parent, target.health, target.attack, target.mana, target.exp, target.equipment);
         let position = target.position;
-        target.parent.setPet(position, new Rock(this.logService, this.abilityService, target.parent, health, target.attack, target.mana, target.exp, target.equipment), false);
-
-        this.superStartOfBattle(gameApi, tiger);
+        this.parent.opponent.setPet(position, rock, false);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

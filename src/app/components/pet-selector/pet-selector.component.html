@@ -51,6 +51,11 @@
                         </select>
                     </div>
                 </div>
+
+                <div *ngIf="pet.name == 'Slime'">
+                    <label for="battlesFought">Battles Fought</label>
+                    <input class="form-control" formControlName="battlesFought" type="number" max="99">
+                </div>
                 
             </div>
         </div>
