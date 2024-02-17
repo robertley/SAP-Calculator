@@ -15,7 +15,6 @@ export class Cerberus extends Pet {
     attack = 8;
     health = 8;
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        console.log('emptyFrontSpace', this.parent.pet0);
         if (this.parent.pet0 != null) {
             return;
         }

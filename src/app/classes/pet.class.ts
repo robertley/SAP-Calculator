@@ -1211,7 +1211,6 @@ export abstract class Pet {
     }
 
     increaseAttack(amt) {
-        console.log('increase attack called', amt)
         let max = 50;
         if (this.name == 'Behemoth') {
             max = 100;

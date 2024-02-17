@@ -58,7 +58,6 @@ export class CustomPackEditorComponent implements OnInit {
     for (let [tier, pets] of this.petService.customPackPets) {
       this.petPackMap.get(tier).get('Custom').push(...pets);
     }
-    console.log(this.petPackMap)
   }
 
   createNewPack() {
