@@ -9,8 +9,8 @@ export class Werewolf extends Pet {
     name = "Werewolf";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 3;
-    health = 3;
+    attack = 7;
+    health = 7;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         if (gameApi.day) {
             return;

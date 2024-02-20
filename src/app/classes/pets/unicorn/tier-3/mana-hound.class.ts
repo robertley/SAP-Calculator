@@ -20,6 +20,8 @@ export class ManaHound extends Pet {
             rollAmount = gameApi.opponentRollAmount;
         }
 
+        rollAmount = Math.min(rollAmount, 5);
+
         let target = this.petAhead;
 
         if (target == null) {

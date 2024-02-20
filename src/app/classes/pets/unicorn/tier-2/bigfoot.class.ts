@@ -9,7 +9,7 @@ export class Bigfoot extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 2;
-    health = 5;
+    health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

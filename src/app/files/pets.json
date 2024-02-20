@@ -1,9 +1,34 @@
 {
     "tier1": [
         {
+            "name": "Alchemedes",
+            "tier": "1",
+            "id": "626"
+        },
+        {
             "name": "Ant",
             "tier": "1",
             "id": "0"
+        },
+        {
+            "name": "Axehandle Hound",
+            "tier": "1",
+            "id": "377"
+        },
+        {
+            "name": "Baku",
+            "tier": "1",
+            "id": "628"
+        },
+        {
+            "name": "Barghest",
+            "tier": "1",
+            "id": "621"
+        },
+        {
+            "name": "Basilisk",
+            "tier": "1",
+            "id": "332"
         },
         {
             "name": "Beaver",
@@ -31,6 +56,16 @@
             "id": "189"
         },
         {
+            "name": "Bunyip",
+            "tier": "1",
+            "id": "601"
+        },
+        {
+            "name": "Burbel",
+            "tier": "1",
+            "id": "659"
+        },
+        {
             "name": "Bus",
             "tier": "1",
             "id": "85"
@@ -44,6 +79,21 @@
             "name": "Chick",
             "tier": "1",
             "id": "13"
+        },
+        {
+            "name": "Chimera Goat",
+            "tier": "1",
+            "id": "648"
+        },
+        {
+            "name": "Chimera Lion",
+            "tier": "1",
+            "id": "650"
+        },
+        {
+            "name": "Chimera Snake",
+            "tier": "1",
+            "id": "649"
         },
         {
             "name": "Chinchilla",
@@ -66,9 +116,24 @@
             "id": "272"
         },
         {
+            "name": "Cracked Egg",
+            "tier": "1",
+            "id": "647"
+        },
+        {
             "name": "Cricket",
             "tier": "1",
             "id": "17"
+        },
+        {
+            "name": "Cuddle Toad",
+            "tier": "1",
+            "id": "611"
+        },
+        {
+            "name": "Daycrawler",
+            "tier": "1",
+            "id": "641"
         },
         {
             "name": "Dirty Rat",
@@ -86,9 +151,19 @@
             "id": "113"
         },
         {
+            "name": "Fake Nessie",
+            "tier": "1",
+            "id": "614"
+        },
+        {
             "name": "Ferret",
             "tier": "1",
             "id": "172"
+        },
+        {
+            "name": "Fire Pup",
+            "tier": "1",
+            "id": "343"
         },
         {
             "name": "Fish",
@@ -111,9 +186,19 @@
             "id": "229"
         },
         {
+            "name": "Giant Eyes Dog",
+            "tier": "1",
+            "id": "644"
+        },
+        {
             "name": "Golden Retriever",
             "tier": "1",
             "id": "188"
+        },
+        {
+            "name": "Good Dog",
+            "tier": "1",
+            "id": "658"
         },
         {
             "name": "Goose",
@@ -139,6 +224,11 @@
             "name": "Hummingbird",
             "tier": "1",
             "id": "138"
+        },
+        {
+            "name": "Hydra Head",
+            "tier": "1",
+            "id": "643"
         },
         {
             "name": "Kiwi",
@@ -171,6 +261,16 @@
             "id": "204"
         },
         {
+            "name": "Moby Dick",
+            "tier": "1",
+            "id": "-"
+        },
+        {
+            "name": "Monty",
+            "tier": "1",
+            "id": "384"
+        },
+        {
             "name": "Mosquito",
             "tier": "1",
             "id": "47"
@@ -184,6 +284,11 @@
             "name": "Mouse",
             "tier": "1",
             "id": "48"
+        },
+        {
+            "name": "Murmel",
+            "tier": "1",
+            "id": "362"
         },
         {
             "name": "Nest",
@@ -226,6 +331,11 @@
             "id": "62"
         },
         {
+            "name": "Rock",
+            "tier": "1",
+            "id": "638"
+        },
+        {
             "name": "Seahorse",
             "tier": "1",
             "id": "152"
@@ -241,6 +351,11 @@
             "id": "71"
         },
         {
+            "name": "Smaller Slime",
+            "tier": "1",
+            "id": "642"
+        },
+        {
             "name": "Smaller Slug",
             "tier": "1",
             "id": "270"
@@ -249,6 +364,26 @@
             "name": "Smallest Slug",
             "tier": "1",
             "id": "477"
+        },
+        {
+            "name": "Sneaky Egg",
+            "tier": "1",
+            "id": "617"
+        },
+        {
+            "name": "Tsuchinoko",
+            "tier": "1",
+            "id": "379"
+        },
+        {
+            "name": "Warf",
+            "tier": "1",
+            "id": "382"
+        },
+        {
+            "name": "Young Phoenix",
+            "tier": "1",
+            "id": "646"
         },
         {
             "name": "Zombie Cricket",
@@ -283,9 +418,19 @@
             "id": "213"
         },
         {
+            "name": "Bigfoot",
+            "tier": "2",
+            "id": "334"
+        },
+        {
             "name": "Black Necked Stilt",
             "tier": "2",
             "id": "215"
+        },
+        {
+            "name": "Chupacabra",
+            "tier": "2",
+            "id": "339"
         },
         {
             "name": "Crab",
@@ -308,6 +453,11 @@
             "id": "104"
         },
         {
+            "name": "Drop Bear",
+            "tier": "2",
+            "id": "341"
+        },
+        {
             "name": "Flamingo",
             "tier": "2",
             "id": "29"
@@ -318,9 +468,29 @@
             "id": "137"
         },
         {
+            "name": "Frost Wolf",
+            "tier": "2",
+            "id": "344"
+        },
+        {
+            "name": "Gargoyle",
+            "tier": "2",
+            "id": "345"
+        },
+        {
             "name": "Gazelle",
             "tier": "2",
             "id": "185"
+        },
+        {
+            "name": "Ghost Kitten",
+            "tier": "2",
+            "id": "346"
+        },
+        {
+            "name": "Golden Beetle",
+            "tier": "2",
+            "id": "634"
         },
         {
             "name": "Guinea Pig",
@@ -341,6 +511,11 @@
             "name": "Iguana",
             "tier": "2",
             "id": "147"
+        },
+        {
+            "name": "Jackalope",
+            "tier": "2",
+            "id": "353"
         },
         {
             "name": "Jellyfish",
@@ -368,9 +543,29 @@
             "id": "237"
         },
         {
+            "name": "Lucky Cat",
+            "tier": "2",
+            "id": "623"
+        },
+        {
             "name": "Mandrill",
             "tier": "2",
             "id": "405"
+        },
+        {
+            "name": "Mothman",
+            "tier": "2",
+            "id": "604"
+        },
+        {
+            "name": "Nightcrawler",
+            "tier": "2",
+            "id": "605"
+        },
+        {
+            "name": "Ogopogo",
+            "tier": "2",
+            "id": "639"
         },
         {
             "name": "Panda",
@@ -418,6 +613,11 @@
             "id": "72"
         },
         {
+            "name": "Sphinx",
+            "tier": "2",
+            "id": "376"
+        },
+        {
             "name": "Spider",
             "tier": "2",
             "id": "74"
@@ -446,6 +646,11 @@
             "name": "Tabby Cat",
             "tier": "2",
             "id": "99"
+        },
+        {
+            "name": "Thunderbird",
+            "tier": "2",
+            "id": "610"
         },
         {
             "name": "Toucan",
@@ -500,6 +705,16 @@
             "id": "214"
         },
         {
+            "name": "Brain Cramp",
+            "tier": "3",
+            "id": "349"
+        },
+        {
+            "name": "Calygreyhound",
+            "tier": "3",
+            "id": "336"
+        },
+        {
             "name": "Camel",
             "tier": "3",
             "id": "10"
@@ -513,6 +728,11 @@
             "name": "Cassowary",
             "tier": "3",
             "id": "133"
+        },
+        {
+            "name": "Deer Lord",
+            "tier": "3",
+            "id": "651"
         },
         {
             "name": "Dodo",
@@ -560,6 +780,16 @@
             "id": "227"
         },
         {
+            "name": "Foo Dog",
+            "tier": "3",
+            "id": "625"
+        },
+        {
+            "name": "Fur-Bearing Trout",
+            "tier": "3",
+            "id": "653"
+        },
+        {
             "name": "Giraffe",
             "tier": "3",
             "id": "33"
@@ -568,6 +798,11 @@
             "name": "Gold Fish",
             "tier": "3",
             "id": "121"
+        },
+        {
+            "name": "Griffin",
+            "tier": "3",
+            "id": "348"
         },
         {
             "name": "Guineafowl",
@@ -595,9 +830,24 @@
             "id": "165"
         },
         {
+            "name": "Mana Hound",
+            "tier": "3",
+            "id": "635"
+        },
+        {
+            "name": "Mandrake",
+            "tier": "3",
+            "id": "357"
+        },
+        {
             "name": "Meerkat",
             "tier": "3",
             "id": "203"
+        },
+        {
+            "name": "Minotaur",
+            "tier": "3",
+            "id": "360"
         },
         {
             "name": "Mole",
@@ -620,6 +870,11 @@
             "id": "247"
         },
         {
+            "name": "Ouroboros",
+            "tier": "3",
+            "id": "364"
+        },
+        {
             "name": "Owl",
             "tier": "3",
             "id": "95"
@@ -633,6 +888,11 @@
             "name": "Pangolin",
             "tier": "3",
             "id": "249"
+        },
+        {
+            "name": "Pegasus",
+            "tier": "3",
+            "id": "365"
         },
         {
             "name": "Porcupine",
@@ -665,6 +925,16 @@
             "id": "68"
         },
         {
+            "name": "Skeleton Dog",
+            "tier": "3",
+            "id": "374"
+        },
+        {
+            "name": "Slime",
+            "tier": "3",
+            "id": "375"
+        },
+        {
             "name": "Surgeon Fish",
             "tier": "3",
             "id": "264"
@@ -673,6 +943,11 @@
             "name": "Toad",
             "tier": "3",
             "id": "162"
+        },
+        {
+            "name": "Tree",
+            "tier": "3",
+            "id": "378"
         },
         {
             "name": "Tropical Fish",
@@ -693,9 +968,24 @@
             "name": "Woodpecker",
             "tier": "3",
             "id": "156"
+        },
+        {
+            "name": "Wyvern",
+            "tier": "3",
+            "id": "385"
         }
     ],
     "tier4": [
+        {
+            "name": "Abomination",
+            "tier": "4",
+            "id": "373"
+        },
+        {
+            "name": "Anubis",
+            "tier": "4",
+            "id": "331"
+        },
         {
             "name": "Bison",
             "tier": "4",
@@ -727,6 +1017,11 @@
             "id": "216"
         },
         {
+            "name": "Chimera",
+            "tier": "4",
+            "id": "338"
+        },
+        {
             "name": "Clownfish",
             "tier": "4",
             "id": "117"
@@ -745,6 +1040,11 @@
             "name": "Cuttlefish",
             "tier": "4",
             "id": "176"
+        },
+        {
+            "name": "Cyclops",
+            "tier": "4",
+            "id": "630"
         },
         {
             "name": "Deer",
@@ -767,6 +1067,11 @@
             "id": "196"
         },
         {
+            "name": "Fairy",
+            "tier": "4",
+            "id": "342"
+        },
+        {
             "name": "Falcon",
             "tier": "4",
             "id": "224"
@@ -787,9 +1092,19 @@
             "id": "38"
         },
         {
+            "name": "Hippocampus",
+            "tier": "4",
+            "id": "350"
+        },
+        {
             "name": "Jerboa",
             "tier": "4",
             "id": "199"
+        },
+        {
+            "name": "Kraken",
+            "tier": "4",
+            "id": "355"
         },
         {
             "name": "Llama",
@@ -820,6 +1135,11 @@
             "name": "Microbe",
             "tier": "4",
             "id": "94"
+        },
+        {
+            "name": "Old Mouse",
+            "tier": "4",
+            "id": "612"
         },
         {
             "name": "Orangutan",
@@ -855,6 +1175,16 @@
             "name": "Praying Mantis",
             "tier": "4",
             "id": "126"
+        },
+        {
+            "name": "Roc",
+            "tier": "4",
+            "id": "369"
+        },
+        {
+            "name": "Rootling",
+            "tier": "4",
+            "id": "622"
         },
         {
             "name": "Saiga Antelope",
@@ -902,14 +1232,34 @@
             "id": "393"
         },
         {
+            "name": "Tatzelwurm",
+            "tier": "4",
+            "id": "654"
+        },
+        {
+            "name": "Tiger Bug",
+            "tier": "4",
+            "id": "330"
+        },
+        {
             "name": "Turtle",
             "tier": "4",
             "id": "80"
         },
         {
+            "name": "Unicorn",
+            "tier": "4",
+            "id": "380"
+        },
+        {
             "name": "Vaquita",
             "tier": "4",
             "id": "265"
+        },
+        {
+            "name": "Visitor",
+            "tier": "4",
+            "id": "386"
         },
         {
             "name": "Whale",
@@ -920,6 +1270,11 @@
             "name": "Whale Shark",
             "tier": "4",
             "id": "267"
+        },
+        {
+            "name": "Worm of Sand",
+            "tier": "4",
+            "id": "371"
         }
     ],
     "tier5": [
@@ -939,6 +1294,11 @@
             "id": "212"
         },
         {
+            "name": "Bad Dog",
+            "tier": "5",
+            "id": "613"
+        },
+        {
             "name": "Beluga Whale",
             "tier": "5",
             "id": "182"
@@ -947,6 +1307,11 @@
             "name": "Blue Ringed Octopus",
             "tier": "5",
             "id": "271"
+        },
+        {
+            "name": "Boitata",
+            "tier": "5",
+            "id": "656"
         },
         {
             "name": "Chicken",
@@ -1009,14 +1374,39 @@
             "id": "167"
         },
         {
+            "name": "Jersey Devil",
+            "tier": "5",
+            "id": "652"
+        },
+        {
+            "name": "Kappa",
+            "tier": "5",
+            "id": "655"
+        },
+        {
+            "name": "Kitsune",
+            "tier": "5",
+            "id": "354"
+        },
+        {
             "name": "Lion",
             "tier": "5",
             "id": "42"
         },
         {
+            "name": "Loveland Frogman",
+            "tier": "5",
+            "id": "640"
+        },
+        {
             "name": "Macaque",
             "tier": "5",
             "id": "238"
+        },
+        {
+            "name": "Mimic",
+            "tier": "5",
+            "id": "359"
         },
         {
             "name": "Monkey",
@@ -1034,6 +1424,16 @@
             "id": "242"
         },
         {
+            "name": "Nessie",
+            "tier": "5",
+            "id": "363"
+        },
+        {
+            "name": "Nurikabe",
+            "tier": "5",
+            "id": "657"
+        },
+        {
             "name": "Nurse Shark",
             "tier": "5",
             "id": "276"
@@ -1047,6 +1447,11 @@
             "name": "Panther",
             "tier": "5",
             "id": "250"
+        },
+        {
+            "name": "Pixiu",
+            "tier": "5",
+            "id": "619"
         },
         {
             "name": "Polar Bear",
@@ -1064,6 +1469,11 @@
             "id": "158"
         },
         {
+            "name": "Red Dragon",
+            "tier": "5",
+            "id": "368"
+        },
+        {
             "name": "Rhino",
             "tier": "5",
             "id": "55"
@@ -1072,6 +1482,11 @@
             "name": "Rooster",
             "tier": "5",
             "id": "63"
+        },
+        {
+            "name": "Salmon of Knowledge",
+            "tier": "5",
+            "id": "370"
         },
         {
             "name": "Scorpion",
@@ -1124,6 +1539,16 @@
             "id": "119"
         },
         {
+            "name": "Tandgnost",
+            "tier": "5",
+            "id": "607"
+        },
+        {
+            "name": "Tandgrisner",
+            "tier": "5",
+            "id": "608"
+        },
+        {
             "name": "Triceratops",
             "tier": "5",
             "id": "142"
@@ -1134,9 +1559,19 @@
             "id": "79"
         },
         {
+            "name": "Vampire Bat",
+            "tier": "5",
+            "id": "381"
+        },
+        {
             "name": "Vulture",
             "tier": "5",
             "id": "135"
+        },
+        {
+            "name": "Werewolf",
+            "tier": "5",
+            "id": "383"
         },
         {
             "name": "Wolf",
@@ -1154,6 +1589,11 @@
             "name": "Anglerfish",
             "tier": "6",
             "id": "180"
+        },
+        {
+            "name": "Behemoth",
+            "tier": "6",
+            "id": "333"
         },
         {
             "name": "Bird of Paradise",
@@ -1176,9 +1616,19 @@
             "id": "174"
         },
         {
+            "name": "Cerberus",
+            "tier": "6",
+            "id": "337"
+        },
+        {
             "name": "Cobra",
             "tier": "6",
             "id": "217"
+        },
+        {
+            "name": "Cockatrice",
+            "tier": "6",
+            "id": "340"
         },
         {
             "name": "Dragon",
@@ -1206,6 +1656,11 @@
             "id": "36"
         },
         {
+            "name": "Great One",
+            "tier": "6",
+            "id": "335"
+        },
+        {
             "name": "Grizzly Bear",
             "tier": "6",
             "id": "275"
@@ -1221,6 +1676,11 @@
             "id": "186"
         },
         {
+            "name": "Hydra",
+            "tier": "6",
+            "id": "352"
+        },
+        {
             "name": "Komodo",
             "tier": "6",
             "id": "124"
@@ -1229,6 +1689,11 @@
             "name": "Leopard",
             "tier": "6",
             "id": "41"
+        },
+        {
+            "name": "Leviathan",
+            "tier": "6",
+            "id": "356"
         },
         {
             "name": "Lioness",
@@ -1244,6 +1709,11 @@
             "name": "Mammoth",
             "tier": "6",
             "id": "45"
+        },
+        {
+            "name": "Manticore",
+            "tier": "6",
+            "id": "358"
         },
         {
             "name": "Mantis Shrimp",
@@ -1276,6 +1746,11 @@
             "id": "248"
         },
         {
+            "name": "Phoenix",
+            "tier": "6",
+            "id": "366"
+        },
+        {
             "name": "Piranha",
             "tier": "6",
             "id": "118"
@@ -1291,6 +1766,16 @@
             "id": "254"
         },
         {
+            "name": "Questing Beast",
+            "tier": "6",
+            "id": "616"
+        },
+        {
+            "name": "Quetzalcoatl",
+            "tier": "6",
+            "id": "367"
+        },
+        {
             "name": "Reindeer",
             "tier": "6",
             "id": "205"
@@ -1304,6 +1789,16 @@
             "name": "Sauropod",
             "tier": "6",
             "id": "98"
+        },
+        {
+            "name": "Sea Serpent",
+            "tier": "6",
+            "id": "372"
+        },
+        {
+            "name": "Sleipnir",
+            "tier": "6",
+            "id": "606"
         },
         {
             "name": "Snake",
@@ -1324,6 +1819,11 @@
             "name": "Tapir",
             "tier": "6",
             "id": "208"
+        },
+        {
+            "name": "Team Spirit",
+            "tier": "6",
+            "id": "636"
         },
         {
             "name": "Tiger",
@@ -1364,6 +1864,11 @@
             "name": "Wolverine",
             "tier": "6",
             "id": "269"
+        },
+        {
+            "name": "Yeti",
+            "tier": "6",
+            "id": "387"
         }
     ]
 }

@@ -10,7 +10,7 @@ export class TigerBug extends Pet {
     tier = 4;
     pack: Pack = 'Unicorn';
     attack = 4;
-    health = 2;
+    health = 4;
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
         if (this.parent.pet0 != null) {
             return;

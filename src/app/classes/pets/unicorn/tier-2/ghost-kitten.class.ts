@@ -9,7 +9,7 @@ export class GhostKitten extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 3;
-    health = 2;
+    health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

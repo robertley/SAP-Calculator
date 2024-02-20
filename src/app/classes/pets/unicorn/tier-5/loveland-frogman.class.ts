@@ -14,7 +14,7 @@ export class LovelandFrogman extends Pet {
     health = 5;
     friendJumped(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power: Power = {
-            attack: this.level,
+            attack: this.level * 2,
             health: this.level * 2
         };
 

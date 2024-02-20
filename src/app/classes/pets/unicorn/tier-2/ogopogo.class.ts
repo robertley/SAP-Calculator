@@ -10,7 +10,7 @@ export class Ogopogo extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 1;
-    health = 5;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let target = this.parent.furthestUpPet;
         

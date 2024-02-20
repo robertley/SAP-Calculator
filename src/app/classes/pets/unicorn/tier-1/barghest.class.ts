@@ -2,6 +2,7 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.servicee";
 import { Equipment } from "../../../equipment.class";
+import { Spooked } from "../../../equipment/ailments/spooked.class";
 import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -30,13 +31,13 @@ export class Barghest extends Pet {
         for (let target of targets) {
             
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} Weak`,
+                message: `${this.name} gave ${target.name} Spooked`,
                 type: "ability",
                 player: this.parent,
                 tiger: tiger
             })
 
-            target.givePetEquipment(new Weak());
+            target.givePetEquipment(new Spooked());
 
         }
 

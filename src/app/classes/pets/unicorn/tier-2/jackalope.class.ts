@@ -10,7 +10,7 @@ export class Jackalope extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 1;
-    health = 2;
+    health = 3;
     // TODO check if sniping before drop bear is correct
     friendJumped(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let target = this.parent.opponent.getRandomPet();

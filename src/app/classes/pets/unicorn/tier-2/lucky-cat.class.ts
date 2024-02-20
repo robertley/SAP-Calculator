@@ -9,8 +9,8 @@ export class LuckyCat extends Pet {
     name = "Lucky Cat";
     tier = 2;
     pack: Pack = 'Unicorn';
-    attack = 3;
-    health = 4;
+    attack = 2;
+    health = 3;
     anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet != this) {
             return;

@@ -13,25 +13,29 @@ export class AxehandleHound extends Pet {
     health = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let oppponetPets = this.parent.opponent.petArray;
-        let hasDuplicate = false;
-        for (let petX of oppponetPets) {
-            for (let petY of oppponetPets) {
-                if (petX == petY) {
-                    continue;
-                }
+        let petMap: Map<string, Pet[]> = new Map();
 
-                if (petX.name == petY.name) {
-                    hasDuplicate = true;
-                    break;
-                }
+        for (let pet of oppponetPets) {
+            if (petMap.has(pet.name)) {
+                petMap.get(pet.name).push(pet);
+            } else {
+                petMap.set(pet.name, [pet]);
             }
         }
 
-        if (!hasDuplicate) {
-            return;
+        let targets = [];
+        for (let [key, value] of petMap) {
+            if (value.length > 1) {
+                targets.push(...value);
+            }
         }
 
-        let target = this.parent.opponent.getRandomPet();
+        if (targets.length == 0) {
+            return;
+        }
+        
+        let target = targets[Math.floor(Math.random() * targets.length)];
+
         this.logService.createLog({
             message: `${this.name} sniped ${target.name} for ${this.level * 10} damage`,
             type: "ability",

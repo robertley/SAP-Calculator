@@ -40,6 +40,10 @@ import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
 
+// TODO
+// Weak as equipment option
+// parrot copy abomination log bug?
+// move turn to not advanced?
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -66,8 +70,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.0';
-  sapVersion = '0.32.1-150 BETA'
+  version = '0.6.1';
+  sapVersion = '0.33.3-151 BETA'
 
   title = 'sap-calculator';
   player: Player;

@@ -22,7 +22,7 @@ export class Chimera extends Pet {
 
         let power: Power = {
             attack: this.mana,
-            health: this.mana * 2
+            health: this.mana
         }
 
         this.logService.createLog(

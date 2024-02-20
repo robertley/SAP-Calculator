@@ -7,6 +7,7 @@ import { Crisp } from "../../equipment/ailments/crisp.class";
 import { Dazed } from "../../equipment/ailments/dazed.class";
 import { Exposed } from "../../equipment/ailments/exposed.class";
 import { Ink } from "../../equipment/ailments/ink.class";
+import { Spooked } from "../../equipment/ailments/spooked.class";
 import { Weak } from "../../equipment/ailments/weak.class";
 import { Peanut } from "../../equipment/turtle/peanut.class";
 import { Player } from "../../player.class";
@@ -23,6 +24,7 @@ export class PandorasBox extends Toy {
         equipmentMap.set('Ink', new Ink());
         equipmentMap.set('Weak', new Weak());
         equipmentMap.set('Dazed', new Dazed());
+        equipmentMap.set('Spooked', new Spooked());
 
         let pets = [
             ...gameApi.player.petArray,

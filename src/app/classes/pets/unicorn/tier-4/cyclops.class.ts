@@ -12,19 +12,23 @@ export class Cyclops extends Pet {
     attack = 4;
     health = 5;
     anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
         if (pet.parent != this.parent) {
             return;
         }
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${this.level} exp and ${this.level * 2} mana.`,
+            message: `${this.name} gave ${pet.name} 1 exp and 2 mana.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
 
-        pet.increaseExp(this.level);
-        pet.increaseMana(this.level * 2);
+        pet.increaseExp(1);
+        pet.increaseMana(2);
 
+        this.abilityUses++;
         this.superAnyoneLevelUp(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
@@ -37,5 +41,9 @@ export class Cyclops extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }
