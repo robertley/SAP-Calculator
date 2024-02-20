@@ -281,7 +281,7 @@ import { Barghest } from "../classes/pets/unicorn/tier-1/barghest.class";
 import { Tsuchinoko } from "../classes/pets/unicorn/tier-1/tsuchinoko.class";
 import { Murmel } from "../classes/pets/unicorn/tier-1/murmel.class";
 import { Alchemedes } from "../classes/pets/unicorn/tier-1/alchemedes.class";
-import { Warg } from "../classes/pets/unicorn/tier-1/warg.class";
+import { Warf } from "../classes/pets/unicorn/tier-1/warf.class";
 import { Bunyip } from "../classes/pets/unicorn/tier-1/bunyip.class";
 import { SneakyEgg } from "../classes/pets/unicorn/tier-1/sneaky-egg.class";
 import { CrackedEgg } from "../classes/pets/hidden/cracked-egg.class";
@@ -790,7 +790,7 @@ export class PetService {
             "Tsuchinoko",
             "Murmel",
             "Alchemedes",
-            "Warg",
+            "Warf",
             "Bunyip",
             "Sneaky Egg",
             "Cuddle Toad"
@@ -825,7 +825,7 @@ export class PetService {
         this.unicornPackPets.set(4, [
             "Kraken",
             "Visitor",
-            "Vampire Bat",
+            "Unicorn",
             "Tiger Bug",
             "Tatzelwurm",
             "Cyclops",
@@ -837,7 +837,7 @@ export class PetService {
 
         this.unicornPackPets.set(5, [
             "Red Dragon",
-            "Unicorn",
+            "Vampire Bat",
             "Loveland Frogman",
             "Salmon of Knowledge",
             "Jersey Devil",
@@ -1627,8 +1627,8 @@ export class PetService {
                 return new Murmel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Alchemedes':
                 return new Alchemedes(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-            case 'Warg':
-                return new Warg(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Warf':
+                return new Warf(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bunyip':
                 return new Bunyip(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sneaky Egg':
@@ -2743,8 +2743,8 @@ export class PetService {
         if (pet instanceof Alchemedes) {
             newPet = new Alchemedes(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
-        if (pet instanceof Warg) {
-            newPet = new Warg(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        if (pet instanceof Warf) {
+            newPet = new Warf(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bunyip) {
             newPet = new Bunyip(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

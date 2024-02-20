@@ -17,6 +17,7 @@ import { Exposed } from "./equipment/ailments/exposed.class";
 import { Crisp } from "./equipment/ailments/crisp.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
+import { cloneDeep } from "lodash";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -759,12 +760,15 @@ export abstract class Pet {
             let manticoreAilments = [
                 'Weak',
                 'Cold',
-                'Exposed'
+                'Exposed',
+                'Spooked'
             ]
             let hasAilment = manticoreAilments.includes(pet.equipment?.name);
 
-            if (manticoreMult > 1 && hasAilment) {
-                message += ` x${manticoreMult} (Manticore)`;
+            if (manticoreMult.length > 0 && hasAilment) {
+                for (let mult of manticoreMult) {
+                    message += ` x${mult} (Manticore)`;
+                }
             }
 
             this.logService.createLog({
@@ -940,8 +944,17 @@ export abstract class Pet {
         }
 
         let manticoreMult = this.getManticoreMult();
-        if (manticoreMult > 1) {
-            message += ` x${manticoreMult} (Manticore)`;
+        let manticoreAilments = [
+            'Weak',
+            'Cold',
+            'Exposed',
+            'Spooked'
+        ]
+        let hasAilment = manticoreAilments.includes(pet.equipment?.name);
+        if (manticoreMult.length > 0 && hasAilment) {
+            for (let mult of manticoreMult) {
+                message += ` x${mult} (Manticore)`;
+            }
         }
 
         if (damageResp.nurikabe > 0) {
@@ -988,7 +1001,7 @@ export abstract class Pet {
         return damage;
     }
 
-    calculateDamgae(pet: Pet, manticoreMult: number, power?: number, snipe=false):
+    calculateDamgae(pet: Pet, manticoreMult: number[], power?: number, snipe=false):
         {
             defenseEquipment: Equipment,
             attackEquipment: Equipment,
@@ -1026,7 +1039,11 @@ export abstract class Pet {
         if (defenseEquipment != null) {
 
             if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
-                defenseEquipment.power = defenseEquipment.originalPower * manticoreMult;
+                let power = defenseEquipment.originalPower;
+                for (let mult of manticoreMult) {
+                    power *= mult;
+                }
+                defenseEquipment.power = power;
             } else {
                 defenseEquipment.power = defenseEquipment.originalPower;
             }
@@ -1047,7 +1064,11 @@ export abstract class Pet {
             if (attackEquipment != null) {
             
                 if (manticoreAttackAilments.includes(attackEquipment?.name)) {
-                    attackEquipment.power = attackEquipment.originalPower * manticoreMult;
+                    let power = attackEquipment.originalPower;
+                    for (let mult of manticoreMult) {
+                        power *= mult;
+                    }
+                    attackEquipment.power = power;
                 } else {
                     attackEquipment.power = attackEquipment.originalPower;
                 }
@@ -1095,7 +1116,10 @@ export abstract class Pet {
         }
 
         if (pet.equipment instanceof Exposed) {
-            attackAmt *= 2 * manticoreMult;
+            attackAmt *= 2;
+            for (let mult of manticoreMult) {
+                attackAmt *= mult;
+            }
         }
 
         let damage = Math.max(min, attackAmt - defenseAmt);
@@ -1332,14 +1356,14 @@ export abstract class Pet {
         return null;
     }
 
-    getManticoreMult() {
-        let mult = 1;
+    getManticoreMult(): number[] {
+        let mult = [];
         for (let pet of this.parent.petArray) {
             if (!pet.alive) {
                 continue;
             }
             if (pet.name == 'Manticore') {
-                return pet.level + 1;
+                mult.push(pet.level + 1);
             }
         }
 

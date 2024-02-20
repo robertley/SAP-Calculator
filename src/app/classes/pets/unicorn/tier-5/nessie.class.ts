@@ -15,15 +15,17 @@ export class Nessie extends Pet {
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let isPlayer = this.parent === gameApi.player;
         let rolls = isPlayer ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
-        let power = Math.min(50, rolls * this.level * 2);
+        rolls = Math.min(rolls, 7);
+        let attack = Math.min(50, rolls * this.level);
+        let health = Math.min(50, rolls * this.level * 2);
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let nessieQ = new NessieQ(this.logService, this.abilityService, this.parent, power, power, 0);
+                let nessieQ = new NessieQ(this.logService, this.abilityService, this.parent, health, attack, 0);
         
                 this.logService.createLog(
                     {
-                        message: `${this.name} spawned a Nessie? ${power}/${power}`,
+                        message: `${this.name} spawned a Nessie? ${attack}/${health}`,
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,

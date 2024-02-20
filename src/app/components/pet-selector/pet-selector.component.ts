@@ -6,6 +6,7 @@ import { PetService } from '../../services/pet.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
 import { cloneDeep } from 'lodash';
+import { Weak } from '../../classes/equipment/ailments/weak.class';
 
 @Component({
   selector: 'app-pet-selector',
@@ -175,6 +176,7 @@ export class PetSelectorComponent implements OnInit {
 
   initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
+    this.equipment.set('Weak', new Weak())
   }
 
   initForm() {

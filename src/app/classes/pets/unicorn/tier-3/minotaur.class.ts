@@ -11,7 +11,7 @@ export class Minotaur extends Pet {
     tier = 3;
     pack: Pack = 'Unicorn';
     attack = 1;
-    health = 3;
+    health = 2;
     friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = this.level * pet.level;
 

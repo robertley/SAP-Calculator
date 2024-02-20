@@ -15,6 +15,7 @@ export class JerseyDevil extends Pet {
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         let isPlayer = this.parent === gameApi.player;
         let mult = isPlayer ? gameApi.playerLevel3Sold : gameApi.opponentLevel3Sold;
+        mult = Math.min(mult, 5);
         let power = this.level * mult;
 
         this.logService.createLog({

@@ -5,19 +5,17 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Warg extends Pet {
-    name = "Warg";
+export class Warf extends Pet {
+    name = "Warf";
     tier = 1;
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 2;
     gainedMana(gameApi: GameAPI, tiger?: boolean): void {
 
-        let targets = this.parent.opponent.getRandomPets(this.level);
+        let target = this.parent.opponent.getRandomPet([], null, true);
 
-        for (let target of targets) {
-            this.snipePet(target, 1, true, tiger);
-        }
+        this.snipePet(target, this.level, true, tiger);
 
         this.superGainedMana(gameApi, tiger);
 
