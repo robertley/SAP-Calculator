@@ -15,6 +15,10 @@ export class Warf extends Pet {
 
         let target = this.parent.opponent.getRandomPet([], null, true);
 
+        if (target == null) {
+            return;
+        }
+
         this.snipePet(target, this.level, true, tiger);
 
         this.superGainedMana(gameApi, tiger);
