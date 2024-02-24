@@ -26,6 +26,8 @@ export class PetSelectorComponent implements OnInit {
   @Input()
   angler: boolean;
   @Input()
+  ailments: boolean;
+  @Input()
   allPets: boolean;
   @Input()
   mana: boolean;
@@ -35,6 +37,7 @@ export class PetSelectorComponent implements OnInit {
   customPacks: AbstractControl;//FormArray;
 
   equipment: Map<string, Equipment>;
+  ailmentEquipment: Map<string, Equipment>;
   turtlePackPets: string[];
   pets: Map<number, string[]>;
   startOfBattlePets: Map<number, string[]>;
@@ -176,7 +179,7 @@ export class PetSelectorComponent implements OnInit {
 
   initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
-    this.equipment.set('Weak', new Weak())
+    this.ailmentEquipment = this.equipmentService.getInstanceOfAllAilments();
   }
 
   initForm() {
@@ -202,6 +205,9 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('equipment').valueChanges.subscribe((value) => {
       if (value != null && value.reset == null) {
         let equipment = this.equipment.get(value.name);
+        if (equipment == null) {
+          equipment = this.ailmentEquipment.get(value.name);
+        }
         this.formGroup.get('equipment').setValue(equipment, {emitEvent: false});
       }
       this.substitutePet(false)
@@ -236,7 +242,7 @@ export class PetSelectorComponent implements OnInit {
       }
       let equipment = formValue.equipment;
       if (equipment != null) {
-        formValue.equipment = this.equipment.get(equipment.name);
+        formValue.equipment = this.equipment.get(equipment.name) ?? this.ailmentEquipment.get(equipment.name);
       }
 
       let pet = this.petService.createPet(formValue, this.player);
@@ -348,7 +354,11 @@ export class PetSelectorComponent implements OnInit {
     if (equipment == null) {
       return;
     }
-    this.formGroup.get('equipment').setValue(this.equipment.get(equipment.name));
+    let newEquipment = this.equipment.get(equipment.name);
+    if (newEquipment == null) {
+      newEquipment = this.ailmentEquipment.get(equipment.name);
+    }
+    this.formGroup.get('equipment').setValue(newEquipment);
   }
 
 

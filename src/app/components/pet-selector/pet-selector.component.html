@@ -63,6 +63,9 @@
             <select class="form-control" formControlName="equipment">
                 <option [ngValue]="null">None</option>
                 <option *ngFor="let equip of equipment | keyvalue" [ngValue]="equip.value">{{equip.key}}</option>
+                <optgroup *ngIf="ailments" label="Ailments">
+                    <option *ngFor="let ailment of ailmentEquipment | keyvalue" [ngValue]="ailment.value">{{ailment.key}}</option>
+                </optgroup>
             </select>
         </div>
         <div class="col-12 d-flex justify-content-center" *ngIf="mana">

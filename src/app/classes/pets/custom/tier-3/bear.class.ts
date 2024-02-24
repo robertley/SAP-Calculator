@@ -14,30 +14,11 @@ export class Bear extends Pet {
     attack = 3;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let playerHoneyPets: Pet[] = [];
-        let petBehind = this.petBehind();
-        while (petBehind != null) {
-            playerHoneyPets.push(petBehind);
-            if (playerHoneyPets.length == this.level) {
-                break;
-            }
-            petBehind = petBehind.petBehind();
-        }
-        let opponentHoneyPets: Pet[] = [];
-        petBehind = getOpponent(gameApi, this.parent).petArray[0];
-        while (petBehind != null) {
-            // in case the pets trade
-            if (!petBehind.alive) {
-                petBehind = petBehind.petBehind();
-                continue;
-            }
-            opponentHoneyPets.push(petBehind);
-            if (opponentHoneyPets.length == this.level) {
-                break;
-            }
-            petBehind = petBehind.petBehind();
-        }
-        for (let pet of [...playerHoneyPets, ...opponentHoneyPets]) {
+        let targets = [
+            ...this.getPetsAhead(this.level, true),
+            ...this.getPetsBehind(this.level)
+        ];
+        for (let pet of targets) {
             pet.givePetEquipment(new Honey(this.logService, this.abilityService));
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} Honey.`,

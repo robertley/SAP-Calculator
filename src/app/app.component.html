@@ -137,6 +137,16 @@
           </div>
         </div>
 
+        <div class="flex-column">
+          
+          <div class="form-check ms-3" title="Include Ailments for Equipment Options.">
+            <input class="form-check-input" type="checkbox" value="" id="ailmentEquipment" formControlName="ailmentEquipment">
+            <label class="form-check-label" for="ailmentEquipment" >
+              Ailment Equipment
+            </label>
+          </div>
+        </div>
+
       </div>
       
       <div class="flex-col zoom-container">
@@ -228,6 +238,7 @@
               [index]="4 - i"
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
+              [ailments]="formGroup.get('ailmentEquipment').value"
               [allPets]="formGroup.get('allPets').value"
               [mana]="formGroup.get('mana').value"
               [showTokenPets]="formGroup.get('tokenPets').value"
@@ -261,6 +272,7 @@
               [index]="i"
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
+              [ailments]="formGroup.get('ailmentEquipment').value"
               [allPets]="formGroup.get('allPets').value"
               [mana]="formGroup.get('mana').value"
               [showTokenPets]="formGroup.get('tokenPets').value"
