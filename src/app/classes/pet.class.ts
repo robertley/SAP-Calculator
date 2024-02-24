@@ -411,12 +411,10 @@ export abstract class Pet {
     }
 
     tigerCheck(tiger) {
-        if (this.petBehind() == null) {
-            return false;
-        }
-        if (this.petBehind().name == 'Tiger' && (tiger == null || tiger == false)) {
+        if (this.petBehind(true, true)?.name == 'Tiger' && (tiger == null || tiger == false)) {
             return true;
         }
+        return false;
     }
 
     protected superStartOfBattle(gameApi, tiger=false) {
@@ -424,7 +422,7 @@ export abstract class Pet {
             return;
         }
         let exp = this.exp;
-        this.exp = this.petBehind().minExpForLevel;
+        this.exp = this.petBehind(true, true).minExpForLevel;
         this.startOfBattle(gameApi,true)
         this.exp = exp;
     
@@ -838,15 +836,24 @@ export abstract class Pet {
     }
 
     applyCrisp() {
+        let manticoreMult = this.getManticoreMult();
         for (let pet of this.parent.petArray) {
             if (pet.equipment instanceof Crisp) {
                 let damage = 6;
+                for (let mult of manticoreMult) {
+                    damage *= mult;
+                }
                 let nurikabe = 0;
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
                     damage = Math.max(0, damage - nurikabe);
                 }
                 let message = `${pet.name} took ${damage} damage`;
+                if (manticoreMult.length > 0) {
+                    for (let mult of manticoreMult) {
+                        message += ` x${mult} (Manticore)`;
+                    }
+                }
                 if (nurikabe > 0) {
                     message += ` -${nurikabe} (Nurikabe)`;
                 }
@@ -1368,6 +1375,46 @@ export abstract class Pet {
         }
 
         return mult;
+    }
+
+    getPetsAhead(amt: number, includeOpponent=false) {
+        let targetsAhead = [];
+        let petAhead = this.petAhead;
+        while (petAhead) {
+            if (targetsAhead.length >= this.level) {
+                break;
+            }
+            targetsAhead.push(petAhead);
+            petAhead = petAhead.petAhead;
+        }
+
+        // get opponent pets
+        if (targetsAhead.length < amt) {
+            let opponent = this.parent.opponent;
+            let petAhead = opponent.furthestUpPet;
+            while (petAhead) {
+                if (targetsAhead.length >= amt) {
+                    break;
+                }
+                targetsAhead.push(petAhead);
+                petAhead = petAhead.petBehind();
+            }
+        }
+
+        return targetsAhead;
+    }
+
+    getPetsBehind(amt: number) {
+        let targetsBehind = [];
+        let petBehind = this.petBehind();
+        while (petBehind) {
+            if (targetsBehind.length >= amt) {
+                break;
+            }
+            targetsBehind.push(petBehind);
+            petBehind = petBehind.petBehind();
+        }
+        return targetsBehind;
     }
 
     get petAhead() {

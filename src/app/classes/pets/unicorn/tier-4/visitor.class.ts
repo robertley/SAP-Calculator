@@ -14,41 +14,23 @@ export class Visitor extends Pet {
     attack = 5;
     health = 4;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        // stole bear logic
-        let playerHoneyPets: Pet[] = [];
-        let petBehind = this.petBehind();
-        while (petBehind != null) {
-            playerHoneyPets.push(petBehind);
-            if (playerHoneyPets.length == this.level) {
-                break;
-            }
-            petBehind = petBehind.petBehind();
-        }
-        let opponentHoneyPets: Pet[] = [];
-        petBehind = getOpponent(gameApi, this.parent).petArray[0];
-        while (petBehind != null) {
-            // in case the pets trade
-            if (!petBehind.alive) {
-                petBehind = petBehind.petBehind();
-                continue;
-            }
-            opponentHoneyPets.push(petBehind);
-            if (opponentHoneyPets.length == this.level) {
-                break;
-            }
-            petBehind = petBehind.petBehind();
-        }
-        for (let pet of [...playerHoneyPets, ...opponentHoneyPets]) {
-            pet.givePetEquipment(new Exposed());
+
+        let targets = [
+            ...this.getPetsAhead(this.level, true),
+            ...this.getPetsBehind(this.level)
+        ];
+
+        for (let target of targets) {
+            target.givePetEquipment(new Exposed());
             this.logService.createLog({
-                message: `${this.name} made ${pet.name} Exposed.`,
+                message: `${this.name} made ${target.name} Exposed.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon
             })
         }
-
+        
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

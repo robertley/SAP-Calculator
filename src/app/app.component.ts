@@ -70,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.1';
+  version = '0.6.2';
   sapVersion = '0.33.3-151 BETA'
 
   title = 'sap-calculator';
@@ -272,6 +272,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       playerSummonedAmount: new FormControl(0),
       opponentSummonedAmount: new FormControl(0),
       showAdvanced: new FormControl(false),
+      ailmentEquipment: new FormControl(false),
     })
 
     this.initPetForms();

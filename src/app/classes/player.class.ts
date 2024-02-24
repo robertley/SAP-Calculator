@@ -408,7 +408,7 @@ export class Player {
     getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, notFiftyFifty?: boolean) {
         let pets = this.petArray;
         if (donut) {
-            let donutPets = this.getPetsWithEquipment('Donut');
+            let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => { !excludePets?.includes(pet) });
             if (donutPets.length > 0) {
                 pets = donutPets;
             }
@@ -423,7 +423,7 @@ export class Player {
             }
         }
         if (blueberry) {
-            let blueberryPets = this.getPetsWithEquipment('Blueberry');
+            let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => { !excludePets?.includes(pet) });
             if (blueberryPets.length > 0) {
                 pets = blueberryPets;
             }
