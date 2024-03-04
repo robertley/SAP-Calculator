@@ -756,4 +756,23 @@ export class Player {
         this.trumpets = 0;
         this.spawnedGoldenRetiever = true;
     }
+
+    getManticoreMult(): number[] {
+        let mult = [];
+        console.log(cloneDeep(this.petArray))
+        for (let pet of this.petArray) {
+            if (pet.name == 'Manticore') {
+                // let petBehind = pet.petBehind();
+                // if (petBehind == null) {
+                //     mult.push(pet.level + 1);
+                // }
+                // if (petBehind != null && petBehind.name == 'Tiger') {
+                //     mult.push(petBehind.level + 1);
+                // }
+                mult.push(pet.level + 1);
+            }
+        }
+
+        return mult;
+    }
 }

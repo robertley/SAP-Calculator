@@ -836,7 +836,7 @@ export abstract class Pet {
     }
 
     applyCrisp() {
-        let manticoreMult = this.getManticoreMult();
+        let manticoreMult = this.parent.opponent.getManticoreMult();
         for (let pet of this.parent.petArray) {
             if (pet.equipment instanceof Crisp) {
                 let damage = 6;

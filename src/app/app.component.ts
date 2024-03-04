@@ -70,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.2';
+  version = '0.6.3';
   sapVersion = '0.33.3-151 BETA'
 
   title = 'sap-calculator';
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1000;
+  simulationBattleAmt = 1;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;

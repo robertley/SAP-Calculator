@@ -16,7 +16,7 @@ export class SmallerSlug extends Pet {
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let slug = new SmallestSlug(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
+                let slug = new SmallestSlug(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
         
                 this.logService.createLog(
                     {

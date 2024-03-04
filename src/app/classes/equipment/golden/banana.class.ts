@@ -18,7 +18,7 @@ export class Banana extends Equipment {
         for (let i = 0; i < multiplier; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let monke = new Monkey(this.logService, this.abilityService, pet.parent, 4, 4, 0);
+                    let monke = new Monkey(this.logService, this.abilityService, pet.parent, 4, 4, 0, 0);
                     pet.parent.summonPet(monke, pet.savedPosition);
         
                     let pantherMessage = '';

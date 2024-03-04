@@ -17,7 +17,7 @@ export class EasterEgg extends Equipment {
         for (let i = 0; i < multiplier; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let monty = new Monty(this.logService, this.abilityService, pet.parent, null, null, 0);
+                    let monty = new Monty(this.logService, this.abilityService, pet.parent, null, null, 0, 0);
                     pet.parent.summonPet(monty, pet.savedPosition);
         
                     let pantherMessage = '';
