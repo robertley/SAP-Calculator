@@ -31,7 +31,7 @@ export class Rat extends Pet {
                         tiger: tiger,
                         pteranodon: pteranodon
                     })
-                    let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0);
+                    let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0, 0);
         
                     let spawned = opponent.summonPet(dirtyRat, 0);
                     if (spawned) {

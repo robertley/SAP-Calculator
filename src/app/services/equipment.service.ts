@@ -57,6 +57,7 @@ import { Dazed } from "../classes/equipment/ailments/dazed.class";
 import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
+import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
 
 @Injectable({
     providedIn: "root"
@@ -115,6 +116,7 @@ export class EquipmentService {
         map.set('Health Potion', new HealthPotion(this.logService));
         map.set('Magic Beans', new MagicBeans());
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
+        map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
 
         return map;
     }

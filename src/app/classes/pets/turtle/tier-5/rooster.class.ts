@@ -26,7 +26,7 @@ export class Rooster extends Pet {
                         pteranodon: pteranodon
                     })
                     this.parent.summonPet(
-                        new Chick(this.logService, this.abilityService, this.parent, 1, attack, this.minExpForLevel),
+                        new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel),
                         this.savedPosition
                     )
                 },

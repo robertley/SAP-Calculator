@@ -26,7 +26,7 @@ export class Nightcrawler extends Pet {
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0);
+                let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0, 0);
         
                 this.logService.createLog(
                     {

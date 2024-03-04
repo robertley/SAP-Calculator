@@ -17,7 +17,7 @@ export class Osprey extends Pet {
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let groundhog = new Groundhog(this.logService, this.abilityService, this.parent, null, null, 0);
+                    let groundhog = new Groundhog(this.logService, this.abilityService, this.parent, null, null, 0, 0);
             
                     this.logService.createLog(
                         {

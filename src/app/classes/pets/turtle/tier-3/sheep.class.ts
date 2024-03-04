@@ -16,7 +16,7 @@ export class Sheep extends Pet {
         for (let i = 0; i < 2; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let ram = new Ram(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
+                    let ram = new Ram(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
             
                     this.logService.createLog(
                         {
