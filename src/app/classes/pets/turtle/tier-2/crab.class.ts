@@ -12,6 +12,9 @@ export class Crab extends Pet {
     health = 1;
     attack = 4;
     startOfBattle(gameApi: GameAPI, tiger) {
+        if (!this.alive) {
+            return;
+        }
         let highestHealthPet = this.parent.getHighestHealthPet(this).pet;
         let copyAmmt = .5 * this.level;
         let crabHealth = Math.floor(highestHealthPet.health * copyAmmt);
@@ -30,9 +33,10 @@ export class Crab extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

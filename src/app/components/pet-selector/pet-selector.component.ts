@@ -6,6 +6,7 @@ import { PetService } from '../../services/pet.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
 import { cloneDeep } from 'lodash';
+import { Weak } from '../../classes/equipment/ailments/weak.class';
 
 @Component({
   selector: 'app-pet-selector',
@@ -25,17 +26,24 @@ export class PetSelectorComponent implements OnInit {
   @Input()
   angler: boolean;
   @Input()
+  ailments: boolean;
+  @Input()
   allPets: boolean;
+  @Input()
+  mana: boolean;
   @Input()
   formGroup: FormGroup;
   @Input()
   customPacks: AbstractControl;//FormArray;
 
   equipment: Map<string, Equipment>;
+  ailmentEquipment: Map<string, Equipment>;
   turtlePackPets: string[];
   pets: Map<number, string[]>;
+  startOfBattlePets: Map<number, string[]>;
 
   showFlyOut = false;
+  attackHealthMax = 50;
 
   @Input()
   showTokenPets = false;
@@ -49,7 +57,17 @@ export class PetSelectorComponent implements OnInit {
     'Smaller Slug',
     'Smallest Slug',
     'Zombie Cricket',
-    'Zombie Fly'
+    'Zombie Fly',
+    'Chim-Goat',
+    'Chim-Lion',
+    'Chim-Snake',
+    'Daycrawler',
+    'Head',
+    'Monty',
+    'Nessie?',
+    'Smaller Slime',
+    'Young Phoenix',
+    'Good Dog',
   ];
 
   constructor(private petService: PetService, private equipmentService: EquipmentService) {
@@ -60,6 +78,10 @@ export class PetSelectorComponent implements OnInit {
     this.initSelector();
 
     this.fixLoadEquipment();
+
+    if (this.pet?.name == 'Behemoth') {
+      this.attackHealthMax = 100;
+    }
   }
 
   initSelector() {
@@ -85,6 +107,9 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.petService.goldenPackPets) {
       this.pets.get(tier).push(...pets);
     }
+    for (let [tier, pets] of this.petService.unicornPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
     for (let [tier, pets] of this.petService.customPackPets) {
       this.pets.get(tier).push(...pets);
     }
@@ -92,7 +117,25 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.pets) {
       this.pets.set(tier, [...new Set(pets)]);
     }
+
+    this.initStartOfBattlePets();
+
+    console.log('pets', this.pets);
   }
+
+  initStartOfBattlePets() {
+    this.startOfBattlePets = new Map();
+    for (let i = 1; i <= 6; i++) {
+      let SOBpets = [];
+      for (let pet of this.pets.get(i)) {
+        if (this.petService.startOfBattlePets.includes(pet)) {
+          SOBpets.push(pet);
+        }
+      }
+      this.startOfBattlePets.set(i, SOBpets);
+    }
+  }
+
 
   getPack(player: Player) {
     let pack;
@@ -104,6 +147,8 @@ export class PetSelectorComponent implements OnInit {
       pack = this.petService.starPackPets;
     } else if (player.pack == 'Golden') {
       pack = this.petService.goldenPackPets;
+    } else if (player.pack == 'Unicorn') {
+      pack = this.petService.unicornPackPets;
     } else {
       try {
         pack = this.buildCustomPack(player.pack)
@@ -111,6 +156,8 @@ export class PetSelectorComponent implements OnInit {
         pack = this.petService.turtlePackPets;
       }
     }
+
+    // console.log('pack', pack);
     return cloneDeep(pack);
   }
 
@@ -132,6 +179,7 @@ export class PetSelectorComponent implements OnInit {
 
   initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
+    this.ailmentEquipment = this.equipmentService.getInstanceOfAllAilments();
   }
 
   initForm() {
@@ -154,8 +202,22 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('attack').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('health').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
-    this.formGroup.get('equipment').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('equipment').valueChanges.subscribe((value) => {
+      if (value != null && value.reset == null) {
+        let equipment = this.equipment.get(value.name);
+        if (equipment == null) {
+          equipment = this.ailmentEquipment.get(value.name);
+        }
+        this.formGroup.get('equipment').setValue(equipment, {emitEvent: false});
+      }
+      this.substitutePet(false)
+    });
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
+    this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('mana').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
   }
 
   setExp(amt: number) {
@@ -176,14 +238,27 @@ export class PetSelectorComponent implements OnInit {
       if (nameChange) {
         formValue.attack = null;
         formValue.health = null;
+        formValue.mana = null;
       }
+      let equipment = formValue.equipment;
+      if (equipment != null) {
+        formValue.equipment = this.equipment.get(equipment.name) ?? this.ailmentEquipment.get(equipment.name);
+      }
+
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
   
-      console.log('pet substituted', this.player);
+      // console.log('pet substituted', this.player);
       if (nameChange) {
         this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
         this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
+        this.formGroup.get('mana').setValue(pet.mana, {emitEvent: false});
+      }
+
+      if (this.formGroup.get('name').value == 'Behemoth') {
+        this.attackHealthMax = 100;
+      } else {
+        this.attackHealthMax = 50;
       }
     })
 
@@ -191,12 +266,44 @@ export class PetSelectorComponent implements OnInit {
 
   setBelugaSwallow(value: string) {
     let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
     pet.belugaSwallowedPet = value;
-    console.log(pet)
+  }
+
+  setSwallowedPets(value: string) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    let swallowedPets = [];
+    if (this.formGroup.get('abominationSwallowedPet1').value != null) {
+      swallowedPets.push(this.formGroup.get('abominationSwallowedPet1').value);
+    }
+    if (this.formGroup.get('abominationSwallowedPet2').value != null) {
+      swallowedPets.push(this.formGroup.get('abominationSwallowedPet2').value);
+    }
+    if (this.formGroup.get('abominationSwallowedPet3').value != null) {
+      swallowedPets.push(this.formGroup.get('abominationSwallowedPet3').value);
+    }
+    console.log(swallowedPets)
+    pet.abominationSwallowedPet1 = swallowedPets[0];
+    pet.abominationSwallowedPet2 = swallowedPets[1];
+    pet.abominationSwallowedPet3 = swallowedPets[2];
+  }
+
+  setBattlesFought(value: number) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    pet.battlesFought = value;
   }
 
   showFlyOutButton() {
-    return this.formGroup.get('name').value == 'Beluga Whale'
+    let flyOutPets = ['Beluga Whale', 'Abomination', 'Slime'];
+    return flyOutPets.includes(this.formGroup.get('name').value);
   }
 
   toggleFlyOut() {
@@ -210,9 +317,11 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('health').setValue(0, {emitEvent: false});
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
     this.formGroup.get('equipment').setValue(null, {emitEvent: false});
+    this.formGroup.get('mana').setValue(0, {emitEvent: false});
   }
 
   optionHidden(option: string) {
+
     if (this.allPets) {
       return false;
     }
@@ -245,7 +354,11 @@ export class PetSelectorComponent implements OnInit {
     if (equipment == null) {
       return;
     }
-    this.formGroup.get('equipment').setValue(this.equipment.get(equipment.name));
+    let newEquipment = this.equipment.get(equipment.name);
+    if (newEquipment == null) {
+      newEquipment = this.ailmentEquipment.get(equipment.name);
+    }
+    this.formGroup.get('equipment').setValue(newEquipment);
   }
 
 

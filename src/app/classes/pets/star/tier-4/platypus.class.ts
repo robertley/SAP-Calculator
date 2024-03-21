@@ -15,8 +15,8 @@ export class Platypus extends Pet {
     health = 2;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 3;
-        let duck = new Duck(this.logService, this.abilityService, this.parent, power, power, this.minExpForLevel);
-        let beaver = new Beaver(this.logService, this.abilityService, this.parent, power, power, this.minExpForLevel);
+        let duck = new Duck(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
+        let beaver = new Beaver(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
         this.abilityService.setSpawnEvent({
             callback: () => {
                 this.logService.createLog(
@@ -59,9 +59,10 @@ export class Platypus extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

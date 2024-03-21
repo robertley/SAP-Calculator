@@ -13,7 +13,7 @@ export class Turkey extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 4;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         let power: Power = {
             attack: 3 * this.level,
             health: 2 * this.level
@@ -34,9 +34,10 @@ export class Turkey extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

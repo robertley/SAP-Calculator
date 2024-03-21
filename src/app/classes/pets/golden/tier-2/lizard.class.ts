@@ -19,7 +19,7 @@ export class Lizard extends Pet {
         }
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let lizardTail = new LizardTail(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
+                let lizardTail = new LizardTail(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
         
                 this.logService.createLog(
                     {
@@ -45,9 +45,10 @@ export class Lizard extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

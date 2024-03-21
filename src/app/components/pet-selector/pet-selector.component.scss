@@ -6,8 +6,13 @@
     background-color: #ca0202;
     color: white;
 }
+.select-mana {
+    background-color: #7388f8;
+    color: white;
+    width: 45%;
+}
 
-.select-attack, .select-health {
+.select-attack, .select-health, .select-mana {
     font-size: 1.5em;
     padding-right: 0;
 }

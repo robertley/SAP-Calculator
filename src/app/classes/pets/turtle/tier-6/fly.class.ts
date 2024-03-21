@@ -26,7 +26,7 @@ export class Fly extends Pet {
         }
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
+                let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel);
         
                 if (this.parent.summonPet(zombie, faintedPet.savedPosition, true)) {
                     this.abilityService.triggerSummonedEvents(zombie);
@@ -49,10 +49,11 @@ export class Fly extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 
 }

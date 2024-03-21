@@ -46,6 +46,14 @@ import { Blueberry } from "../../../equipment/custom/blueberry.class";
 import { Donut } from "../../../equipment/custom/donut.class";
 import { Pineapple } from "../../../equipment/custom/pineapple.class";
 import { Fig } from "../../../equipment/golden/fig.class";
+import { EasterEgg } from "../../../equipment/unicorn/easter-egg.class";
+import { FairyDust } from "../../../equipment/unicorn/fairy-dust.class";
+import { GingerbreadMan } from "../../../equipment/unicorn/gingerbread-man.class";
+import { GoldenEgg } from "../../../equipment/unicorn/golden-egg.class";
+import { HealthPotion } from "../../../equipment/unicorn/health-potion.class";
+import { LovePotion } from "../../../equipment/unicorn/love-potion.class";
+import { MagicBeans } from "../../../equipment/unicorn/magic-beans.class";
+import { Rambutan } from "../../../equipment/unicorn/rambutan.class";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -54,7 +62,7 @@ export class Seagull extends Pet {
     attack = 4;
     health = 3;
     abilityUses: number;
-    friendSummoned(pet: Pet, tiger?: boolean): void {
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
@@ -79,10 +87,11 @@ export class Seagull extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 
     setAbilityUses(): void {
@@ -132,6 +141,15 @@ export class Seagull extends Pet {
         map.set('Pineapple', new Pineapple());
         map.set('Fig', new Fig());
         
+        map.set('Rambutan', new Rambutan(this.logService));
+        map.set('Love Potion', new LovePotion(this.logService));
+        map.set('Fairy Dust', new FairyDust(this.logService));
+        map.set('Gingerbread Man', new GingerbreadMan(this.logService));
+        map.set('Easter Egg', new EasterEgg(this.logService, this.abilityService));
+        map.set('Health Potion', new HealthPotion(this.logService));
+        map.set('Magic Beans', new MagicBeans());
+        map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
+
         return map;
     }
 }

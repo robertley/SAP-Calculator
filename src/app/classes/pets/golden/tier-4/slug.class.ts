@@ -16,7 +16,7 @@ export class Slug extends Pet {
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel);
+                let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
         
                 this.logService.createLog(
                     {
@@ -42,9 +42,10 @@ export class Slug extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

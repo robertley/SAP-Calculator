@@ -75,6 +75,7 @@ export function createPack(customPack?) {
 // custom angular validator
 function controlArrayLengthOf10(): ValidatorFn {
   return (control:AbstractControl) : ValidationErrors | null => {
+    if (!control.value) return null;
     if (control.value.length !== 10) {
       return {length: true};
     }

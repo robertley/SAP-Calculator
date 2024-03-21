@@ -15,7 +15,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { shuffle } from 'lodash';
+import { cloneDeep, shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
@@ -29,11 +29,38 @@ import { EquipmentService } from './services/equipment.service';
 import { Nest } from './classes/pets/hidden/nest.class';
 import { Egg } from './classes/equipment/puppy/egg.class';
 import { Fig } from './classes/equipment/golden/fig.class';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Dazed } from './classes/equipment/ailments/dazed.class';
+import { Rambutan } from './classes/equipment/unicorn/rambutan.class';
+import { LovePotion } from './classes/equipment/unicorn/love-potion.class';
+import { FairyDust } from './classes/equipment/unicorn/fairy-dust.class';
+import { GingerbreadMan } from './classes/equipment/unicorn/gingerbread-man.class';
+import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
 
+const DAY = '#85ddf2';
+const NIGHT = '#33377a';
+
+// TODO
+// Weak as equipment option
+// parrot copy abomination log bug?
+// move turn to not advanced?
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  animations: [
+    trigger('dayNight', [
+      state('day', style({
+        backgroundColor: DAY
+      })),
+      state('night', style({
+        backgroundColor: NIGHT
+      })),
+      transition('day <=> night', [
+        animate('0.5s')
+      ])
+    ])
+  ]
 })
 export class AppComponent implements OnInit, AfterViewInit {
 
@@ -43,8 +70,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.5.18';
-  sapVersion = '0.31.9-145 BETA'
+  version = '0.6.4';
+  sapVersion = '0.33.3-151 BETA'
 
   title = 'sap-calculator';
   player: Player;
@@ -68,6 +95,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   previousPackPlayer = null;
   previousPackOpponent = null;
 
+  dayNight = true;
+
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
@@ -84,6 +113,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initFormGroup();
     this.loadLocalStorage();
     this.initApp();
+    this.initGameApi();
+    this.setDayNight();
   }
 
   printFormGroup() {
@@ -115,11 +146,31 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadCalculatorFromValue(calculator) {
+    this.formGroup.reset();
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
-    this.formGroup.patchValue(calculator, {emitEvent: false});
     this.loadCustomPacks(customPacks);
+    this.formGroup.patchValue(calculator, {emitEvent: false});
+    // band aid for weird bug where the select switches to turtle when pack already exists
+    setTimeout(() => {
+      this.fixCustomPackSelect();
+    })
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
+    this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
+    this.gameService.gameApi.mana = this.formGroup.get('mana').value;
+  }
+
+  setDayNight() {
+    let turn = this.formGroup.get('turn').value;
+    let day = turn % 2 == 1;
+    this.dayNight = day;
+    this.gameService.gameApi.day = day;
+
+  }
+
+  fixCustomPackSelect() {
+    this.formGroup.get('playerPack').setValue(this.formGroup.get('playerPack').value, {emitEvent: false});
+    this.formGroup.get('opponentPack').setValue(this.formGroup.get('opponentPack').value, {emitEvent: false});
   }
 
   initApp() {
@@ -134,13 +185,26 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.previousPackPlayer = this.player.pack;
   }
 
+  initGameApi() {
+    this.gameService.gameApi.day = this.dayNight;
+    this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
+    this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
+    this.gameService.gameApi.mana = this.formGroup.get('mana').value;
+    this.gameService.gameApi.playerRollAmount = this.formGroup.get('playerRollAmount').value;
+    this.gameService.gameApi.opponentRollAmount = this.formGroup.get('opponentRollAmount').value;
+    this.gameService.gameApi.playerLevel3Sold = this.formGroup.get('playerLevel3Sold').value;
+    this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
+    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
+    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+  }
+
   loadCustomPacks(customPacks) {
-    let formArray = new FormArray([]);
+    let formArray = this.formGroup.get('customPacks') as FormArray;
+    formArray.clear();
     for (let customPack of customPacks) {
       let formGroup = createPack(customPack);
       formArray.push(formGroup);
     }
-    this.formGroup.setControl('customPacks', formArray);
   }
 
   initPlayerPets() {
@@ -198,12 +262,27 @@ export class AppComponent implements OnInit, AfterViewInit {
       fontSize: new FormControl(13),
       customPacks: new FormArray([]),
       oldStork: new FormControl(false),
-      tokenPets: new FormControl(false)
+      tokenPets: new FormControl(false),
+      komodoShuffle: new FormControl(false),
+      mana: new FormControl(false),
+      playerRollAmount: new FormControl(4),
+      opponentRollAmount: new FormControl(4),
+      playerLevel3Sold: new FormControl(0),
+      opponentLevel3Sold: new FormControl(0),
+      playerSummonedAmount: new FormControl(0),
+      opponentSummonedAmount: new FormControl(0),
+      showAdvanced: new FormControl(false),
+      ailmentEquipment: new FormControl(false),
     })
 
     this.initPetForms();
 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
+      // happens on import
+      if (value == null) {
+        return;
+      }
+
       if (value == 'Add Custom Pack') { 
         this.openCustomPackEditor();
         return;
@@ -212,6 +291,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.updatePlayerPack(this.player, value);
     })
     this.formGroup.get('opponentPack').valueChanges.subscribe((value) => {
+      // happens on import
+      if (value == null) {
+        return;
+      }
+
       if (value == 'Add Custom Pack') { 
         this.openCustomPackEditor();
         return;
@@ -233,6 +317,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
     this.formGroup.get('turn').valueChanges.subscribe((value) => {
       this.updatePreviousShopTier(value);
+      this.setDayNight();
     })
     this.formGroup.get('playerGoldSpent').valueChanges.subscribe((value) => {
       this.updateGoldSpent(value, null);
@@ -248,6 +333,37 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('oldStork').valueChanges.subscribe((value) => {
       this.gameService.gameApi.oldStork = value;
     });
+    this.formGroup.get('komodoShuffle').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.komodoShuffle = value;
+    });
+    this.formGroup.get('mana').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.mana = value;
+    });
+    this.formGroup.get('playerRollAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerRollAmount = value;
+      console.log('playerRollAmount', value)
+    });
+    this.formGroup.get('opponentRollAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentRollAmount = value;
+      console.log('opponentRollAmount', value)
+    });
+    this.formGroup.get('playerLevel3Sold').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerLevel3Sold = value;
+    });
+    this.formGroup.get('opponentLevel3Sold').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentLevel3Sold = value;
+    });
+    this.formGroup.get('playerSummonedAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerSummonedAmount = value;
+    });
+    this.formGroup.get('opponentSummonedAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentSummonedAmount = value;
+    });
+  }
+
+  toggleAdvanced() {
+    let advanced = this.formGroup.get('showAdvanced').value;
+    this.formGroup.get('showAdvanced').setValue(!advanced);
   }
 
   initPetForms() {
@@ -259,7 +375,12 @@ export class AppComponent implements OnInit, AfterViewInit {
           health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
           exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
-          belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet)
+          belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
+          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
+          abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
+          abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
+          abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
+          battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
         })
       }
     );
@@ -275,7 +396,12 @@ export class AppComponent implements OnInit, AfterViewInit {
           health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
           exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
           equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
-          belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet)
+          belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
+          mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
+          abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
+          abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
+          abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+          battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
         })
       }
     );
@@ -309,17 +435,25 @@ export class AppComponent implements OnInit, AfterViewInit {
       case 'Golden':
         petPool = this.petService.goldenPackPets;
         break;
+      case 'Unicorn':
+        petPool = this.petService.unicornPackPets;
+        break;
       default:
         petPool = this.petService.playerCustomPackPets.get(pack);
         break;
     }
+    // console.log('petPool', petPool)
     if (player == this.player) {
       this.gameService.setTierGroupPets(petPool, null);
     } else {
       this.gameService.setTierGroupPets(null, petPool);
     }
+    // if on all pets do nothing
+    if (this.formGroup.get('allPets').value) {
+      return;
+    }
     if (randomize) {
-      this.randomize(player);
+      // this.randomize(player);
     }
   }
 
@@ -398,17 +532,26 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
-    this.abilityService.executeFriendFaintsEvents();
+    this.abilityService.executeManaEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
     
-    // this might cause an issue with door head ant
-    // probably just move the functions in here that trigger the empty front space events
-    this.removeDeadPets();
+    let petRemoved = this.removeDeadPets();
 
     this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();
+    this.abilityService.executeFriendSummonedToyEvents();
     this.abilityService.executeEnemySummonedEvents();
+    
+    this.abilityService.executeFriendFaintsEvents();
+    this.abilityService.executeFriendFaintsToyEvents();
+    this.executeFrequentEvents();
+    this.checkPetsAlive();
+
+
+    if (petRemoved) {
+      this.emptyFrontSpaceCheck();
+    }
 
     this.executeFrequentEvents();
     this.checkPetsAlive();
@@ -462,6 +605,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   simulate() {
+    try {
+      this.runSimulation();
+    } catch {
+      window.alert('Something went wrong, please send a bug report.');
+    }
+  }
+
+  runSimulation() {
     this.localStorageService.setFormStorage(this.formGroup);
 
     this.resetSimulation();
@@ -470,9 +621,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.setAbilityEquipments(this.opponent);
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
+
       this.initBattle();
       this.startBattle();
       this.initToys();
+
+      // // give all pets dazed equipment
+      // for (let pet of this.player.petArray) {
+      //   pet.equipment = new Dazed();
+      // }
+
+      // for (let pet of this.opponent.petArray) {
+      //   pet.equipment = new Dazed();
+      // }
+      
 
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
@@ -485,6 +647,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.startOfBattleService.initStartOfBattleEvents();
       this.startOfBattleService.executeToyPetEvents();
+
+      // empty front space toy events
+      this.emptyFrontSpaceCheck();
+
       this.executeFrequentEvents();
       this.toyService.executeStartOfBattleEvents();
       this.executeFrequentEvents();
@@ -492,6 +658,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.executeFrequentEvents();
 
       this.abilityService.executeSummonedEvents();
+      this.abilityService.executeFriendSummonedToyEvents();
       this.abilityService.executeEnemySummonedEvents();
       
       this.abilityService.triggerTransformEvents(this.player);
@@ -519,9 +686,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   removeDeadPets() {
-    this.player.removeDeadPets();
-    this.opponent.removeDeadPets();
+    let petRemoved = false;
+    petRemoved = this.player.removeDeadPets();
+    petRemoved = this.opponent.removeDeadPets() || petRemoved;
 
+    return petRemoved;
+  }
+
+  emptyFrontSpaceCheck() {
+    
     if (this.player.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
     }
@@ -531,6 +704,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.abilityService.executeEmptyFrontSpaceEvents();
+
+    if (this.player.pet0 == null) {
+      this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);
+    }
+
+    if (this.opponent.pet0 == null) {
+      this.abilityService.triggerEmptyFrontSpaceToyEvents(this.opponent);
+    }
+
+    this.abilityService.executeEmptyFrontSpaceToyEvents();
   }
 
   startBattle() {
@@ -558,6 +741,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       logs: this.logs
     }
     this.battles.push(this.currBattle);
+    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
   }
 
   reset() {
@@ -600,7 +785,26 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.pushPetsForwards();
 
-    this.doBeforeAttackEquipment();
+    let amt = 1;
+    if (this.player.pet0 instanceof Panther) {
+      amt = this.player.pet0.level + 1;
+    }
+    for (let i = 0; i < amt; i++) {
+      this.doBeforeAttackEquipment(this.player);
+    }
+    amt = 1;
+    if (this.opponent.pet0 instanceof Panther) {
+      amt = this.opponent.pet0.level + 1;
+    }
+    for (let i = 0; i < amt; i++) {
+      this.doBeforeAttackEquipment(this.opponent);
+    }
+
+    this.abilityService.executeEqiupmentBeforeAttackEvents();
+
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
+
     while(this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
     }
@@ -673,6 +877,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment?.equipmentClass == 'startOfBattle') {
         pet.equipment.callback(pet);
       }
+      if (pet.equipment instanceof FairyDust) {
+        pet.equipment.callback(pet);
+      }
     }
   }
 
@@ -682,31 +889,43 @@ export class AppComponent implements OnInit, AfterViewInit {
       let pantherMessage = '';
       if (pet instanceof Panther) {
         multiplier = pet.level + 1;
-        pantherMessage = ` x${multiplier} (Panther)`;
+        pantherMessage = ` (Panther)`;
       }
-      if (pet.equipment instanceof Pie) {
-        pet.increaseAttack(4 * multiplier);
-        pet.increaseHealth(4 * multiplier);
-        this.logService.createLog({
-          message: `${pet.name} gained ${4 * multiplier} attack and ${4 * multiplier} health (Pie)${pantherMessage}`,
-          type: 'equipment',
-          player: player
-        })
-      }
-      if (pet.equipment instanceof Pancakes) {
-        for (let pett of player.petArray) {
-          if (pet == pett) {
-            continue;
-          }
-          pett.increaseAttack(2 * multiplier);
-          pett.increaseHealth(2 * multiplier);
+      for (let i = 0; i < multiplier; i++) {
+        if (pet.equipment instanceof Pie) {
+          pet.increaseAttack(4);
+          pet.increaseHealth(4);
           this.logService.createLog({
-            message: `${pett.name} gained ${2 * multiplier} attack and ${2 * multiplier} health (Pancake)${pantherMessage}`,
+            message: `${pet.name} gained ${4} attack and ${4} health (Pie)${pantherMessage}`,
             type: 'equipment',
             player: player
           })
         }
+        if (pet.equipment instanceof Pancakes) {
+          for (let pett of player.petArray) {
+            if (pet == pett) {
+              continue;
+            }
+            pett.increaseAttack(2);
+            pett.increaseHealth(2);
+            this.logService.createLog({
+              message: `${pett.name} gained ${2} attack and ${2} health (Pancake)${pantherMessage}`,
+              type: 'equipment',
+              player: player
+            })
+          }
+        }
+        if (pet.equipment instanceof LovePotion) {
+          pet.equipment.callback(pet);
+        }
+        if (pet.equipment instanceof GingerbreadMan) {
+          pet.equipment.callback(pet);
+        }
+        if (pet.equipment instanceof HealthPotion) {
+          pet.equipment.callback(pet);
+        }
       }
+      
     }
   }
 
@@ -723,12 +942,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponent.onionCheck();
   }
 
-  doBeforeAttackEquipment() {
-    let playerPet = this.player.pet0;
-    let opponentPet = this.opponent.pet0;
+  doBeforeAttackEquipment(player) {
+    let playerPet = player.pet0;
+    let opponentPet = player == this.player ? this.opponent.pet0 : this.player.pet0;
 
     let playerEquipment = playerPet.equipment;
-    let opponentEquipment = opponentPet.equipment;
 
     if (playerEquipment?.equipmentClass == 'snipe') {
       let amt = 1;
@@ -744,24 +962,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (opponentEquipment?.equipmentClass == 'snipe') {
-      let amt = 1;
-      if (opponentPet instanceof Nest && opponentEquipment instanceof Egg) {
-        amt = opponentPet.level;
-      }
-      for (let i = 0; i < amt; i++) {
-        this.abilityService.setEqiupmentBeforeAttackEvent({
-          callback: () => { opponentEquipment.attackCallback(opponentPet, playerPet) },
-          priority: opponentPet.attack,
-          player: this.opponent
-        })
-      }
+    // probably should use equipmentClass beforeAttack but choco cake has its own method
+    if (playerEquipment instanceof Rambutan) {
+      this.abilityService.setEqiupmentBeforeAttackEvent({
+        callback: () => { playerEquipment.callback(playerPet) },
+        priority: playerPet.attack,
+        player: this.player
+      })
     }
-
-    this.abilityService.executeEqiupmentBeforeAttackEvents();
-
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
     
   }
 
@@ -937,13 +1145,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
     
-    let pets = player.petArray;
-    moveItemInArray(pets, previousIndex, currentIndex);
-    player.setPet(0, pets[0], true);
-    player.setPet(1, pets[1], true);
-    player.setPet(2, pets[2], true);
-    player.setPet(3, pets[3], true);
-    player.setPet(4, pets[4], true);
+    for (let selector of this.petSelectors.toArray()) {
+      selector.substitutePet();
+    }
   
   }
 
@@ -1022,4 +1226,5 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     return validFormGroups;
   }
+
 }

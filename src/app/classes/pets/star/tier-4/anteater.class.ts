@@ -16,7 +16,7 @@ export class Anteater extends Pet {
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
-                    let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 5);
+                    let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 0, 5);
             
                     this.logService.createLog(
                         {
@@ -43,9 +43,10 @@ export class Anteater extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

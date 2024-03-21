@@ -22,6 +22,7 @@
             <option value="Puppy">Puppy</option>
             <option value="Star">Star</option>
             <option value="Golden">Golden</option>
+            <option value="Unicorn">Unicorn</option>
             <optgroup label="Custom Packs">
               <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
               <option value="Add Custom Pack">Add Custom Pack</option>
@@ -36,30 +37,13 @@
             <option value="Puppy">Puppy</option>
             <option value="Star">Star</option>
             <option value="Golden">Golden</option>
+            <option value="Unicorn">Unicorn</option>
             <optgroup label="Custom Packs">
               <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
               <option value="Add Custom Pack">Add Custom Pack</option>
             </optgroup>
           </select>
         </div>
-  
-        <div class="border-end d-flex pe-3">
-          <div class="form-group small-w-input ms-3">
-            <label for="turn">Turn</label>
-            <input class="form-control" id="turn" type="number" formControlName="turn" max="99"/>
-          </div>
-    
-          <div class="form-group small-w-input ms-3">
-            <label for="playerGoldSpent" title="Player Gold Spent">PGS</label>
-            <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99"/>
-          </div>
-    
-          <div class="form-group small-w-input ms-3">
-            <label for="opponentGoldSpent" title="Opponent Gold Spent">OGS</label>
-            <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99"/>
-          </div>
-        </div>
-  
   
         <div class="form-group min-w-input mx-3">
           <label for="playerPack">Player Toy</label>
@@ -90,13 +74,17 @@
           </select>
         </div>
   
-        <div class="form-group pe-3 border-end">
+        <div class="form-group me-3">
           <label for="opponentToyLevel">Toy Level</label>
           <select class="form-control" id="opponentToyLevel" formControlName="opponentToyLevel">
             <option>1</option>
             <option>2</option>
             <option>3</option>
           </select>
+        </div>
+
+        <div class="form-group pe-3 d-flex align-items-end border-end">
+          <span class="btn-link" (click)="toggleAdvanced()">{{formGroup.get('showAdvanced').value ? 'Hide' : 'Show'}} Advanced Settings</span>
         </div>
 
         <div class="flex-column">
@@ -124,14 +112,40 @@
             </label>
           </div>
 
-          <div class="form-check ms-3" title="Stork spawns with base stats.">
+          <div class="form-check ms-3" title="Include Token Pets in pet pool.">
             <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="tokenPets">
             <label class="form-check-label" for="tokenPets" >
               Token Pets
             </label>
           </div>
         </div>
-  
+
+        <div class="flex-column">
+          
+          <div class="form-check ms-3" title="Shuffle pets in front of Komodo if present.">
+            <input class="form-check-input" type="checkbox" value="" id="komodoShuffle" formControlName="komodoShuffle">
+            <label class="form-check-label" for="komodoShuffle" >
+              Komodo Shuffle
+            </label>
+          </div>
+
+          <div class="form-check ms-3" title="Include Mana.">
+            <input class="form-check-input" type="checkbox" value="" id="mana" formControlName="mana">
+            <label class="form-check-label" for="mana" >
+              Mana
+            </label>
+          </div>
+        </div>
+
+        <div class="flex-column">
+          
+          <div class="form-check ms-3" title="Include Ailments for Equipment Options.">
+            <input class="form-check-input" type="checkbox" value="" id="ailmentEquipment" formControlName="ailmentEquipment">
+            <label class="form-check-label" for="ailmentEquipment" >
+              Ailment Equipment
+            </label>
+          </div>
+        </div>
 
       </div>
       
@@ -143,6 +157,62 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="row battle-controller border" *ngIf="formGroup.get('showAdvanced').value">
+    <div class="col-12 d-flex justify-content-between py-2">
+      <div class="border-end d-flex flex-wrap pe-3">
+        
+        <div class="form-group small-w-input me-s-3">
+          <label for="turn">Turn</label>
+          <input class="form-control" id="turn" type="number" formControlName="turn" max="99"/>
+        </div>
+
+        <div class="form-group advanced-input ms-3">
+          <label for="playerGoldSpent" title="Player Gold Spent">Player Gold Spent</label>
+          <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99"/>
+        </div>
+  
+        <div class="form-group advanced-input ms-3">
+          <label for="opponentGoldSpent" title="Opponent Gold Spent">Opponent Gold Spent</label>
+          <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99"/>
+        </div>
+
+        <div class="form-group advanced-input ms-3">
+          <label for="playerRollAmount" title="Player Roll Amount">Player Roll Amt</label>
+          <input class="form-control" id="turn" type="number" formControlName="playerRollAmount" max="99"/>
+        </div>
+  
+        <div class="form-group advanced-input ms-3">
+          <label for="opponentRollAmount" title="Opponent Roll Amount">Opponent Roll Amt</label>
+          <input class="form-control" id="turn" type="number" formControlName="opponentRollAmount" max="99"/>
+        </div>
+
+        <div class="form-group advanced-input ms-3">
+          <label for="playerLevel3Sold" title="Player Level 3 Sold">Player Lvl 3 Sold</label>
+          <input class="form-control" id="turn" type="number" formControlName="playerLevel3Sold" max="99"/>
+        </div>
+  
+        <div class="form-group advanced-input ms-3">
+          <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">Opponent Lvl 3 Sold</label>
+          <input class="form-control" id="turn" type="number" formControlName="opponentLevel3Sold" max="99"/>
+        </div>
+  
+        <div class="form-group advanced-input ms-3">
+          <label for="playerSummonedAmount" title="Player Summoned Amount">Player Summoned Amt</label>
+          <input class="form-control" id="turn" type="number" formControlName="playerSummonedAmount" max="99"/>
+        </div>
+  
+        <div class="form-group advanced-input ms-3">
+          <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amt</label>
+          <input class="form-control" id="turn" type="number" formControlName="opponentSummonedAmount" max="99"/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row day-night-container">
+    <div class="col-12" [@dayNight]="dayNight ? 'day' : 'night'"></div>
   </div>
 
   <div class="row battle-row pb-5 pt-3">
@@ -168,7 +238,9 @@
               [index]="4 - i"
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
+              [ailments]="formGroup.get('ailmentEquipment').value"
               [allPets]="formGroup.get('allPets').value"
+              [mana]="formGroup.get('mana').value"
               [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>
@@ -200,7 +272,9 @@
               [index]="i"
               [formGroup]="makeFormGroup(pet)"
               [angler]="formGroup.get('angler').value"
+              [ailments]="formGroup.get('ailmentEquipment').value"
               [allPets]="formGroup.get('allPets').value"
+              [mana]="formGroup.get('mana').value"
               [showTokenPets]="formGroup.get('tokenPets').value"
               [customPacks]="formGroup.get('customPacks')"
             ></app-pet-selector>

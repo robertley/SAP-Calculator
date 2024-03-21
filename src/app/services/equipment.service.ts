@@ -42,6 +42,22 @@ import { Blueberry } from "../classes/equipment/custom/blueberry.class";
 import { Donut } from "../classes/equipment/custom/donut.class";
 import { Pineapple } from "../classes/equipment/custom/pineapple.class";
 import { Fig } from "../classes/equipment/golden/fig.class";
+import { Rambutan } from "../classes/equipment/unicorn/rambutan.class";
+import { LovePotion } from "../classes/equipment/unicorn/love-potion.class";
+import { FairyDust } from "../classes/equipment/unicorn/fairy-dust.class";
+import { GingerbreadMan } from "../classes/equipment/unicorn/gingerbread-man.class";
+import { EasterEgg } from "../classes/equipment/unicorn/easter-egg.class";
+import { HealthPotion } from "../classes/equipment/unicorn/health-potion.class";
+import { MagicBeans } from "../classes/equipment/unicorn/magic-beans.class";
+import { GoldenEgg } from "../classes/equipment/unicorn/golden-egg.class";
+import { Cold } from "../classes/equipment/ailments/cold.class";
+import { Exposed } from "../classes/equipment/ailments/exposed.class";
+import { Crisp } from "../classes/equipment/ailments/crisp.class";
+import { Dazed } from "../classes/equipment/ailments/dazed.class";
+import { Ink } from "../classes/equipment/ailments/ink.class";
+import { Spooked } from "../classes/equipment/ailments/spooked.class";
+import { Weak } from "../classes/equipment/ailments/weak.class";
+import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
 
 @Injectable({
     providedIn: "root"
@@ -92,7 +108,32 @@ export class EquipmentService {
         map.set('Pineapple', new Pineapple());
         map.set('Fig', new Fig())
 
+        map.set('Rambutan', new Rambutan(this.logService));
+        map.set('Love Potion', new LovePotion(this.logService));
+        map.set('Fairy Dust', new FairyDust(this.logService));
+        map.set('Gingerbread Man', new GingerbreadMan(this.logService));
+        map.set('Easter Egg', new EasterEgg(this.logService, this.abilityService));
+        map.set('Health Potion', new HealthPotion(this.logService));
+        map.set('Magic Beans', new MagicBeans());
+        map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
+        map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
+
         return map;
     }
+
+    getInstanceOfAllAilments() {
+        let map = new Map();
+        map.set('Cold', new Cold());
+        map.set('Crisp', new Crisp());
+        map.set('Dazed', new Dazed());
+        map.set('Exposed', new Exposed());
+        map.set('Ink', new Ink());
+        map.set('Spooked', new Spooked());
+        map.set('Weak', new Weak());
+
+        return map;
+    }
+
+    
 
 }

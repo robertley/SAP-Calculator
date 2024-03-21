@@ -26,7 +26,7 @@ export class Rooster extends Pet {
                         pteranodon: pteranodon
                     })
                     this.parent.summonPet(
-                        new Chick(this.logService, this.abilityService, this.parent, 1, attack, this.minExpForLevel),
+                        new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel),
                         this.savedPosition
                     )
                 },
@@ -41,9 +41,10 @@ export class Rooster extends Pet {
         parent: Player,
         health?: number,
         attack?: number,
+        mana?: number,
         exp?: number,
         equipment?: Equipment) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, equipment);
+        this.initPet(exp, health, attack, mana, equipment);
     }
 }

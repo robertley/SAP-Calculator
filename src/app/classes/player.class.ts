@@ -24,7 +24,7 @@ export class Player {
     private orignalPet3?: Pet;
     private orignalPet4?: Pet;
 
-    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' = 'Turtle';
+    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' = 'Turtle';
 
     toy: Toy;
     originalToy: Toy;
@@ -57,12 +57,22 @@ export class Player {
         this.orignalPet3 = this.pet3;
         this.orignalPet4 = this.pet4;
 
+        this.originalToy = this.toy;
+
         this.toy = this.originalToy;
+        if (this.toy) {
+            this.toy.used = false;
+            this.toy.triggers = 0;
+        }
         this.trumpets = 0;
         this.spawnedGoldenRetiever = false;
     }
 
     setPet(index: number, pet: Pet, init=false) {
+        let oldPet = this.getPet(index);
+        if (oldPet != null) {
+            // oldPet.savedPosition = null;
+        }
         if (index == 0) {
             this.pet0 = pet;
             if (pet != null) {
@@ -169,6 +179,12 @@ export class Player {
                 })
             }
             return false;
+        }
+        let isPlayer = this == this.gameService.gameApi.player;
+        if (isPlayer) {
+            this.gameService.gameApi.playerSummonedAmount++;
+        } else {
+            this.gameService.gameApi.opponentSummonedAmount++;
         }
         if (position == 0) {
             if (this.pet0 != null) {
@@ -319,7 +335,8 @@ export class Player {
             this.abilityService.setFriendAheadFaintsEvent({
                     callback: pet.petBehind().friendAheadFaints.bind(pet.petBehind()),
                     priority: pet.petBehind().attack,
-                    player: this
+                    player: this,
+                    callbackPet: pet
                 })
         }
         this.abilityService.triggerFriendFaintsEvents(pet);
@@ -350,21 +367,28 @@ export class Player {
     }
 
     removeDeadPets() {
-        if (!this.pet0?.alive) {
+        let petRemoved = false;
+        if (!this.pet0?.alive && this.pet0 !== undefined) {
             this.pet0 = null;
+            petRemoved = true;
         }
         if (!this.pet1?.alive) {
             this.pet1 = null;
+            petRemoved = true;
         }
         if (!this.pet2?.alive) {
             this.pet2 = null;
+            petRemoved = true;
         }
         if (!this.pet3?.alive) {
             this.pet3 = null;
+            petRemoved = true;
         }
         if (!this.pet4?.alive) {
             this.pet4 = null;
+            petRemoved = true;
         }
+        return petRemoved;
     }
 
     createDeathLog(pet: Pet) {
@@ -384,13 +408,13 @@ export class Player {
     getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, notFiftyFifty?: boolean) {
         let pets = this.petArray;
         if (donut) {
-            let donutPets = this.getPetsWithEquipment('Donut');
+            let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => { !excludePets?.includes(pet) });
             if (donutPets.length > 0) {
                 pets = donutPets;
             }
             if (notFiftyFifty) {
                 pets = pets.filter((pet) => {
-                    return pet.health != 50 || pet.attack != 50;
+                    return pet.health != 50 || pet.attack != 50 || pet.name == 'Behemoth';
                 });
 
                 if (pets.length == 0) {
@@ -399,7 +423,7 @@ export class Player {
             }
         }
         if (blueberry) {
-            let blueberryPets = this.getPetsWithEquipment('Blueberry');
+            let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => { !excludePets?.includes(pet) });
             if (blueberryPets.length > 0) {
                 pets = blueberryPets;
             }
@@ -636,8 +660,15 @@ export class Player {
         return strongestPet;
     }
 
-    pushPetToFront(pet: Pet) {
+    pushPetToFront(pet: Pet, jump = false) {
         this.pushPet(pet, 4);
+
+        if (jump) {
+            this.abilityService.triggerFriendJumpedEvents(this, pet);
+            this.abilityService.triggerFriendJumpedToyEvents(this, pet);
+            this.abilityService.executeFriendJumpedEvents();
+            this.abilityService.executeFriendJumpedToyEvents();
+        }
     }
 
     pushPetToBack(pet: Pet) {
@@ -724,5 +755,24 @@ export class Player {
         }
         this.trumpets = 0;
         this.spawnedGoldenRetiever = true;
+    }
+
+    getManticoreMult(): number[] {
+        let mult = [];
+        console.log(cloneDeep(this.petArray))
+        for (let pet of this.petArray) {
+            if (pet.name == 'Manticore') {
+                // let petBehind = pet.petBehind();
+                // if (petBehind == null) {
+                //     mult.push(pet.level + 1);
+                // }
+                // if (petBehind != null && petBehind.name == 'Tiger') {
+                //     mult.push(petBehind.level + 1);
+                // }
+                mult.push(pet.level + 1);
+            }
+        }
+
+        return mult;
     }
 }
