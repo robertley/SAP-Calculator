@@ -70,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.3';
+  version = '0.6.4';
   sapVersion = '0.33.3-151 BETA'
 
   title = 'sap-calculator';
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1;
+  simulationBattleAmt = 1000;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
@@ -532,11 +532,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
-    this.abilityService.executeFriendFaintsEvents();
-    this.abilityService.executeFriendFaintsToyEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
     this.abilityService.executeManaEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
@@ -547,6 +542,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.abilityService.executeSummonedEvents();
     this.abilityService.executeFriendSummonedToyEvents();
     this.abilityService.executeEnemySummonedEvents();
+    
+    this.abilityService.executeFriendFaintsEvents();
+    this.abilityService.executeFriendFaintsToyEvents();
+    this.executeFrequentEvents();
+    this.checkPetsAlive();
+
 
     if (petRemoved) {
       this.emptyFrontSpaceCheck();
@@ -604,6 +605,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   simulate() {
+    try {
+      this.runSimulation();
+    } catch {
+      window.alert('Something went wrong, please send a bug report.');
+    }
+  }
+
+  runSimulation() {
     this.localStorageService.setFormStorage(this.formGroup);
 
     this.resetSimulation();
