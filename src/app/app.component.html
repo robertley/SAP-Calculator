@@ -5,10 +5,14 @@
         <h1 (click)="printFormGroup()">SAP Calculator</h1>
         <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link">Info/Guide</span>
       </div>
-      <div class="d-flex flex-column align-items-end">
-        <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch Notes</span></span>
-        <span>SAP Version: {{sapVersion}}</span>
+      <div class="d-flex align-items-end">
+        <div class="me-3">Last Updated: 4/4/2024</div>
+        <div class="d-flex flex-column align-items-end">
+          <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch Notes</span></span>
+          <span>SAP Version: {{sapVersion}}</span>
+        </div>
       </div>
+
     </div>
   </div>
 

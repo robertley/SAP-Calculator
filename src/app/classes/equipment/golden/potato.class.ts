@@ -6,4 +6,5 @@ export class Potato extends Equipment {
     power = 10;
     uses = 2;
     originalUses = 2;
+    originalPower = 10;
 }
