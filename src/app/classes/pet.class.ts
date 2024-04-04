@@ -868,7 +868,7 @@ export abstract class Pet {
                     type: 'ability',
                     player: pet.parent
                 });
-                pet.health -= 6;
+                pet.health -= damage;
                 pet.givePetEquipment(null);
             }
         }
