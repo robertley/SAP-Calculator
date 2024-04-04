@@ -14,6 +14,9 @@ export class Anubis extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let faintPets = this.parent.petArray.filter(pet => pet.faintPet);
         for (let pet of faintPets) {
+            if (!pet.alive) {
+                continue;
+            }
             if (pet.tier <= this.level * 2) {
                 this.logService.createLog({
                     message: `${this.name} activated ${pet.name}'s faint ability.`,
@@ -21,7 +24,14 @@ export class Anubis extends Pet {
                     player: this.parent,
                     tiger: tiger
                 });
-                pet.faint(gameApi, false, false);
+                this.abilityService.setFaintEvent(
+                    {
+                        callback: () => {
+                            pet.faint(gameApi, false, false);
+                        },
+                        priority: 100 - pet.position
+                    }
+                )
             }
         }
     }

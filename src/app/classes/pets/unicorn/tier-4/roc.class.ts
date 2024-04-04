@@ -24,7 +24,7 @@ export class Roc extends Pet {
             return;
         }
 
-        let excludePets = this.parent.petArray.filter(pet => pet == this && !petsAhead.includes(pet));
+        let excludePets = this.parent.petArray.filter(pet => pet == this || !petsAhead.includes(pet));
 
         for (let i = 0; i < this.level * 3; i++) {
             let target = this.parent.getRandomPet(excludePets, true);
@@ -36,7 +36,7 @@ export class Roc extends Pet {
                 randomEvent: true
             })
 
-            target.increaseMana(3);
+            target.increaseMana(2);
         }
 
         this.superStartOfBattle(gameApi, tiger);

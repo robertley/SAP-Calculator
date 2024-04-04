@@ -188,6 +188,10 @@ export abstract class Pet {
             if (!this.abilityValidCheck()) {
                 return;
             }
+
+            if (this.kitsuneCheck()) {
+                return;
+            }
             
             if (this.mana > 0) {
                 
@@ -1282,6 +1286,7 @@ export abstract class Pet {
 
     increaseMana(amt) {
         this.mana += amt;
+        this.mana = Math.min(this.mana, 50);
 
         if (this.gainedMana) {
             this.gainedMana(null, false);
@@ -1366,9 +1371,9 @@ export abstract class Pet {
     getManticoreMult(): number[] {
         let mult = [];
         for (let pet of this.parent.petArray) {
-            if (!pet.alive) {
-                continue;
-            }
+            // if (!pet.alive) {
+            //     continue;
+            // }
             if (pet.name == 'Manticore') {
                 mult.push(pet.level + 1);
             }
@@ -1415,6 +1420,22 @@ export abstract class Pet {
             petBehind = petBehind.petBehind();
         }
         return targetsBehind;
+    }
+
+    kitsuneCheck() {
+        let petBehind = this.petBehind();
+        let first = true;
+        while (petBehind) {
+            if (petBehind.name == 'Kitsune' && first) {
+                return false;
+            }
+            first = false;
+            if (petBehind.name == 'Kitsune') {
+                return true;
+            }
+            petBehind = petBehind.petBehind();
+        }
+        return false;
     }
 
     get petAhead() {

@@ -15,7 +15,7 @@ import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
 import { Pie } from './classes/equipment/puppy/pie.class';
-import { cloneDeep, shuffle } from 'lodash';
+import { cloneDeep, pickBy, shuffle } from 'lodash';
 import { Panther } from './classes/pets/puppy/tier-5/panther.class';
 import { Puma } from './classes/pets/puppy/tier-6/puma.class';
 import { Pancakes } from './classes/equipment/puppy/pancakes.class';
@@ -70,7 +70,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.3';
+  version = '0.6.5';
   sapVersion = '0.33.3-151 BETA'
 
   title = 'sap-calculator';
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1;
+  simulationBattleAmt = 1000;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
@@ -146,11 +146,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadCalculatorFromValue(calculator) {
-    this.formGroup.reset();
+    // this.formGroup.reset();
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
     this.loadCustomPacks(customPacks);
     this.formGroup.patchValue(calculator, {emitEvent: false});
+
+
     // band aid for weird bug where the select switches to turtle when pack already exists
     setTimeout(() => {
       this.fixCustomPackSelect();
@@ -158,6 +160,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
     this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
     this.gameService.gameApi.mana = this.formGroup.get('mana').value;
+    this.gameService.gameApi.playerRollAmount = this.formGroup.get('playerRollAmount').value;
+    this.gameService.gameApi.opponentRollAmount = this.formGroup.get('opponentRollAmount').value;
+    this.gameService.gameApi.playerLevel3Sold = this.formGroup.get('playerLevel3Sold').value;
+    this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
+    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
+    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.day = this.dayNight;
+    this.gameService.gameApi.turnNumber = this.formGroup.get('turn').value;
   }
 
   setDayNight() {
@@ -532,11 +542,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
-    this.abilityService.executeFriendFaintsEvents();
-    this.abilityService.executeFriendFaintsToyEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
     this.abilityService.executeManaEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
@@ -547,6 +552,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.abilityService.executeSummonedEvents();
     this.abilityService.executeFriendSummonedToyEvents();
     this.abilityService.executeEnemySummonedEvents();
+    
+    this.abilityService.executeFriendFaintsEvents();
+    this.abilityService.executeFriendFaintsToyEvents();
+    this.executeFrequentEvents();
+    this.checkPetsAlive();
+
 
     if (petRemoved) {
       this.emptyFrontSpaceCheck();
@@ -604,6 +615,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   simulate() {
+    try {
+      this.runSimulation();
+    } catch (error) {
+      console.error(error)
+      window.alert('Something went wrong, please send a bug report.');
+    }
+  }
+
+  runSimulation() {
     this.localStorageService.setFormStorage(this.formGroup);
 
     this.resetSimulation();

@@ -14,18 +14,15 @@ export class Sleipnir extends Pet {
     health = 5;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let manaAmt = Math.floor(this.attack / 2);
+        let target = this.parent.furthestUpPet;
         let targets = [];
-        let tempTarget = this.petAhead;
-        while (tempTarget) {
-            targets.push(tempTarget);
-
+        while(target) {
+            targets.push(target);
             if (targets.length >= this.level) {
                 break;
             }
-
-            tempTarget = tempTarget.petAhead;
+            target = target.petBehind();
         }
-
         for (let target of targets) {
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} ${manaAmt} mana.`,
