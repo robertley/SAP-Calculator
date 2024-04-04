@@ -29,7 +29,7 @@ export class Roc extends Pet {
         for (let i = 0; i < this.level * 3; i++) {
             let target = this.parent.getRandomPet(excludePets, true);
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} 3 mana.`,
+                message: `${this.name} gave ${target.name} 2 mana.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
