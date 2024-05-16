@@ -25,7 +25,7 @@ export class Minotaur extends Pet {
         this.increaseAttack(power);
         this.increaseHealth(power);
 
-        this.superFriendAheadAttacks(gameApi, tiger);
+        this.superFriendAheadAttacks(gameApi, pet, tiger);
 
     }
     constructor(protected logService: LogService,

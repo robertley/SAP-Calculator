@@ -10,7 +10,7 @@ export class Kangaroo extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 2;
-    friendAheadAttacks(gameApi, tiger) {
+    friendAheadAttacks(gameApi, pet, tiger) {
         if (!this.alive) {
             return;
         }
@@ -22,7 +22,7 @@ export class Kangaroo extends Pet {
             player: this.parent,
             tiger
         })
-        super.superFriendAheadAttacks(gameApi, tiger)
+        super.superFriendAheadAttacks(gameApi, pet, tiger)
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
