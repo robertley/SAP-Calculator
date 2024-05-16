@@ -6,7 +6,7 @@
         <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link">Info/Guide</span>
       </div>
       <div class="d-flex align-items-end">
-        <div class="me-3">Last Updated: 4/4/2024</div>
+        <div class="me-3">Last Updated: {{lastUpdated}}</div>
         <div class="d-flex flex-column align-items-end">
           <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch Notes</span></span>
           <span>SAP Version: {{sapVersion}}</span>
@@ -297,7 +297,7 @@
       </div>
       <div>
         <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#reportABug">Report A Bug</button>
-        <button class="btn btn-secondary me-2 mb-2" (click)="export()">Export Calculator</button>
+        <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#export">Export Calculator</button>
         <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import Calculator</button>
       </div>
     </div>
@@ -439,6 +439,22 @@
         <app-import-calculator
           [importFunc]="import.bind(this)"
         ></app-import-calculator>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exportModalLabel">Export Calculator</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <app-export-calculator
+          [formGroup]="formGroup"
+        ></app-export-calculator>
       </div>
     </div>
   </div>

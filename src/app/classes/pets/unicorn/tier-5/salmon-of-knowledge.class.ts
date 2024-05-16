@@ -30,6 +30,9 @@ export class SalmonOfKnowledge extends Pet {
             targets.push(opponentPets[1]);
         }
         for (let target of targets) {
+            if (target == this) {
+                continue;
+            }
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} ${power} exp.`,
                 type: 'ability',
