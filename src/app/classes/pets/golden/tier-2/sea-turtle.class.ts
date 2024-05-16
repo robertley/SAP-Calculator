@@ -20,7 +20,7 @@ export class SeaTurtle extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.superFriendSummoned(pet, tiger);
+        this.superFriendSummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

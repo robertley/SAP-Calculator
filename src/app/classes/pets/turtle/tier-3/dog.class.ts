@@ -11,7 +11,7 @@ export class Dog extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 2;
-    friendSummoned(pet, tiger) {
+    friendSummoned(gameApi, pet, tiger) {
         if (pet == this) {
             return;
         }
@@ -25,7 +25,7 @@ export class Dog extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        super.superFriendSummoned(pet, tiger);
+        super.superFriendSummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

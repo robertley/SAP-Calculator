@@ -26,7 +26,7 @@ export class Alpaca extends Pet {
             tiger: tiger
         })
         this.abilityUses++;
-        this.superFriendSummoned(pet, tiger);
+        this.superFriendSummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

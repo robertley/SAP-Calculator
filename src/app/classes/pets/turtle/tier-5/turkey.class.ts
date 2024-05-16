@@ -18,8 +18,15 @@ export class Turkey extends Pet {
             attack: 3 * this.level,
             health: 2 * this.level
         }
-        pet.increaseAttack(power.attack);
-        pet.increaseHealth(power.health);
+        try {
+            pet.increaseAttack(power.attack);
+            pet.increaseHealth(power.health);
+        } catch (error) {
+            console.error(error);
+            console.log(pet);
+            throw error;
+        }
+
         this.logService.createLog({
             message: `${this.name} gave ${pet.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
@@ -27,7 +34,7 @@ export class Turkey extends Pet {
             tiger: tiger
         })
 
-        super.superFriendSummoned(pet, tiger);
+        super.superFriendSummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
