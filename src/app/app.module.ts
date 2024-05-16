@@ -14,6 +14,7 @@ import { InfoComponent } from './components/info/info.component';
 import { ImportCalculatorComponent } from './components/import-calculator/import-calculator.component';
 import { ReportABugComponent } from './components/report-a-bug/report-a-bug.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ExportCalculatorComponent } from './components/export-calculator/export-calculator.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { HttpClientModule } from '@angular/common/http';
     CustomPackFormComponent,
     InfoComponent,
     ImportCalculatorComponent,
-    ReportABugComponent
+    ReportABugComponent,
+    ExportCalculatorComponent
   ],
   imports: [
     BrowserModule,

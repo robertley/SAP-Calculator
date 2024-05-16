@@ -40,6 +40,7 @@ export class CustomPackEditorComponent implements OnInit {
       packMap.set('Puppy', []);
       packMap.set('Star', []);
       packMap.set('Golden', []);
+      packMap.set('Unicorn', []);
       packMap.set('Custom', []);
       this.petPackMap.set(i, packMap);
     }
@@ -54,6 +55,9 @@ export class CustomPackEditorComponent implements OnInit {
     }
     for (let [tier, pets] of this.petService.goldenPackPets) {
       this.petPackMap.get(tier).get('Golden').push(...pets);
+    }
+    for (let [tier, pets] of this.petService.unicornPackPets) {
+      this.petPackMap.get(tier).get('Unicorn').push(...pets);
     }
     for (let [tier, pets] of this.petService.customPackPets) {
       this.petPackMap.get(tier).get('Custom').push(...pets);

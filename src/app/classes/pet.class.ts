@@ -221,7 +221,7 @@ export abstract class Pet {
             if (!this.abilityValidCheck()) {
                 return;
             }
-            startOfBattleCallback(gameApi, tiger);
+            return startOfBattleCallback(gameApi, tiger);
         }
 
         let transformCallback = this.transform?.bind(this);

@@ -70,8 +70,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.7';
-  sapVersion = '0.33.3-151 BETA'
+  version = '0.6.8';
+  sapVersion = '0.33.3-156 BETA'
+  lastUpdated = '5/15/2024';
 
   title = 'sap-calculator';
   player: Player;
@@ -534,11 +535,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
-    this.abilityService.executeKnockOutEvents();
+    this.abilityService.executeFriendAheadFaintsEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
-
-    this.abilityService.executeFriendAheadFaintsEvents();
+    
+    this.abilityService.executeKnockOutEvents();
     this.executeFrequentEvents();
     this.checkPetsAlive();
 
