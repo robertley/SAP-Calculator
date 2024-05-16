@@ -70,9 +70,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.9';
+  version = '0.6.10';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '5/15/2024';
+  lastUpdated = '5/16/2024';
 
   title = 'sap-calculator';
   player: Player;
@@ -153,6 +153,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.loadCustomPacks(customPacks);
     this.formGroup.patchValue(calculator, {emitEvent: false});
 
+    for (let selector of this.petSelectors.toArray()) {
+      selector.substitutePet();
+    }
 
     // band aid for weird bug where the select switches to turtle when pack already exists
     setTimeout(() => {

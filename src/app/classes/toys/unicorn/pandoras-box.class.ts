@@ -18,23 +18,54 @@ export class PandorasBox extends Toy {
     tier = 6;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
-        equipmentMap.set('Cold', new Cold());
-        equipmentMap.set('Crisp', new Crisp());
-        equipmentMap.set('Exposed', new Exposed());
-        equipmentMap.set('Ink', new Ink());
-        equipmentMap.set('Weak', new Weak());
-        equipmentMap.set('Dazed', new Dazed());
-        equipmentMap.set('Spooked', new Spooked());
+        let ailments = [
+            new Cold(),
+            new Crisp(),
+            new Dazed(),
+            new Exposed(),
+            // new Ink(), // excluded
+            new Spooked(),
+            new Weak()
+        ];
+        
+        // https://superautopets.wiki.gg/wiki/Pandoras_Box
+        let excludedPerks = [
+            'Carrot',
+            'Cherry',
+            'Chocolate Cake',
+            'Coconut',
+            'Croissant',
+            'Cucumber',
+            'Eggplant',
+            'Fig',
+            'Gingerbread Man',
+            'Grapes',
+            'Golden Egg',
+            'Health Potion',
+            'Love Potion',
+            'Magic Beans',
+            'Peanut',
+            'Pie',
+            'Rambutan',
+            'Rice',
+            'Skewer'
+        ]
 
         let pets = [
             ...gameApi.player.petArray,
             ...gameApi.opponet.petArray
         ];
 
-        let equipmentArray = Array.from(equipmentMap.values());
+        let equipments = Array.from(equipmentMap.values());
+        equipments = equipments.filter(equipment => !excludedPerks.includes(equipment.name));
 
         for (let pet of pets) {
-            let equipment = equipmentArray[Math.floor(Math.random() * equipmentArray.length)];
+            // 50% chance for pool to be ailments
+            let perkPool = ailments;
+            if (Math.random() < 0.5) {
+                perkPool = equipments;
+            }
+            let equipment = perkPool[Math.floor(Math.random() * perkPool.length)];
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} ${equipment.name}`,
                 type: "ability",
