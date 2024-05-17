@@ -98,6 +98,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   dayNight = true;
 
+  api = false;
+  apiResponse = null;
+
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
@@ -116,6 +119,30 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initApp();
     this.initGameApi();
     this.setDayNight();
+
+    // get the end of url
+    let url = window.location.href;
+    let urlSplit = url.split('/');
+    let lastUrl = urlSplit[urlSplit.length - 1];
+    let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
+    if (code) {
+      this.api = true;
+      this.loadCalculatorFromValue(JSON.parse(code));
+      this.simulate();
+      this.buildApiResponse();
+    }
+    
+  }
+
+  buildApiResponse() {
+    let repsonse = {
+      playerWins: this.playerWinner,
+      opponentWins: this.opponentWinner,
+      draws: this.draw,
+    }
+
+    // set api response to stringified version of object with whitespace
+    this.apiResponse = JSON.stringify(repsonse, null);
   }
 
   printFormGroup() {
@@ -127,7 +154,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initModals();
+    if (!this.api) {
+      this.initModals();
+    }
   }
 
   loadLocalStorage() {
@@ -153,9 +182,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.loadCustomPacks(customPacks);
     this.formGroup.patchValue(calculator, {emitEvent: false});
 
-    for (let selector of this.petSelectors.toArray()) {
-      selector.substitutePet();
-    }
+    // if (!this.api) {
+    //   for (let selector of this.petSelectors.toArray()) {
+    //     selector.substitutePet();
+    //   }
+    // }
+
 
     // band aid for weird bug where the select switches to turtle when pack already exists
     setTimeout(() => {
