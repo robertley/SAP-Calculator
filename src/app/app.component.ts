@@ -125,6 +125,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     let urlSplit = url.split('/');
     let lastUrl = urlSplit[urlSplit.length - 1];
     let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
+    // remove ?code= from string
+    code = code.replace('?code=', '');
     if (code) {
       this.api = true;
       this.loadCalculatorFromValue(JSON.parse(code));
