@@ -1,5 +1,5 @@
 <ng-container *ngIf="api">
-  {{apiResponse}}
+  <div id="apiResponse">{{apiResponse}}</div>
 </ng-container>
 <ng-container  *ngIf="!api">
   <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" #container>
