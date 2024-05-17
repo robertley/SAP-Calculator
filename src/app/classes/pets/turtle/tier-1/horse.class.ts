@@ -18,7 +18,7 @@ export class Horse extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        super.superFriendSummoned(pet, tiger);
+        super.superFriendSummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

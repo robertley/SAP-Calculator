@@ -26,6 +26,8 @@ export class Dodo extends Pet {
         })
         
         super.superStartOfBattle(gameApi, tiger);
+
+        return true;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

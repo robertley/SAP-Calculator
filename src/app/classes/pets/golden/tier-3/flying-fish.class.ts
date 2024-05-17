@@ -28,7 +28,7 @@ export class FlyingFish extends Pet {
         })
         pet.increaseExp(power);
         this.abilityUses++;
-        this.superFriendSummoned(pet, tiger);
+        this.superFriendSummoned(gameApi, pet, tiger);
     }
 
     constructor(protected logService: LogService,

@@ -524,6 +524,10 @@ export class Player {
         pet: Pet,
         random: boolean
     } {
+        let targets = this.petArray.filter((pet) => { return pet != excludePet && pet.alive });
+        if (targets.length == 0) {
+            return { pet: null, random: false };
+        }
         let highestHealthPets: Pet[];
         for (let i in this.petArray) {
             let index = +i;
@@ -759,7 +763,6 @@ export class Player {
 
     getManticoreMult(): number[] {
         let mult = [];
-        console.log(cloneDeep(this.petArray))
         for (let pet of this.petArray) {
             if (pet.name == 'Manticore') {
                 // let petBehind = pet.petBehind();

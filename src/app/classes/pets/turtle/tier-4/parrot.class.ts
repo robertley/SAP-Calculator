@@ -19,17 +19,29 @@ export class Parrot extends Pet {
         if (this.petAhead == null) {
             return;
         }
-        this.startOfBattle = copyPet.startOfBattle?.bind(this);
-        this.hurt = copyPet.hurt?.bind(this);
-        this.faint = copyPet.faint?.bind(this);
-        this.friendSummoned = copyPet.friendSummoned?.bind(this);
-        this.friendAheadAttacks = copyPet.friendAheadAttacks?.bind(this);
-        this.friendAheadFaints = copyPet.friendAheadFaints?.bind(this);
-        this.friendFaints = copyPet.friendFaints?.bind(this);
-        this.afterAttack = copyPet.afterAttack?.bind(this);
-        this.beforeAttack = copyPet.beforeAttack?.bind(this);
-        this.knockOut = copyPet.knockOut?.bind(this);
-        this.summoned = copyPet.summoned?.bind(this);
+        this.startOfBattle = copyPet.originalStartOfBattle?.bind(this);
+        this.hurt = copyPet.originalHurt?.bind(this);
+        this.faint = copyPet.originalFaint?.bind(this);
+        this.friendSummoned = copyPet.originalFriendSummoned?.bind(this);
+        this.friendAheadAttacks = copyPet.originalFriendAheadAttacks?.bind(this);
+        this.friendAheadFaints = copyPet.originalFriendAheadFaints?.bind(this);
+        this.friendFaints = copyPet.originalFriendFaints?.bind(this);
+        this.afterAttack = copyPet.originalAfterAttack?.bind(this);
+        this.beforeAttack = copyPet.originalBeforeAttack?.bind(this);
+        this.knockOut = copyPet.originalKnockOut?.bind(this);
+        this.summoned = copyPet.originalSummoned?.bind(this);
+        this.friendlyToyBroke = copyPet.originalFriendlyToyBroke?.bind(this);
+        this.friendGainedAilment = copyPet.originalFriendGainedAilment?.bind(this);
+        this.friendGainedPerk = copyPet.originalFriendGainedPerk?.bind(this);
+        this.anyoneLevelUp = copyPet.originalAnyoneLevelUp?.bind(this);
+        this.enemySummoned = copyPet.originalEnemySummoned?.bind(this);
+        this.enemyPushed = copyPet.originalEnemyPushed?.bind(this);
+        this.gainedMana = copyPet.originalGainedMana?.bind(this);
+        this.friendJumped = copyPet.originalFriendJumped?.bind(this);
+        this.enemyGainedAilment = copyPet.originalEnemyGainedAilment?.bind(this);
+        this.friendGainsHealth = copyPet.originalFriendGainsHealth?.bind(this);
+        this.emptyFrontSpace = copyPet.originalEmptyFrontSpace?.bind(this);
+        this.enemyHurt = copyPet.originalEnemyHurt?.bind(this);
 
         this.logService.createLog({
             message: `Parrot copied ${copyPet.name}`,

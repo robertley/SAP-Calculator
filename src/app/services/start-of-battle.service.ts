@@ -4,6 +4,7 @@ import { GameAPI } from "../interfaces/gameAPI.interface";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { shuffle } from "lodash";
 import { GameService } from "./game.service";
+import { Pet } from "../classes/pet.class";
 
 @Injectable({
     providedIn: "root"
@@ -17,6 +18,17 @@ export class StartOfBattleService {
 
     }
 
+    redoPriorities(pet: Pet) {
+        // remove all events for this pet
+        this.nonToyPetEvents = this.nonToyPetEvents.filter(event => event.pet != pet);
+
+        for (let event of this.nonToyPetEvents) {
+            event.priority = event.pet.attack;
+        }
+        
+        this.executeNonToyPetEvents();
+    }
+
     initStartOfBattleEvents() {
         this.gameApi = this.gameService.gameApi;
         for (let pet of this.gameApi.player.petArray) {
@@ -28,7 +40,8 @@ export class StartOfBattleService {
                 events.push({
                     callback: pet.startOfBattle.bind(pet),
                     priority: pet.attack,
-                    player: this.gameApi.player
+                    player: this.gameApi.player,
+                    pet: pet
                 })
             }
         }
@@ -41,7 +54,8 @@ export class StartOfBattleService {
                 events.push({
                     callback: pet.startOfBattle.bind(pet),
                     priority: pet.attack,
-                    player: this.gameApi.opponet
+                    player: this.gameApi.opponet,
+                    pet: pet
                 })
             }
         }
@@ -76,7 +90,12 @@ export class StartOfBattleService {
         this.nonToyPetEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.nonToyPetEvents) {
-            event.callback(this.gameApi);
+            
+            let reorder = event.callback(this.gameApi);
+
+            if (reorder) {
+                return this.redoPriorities(event.pet);
+            }
         }
         
         this.resetNonToyPetEvents();

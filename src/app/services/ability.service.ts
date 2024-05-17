@@ -13,8 +13,7 @@ import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
 export class AbilityService {
 
     private gameApi: GameAPI;
-    private startOfBattleEvents: AbilityEvent[] = [];
-    private hurtEvents: AbilityEvent[] = [];
+        private hurtEvents: AbilityEvent[] = [];
     private faintEvents: AbilityEvent[] = [];
     private summonedEvents: AbilityEvent[] = [];
     private friendFaintsEvents: AbilityEvent[] = [];
@@ -88,53 +87,6 @@ export class AbilityService {
         for (let event of endTurnEvents) {
             event.callback(this.gameService.gameApi);
         }
-    }
-
-    // Start of Battle
-    
-    initStartOfBattleEvents() {
-        this.gameApi = this.gameService.gameApi;
-        for (let pet of this.gameApi.player.petArray) {
-            if (pet.startOfBattle != null) {
-                this.startOfBattleEvents.push({
-                    callback: () => { pet.startOfBattle(this.gameApi) },
-                    priority: pet.attack,
-                    player: this.gameApi.player
-                })
-            }
-        }
-        for (let pet of this.gameApi.opponet.petArray) {
-            if (pet.startOfBattle != null) {
-                this.startOfBattleEvents.push({
-                    callback: () => { pet.startOfBattle(this.gameApi) },
-                    priority: pet.attack,
-                    player: this.gameApi.opponet
-                })
-            }
-        }
-
-        this.executeStartOfBattleEvents();
-    }
-
-    setStartOfBattleEvent(event: AbilityEvent) {
-        this.startOfBattleEvents.push(event);
-    }
-
-    private resetStartOfBattleEvents() {
-        this.startOfBattleEvents = [];
-    }
-
-    private executeStartOfBattleEvents() {
-        // shuffle, so that same priority events are in random order
-        this.startOfBattleEvents = shuffle(this.startOfBattleEvents);
-
-        this.startOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.startOfBattleEvents) {
-            event.callback(this.gameService.gameApi);
-        }
-        
-        this.resetStartOfBattleEvents();
     }
 
     // Hurt

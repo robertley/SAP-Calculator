@@ -11,7 +11,7 @@ export class Ox extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 1;
-    friendAheadFaints(gameApi, tiger) {
+    friendAheadFaints(gameApi, pet, tiger) {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
@@ -24,7 +24,7 @@ export class Ox extends Pet {
             tiger: tiger
         })
         this.abilityUses++;
-        super.superFriendAheadFaints(gameApi, tiger);
+        super.superFriendAheadFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

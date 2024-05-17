@@ -19,7 +19,7 @@ export class Snake extends Pet {
             return;
         }
         this.snipePet(target, power, true, tiger);
-        this.superFriendAheadAttacks(gameApi, tiger);
+        this.superFriendAheadAttacks(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -24,19 +24,19 @@ export class Roc extends Pet {
             return;
         }
 
-        let excludePets = this.parent.petArray.filter(pet => pet == this && !petsAhead.includes(pet));
+        let excludePets = this.parent.petArray.filter(pet => pet == this || !petsAhead.includes(pet));
 
         for (let i = 0; i < this.level * 3; i++) {
             let target = this.parent.getRandomPet(excludePets, true);
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} 3 mana.`,
+                message: `${this.name} gave ${target.name} 2 mana.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
                 randomEvent: true
             })
 
-            target.increaseMana(3);
+            target.increaseMana(2);
         }
 
         this.superStartOfBattle(gameApi, tiger);
