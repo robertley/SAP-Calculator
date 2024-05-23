@@ -123,20 +123,35 @@ export abstract class Pet {
     eggplantTouched = false;
     cherryTouched = false;
 
+    foo;
 
     constructor(
         protected logService: LogService,
         protected abilityService: AbilityService,
-        parent: Player) {
+        parent: Player,
+        health?: number,
+        attack?: number,
+        mana?: number,
+        exp?: number,
+        equipment?: Equipment
+    ) {
         this.parent = parent;
+        setTimeout(() => {
+            this.initPet(exp, health, attack, mana, equipment);
+            console.log(this.foo)
+        })
+
     }
 
     initPet(exp, health, attack, mana, equipment) {
+        console.log('initPet')
+        console.log(health, this.health, this.level);
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
         this.mana = mana ?? this.mana;
         this.originalHealth = this.health;
+        
         this.originalAttack = this.attack;
         this.originalMana = this.mana;
         this.equipment = equipment;

@@ -345,6 +345,7 @@ export class Player {
 
     checkPetsAlive() {
         if (this.pet0 && !this.pet0.alive && !this.pet0.seenDead) {
+            console.log('pet0 dead', this.pet0)
             this.handleDeath(this.pet0)
             // this.pet0 = null;
         }
