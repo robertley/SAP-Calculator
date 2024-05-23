@@ -20,8 +20,13 @@ export class Parrot extends Pet {
         this.copyPet = copyPet;
         if (copyPet instanceof Parrot) {
             copyPet = copyPet.copyPet;
+            this.logService.createLog({
+                message: `Parrot copied ${this.petAhead.name}`,
+                type: 'ability',
+                player: this.parent
+            })
         }
-        if (this.petAhead == null) {
+        if (copyPet == null) {
             return;
         }
         this.startOfBattle = copyPet.originalStartOfBattle?.bind(this);
@@ -48,11 +53,14 @@ export class Parrot extends Pet {
         this.emptyFrontSpace = copyPet.originalEmptyFrontSpace?.bind(this);
         this.enemyHurt = copyPet.originalEnemyHurt?.bind(this);
 
-        this.logService.createLog({
-            message: `Parrot copied ${copyPet.name}`,
-            type: 'ability',
-            player: this.parent
-        })
+        if (!(copyPet instanceof Parrot)) {
+            this.logService.createLog({
+                message: `Parrot copied ${copyPet.name}`,
+                type: 'ability',
+                player: this.parent
+            })
+        }
+
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
