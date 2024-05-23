@@ -18,6 +18,9 @@ export class Crab extends Pet {
         let highestHealthPet = this.parent.getHighestHealthPet(this).pet;
         let copyAmmt = .5 * this.level;
         let crabHealth = Math.floor(highestHealthPet.health * copyAmmt);
+        if (crabHealth == 0) {
+            crabHealth = 1;
+        }
         this.health = crabHealth;
         this.logService.createLog({
             message: `${this.name} copied ${copyAmmt * 100}% of ${highestHealthPet.name}'s health (${crabHealth})`,
