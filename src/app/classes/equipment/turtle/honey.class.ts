@@ -5,6 +5,8 @@ import { Pet } from "../../pet.class";
 import { Bee } from "../../pets/hidden/bee.class";
 import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
+// apparently when a pet is kiled from snipes honey spawns are less predictable
+// this ensures that honey spawns are in the front, for now
 export class Honey extends Equipment {
     name = 'Honey';
     equipmentClass = 'faint' as EquipmentClass;
@@ -33,7 +35,7 @@ export class Honey extends Equipment {
                     )
                     this.abilityService.triggerSummonedEvents(bee);
                 },
-                priority: pet.attack
+                priority: -1
             })
         }
     }

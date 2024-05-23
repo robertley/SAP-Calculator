@@ -70,9 +70,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.10';
+  version = '0.6.11';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '5/16/2024';
+  lastUpdated = '5/22/2024';
 
   title = 'sap-calculator';
   player: Player;
@@ -666,8 +666,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.resetSimulation();
 
-    this.setAbilityEquipments(this.player);
-    this.setAbilityEquipments(this.opponent);
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
 
@@ -684,9 +682,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       //   pet.equipment = new Dazed();
       // }
       
-
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
+      
+      this.setAbilityEquipments(this.player);
+      this.setAbilityEquipments(this.opponent);
 
       this.player.onionCheck();
       this.opponent.onionCheck();

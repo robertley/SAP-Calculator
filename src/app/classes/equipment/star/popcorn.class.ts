@@ -50,7 +50,7 @@ export class Popcorn extends Equipment {
                     pet.parent.summonPet(popcornPet, pet.savedPosition);
                     this.abilityService.triggerSummonedEvents(popcornPet);
                 },
-                priority: pet.attack
+                priority: -1
             })
         }
     }

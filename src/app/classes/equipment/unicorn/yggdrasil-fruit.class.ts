@@ -34,7 +34,7 @@ export class YggdrasilFruit extends Equipment {
                     )
                     this.abilityService.triggerSummonedEvents(tan);
                 },
-                priority: pet.attack
+                priority: -1
             })
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -54,7 +54,7 @@ export class YggdrasilFruit extends Equipment {
                     )
                     this.abilityService.triggerSummonedEvents(tan);
                 },
-                priority: pet.attack
+                priority: -1
             })
         }
     }
