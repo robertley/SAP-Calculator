@@ -34,7 +34,7 @@ export class Banana extends Equipment {
                     )
                     this.abilityService.triggerSummonedEvents(monke);
                 },
-                priority: pet.attack
+                priority: -1
             })
         }
     }

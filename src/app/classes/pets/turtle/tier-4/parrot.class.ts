@@ -14,8 +14,13 @@ export class Parrot extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 2;
+    copyPet: Pet;
     endTurn(gameApi: GameAPI) {
         let copyPet = this.petAhead;
+        this.copyPet = copyPet;
+        if (copyPet instanceof Parrot) {
+            copyPet = copyPet.copyPet;
+        }
         if (this.petAhead == null) {
             return;
         }

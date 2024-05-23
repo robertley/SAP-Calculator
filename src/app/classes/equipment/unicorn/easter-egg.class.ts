@@ -33,7 +33,7 @@ export class EasterEgg extends Equipment {
                     )
                     this.abilityService.triggerSummonedEvents(monty);
                 },
-                priority: pet.attack
+                priority: -1
             })
         }
     }
