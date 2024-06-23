@@ -1168,7 +1168,7 @@ export abstract class Pet {
         this.setAbilityUses();
     }
 
-    get alive() {
+    get alive(): boolean {
         return this.health > 0;
     }
     
@@ -1313,7 +1313,7 @@ export abstract class Pet {
 
     }
 
-    get level() {
+    get level(): number {
         if (this.exp < 2) {
             return 1;
         }
@@ -1323,7 +1323,7 @@ export abstract class Pet {
         return 3;
     }
 
-    get position() {
+    get position(): number {
         if (this == this.parent.pet0) {
             return 0;
         }
@@ -1346,7 +1346,7 @@ export abstract class Pet {
      * @param seenDead if true, consider pets that are not seenDead. if the pet is dead, but not seen, return null.
      * @returns 
      */
-    petBehind(seenDead = false, deadOrAlive = false) {
+    petBehind(seenDead = false, deadOrAlive = false): Pet {
         for (let i = this.position + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
             if (deadOrAlive) {
@@ -1382,7 +1382,7 @@ export abstract class Pet {
         return mult;
     }
 
-    getPetsAhead(amt: number, includeOpponent=false) {
+    getPetsAhead(amt: number, includeOpponent=false): Pet[] {
         let targetsAhead = [];
         let petAhead = this.petAhead;
         while (petAhead) {
@@ -1409,7 +1409,7 @@ export abstract class Pet {
         return targetsAhead;
     }
 
-    getPetsBehind(amt: number) {
+    getPetsBehind(amt: number): Pet[] {
         let targetsBehind = [];
         let petBehind = this.petBehind();
         while (petBehind) {
@@ -1422,7 +1422,7 @@ export abstract class Pet {
         return targetsBehind;
     }
 
-    kitsuneCheck() {
+    kitsuneCheck(): boolean {
         let petBehind = this.petBehind();
         let first = true;
         while (petBehind) {
@@ -1438,7 +1438,7 @@ export abstract class Pet {
         return false;
     }
 
-    get petAhead() {
+    get petAhead(): Pet {
         for (let i = this.position - 1; i > -1; i--) {
             let pet = this.parent.getPetAtPosition(i);
             if (pet != null && pet.alive) {
@@ -1448,7 +1448,7 @@ export abstract class Pet {
         return null;
     }
 
-    get minExpForLevel() {
+    get minExpForLevel(): number {
         return this.level == 1 ? 0 : this.level == 2 ? 2 : 5;
     }
 }
