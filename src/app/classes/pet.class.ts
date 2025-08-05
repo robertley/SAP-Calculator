@@ -18,6 +18,7 @@ import { Crisp } from "./equipment/ailments/crisp.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
 import { cloneDeep } from "lodash";
+import { PeanutButter } from "./equipment/hidden/peanut-butter";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -674,6 +675,14 @@ export abstract class Pet {
         if (attackEquipment instanceof Peanut && damage > 0) {
             this.logService.createLog({
                 message: `${this.name} attacks ${pet.name} for ${pet.health} (Peanut)`,
+                type: 'attack',
+                player: this.parent
+            })
+
+            pet.health = 0;
+        } else if (attackEquipment instanceof PeanutButter && damage > 0 && attackEquipment.uses > 0) {
+            this.logService.createLog({
+                message: `${this.name} attacks ${pet.name} for ${pet.health} (Peanut Butter)`,
                 type: 'attack',
                 player: this.parent
             })

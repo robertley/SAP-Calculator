@@ -58,6 +58,7 @@ import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
+import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 
 @Injectable({
     providedIn: "root"
@@ -78,6 +79,7 @@ export class EquipmentService {
         map.set('Mushroom', new Mushroom(this.logService, this.abilityService, this.petService));
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
+        map.set('Peanut Butter', new PeanutButter());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
         map.set('Egg', new Egg(this.logService, this.abilityService));
