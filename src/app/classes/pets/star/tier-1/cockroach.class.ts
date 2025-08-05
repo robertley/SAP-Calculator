@@ -9,7 +9,7 @@ export class Cockroach extends Pet {
     tier = 1;
     pack: Pack = 'Star';
     attack = 1;
-    health = 4;
+    health = 1;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

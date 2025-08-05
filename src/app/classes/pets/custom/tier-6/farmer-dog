@@ -1,16 +1,15 @@
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { Player } from "../../../player.class";
-import { Pet, Pack } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
 
-export class Orangutan extends Pet {
-    name = "Orangutan";
-    tier = 3;
-    pack: Pack = "Custom";
-    health = 4;
-    attack = 1;
-
+export class Fish extends Pet {
+    name = "Farmer Dog";
+    tier = 6;
+    pack: Pack = 'Custom';
+    health = 3;
+    attack = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

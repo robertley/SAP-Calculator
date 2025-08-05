@@ -12,8 +12,8 @@ export class Cerberus extends Pet {
     name = "Cerberus";
     tier = 6;
     pack: Pack = 'Unicorn';
-    attack = 8;
-    health = 8;
+    attack = 9;
+    health = 9;
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
         if (this.parent.pet0 != null) {
             return;
@@ -25,8 +25,8 @@ export class Cerberus extends Pet {
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let firePup = new FirePup(this.logService, this.abilityService, this.parent, null, null, 0);
-        
+                let exp = 5;
+                let firePup = new FirePup(this.logService, this.abilityService, this.parent, null, null, exp);
                 this.logService.createLog(
                     {
                         message: `${this.name} spawned Fire Pup (8/8).`,
