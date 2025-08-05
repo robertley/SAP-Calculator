@@ -1,6 +1,6 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Garlic } from "../../../equipment/turtle/garlic.class";
 import { Honey } from "../../../equipment/turtle/honey.class";

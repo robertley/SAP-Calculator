@@ -1,0 +1,3984 @@
+Everything to update
+- Added Chihuahua.
+  - Tier: 1. 
+  - Stats: 4/1. 
+  - Level 1 Ability: Start of battle: Push the most healthy enemy one space forward.
+  - Level 2 Ability: Start of battle: Push the most healthy enemy two spaces forward.
+  - Level 3 Ability: Start of battle: Push the most healthy enemy three spaces forward.
+  - Added to Star pack.
+
+- Added Firefly.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Faint: Deal 1 damage to ALL pets within one space.
+  - Level 2 Ability: Faint: Deal 1 damage to ALL pets within two spaces.
+  - Level 3 Ability: Faint: Deal 1 damage to ALL pets within three spaces.
+  - Added to Star pack.
+
+- Added Pheasant.
+  - Tier: 1. 
+  - Stats: 2/1. 
+  - Level 1 Ability: Friend summoned: Give it the Strawberry perk until end of battle. Works 1 time per turn.
+  - Level 2 Ability: Friend summoned: Give it the Strawberry perk until end of battle. Works 2 times per turn.
+  - Level 3 Ability: Friend summoned: Give it the Strawberry perk until end of battle. Works 3 times per turn.
+  - Added to Star pack.
+
+- Added Bass.
+  - Tier: 2. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Faint & Sell: Give one level 2 Sell friend +1 experience.
+  - Level 2 Ability: Faint & Sell: Give one level 2 Sell friend +2 experience.
+  - Level 3 Ability: Faint & Sell: Give one level 2 Sell friend +3 experience.
+  - Added to Star pack.
+
+- Added Tuna.
+  - Tier: 3. 
+  - Stats: 1/5. 
+  - Level 1 Ability: Faint: Give one random friend +1 attack and +1 health for each time this was hurt.
+  - Level 2 Ability: Faint: Give one random friend +2 attack and +2 health for each time this was hurt.
+  - Level 3 Ability: Faint: Give one random friend +3 attack and +3 health for each time this was hurt.
+  - Added to Star pack.
+
+- Added Elk.
+  - Tier: 4. 
+  - Stats: 2/6. 
+  - Level 1 Ability: Faint: Increase sell value of one random Sell friend permanently by 1 gold for each of their level.
+  - Level 2 Ability: Faint: Increase sell value of one random Sell friend permanently by 2 gold for each of their level.
+  - Level 3 Ability: Faint: Increase sell value of one random Sell friend permanently by 3 gold for each of their level.
+  - Added to Star pack.
+
+
+- Added Fossa.
+  - Tier: 4. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Start of battle: Remove 2 health from the first enemy for each roll this turn.
+  - Level 2 Ability: Start of battle: Remove 2 health from the first two enemies for each roll this turn.
+  - Level 3 Ability: Start of battle: Remove 2 health from the first three enemies for each roll this turn.
+  - Added to Star pack.
+
+- Added Sparrow.
+  - Tier: 4. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Friendly pets with Strawberries take 10 less damage, once.
+  - Level 2 Ability: Friendly pets with Strawberries take 20 less damage, once.
+  - Level 3 Ability: Friendly pets with Strawberries take 30 less damage, once.
+  - Added to Star pack.
+
+- Added Ibex.
+  - Tier: 5. 
+  - Stats: 6/4. 
+  - Level 1 Ability: Enemy hurt or pushed: Remove 70% health from it. Works 1 time per turn.
+  - Level 2 Ability: Enemy hurt or pushed: Remove 70% health from it. Works 2 times per turn.
+  - Level 3 Ability: Enemy hurt or pushed: Remove 70% health from it. Works 3 times per turn.
+  - Added to Star pack.
+
+- Added Albatross.
+  - Tier: 6. 
+  - Stats: 5/4. 
+  - Level 1 Ability: Adjacent tier 4 or lower friends deals 3 ability damage extra.
+  - Level 2 Ability: Adjacent tier 4 or lower friends deals 6 ability damage extra.
+  - Level 3 Ability: Adjacent tier 4 or lower friends deals 9 ability damage extra.
+  - Added to Custom pack.
+
+- Added Ammonite.
+  - Tier: 6. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Faint: Transform the front-most friend into a Mimic Octopus with 1 exp for every 3rd roll.
+  - Level 2 Ability: Faint: Transform the two front-most friends into Mimic Octopuses with 1 exp for every 3rd roll.
+  - Level 3 Ability: Faint: Transform the three front-most friends into Mimic Octopuses with 1 exp for every 3rd roll.
+  - Added to Star pack.
+
+- Added Harpy Eagle.
+  - Tier: 6. 
+  - Stats: 6/6. 
+  - Level 1 Ability: Hurt: Summon one random 5/5 pet from tier 1. Works 3 times per turn.
+  - Level 2 Ability: Hurt: Summon one random 10/10 pet from tier 1. Works 3 times per turn.
+  - Level 3 Ability: Hurt: Summon one random 15/15 pet from tier 1. Works 3 times per turn.
+  - Added to Custom pack.
+
+- Added Real Velociraptor.
+  - Tier: 6. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Friend lost perk: Return its perk. Works 1 time per turn.
+  - Level 2 Ability: Friend lost perk: Return its perk. Works 2 times per turn and only once per friend in battle.
+  - Level 3 Ability: Friend lost perk: Return its perk. Works 3 times per turn and only once per friend in battle.
+  - Added to Star pack.
+
+- Changed Cockroach.
+  - Stats: 1/4 > 1/1. 
+  - Old level 1 ability: Start of turn: Set attack to the current shop tier + 1.
+  - Old level 2 ability: Start of turn: Set attack to the current shop tier + 2.
+  - Old level 3 ability: Start of turn: Set attack to the current shop tier + 3.
+  - New level 1 ability: Faint: Summon one 1/1 Cockroach and give it +1 experience.
+  - New level 2 ability: Faint: Summon one 1/1 Cockroach and give it +2 experience.
+  - New level 3 ability: Faint: Summon one 1/1 Cockroach and give it +3 experience.
+
+- Changed Duckling.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Frog.
+  - Old level 1 ability: Start of battle: Swap stats of the two adjacent friends.
+  - Old level 2 ability: Sell: Swap stats of the two adjacent friends.
+  - Old level 3 ability: End turn: Swap stats of the two adjacent friends.
+  - New level 1 ability: Sell: If both adjacent friends are tier 2 or lower, swap their stats.
+  - New level 2 ability: Sell: If both adjacent friends are tier 4 or lower, swap their stats.
+  - New level 3 ability: Sell: If both adjacent friends are tier 6 or lower, swap their stats.
+
+
+- Changed Seahorse.
+  - Tier: 1 > 2. 
+  - Stats: 2/3 > 2/4. 
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Atlantic Puffin.
+  - Old level 1 ability: Start of battle: Deal 2 damage for each strawberry friend to one random enemy.
+  - Old level 2 ability: Start of battle: Deal 2 damage for each strawberry friend to two random enemies.
+  - Old level 3 ability: Start of battle: Deal 2 damage for each strawberry friend to three random enemies.
+  - New level 1 ability: Friend attacks: Remove its Strawberry perk to deal 2 damage to the last enemy.
+  - New level 2 ability: Friend attacks: Remove its Strawberry perk to deal 4 damage to the last enemy.
+  - New level 3 ability: Friend attacks: Remove its Strawberry perk to deal 6 damage to the last enemy.
+
+
+  - New level 1 ability: Faint: Replace two random friendly Strawberry perks with +2 attack and +2 health.
+  - New level 2 ability: Faint: Replace two random friendly Strawberry perks with +4 attack and +4 health.
+  - New level 3 ability: Faint: Replace two random friendly Strawberry perks with +6 attack and +6 health.
+
+- Changed Iguana.
+  - Stats: 3/3 > 2/4. 
+
+- Changed Koala.
+  - Stats: 3/2 > 2/2. 
+  - Old level 1 ability: Friend hurt: Give it +1 attack and +1 health. Works 1 time per turn.
+  - Old level 2 ability: Friend hurt: Give it +2 attack and +2 health. Works 1 time per turn.
+  - Old level 3 ability: Friend hurt: Give it +3 attack and +3 health. Works 1 time per turn.
+  - New level 1 ability: Friend hurt: Give it the Eucalyptus perk. Works 1 time per turn.
+  - New level 2 ability: Friend hurt: Give it the Eucalyptus perk. Works 2 times per turn.
+  - New level 3 ability: Friend hurt: Give it the Eucalyptus perk. Works 3 times per turn.
+
+- Changed Panda.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Salamander.
+  - Stats: 2/4 > 1/1. 
+  - Old level 1 ability: Friend bought: If it was a Start of battle pet, gain +2 attack. Works 1 time per turn.
+  - Old level 2 ability: Friend bought: If it was a Start of battle pet, gain +4 attack. Works 1 time per turn.
+  - Old level 3 ability: Friend bought: If it was a Start of battle pet, gain +6 attack. Works 1 time per turn.
+  - New level 1 ability: Start of battle: Gain +1 attack and +1 health for each level of each Sell friend.
+  - New level 2 ability: Start of battle: Gain +2 attack and +2 health for each level of each Sell friend.
+  - New level 3 ability: Start of battle: Gain +3 attack and +3 health for each level of each Sell friend.
+
+- Changed Yak.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Capybara.
+  - Old level 1 ability: Roll: Give unfrozen shop pets +2 attack and +1 health.
+  - Old level 2 ability: Roll: Give unfrozen shop pets +4 attack and +2 health.
+  - Old level 3 ability: Roll: Give unfrozen shop pets +6 attack and +3 health.
+  - New level 1 ability: Roll & Sell: Give newly rolled shop pets +1 attack and +1 health.
+  - New level 2 ability: Roll & Sell: Give newly rolled shop pets +2 attack and +2 health.
+  - New level 3 ability: Roll & Sell: Give newly rolled shop pets +3 attack and +3 health.
+
+- Changed Eel.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Blobfish.
+  - Tier: 4 > 5. 
+  - Stats: 2/6 > 2/10. 
+  - Old level 1 ability: Faint: Give the nearest friend behind +2 attack and +2 health and +1 experience.
+  - Old level 2 ability: Faint: Give the nearest friend behind +4 attack and +4 health and +2 experience.
+  - Old level 3 ability: Faint: Give the nearest friend behind +6 attack and +6 health and +3 experience.
+  - New level 1 ability: Faint: Give the nearest friend behind +1 experience. Give to one more friend in battle.
+  - New level 2 ability: Faint: Give the nearest friend behind +2 experience. Give to one more friend in battle.
+  - New level 3 ability: Faint: Give the nearest friend behind +3 experience. Give to one more friend in battle.
+
+- Changed Crow.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Orangutan.
+  - Tier: 4 > 3. 
+  - Stats: 3/6 > 1/4. 
+  - Old level 1 ability: End turn: Give the lowest health friendly pet +4 health.
+  - Old level 2 ability: End turn: Give the lowest health friendly pet +8 health.
+  - Old level 3 ability: End turn: Give the lowest health friendly pet +12 health.
+  - New level 1 ability: End turn: Give the lowest health friendly pet +3 health.
+  - New level 2 ability: End turn: Give the lowest health friendly pet +6 health.
+  - New level 3 ability: End turn: Give the lowest health friendly pet +9 health.
+
+- Changed Pelican.
+  - Tier: 4 > 5. 
+  - Stats: 2/5 > 5/5. 
+  - Old level 1 ability: End turn & Start of battle: Give one random Strawberry friend +2 attack and +1 health.
+  - Old level 2 ability: End turn & Start of battle: Give one random Strawberry friend +4 attack and +2 health.
+  - Old level 3 ability: End turn & Start of battle: Give one random Strawberry friend +6 attack and +3 health.
+  - New level 1 ability: Start of battle: Swallow one Strawberry friend ahead and turn it into a Salmon on faint.
+  - New level 2 ability: Start of battle: Swallow two Strawberry friends ahead and turn them into Salmons on faint.
+  - New level 3 ability: Start of battle: Swallow three Strawberry friends ahead and turn them into Salmons on faint.
+
+- Changed Platypus.
+  - Old level 1 ability: Sell & Faint: Summon one 3/3 level 1 Duck and Beaver.
+  - Old level 2 ability: Sell & Faint: Summon one 6/6 level 2 Duck and Beaver.
+  - Old level 3 ability: Sell & Faint: Summon one 9/9 level 3 Duck and Beaver.
+  - New level 1 ability: Faint & Sell: Summon one 3/3 level 1 Duck and Beaver.
+  - New level 2 ability: Faint & Sell: Summon one 6/6 level 2 Duck and Beaver.
+  - New level 3 ability: Faint & Sell: Summon one 9/9 level 3 Duck and Beaver.
+
+- Changed Praying Mantis.
+  - Old level 1 ability: Start of turn: Knock out adjacent friends and gain +2 attack and +2 health.
+  - Old level 2 ability: Start of turn: Knock out adjacent friends and gain +4 attack and +4 health.
+  - Old level 3 ability: Start of turn: Knock out adjacent friends and gain +6 attack and +6 health.
+  - New level 1 ability: Start of turn: Deal 50 damage to adjacent friends and gain +2 attack and +2 health.
+  - New level 2 ability: Start of turn: Deal 50 damage to adjacent friends and gain +4 attack and +4 health.
+  - New level 3 ability: Start of turn: Deal 50 damage to adjacent friends and gain +6 attack and +6 health.
+
+- Changed Starfish.
+  - Tier: 4 > 5. 
+  - Stats: 3/4 > 3/7. 
+  - Old level 1 ability: Friend sold: If it was a Sell pet, give one random friend +1 attack and +1 health.
+  - Old level 2 ability: Friend sold: If it was a Sell pet, give one random friend +2 attack and +2 health.
+  - Old level 3 ability: Friend sold: If it was a Sell pet, give one random friend +3 attack and +3 health.
+  - New level 1 ability: Level 3 friend sold: Give friends +1 attack and +1 health. Triple if sold pet had at least 10 attack.
+  - New level 2 ability: Level 3 friend sold: Give friends +2 attack and +2 health. Triple if sold pet had at least 10 attack.
+  - New level 3 ability: Level 3 friend sold: Give friends +3 attack and +3 health. Triple if sold pet had at least 10 attack.
+
+- Changed Alpaca.
+  - Tier: 5 > 6. 
+  - Old level 1 ability: Friend summoned: Give it +1 experience. Works 1 time per turn.
+  - Old level 2 ability: Friend summoned: Give it +1 experience. Works 2 times per turn.
+  - Old level 3 ability: Friend summoned: Give it +1 experience. Works 3 times per turn.
+  - New level 1 ability: Friend summoned: Give it +1 experience. Triple in battle. Works 1 time per turn.
+  - New level 2 ability: Friend summoned: Give it +1 experience. Triple in battle. Works 2 times per turn.
+  - New level 3 ability: Friend summoned: Give it +1 experience. Triple in battle. Works 3 times per turn.
+  - Added to Star pack.
+
+- Changed Fox.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Lion.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Polar Bear.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Siberian Husky.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Zebra.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Hammerhead Shark.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Komodo.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Orca.
+  - Stats: 4/8 > 5/7. 
+  - Old level 1 ability: Faint: Summon one random Faint pet from any pack.
+  - Old level 2 ability: Faint: Summon two random Faint pets from any pack.
+  - Old level 3 ability: Faint: Summon three random Faint pets from any pack.
+  - New level 1 ability: Faint: Summon one random Faint pet from ANY pack as 6/6.
+  - New level 2 ability: Faint: Summon two random Faint pets from ANY pack as 6/6.
+  - New level 3 ability: Faint: Summon three random Faint pets from ANY pack as 6/6.
+
+- Changed Sabertooth Tiger.
+  - Stats: 6/6 > 3/5. 
+  - Old level 1 ability: Hurt: Summon one random tier 1 pet as a 5/5.
+  - Old level 2 ability: Hurt: Summon one random tier 1 pet as a 10/10.
+  - Old level 3 ability: Hurt: Summon one random tier 1 pet as a 15/15.
+  - New level 1 ability: Faint: Summon one Mammoth with +2 attack and +3 health for each time this was hurt.
+  - New level 2 ability: Faint: Summon two Mammoths with +2 attack and +3 health for each time this was hurt.
+  - New level 3 ability: Faint: Summon three Mammoths with +2 attack and +3 health for each time this was hurt.
+
+- Changed Spinosaurus.
+  - Stats: 4/8 > 4/4. 
+  - Old level 1 ability: Friend faints: Give one random friend +3 attack and +2 health.
+  - Old level 2 ability: Friend faints: Give one random friend +6 attack and +4 health.
+  - Old level 3 ability: Friend faints: Give one random friend +9 attack and +6 health.
+  - New level 1 ability: Friend faints: Give one random friend +2 attack and +3 health.
+  - New level 2 ability: Friend faints: Give one random friend +4 attack and +6 health.
+  - New level 3 ability: Friend faints: Give one random friend +6 attack and +9 health.
+
+- Changed Stegosaurus.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Velociraptor.
+  - Old level 1 ability: Start of battle: Give Coconut perk to one random Strawberry friend.
+  - Old level 2 ability: Start of battle: Give Coconut perk to two random Strawberry friends.
+  - Old level 3 ability: Start of battle: Give Coconut perk to three random Strawberry friends.
+  - New level 1 ability: Friend attacks: Steal friendly Strawberry ahead to give friends +2 attack and +3 health.
+  - New level 2 ability: Friend attacks: Steal friendly Strawberry ahead to give friends +4 attack and +6 health.
+  - New level 3 ability: Friend attacks: Steal friendly Strawberry ahead to give friends +6 attack and +9 health.
+
+- Added Caramel.
+  - Tier: 2.
+  - Ability: Give one pet the Caramel perk.
+  - Perk: Before attack: Combine friendly Caramels to deal 3 damage each to the most healthy enemy, once.
+  - Added to Star pack.
+
+- Added Eucalyptus.
+  - Tier: 2.
+  - Ability: Give one pet the Eucalyptus perk.
+  - Perk: Take 4 less damage, once.
+
+- Added Sausage.
+  - Tier: 3.
+  - Ability: Give one pet the Sausage perk.
+  - Perk: Start of turn: Gain one free roll.
+  - Added to Star pack.
+
+- Added Seaweed.
+  - Tier: 3.
+  - Ability: Give one pet the Seaweed perk.
+  - Perk: Before attack: Transform into a Sea Urchin.
+  - Added to Star pack.
+
+- Added Baguette.
+  - Tier: 4.
+  - Ability: Give one pet the Baguette perk.
+  - Perk: Before attack: Remove the front-most enemy perk, once.
+  - Added to Star pack.
+
+- Added Cotton Candy.
+  - Tier: 4.
+  - Ability: Give one pet from the current shop tier or higher +3 attack and +2 health.
+  - Perk: 
+  - Added to Star pack.
+
+- Added Strawberry Jam.
+  - Tier: 5.
+  - Ability: Give one pet Strawberry. Always on sale!
+  - Perk: Faint: Give the back-most friend +1 attack and +1 health.
+  - Added to Star pack.
+
+- Added Celery.
+  - Tier: 6.
+  - Ability: Give one pet +6 health.
+  - Perk: 
+  - Added to Star pack.
+
+- Changed Strawberry.
+  - Old perk: Enables Strawberry abilities.
+  - New perk: Faint: Give the back-most friend +1 attack and +1 health.
+
+- Changed Stew.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Taco.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Orange.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Skewer.
+  - Tier: 6 > 5. 
+
+- Added Baguette.
+  - Ability: Before attack: Remove the front-most enemy perk, once.
+
+- Added Caramel.
+  - Ability: Before attack: Combine friendly Caramels to deal 3 damage each to the most healthy enemy, once.
+
+- Added Cauliflower.
+  - Ability: Knock out: If still standing, gain permanent +1 attack and +2 health, once.
+
+- Added Eucalyptus.
+  - Ability: Take 4 less damage, once.
+
+- Added Radish.
+  - Ability: Start of battle: Gain ANY random perk from the pet's tier.
+
+- Added Sausage.
+  - Ability: Start of turn: Gain one free roll.
+
+- Added Seaweed.
+  - Ability: Before attack: Transform into a Sea Urchin.
+
+
+2
+- Added ???.
+  - Tier: 1. 
+  - Stats: 3/2. 
+  - Level 1 Ability: End turn: Give +1 attack and Spooked until next turn to the nearest friend ahead.
+  - Level 2 Ability: End turn: Give +2 attack and Spooked until next turn to the nearest friend ahead.
+  - Level 3 Ability: End turn: Give +3 attack and Spooked until next turn to the nearest friend ahead.
+  - Added to Unicorn pack.
+
+- Added Fairy Ball.
+  - Tier: 1. 
+  - Stats: 3/6. 
+  - Level 1 Ability: Takes 1 less damage.
+  - Level 2 Ability: Takes 2 less damage.
+  - Level 3 Ability: Takes 3 less damage.
+
+- Added Pengobble.
+  - Tier: 1. 
+  - Stats: 1/3. 
+  - Level 1 Ability: Gains mana: Gain 1 bonus mana. Works 3 times per turn.
+  - Level 2 Ability: Gains mana: Gain 2 bonus mana. Works 3 times per turn.
+  - Level 3 Ability: Gains mana: Gain 3 bonus mana. Works 3 times per turn.
+  - Added to Unicorn pack.
+
+- Added Amalgamation.
+  - Tier: 5. 
+  - Stats: 4/5. 
+Friend summoned: Give it +3/6/9 attack and +4/8/12 mana and Spooked. Works 2 times per turn"
+  - Added to Unicorn pack.
+
+- Added Orchid Mantis.
+  - Tier: 5. 
+  - Stats: 6/4. 
+  - Level 1 Ability: Start of battle: Summon one Mantis with 40% attack and health of this.
+  - Level 2 Ability: Start of battle: Summon one Mantis with 80% attack and health of this.
+  - Level 3 Ability: Start of battle: Summon one Mantis with 120% attack and health of this.
+  - Added to Puppy pack.
+
+- Added Small One.
+  - Tier: 6. 
+  - Stats: 5/8. 
+  - Level 1 Ability: Summoned: Deal 2 damage to ALL other pets. Double against enemies.
+  - Level 2 Ability: Summoned: Deal 2 damage to ALL other pets. Double against enemies. Triggers 2 times.
+  - Level 3 Ability: Summoned: Deal 2 damage to ALL other pets. Double against enemies. Triggers 3 times.
+  - Added to Custom pack.
+
+- Changed Alchemedes.
+  - Stats: 1/4 > 3/2. 
+
+- Changed Axehandle Hound.
+  - Tier: 1 > 3. 
+  - Stats: 3/1 > 5/2. 
+  - Old level 1 ability: Start of battle: If the enemy has multiple copies, deal 10 damage to one of them.
+  - Old level 2 ability: Start of battle: If the enemy has multiple copies, deal 20 damage to one of them.
+  - Old level 3 ability: Start of battle: If the enemy has multiple copies, deal 30 damage to one of them.
+  - New level 1 ability: Start of battle: If the enemy has multiple copies, deal 12 damage to one of them.
+  - New level 2 ability: Start of battle: If the enemy has multiple copies, deal 24 damage to one of them.
+  - New level 3 ability: Start of battle: If the enemy has multiple copies, deal 36 damage to one of them.
+  - Added to Custom pack.
+  - Removed from Unicorn pack.
+
+- Changed Barghest.
+  - Stats: 1/3 > 2/3. 
+
+- Changed Murmel.
+  - Stats: 1/2 > 2/2. 
+  - Old level 1 ability: Friend level-up: Gain +1 attack and +2 health until end of battle.
+  - Old level 2 ability: Friend level-up: Gain +2 attack and +4 health until end of battle.
+  - Old level 3 ability: Friend level-up: Gain +3 attack and +6 health until end of battle.
+  - New level 1 ability: Friend level-up: Gain +2 attack until next turn.
+  - New level 2 ability: Friend level-up: Gain +4 attack until next turn.
+  - New level 3 ability: Friend level-up: Gain +6 attack until next turn.
+
+- Changed Tsuchinoko.
+  - Stats: 1/2 > 2/1. 
+
+- Changed Warf.
+  - Tier: 1 > 2. 
+  - Added to Custom pack.
+  - Removed from Unicorn pack.
+
+- Changed Chupacabra.
+  - Old level 1 ability: Knock out: Give +1 health to one random friend. Triggers 3 times.
+  - Old level 2 ability: Knock out: Give +1 health to one random friend. Triggers 6 times.
+  - Old level 3 ability: Knock out: Give +1 health to one random friend. Triggers 9 times.
+  - New level 1 ability: Knock out: Give +1 health to one random friend. Triggers 2 times.
+  - New level 2 ability: Knock out: Give +1 health to one random friend. Triggers 4 times.
+  - New level 3 ability: Knock out: Give +1 health to one random friend. Triggers 6 times.
+
+- Changed Frost Wolf.
+  - Stats: 1/3 > 2/4. 
+
+- Changed Gargoyle.
+  - Stats: 3/4 > 3/3. 
+  - Old level 1 ability: Faint: Spend mana to give the nearest friend behind +1 health per mana.
+  - Old level 2 ability: Faint: Spend mana to give the nearest friend behind +2 health per mana.
+  - Old level 3 ability: Faint: Spend mana to give the nearest friend behind +3 health per mana.
+  - New level 1 ability: Faint: Spend mana to give the nearest friend behind +2 health and +1 more per mana.
+  - New level 2 ability: Faint: Spend mana to give the nearest friend behind +4 health and +2 more per mana.
+  - New level 3 ability: Faint: Spend mana to give the nearest friend behind +6 health and +3 more per mana.
+
+- Changed Ghost Kitten.
+  - Stats: 3/3 > 3/4. 
+
+- Changed Jackalope.
+  - Old level 1 ability: Friend jumped: Deal 2 damage to one random enemy.
+  - Old level 2 ability: Friend jumped: Deal 4 damage to one random enemy.
+  - Old level 3 ability: Friend jumped: Deal 6 damage to one random enemy.
+  - New level 1 ability: Friend jumped: Give it +1 attack and +1 health. Double if you rolled 4 times this turn.
+  - New level 2 ability: Friend jumped: Give it +2 attack and +2 health. Double if you rolled 4 times this turn.
+  - New level 3 ability: Friend jumped: Give it +3 attack and +3 health. Double if you rolled 4 times this turn.
+
+- Changed Lucky Cat.
+  - Tier: 2 > 3. 
+  - Old level 1 ability: Level-up: Gain +2 attack and +2 health now and +1 gold next turn.
+  - Old level 2 ability: Level-up: Gain +4 attack and +4 health now and +2 gold next turn.
+  - Old level 3 ability: No ability.
+  - New level 1 ability: Level-up: Gain +2 attack and +2 health now and +2 gold next turn.
+  - New level 2 ability: Level-up: Gain +4 attack and +4 health now and +4 gold next turn.
+  - New level 3 ability: No ability.
+
+- Changed Mothman.
+  - Stats: 3/3 > 3/2. 
+  - Old level 1 ability: Faint: Deal 2 damage to one enemy with ailments.
+  - Old level 2 ability: Faint: Deal 2 damage to two enemies with ailments.
+  - Old level 3 ability: Faint: Deal 2 damage to three enemies with ailments.
+  - New level 1 ability: Anyone gained ailment: Gain +1 attack and +1 health until next turn. Works 5 times per turn.
+  - New level 2 ability: Anyone gained ailment: Gain +2 attack and +2 health until next turn. Works 5 times per turn.
+  - New level 3 ability: Anyone gained ailment: Gain +3 attack and +3 health until next turn. Works 5 times per turn.
+
+- Changed Ogopogo.
+  - Stats: 1/2 > 4/1. 
+  - Old level 1 ability: Start of battle: Give front-most friend +1 experience.
+  - Old level 2 ability: Start of battle: Give front-most friend +2 experience.
+  - Old level 3 ability: Start of battle: Give front-most friend +3 experience.
+  - New level 1 ability: Start of battle: Give the front-most friend +1 experience.
+  - New level 2 ability: Start of battle: Give the two front-most friends +1 experience.
+  - New level 3 ability: Start of battle: Give the three front-most friends +1 experience.
+
+- Changed Peacock.
+  - Old level 1 ability: Hurt: Gain +4 attack.
+  - Old level 2 ability: Hurt: Gain +8 attack.
+  - Old level 3 ability: Hurt: Gain +12 attack.
+  - New level 1 ability: Hurt: Gain +3 attack.
+  - New level 2 ability: Hurt: Gain +6 attack.
+  - New level 3 ability: Hurt: Gain +9 attack.
+
+- Changed Shrimp.
+  - Old level 1 ability: Friend sold: Give one random friend +1 health.
+  - Old level 2 ability: Friend sold: Give one random friend +2 health.
+  - Old level 3 ability: Friend sold: Give one random friend +3 health.
+  - New level 1 ability: Friend sold: Give one random friend +1 health. Works 2 times per turn.
+  - New level 2 ability: Friend sold: Give one random friend +2 health. Works 2 times per turn.
+  - New level 3 ability: Friend sold: Give one random friend +3 health. Works 2 times per turn.
+
+- Changed Tabby Cat.
+  - Stats: 4/2 > 3/2. 
+
+- Changed Yak.
+  - Old level 1 ability: End turn: Take 1 damage and gain +1 attack.
+  - Old level 2 ability: End turn: Take 1 damage and gain +2 attack.
+  - Old level 3 ability: End turn: Take 1 damage and gain +3 attack.
+  - New level 1 ability: End turn: Take 1 damage and gain +2 attack.
+  - New level 2 ability: End turn: Take 2 damage and gain +4 attack.
+  - New level 3 ability: End turn: Take 3 damage and gain +6 attack.
+
+- Changed Dodo.
+  - Stats: 4/2 > 3/2. 
+
+- Changed Fur-Bearing Trout.
+  - Stats: 2/2 > 3/4. 
+
+- Changed Giraffe.
+  - Old level 1 ability: End turn: Give the nearest friend ahead +1 attack and +1 health.
+  - Old level 2 ability: End turn: Give the nearest two friends ahead +1 attack and +1 health.
+  - Old level 3 ability: End turn: Give the nearest three friends ahead +1 attack and +1 health.
+  - New level 1 ability: Start of turn: Give the nearest friend ahead +1 attack and +1 health.
+  - New level 2 ability: Start of turn: Give the nearest two friends ahead +1 attack and +1 health.
+  - New level 3 ability: Start of turn: Give the nearest three friends ahead +1 attack and +1 health.
+
+- Changed Griffin.
+  - Stats: 4/3 > 5/4. 
+
+- Changed Mana Hound.
+  - Stats: 2/5 > 5/2. 
+
+- Changed Mandrake.
+  - Stats: 2/3 > 4/2. 
+  - Old level 1 ability: Start of battle: Make one tier 2 or lower Faint enemy Dazed.
+  - Old level 2 ability: Start of battle: Make one tier 4 or lower Faint enemy Dazed.
+  - Old level 3 ability: Start of battle: Make one tier 6 or lower Faint enemy Dazed.
+  - New level 1 ability: Start of battle: Make one tier 2 or lower enemy Dazed and prioritize Faint pets.
+  - New level 2 ability: Start of battle: Make one tier 4 or lower enemy Dazed and prioritize Faint pets.
+  - New level 3 ability: Start of battle: Make one tier 6 or lower enemy Dazed and prioritize Faint pets.
+
+- Changed Minotaur.
+  - Tier: 3 > 4. 
+
+- Changed Ouroboros.
+  - Old level 1 ability: Roll: Give unfrozen shop pets +1 health until end of battle for each roll this turn.
+  - Old level 2 ability: Roll: Give unfrozen shop pets +2 health until end of battle for each roll this turn.
+  - Old level 3 ability: Roll: Give unfrozen shop pets +3 health until end of battle for each roll this turn.
+  - New level 1 ability: Roll: Give new shop pets +1 attack and +1 health until next turn for each roll, up to 7 rolls.
+  - New level 2 ability: Roll: Give new shop pets +2 attack and +2 health until next turn for each roll, up to 7 rolls.
+  - New level 3 ability: Roll: Give new shop pets +3 attack and +3 health until next turn for each roll, up to 7 rolls.
+
+- Changed Pegasus.
+  - Tier: 3 > 4. 
+  - Stats: 1/3 > 2/4. 
+
+- Changed Tropical Fish.
+  - Stats: 2/4 > 2/3. 
+
+- Changed Wyvern.
+  - Tier: 3 > 2. 
+  - Stats: 3/4 > 4/2. 
+
+- Changed Abomination.
+  - Old level 1 ability: End turn: Swallow and copy the left-most Start of battle shop pet until end of battle.
+  - Old level 2 ability: End turn: Swallow and copy the two left-most Start of battle shop pets until end of battle.
+  - Old level 3 ability: End turn: Swallow and copy the three left-most Start of battle shop pets until end of battle.
+  - New level 1 ability: End turn: Swallow and copy the left-most unfrozen shop pet until next turn.
+  - New level 2 ability: End turn: Swallow and copy the two left-most unfrozen shop pets until next turn.
+  - New level 3 ability: End turn: Swallow and copy the three left-most unfrozen shop pets until next turn.
+
+- Changed Chimera.
+  - Stats: 3/3 > 2/6. 
+  - Old level 1 ability: Faint: Spend mana to summon one pet with +1 attack and +1 health per mana.
+  - Old level 2 ability: Faint: Spend mana to summon two pets with +1 attack and +1 health per mana.
+  - Old level 3 ability: Faint: Spend mana to summon three pets with +1 attack and +1 health per mana.
+  - New level 1 ability: Faint: Spend mana to summon one 3/3 pet with +1 attack and +2 health per 2 mana.
+  - New level 2 ability: Faint: Spend mana to summon two 3/3 pets with +1 attack and +2 health per 2 mana.
+  - New level 3 ability: Faint: Spend mana to summon three 3/3 pets with +1 attack and +2 health per 2 mana.
+
+- Changed Cyclops.
+  - Stats: 4/5 > 2/5. 
+  - Old level 1 ability: Friend level-up: Give it +2 mana and +1 experience. Works 1 time per turn.
+  - Old level 2 ability: Friend level-up: Give it +2 mana and +1 experience. Works 2 times per turn.
+  - Old level 3 ability: Friend level-up: Give it +2 mana and +1 experience. Works 3 times per turn.
+  - New level 1 ability: Friend level-up: Give it +2 mana. Also give +1 experience on the first trigger this turn.
+  - New level 2 ability: Friend level-up: Give it +4 mana. Also give +1 experience on the first two triggers this turn.
+  - New level 3 ability: Friend level-up: Give it +6 mana. Also give +1 experience on the first three triggers this turn.
+
+- Changed Dragonfly.
+  - Tier: 4 > 5. 
+  - Stats: 1/1 > 4/2. 
+
+- Changed Hippo.
+  - Stats: 4/7 > 4/6. 
+  - Old level 1 ability: Knock out: Gain +2 attack and +2 health. Gain double against tier 4 pets or higher.
+  - Old level 2 ability: Knock out: Gain +4 attack and +4 health. Gain double against tier 4 pets or higher.
+  - Old level 3 ability: Knock out: Gain +6 attack and +6 health. Gain double against tier 4 pets or higher.
+  - New level 1 ability: Knock out: Gain +3 attack and +3 health. Works 3 times per battle.
+  - New level 2 ability: Knock out: Gain +6 attack and +6 health. Works 3 times per battle.
+  - New level 3 ability: Knock out: Gain +9 attack and +9 health. Works 3 times per battle.
+
+- Changed Hippocampus.
+  - Tier: 4 > 5. 
+
+- Changed Jerboa.
+  - Old level 1 ability: Eats apple: Give friends +1 attack and +1 health. Works 2 times per turn.
+  - Old level 2 ability: Eats apple: Give friends +2 attack and +2 health. Works 2 times per turn.
+  - Old level 3 ability: Eats apple: Give friends +3 attack and +3 health. Works 2 times per turn.
+  - New level 1 ability: Eats apple: Give friends +1 attack and +1 health. Works 1 time per turn.
+  - New level 2 ability: Eats apple: Give friends +2 attack and +2 health. Works 1 time per turn.
+  - New level 3 ability: Eats apple: Give friends +3 attack and +3 health. Works 1 time per turn.
+
+- Changed Kraken.
+  - Old level 1 ability: Start of battle: Remove 20% health from ALL other pets.
+  - Old level 2 ability: Start of battle: Remove 40% health from ALL other pets.
+  - Old level 3 ability: Start of battle: Remove 60% health from ALL other pets.
+  - New level 1 ability: Faint: Remove 15% health from ALL other pets.
+  - New level 2 ability: Faint: Remove 30% health from ALL other pets.
+  - New level 3 ability: Faint: Remove 45% health from ALL other pets.
+
+- Changed Old Mouse.
+  - Old level 1 ability: End turn: Summon one random level 1 nostalgic toy.
+  - Old level 2 ability: End turn: Summon one random level 2 nostalgic toy.
+  - Old level 3 ability: End turn: Summon one random level 3 nostalgic toy.
+  - New level 1 ability: Start of turn: Summon one random level 1 nostalgic toy.
+  - New level 2 ability: Start of turn: Summon one random level 2 nostalgic toy.
+  - New level 3 ability: Start of turn: Summon one random level 3 nostalgic toy.
+
+- Changed Roc.
+  - Old level 1 ability: Start of battle: Give one random friend ahead +2 mana. Triggers 3 times.
+  - Old level 2 ability: Start of battle: Give one random friend ahead +2 mana. Triggers 6 times.
+  - Old level 3 ability: Start of battle: Give one random friend ahead +2 mana. Triggers 9 times.
+  - New level 1 ability: Start of battle: Give one friend ahead +2 mana. Repeat 3 times and spread evenly.
+  - New level 2 ability: Start of battle: Give one friend ahead +2 mana. Repeat 6 times and spread evenly.
+  - New level 3 ability: Start of battle: Give one friend ahead +2 mana. Repeat 9 times and spread evenly.
+
+- Changed Tatzelwurm.
+  - Tier: 4 > 3. 
+  - Stats: 3/4 > 2/3. 
+  - Old level 1 ability: Friend ahead faints: Deal 2 damage for each of its level to one random enemy.
+  - Old level 2 ability: Friend ahead faints: Deal 4 damage for each of its level to one random enemy.
+  - Old level 3 ability: Friend ahead faints: Deal 6 damage for each of its level to one random enemy.
+  - New level 1 ability: Friend ahead faints: Deal 2 damage to the first enemy. Double if the friend was level 3.
+  - New level 2 ability: Friend ahead faints: Deal 4 damage to the first enemy. Double if the friend was level 3.
+  - New level 3 ability: Friend ahead faints: Deal 6 damage to the first enemy. Double if the friend was level 3.
+
+- Changed Visitor.
+  - Stats: 5/4 > 7/4. 
+  - Old level 1 ability: Faint: Make ALL pets within one space Exposed.
+  - Old level 2 ability: Faint: Make ALL pets within two spaces Exposed.
+  - Old level 3 ability: Faint: Make ALL pets within three spaces Exposed.
+  - New level 1 ability: Faint: Make ALL pets within one space Icky.
+  - New level 2 ability: Faint: Make ALL pets within two spaces Icky.
+  - New level 3 ability: Faint: Make ALL pets within three spaces Icky.
+
+- Changed Worm of Sand.
+  - Stats: 3/5 > 1/4. 
+  - Old level 1 ability: Roll 6 times: Give the two highest tier friends +1 attack and +1 health.
+  - Old level 2 ability: Roll 6 times: Give the two highest tier friends +2 attack and +2 health.
+  - Old level 3 ability: Roll 6 times: Give the two highest tier friends +3 attack and +3 health.
+  - New level 1 ability: End turn: Give adjacent friends +1 attack and +1 health for every 4 roll, up to 8 rolls.
+  - New level 2 ability: End turn: Give adjacent friends +2 attack and +2 health for every 4 roll, up to 8 rolls.
+  - New level 3 ability: End turn: Give adjacent friends +3 attack and +3 health for every 4 roll, up to 8 rolls.
+
+- Changed Jersey Devil.
+  - Tier: 5 > 6. 
+  - Stats: 5/4 > 3/2. 
+  - Added to Custom pack.
+  - Removed from Unicorn pack.
+
+- Changed Kitsune.
+  - Stats: 3/7 > 2/7. 
+  - Old level 1 ability: Friend faints: Transfer all friendly mana + 2 to the nearest friend ahead.
+  - Old level 2 ability: Friend faints: Transfer all friendly mana + 4 to the nearest friend ahead.
+  - Old level 3 ability: Friend faints: Transfer all friendly mana + 6 to the nearest friend ahead.
+  - New level 1 ability: Friend faints: Transfer all unspendable friendly mana + 2 to nearest friend ahead.
+  - New level 2 ability: Friend faints: Transfer all unspendable friendly mana + 4 to nearest friend ahead.
+  - New level 3 ability: Friend faints: Transfer all unspendable friendly mana + 6 to nearest friend ahead.
+
+- Changed Monkey.
+  - Old level 1 ability: End turn: Give front-most friend +2 attack and +3 health.
+  - Old level 2 ability: End turn: Give front-most friend +4 attack and +6 health.
+  - Old level 3 ability: End turn: Give front-most friend +6 attack and +9 health.
+  - New level 1 ability: End turn: Give front-most friend +2 attack and +2 health.
+  - New level 2 ability: End turn: Give front-most friend +4 attack and +4 health.
+  - New level 3 ability: End turn: Give front-most friend +6 attack and +6 health.
+
+- Changed Nessie.
+  - Old level 1 ability: Faint: Summon one Nessie with +1 attack and +2 health for each roll this turn, up to 7 rolls.
+  - Old level 2 ability: Faint: Summon one Nessie with +2 attack and +4 health for each roll this turn, up to 7 rolls.
+  - Old level 3 ability: Faint: Summon one Nessie with +3 attack and +6 health for each roll this turn, up to 7 rolls.
+  - New level 1 ability: Faint: Summon one 3/3 Boat. If it's your first Boat this turn, give it +1 and +1 for each roll.
+  - New level 2 ability: Faint: Summon one 6/6 Boat. If it's your first Boat this turn, give it +2 and +2 for each roll.
+  - New level 3 ability: Faint: Summon one 9/9 Boat. If it's your first Boat this turn, give it +3 and +3 for each roll.
+
+- Changed Pixiu.
+  - Stats: 4/5 > 5/6. 
+  - Old level 1 ability: Faint: Spend 6 mana to gain +3 gold next turn.
+  - Old level 2 ability: Faint: Spend 6 mana to gain +6 gold next turn.
+  - Old level 3 ability: Faint: Spend 6 mana to gain +9 gold next turn.
+  - New level 1 ability: Faint: Spend 4 mana to gain +3 gold next turn.
+  - New level 2 ability: Faint: Spend 4 mana to gain +6 gold next turn.
+  - New level 3 ability: Faint: Spend 4 mana to gain +9 gold next turn.
+
+- Changed Poodle.
+  - Tier: 5 > 6. 
+  - Added to Custom pack.
+  - Removed from Puppy pack.
+
+- Changed Rhino.
+  - Stats: 6/9 > 6/7. 
+
+- Changed Siberian Husky.
+  - Old level 1 ability: End turn: Give friends with no food perks +1 attack and +1 health.
+  - Old level 2 ability: End turn: Give friends with no food perks +2 attack and +2 health.
+  - Old level 3 ability: End turn: Give friends with no food perks +3 attack and +3 health.
+  - New level 1 ability: End turn: Give three random friends with no food perks +1 attack and +1 health.
+  - New level 2 ability: End turn: Give three random friends with no food perks +2 attack and +2 health.
+  - New level 3 ability: End turn: Give three random friends with no food perks +3 attack and +3 health.
+
+- Changed Tandgnost.
+  - Tier: 5 > 4. 
+  - Stats: 5/5 > 4/4. 
+  - Old level 1 ability: Buy: Give future shop Tandgrisner +2 attack and +2 health.
+  - Old level 2 ability: Buy: Give future shop Tandgrisner +4 attack and +4 health.
+  - Old level 3 ability: Buy: Give future shop Tandgrisner +6 attack and +6 health.
+  - New level 1 ability: Buy: Give future shop Tandgrisner +3 attack and +3 health.
+  - New level 2 ability: Buy: Give future shop Tandgrisner +6 attack and +6 health.
+  - New level 3 ability: Buy: Give future shop Tandgrisner +9 attack and +9 health.
+
+- Changed Tandgrisner.
+  - Tier: 5 > 4. 
+  - Stats: 5/5 > 4/4. 
+  - Old level 1 ability: Buy: Give future shop Tandgnost +2 attack and +2 health.
+  - Old level 2 ability: Buy: Give future shop Tandgnost +4 attack and +4 health.
+  - Old level 3 ability: Buy: Give future shop Tandgnost +6 attack and +6 health.
+  - New level 1 ability: Buy: Give future shop Tandgnost +3 attack and +3 health.
+  - New level 2 ability: Buy: Give future shop Tandgnost +6 attack and +6 health.
+  - New level 3 ability: Buy: Give future shop Tandgnost +9 attack and +9 health.
+
+- Changed Vampire Bat.
+  - Old level 1 ability: Enemy gained ailment: Deal 3 damage to it and gain damage as health. Works 2 times per battle.
+  - Old level 2 ability: Enemy gained ailment: Deal 6 damage to it and gain damage as health. Works 2 times per battle.
+  - Old level 3 ability: Enemy gained ailment: Deal 9 damage to it and gain damage as health. Works 2 times per battle.
+  - New level 1 ability: Enemy gained ailment: Deal 4 damage to it and gain damage as health. Works 2 times per battle.
+  - New level 2 ability: Enemy gained ailment: Deal 8 damage to it and gain damage as health. Works 2 times per battle.
+  - New level 3 ability: Enemy gained ailment: Deal 12 damage to it and gain damage as health. Works 2 times per battle.
+
+- Changed Fly.
+  - Stats: 5/5 > 4/4. 
+
+- Changed Great One.
+  - Tier: 6 > 1. 
+  - Added to Unicorn pack.
+  - Removed from Custom pack.
+
+- Changed Komodo.
+  - Old level 1 ability: End turn: Give friends ahead +1 and +1 and then shuffle their positions.
+  - Old level 2 ability: End turn: Give friends ahead +2 and +2 and then shuffle their positions.
+  - Old level 3 ability: End turn: Give friends ahead +3 and +3 and then shuffle their positions.
+  - New level 1 ability: End turn: Give friends ahead +1 attack and +1 health and then shuffle their positions.
+  - New level 2 ability: End turn: Give friends ahead +2 attack and +2 health and then shuffle their positions.
+  - New level 3 ability: End turn: Give friends ahead +3 attack and +3 health and then shuffle their positions.
+
+- Changed Leviathan.
+  - Old level 1 ability: End turn: Summon four 10/10 Fishes.
+  - Old level 2 ability: End turn: Summon four 20/20 Fishes.
+  - Old level 3 ability: End turn: Summon four 30/30 Fishes.
+  - New level 1 ability: End turn: Summon one 8/8 Fish and give it +2 experience.
+  - New level 2 ability: End turn: Summon one 16/16 Fish and give it +4 experience.
+  - New level 3 ability: End turn: Summon one 24/24 Fish and give it +6 experience.
+
+- Changed Phoenix.
+  - Old level 1 ability: Faint: Make ANY three random pets Crisp, then summon one 6/6 Young Phoenix.
+  - Old level 2 ability: Faint: Make ANY six random pets Crisp, then summon one 12/12 Young Phoenix.
+  - Old level 3 ability: Faint: Make ANY nine random pets Crisp, then summon one 18/18 Young Phoenix.
+  - New level 1 ability: Faint: Make ANY three random pets Crisp, then summon one 4/4 Young Phoenix.
+  - New level 2 ability: Faint: Make ANY six random pets Crisp, then summon one 8/8 Young Phoenix.
+  - New level 3 ability: Faint: Make ANY nine random pets Crisp, then summon one 12/12 Young Phoenix.
+
+- Changed Snake.
+  - Stats: 6/6 > 8/3. 
+
+- Changed Team Spirit.
+  - Stats: 3/4 > 4/5. 
+  - Old level 1 ability: Friend level-up: Give friends +1 attack and +2 health.
+  - Old level 2 ability: Friend level-up: Give friends +2 attack and +4 health.
+  - Old level 3 ability: Friend level-up: Give friends +3 attack and +6 health.
+  - New level 1 ability: Friend level-up: Give friends +1 attack and +1 health.
+  - New level 2 ability: Friend level-up: Give friends +2 attack and +2 health.
+  - New level 3 ability: Friend level-up: Give friends +3 attack and +3 health.
+
+- Changed Yeti.
+  - Stats: 5/7 > 5/9. 
+  - Old level 1 ability: End turn: Roll three times while freezing duplicate pets.
+  - Old level 2 ability: End turn: Roll six times while freezing duplicate pets.
+  - Old level 3 ability: End turn: Roll nine times while freezing duplicate pets.
+  - New level 1 ability: Start of turn: Roll four times while freezing copies.
+  - New level 2 ability: Start of turn: Roll eight times while freezing copies.
+  - New level 3 ability: Start of turn: Roll twelve times while freezing copies.
+
+- Added Plastic Saw.
+  - Tier: 2. 
+  - Level 1 Ability: Start of battle: Give Eucalyptus perk to the front-most friend.
+  - Level 2 Ability: Start of battle: Give Eucalyptus perk to the two front-most friends.
+  - Level 3 Ability: Start of battle: Give Eucalyptus perk to the three front-most friends.
+
+- Changed Crystal Ball.
+  - Old ability: Start of battle: Give the front-most friend +1 mana.
+  - New ability: Start of battle: Give the front-most friend +2 mana.
+
+- Changed Magic Wand.
+  - Old ability: Start of battle: Give one random friend +1 experience.
+  - New ability: Start of battle: Give the back-most tier 2 or lower friend +1 experience.
+
+- Added Ambrosia.
+  - Tier: 4.
+  - Ability: Give one pet the Ambrosia perk.
+  - Perk: Block ailment or 8 damage, once.
+  - Added to Unicorn pack.
+
+- Added Big Mana Potion.
+  - Tier: 5.
+  - Ability: Give one pet +6 mana.
+  - Perk: 
+  - Added to Unicorn pack.
+
+- Changed Golden Egg.
+  - Old perk: Before attack: Deal 5 damage to target, once. Also sells for +3 gold.
+  - New perk: Before attack: Deal 6 damage to target, once.
+
+- Changed Holy Water.
+  - Old ability: Transform one Bad Dog into Good Dog, or give +8 health.
+  - New ability: Transform one Bad Dog into Good Dog, or give +4 attack and +4 health.
+
+- Changed Love Potion.
+  - Tier: 1 > 2. 
+  - Old perk: Before battle: Give nearest friend ahead +2 health.
+  - New perk: Before battle: Summon one 3/3 pet like this.
+  - Added to Custom pack.
+  - Removed from Unicorn pack.
+
+- Changed Water of Youth.
+  - Tier: 1 > 2. 
+
+- Changed Fairy Dust.
+  - Old perk: Empty front space: Jump to the front, once.
+  - New perk: Empty front space: Jump to the front and gain +2 mana, once.
+
+- Changed Health Potion.
+  - Tier: 2 > 1. 
+  - Old perk: Before battle: Gain +3 health.
+  - New perk: Before battle: Give the front-most friendly pet +2 health.
+
+- Changed Croissant.
+  - Added to Custom pack.
+
+- Changed Magic Beans.
+  - Tier: 4 > 5. 
+  - Old perk: Start of turn: Gain the Golden Egg perk.
+  - New perk: Start of turn: Gain the Golden Egg perk and increase sell value by 4 gold.
+
+- Changed Mana Potion.
+  - Tier: 5 > 1. 
+  - Old ability: Give one pet +6 mana. Half the mana will decay on start of each turn.
+  - New ability: Give one pet +3 mana.
+
+- Changed Yggdrasil Fruit.
+  - Tier: 5 > 6. 
+  - Old perk: Faint: Summon two 3/3 Nordic Goats.
+  - New perk: Faint: Summon two 5/5 Nordic Goats.
+  - Added to Custom pack.
+  - Removed from Unicorn pack.
+
+- Changed Cornucopia.
+  - Old ability: Choose one free tier 6 food to stock from all packs.
+  - New ability: Choose one free tier 6 food to stock from ALL packs.
+
+3
+- Added Adult Flounder.
+  - Tier: 1. 
+  - Stats: 2/4. 
+  - Level 1 Ability: Transformed: Give two back-most friends 1 experience.
+  - Level 2 Ability: Transformed: Give two back-most friends 2 experience.
+  - Level 3 Ability: Transformed: Give two back-most friends 3 experience.
+  - Added to Custom pack.
+
+- Added Budgie.
+  - Tier: 1. 
+  - Stats: 2/1. 
+  - Level 1 Ability: Start of battle: Replace own perk with Popcorn and +1 health.
+  - Level 2 Ability: Start of battle: Replace own perk with Popcorn and +2 health.
+  - Level 3 Ability: Start of battle: Replace own perk with Popcorn and +3 health.
+  - Added to Custom pack.
+
+- Added Cuckoo Chick.
+  - Tier: 1. 
+  - Stats: 1/1. 
+  - Level 1 Ability: No ability.
+  - Level 2 Ability: No ability.
+  - Level 3 Ability: No ability.
+  - Added to Custom pack.
+
+- Added Farmer Mouse.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Faint: Feed one Corncob to the nearest friend behind.
+  - Level 2 Ability: Faint: Feed one Corncob to the nearest two friends behind.
+  - Level 3 Ability: Faint: Feed one Corncob to the nearest three friends behind.
+  - Added to Custom pack.
+
+- Added Pygmy Seahorse.
+  - Tier: 1. 
+  - Stats: 3/1. 
+  - Level 1 Ability: Start of battle: Give three random friends +1 attack and +1 health and remove this.
+  - Level 2 Ability: Start of battle: Give three random friends +2 attack and +2 health and remove this.
+  - Level 3 Ability: Start of battle: Give three random friends +3 attack and +3 health and remove this.
+  - Added to Custom pack.
+
+- Added Quail.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Transformed: Give front-most friend +2 attack and +2 health. Double in battle.
+  - Level 2 Ability: Transformed: Give front-most friend +4 attack and +4 health. Double in battle.
+  - Level 3 Ability: Transformed: Give front-most friend +6 attack and +6 health. Double in battle.
+  - Added to Custom pack.
+
+- Added Silverfish.
+  - Tier: 1. 
+  - Stats: 2/1. 
+  - Level 1 Ability: Sell: Sells for +2 gold extra, but lose 2 next turn.
+  - Level 2 Ability: Sell: Sells for +4 gold extra, but lose 4 next turn.
+  - Level 3 Ability: Sell: Sells for +6 gold extra, but lose 6 next turn.
+  - Added to Custom pack.
+
+- Added Sleeping Gelada.
+  - Tier: 1. 
+  - Stats: 3/7. 
+  - Level 1 Ability: Transformed: Feed one Pear to each friend.
+  - Level 2 Ability: Transformed: Feed two Pears to each friend.
+  - Level 3 Ability: Transformed: Feed three Pears to each friend.
+  - Added to Custom pack.
+
+- Added Umbrella Bird.
+  - Tier: 1. 
+  - Stats: 3/2. 
+  - Level 1 Ability: End turn: Make the nearest friend ahead Dazed.
+  - Level 2 Ability: End turn: Make the two nearest friends ahead Dazed.
+  - Level 3 Ability: End turn: Make the three nearest friends ahead Dazed.
+  - Added to Custom pack.
+
+- Added Weevil.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Friendly ate food: Give them +1 attack until next turn. Works 3 times per turn.
+  - Level 2 Ability: Friendly ate food: Give them +2 attack until next turn. Works 3 times per turn.
+  - Level 3 Ability: Friendly ate food: Give them +3 attack until next turn. Works 3 times per turn.
+  - Added to Custom pack.
+
+- Added Albino Squirrel.
+  - Tier: 2. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Sell: Replace shop food with three random food and discount them by 1 gold.
+  - Level 2 Ability: Sell: Replace shop food with three random food and discount them by 2 gold.
+  - Level 3 Ability: Sell: Replace shop food with three random food and discount them by 3 gold.
+  - Added to Custom pack.
+
+- Added Dung Beetle.
+  - Tier: 2. 
+  - Stats: 1/3. 
+  - Level 1 Ability: Faint: Deal 2 damage to the least healthy enemy for each food this has eaten this turn.
+  - Level 2 Ability: Faint: Deal 4 damage to the least healthy enemy for each food this has eaten this turn.
+  - Level 3 Ability: Faint: Deal 6 damage to the least healthy enemy for each food this has eaten this turn.
+  - Added to Custom pack.
+
+- Added Farmer Chicken.
+  - Tier: 2. 
+  - Stats: 3/3. 
+  - Level 1 Ability: End turn: Spend 1 gold to feed one Corncob to the nearest friend ahead.
+  - Level 2 Ability: End turn: Spend 1 gold to feed one Corncob to the nearest two friends ahead.
+  - Level 3 Ability: End turn: Spend 1 gold to feed one Corncob to the nearest three friends ahead.
+  - Added to Custom pack.
+
+- Added Fruit Fly.
+  - Tier: 2. 
+  - Stats: 1/1. 
+  - Level 1 Ability: Start of battle: Give Blueberry perk to the opposite enemy and deal 2 damage to it.
+  - Level 2 Ability: Start of battle: Give Blueberry perk to the opposite enemy and deal 4 damage to it.
+  - Level 3 Ability: Start of battle: Give Blueberry perk to the opposite enemy and deal 6 damage to it.
+  - Added to Custom pack.
+
+- Added Mink.
+  - Tier: 2. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Start of battle: Gain ANY random perk from the previous tier.
+  - Level 2 Ability: Start of battle: Gain ANY random perk from the previous tier with double effect.
+  - Level 3 Ability: Start of battle: Gain ANY random perk from the previous tier with triple effect.
+  - Added to Custom pack.
+
+- Added Pink Robin.
+  - Tier: 2. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Faint: Activate End Turn on one random tier 2 or lower friend.
+  - Level 2 Ability: Faint: Activate End Turn on one random tier 4 or lower friend.
+  - Level 3 Ability: Faint: Activate End Turn on one random tier 6 or lower friend.
+  - Added to Custom pack.
+
+- Added Vervet.
+  - Tier: 2. 
+  - Stats: 1/3. 
+  - Level 1 Ability: Buy: Summon one level 1 Microwave Oven.
+  - Level 2 Ability: Buy: Summon one level 2 Microwave Oven.
+  - Level 3 Ability: Buy: Summon one level 3 Microwave Oven.
+  - Added to Custom pack.
+
+- Added Dimetrodon.
+  - Tier: 3. 
+  - Stats: 1/3. 
+  - Level 1 Ability: Start of battle: Summon one 5/5 friend if able. Otherwise give friends +1 attack and +1 health.
+  - Level 2 Ability: Start of battle: Summon one 10/10 friend if able. Otherwise give friends +2 attack and +2 health.
+  - Level 3 Ability: Start of battle: Summon one 15/15 friend if able. Otherwise give friends +3 attack and +3 health.
+  - Added to Custom pack.
+
+- Added Farmer Pig.
+  - Tier: 3. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Start of battle: Feed adjacent friends one Corncob.
+  - Level 2 Ability: Start of battle: Feed adjacent friends two Corncobs.
+  - Level 3 Ability: Start of battle: Feed adjacent friends three Corncobs.
+  - Added to Custom pack.
+
+- Added Great Potoo.
+  - Tier: 3. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Anyone hurt: If nobody has attacked, gain +2 health until next turn. Works 5 times per turn.
+  - Level 2 Ability: Anyone hurt: If nobody has attacked, gain +4 health until next turn. Works 5 times per turn.
+  - Level 3 Ability: Anyone hurt: If nobody has attacked, gain +6 health until next turn. Works 5 times per turn.
+  - Added to Custom pack.
+
+- Added Pony.
+  - Tier: 3. 
+  - Stats: 4/4. 
+  - Level 1 Ability: Knock out: Feed the back-most friend with one apple.
+  - Level 2 Ability: Knock out: Feed the back-most friend with two apples.
+  - Level 3 Ability: Knock out: Feed the back-most friend with three apples.
+  - Added to Custom pack.
+
+- Added Quail Chick.
+  - Tier: 3. 
+  - Stats: 1/1. 
+  - Level 1 Ability: Eats food: Transform and give front-most friend +2 attack and +2 health. Double in battle.
+  - Level 2 Ability: Eats food: Transform and give front-most friend +4 attack and +4 health. Double in battle.
+  - Level 3 Ability: Eats food: Transform and give front-most friend +6 attack and +6 health. Double in battle.
+  - Added to Custom pack.
+
+- Added Queen Bee.
+  - Tier: 3. 
+  - Stats: 2/4. 
+  - Level 1 Ability: Bee summoned: Give it +3 attack and +3 health and remove ALL other Queen Bees.
+  - Level 2 Ability: Bee summoned: Give it +6 attack and +6 health and remove ALL other Queen Bees.
+  - Level 3 Ability: Bee summoned: Give it +9 attack and +9 health and remove ALL other Queen Bees.
+  - Added to Custom pack.
+
+- Added Quetzalcoatlus.
+  - Tier: 3. 
+  - Stats: 4/6. 
+  - Level 1 Ability: Faint: Give the pet that knocked this out and its friends +1 attack and +1 health.
+  - Level 2 Ability: Faint: Give the pet that knocked this out and its friends +2 attack and +2 health.
+  - Level 3 Ability: Faint: Give the pet that knocked this out and its friends +3 attack and +3 health.
+  - Added to Custom pack.
+
+- Added Sarcastic Fringehead.
+  - Tier: 3. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Faint: Summon one 1/1 level 1 copy of the back-most friend up front for the enemy.
+  - Level 2 Ability: Faint: Summon one 1/1 level 2 copy of the back-most friend up front for the enemy.
+  - Level 3 Ability: Faint: Summon one 1/1 level 3 copy of the back-most friend up front for the enemy.
+  - Added to Custom pack.
+
+- Added Sugar Glider.
+  - Tier: 3. 
+  - Stats: 1/3. 
+  - Level 1 Ability: Start of turn: Stock one free Cupcake.
+  - Level 2 Ability: Start of turn: Stock one free Cupcake with double effect.
+  - Level 3 Ability: Start of turn: Stock one free Cupcake with triple effect.
+  - Added to Custom pack.
+
+- Added Andrewsarchus.
+  - Tier: 4. 
+  - Stats: 6/2. 
+  - Level 1 Ability: End turn: Remove the shop pet below and gain 50% of its attack and health until next turn.
+  - Level 2 Ability: End turn: Remove the shop pet below and gain 100% of its attack and health until next turn.
+  - Level 3 Ability: End turn: Remove the shop pet below and gain 150% of its attack and health until next turn.
+  - Added to Custom pack.
+
+- Added Cuckoo.
+  - Tier: 4. 
+  - Stats: 5/4. 
+  - Level 1 Ability: Enemy faints: Summon 1/1 bad Chicks up front for the enemy early. Can summon up to 2 per battle.
+  - Level 2 Ability: Enemy faints: Summon 1/1 bad Chicks up front for the enemy early. Can summon up to 4 per battle.
+  - Level 3 Ability: Enemy faints: Summon 1/1 bad Chicks up front for the enemy early. Can summon up to 6 per battle.
+  - Added to Custom pack.
+
+- Added Farmer Cat.
+  - Tier: 4. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Buy: Feed friends one Corncob.
+  - Level 2 Ability: Buy: Feed friends two Corncobs.
+  - Level 3 Ability: Buy: Feed friends three Corncobs.
+  - Added to Custom pack.
+
+- Added Gelada.
+  - Tier: 4. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Eats two food: Transform and feed one Pear to each friend.
+  - Level 2 Ability: Eats two food: Transform and feed two Pears to each friend.
+  - Level 3 Ability: Eats two food: Transform and feed three Pears to each friend.
+  - Added to Custom pack.
+
+- Added Goblin Shark.
+  - Tier: 4. 
+  - Stats: 6/3. 
+  - Level 1 Ability: Start of battle: Swallow the first enemy with 6 health or less. Release it on faint.
+  - Level 2 Ability: Start of battle: Swallow the first enemy with 12 health or less. Release it on faint.
+  - Level 3 Ability: Start of battle: Swallow the first enemy with 18 health or less. Release it on faint.
+  - Added to Custom pack.
+
+- Added Leafy Sea Dragon.
+  - Tier: 4. 
+  - Stats: 7/2. 
+  - Level 1 Ability: Start of battle: Give adjacent friends 1 experience and remove this.
+  - Level 2 Ability: Start of battle: Give adjacent friends 2 experience and remove this.
+  - Level 3 Ability: Start of battle: Give adjacent friends 3 experience and remove this.
+  - Added to Custom pack.
+
+- Added Locust.
+  - Tier: 4. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Faint: Summon one 3/3 plain Locust for each food eaten this turn.
+  - Level 2 Ability: Faint: Summon one 6/6 plain Locust for each food eaten this turn.
+  - Level 3 Ability: Faint: Summon one 9/9 plain Locust for each food eaten this turn.
+  - Added to Custom pack.
+
+- Added Spider Crab.
+  - Tier: 4. 
+  - Stats: 2/4. 
+  - Level 1 Ability: Friend attacks: Give it +4 health and move it far back. Works on one friend per turn.
+  - Level 2 Ability: Friend attacks: Give it +4 health and move it far back. Works on two different friends per turn.
+  - Level 3 Ability: Friend attacks: Give it +4 health and move it far back. Works on three different friends per turn.
+  - Added to Custom pack.
+
+- Added Tardigrade.
+  - Tier: 4. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Faint: Summon one 3/3 level 1 Tardigrade and make it Dazed.
+  - Level 2 Ability: Faint: Summon one 6/6 level 2 Tardigrade and make it Dazed.
+  - Level 3 Ability: Faint: Summon one 9/9 level 3 Tardigrade and make it Dazed.
+  - Added to Custom pack.
+
+- Added Trout.
+  - Tier: 4. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Friend sold: If it was sold for at least 3 gold, gain +1 attack and +2 health.
+  - Level 2 Ability: Friend sold: If it was sold for at least 3 gold, gain +2 attack and +4 health.
+  - Level 3 Ability: Friend sold: If it was sold for at least 3 gold, gain +3 attack and +6 health.
+  - Added to Custom pack.
+
+- Added Blue Jay.
+  - Tier: 5. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Faint: Give three random friends +1 attack and +1 health for each food this has eaten this turn.
+  - Level 2 Ability: Faint: Give three random friends +2 attack and +2 health for each food this has eaten this turn.
+  - Level 3 Ability: Faint: Give three random friends +3 attack and +3 health for each food this has eaten this turn.
+  - Added to Custom pack.
+
+- Added Brahma Chicken.
+  - Tier: 5. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Faint: Give three friends that dealt damage this battle permanent +1 attack and +1 health.
+  - Level 2 Ability: Faint: Give three friends that dealt damage this battle permanent +2 attack and +2 health.
+  - Level 3 Ability: Faint: Give three friends that dealt damage this battle permanent +3 attack and +3 health.
+  - Added to Custom pack.
+
+- Added Farmer Crow.
+  - Tier: 5. 
+  - Stats: 3/6. 
+  - Level 1 Ability: Faint: Feed three Corncobs to the nearest friend behind.
+  - Level 2 Ability: Faint: Feed three Corncobs to the nearest two friends behind.
+  - Level 3 Ability: Faint: Feed three Corncobs to the nearest three friends behind.
+  - Added to Custom pack.
+
+- Added Flounder.
+  - Tier: 5. 
+  - Stats: 2/4. 
+  - Level 1 Ability: Eats two food: Transform and give the two back-most friends 1 experience.
+  - Level 2 Ability: Eats two food: Transform and give the two back-most friends 2 experience.
+  - Level 3 Ability: Eats two food: Transform and give the two back-most friends 3 experience.
+  - Added to Custom pack.
+
+- Added Jackal.
+  - Tier: 5. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Pet flung: Set attack and health to 13.
+  - Level 2 Ability: Pet flung: Set attack and health to 26.
+  - Level 3 Ability: Pet flung: Set attack and health to 39.
+  - Added to Custom pack.
+
+- Added Maltese.
+  - Tier: 5. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Faint: Spend trumpets to give 3 mana + 1 for each trumpet to the nearest friend behind.
+  - Level 2 Ability: Faint: Spend trumpets to give 6 mana + 2 for each trumpet to the nearest friend behind.
+  - Level 3 Ability: Faint: Spend trumpets to give 9 mana + 3 for each trumpet to the nearest friend behind.
+  - Added to Custom pack.
+
+- Added Namazu.
+  - Tier: 5. 
+  - Stats: 3/5. 
+  - Level 1 Ability: Faint: Spend mana to gain 3 trumpets + 1 for each mana.
+  - Level 2 Ability: Faint: Spend mana to gain 6 trumpets + 2 for each mana.
+  - Level 3 Ability: Faint: Spend mana to gain 9 trumpets + 3 for each mana.
+  - Added to Custom pack.
+
+- Added Tarantula Hawk.
+  - Tier: 5. 
+  - Stats: 10/2. 
+  - Level 1 Ability: Start of battle: Remove 1 health from all enemies for every 10 attack this has.
+  - Level 2 Ability: Start of battle: Remove 2 health from all enemies for every 10 attack this has.
+  - Level 3 Ability: Start of battle: Remove 3 health from all enemies for every 10 attack this has.
+  - Added to Custom pack.
+
+- Added Venus Flytrap.
+  - Tier: 5. 
+  - Stats: 2/7. 
+  - Level 1 Ability: Sell: Choose one remaining pet from last battle to stock at 2 gold.
+  - Level 2 Ability: Sell: Choose one remaining pet from last battle to stock at 2 gold, twice.
+  - Level 3 Ability: Sell: Choose one remaining pet from last battle to stock at 2 gold, thrice.
+  - Added to Custom pack.
+
+- Added Amargasaurus.
+  - Tier: 6. 
+  - Stats: 5/7. 
+  - Level 1 Ability: Friend hurt: Restore its health. Can restore up to 15 health per turn.
+  - Level 2 Ability: Friend hurt: Restore its health. Can restore up to 30 health per turn.
+  - Level 3 Ability: Friend hurt: Restore its health. Can restore up to 45 health per turn.
+  - Added to Custom pack.
+
+- Added Black Bear.
+  - Tier: 6. 
+  - Stats: 5/6. 
+  - Level 1 Ability: Faint: Remove 4 health from one random enemy for each food this has eaten this turn.
+  - Level 2 Ability: Faint: Remove 8 health from one random enemy for each food this has eaten this turn.
+  - Level 3 Ability: Faint: Remove 12 health from one random enemy for each food this has eaten this turn.
+  - Added to Custom pack.
+
+- Added Chimpanzee.
+  - Tier: 6. 
+  - Stats: 3/5. 
+  - Level 1 Ability: Friend ate corncob: Give them +1 attack and +1 health.
+  - Level 2 Ability: Friend ate corncob: Give them +2 attack and +2 health.
+  - Level 3 Ability: Friend ate corncob: Give them +3 attack and +3 health.
+  - Added to Custom pack.
+
+- Added Coconut Crab.
+  - Tier: 6. 
+  - Stats: 4/8. 
+  - Level 1 Ability: Eats three food: Gain Coconut perk.
+  - Level 2 Ability: Eats three food: Gain Coconut perk that works twice.
+  - Level 3 Ability: Eats three food: Gain Coconut perk that works thrice.
+  - Added to Custom pack.
+
+- Added Eagle Owl.
+  - Tier: 6. 
+  - Stats: 8/3. 
+  - Level 1 Ability: Faint: Give three random friends +1 attack and +1 health for each battle this has fought.
+  - Level 2 Ability: Faint: Give three random friends +2 attack and +2 health for each battle this has fought.
+  - Level 3 Ability: Faint: Give three random friends +3 attack and +3 health for each battle this has fought.
+  - Added to Custom pack.
+
+- Added Farmer Dog.
+  - Tier: 6. 
+  - Stats: 3/4. 
+  - Level 1 Ability: End turn: Feed one Corncob to all friends.
+  - Level 2 Ability: End turn: Feed two Corncobs to all friends.
+  - Level 3 Ability: End turn: Feed three Corncobs to all friends.
+  - Added to Custom pack.
+
+- Added Lamprey.
+  - Tier: 6. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Friend faints: Deal 1 damage to the nearest friend ahead.
+  - Level 2 Ability: Friend faints: Deal 1 damage to the nearest two friends ahead.
+  - Level 3 Ability: Friend faints: Deal 1 damage to the nearest three friends ahead.
+  - Added to Custom pack.
+
+- Added Yellow Boxfish.
+  - Tier: 6. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Faint: Set attack and health of the most healthy pet from ANY team to 20.
+  - Level 2 Ability: Faint: Set attack and health of the two most healthy pets from ANY team to 20.
+  - Level 3 Ability: Faint: Set attack and health of the three most healthy pets from ANY team to 20.
+  - Added to Custom pack.
+
+- Changed Bunyip.
+  - Old level 1 ability: Start of battle: Gain +1 health for each time you rolled this turn, up to 3 rolls.
+  - Old level 2 ability: Start of battle: Gain +2 health for each time you rolled this turn, up to 3 rolls.
+  - Old level 3 ability: Start of battle: Gain +3 health for each time you rolled this turn, up to 3 rolls.
+  - New level 1 ability: Start of battle: Set health to 1 + times rolled this turn.
+  - New level 2 ability: Start of battle: Set health to 2 + times rolled this turn.
+  - New level 3 ability: Start of battle: Set health to 3 + times rolled this turn.
+
+- Changed Fairy Ball.
+  - Old level 1 ability: Takes 1 less damage.
+  - Old level 2 ability: Takes 2 less damage.
+  - Old level 3 ability: Takes 3 less damage.
+  - New level 1 ability: Takes 2 less damage.
+  - New level 2 ability: Takes 4 less damage.
+  - New level 3 ability: Takes 6 less damage.
+
+- Changed Ladybug.
+  - Stats: 1/3 > 2/2. 
+  - Old level 1 ability: Friend gained perk: Gain +2 attack until next turn.
+  - Old level 2 ability: Friend gained perk: Gain +4 attack until next turn.
+  - Old level 3 ability: Friend gained perk: Gain +6 attack until next turn.
+  - New level 1 ability: Friendly gained perk: Gain +2 attack until next turn.
+  - New level 2 ability: Friendly gained perk: Gain +4 attack until next turn.
+  - New level 3 ability: Friendly gained perk: Gain +6 attack until next turn.
+
+- Changed Pillbug.
+  - Stats: 2/2 > 2/3. 
+
+- Changed Atlantic Puffin.
+  - Stats: 2/3 > 4/3. 
+  - Old level 1 ability: Friend attacks: Remove its Strawberry perk to deal 2 damage to the last enemy.
+  - Old level 2 ability: Friend attacks: Remove its Strawberry perk to deal 4 damage to the last enemy.
+  - Old level 3 ability: Friend attacks: Remove its Strawberry perk to deal 6 damage to the last enemy.
+  - New level 1 ability: Friendly attacked: Remove its Strawberry perk to deal 2 damage to the last enemy.
+  - New level 2 ability: Friendly attacked: Remove its Strawberry perk to deal 4 damage to the last enemy.
+  - New level 3 ability: Friendly attacked: Remove its Strawberry perk to deal 6 damage to the last enemy.
+
+- Changed Bass.
+  - Old level 1 ability: Faint & Sell: Give one level 2 Sell friend +1 experience.
+  - Old level 2 ability: Faint & Sell: Give one level 2 Sell friend +2 experience.
+  - Old level 3 ability: Faint & Sell: Give one level 2 Sell friend +3 experience.
+  - New level 1 ability: Faint & Sell: Give one level 2 Sell friend +1 experience. Double in battle.
+  - New level 2 ability: Faint & Sell: Give one level 2 Sell friend +2 experience. Double in battle.
+  - New level 3 ability: Faint & Sell: Give one level 2 Sell friend +3 experience. Double in battle.
+
+- Changed Dumbo Octopus.
+  - Old level 1 ability: Roll 4 times: Stock one food from OTHER packs and discount it by 1 gold.
+  - Old level 2 ability: Roll 4 times: Stock one food from OTHER packs and discount it by 2 gold.
+  - Old level 3 ability: Roll 4 times: Stock one food from OTHER packs and discount it by 3 gold.
+  - New level 1 ability: Roll 3 times: Stock one food from OTHER packs and discount it by 1 gold.
+  - New level 2 ability: Roll 3 times: Stock one food from OTHER packs and discount it by 2 gold.
+  - New level 3 ability: Roll 3 times: Stock one food from OTHER packs and discount it by 3 gold.
+
+- Changed Koala.
+  - Stats: 2/2 > 3/2. 
+
+- Changed Wombat.
+  - Old level 1 ability: Start of battle: Copy Faint Ability as level 1 from the highest tier enemy.
+  - Old level 2 ability: Start of battle: Copy Faint Ability as level 2 from the highest tier enemy.
+  - Old level 3 ability: Start of battle: Copy Faint Ability as level 3 from the highest tier enemy.
+  - New level 1 ability: Before attack: Copy ability from the first Faint enemy as level 1.
+  - New level 2 ability: Before attack: Copy ability from the first Faint enemy as level 2.
+  - New level 3 ability: Before attack: Copy ability from the first Faint enemy as level 3.
+
+- Changed Cardinal.
+  - Old level 1 ability: Start of turn: Stock one copy of the nearest perk ahead and discount it by 1 gold.
+  - Old level 2 ability: Start of turn: Stock one copy of the nearest perk ahead and discount it by 2 gold.
+  - Old level 3 ability: Start of turn: Stock one copy of the nearest perk ahead and discount it by 3 gold.
+  - New level 1 ability: End turn: Gain and stock one copy of the nearest perk ahead and discount it by 1 gold.
+  - New level 2 ability: End turn: Gain and stock one copy of the nearest perk ahead and discount it by 2 gold.
+  - New level 3 ability: End turn: Gain and stock one copy of the nearest perk ahead and discount it by 3 gold.
+
+- Changed Cassowary.
+  - Stats: 4/2 > 5/3. 
+  - Old level 1 ability: Friend gained strawberry: Gain +1 health. Also gain +1 attack until next turn.
+  - Old level 2 ability: Friend gained strawberry: Gain +2 health. Also gain +2 attack until next turn.
+  - Old level 3 ability: Friend gained strawberry: Gain +3 health. Also gain +3 attack until next turn.
+  - New level 1 ability: Friendly gained strawberry: Gain +1 health. Also gain +1 attack until next turn.
+  - New level 2 ability: Friendly gained strawberry: Gain +2 health. Also gain +2 attack until next turn.
+  - New level 3 ability: Friendly gained strawberry: Gain +3 health. Also gain +3 attack until next turn.
+
+- Changed Flying Squirrel.
+  - Old level 1 ability: Friendly toy broke: Re-summon the toy, but its level can max be kept at 1.
+  - Old level 2 ability: Friendly toy broke: Re-summon the toy, but its level can max be kept at 2.
+  - Old level 3 ability: Friendly toy broke: Re-summon the toy, but its level can max be kept at 3.
+  - New level 1 ability: Friendly toy broke: Gain +2 attack and re-summon the toy at up to level 1.
+  - New level 2 ability: Friendly toy broke: Gain +4 attack and re-summon the toy at up to level 2.
+  - New level 3 ability: Friendly toy broke: Gain +6 attack and re-summon the toy at up to level 3.
+
+- Changed Ouroboros.
+  - Old level 1 ability: Roll: Give new shop pets +1 attack and +1 health until next turn for each roll, up to 7 rolls.
+  - Old level 2 ability: Roll: Give new shop pets +2 attack and +2 health until next turn for each roll, up to 7 rolls.
+  - Old level 3 ability: Roll: Give new shop pets +3 attack and +3 health until next turn for each roll, up to 7 rolls.
+  - New level 1 ability: Roll: Give new shop pets +1 attack and +1 health until next turn for each roll, up to 5 rolls.
+  - New level 2 ability: Roll: Give new shop pets +2 attack and +2 health until next turn for each roll, up to 5 rolls.
+  - New level 3 ability: Roll: Give new shop pets +3 attack and +3 health until next turn for each roll, up to 5 rolls.
+
+- Changed Tuna.
+  - Stats: 1/5 > 3/5. 
+
+- Changed Abomination.
+  - Old level 1 ability: End turn: Swallow and copy the left-most unfrozen shop pet until next turn.
+  - Old level 2 ability: End turn: Swallow and copy the two left-most unfrozen shop pets until next turn.
+  - Old level 3 ability: End turn: Swallow and copy the three left-most unfrozen shop pets until next turn.
+  - New level 1 ability: End turn: Swallow and copy the left-most unfrozen shop pet until next turn.
+  - New level 2 ability: End turn: Swallow and copy the two left-most unfrozen and different shop pets until next turn.
+  - New level 3 ability: End turn: Swallow and copy the three left-most unfrozen and different shop pets until next turn.
+
+
+- Changed Kraken.
+  - Stats: 3/6 > 4/7. 
+  - Old level 1 ability: Faint: Remove 15% health from ALL other pets.
+  - Old level 2 ability: Faint: Remove 30% health from ALL other pets.
+  - Old level 3 ability: Faint: Remove 45% health from ALL other pets.
+  - New level 1 ability: Start of battle: Remove 15% health from ALL other pets.
+  - New level 2 ability: Start of battle: Remove 30% health from ALL other pets.
+  - New level 3 ability: Start of battle: Remove 45% health from ALL other pets.
+
+- Changed Siamese.
+  - Stats: 1/4 > 2/5. 
+  - Old level 1 ability: Start of turn: Remove one discounted food to give adjacent pets +1 attack and +2 health.
+  - Old level 2 ability: Start of turn: Remove one discounted food to give adjacent pets +2 attack and +4 health.
+  - Old level 3 ability: Start of turn: Remove one discounted food to give adjacent pets +3 attack and +6 health.
+  - New level 1 ability: End turn: Give adjacent pets +1 attack. Also +1 health if the shop has discounted food.
+  - New level 2 ability: End turn: Give adjacent pets +2 attack. Also +2 health if the shop has discounted food.
+  - New level 3 ability: End turn: Give adjacent pets +3 attack. Also +3 health if the shop has discounted food.
+
+- Changed Sparrow.
+  - Old level 1 ability: Friendly pets with Strawberries take 10 less damage, once.
+  - Old level 2 ability: Friendly pets with Strawberries take 20 less damage, once.
+  - Old level 3 ability: Friendly pets with Strawberries take 30 less damage, once.
+  - New level 1 ability: Friendly pets with Strawberries take 5 less damage, twice.
+  - New level 2 ability: Friendly pets with Strawberries take 10 less damage, twice.
+  - New level 3 ability: Friendly pets with Strawberries take 15 less damage, twice.
+
+- Changed Emu.
+  - Old level 1 ability: Empty front space: Push nearest friend ahead to the front and give +4 health in battle.
+  - Old level 2 ability: Empty front space: Push nearest friend ahead to the front and give +8 health in battle.
+  - Old level 3 ability: Empty front space: Push nearest friend ahead to the front and give +12 health in battle.
+  - New level 1 ability: Empty front space: Give nearest friend ahead +4 health and move it to the front in battle.
+  - New level 2 ability: Empty front space: Give nearest friend ahead +8 health and move it to the front in battle.
+  - New level 3 ability: Empty front space: Give nearest friend ahead +12 health and move it to the front in battle.
+
+- Changed Ibex.
+  - Old level 1 ability: Enemy hurt or pushed: Remove 70% health from it. Works 1 time per turn.
+  - Old level 2 ability: Enemy hurt or pushed: Remove 70% health from it. Works 2 times per turn.
+  - Old level 3 ability: Enemy hurt or pushed: Remove 70% health from it. Works 3 times per turn.
+  - New level 1 ability: Enemy hurt or pushed: Remove 70% health from it. Works on one enemy per battle.
+  - New level 2 ability: Enemy hurt or pushed: Remove 70% health from it. Works on two different enemies per battle.
+  - New level 3 ability: Enemy hurt or pushed: Remove 70% health from it. Works on three different enemies per battle.
+
+- Changed Kitsune.
+  - Old level 1 ability: Friend faints: Transfer all unspendable friendly mana + 2 to nearest friend ahead.
+  - Old level 2 ability: Friend faints: Transfer all unspendable friendly mana + 4 to nearest friend ahead.
+  - Old level 3 ability: Friend faints: Transfer all unspendable friendly mana + 6 to nearest friend ahead.
+  - New level 1 ability: Friend faints: Transfer all friendly mana + 2 to nearest friend ahead.
+  - New level 2 ability: Friend faints: Transfer all friendly mana + 4 to nearest friend ahead.
+  - New level 3 ability: Friend faints: Transfer all friendly mana + 6 to nearest friend ahead.
+
+- Changed Lion.
+  - Tier: 5 > 6. 
+  - Stats: 6/6 > 7/7. 
+
+- Changed Salmon of Knowledge.
+  - Old level 1 ability: Start of battle: Give the two front-most friends AND enemies +2 experience.
+  - Old level 2 ability: Start of battle: Give the two front-most friends AND enemies +2 experience. Triggers 2 times.
+  - Old level 3 ability: Start of battle: Give the two front-most friends AND enemies +2 experience. Triggers 3 times.
+  - New level 1 ability: Start of battle: Give the two front-most friends AND enemies +2 experience.
+  - New level 2 ability: Start of battle: Give the two front-most friends AND enemies +4 experience.
+  - New level 3 ability: Start of battle: Give the two front-most friends AND enemies +6 experience.
+
+- Changed Swordfish.
+  - Stats: 5/5 > 5/7. 
+
+- Changed Ammonite.
+  - Old level 1 ability: Faint: Transform the front-most friend into a Mimic Octopus with 1 exp for every 3rd roll.
+  - Old level 2 ability: Faint: Transform the two front-most friends into Mimic Octopuses with 1 exp for every 3rd roll.
+  - Old level 3 ability: Faint: Transform the three front-most friends into Mimic Octopuses with 1 exp for every 3rd roll.
+  - New level 1 ability: Faint: Transform the front-most friend into a level 1 Mimic Octopus with +1 experience for every 2 roll.
+  - New level 2 ability: Faint: Transform the front-most two friends into level 1 Mimic Octopi with +1 experience for every 2 roll.
+  - New level 3 ability: Faint: Transform the front-most three friends into level 1 Mimic Octopi with +1 experience for every 2 roll.
+
+- Changed Cat.
+  - Old level 1 ability: Food gives double attack and health. Works 2 times per turn.
+  - Old level 2 ability: Food gives triple attack and health. Works 2 times per turn.
+  - Old level 3 ability: Food gives quadruple attack and health. Works 2 times per turn.
+  - New level 1 ability: Shop food gives two times more attack and health. Works 2 times per turn.
+  - New level 2 ability: Shop food gives three times more attack and health. Works 2 times per turn.
+  - New level 3 ability: Shop food gives four times more attack and health. Works 2 times per turn.
+
+
+- Changed Ostrich.
+  - Stats: 2/8 > 6/7. 
+  - Old level 1 ability: Roll: If there are four tier 6 shop pets, roll pets and give friends +1 attack and +1 health.
+  - Old level 2 ability: Roll: If there are four tier 6 shop pets, roll pets and give friends +2 attack and +2 health.
+  - Old level 3 ability: Roll: If there are four tier 6 shop pets, roll pets and give friends +3 attack and +3 health.
+  - New level 1 ability: Roll: If four shop pets are the same tier, roll pets and give friends +1 attack and +1 health.
+  - New level 2 ability: Roll: If four shop pets are the same tier, roll pets and give friends +2 attack and +2 health.
+  - New level 3 ability: Roll: If four shop pets are the same tier, roll pets and give friends +3 attack and +3 health.
+
+- Changed Poodle.
+  - Stats: 2/2 > 3/2. 
+
+- Changed Real Velociraptor.
+  - Stats: 2/3 > 5/5. 
+  - Old level 1 ability: Friend lost perk: Return its perk. Works 1 time per turn.
+  - Old level 2 ability: Friend lost perk: Return its perk. Works 2 times per turn and only once per friend in battle.
+  - Old level 3 ability: Friend lost perk: Return its perk. Works 3 times per turn and only once per friend in battle.
+  - New level 1 ability: Friend lost perk: Return its perk. Works on one friend per turn.
+  - New level 2 ability: Friend lost perk: Return its perk. Works on two different friends per turn.
+  - New level 3 ability: Friend lost perk: Return its perk. Works on three different friends per turn.
+
+- Changed Sea Serpent.
+  - Old level 1 ability: Faint: Spend mana to deal 2 damage per mana to the most healthy enemy.
+  - Old level 2 ability: Faint: Spend mana to deal 2 damage per mana to the two most healthy enemies.
+  - Old level 3 ability: Faint: Spend mana to deal 2 damage per mana to the three most healthy enemies.
+  - New level 1 ability: This pet's mana damage hits the most healthy enemy and one extra enemy.
+  - New level 2 ability: This pet's mana damage hits the most healthy enemy and two extra enemies.
+  - New level 3 ability: This pet's mana damage hits the most healthy enemy and three extra enemies.
+
+- Changed Small One.
+  - Stats: 5/8 > 3/3. 
+
+- Changed Stegosaurus.
+  - Old level 1 ability: Start of battle: Give one perk-less friend +1 and +1 multiplied with turn number.
+  - Old level 2 ability: Start of battle: Give one perk-less friend +2 and +2 multiplied with turn number.
+  - Old level 3 ability: Start of battle: Give one perk-less friend +3 and +3 multiplied with turn number.
+  - New level 1 ability: Start of battle: Give one perk-less friend +1 attack and +1 health multiplied with turn number.
+  - New level 2 ability: Start of battle: Give one perk-less friend +2 attack and +2 health multiplied with turn number.
+  - New level 3 ability: Start of battle: Give one perk-less friend +3 attack and +3 health multiplied with turn number.
+
+- Changed Tapir.
+  - Old level 1 ability: Faint: Summon one level 1 copy of a random friendly pet.
+  - Old level 2 ability: Faint: Summon one level 2 copy of a random friendly pet.
+  - Old level 3 ability: Faint: Summon one level 3 copy of a random friendly pet.
+  - New level 1 ability: Start of battle: Summon one 10/10 level 1 copy of the back-most friend.
+  - New level 2 ability: Start of battle: Summon one 20/20 level 2 copy of the back-most friend.
+  - New level 3 ability: Start of battle: Summon one 30/30 level 3 copy of the back-most friend.
+
+- Changed Tyrannosaurus.
+  - Old level 1 ability: End turn: Give two tier 5 friends or higher +2 attack and +2 health.
+  - Old level 2 ability: End turn: Give two tier 5 friends or higher +4 attack and +4 health.
+  - Old level 3 ability: End turn: Give two tier 5 friends or higher +6 attack and +6 health.
+  - New level 1 ability: Start of turn: Give two tier 5 friends or higher +2 attack and +2 health.
+  - New level 2 ability: Start of turn: Give two tier 5 friends or higher +4 attack and +4 health.
+  - New level 3 ability: Start of turn: Give two tier 5 friends or higher +6 attack and +6 health.
+
+- Added Broom.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of turn: Remove all friends and gain 10 gold + 1 times the turn number.
+
+- Added Chocolate Box.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Give +1 experience to friends and +2 experience to enemies.
+
+- Added Crumpled Paper.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Summoned: Replace this with another random toy.
+
+- Added Deck of Cards.
+  - Min Tier: 1. 
+  - Max Tier: 4. 
+  - Ability: Friend bought: Transform it into ANY random pet from the same tier with new base stats.
+
+- Added Flute.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: End turn: If you bought less than two tier 1 food this turn, make friends Dazed.
+
+- Added Kite.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Empty front space: Remove 20% attack from the back-most friend and make it jump to the front.
+
+- Added Lamp.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Remove 20% attack and 20% health from friends.
+
+- Added Onesie.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Make two random friends Cold.
+
+- Added Remote Car.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Give enemies +20% attack and +20% health.
+
+- Added Ring.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: End turn: If you spent less than 13 gold this turn, remove 20% health from friends.
+
+- Added Scale.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Set attack and health of all friends to the turn number.
+
+- Added Soccer Ball.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Knock out friends from the current tier.
+
+- Added Sticky Hand.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: Start of battle: Make the two back-most friends Icky.
+
+- Added Vacuum Cleaner.
+  - Min Tier: 1. 
+  - Max Tier: 6. 
+  - Ability: End turn: Remove the lowest tier perks from two friends.
+
+- Added Microwave Oven.
+  - Tier: 2. 
+  - Level 1 Ability: Start of battle: Give Popcorn perk to the front-most perkless friend.
+  - Level 2 Ability: Start of battle: Give Popcorn perk to the two front-most perkless friends.
+  - Level 3 Ability: Start of battle: Give Popcorn perk to the three front-most perkless friends.
+
+- Changed Handkerchief.
+  - Max Tier: 6 > 3. 
+  - Old ability: Start of battle: Make friends front-to-back Weak for each shop tier.
+  - New ability: Start of battle: Make the two front-most friends Weak.
+
+- Changed Pen.
+  - Max Tier: 6 > 3. 
+  - Old ability: Start of battle: Make friends front-to-back Inked for each shop tier.
+  - New ability: Start of battle: Make the two front-most friends Inked.
+
+- Changed Pogo Stick.
+  - Old ability: Start of battle: Multiply attack and health of the lowest health enemy by 4.
+  - New ability: Start of battle: Push the last enemy up front and give it +100% attack and +100% health.
+
+- Changed Rock Bag.
+  - Old ability: Start of battle: Deal 2 damage to a random friend for each turn.
+  - New ability: End turn: Deal 1 damage to the three front-most friends. Multiply damage with their tiers.
+
+- Changed Scissors.
+  - Min Tier: 1 > 3. 
+  - Old ability: Start of battle: Set health of the two most healthy friends to 1.
+  - New ability: End turn: Transform front-most friend into another random pet from 2 tiers below.
+
+- Changed Action Figure.
+  - Min Tier: 2 > 1. 
+  - Old ability: Start of battle: Give Coconut to enemies front-to-back for every second shop tier.
+  - New ability: Start of battle: Give Coconut perk to two first enemies.
+
+- Changed Dice.
+  - Min Tier: 2 > 1. 
+
+- Changed Open Piggy Bank.
+  - Min Tier: 2 > 1. 
+  - Old ability: Buy from shop: Lose 1 gold.
+  - New ability: Start of turn: Lose 3 gold.
+
+- Changed Rubber Duck.
+  - Min Tier: 2 > 1. 
+  - Max Tier: 2 > 6. 
+  - Old ability: All enemies fainted: Summon one 3/3 enemy Duck. Works 1 time per battle.
+  - New ability: All enemies fainted: Summon one 50/1 enemy Duck. Works 1 time per battle.
+
+- Changed Bowling Ball.
+  - Min Tier: 3 > 1. 
+  - Max Tier: 4 > 6. 
+  - Old ability: Friend faints: Deal 3 damage to the friend behind.
+  - New ability: End turn: If you rolled less than 6 times this turn, deal the turn number as damage to friends.
+
+- Changed Lunchbox.
+  - Min Tier: 3 > 1. 
+  - Max Tier: 3 > 6. 
+  - Old ability: All enemies fainted: Summon two 4/2 enemy Ants. Works 1 time per battle.
+  - New ability: Start of battle: Feed Apples to random pets for each turn number. Double their power on enemies.
+
+- Changed Paper Shredder.
+  - Min Tier: 3 > 1. 
+  - Old ability: Friend summoned: Make it faint.
+  - New ability: Friend summoned: Knock it out.
+
+- Changed Cardboard Box.
+  - Min Tier: 4 > 1. 
+  - Max Tier: 6 > 4. 
+  - Old ability: All enemies fainted: Summon two 1/1 enemy Scorpions. Works 1 time per battle.
+  - New ability: Start of turn: Sell the two front-most friends.
+
+- Changed Boot.
+  - Min Tier: 5 > 1. 
+  - Old ability: Friend faints: Deal 8 damage to the back-most friend.
+  - New ability: End turn: Deal 50 damage to the front-most friend.
+
+- Changed Pandoras Box.
+  - Old level 1 ability: Start of battle: Give ALL pets random perks and ailments.
+  - Old level 2 ability: Start of battle: Give ALL pets random perks and ailments.
+  - Old level 3 ability: Start of battle: Give ALL pets random perks and ailments.
+  - New level 1 ability: Start of battle: Give ALL pets random perks and ailments.
+  - New level 2 ability: Start of battle: Give ALL pets random perks and ailments with double effects.
+  - New level 3 ability: Start of battle: Give ALL pets random perks and ailments with triple effects.
+
+- Changed Pill Bottle.
+  - Min Tier: 5 > 1. 
+  - Old ability: Start of battle: Knock out the front-most friend.
+  - New ability: Start of battle: Knock out the two front-most friends and the front-most enemy.
+
+- Changed Ring Pyramid.
+  - Min Tier: 5 > 1. 
+  - Old ability: Friend faints: Deal 2 damage to all friends.
+  - New ability: Start of battle: Knock out friends from the previous tier.
+
+- Changed Stuffed Bear.
+  - Min Tier: 6 > 1. 
+  - Old ability: All enemies fainted: Summon one 25/25 enemy Grizzly Bear. Works 1 time per battle.
+  - New ability: Three friends faint: Summon one exact enemy copy of the back-most friend.
+
+- Changed Toy Mouse.
+  - Min Tier: 6 > 3. 
+  - Old ability: All enemies fainted: Summon five random 5/5 enemy Felines. Works 1 time per battle.
+  - New ability: Start of battle: Transform all friends to level 1.
+
+- Added Asparagus.
+  - Tier: 1.
+  - Ability: Increase sell value of one pet by 1 gold.
+  - Perk: 
+  - Added to Custom pack.
+
+- Added Corncob.
+  - Tier: 1.
+  - Ability: Give one pet +1 to lowest stat.
+  - Perk: 
+  - Added to Custom pack.
+
+- Added Churros.
+  - Tier: 2.
+  - Ability: Give one pet the Churros perk.
+  - Perk: Activate ability before other pets with the same trigger.
+  - Added to Custom pack.
+
+- Added Radish.
+  - Tier: 2.
+  - Ability: Give one pet the Radish perk.
+  - Perk: Start of battle: Gain ANY random perk from the pet's tier.
+  - Added to Custom pack.
+
+- Added Brussels Sprout.
+  - Tier: 3.
+  - Ability: Give one pet the Brussels Sprout perk.
+  - Perk: Block being pushed or 5 damage, once.
+  - Added to Custom pack.
+
+- Added Oyster Mushroom.
+  - Tier: 4.
+  - Ability: Give one pet the Oyster Mushroom perk.
+  - Perk: Before battle: Transform nearest friend ahead to this at level 1.
+  - Added to Custom pack.
+
+- Added Tofu.
+  - Tier: 5.
+  - Ability: Stock one 2-gold copy of the last non-Tofu food bought this turn.
+  - Perk: 
+  - Added to Custom pack.
+
+- Changed Eucalyptus.
+  - Old perk: Take 4 less damage, once.
+  - New perk: Take 4 less enemy damage, once.
+
+- Changed Fig.
+  - Old perk: Start of battle: Deal 4 damage to the lowest health enemy.
+  - New perk: Before attack: Deal 4 damage to the lowest health enemy, once.
+
+- Changed Cotton Candy.
+  - Tier: 4 > 5. 
+  - Old ability: Give one pet from the current shop tier or higher +3 attack and +2 health.
+  - New ability: Give one pet +3 attack and +2 health.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Pear.
+  - Added to Star pack.
+
+- Changed Onion.
+  - Old perk: Move to the back when in the front, once.
+  - New perk: Before attack: Move to the back, once.
+
+- Changed Tomato.
+  - Old perk: Before attack: Deal 8 damage to the last enemy, once.
+  - New perk: Before attack: Deal 10 damage to the last enemy, once.
+
+
+4
+- Added Nudibranch.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Start of battle: If there are no friendly duplicates, gain +3 attack and +1 health.
+  - Level 2 Ability: Start of battle: If there are no friendly duplicates, gain +6 attack and +2 health.
+  - Level 3 Ability: Start of battle: If there are no friendly duplicates, gain +9 attack and +3 health.
+  - Added to Custom pack.
+
+- Added Desert Rain Frog.
+  - Tier: 2. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Before attack: Spend 1 trumpet to transform into a level 1 Faint pet from one tier above.
+  - Level 2 Ability: Before attack: Spend 1 trumpet to transform into a level 1 Faint pet from two tiers above.
+  - Level 3 Ability: Before attack: Spend 1 trumpet to transform into a level 1 Faint pet from three tiers above.
+  - Added to Custom pack.
+
+- Added Giant Squirrel.
+  - Tier: 2. 
+  - Stats: 2/4. 
+  - Level 1 Ability: After attack: Copy perk to the back-most pets from BOTH teams. Works 1 time per battle.
+  - Level 2 Ability: After attack: Copy perk to the back-most pets from BOTH teams. Works 2 times per battle.
+  - Level 3 Ability: After attack: Copy perk to the back-most pets from BOTH teams. Works 3 times per battle.
+  - Added to Custom pack.
+
+- Added Honduran White Bat.
+  - Tier: 2. 
+  - Stats: 1/1. 
+  - Level 1 Ability: Start of battle: Gain +1 trumpet for one friend of each tier.
+  - Level 2 Ability: Start of battle: Gain +2 trumpets for one friend of each tier.
+  - Level 3 Ability: Start of battle: Gain +3 trumpets for one friend of each tier.
+  - Added to Custom pack.
+
+- Added Olm.
+  - Tier: 2. 
+  - Stats: 3/1. 
+  - Level 1 Ability: Faint: Make one random enemy Spooked and multiply the effect once for each roll this turn.
+  - Level 2 Ability: Faint: Make one random enemy Spooked and multiply the effect twice for each roll this turn.
+  - Level 3 Ability: Faint: Make one random enemy Spooked and multiply the effect thrice for each roll this turn.
+  - Added to Custom pack.
+
+- Added Shima Enaga.
+  - Tier: 2. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Friend faints: If it had a Strawberry, summon one 2/3 friend in its place. Works 2 times per turn.
+  - Level 2 Ability: Friend faints: If it had a Strawberry, summon one 4/6 friend in its place. Works 2 times per turn.
+  - Level 3 Ability: Friend faints: If it had a Strawberry, summon one 6/9 friend in its place. Works 2 times per turn.
+  - Added to Custom pack.
+
+- Added Tadpole.
+  - Tier: 2. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Start of battle: Transform into a level 1 Frog and gain +2 experience.
+  - Level 2 Ability: Start of battle: Transform into a level 1 Frog and gain +4 experience.
+  - Level 3 Ability: Start of battle: Transform into a level 1 Frog and gain +6 experience.
+  - Added to Custom pack.
+
+- Added Barnacle.
+  - Tier: 3. 
+  - Stats: 1/3. 
+  - Added to Custom pack.
+
+- Added Blue Dragon.
+  - Tier: 3. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Start of battle: Gain +1 trumpet for each friend behind and give friends ahead +1 mana.
+  - Level 2 Ability: Start of battle: Gain +2 trumpets for each friend behind and give friends ahead +2 mana.
+  - Level 3 Ability: Start of battle: Gain +3 trumpets for each friend behind and give friends ahead +3 mana.
+  - Added to Custom pack.
+
+- Added Caladrius.
+  - Tier: 3. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Before friend attacks: Replace 3 mana on it with +2 attack and +2 health.
+  - Level 2 Ability: Before friend attacks: Replace 3 mana on it with +4 attack and +4 health.
+  - Level 3 Ability: Before friend attacks: Replace 3 mana on it with +6 attack and +6 health.
+  - Added to Custom pack.
+
+- Added Centipede.
+  - Tier: 3. 
+  - Stats: 1/4. 
+  - Level 1 Ability: Friend bought: Gain +1 attack and +1 health times its tier until next turn. Works 1 time per turn.
+  - Level 2 Ability: Friend bought: Gain +2 attack and +2 health times its tier until next turn. Works 1 time per turn.
+  - Level 3 Ability: Friend bought: Gain +3 attack and +3 health times its tier until next turn. Works 1 time per turn.
+  - Added to Custom pack.
+
+- Added Gerenuk.
+  - Tier: 3. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Start of battle: Remove the highest tier perk from one enemy.
+  - Level 2 Ability: Start of battle: Remove the highest tier perks from two enemies.
+  - Level 3 Ability: Start of battle: Remove the highest tier perks from three enemies.
+  - Added to Custom pack.
+
+- Added Jewel Caterpillar.
+  - Tier: 3. 
+  - Stats: 1/1. 
+  - Level 1 Ability: Faint: Spend 2 trumpets to increase sell value of two random friends permanently by 1 gold.
+  - Level 2 Ability: Faint: Spend 2 trumpets to increase sell value of two random friends permanently by 2 gold.
+  - Level 3 Ability: Faint: Spend 2 trumpets to increase sell value of two random friends permanently by 3 gold.
+  - Added to Custom pack.
+
+- Added Patagonian Mara.
+  - Tier: 3. 
+  - Stats: 2/4. 
+  - Level 1 Ability: Faint: Gain +4 trumpets and summon the Golden Retriever immediately.
+  - Level 2 Ability: Faint: Gain +8 trumpets and summon the Golden Retriever immediately.
+  - Level 3 Ability: Faint: Gain +12 trumpets and summon the Golden Retriever immediately.
+  - Added to Custom pack.
+
+- Added Roadrunner.
+  - Tier: 3. 
+  - Stats: 4/2. 
+  - Level 1 Ability: Faint: Give the nearest friend behind +3 attack and Strawberry perk.
+  - Level 2 Ability: Faint: Give the two nearest friends behind +3 attack and Strawberry perks.
+  - Level 3 Ability: Faint: Give the three nearest friends behind +3 attack and Strawberry perks.
+  - Added to Custom pack.
+
+- Added Sage-Grouse.
+  - Tier: 3. 
+  - Stats: 2/4. 
+  - Level 1 Ability: Sell friend: Remove its Strawberry perk to gain +3 gold. Works 1 time per turn.
+  - Level 2 Ability: Sell friend: Remove its Strawberry perk to gain +3 gold. Works 2 times per turn.
+  - Level 3 Ability: Sell friend: Remove its Strawberry perk to gain +3 gold. Works 3 times per turn.
+  - Added to Custom pack.
+
+- Added Ahuizotl.
+  - Tier: 4. 
+  - Stats: 3/6. 
+  - Added to Custom pack.
+
+- Added Bloodhound.
+  - Tier: 4. 
+  - Stats: 4/4. 
+  - Level 1 Ability: Friend sold: Stock one copy of it. Works 1 time per turn.
+  - Level 2 Ability: Friend sold: Stock one copy of it. Works 2 times per turn.
+  - Level 3 Ability: Friend sold: Stock one copy of it. Works 3 times per turn.
+  - Added to Custom pack.
+
+- Added Blue-Footed Booby.
+  - Tier: 4. 
+  - Stats: 2/5. 
+  - Level 1 Ability: Faint: Spend 4 trumpets to give nearest friend behind permanent Melon Slice.
+  - Level 2 Ability: Faint: Spend 4 trumpets to give nearest friend behind permanent Melon Slice that works twice.
+  - Level 3 Ability: Faint: Spend 4 trumpets to give nearest friend behind permanent Melon Slice that works thrice.
+  - Added to Custom pack.
+
+- Added Hoatzin.
+  - Tier: 4. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Start of battle: Remove friendly strawberries to gain +3 trumpets for each.
+  - Level 2 Ability: Start of battle: Remove friendly strawberries to gain +6 trumpets for each.
+  - Level 3 Ability: Start of battle: Remove friendly strawberries to gain +9 trumpets for each.
+  - Added to Custom pack.
+
+- Added Platybelodon.
+  - Tier: 4. 
+  - Stats: 3/5. 
+  - Level 1 Ability: Start of battle: Gain +1 trumpet for each roll this turn.
+  - Level 2 Ability: Start of battle: Gain +2 trumpets for each roll this turn.
+  - Level 3 Ability: Start of battle: Gain +3 trumpets for each roll this turn.
+  - Added to Custom pack.
+
+- Added Racket Tail.
+  - Tier: 4. 
+  - Stats: 2/5. 
+  - Level 1 Ability: Before friend attacks: Give it the Strawberry perk and +5 attack. Works 1 time per battle.
+  - Level 2 Ability: Before friend attacks: Give it the Strawberry perk and +5 attack. Works 2 times per battle.
+  - Level 3 Ability: Before friend attacks: Give it the Strawberry perk and +5 attack. Works 3 times per battle.
+  - Added to Custom pack.
+
+- Added Red Lipped Batfish.
+  - Tier: 4. 
+  - Stats: 5/3. 
+  - Level 1 Ability: Start of battle: Transform the opposite enemy into ANY random Faint pet from one tier below.
+  - Level 2 Ability: Start of battle: Transform the opposite enemy into ANY random Faint pet from two tiers below.
+  - Level 3 Ability: Start of battle: Transform the opposite enemy into ANY random Faint pet from three tiers below.
+  - Added to Custom pack.
+
+- Added Ruspoli's Turaco.
+  - Tier: 4. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Start of battle: Replace friendly strawberries with +4 mana.
+  - Level 2 Ability: Start of battle: Replace friendly strawberries with +8 mana.
+  - Level 3 Ability: Start of battle: Replace friendly strawberries with +12 mana.
+  - Added to Custom pack.
+
+- Added Spiny Bush Viper.
+  - Tier: 4. 
+  - Stats: 5/2. 
+  - Level 1 Ability: Faint: Deal 1 damage to two random enemies and multiply damage by the distance.
+  - Level 2 Ability: Faint: Deal 2 damage to two random enemies and multiply damage by the distance.
+  - Level 3 Ability: Faint: Deal 3 damage to two random enemies and multiply damage by the distance.
+  - Added to Custom pack.
+
+- Added Tand & Tand.
+  - Tier: 4. 
+  - Stats: 1/1. 
+  - Level 1 Ability: Transformed: Summon a level 1 Thunder Hammer.
+  - Level 2 Ability: Transformed: Summon a level 2 Thunder Hammer.
+  - Level 3 Ability: Transformed: Summon a level 3 Thunder Hammer.
+  - Added to Custom pack.
+
+- Added Giant Isopod.
+  - Tier: 5. 
+  - Stats: 5/6. 
+  - Level 1 Ability: Faint: Give friends +2 health. Spend 2 trumpets to upgrade this ability to give +1 more health.
+  - Level 2 Ability: Faint: Give friends +4 health. Spend 2 trumpets to upgrade this ability to give +2 more health.
+  - Level 3 Ability: Faint: Give friends +6 health. Spend 2 trumpets to upgrade this ability to give +3 more health.
+  - Added to Custom pack.
+
+- Added Lusca.
+  - Tier: 5. 
+  - Stats: 7/5. 
+  - Level 1 Ability: Faint: Spend mana to remove 1 attack and health per mana from one random enemy.
+  - Level 2 Ability: Faint: Spend mana to remove 1 attack and health per mana from two random enemies.
+  - Level 3 Ability: Faint: Spend mana to remove 1 attack and health per mana from three random enemies.
+  - Added to Custom pack.
+
+- Added Pacific Fanfish.
+  - Tier: 5. 
+  - Stats: 4/4. 
+  - Level 1 Ability: Start of battle: Gain +4 attack and +4 health for each friend that sells for at least 3 gold.
+  - Level 2 Ability: Start of battle: Gain +8 attack and +8 health for each friend that sells for at least 3 gold.
+  - Level 3 Ability: Start of battle: Gain +12 attack and +12 health for each friend that sells for at least 3 gold.
+  - Added to Custom pack.
+
+- Added Sea Cucumber.
+  - Tier: 5. 
+  - Stats: 3/5. 
+  - Level 1 Ability: Start of battle: Make one random enemy Tasty.
+  - Level 2 Ability: Start of battle: Make two random enemies Tasty.
+  - Level 3 Ability: Start of battle: Make three random enemies Tasty.
+  - Added to Custom pack.
+
+- Added Akhlut.
+  - Tier: 6. 
+  - Stats: 5/7. 
+  - Level 1 Ability: Faint: Spend 2 mana to give the nearest friend behind permanent +3 attack and +3 health.
+  - Level 2 Ability: Faint: Spend 2 mana to give the nearest friend behind permanent +6 attack and +6 health.
+  - Level 3 Ability: Faint: Spend 2 mana to give the nearest friend behind permanent +9 attack and +9 health.
+  - Added to Custom pack.
+
+- Added Bakunawa.
+  - Tier: 6. 
+  - Stats: 7/6. 
+  - Level 1 Ability: Start of battle: Make the highest attack enemy Sleepy.
+  - Level 2 Ability: Start of battle: Make the two highest attack enemies Sleepy.
+  - Level 3 Ability: Start of battle: Make the three highest attack enemies Sleepy.
+  - Added to Custom pack.
+
+- Added Markhor.
+  - Tier: 6. 
+  - Stats: 6/6. 
+  - Level 1 Ability: Faint: Spend 4 trumpets to give friends permanent +4 attack and +4 health evenly spread.
+  - Level 2 Ability: Faint: Spend 4 trumpets to give friends permanent +8 attack and +8 health evenly spread.
+  - Level 3 Ability: Faint: Spend 4 trumpets to give friends permanent +12 attack and +12 health evenly spread.
+  - Added to Custom pack.
+
+- Added Rockhopper Penguin.
+  - Tier: 6. 
+  - Stats: 2/5. 
+  - Level 1 Ability: Empty front space: Jump to the front and gain +12 trumpets. Works 1 time per battle.
+  - Level 2 Ability: Empty front space: Jump to the front and gain +24 trumpets. Works 1 time per battle.
+  - Level 3 Ability: Empty front space: Jump to the front and gain +36 trumpets. Works 1 time per battle.
+  - Added to Custom pack.
+
+- Added Sunfish.
+  - Tier: 6. 
+  - Stats: 5/4. 
+  - Level 1 Ability: Start of battle: If turn number is odd, deal 4 damage to ALL pets ahead.
+  - Level 2 Ability: Start of battle: If turn number is odd, deal 8 damage to ALL pets ahead.
+  - Level 3 Ability: Start of battle: If turn number is odd, deal 12 damage to ALL pets ahead.
+  - Added to Custom pack.
+
+- Added Terror Bird.
+  - Tier: 6. 
+  - Stats: 8/3. 
+  - Level 1 Ability: Start of battle: Give Peanut perk to the front-most Strawberry friend.
+  - Level 2 Ability: Start of battle: Give Peanut perk to the two front-most Strawberry friends.
+  - Level 3 Ability: Start of battle: Give Peanut perk to the three front-most Strawberry friends.
+  - Added to Custom pack.
+
+- Added Therizinosaurus.
+  - Tier: 6. 
+  - Stats: 3/8. 
+  - Level 1 Ability: Start of battle: Give Coconut perk to the front-most Strawberry friend.
+  - Level 2 Ability: Start of battle: Give Coconut perk to the two front-most Strawberry friends.
+  - Level 3 Ability: Start of battle: Give Coconut perk to the three front-most Strawberry friends.
+  - Added to Custom pack.
+
+- Added Winter Spirit.
+  - Tier: 6. 
+  - Stats: 3/8. 
+  - Added to Custom pack.
+
+- Changed Adult Flounder.
+
+- Changed Budgie.
+  - Stats: 2/1 > 1/1. 
+  - Old level 1 ability: Start of battle: Replace own perk with Popcorn and +1 health.
+  - Old level 2 ability: Start of battle: Replace own perk with Popcorn and +2 health.
+  - Old level 3 ability: Start of battle: Replace own perk with Popcorn and +3 health.
+  - New level 1 ability: Start of battle: Gain the Popcorn perk and +1 health.
+  - New level 2 ability: Start of battle: Gain the Popcorn perk and +2 health.
+  - New level 3 ability: Start of battle: Gain the Popcorn perk and +3 health.
+
+- Changed Bulldog.
+  - Stats: 1/3 > 1/4. 
+
+- Changed Bus.
+  - Stats: 5/5 > 5/3. 
+
+- Changed Butterfly.
+
+- Changed Chipmunk.
+  - Old level 1 ability: Sell: Stock one 1-gold copy of this pet's food perk.
+  - Old level 2 ability: Sell: Stock two 1-gold copies of this pet's food perk.
+  - Old level 3 ability: Sell: Stock three 1-gold copies of this pet's food perk.
+  - New level 1 ability: Sell: Stock one free copy of this pet's food perk.
+  - New level 2 ability: Sell: Stock two free copies of this pet's food perk.
+  - New level 3 ability: Sell: Stock three free copies of this pet's food perk.
+
+- Changed Fairy Ball.
+
+- Changed Farmer Mouse.
+  - Stats: 2/2 > 2/3. 
+
+- Changed Firefly.
+  - Stats: 2/2 > 3/2. 
+
+- Changed Gibbon.
+  - Stats: 2/2 > 1/2. 
+
+- Changed Mimic Octopus.
+
+- Changed Monty.
+  - Stats: 2/1 > 3/3. 
+
+- Changed Moth.
+  - Old level 1 ability: Start of battle: Give front-most friend +2 attack.
+  - Old level 2 ability: Start of battle: Give front-most friend +4 attack.
+  - Old level 3 ability: Start of battle: Give front-most friend +6 attack.
+  - New level 1 ability: Start of battle: Give front-most friendly pet +2 attack.
+  - New level 2 ability: Start of battle: Give front-most friendly pet +4 attack.
+  - New level 3 ability: Start of battle: Give front-most friendly pet +6 attack.
+
+- Changed Murmel.
+  - Old level 1 ability: Friend level-up: Gain +2 attack until next turn.
+  - Old level 2 ability: Friend level-up: Gain +4 attack until next turn.
+  - Old level 3 ability: Friend level-up: Gain +6 attack until next turn.
+  - New level 1 ability: Friend gained experience: Gain +1 attack until next turn.
+  - New level 2 ability: Friend gained experience: Gain +2 attack until next turn.
+  - New level 3 ability: Friend gained experience: Gain +3 attack until next turn.
+
+- Changed Nessie?.
+
+- Changed Pengobble.
+  - Old level 1 ability: Gains mana: Gain 1 bonus mana. Works 3 times per turn.
+  - Old level 2 ability: Gains mana: Gain 2 bonus mana. Works 3 times per turn.
+  - Old level 3 ability: Gains mana: Gain 3 bonus mana. Works 3 times per turn.
+  - New level 1 ability: Gains mana: Gain 2 bonus mana. Works 2 times per turn.
+  - New level 2 ability: Gains mana: Gain 4 bonus mana. Works 2 times per turn.
+  - New level 3 ability: Gains mana: Gain 6 bonus mana. Works 2 times per turn.
+
+- Changed Pied Tamarin.
+  - Stats: 1/2 > 2/2. 
+
+- Changed Quail.
+
+- Changed Salmon.
+
+- Changed Silverfish.
+  - Stats: 2/1 > 2/2. 
+
+- Changed Sleeping Gelada.
+
+- Changed Dumbo Octopus.
+  - Old level 1 ability: Roll 3 times: Stock one food from OTHER packs and discount it by 1 gold.
+  - Old level 2 ability: Roll 3 times: Stock one food from OTHER packs and discount it by 2 gold.
+  - Old level 3 ability: Roll 3 times: Stock one food from OTHER packs and discount it by 3 gold.
+  - New level 1 ability: Roll 3 times: Stock ANY food from the 3 most recent tiers and discount it by 1 gold.
+  - New level 2 ability: Roll 3 times: Stock ANY food from the 3 most recent tiers and discount it by 2 gold.
+  - New level 3 ability: Roll 3 times: Stock ANY food from the 3 most recent tiers and discount it by 3 gold.
+
+- Changed Dung Beetle.
+  - Stats: 1/3 > 2/4. 
+  - Old level 1 ability: Faint: Deal 2 damage to the least healthy enemy for each food this has eaten this turn.
+  - Old level 2 ability: Faint: Deal 4 damage to the least healthy enemy for each food this has eaten this turn.
+  - Old level 3 ability: Faint: Deal 6 damage to the least healthy enemy for each food this has eaten this turn.
+  - New level 1 ability: Faint: Deal 3 damage to the least healthy enemy for each food this has eaten this turn.
+  - New level 2 ability: Faint: Deal 6 damage to the least healthy enemy for each food this has eaten this turn.
+  - New level 3 ability: Faint: Deal 9 damage to the least healthy enemy for each food this has eaten this turn.
+
+- Changed Frost Wolf.
+  - Stats: 2/4 > 2/3. 
+
+- Changed Gargoyle.
+  - Old level 1 ability: Faint: Spend mana to give the nearest friend behind +2 health and +1 more per mana.
+  - Old level 2 ability: Faint: Spend mana to give the nearest friend behind +4 health and +2 more per mana.
+  - Old level 3 ability: Faint: Spend mana to give the nearest friend behind +6 health and +3 more per mana.
+  - New level 1 ability: Faint: Spend mana to give the nearest friend behind +3 health and +1 more per mana.
+  - New level 2 ability: Faint: Spend mana to give the nearest friend behind +6 health and +2 more per mana.
+  - New level 3 ability: Faint: Spend mana to give the nearest friend behind +9 health and +3 more per mana.
+
+- Changed Golden Beetle.
+  - Stats: 2/3 > 4/3. 
+
+- Changed Hercules Beetle.
+  - Old level 1 ability: Sell: Give friends front-to-back +1 attack for each battle this has fought.
+  - Old level 2 ability: Sell: Give friends front-to-back +2 attack for each battle this has fought.
+  - Old level 3 ability: Sell: Give friends front-to-back +3 attack for each battle this has fought.
+  - New level 1 ability: Sell: Give friends +1 attack for each battle this has fought evenly spread.
+  - New level 2 ability: Sell: Give friends +2 attack for each battle this has fought evenly spread.
+  - New level 3 ability: Sell: Give friends +3 attack for each battle this has fought evenly spread.
+
+- Changed Mink.
+  - Old level 1 ability: Start of battle: Gain ANY random perk from the previous tier.
+  - Old level 2 ability: Start of battle: Gain ANY random perk from the previous tier with double effect.
+  - Old level 3 ability: Start of battle: Gain ANY random perk from the previous tier with triple effect.
+  - New level 1 ability: Start of battle: Gain ANY useful perk from the previous tier.
+  - New level 2 ability: Start of battle: Gain ANY useful perk from the previous tier with double effect.
+  - New level 3 ability: Start of battle: Gain ANY useful perk from the previous tier with triple effect.
+
+- Changed Ogopogo.
+  - Stats: 4/1 > 3/1. 
+
+- Changed Shrimp.
+  - Old level 1 ability: Friend sold: Give one random friend +1 health. Works 2 times per turn.
+  - Old level 2 ability: Friend sold: Give one random friend +2 health. Works 2 times per turn.
+  - Old level 3 ability: Friend sold: Give one random friend +3 health. Works 2 times per turn.
+  - New level 1 ability: Friend sold: Give one random friend +1 health. Works 3 times per turn.
+  - New level 2 ability: Friend sold: Give one random friend +2 health. Works 3 times per turn.
+  - New level 3 ability: Friend sold: Give one random friend +3 health. Works 3 times per turn.
+
+- Changed Anteater.
+  - Stats: 3/2 > 2/2. 
+
+- Changed Axehandle Hound.
+  - Stats: 5/2 > 4/3. 
+  - Old level 1 ability: Start of battle: If the enemy has multiple copies, deal 12 damage to one of them.
+  - Old level 2 ability: Start of battle: If the enemy has multiple copies, deal 24 damage to one of them.
+  - Old level 3 ability: Start of battle: If the enemy has multiple copies, deal 36 damage to one of them.
+  - New level 1 ability: Before attack: If opponent has duplicates, deal 2 damage to all enemies. Works 1 time per battle.
+  - New level 2 ability: Before attack: If opponent has duplicates, deal 4 damage to all enemies. Works 1 time per battle.
+  - New level 3 ability: Before attack: If opponent has duplicates, deal 6 damage to all enemies. Works 1 time per battle.
+
+
+- Changed Calygreyhound.
+  - Stats: 3/4 > 4/4. 
+
+- Changed Capybara.
+  - Stats: 2/5 > 2/6. 
+
+- Changed Flea.
+  - Stats: 4/2 > 3/2. 
+
+- Changed Flying Fish.
+  - Stats: 3/2 > 5/2. 
+
+- Changed Fur-Bearing Trout.
+  - Stats: 3/4 > 3/5. 
+
+- Changed Guineafowl.
+  - Stats: 2/4 > 2/3. 
+
+- Changed Leech.
+  - Stats: 2/4 > 2/3. 
+
+- Changed Meerkat.
+  - Old level 1 ability: Start of battle: Give adjacent friends +1 attack for every 3 gold spent this turn.
+  - Old level 2 ability: Start of battle: Give adjacent friends +2 attack for every 3 gold spent this turn.
+  - Old level 3 ability: Start of battle: Give adjacent friends +3 attack for every 3 gold spent this turn.
+  - New level 1 ability: Start of battle: Give adjacent friends +2 attack for every 5 gold spent this turn.
+  - New level 2 ability: Start of battle: Give adjacent friends +4 attack for every 5 gold spent this turn.
+  - New level 3 ability: Start of battle: Give adjacent friends +6 attack for every 5 gold spent this turn.
+
+- Changed Pangolin.
+  - Old level 1 ability: Faint: If you have a toy, give the nearest friend behind +5 health.
+  - Old level 2 ability: Faint: If you have a toy, give the nearest friend behind +10 health.
+  - Old level 3 ability: Faint: If you have a toy, give the nearest friend behind +15 health.
+  - New level 1 ability: Faint: If you have a toy, give the nearest friend behind +4 health.
+  - New level 2 ability: Faint: If you have a toy, give the nearest friend behind +8 health.
+  - New level 3 ability: Faint: If you have a toy, give the nearest friend behind +12 health.
+
+- Changed Rabbit.
+  - Old level 1 ability: Friendly ate food: Give them +1 health.
+  - Old level 2 ability: Friendly ate food: Give them +2 health.
+  - Old level 3 ability: Friendly ate food: Give them +3 health.
+  - New level 1 ability: Friendly ate food: Give them +1 health. Works 4 times per turn.
+  - New level 2 ability: Friendly ate food: Give them +2 health. Works 4 times per turn.
+  - New level 3 ability: Friendly ate food: Give them +3 health. Works 4 times per turn.
+
+- Changed Sarcastic Fringehead.
+  - Stats: 4/5 > 4/7. 
+
+- Changed Surgeon Fish.
+  - Stats: 3/3 > 4/3. 
+  - Old level 1 ability: Before attack: Spend 2 trumpets to give the nearest friend behind +6 health.
+  - Old level 2 ability: Before attack: Spend 2 trumpets to give the nearest friend behind +12 health.
+  - Old level 3 ability: Before attack: Spend 2 trumpets to give the nearest friend behind +18 health.
+  - New level 1 ability: Faint: Spend 2 trumpets to give the two nearest friends behind +4 health.
+  - New level 2 ability: Faint: Spend 2 trumpets to give the two nearest friends behind +8 health.
+  - New level 3 ability: Faint: Spend 2 trumpets to give the two nearest friends behind +12 health.
+
+- Changed Tatzelwurm.
+  - Stats: 2/3 > 1/3. 
+
+- Changed Tropical Fish.
+  - Stats: 2/3 > 1/3. 
+
+- Changed Cockatoo.
+  - Old level 1 ability: Buy: Give one random Faint friend +2 attack and +2 health.
+  - Old level 2 ability: Buy: Give one random Faint friend +4 attack and +4 health.
+  - Old level 3 ability: Buy: Give one random Faint friend +6 attack and +6 health.
+  - New level 1 ability: Buy: Give the highest tier friend +2 attack and +2 health.
+  - New level 2 ability: Buy: Give the highest tier friend +4 attack and +4 health.
+  - New level 3 ability: Buy: Give the highest tier friend +6 attack and +6 health.
+
+- Changed Cuttlefish.
+  - Old level 1 ability: Faint: Make the last enemy Inked.
+  - Old level 2 ability: Faint: Make the last two enemies Inked.
+  - Old level 3 ability: Faint: Make the last three enemies Inked.
+  - New level 1 ability: Faint: Remove 3 health from the last enemy and make it Inked.
+  - New level 2 ability: Faint: Remove 3 health from the last two enemies and make them Inked.
+  - New level 3 ability: Faint: Remove 3 health from the last three enemies and make them Inked.
+
+- Changed Deer.
+  - Stats: 1/1 > 2/2. 
+  - Old level 1 ability: Faint: Summon one 5/5 Bus with Chili.
+  - Old level 2 ability: Faint: Summon one 10/10 Bus with Chili.
+  - Old level 3 ability: Faint: Summon one 15/15 Bus with Chili.
+  - New level 1 ability: Faint: Summon one 5/3 Bus with Chili.
+  - New level 2 ability: Faint: Summon one 10/6 Bus with Chili.
+  - New level 3 ability: Faint: Summon one 15/9 Bus with Chili.
+
+
+- Changed Fairy Armadillo.
+ - Added to Star pack. Tier 4
+  - Stats: 3/6 > 2/6. 
+  - New level 1 ability: Hurt: If still standing, gain permanent +2 health and transform into a protected ball.
+  - New level 2 ability: Hurt: If still standing, gain permanent +4 health and transform into a protected ball.
+  - New level 3 ability: Hurt: If still standing, gain permanent +6 health and transform into a protected ball.
+
+- Changed Fossa.
+  - Old level 1 ability: Start of battle: Remove 2 health from the first enemy for each roll this turn.
+  - Old level 2 ability: Start of battle: Remove 2 health from the first two enemies for each roll this turn.
+  - Old level 3 ability: Start of battle: Remove 2 health from the first three enemies for each roll this turn.
+  - New level 1 ability: Start of battle: Remove 1 health from the two first enemies for each roll this turn.
+  - New level 2 ability: Start of battle: Remove 2 health from the two first enemies for each roll this turn.
+  - New level 3 ability: Start of battle: Remove 3 health from the two first enemies for each roll this turn.
+
+- Changed Hawk.
+  - Stats: 4/3 > 5/4. 
+
+- Changed Llama.
+  - Stats: 2/5 > 3/5. 
+
+- Changed Manta Ray.
+  - Stats: 5/6 > 5/7. 
+
+- Changed Penguin.
+  - Stats: 1/3 > 1/2. 
+
+- Changed Saiga Antelope.
+  - Old level 1 ability: Friend faints: Gain +1 trumpet.
+  - Old level 2 ability: Friend faints: Gain +2 trumpets.
+  - Old level 3 ability: Friend faints: Gain +3 trumpets.
+  - New level 1 ability: Two friends faint: Gain +3 trumpets.
+  - New level 2 ability: Two friends faint: Gain +6 trumpets.
+  - New level 3 ability: Two friends faint: Gain +9 trumpets.
+
+- Changed Sealion.
+  - Stats: 3/6 > 2/4. 
+
+- Changed Secretary Bird.
+  - Tier: 4 > 5. 
+  - Stats: 2/5 > 3/5. 
+  - Old level 1 ability: Two friends faint: Give the nearest friend ahead +3 attack and +3 health.
+  - Old level 2 ability: Two friends faint: Give the nearest friend ahead +6 attack and +6 health.
+  - Old level 3 ability: Two friends faint: Give the nearest friend ahead +9 attack and +9 health.
+  - New level 1 ability: Two friends faint: Give the nearest friend ahead +3 attack and +4 health.
+  - New level 2 ability: Two friends faint: Give the nearest friend ahead +6 attack and +8 health.
+  - New level 3 ability: Two friends faint: Give the nearest friend ahead +9 attack and +12 health.
+
+
+
+
+- Changed Visitor.
+  - Stats: 7/4 > 7/5. 
+
+- Changed Whale.
+  - Stats: 4/10 > 3/7. 
+  - Old level 1 ability: Start of battle: Swallow the nearest friend ahead and summon a new level 1 after fainting.
+  - Old level 2 ability: Start of battle: Swallow the nearest friend ahead and summon a new level 2 after fainting.
+  - Old level 3 ability: Start of battle: Swallow the nearest friend ahead and summon a new level 3 after fainting.
+  - New level 1 ability: Start of battle: Swallow the nearest friend ahead and release it at level 1 on faint.
+  - New level 2 ability: Start of battle: Swallow the nearest friend ahead and release it at level 2 on faint.
+  - New level 3 ability: Start of battle: Swallow the nearest friend ahead and release it at level 3 on faint.
+
+- Changed Armadillo.
+  - Stats: 2/6 > 2/10. 
+
+- Changed Beluga Whale.
+  - Stats: 3/8 > 2/5. 
+  - Old level 1 ability: Eats food: Swallow the left-most shop pet and release it as level 1 after fainting.
+  - Old level 2 ability: Eats food: Swallow the left-most shop pet and release it as level 2 after fainting.
+  - Old level 3 ability: Eats food: Swallow the left-most shop pet and release it as level 3 after fainting.
+  - New level 1 ability: Eats food: Swallow the left-most shop pet and summon it at level 1 with base stats on faint.
+  - New level 2 ability: Eats food: Swallow the left-most shop pet and summon it at level 2 with double stats on faint.
+  - New level 3 ability: Eats food: Swallow the left-most shop pet and summon it at level 3 with triple stats on faint.
+
+- Changed Boitata.
+  - Stats: 2/9 > 2/12. 
+  - Old level 1 ability: Before attack: Make the target Crisp. Works 1 time per battle.
+  - Old level 2 ability: Before attack: Make the target Crisp. Works 2 times per battle.
+  - Old level 3 ability: Before attack: Make the target Crisp. Works 3 times per battle.
+  - New level 1 ability: Before attack: Make the target Crisp. Works 2 times per battle.
+  - New level 2 ability: Before attack: Make the target Crisp. Works 4 times per battle.
+  - New level 3 ability: Before attack: Make the target Crisp. Works 6 times per battle.
+
+- Changed Egyptian Vulture.
+  - Added to Custom pack.
+  - Removed from Golden pack.
+
+- Changed Fire Ant.
+  - Stats: 6/4 > 8/3. 
+
+- Changed Hippocampus.
+  - Stats: 2/4 > 4/6. 
+  - Old level 1 ability: Friend gains health: Give it +1 attack. Double in battle.
+  - Old level 2 ability: Friend gains health: Give it +2 attack. Double in battle.
+  - Old level 3 ability: Friend gains health: Give it +3 attack. Double in battle.
+  - New level 1 ability: Friend ahead faints: Gain +1 mana for each roll this turn.
+  - New level 2 ability: Friend ahead faints: Gain +2 mana for each roll this turn.
+  - New level 3 ability: Friend ahead faints: Gain +3 mana for each roll this turn.
+
+- Changed Ibex.
+  - Stats: 6/4 > 6/7. 
+
+- Changed Mimic.
+  - Tier: 5 > 4. 
+
+
+
+- Changed Nessie.
+  - Stats: 4/6 > 3/5. 
+
+- Changed Nurse Shark.
+  - Stats: 4/6 > 5/7. 
+
+- Changed Orchid Mantis.
+  - Stats: 6/4 > 8/4. 
+
+- Changed Swordfish.
+  - Stats: 5/7 > 6/9. 
+
+- Changed Turkey.
+  - Old level 1 ability: Friend summoned: Give it +3 attack and +2 health.
+  - Old level 2 ability: Friend summoned: Give it +6 attack and +4 health.
+  - Old level 3 ability: Friend summoned: Give it +9 attack and +6 health.
+  - New level 1 ability: Friend summoned: Give it +3 attack and +1 health.
+  - New level 2 ability: Friend summoned: Give it +6 attack and +2 health.
+  - New level 3 ability: Friend summoned: Give it +9 attack and +3 health.
+
+- Changed Woodpecker.
+ Tier 3 → 5, Stats 4/3 → 6/5, Multiple trigger ability
+ - New level 1 ability: Start of battle: Deal 2 damage to the nearest two pets ahead. Triggers 2 times.
+  - New level 2 ability: Start of battle: Deal 2 damage to the nearest two pets ahead. Triggers 4 times.
+  - New level 3 ability: Start of battle: Deal 2 damage to the nearest two pets ahead. Triggers 6 times.
+
+
+- Changed Ammonite.
+  - Stats: 2/3 > 5/3. 
+
+- Changed Catfish.
+  - Stats: 3/3 > 4/6. 
+  - Old level 1 ability: Start of turn: Spend 1 gold to activate Buy ability on the nearest friend ahead.
+  - Old level 2 ability: Start of turn: Spend 1 gold to activate Buy ability on the nearest friend ahead. Triggers 2 times.
+  - Old level 3 ability: Start of turn: Spend 1 gold to activate Buy ability on the nearest friend ahead. Triggers 3 times.
+  - New level 1 ability: Start of turn: Activate Buy ability on the nearest friend ahead.
+  - New level 2 ability: Start of turn: Activate Buy ability on the nearest friend ahead. Triggers 2 times.
+  - New level 3 ability: Start of turn: Activate Buy ability on the nearest friend ahead. Triggers 3 times.
+
+- Changed German Shepherd.
+  - Stats: 10/4 > 10/6. 
+
+
+- Changed Real Velociraptor.
+  - Stats: 5/5 > 6/5. 
+
+- Changed Reindeer.
+  - Stats: 6/4 > 7/6. 
+
+- Changed Sabertooth Tiger.
+  - Stats: 3/5 > 4/5. 
+
+- Changed Walrus.
+  - Old level 1 ability: Faint: Give Peanut perk to one random friend.
+  - Old level 2 ability: Faint: Give Peanut perk to two random friends.
+  - Old level 3 ability: Faint: Give Peanut perk to three random friends.
+  - New level 1 ability: Faint: Give Peanut Butter perk to one random friend.
+  - New level 2 ability: Faint: Give Peanut Butter perk to two random friends.
+  - New level 3 ability: Faint: Give Peanut Butter perk to three random friends.
+
+- Changed Wolverine.
+  - Stats: 5/4 > 5/7. 
+"Four friends hurt: Remove 3/6/9 health from all enemies"
+
+- Added Ocarina.
+  - Tier: 4. 
+  - Level 1 Ability: Start of battle: Give the middle friendly pet +5 mana.
+  - Level 2 Ability: Start of battle: Give the middle friendly pet +10 mana.
+  - Level 3 Ability: Start of battle: Give the middle friendly pet +15 mana.
+
+- Added Thunder Hammer.
+  - Tier: 4. 
+  - Level 1 Ability: Start of battle: Give one random Tand & Tand +6 attack and +6 health.
+  - Level 2 Ability: Start of battle: Give one random Tand & Tand +12 attack and +12 health.
+  - Level 3 Ability: Start of battle: Give one random Tand & Tand +18 attack and +18 health.
+
+- Changed Broom.
+  - Min Tier: 1 > 2. 
+  - Max Tier: 6 > 5. 
+  - Old ability: Start of turn: Remove all friends and gain 10 gold + 1 times the turn number.
+  - New ability: Start of turn: Remove all friends and gain 10 gold + 2 times the turn number.
+
+
+
+- Changed Kite.
+  - Old ability: Empty front space: Remove 20% attack from the back-most friend and make it jump to the front.
+  - New ability: Empty front space: Remove 20% attack from the back-most friend and move it to the front.
+
+- Changed Peanut Jar.
+  - Old level 1 ability: Start of battle: Give the front-most friend Peanut perk.
+  - Old level 2 ability: Start of battle: Give the two front-most friends Peanut perk.
+  - Old level 3 ability: Start of battle: Give the three front-most friends Peanut perk.
+  - New level 1 ability: Start of battle: Give the front-most friend Peanut Butter perk.
+  - New level 2 ability: Start of battle: Give the two front-most friends Peanut Butter perk.
+  - New level 3 ability: Start of battle: Give the three front-most friends Peanut Butter perk.
+
+- Added Faint Bread.
+  - Tier: 2.
+  - Ability: Give one pet the Faint Bread perk.
+  - Perk: Faint: Summon ANY one tier 1 <b>Faint</b> pet.
+  - Added to Unicorn pack.
+
+- Added Cauliflower.
+  - Tier: 4.
+  - Ability: Give one pet the Cauliflower perk.
+  - Perk: Knock out: If still standing, gain permanent +1 attack and +1 health, once.
+  - Added to Custom pack.
+
+- Added Melon Slice.
+  - Tier: 4.
+  - Ability: Give one pet the Melon Slice perk.
+  - Perk: Take 10 less damage, once.
+
+- Added Kiwano.
+  - Tier: 5.
+  - Ability: Give one pet the Kiwano perk.
+  - Perk: Ability deals exactly 10 damage, once.
+  - Added to Custom pack.
+
+- Added Peanut Butter.
+  - Tier: 6.
+  - Ability: Give one pet the Peanut Butter perk.
+  - Perk: Knock out any pet attacked and hurt by this, once.
+
+- Added Starfruit.
+  - Tier: 6.
+  - Ability: Choose one tier 5-6 perk food to stock for free from ANY pack.
+  - Perk: 
+  - Added to Star pack.
+
+- Changed Cherries.
+  - Old perk: Start of battle: Gain 2 trumpets.
+  - New perk: Before battle: Gain 2 trumpets.
+
+- Changed Love Potion.
+  - Tier: 2 > 4. 
+
+- Changed Radish.
+  - Old perk: Start of battle: Gain ANY random perk from the pet's tier.
+  - New perk: Before battle: Gain ANY useful perk from the pet's tier.
+
+- Changed Water of Youth.
+  - Tier: 2 > 3. 
+
+- Changed Easter Egg.
+  - Tier: 3 > 5. 
+  - Old perk: Faint: Summon one 2/1 Bunny that attacks for double damage.
+  - New perk: Faint: Summon one 3/3 Bunny that attacks for double damage.
+  - Added to Custom pack.
+  - Removed from Unicorn pack.
+
+- Changed Cheese.
+  - Old perk: Attack with double damage, once.
+  - New perk: Attack with at least 15 attack, once.
+
+- Changed Salt.
+  - Old perk: Attack lower tier pets for double damage.
+  - New perk: Attack for double damage, once.
+
+- Changed Eggplant.
+  - Old perk: Start of battle: Push opposite enemy 1 space forward.
+  - New perk: Before battle: Push opposite enemy 1 space forward.
+
+- Changed Popcorn.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Added Sleepy.
+  - Ability: Attack with half damage, once.
+
+- Added Tasty.
+  - Ability: Faint: Give one random enemy permanent +2 attack and +2 health.
+
+5
+- Changed Pengobble.
+  -Stats 1/3 → 1/4, "Gains mana: Gain 2/4/6 bonus mana. Works 2 times per turn"
+
+- Changed Stoat.
+  - Stats: 2/2 > 3/3. 
+
+
+
+- Changed Giant Isopod.
+  - Old level 1 ability: Faint: Give friends +2 health. Spend 2 trumpets to upgrade this ability to give +1 more health.
+  - Old level 2 ability: Faint: Give friends +4 health. Spend 2 trumpets to upgrade this ability to give +2 more health.
+  - Old level 3 ability: Faint: Give friends +6 health. Spend 2 trumpets to upgrade this ability to give +3 more health.
+  - New level 1 ability: Faint: Give friends +2 health. Spend 2 trumpets to give 1 more health in the future.
+  - New level 2 ability: Faint: Give friends +4 health. Spend 2 trumpets to give 2 more health in the future.
+  - New level 3 ability: Faint: Give friends +6 health. Spend 2 trumpets to give 3 more health in the future.
+
+- Changed Panther.
+  - Old level 1 ability: Perks are two times stronger on this.
+  - Old level 2 ability: Perks are three times stronger on this.
+  - Old level 3 ability: Perks are four times stronger on this.
+  - New level 1 ability: Perks are two times stronger on this in battle.
+  - New level 2 ability: Perks are three times stronger on this in battle.
+  - New level 3 ability: Perks are four times stronger on this in battle.
+
+
+
+Danger Pack
+- Added African Wild Dog.
+  - Tier: 1. 
+  - Stats: 2/1. 
+  - Level 1 Ability: Start of battle: Set attack to 3 and jump-attack the first enemy.
+  - Level 2 Ability: Start of battle: Set attack to 6 and jump-attack the first enemy.
+  - Level 3 Ability: Start of battle: Set attack to 9 and jump-attack the first enemy.
+  - Added to Danger pack.
+
+- Added Bombus Dahlbomii.
+  - Tier: 1. 
+  - Stats: 1/2. 
+  - Level 1 Ability: Two enemy attacks: Deal 1 damage to the first enemy. Works 2 times per turn.
+  - Level 2 Ability: Two enemy attacks: Deal 2 damage to the first enemy. Works 2 times per turn.
+  - Level 3 Ability: Two enemy attacks: Deal 3 damage to the first enemy. Works 2 times per turn.
+  - Added to Danger pack.
+
+- Added Ethiopian Wolf.
+  - Tier: 1. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Faint: Remove 1 attack from the first enemy.
+  - Level 2 Ability: Faint: Remove 1 attack from the first two enemies.
+  - Level 3 Ability: Faint: Remove 1 attack from the first three enemies.
+  - Added to Danger pack.
+
+- Added Fan Mussel.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Takes 1 less damage. Works 2 times per turn.
+  - Level 2 Ability: Takes 2 less damage. Works 2 times per turn.
+  - Level 3 Ability: Takes 3 less damage. Works 2 times per turn.
+  - Added to Danger pack.
+
+- Added Ili Pika.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Friend transformed: Give it +1 to its highest stat until next turn.
+  - Level 2 Ability: Friend transformed: Give it +2 to its highest stat until next turn.
+  - Level 3 Ability: Friend transformed: Give it +3 to its highest stat until next turn.
+  - Added to Danger pack.
+
+- Added Iriomote Cat.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Before battle: Transform into ANY level 1 pet from tier 1.
+  - Level 2 Ability: Before battle: Transform into ANY level 1 pet from tier 2.
+  - Level 3 Ability: Before battle: Transform into ANY level 1 pet from tier 3.
+  - Added to Danger pack.
+
+- Added Malay Tapir.
+  - Tier: 1. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Adjacent friend attacked: Gain +1 health.
+  - Level 2 Ability: Adjacent friend attacked: Gain +2 health.
+  - Level 3 Ability: Adjacent friend attacked: Gain +3 health.
+  - Added to Danger pack.
+
+- Added Togian Babirusa.
+  - Tier: 1. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Faint: Give one random enemy +1 attack and +1 health.
+  - Level 2 Ability: Faint: Give one random enemy +1 attack and +1 health.
+  - Level 3 Ability: Faint: Give one random enemy +1 attack and +1 health.
+  - Added to Danger pack.
+
+- Added Tooth Billed Pigeon.
+  - Tier: 1. 
+  - Stats: 3/1. 
+  - Level 1 Ability: Sell: Stock one free Seed Pile.
+  - Level 2 Ability: Sell: Stock two free Seed Pile.
+  - Level 3 Ability: Sell: Stock three free Seed Pile.
+  - Added to Danger pack.
+
+- Added Volcano Snail.
+  - Tier: 1. 
+  - Stats: 1/4. 
+  - Level 1 Ability: Faint: Make one random perk-less enemy Toasty.
+  - Level 2 Ability: Faint: Make two random perk-less enemies Toasty.
+  - Level 3 Ability: Faint: Make three random perk-less enemies Toasty.
+  - Added to Danger pack.
+
+- Added Angry Pygmy Hog.
+  - Tier: 2. 
+  - Stats: 5/5. 
+  - Level 1 Ability: Really angry!
+  - Level 2 Ability: Really angry!
+  - Level 3 Ability: Really angry!
+  - Added to Danger pack.
+
+- Added Araripe Manakin.
+  - Tier: 2. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Friend jumped or transformed: Gain +2 health until next turn. Works 3 times per turn.
+  - Level 2 Ability: Friend jumped or transformed: Gain +4 health until next turn. Works 3 times per turn.
+  - Level 3 Ability: Friend jumped or transformed: Gain +6 health until next turn. Works 3 times per turn.
+  - Added to Danger pack.
+
+- Added Darwin's Fox.
+  - Tier: 2. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Friend faints: Jump-attack the enemy that knocked the friend out. Works 1 time per turn.
+  - Level 2 Ability: Friend faints: Jump-attack the enemy that knocked the friend out. Works 2 times per turn.
+  - Level 3 Ability: Friend faints: Jump-attack the enemy that knocked the friend out. Works 3 times per turn.
+  - Added to Danger pack.
+
+- Added European Mink.
+  - Tier: 2. 
+  - Stats: 4/3. 
+  - Level 1 Ability: Adjacent friend attacked: Give adjacent friends +1 attack. Works 3 times per turn.
+  - Level 2 Ability: Adjacent friend attacked: Give adjacent friends +2 attack. Works 3 times per turn.
+  - Level 3 Ability: Adjacent friend attacked: Give adjacent friends +3 attack. Works 3 times per turn.
+  - Added to Danger pack.
+
+- Added Proboscis Monkey.
+  - Tier: 2. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Start of turn: Transform the nearest friend ahead into another pet from the same tier.
+  - Level 2 Ability: Start of turn: Transform the nearest two friends ahead into other pets from the same tier.
+  - Level 3 Ability: Start of turn: Transform the nearest three friends ahead into other pets from the same tier.
+  - Added to Danger pack.
+
+- Added Pygmy Hog.
+  - Tier: 2. 
+  - Stats: 1/2. 
+  - Level 1 Ability: Five enemy attacks: Transform into a 5/5 Angry Pygmy Hog with Garlic perk.
+  - Level 2 Ability: Five enemy attacks: Transform into a 10/10 Angry Pygmy Hog with Garlic perk.
+  - Level 3 Ability: Five enemy attacks: Transform into a 15/15 Angry Pygmy Hog with Garlic perk.
+  - Added to Danger pack.
+
+- Added Saker Falcon.
+  - Tier: 2. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Before attack: If outnumbered, gain +2 attack and +2 health. Works 3 times per turn.
+  - Level 2 Ability: Before attack: If outnumbered, gain +4 attack and +4 health. Works 3 times per turn.
+  - Level 3 Ability: Before attack: If outnumbered, gain +6 attack and +6 health. Works 3 times per turn.
+  - Added to Danger pack.
+
+- Added Saola.
+  - Tier: 2. 
+  - Stats: 2/3. 
+  - Added to Danger pack.
+
+- Added Taita Shrew.
+  - Tier: 2. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Start of battle: Transform into a level 1 Weasel.
+  - Level 2 Ability: Start of battle: Transform into a level 2 Weasel.
+  - Level 3 Ability: Start of battle: Transform into a level 3 Weasel.
+  - Added to Danger pack.
+
+- Added Takhi.
+  - Tier: 2. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Faint: Summon one 3/2 African Wild Dog that jump-attacks the first enemy.
+  - Level 2 Ability: Faint: Summon one 6/4 African Wild Dog that jump-attacks the first enemy.
+  - Level 3 Ability: Faint: Summon one 9/6 African Wild Dog that jump-attacks the first enemy.
+  - Added to Danger pack.
+
+- Added White-Bellied Heron.
+  - Tier: 2. 
+  - Stats: 4/2. 
+  - Level 1 Ability: Start of battle: Give Meat Bone to the friend ahead.
+  - Level 2 Ability: Start of battle: Give Meat Bone to the two friends ahead.
+  - Level 3 Ability: Start of battle: Give Meat Bone to the three friends ahead.
+  - Added to Danger pack.
+
+- Added Amami Rabbit.
+  - Tier: 3. 
+  - Stats: 1/3. 
+  - Level 1 Ability: Start of battle: Gain +1 attack permanently and jump-attack the highest attack enemy.
+  - Level 2 Ability: Start of battle: Gain +2 attack permanently and jump-attack the highest attack enemy.
+  - Level 3 Ability: Start of battle: Gain +3 attack permanently and jump-attack the highest attack enemy.
+  - Added to Danger pack.
+
+- Added Blue-Throated Macaw.
+  - Tier: 3. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Friend transformed: Give it +2 attack and +1 health until next turn.
+  - Level 2 Ability: Friend transformed: Give it +4 attack and +2 health until next turn.
+  - Level 3 Ability: Friend transformed: Give it +6 attack and +3 health until next turn.
+  - Added to Danger pack.
+
+- Added Hirola.
+  - Tier: 3. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Faint: Summon two 1/2 Ethiopian Wolves.
+  - Level 2 Ability: Faint: Summon two 2/4 Ethiopian Wolves.
+  - Level 3 Ability: Faint: Summon two 3/6 Ethiopian Wolves.
+  - Added to Danger pack.
+
+- Added Monkey-Faced Bat.
+  - Tier: 3. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Anyone behind hurt: Give two random friends +1 attack and +1 health. Works 3 times per battle.
+  - Level 2 Ability: Anyone behind hurt: Give two random friends +2 attack and +2 health. Works 3 times per battle.
+  - Level 3 Ability: Anyone behind hurt: Give two random friends +3 attack and +3 health. Works 3 times per battle.
+  - Added to Danger pack.
+
+- Added Pygmy Hippo.
+  - Tier: 3. 
+  - Stats: 2/7. 
+  - Level 1 Ability: Five enemy attacks: Deal 33% of health as damage to the least healthy enemy.
+  - Level 2 Ability: Five enemy attacks: Deal 33% of health as damage to the two least healthy enemies.
+  - Level 3 Ability: Five enemy attacks: Deal 33% of health as damage to the three least healthy enemies.
+  - Added to Danger pack.
+
+- Added Roloway Monkey.
+  - Tier: 3. 
+  - Stats: 2/5. 
+  - Level 1 Ability: Start of battle: Transform two friends ahead into ANY useful level 1 Hurt pets from tier 3 or lower.
+  - Level 2 Ability: Start of battle: Transform two friends ahead into ANY useful level 2 Hurt pets from tier 3 or lower.
+  - Level 3 Ability: Start of battle: Transform two friends ahead into ANY useful level 3 Hurt pets from tier 3 or lower.
+  - Added to Danger pack.
+
+- Added Spoon-Billed Sandpiper.
+  - Tier: 3. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Start of turn: Give adjacent friends +1 to their lowest stat.
+  - Level 2 Ability: Start of turn: Give adjacent friends +2 to their lowest stat.
+  - Level 3 Ability: Start of turn: Give adjacent friends +3 to their lowest stat.
+  - Added to Danger pack.
+
+- Added Takin.
+  - Tier: 3. 
+  - Stats: 1/2. 
+  - Level 1 Ability: Friend ahead hurt: Give the highest attack friend -1 attack and +2 health.
+  - Level 2 Ability: Friend ahead hurt: Give the two highest attack friends -1 attack and +2 health.
+  - Level 3 Ability: Friend ahead hurt: Give the three highest attack friends -1 attack and +2 health.
+  - Added to Danger pack.
+
+- Added Tree Kangaroo.
+  - Tier: 3. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Start of battle: Make the last perk-less enemy Silly and activate it.
+  - Level 2 Ability: Start of battle: Make the last perk-less enemy Silly and activate it twice.
+  - Level 3 Ability: Start of battle: Make the last perk-less enemy Silly and activate it thrice.
+  - Added to Danger pack.
+
+- Added Tucuxi.
+  - Tier: 3. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Faint: Push the back-most friend to the front and give it +3 attack and +3 health in battle.
+  - Level 2 Ability: Faint: Push the back-most friend to the front and give it +6 attack and +6 health in battle.
+  - Level 3 Ability: Faint: Push the back-most friend to the front and give it +9 attack and +9 health in battle.
+  - Added to Danger pack.
+
+- Added Amazon River Dolphin.
+  - Tier: 4. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Adjacent friend attacked: Deal 3 damage to its target, or gain +3 attack.
+  - Level 2 Ability: Adjacent friend attacked: Deal 6 damage to its target, or gain +6 attack.
+  - Level 3 Ability: Adjacent friend attacked: Deal 9 damage to its target, or gain +9 attack.
+  - Added to Danger pack.
+
+- Added Angelshark.
+  - Tier: 4. 
+  - Stats: 3/4. 
+  - Added to Danger pack.
+
+- Added Bonobo.
+  - Tier: 4. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Start of turn: Transform into the front-most friend.
+  - Level 2 Ability: Start of turn: Transform into the front-most friend.
+  - Level 3 Ability: Start of turn: Transform into the front-most friend.
+  - Added to Danger pack.
+
+- Added Giant Otter.
+  - Tier: 4. 
+  - Stats: 2/2. 
+  - Level 1 Ability: Before battle: Give friends +3 attack and +3 health while in start of battle.
+  - Level 2 Ability: Before battle: Give friends +6 attack and +6 health while in start of battle.
+  - Level 3 Ability: Before battle: Give friends +9 attack and +9 health while in start of battle.
+  - Added to Danger pack.
+
+- Added Giant Tortoise.
+  - Tier: 4. 
+  - Stats: 4/8. 
+Health can go to 100!
+  - Added to Danger pack.
+
+- Added Golden Tamarin.
+  - Tier: 4. 
+  - Stats: 4/6. 
+  - Level 1 Ability: Before battle: Transform into ANY useful level 1 Start of Battle pet from tier 5.
+  - Level 2 Ability: Before battle: Transform into ANY useful level 2 Start of Battle pet from tier 5.
+  - Level 3 Ability: Before battle: Transform into ANY useful level 3 Start of Battle pet from tier 5.
+  - Added to Danger pack.
+
+- Added Humphead Wrasse.
+  - Tier: 4. 
+  - Stats: 6/4. 
+  - Level 1 Ability: Start of battle: Remove 25% attack from the highest attack enemy.
+  - Level 2 Ability: Start of battle: Remove 50% attack from the highest attack enemy.
+  - Level 3 Ability: Start of battle: Remove 75% attack from the highest attack enemy.
+  - Added to Danger pack.
+
+- Added Kakapo.
+  - Tier: 4. 
+  - Stats: 2/3. 
+  - Level 1 Ability: Friend transformed: Gain its level 1 ability. Works 1 time per battle.
+  - Level 2 Ability: Friend transformed: Gain its level 2 ability. Works 2 times per battle.
+  - Level 3 Ability: Friend transformed: Gain its level 3 ability. Works 3 times per battle.
+  - Added to Danger pack.
+
+- Added Longcomb Sawfish.
+  - Tier: 4. 
+  - Stats: 3/3. 
+  - Level 1 Ability: Five enemy attacks: Gain +4 health and remove 4 health from all enemies.
+  - Level 2 Ability: Five enemy attacks: Gain +8 health and remove 8 health from all enemies.
+  - Level 3 Ability: Five enemy attacks: Gain +12 health and remove 12 health from all enemies.
+  - Added to Danger pack.
+
+- Added Tasmanian Devil.
+  - Tier: 4. 
+  - Stats: 5/5. 
+  - Level 1 Ability: Start of battle: Jump-attack the lowest attack enemy for 50% attack damage.
+  - Level 2 Ability: Start of battle: Jump-attack the lowest attack enemy for 100% attack damage.
+  - Level 3 Ability: Start of battle: Jump-attack the lowest attack enemy for 150% attack damage.
+  - Added to Danger pack.
+
+- Added Aye-aye.
+  - Tier: 5. 
+  - Stats: 3/5. 
+  - Level 1 Ability: Eight enemy attacks: Summon two Lemurs and give all friends +3 and +3.
+  - Level 2 Ability: Eight enemy attacks: Summon two Lemurs and give all friends +6 and +6.
+  - Level 3 Ability: Eight enemy attacks: Summon two Lemurs and give all friends +9 and +9.
+  - Added to Danger pack.
+
+- Added Banggai Cardinalfish.
+  - Tier: 5. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Start of battle: Remove 6 attack from everyone to a minimum of 5 attack.
+  - Level 2 Ability: Start of battle: Remove 12 attack from everyone to a minimum of 5 attack.
+  - Level 3 Ability: Start of battle: Remove 18 attack from everyone to a minimum of 5 attack.
+  - Added to Danger pack.
+
+- Added Geometric Tortoise.
+  - Tier: 5. 
+  - Stats: 3/10. 
+  - Level 1 Ability: Hurt: Deal 33% of damage taken as damage to one random enemy.
+  - Level 2 Ability: Hurt: Deal 66% of damage taken as damage to one random enemy.
+  - Level 3 Ability: Hurt: Deal 100% of damage taken as damage to one random enemy.
+  - Added to Danger pack.
+
+- Added Giant Pangasius.
+  - Tier: 5. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Faint: Deal 4 damage to one random enemy for each friendly transformation this turn.
+  - Level 2 Ability: Faint: Deal 8 damage to one random enemy for each friendly transformation this turn.
+  - Level 3 Ability: Faint: Deal 12 damage to one random enemy for each friendly transformation this turn.
+  - Added to Danger pack.
+
+- Added Hawaiian Monk Seal.
+  - Tier: 5. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Friend attacks: If still standing, give it permanent +2 health. Works on three friends per turn.
+  - Level 2 Ability: Friend attacks: If still standing, give it permanent +4 health. Works on three friends per turn.
+  - Level 3 Ability: Friend attacks: If still standing, give it permanent +6 health. Works on three friends per turn.
+  - Added to Danger pack.
+
+- Added Marine Iguana.
+  - Tier: 5. 
+  - Stats: 4/5. 
+  - Level 1 Ability: Before friend attacks: Give it Melon. Works on one friend per turn.
+  - Level 2 Ability: Before friend attacks: Give it Melon. Works on two different friends per turn.
+  - Level 3 Ability: Before friend attacks: Give it Melon. Works on three different friends per turn.
+  - Added to Danger pack.
+
+- Added Painted Terrapin.
+  - Tier: 5. 
+  - Stats: 4/6. 
+  - Level 1 Ability: Faint: Give White Okra perk to the nearest friend behind.
+  - Level 2 Ability: Faint: Give White Okra perk to the two nearest friends behind.
+  - Level 3 Ability: Faint: Give White Okra perk to the three nearest friends behind.
+  - Added to Danger pack.
+
+- Added Red Panda.
+  - Tier: 5. 
+  - Stats: 4/4. 
+  - Level 1 Ability: Buy: Choose and transform into a pet from the next shop tier from ANY pack.
+  - Level 2 Ability: Buy: Choose and transform into a pet from the next shop tier from ANY pack.
+  - Level 3 Ability: Buy: Choose and transform into a pet from the next shop tier from ANY pack.
+  - Added to Danger pack.
+
+- Added Snow Leopard.
+  - Tier: 5. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Start of battle: Gain +5 attack and +5 health and jump-attack one random enemy.
+  - Level 2 Ability: Start of battle: Gain +10 attack and +10 health and jump-attack one random enemy.
+  - Level 3 Ability: Start of battle: Gain +15 attack and +15 health and jump-attack one random enemy.
+  - Added to Danger pack.
+
+- Added Taita Thrush.
+  - Tier: 5. 
+  - Stats: 3/4. 
+  - Level 1 Ability: Adjacent friend attacked: Give friends +1 attack and +1 health. Works 3 times per turn.
+  - Level 2 Ability: Adjacent friend attacked: Give friends +2 attack and +2 health. Works 3 times per turn.
+  - Level 3 Ability: Adjacent friend attacked: Give friends +3 attack and +3 health. Works 3 times per turn.
+  - Added to Danger pack.
+
+- Added Amsterdam Albatross.
+  - Tier: 6. 
+  - Stats: 3/6. 
+  - Level 1 Ability: Friend transformed: Give it permanent +1 attack and +2 health. Works 3 times per turn.
+  - Level 2 Ability: Friend transformed: Give it permanent +2 attack and +4 health. Works 3 times per turn.
+  - Level 3 Ability: Friend transformed: Give it permanent +3 attack and +6 health. Works 3 times per turn.
+  - Added to Danger pack.
+
+- Added Bay Cat.
+  - Tier: 6. 
+  - Stats: 7/5. 
+  - Level 1 Ability: Faint: Summon ANY one useful Start of Battle pet from tier 4 and activate its ability.
+  - Level 2 Ability: Faint: Summon ANY two useful Start of Battle pets from tier 4 and activate their abilities.
+  - Level 3 Ability: Faint: Summon ANY three useful Start of Battle pets from tier 4 and activate their abilities.
+  - Added to Danger pack.
+
+- Added Black Rhino.
+  - Tier: 6. 
+  - Stats: 5/9. 
+  - Level 1 Ability: Eight enemy attacks: Deal 30 damage to one random enemy.
+  - Level 2 Ability: Eight enemy attacks: Deal 30 damage to two random enemies.
+  - Level 3 Ability: Eight enemy attacks: Deal 30 damage to three random enemies.
+  - Added to Danger pack.
+
+- Added Blue Whale.
+  - Tier: 6. 
+  - Stats: 12/12. 
+  - New level 1 ability: Start of turn: Remove 4 friends, gain +10 gold, and give current and future shop pets +2 attack and +2 health.
+  - New level 2 ability: Start of turn: Remove 4 friends, gain +10 gold, and give current and future shop pets +4 attack and +4 health.
+  - New level 3 ability: Start of turn: Remove 4 friends, gain +10 gold, and give current and future shop pets +6 attack and +6 health.
+  - Added to Danger pack.
+
+- Added California Condor.
+  - Tier: 6. 
+  - Stats: 10/3. 
+  - Level 1 Ability: Friend transformed: Give it +3 experience. Works 2 times per battle.
+  - Level 2 Ability: Friend transformed: Give it +3 experience. Works 2 times per battle.
+  - Level 3 Ability: Friend transformed: Give it +3 experience. Works 2 times per battle.
+  - Added to Danger pack.
+
+- Added Green Sea Turtle.
+  - Tier: 6. 
+  - Stats: 5/6. 
+  - Level 1 Ability: Five enemy attacks: Give all friendly pets Melon that blocks 20 damage. Works 1 time per turn.
+  - Level 2 Ability: Five enemy attacks: Give all friendly pets Melon that blocks 40 damage. Works 1 time per turn.
+  - Level 3 Ability: Five enemy attacks: Give all friendly pets Melon that blocks 60 damage. Works 1 time per turn.
+  - Added to Danger pack.
+
+- Added Helmeted Hornbill.
+  - Tier: 6. 
+  - Stats: 5/4. 
+  - Added to Danger pack.
+
+- Added Hooded Seal.
+  - Tier: 6. 
+  - Stats: 4/9. 
+  - Level 1 Ability: Friend transformed: Transform it back and down to level 1. Works 2 times per turn.
+  - Level 2 Ability: Friend transformed: Transform it back and down to level 2. Works 2 times per turn.
+  - Level 3 Ability: Friend transformed: Transform it back and down to level 3. Works 2 times per turn.
+  - Added to Custom pack.
+
+- Added Philippine Eagle.
+  - Tier: 6. 
+  - Stats: 6/5. 
+  - Level 1 Ability: Anyone jumped: Give one random friend +4 attack and +4 health.
+  - Level 2 Ability: Anyone jumped: Give one random friend +8 attack and +8 health.
+  - Level 3 Ability: Anyone jumped: Give one random friend +12 attack and +12 health.
+  - Added to Danger pack.
+
+- Added Silky Sifaka.
+  - Tier: 6. 
+  - Stats: 4/6. 
+  - Level 1 Ability: Start of battle: Transform two friends behind into ANY useful level 1 Faint pets from tier 6.
+  - Level 2 Ability: Start of battle: Transform two friends behind into ANY useful level 2 Faint pets from tier 6.
+  - Level 3 Ability: Start of battle: Transform two friends behind into ANY useful level 3 Faint pets from tier 6.
+  - Added to Danger pack.
+
+- Added Sumatran Tiger.
+  - Tier: 6. 
+  - Stats: 8/5. 
+  - Level 1 Ability: Start of battle: Jump-attack the opposite enemy.
+  - Level 2 Ability: Start of battle: Jump-attack the opposite enemy and deal 6 damage to adjacent enemies.
+  - Level 3 Ability: Start of battle: Jump-attack the opposite enemy and deal 12 damage to adjacent enemies.
+  - Added to Danger pack.
+
+- Changed Dung Beetle.
+  - Old level 1 ability: Faint: Deal 3 damage to the least healthy enemy for each food this has eaten this turn.
+  - Old level 2 ability: Faint: Deal 6 damage to the least healthy enemy for each food this has eaten this turn.
+  - Old level 3 ability: Faint: Deal 9 damage to the least healthy enemy for each food this has eaten this turn.
+  - New level 1 ability: Faint: Deal 3 damage to the least healthy enemy for each food eaten this turn, up to 3 food.
+  - New level 2 ability: Faint: Deal 6 damage to the least healthy enemy for each food eaten this turn, up to 3 food.
+  - New level 3 ability: Faint: Deal 9 damage to the least healthy enemy for each food eaten this turn, up to 3 food.
+
+- Changed Fairy Ball.
+Stats 3/6 → 2/6, "Hurt: If still standing, gain permanent +2/4/6 health and transform into protected ball"
+
+- Changed Axolotl.
+  - Stats: 2/3 > 2/5. 
+  - New level 1 ability: Friendly gained perk: Give it permanent +1 attack and +1 health. Works 3 times per turn.
+  - New level 2 ability: Friendly gained perk: Give it permanent +2 attack and +2 health. Works 3 times per turn.
+  - New level 3 ability: Friendly gained perk: Give it permanent +3 attack and +3 health. Works 3 times per turn.
+
+- Changed Elephant Seal.
+  - Stats: 3/9 > 2/8. 
+  - Old level 1 ability: Gain perk: Give friends +1 attack and +1 health. Double in battle.
+  - Old level 2 ability: Gain perk: Give friends +2 attack and +2 health. Double in battle.
+  - Old level 3 ability: Gain perk: Give friends +3 attack and +3 health. Double in battle.
+  - New level 1 ability: Gain perk: Give three friends +5 attack and +5 health until next turn. Works 1 time per turn.
+  - New level 2 ability: Gain perk: Give three friends +10 attack and +10 health until next turn. Works 1 time per turn.
+  - New level 3 ability: Gain perk: Give three friends +15 attack and +15 health until next turn. Works 1 time per turn.
+
+
+- Added Fresh Water.
+  - Tier: 1.
+  - Ability: Give one pet +2 to their lowest stat.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Gros Michel Banana.
+  - Tier: 1.
+  - Ability: Give one pet the Gros Michel Banana perk.
+  - Perk: Before attack: Transform into an Ant.
+  - Added to Danger pack.
+
+- Added Seed Pile.
+  - Tier: 1.
+  - Ability: Give one pet +1 health.
+  - Perk: 
+
+- Added Unagi.
+  - Tier: 1.
+  - Ability: Give one pet the Unagi perk.
+  - Perk: Start of battle: Deal 2 damage to a random enemy.
+  - Added to Danger pack.
+
+- Added Antarctic Krill.
+  - Tier: 2.
+  - Ability: Stock ANY free useful perk food from the current tier.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Cod Roe.
+  - Tier: 2.
+  - Ability: Give one pet the Cod Roe perk.
+  - Perk: Faint: Summon one 2/3 Fish.
+  - Added to Danger pack.
+
+- Added Sudduth Tomato.
+  - Tier: 2.
+  - Ability: Give one pet the Sudduth Tomato perk.
+  - Perk: Hurt: If still standing, gain permanent +1 health, once.
+  - Added to Danger pack.
+
+- Added Carrot Parisier.
+  - Tier: 3.
+  - Ability: Give one pet +3 attack.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Geechee Red Pea.
+  - Tier: 3.
+  - Ability: Give one pet +3 health.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added White Truffle.
+  - Tier: 3.
+  - Ability: Give one pet the White Truffle perk.
+  - Perk: Friend faints: Jump-attack the highest attack enemy, once.
+  - Added to Danger pack.
+
+- Added Chickpea.
+  - Tier: 4.
+  - Ability: Transform one pet into another of the same tier and give two other +1 attack and +1 health.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Maple Syrup.
+  - Tier: 4.
+  - Ability: Give one pet the Maple Syrup perk.
+  - Perk: Deal and take half attack damage, remove after attack.
+  - Added to Danger pack.
+
+- Added Vanilla Bean.
+  - Tier: 4.
+  - Ability: Give the two left-most shop pets +2 attack and +3 health.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Cocoa Bean.
+  - Tier: 5.
+  - Ability: Give one pet the Cocoa Bean perk.
+  - Perk: Before attack: Transform into an exact copy of a random enemy, once.
+  - Added to Danger pack.
+
+- Added Oblonot.
+  - Tier: 5.
+  - Ability: Give one pet +5 to its lowest stat.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Coffee Bean.
+  - Tier: 6.
+  - Ability: Activate one pet's ability.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Judean Date.
+  - Tier: 6.
+  - Ability: Stock one 2-gold Melon and one 2-gold Steak.
+  - Perk: 
+  - Added to Danger pack.
+
+- Added Sardinian Currant.
+  - Tier: 6.
+  - Ability: Give one pet the Sardinian Currant perk.
+  - Perk: Start of turn: Gain +2 gold.
+  - Added to Danger pack.
+
+- Added White Okra.
+  - Tier: 6.
+  - Ability: Give one pet the White Okra perk.
+  - Perk: Block 10 damage or ailment, twice.
+  - Added to Danger pack.
+
+- Changed Oyster Mushroom.
+  - Old perk: Before battle: Transform nearest friend ahead to this at level 1.
+  - New perk: Before attack: Set attack and health to at least 9, once.
+
+- Changed Chocolate.
+  - Added to Danger pack.
+
+- Added Silly.
+  - Ability: Ability has random targets.
+
+7
+- Added Hermit Crab.
+  - Tier: 2. 
+  - Stats: 1/5. 
+  - Level 1 Ability: Start of battle: If current perk is tier 2 or lower, copy it to the Golden Retriever when summoned.
+  - Level 2 Ability: Start of battle: If current perk is tier 4 or lower, copy it to the Golden Retriever when summoned.
+  - Level 3 Ability: Start of battle: If current perk is tier 6 or lower, copy it to the Golden Retriever when summoned.
+  - Added to Custom pack.
+
+- Added Baby Urchin.
+  - Tier: 3. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Faint: Remove 4 health from the first enemy.
+  - Level 2 Ability: Faint: Remove 4 health from the first two enemies.
+  - Level 3 Ability: Faint: Remove 4 health from the first three enemies.
+
+- Added Bilby.
+  - Tier: 3. 
+  - Stats: 1/5. 
+  - Level 1 Ability: Anyone gained ailment: Give Garlic perk to the front-most perk-less friend. Works 1 time per battle.
+  - Level 2 Ability: Anyone gained ailment: Give Garlic perk to the front-most perk-less friend. Works 2 times per battle.
+  - Level 3 Ability: Anyone gained ailment: Give Garlic perk to the front-most perk-less friend. Works 3 times per battle.
+  - Added to Puppy pack.
+
+
+- Changed Beetle.
+  - Stats: 1/2 > 2/2. 
+
+- Changed Bulldog.
+  - Old level 1 ability: After attack: Set attack equal to health + 1.
+  - Old level 2 ability: After attack: Set attack equal to health + 2.
+  - Old level 3 ability: After attack: Set attack equal to health + 3.
+  - New level 1 ability: After first attack: Gain +2 attack.
+  - New level 2 ability: After first attack: Gain +4 attack.
+  - New level 3 ability: After first attack: Gain +6 attack.
+
+- Changed Chinchilla.
+  - Stats: 2/2 > 2/3. 
+
+- Changed Duck.
+  - Stats: 2/3 > 2/2. 
+
+- Changed Lizard Tail.
+  - Stats: 1/1 > 3/1. 
+
+- Changed Murmel.
+  - Stats: 2/2 > 1/3. 
+
+- Changed Otter.
+  - Stats: 1/3 > 1/4. 
+
+- Changed Silverfish.
+  - Stats: 2/2 > 3/2. 
+
+- Changed Crab.
+  - Old level 1 ability: Start of battle: Copy 50% of health from the most healthy friend.
+  - Old level 2 ability: Start of battle: Copy 100% of health from the most healthy friend.
+  - Old level 3 ability: Start of battle: Copy 150% of health from the most healthy friend.
+  - New level 1 ability: Start of battle: Gain health equal to 25% of the most healthy friend.
+  - New level 2 ability: Start of battle: Gain health equal to 50% of the most healthy friend.
+  - New level 3 ability: Start of battle: Gain health equal to 75% of the most healthy friend.
+
+- Changed Darwin's Fox.
+  - Old level 1 ability: Friend faints: Jump-attack the enemy that knocked the friend out. Works 1 time per turn.
+  - Old level 2 ability: Friend faints: Jump-attack the enemy that knocked the friend out. Works 2 times per turn.
+  - Old level 3 ability: Friend faints: Jump-attack the enemy that knocked the friend out. Works 3 times per turn.
+  - New level 1 ability: Friend faints: Jump-attack the attacker, or the first enemy. Works 1 time per battle.
+  - New level 2 ability: Friend faints: Jump-attack the attacker, or the first enemy. Works 2 times per battle.
+  - New level 3 ability: Friend faints: Jump-attack the attacker, or the first enemy. Works 3 times per battle.
+
+- Changed Frigatebird.
+  - Removed from Puppy pack.
+
+- Changed Frost Wolf.
+  - Stats: 2/3 > 1/5. 
+  - Old level 1 ability: Faint: Make the first enemy Cold.
+  - Old level 2 ability: Faint: Make the two first enemies Cold.
+  - Old level 3 ability: Faint: Make the three first enemies Cold.
+  - New level 1 ability: After attack: Make the first enemy Cold. Works 1 time per battle.
+  - New level 2 ability: After attack: Make the first enemy Cold. Works 2 times per battle.
+  - New level 3 ability: After attack: Make the first enemy Cold. Works 3 times per battle.
+
+- Changed Kangaroo.
+  - Stats: 2/3 > 2/2. 
+
+- Changed Stork.
+  - Stats: 2/1 > 3/1. 
+  - Old level 1 ability: Faint: Summon one level 1 pet from the previous shop tier as a 3/2.
+  - Old level 2 ability: Faint: Summon one level 2 pet from the previous shop tier as a 6/4.
+  - Old level 3 ability: Faint: Summon one level 3 pet from the previous shop tier as a 9/6.
+  - New level 1 ability: Faint: Summon ANY one level 1 pet from the previous shop tier as a 2/2.
+  - New level 2 ability: Faint: Summon ANY one level 2 pet from the previous shop tier as a 4/4.
+  - New level 3 ability: Faint: Summon ANY one level 3 pet from the previous shop tier as a 6/6.
+
+- Changed Takhi.
+  - Old level 1 ability: Faint: Summon one 3/2 African Wild Dog that jump-attacks the first enemy.
+  - Old level 2 ability: Faint: Summon one 6/4 African Wild Dog that jump-attacks the first enemy.
+  - Old level 3 ability: Faint: Summon one 9/6 African Wild Dog that jump-attacks the first enemy.
+  - New level 1 ability: Faint: Summon one 3/2 African Wild Dog that jump-attacks the second enemy.
+  - New level 2 ability: Faint: Summon one 6/4 African Wild Dog that jump-attacks the second enemy.
+  - New level 3 ability: Faint: Summon one 9/6 African Wild Dog that jump-attacks the second enemy.
+
+- Changed Bear.
+  - Added to Golden pack.
+
+- Changed Betta Fish.
+  - Old level 1 ability: Faint: Give the nearest friend behind +4 attack and +2 health.
+  - Old level 2 ability: Faint: Give the nearest friend behind +8 attack and +4 health.
+  - Old level 3 ability: Faint: Give the nearest friend behind +12 attack and +6 health.
+  - New level 1 ability: Faint: Give the nearest friend behind +4 attack and +2 health until next turn.
+  - New level 2 ability: Faint: Give the nearest friend behind +8 attack and +4 health until next turn.
+  - New level 3 ability: Faint: Give the nearest friend behind +12 attack and +6 health until next turn.
+  - Added to Custom pack.
+  - Removed from Golden pack.
+
+- Changed Camel.
+  - Stats: 3/4 > 3/3. 
+
+- Changed Cassowary.
+  - Stats: 5/3 > 5/2. 
+
+- Changed Gold Fish.
+  - Tier: 3 > 2. 
+  - Stats: 1/5 > 1/1. 
+
+- Changed Hare.
+  - Stats: 3/4 > 4/4. 
+
+- Changed Hoopoe Bird.
+  - Stats: 3/2 > 3/3. 
+
+- Changed Mana Hound.
+  - Stats: 5/2 > 5/3. 
+
+- Changed Owl.
+  - Stats: 1/2 > 3/2. 
+
+- Changed Rabbit.
+  - Old level 1 ability: Friendly ate food: Give them +1 health. Works 4 times per turn.
+  - Old level 2 ability: Friendly ate food: Give them +2 health. Works 4 times per turn.
+  - Old level 3 ability: Friendly ate food: Give them +3 health. Works 4 times per turn.
+  - New level 1 ability: Friendly ate food: Give them +1 health. Works 3 times per turn.
+  - New level 2 ability: Friendly ate food: Give them +2 health. Works 3 times per turn.
+  - New level 3 ability: Friendly ate food: Give them +3 health. Works 3 times per turn.
+
+- Changed Buffalo.
+  - Old level 1 ability: Three friends sold: Gain +2 attack and +2 health.
+  - Old level 2 ability: Three friends sold: Gain +4 attack and +4 health.
+  - Old level 3 ability: Three friends sold: Gain +6 attack and +6 health.
+  - New level 1 ability: Friend sold: Gain +2 attack and +2 health until next turn.
+  - New level 2 ability: Friend sold: Gain +4 attack and +4 health until next turn.
+  - New level 3 ability: Friend sold: Gain +6 attack and +6 health until next turn.
+
+- Changed Giant Otter.
+  - Stats: 2/2 > 4/3. 
+
+- Changed Golden Tamarin.
+  - Stats: 4/6 > 4/4. 
+
+
+- Changed Platypus.
+  - Old level 1 ability: Faint & Sell: Summon one 3/3 level 1 Duck and Beaver.
+  - Old level 2 ability: Faint & Sell: Summon one 6/6 level 2 Duck and Beaver.
+  - Old level 3 ability: Faint & Sell: Summon one 9/9 level 3 Duck and Beaver.
+  - New level 1 ability: Faint & Sell: Summon one 3/2 level 1 Duck and Beaver.
+  - New level 2 ability: Faint & Sell: Summon one 6/4 level 2 Duck and Beaver.
+  - New level 3 ability: Faint & Sell: Summon one 9/6 level 3 Duck and Beaver.
+
+- Changed Whale Shark.
+  - Stats: 1/4 > 3/5. 
+
+
+- Changed Hamster.
+  - Old level 1 ability: Roll: Gain +1 gold. Works 2 times per turn.
+  - Old level 2 ability: Roll: Gain +1 gold. Works 4 times per turn.
+  - Old level 3 ability: Roll: Gain +1 gold. Works 6 times per turn.
+  - New level 1 ability: Start of turn: Gain two free rolls.
+  - New level 2 ability: Start of turn: Gain four free rolls.
+  - New level 3 ability: Start of turn: Gain six free rolls.
+
+- Changed Nessie.
+  - Old level 1 ability: Faint: Summon one 3/3 Boat. If it's your first Boat this turn, give it +1 and +1 for each roll.
+  - Old level 2 ability: Faint: Summon one 6/6 Boat. If it's your first Boat this turn, give it +2 and +2 for each roll.
+  - Old level 3 ability: Faint: Summon one 9/9 Boat. If it's your first Boat this turn, give it +3 and +3 for each roll.
+  - New level 1 ability: Faint: Summon one 3/3 Boat. If it's your first Boat this battle, give it +1 and +1 for each roll.
+  - New level 2 ability: Faint: Summon one 6/6 Boat. If it's your first Boat this battle, give it +2 and +2 for each roll.
+  - New level 3 ability: Faint: Summon one 9/9 Boat. If it's your first Boat this battle, give it +3 and +3 for each roll.
+
+- Changed Red Dragon.
+  - Stats: 3/7 > 4/8. 
+
+- Changed Bird of Paradise.
+  - Old level 1 ability: Spend 7 gold: Give three random friends +1 attack and +1 health.
+  - Old level 2 ability: Spend 7 gold: Give three random friends +2 attack and +2 health.
+  - Old level 3 ability: Spend 7 gold: Give three random friends +3 attack and +3 health.
+  - New level 1 ability: Spend 7 gold: Give three random friends +1 attack and +1 health. Works 3 times per turn.
+  - New level 2 ability: Spend 7 gold: Give three random friends +2 attack and +2 health. Works 3 times per turn.
+  - New level 3 ability: Spend 7 gold: Give three random friends +3 attack and +3 health. Works 3 times per turn.
+
+- Changed Cerberus.
+  - Stats: 8/8 > 8/9. 
+
+- Changed Dragon.
+Stats 6/8 → 3/8, "Tier 1 friend bought: Give friends +1/2/3 attack and health. Works 5 times per turn"
+
+- Changed Grizzly Bear.
+Stats 6/6 → 6/8, "Five friendly attacks: Deal 6/12/18 damage to two random enemies"
+
+- Changed Ostrich.
+  - Old level 1 ability: Roll: If four shop pets are the same tier, roll pets and give friends +1 attack and +1 health.
+  - Old level 2 ability: Roll: If four shop pets are the same tier, roll pets and give friends +2 attack and +2 health.
+  - Old level 3 ability: Roll: If four shop pets are the same tier, roll pets and give friends +3 attack and +3 health.
+  - New level 1 ability: Roll: If 4 shop pets are the same tier, re-roll and give friends +2 health. Works 4 times per turn.
+  - New level 2 ability: Roll: If 4 shop pets are the same tier, re-roll and give friends +4 health. Works 4 times per turn.
+  - New level 3 ability: Roll: If 4 shop pets are the same tier, re-roll and give friends +6 health. Works 4 times per turn.
+
+- Changed Pteranodon.
+  - Stats: 5/3 > 3/5. 
+  - Old level 1 ability: Friend faints: Re-summon it behind this as a 1/1. Works 1 time per turn.
+  - Old level 2 ability: Friend faints: Re-summon it behind this as a 1/1. Works 2 times per turn.
+  - Old level 3 ability: Friend faints: Re-summon it behind this as a 1/1. Works 3 times per turn.
+  - New level 1 ability: Friend faints: Re-summon it behind this as a 1/1. Works 1 time per battle.
+  - New level 2 ability: Friend faints: Re-summon it behind this as a 1/1. Works 2 times per battle.
+  - New level 3 ability: Friend faints: Re-summon it behind this as a 1/1. Works 3 times per battle.
+
+- Changed Sauropod.
+  - Old level 1 ability: Food bought: Gain +1 gold. Works 3 times per turn.
+  - Old level 2 ability: Food bought: Gain +2 gold. Works 3 times per turn.
+  - Old level 3 ability: Food bought: Gain +3 gold. Works 3 times per turn.
+  - New level 1 ability: Friendly gained perk: Gain +1 gold next turn. Works 3 times per turn.
+  - New level 2 ability: Friendly gained perk: Gain +2 gold next turn. Works 3 times per turn.
+  - New level 3 ability: Friendly gained perk: Gain +3 gold next turn. Works 3 times per turn.
+
+- Changed Wildebeest.
+  - Old level 1 ability: Before attack: Spend 4 trumpets to gain Coconut perk. Works 1 time per battle.
+  - Old level 2 ability: Before attack: Spend 4 trumpets to gain Coconut perk. Works 2 times per battle.
+  - Old level 3 ability: Before attack: Spend 4 trumpets to gain Coconut perk. Works 3 times per battle.
+  - New level 1 ability: Before attack: Spend 2 trumpets to gain Coconut perk. Works 1 time per battle.
+  - New level 2 ability: Before attack: Spend 2 trumpets to gain Coconut perk. Works 2 times per battle.
+  - New level 3 ability: Before attack: Spend 2 trumpets to gain Coconut perk. Works 3 times per battle.
+
+- Added Lime.
+  - Tier: 2.
+  - Ability: Give one pet the Lime perk.
+  - Perk: Take 1 less damage.
+  - Added to Puppy pack.
+
+- Added Blackberry.
+  - Tier: 3.
+  - Ability: Give one pet the Blackberry perk.
+  - Perk: When gained, give pet +1 attack and +2 health.
+  - Added to Puppy pack.
+
+- Added Squash.
+  - Tier: 3.
+  - Ability: Give one pet the Squash perk.
+  - Perk: Before attack: Remove 5 health from target.
+  - Added to Puppy pack.
+
+- Changed Meat Bone.
+  - Removed from Puppy pack.
+
+- Changed Garlic.
+  - Old perk: Take 2 less damage.
+  - New perk: Takes 2 less damage. It can't be reduced to less than 2.
+  - Removed from Puppy pack.
+
+- Changed Salad Bowl.
+  - Removed from Puppy pack.
+
+- Changed Seaweed.
+  - Old perk: Before attack: Transform into a Sea Urchin.
+  - New perk: Before attack: Transform into a Baby Urchin.
+
+
+8
+- Added Lemming.
+  - Tier: 1. 
+  - Stats: 3/2. 
+  - Level 1 Ability: Sell: Gain +1 gold next turn.
+  - Level 2 Ability: Sell: Gain +2 gold next turn.
+  - Level 3 Ability: Sell: Gain +3 gold next turn.
+  - Added to Golden pack.
+
+- Added Amphisbaena.
+  - Tier: 2. 
+  - Stats: 2/2. 
+  - Added to Custom pack.
+
+- Changed African Wild Dog.
+Stats 2/1 → 3/2, "Jump attack second enemy for 3/6/9 damage"
+
+- Changed Baku.
+  - Stats: 1/4 > 1/3. 
+
+- Changed Beetle.
+Stats: 1/2 > 2/2. 
+  - Old level 1 ability: Start of battle: Gain Honey perk.
+  - Old level 2 ability: Start of battle: Gain Meat Bone perk.
+  - Old level 3 ability: Start of battle: Gain Garlic perk.
+  - New level 1 ability: Start of battle: Give Honey perk to nearest friend behind.
+  - New level 2 ability: Start of battle: Give Meat Bone perk to nearest friend behind.
+  - New level 3 ability: Start of battle: Give Garlic perk to nearest friend behind.
+
+- Changed Hummingbird.
+ - Stats: 2/2 > 3/1. 
+  - Old level 1 ability: Start of battle: Give +2 attack and +1 health to one random Strawberry friend.
+  - Old level 2 ability: Start of battle: Give +4 attack and +2 health to one random Strawberry friend.
+  - Old level 3 ability: Start of battle: Give +6 attack and +3 health to one random Strawberry friend.
+
+  - New level 1 ability: Faint: Give Strawberry perk to the nearest friend behind.
+  - New level 2 ability: Faint: Give Strawberry perk to the two nearest friends behind.
+  - New level 3 ability: Faint: Give Strawberry perk to the three nearest friends behind.
+
+- Changed Kiwi.
+- Stats: 2/2 > 1/4. 
+  - Old level 1 ability: Sell: Replace one random friendly Strawberry perk with +2 attack and +2 health.
+  - Old level 2 ability: Sell: Replace one random friendly Strawberry perk with +4 attack and +4 health.
+  - Old level 3 ability: Sell: Replace one random friendly Strawberry perk with +6 attack and +6 health.
+
+  - New level 1 ability: Hurt & Sell: Give the back-most friendly Strawberry pet +1 attack.
+  - New level 2 ability: Hurt & Sell: Give the back-most friendly Strawberry pet +2 attack.
+  - New level 3 ability: Hurt & Sell: Give the back-most friendly Strawberry pet +3 attack.
+
+- Changed Murmel.
+  Stats 1/2 → 1/4, "Friend gained experience: Gain +1/2/3 attack until next turn"
+
+- Changed Sneaky Egg.
+  - Stats: 2/4 > 1/4. 
+
+- Changed Atlantic Puffin.
+  - Added to Custom pack.
+  - Removed from Star pack.
+
+- Changed Bass.
+  - Old level 1 ability: Faint & Sell: Give one level 2 Sell friend +1 experience. Double in battle.
+  - Old level 2 ability: Faint & Sell: Give one level 2 Sell friend +2 experience. Double in battle.
+  - Old level 3 ability: Faint & Sell: Give one level 2 Sell friend +3 experience. Double in battle.
+  - New level 1 ability: Faint & Sell: Give one level 2 Sell friend +1 experience.
+  - New level 2 ability: Faint & Sell: Give one level 2 Sell friend +2 experience.
+  - New level 3 ability: Faint & Sell: Give one level 2 Sell friend +3 experience.
+
+- Changed Bat.
+ Stats 1/2 → 2/4, "Before attack: Make one random enemy Weak. Works 1/2/3 times per battle"
+
+- Changed Dove.
+  Stats 2/1 → 3/1, 
+  - Old level 1 ability: Faint: Give two Strawberry friends +2 attack and +2 health.
+  - Old level 2 ability: Faint: Give two Strawberry friends +4 attack and +4 health.
+  - Old level 3 ability: Faint: Give two Strawberry friends +6 attack and +6 health.
+  - New level 1 ability: Faint: Activate three friendly Strawberries.
+  - New level 2 ability: Faint: Activate three friendly Strawberries with double effect.
+  - New level 3 ability: Faint: Activate three friendly Strawberries with triple effect.
+
+- Changed Frost Wolf.
+Stats 2/4 → 2/3, "Faint: Make first enemy Cold (with multiplied effects)"
+
+- Changed Fruit Fly.
+  - Stats: 1/1 > 2/2. 
+
+- Changed Gargoyle.
+  - Old level 1 ability: Faint: Spend mana to give the nearest friend behind +3 health and +1 more per mana.
+  - Old level 2 ability: Faint: Spend mana to give the nearest friend behind +6 health and +2 more per mana.
+  - Old level 3 ability: Faint: Spend mana to give the nearest friend behind +9 health and +3 more per mana.
+  - New level 1 ability: Faint: Give the nearest friend behind +2 health. Spend mana to give 1 more per mana.
+  - New level 2 ability: Faint: Give the nearest friend behind +4 health. Spend mana to give 2 more per mana.
+  - New level 3 ability: Faint: Give the nearest friend behind +6 health. Spend mana to give 3 more per mana.
+
+- Changed Gazelle.
+  - Tier: 2 > 4. 
+  - Added to Custom pack.
+  - Removed from Golden pack.
+
+- Changed Ghost Kitten.
+  - Stats: 3/4 > 4/3. 
+
+- Changed Jackalope.
+  - Old level 1 ability: Friend jumped: Give it +1 attack and +1 health. Double if you rolled 4 times this turn.
+  - Old level 2 ability: Friend jumped: Give it +2 attack and +2 health. Double if you rolled 4 times this turn.
+  - Old level 3 ability: Friend jumped: Give it +3 attack and +3 health. Double if you rolled 4 times this turn.
+  - New level 1 ability: Before friend attacks: Give it +1 attack. Double if it jumped. Works 3 times per battle.
+  - New level 2 ability: Before friend attacks: Give it +2 attack. Double if it jumped. Works 3 times per battle.
+  - New level 3 ability: Before friend attacks: Give it +3 attack. Double if it jumped. Works 3 times per battle.
+
+- Changed Mink.
+  - Stats: 2/3 > 3/3. 
+
+- Changed Sea Turtle.
+  - Stats: 2/5 > 1/4. 
+  - Old level 1 ability: Friend summoned: If in battle, give it +3 health.
+  - Old level 2 ability: Friend summoned: If in battle, give it +6 health.
+  - Old level 3 ability: Friend summoned: If in battle, give it +9 health.
+  - New level 1 ability: Friend summoned: Give it +2 health until next turn.
+  - New level 2 ability: Friend summoned: Give it +4 health until next turn.
+  - New level 3 ability: Friend summoned: Give it +6 health until next turn.
+
+- Changed Shima Enaga.
+  - Old level 1 ability: Friend faints: If it had a Strawberry, summon one 2/3 friend in its place. Works 2 times per turn.
+  - Old level 2 ability: Friend faints: If it had a Strawberry, summon one 4/6 friend in its place. Works 2 times per turn.
+  - Old level 3 ability: Friend faints: If it had a Strawberry, summon one 6/9 friend in its place. Works 2 times per turn.
+  - New level 1 ability: Friend faints: If it had a Strawberry, summon one 2/2 friend in its place. Works 2 times per turn.
+  - New level 2 ability: Friend faints: If it had a Strawberry, summon one 4/4 friend in its place. Works 2 times per turn.
+  - New level 3 ability: Friend faints: If it had a Strawberry, summon one 6/6 friend in its place. Works 2 times per turn.
+  - Added to Star pack.
+  - Removed from Custom pack.
+
+- Changed Thunderbird.
+  - Old level 1 ability: Start of battle: Give the front-most friend +3 mana.
+  - Old level 2 ability: Start of battle: Give the front-most friend +6 mana.
+  - Old level 3 ability: Start of battle: Give the front-most friend +9 mana.
+  - New level 1 ability: Start of battle: Give the second nearest friend ahead +3 mana.
+  - New level 2 ability: Start of battle: Give the second nearest friend ahead +6 mana.
+  - New level 3 ability: Start of battle: Give the second nearest friend ahead +9 mana.
+
+- Changed Toucan.
+Tier 2 → 3, Stats 3/3 → 4/3,
+  - New level 1 ability: Before first attack: Copy perk (tier 5 max) to the nearest friend behind.
+  - New level 2 ability: Before first attack: Copy perk (tier 5 max) to the two nearest friends behind.
+  - New level 3 ability: Before first attack: Copy perk (tier 5 max) to the three nearest friends behind.
+
+- Changed Wyvern.
+  - Stats: 4/2 > 3/4. 
+
+- Changed Bilby.
+  - Tier: 3 > 2. 
+  - Stats: 1/5 > 1/4. 
+  - Old level 1 ability: Anyone gained ailment: Give Garlic perk to the front-most perk-less friend. Works 1 time per battle.
+  - Old level 2 ability: Anyone gained ailment: Give Garlic perk to the front-most perk-less friend. Works 2 times per battle.
+  - Old level 3 ability: Anyone gained ailment: Give Garlic perk to the front-most perk-less friend. Works 3 times per battle.
+  - New level 1 ability: Friend lost perk: Give it Garlic. Works 1 time per turn.
+  - New level 2 ability: Friend lost perk: Give it Garlic. Works 2 times per turn.
+  - New level 3 ability: Friend lost perk: Give it Garlic. Works 3 times per turn.
+
+- Changed Jewel Caterpillar.
+  - Old level 1 ability: Faint: Spend 2 trumpets to increase sell value of two random friends permanently by 1 gold.
+  - Old level 2 ability: Faint: Spend 2 trumpets to increase sell value of two random friends permanently by 2 gold.
+  - Old level 3 ability: Faint: Spend 2 trumpets to increase sell value of two random friends permanently by 3 gold.
+  - New level 1 ability: Faint: Spend 2 trumpets to increase sell value of the two back-most friends permanently by 1 gold.
+  - New level 2 ability: Faint: Spend 2 trumpets to increase sell value of the two back-most friends permanently by 2 gold.
+  - New level 3 ability: Faint: Spend 2 trumpets to increase sell value of the two back-most friends permanently by 3 gold.
+
+- Changed Meerkat.
+  - Tier: 3 > 2. 
+  - Stats: 1/3 > 1/2. 
+  - Old level 1 ability: Start of battle: Give adjacent friends +2 attack for every 5 gold spent this turn.
+  - Old level 2 ability: Start of battle: Give adjacent friends +4 attack for every 5 gold spent this turn.
+  - Old level 3 ability: Start of battle: Give adjacent friends +6 attack for every 5 gold spent this turn.
+  - New level 1 ability: Start of battle: Give adjacent friends +1 attack for every 4 gold spent this turn.
+  - New level 2 ability: Start of battle: Give adjacent friends +2 attack for every 4 gold spent this turn.
+  - New level 3 ability: Start of battle: Give adjacent friends +3 attack for every 4 gold spent this turn.
+
+- Changed Roadrunner.
+  - Tier: 3 > 2. 
+  - Stats: 4/2 > 4/1. 
+  - Old level 1 ability: Faint: Give the nearest friend behind +3 attack and Strawberry perk.
+  - Old level 2 ability: Faint: Give the two nearest friends behind +3 attack and Strawberry perks.
+  - Old level 3 ability: Faint: Give the three nearest friends behind +3 attack and Strawberry perks.
+  - New level 1 ability: Start of battle: Give Strawberry perk and +2 attack to the nearest friend ahead.
+  - New level 2 ability: Start of battle: Give Strawberry perk and +2 attack to the two nearest friends ahead.
+  - New level 3 ability: Start of battle: Give Strawberry perk and +2 attack to the three nearest friends ahead.
+
+- Changed Abomination.
+  - Stats: 6/3 > 6/5. 
+
+- Changed Chimera.
+  - Old level 1 ability: Faint: Spend mana to summon one 3/3 pet with +1 attack and +2 health per 2 mana.
+  - Old level 2 ability: Faint: Spend mana to summon two 3/3 pets with +1 attack and +2 health per 2 mana.
+  - Old level 3 ability: Faint: Spend mana to summon three 3/3 pets with +1 attack and +2 health per 2 mana.
+  - New level 1 ability: Faint: Summon one 3/3 pet. Spend mana to give it +1 attack and +2 health per 2 mana.
+  - New level 2 ability: Faint: Summon two 3/3 pets. Spend mana to give them +1 attack and +2 health per 2 mana.
+  - New level 3 ability: Faint: Summon three 3/3 pets. Spend mana to give them +1 attack and +2 health per 2 mana.
+
+
+- Changed Humphead Wrasse.
+  - Old level 1 ability: Start of battle: Remove 25% attack from the highest attack enemy.
+  - Old level 2 ability: Start of battle: Remove 50% attack from the highest attack enemy.
+  - Old level 3 ability: Start of battle: Remove 75% attack from the highest attack enemy.
+  - New level 1 ability: Start of battle: Remove 30% attack from the highest attack enemy.
+  - New level 2 ability: Start of battle: Remove 60% attack from the highest attack enemy.
+  - New level 3 ability: Start of battle: Remove 90% attack from the highest attack enemy.
+
+- Changed Minotaur.
+  - Stats: 1/2 > 3/3. 
+
+- Changed Platybelodon.
+  - Old level 1 ability: Start of battle: Gain +1 trumpet for each roll this turn.
+  - Old level 2 ability: Start of battle: Gain +2 trumpets for each roll this turn.
+  - Old level 3 ability: Start of battle: Gain +3 trumpets for each roll this turn.
+  - New level 1 ability: Start of battle: Gain +1 trumpet for each roll (max 8) this turn.
+  - New level 2 ability: Start of battle: Gain +2 trumpets for each roll (max 8) this turn.
+  - New level 3 ability: Start of battle: Gain +3 trumpets for each roll (max 8) this turn.
+
+- Changed Sea Anemone.
+  - Old level 1 ability: Friend sold: If it was a Sell pet, give one random friend +1 attack and +1 health.
+  - Old level 2 ability: Friend sold: If it was a Sell pet, give one random friend +2 attack and +2 health.
+  - Old level 3 ability: Friend sold: If it was a Sell pet, give one random friend +3 attack and +3 health.
+  - New level 1 ability: Friend sold: If it was a Sell pet, give one random friend +1 attack and +1 health. Works 3 times per turn.
+  - New level 2 ability: Friend sold: If it was a Sell pet, give one random friend +2 attack and +2 health. Works 3 times per turn.
+  - New level 3 ability: Friend sold: If it was a Sell pet, give one random friend +3 attack and +3 health. Works 3 times per turn.
+
+- Changed Spider Crab.
+  - Stats: 2/4 > 3/6. 
+
+- Changed Vaquita.
+  - Old level 1 ability: Faint: Gain +50% trumpets.
+  - Old level 2 ability: Faint: Gain +100% trumpets.
+  - Old level 3 ability: Faint: Gain +150% trumpets.
+  - New level 1 ability: Faint: Gain +50% trumpets, and minimum +4 trumpets.
+  - New level 2 ability: Faint: Gain +100% trumpets, and minimum +8 trumpets.
+  - New level 3 ability: Faint: Gain +150% trumpets, and minimum +12 trumpets.
+
+- Changed Whale Shark.
+  - Stats: 3/5 > 2/6. 
+  - Old level 1 ability: Gain perk or ailment: Remove it and gain +2 attack and +2 health.
+  - Old level 2 ability: Gain perk or ailment: Remove it and gain +4 attack and +4 health.
+  - Old level 3 ability: Gain perk or ailment: Remove it and gain +6 attack and +6 health.
+  - New level 1 ability: Gain perk or ailment: Remove it and gain +1 attack and +1 health. Triple in battle.
+  - New level 2 ability: Gain perk or ailment: Remove it and gain +2 attack and +2 health. Triple in battle.
+  - New level 3 ability: Gain perk or ailment: Remove it and gain +3 attack and +3 health. Triple in battle.
+
+- Changed Farmer Crow.
+  - Stats: 3/6 > 6/3. 
+  - Old level 1 ability: Faint: Feed three Corncobs to the nearest friend behind.
+  - Old level 2 ability: Faint: Feed three Corncobs to the nearest two friends behind.
+  - Old level 3 ability: Faint: Feed three Corncobs to the nearest three friends behind.
+  - New level 1 ability: Faint: Feed three Corncobs with double effect to the nearest friend behind.
+  - New level 2 ability: Faint: Feed three Corncobs with double effect to the nearest two friends behind.
+  - New level 3 ability: Faint: Feed three Corncobs with double effect to the nearest three friends behind.
+
+- Changed Loveland Frogman.
+"Before friend attacks: Give it +1/2/3 attack and +2/4/6 health once. Permanent if it jumped"
+
+- Changed Silver Fox.
+  - Added to Custom pack.
+  - Removed from Golden pack.
+
+- Changed Werewolf.
+  - Stats: 7/7 > 6/6. 
+  - Old level 1 ability: Start of battle: If turn number is even, gain +100% attack and health.
+  - Old level 2 ability: Start of battle: If turn number is even, gain +200% attack and health.
+  - Old level 3 ability: Start of battle: If turn number is even, gain +300% attack and health.
+  - New level 1 ability: Start of battle: If turn number is even, gain +50% attack and health. Otherwise gain 6 mana.
+  - New level 2 ability: Start of battle: If turn number is even, gain +100% attack and health. Otherwise gain 12 mana.
+  - New level 3 ability: Start of battle: If turn number is even, gain +150% attack and health. Otherwise gain 18 mana.
+
+- Changed Ammonite.
+  - Old level 1 ability: Faint: Transform the front-most friend into a level 1 Mimic Octopus with +1 experience for every 2 roll.
+  - Old level 2 ability: Faint: Transform the front-most two friends into level 1 Mimic Octopi with +1 experience for every 2 roll.
+  - Old level 3 ability: Faint: Transform the front-most three friends into level 1 Mimic Octopi with +1 experience for every 2 roll.
+  - New level 1 ability: Faint: Transform friend behind into a level 1 Mimic Octopus. Give it +1 XP in battle for every 2 roll.
+  - New level 2 ability: Faint: Transform friend behind into a level 1 Mimic Octopus. Give it +2 XP in battle for every 2 roll.
+  - New level 3 ability: Faint: Transform friend behind into a level 1 Mimic Octopus. Give it +3 XP in battle for every 2 roll.
+
+- Changed Catfish.
+  - Old level 1 ability: Start of turn: Activate Buy ability on the nearest friend ahead.
+  - Old level 2 ability: Start of turn: Activate Buy ability on the nearest friend ahead. Triggers 2 times.
+  - Old level 3 ability: Start of turn: Activate Buy ability on the nearest friend ahead. Triggers 3 times.
+  - New level 1 ability: Start of turn: Activate Buy ability on the nearest friend ahead once, or give it +4 health.
+  - New level 2 ability: Start of turn: Activate Buy ability on the nearest friend ahead twice, or give it +8 health.
+  - New level 3 ability: Start of turn: Activate Buy ability on the nearest friend ahead thrice, or give it +12 health.
+
+- Changed Cerberus.
+  - Stats: 8/9 > 9/9. 
+  - Old level 1 ability: Empty front space: Summon one 8/8 Fire Pup up front. Works 1 time per turn.
+  - Old level 2 ability: Empty front space: Summon one 8/8 Fire Pup up front. Works 2 times per turn.
+  - Old level 3 ability: Empty front space: Summon one 8/8 Fire Pup up front. Works 3 times per turn.
+  - New level 1 ability: Empty front space: Summon one 8/8 Fire Pup at level 3 up front. Works 1 time per battle.
+  - New level 2 ability: Empty front space: Summon one 8/8 Fire Pup at level 3 up front. Works 2 times per battle.
+  - New level 3 ability: Empty front space: Summon one 8/8 Fire Pup at level 3 up front. Works 3 times per battle.
+
+- Changed Coconut Crab.
+  - Old level 1 ability: Eats three food: Gain Coconut perk.
+  - Old level 2 ability: Eats three food: Gain Coconut perk that works twice.
+  - Old level 3 ability: Eats three food: Gain Coconut perk that works thrice.
+  - New level 1 ability: Eats two food: Gain Coconut perk until next turn.
+  - New level 2 ability: Eats two food: Gain Coconut perk that works twice until next turn.
+  - New level 3 ability: Eats two food: Gain Coconut perk that works thrice until next turn.
+
+
+
+- Changed Tyrannosaurus.
+  - Stats: 6/4 > 7/7. 
+
+- Changed Yeti.
+  - Old level 1 ability: Start of turn: Roll four times while freezing copies.
+  - Old level 2 ability: Start of turn: Roll eight times while freezing copies.
+  - Old level 3 ability: Start of turn: Roll twelve times while freezing copies.
+  - New level 1 ability: Start of turn: Roll four times while freezing pet copies and tier 6 food.
+  - New level 2 ability: Start of turn: Roll eight times while freezing pet copies and tier 6 food.
+  - New level 3 ability: Start of turn: Roll twelve times while freezing pet copies and tier 6 food.
+
+- Changed Ocarina.
+  - Old level 1 ability: Start of battle: Give the middle friendly pet +5 mana.
+  - Old level 2 ability: Start of battle: Give the middle friendly pet +10 mana.
+  - Old level 3 ability: Start of battle: Give the middle friendly pet +15 mana.
+  - New level 1 ability: Start of battle: Give the middle friendly pet +6 mana.
+  - New level 2 ability: Start of battle: Give the middle friendly pet +12 mana.
+  - New level 3 ability: Start of battle: Give the middle friendly pet +18 mana.
+
+- Added Honeydew Melon.
+  - Tier: 5.
+  - Ability: Give one pet the Honeydew Melon perk.
+  - Perk: Block 10 damage, and attack for +5 damage, once.
+  - Added to Golden pack.
+
+- Changed Egg.
+  - Added to Puppy pack.
+
+- Changed Honey.
+  - Removed from Puppy pack.
+
+- Changed Squash.
+  - Old perk: Before attack: Remove 5 health from target.
+  - New perk: Before attack: Remove 6 health from target, once.
+
+- Changed Water of Youth.
+  - Old ability: Transform one pet into another from the same tier.
+  - New ability: Transform one pet into another from the same tier and with ANY tier 3 perk.
+
+- Changed Drink-Me Liquid.
+  - Old ability: Remove 2 attack from one pet and then give it +5 health.
+  - New ability: Give one pet +3 health. Also convert 2 attack into health.
+
+- Changed Eat-Me Cake.
+  - Old ability: Remove 2 health from one pet and then give it +5 attack.
+  - New ability: Give one pet +3 attack. Also convert 2 health into attack.
+
+- Changed Onion.
+  - Added to Custom pack.
+  - Removed from Golden pack.
+
+- Changed Peanut.
+  - Tier: 6 > 7. 
+
+- Changed Peanut Butter.
+  - Tier: 6 > 7. 
+
+- Changed White Okra.
+  - Old perk: Block 10 damage or ailment, twice.
+  - New perk: Block 10 damage twice or ailment once.
+
+

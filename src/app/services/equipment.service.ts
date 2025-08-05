@@ -5,7 +5,7 @@ import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
 import { Steak } from "../classes/equipment/turtle/steak.class";
 import { Melon } from "../classes/equipment/turtle/melon.class";
 import { Honey } from "../classes/equipment/turtle/honey.class";
-import { LogService } from "./log.servicee";
+import { LogService } from "./log.service";
 import { Chili } from "../classes/equipment/turtle/chili.class";
 import { Mushroom } from "../classes/equipment/turtle/mushroom.class";
 import { Coconut } from "../classes/equipment/turtle/coconut.class";

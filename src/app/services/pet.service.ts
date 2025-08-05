@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Pet } from "../classes/pet.class";
 import { Ant } from "../classes/pets/turtle/tier-1/ant.class";
-import { LogService } from "./log.servicee";
+import { LogService } from "./log.service";
 import { Player } from "../classes/player.class";
 import { Equipment } from "../classes/equipment.class";
 import { Cricket } from "../classes/pets/turtle/tier-1/cricket.class";

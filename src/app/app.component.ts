@@ -2,7 +2,7 @@ import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, Afte
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
-import { LogService } from './services/log.servicee';
+import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
 import { createPack, money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
@@ -616,7 +616,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
   }
-
+//  1. Check if toy exists and has startOfBattle ability
+// 2. Queue toy ability in the ToyService event system
+// 3. Set priority based on toy tier (lower tier = higher priority)
+// 4. Special Puma interaction - Puma pets trigger toy abilities at their level
+// 5. Execute later in the start-of-battle phase sequence
   initToys() {
     if (this.player.toy?.startOfBattle) {
       this.toyService.setStartOfBattleEvent({
@@ -662,15 +666,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   runSimulation() {
+    debugger;
+    //save info to local
     this.localStorageService.setFormStorage(this.formGroup);
-
+    //clear previous simulation results
     this.resetSimulation();
 
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
-
+      //get some input like summon amount
       this.initBattle();
+      //reset pet to original state, reset turn counter
       this.startBattle();
+
       this.initToys();
 
       // // give all pets dazed equipment

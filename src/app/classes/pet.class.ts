@@ -1,5 +1,5 @@
 import { GameAPI } from "../interfaces/gameAPI.interface";
-import { LogService } from "../services/log.servicee";
+import { LogService } from "../services/log.service";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
 import { Peanut } from "./equipment/turtle/peanut.class";
