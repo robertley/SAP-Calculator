@@ -707,7 +707,11 @@ export abstract class Pet {
                     }
                 }
                 if (attackEquipment instanceof Cheese) {
-                    powerAmt = `x2`;
+                    if (damage <= 15) {
+                        powerAmt = '=15';
+                    } else {
+                        powerAmt = '+0';
+                    }
                 }
                 if (attackEquipment instanceof FortuneCookie) {
                     randomEvent = true;
@@ -1132,7 +1136,7 @@ export abstract class Pet {
         }
 
         if (attackEquipment instanceof Cheese && !snipe) {
-            attackAmt *= (2 + attackMultiplier - 1);
+            attackAmt = Math.max(15, attackAmt);
         }
 
         if (pet.equipment instanceof Exposed) {
