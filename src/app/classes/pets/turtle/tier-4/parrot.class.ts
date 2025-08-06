@@ -1,7 +1,7 @@
 import { PetService } from "app/services/pet.service";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -42,6 +42,7 @@ export class Parrot extends Pet {
         this.summoned = copyPet.originalSummoned?.bind(this);
         this.friendlyToyBroke = copyPet.originalFriendlyToyBroke?.bind(this);
         this.friendGainedAilment = copyPet.originalFriendGainedAilment?.bind(this);
+        this.GainedPerk = copyPet.originalGainedPerk?.bind(this);
         this.friendGainedPerk = copyPet.originalFriendGainedPerk?.bind(this);
         this.anyoneLevelUp = copyPet.originalAnyoneLevelUp?.bind(this);
         this.enemySummoned = copyPet.originalEnemySummoned?.bind(this);

@@ -2,7 +2,7 @@ import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, Afte
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
-import { LogService } from './services/log.servicee';
+import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
 import { createPack, money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
@@ -36,6 +36,7 @@ import { LovePotion } from './classes/equipment/unicorn/love-potion.class';
 import { FairyDust } from './classes/equipment/unicorn/fairy-dust.class';
 import { GingerbreadMan } from './classes/equipment/unicorn/gingerbread-man.class';
 import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
+import { Cherry } from './classes/equipment/golden/cherry.class';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
@@ -607,6 +608,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   executeFrequentEvents() {
+    this.abilityService.executeGainedPerkEvents();
     this.abilityService.executeFriendGainedPerkEvents();
     this.abilityService.executeFriendGainedAilmentEvents();
     this.abilityService.executeFriendlyToyBrokeEvents();
@@ -616,7 +618,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
   }
-
+//  1. Check if toy exists and has startOfBattle ability
+// 2. Queue toy ability in the ToyService event system
+// 3. Set priority based on toy tier (lower tier = higher priority)
+// 4. Special Puma interaction - Puma pets trigger toy abilities at their level
+// 5. Execute later in the start-of-battle phase sequence
   initToys() {
     if (this.player.toy?.startOfBattle) {
       this.toyService.setStartOfBattleEvent({
@@ -662,15 +668,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   runSimulation() {
+    debugger;
+    //save info to local
     this.localStorageService.setFormStorage(this.formGroup);
-
+    //clear previous simulation results
     this.resetSimulation();
 
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
-
+      //get some input like summon amount
       this.initBattle();
+      //reset pet to original state, reset turn counter
       this.startBattle();
+
       this.initToys();
 
       // // give all pets dazed equipment
@@ -949,6 +959,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             type: 'equipment',
             player: player
           })
+        }
+        if (pet.equipment instanceof Cherry) {
+          pet.parent.gainTrumpets(2 * multiplier, pet, false, multiplier, true);
         }
         if (pet.equipment instanceof Pancakes) {
           for (let pett of player.petArray) {

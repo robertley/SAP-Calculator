@@ -1,6 +1,6 @@
 import { clone, cloneDeep, shuffle, sum } from "lodash";
 import { Pet } from "./pet.class";
-import { LogService } from "../services/log.servicee";
+import { LogService } from "../services/log.service";
 import { getOpponent, getRandomInt } from "../util/helper-functions";
 import { AbilityService } from "../services/ability.service";
 import { Toy } from "./toy.class";

@@ -1,12 +1,11 @@
 import { AbilityService } from "../../../services/ability.service";
-import { LogService } from "../../../services/log.servicee";
+import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 
 export class Salt extends Equipment {
     name = 'Salt';
     equipmentClass: EquipmentClass = 'attack';
-    constructor(
-    ) {
-        super()
-    }
+    uses = 1;
+    originalUses = 1;
 }
+//Attack for double damage, once.

@@ -1,6 +1,6 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { EquipmentService } from "../../../services/equipment.service";
-import { LogService } from "../../../services/log.servicee";
+import { LogService } from "../../../services/log.service";
 import { ToyService } from "../../../services/toy.service";
 import { Cold } from "../../equipment/ailments/cold.class";
 import { Crisp } from "../../equipment/ailments/crisp.class";

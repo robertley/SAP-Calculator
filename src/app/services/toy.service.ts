@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { LogService } from "./log.servicee";
+import { LogService } from "./log.service";
 import { Player } from "../classes/player.class";
 import { Pet } from "../classes/pet.class";
 import { Equipment } from "../classes/equipment.class";

@@ -1,4 +1,4 @@
-import { LogService } from "../../../services/log.servicee";
+import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 
 export class MagicBeans extends Equipment {

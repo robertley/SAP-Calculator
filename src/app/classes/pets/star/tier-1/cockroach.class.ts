@@ -1,5 +1,5 @@
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -9,7 +9,7 @@ export class Cockroach extends Pet {
     tier = 1;
     pack: Pack = 'Star';
     attack = 1;
-    health = 4;
+    health = 1;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

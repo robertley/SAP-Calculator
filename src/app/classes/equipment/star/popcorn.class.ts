@@ -1,6 +1,6 @@
 import { AbilityService } from "../../../services/ability.service";
 import { GameService } from "../../../services/game.service";
-import { LogService } from "../../../services/log.servicee";
+import { LogService } from "../../../services/log.service";
 import { PetService } from "../../../services/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";

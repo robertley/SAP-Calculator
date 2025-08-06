@@ -1,5 +1,5 @@
 import { AbilityService } from "../../../services/ability.service";
-import { LogService } from "../../../services/log.servicee";
+import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
@@ -9,7 +9,7 @@ export class Bus extends Pet {
     tier = 1;
     pack: Pack = 'Turtle';
     hidden: boolean = true;
-    health = 5;
+    health = 3;
     attack = 5;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

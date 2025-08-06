@@ -1,7 +1,7 @@
 import { Melon } from "app/classes/equipment/turtle/melon.class";
 import { getOpponent } from "app/util/helper-functions";
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -25,7 +25,6 @@ export class Turtle extends Pet {
             if (targetPet == null) {
                 return;
             }
-            targetPet.givePetEquipment(new Melon());
             this.logService.createLog({
                 message: `${this.name} gave ${targetPet.name} Melon.`,
                 type: 'ability',
@@ -33,6 +32,7 @@ export class Turtle extends Pet {
                 player: this.parent,
                 pteranodon: pteranodon
             })
+            targetPet.givePetEquipment(new Melon());
         }
 
         this.superFaint(gameApi, tiger);

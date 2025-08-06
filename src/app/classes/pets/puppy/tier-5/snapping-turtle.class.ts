@@ -1,6 +1,6 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Skewer } from "../../../equipment/puppy/skewer.class";
 import { Pack, Pet } from "../../../pet.class";
