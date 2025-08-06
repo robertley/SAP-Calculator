@@ -14,8 +14,8 @@ export class Whale extends Pet {
     name = "Whale";
     tier = 4;
     pack: Pack = 'Turtle';
-    attack = 4;
-    health = 10;
+    attack = 3;
+    health = 7;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let targetPet = this.petAhead;
         if (!targetPet) {
