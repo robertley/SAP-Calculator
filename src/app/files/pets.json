@@ -671,6 +671,11 @@
             "name": "Yak",
             "tier": "2",
             "id": "163"
+        },
+        {
+            "name": "Dumbo Octupus",
+            "tier": "2",
+            "id": "661"
         }
     ],
     "tier3": [
