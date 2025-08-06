@@ -9,7 +9,7 @@ export class Bus extends Pet {
     tier = 1;
     pack: Pack = 'Turtle';
     hidden: boolean = true;
-    health = 5;
+    health = 3;
     attack = 5;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

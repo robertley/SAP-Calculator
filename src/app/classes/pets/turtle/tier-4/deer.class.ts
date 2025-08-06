@@ -11,8 +11,8 @@ export class Deer extends Pet {
     name = "Deer";
     tier = 4;
     pack: Pack = 'Turtle';
-    attack = 1;
-    health = 1;
+    attack = 2;
+    health = 2;
     faint(gameApi, tiger, pteranodon?: boolean) {
         let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
         this.abilityService.setSpawnEvent({
@@ -49,3 +49,4 @@ export class Deer extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 }
+//Faint: Summon one 5/3 *level Bus with Chili.
