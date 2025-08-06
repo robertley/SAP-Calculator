@@ -34,8 +34,8 @@ export class ReportABugComponent implements OnInit {
       code: JSON.stringify(this.calcFormGroup.value)
     }
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    this.http.post('https://formspree.io/f/xrgnzkdq',
-      { name: 'SAP CALC', replyto: 'robert.ley94@gmail.com', message: message },
+    this.http.post('https://formspree.io/f/mgvzngzp',
+      { name: 'SAP CALC', replyto: 'Ruihan20080129@gmail.com', message: message },
       { 'headers': headers }).subscribe(
           response => {
             console.log(response);
