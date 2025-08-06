@@ -36,6 +36,7 @@ import { LovePotion } from './classes/equipment/unicorn/love-potion.class';
 import { FairyDust } from './classes/equipment/unicorn/fairy-dust.class';
 import { GingerbreadMan } from './classes/equipment/unicorn/gingerbread-man.class';
 import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
+import { Cherry } from './classes/equipment/golden/cherry.class';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
@@ -957,6 +958,9 @@ export class AppComponent implements OnInit, AfterViewInit {
             type: 'equipment',
             player: player
           })
+        }
+        if (pet.equipment instanceof Cherry) {
+          pet.parent.gainTrumpets(2 * multiplier, pet, false, multiplier, true);
         }
         if (pet.equipment instanceof Pancakes) {
           for (let pett of player.petArray) {
