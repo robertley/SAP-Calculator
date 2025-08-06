@@ -1869,6 +1869,11 @@
             "name": "Yeti",
             "tier": "6",
             "id": "387"
+        },
+        {
+            "name": "Albatross",
+            "tier": 6,
+            "id": "660"
         }
     ]
 }

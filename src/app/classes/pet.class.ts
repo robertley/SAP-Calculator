@@ -5,7 +5,7 @@ import { Player } from "./player.class";
 import { Peanut } from "./equipment/turtle/peanut.class";
 import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
-import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
+import { Albatross } from "./pets/custom/tier-6/albatross.class";
 import { Salt } from "./equipment/puppy/salt.class";
 import { Panther } from "./pets/puppy/tier-5/panther.class";
 import { getOpponent } from "../util/helper-functions";
@@ -896,14 +896,14 @@ export abstract class Pet {
      */
     snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean, fig?: boolean, mana?: boolean) {
 
-        let wolverine = false;
-        if (this.petAhead?.name == 'Wolverine') {
+        let albatross = false;
+        if (this.petAhead?.name == 'Albatross' && pet.tier <= 4) {
             power += this.petAhead.level * 3;
-            wolverine = true;
+            albatross = true;
         }
-        if (this.petBehind()?.name == 'Wolverine') {
+        if (this.petBehind()?.name == 'Albatross' && pet.tier <= 4) {
             power += this.petBehind().level * 3;
-            wolverine = true;
+            albatross = true;
         }
 
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(), power, true);
@@ -943,8 +943,8 @@ export abstract class Pet {
             message += ' (Tiger)'
         }
 
-        if (wolverine) {
-            message += ' (Wolverine)'
+        if (albatross) {
+            message += ' (Albatross)'
         }
 
         if (fig) {

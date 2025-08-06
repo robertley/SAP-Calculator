@@ -9,7 +9,7 @@ export class Wolverine extends Pet {
     tier = 6;
     pack: Pack = 'Turtle';
     attack = 5;
-    health = 4;
+    health = 7;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

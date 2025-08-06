@@ -368,6 +368,7 @@ import { GreatOne } from "../classes/pets/custom/tier-6/great-one.class";
 import { Leviathan } from "../classes/pets/custom/tier-6/leviathan.class";
 import { QuestingBeast } from "../classes/pets/custom/tier-6/questing-beast.class";
 import { Cockatrice } from "../classes/pets/custom/tier-6/cockatrice.class";
+import {Albatross} from "../classes/pets/custom/tier-6/albatross.class";
 import { ChimGoat } from "../classes/pets/hidden/chim-goat.class";
 import { ChimLion } from "../classes/pets/hidden/chim-lion.class";
 import { ChimSnake } from "../classes/pets/hidden/chim-snake.class";
@@ -916,7 +917,8 @@ export class PetService {
             "Great One",
             "Leviathan",
             "Questing Beast",
-            "Cockatrice"
+            "Cockatrice",
+            "Albatross"
         ]);
 
         this.setAllPets();
@@ -2721,6 +2723,10 @@ export class PetService {
         if (pet instanceof Cockatrice) {
             newPet = new Cockatrice(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof Albatross) {
+            newPet = new Albatross(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
 
 
         // Unicorn
