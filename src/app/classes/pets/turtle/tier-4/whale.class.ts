@@ -23,7 +23,8 @@ export class Whale extends Pet {
         }
         let swallowPet = clone(targetPet);
         swallowPet.exp = this.exp;
-        this.swallowedPets.push(this.petService.createDefaultVersionOfPet(swallowPet));
+        swallowPet.equipment = null;
+        this.swallowedPets.push(swallowPet);
         targetPet.health = 0;
         this.logService.createLog({
             message: `${this.name} swallowed ${targetPet.name}`,
@@ -45,6 +46,7 @@ export class Whale extends Pet {
                         pteranodon: pteranodon
                     })
                     this.parent.summonPet(pet, this.savedPosition);
+                    this.abilityService.triggerSummonedEvents(pet);
                 },
                 priority: this.attack,
                 player: this.parent
