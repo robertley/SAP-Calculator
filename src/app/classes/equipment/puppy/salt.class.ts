@@ -8,3 +8,4 @@ export class Salt extends Equipment {
     uses = 1;
     originalUses = 1;
 }
+//Attack for double damage, once.
