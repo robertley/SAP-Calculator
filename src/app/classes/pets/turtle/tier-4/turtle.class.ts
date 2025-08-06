@@ -25,7 +25,6 @@ export class Turtle extends Pet {
             if (targetPet == null) {
                 return;
             }
-            targetPet.givePetEquipment(new Melon());
             this.logService.createLog({
                 message: `${this.name} gave ${targetPet.name} Melon.`,
                 type: 'ability',
@@ -33,6 +32,7 @@ export class Turtle extends Pet {
                 player: this.parent,
                 pteranodon: pteranodon
             })
+            targetPet.givePetEquipment(new Melon());
         }
 
         this.superFaint(gameApi, tiger);

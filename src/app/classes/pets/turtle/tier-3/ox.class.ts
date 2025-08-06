@@ -15,7 +15,6 @@ export class Ox extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.equipment = new Melon();
         this.increaseAttack(1);
         this.logService.createLog({
             message: `${this.name} gained Melon and 1 attack.`,
@@ -23,6 +22,7 @@ export class Ox extends Pet {
             player: this.parent,
             tiger: tiger
         })
+        this.givePetEquipment(new Melon());;
         this.abilityUses++;
         super.superFriendAheadFaints(gameApi, pet, tiger);
     }
