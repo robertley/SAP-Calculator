@@ -1,6 +1,6 @@
 import { getOpponent } from "app/util/helper-functions";
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -14,8 +14,8 @@ export class Whale extends Pet {
     name = "Whale";
     tier = 4;
     pack: Pack = 'Turtle';
-    attack = 4;
-    health = 10;
+    attack = 3;
+    health = 7;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let targetPet = this.petAhead;
         if (!targetPet) {
@@ -23,7 +23,8 @@ export class Whale extends Pet {
         }
         let swallowPet = clone(targetPet);
         swallowPet.exp = this.exp;
-        this.swallowedPets.push(this.petService.createDefaultVersionOfPet(swallowPet));
+        swallowPet.equipment = null;
+        this.swallowedPets.push(swallowPet);
         targetPet.health = 0;
         this.logService.createLog({
             message: `${this.name} swallowed ${targetPet.name}`,
@@ -45,6 +46,7 @@ export class Whale extends Pet {
                         pteranodon: pteranodon
                     })
                     this.parent.summonPet(pet, this.savedPosition);
+                    this.abilityService.triggerSummonedEvents(pet);
                 },
                 priority: this.attack,
                 player: this.parent

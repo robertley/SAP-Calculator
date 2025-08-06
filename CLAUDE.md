@@ -86,3 +86,19 @@ The core simulation runs in `AppComponent.runSimulation()`:
 - Random number generation uses `getRandomInt()` helper function
 - Battle state is logged extensively for debugging and analysis
 - Form management uses Angular Reactive Forms with complex nested FormArrays
+
+## Node.js Compatibility
+
+**Issue:** This Angular 12 project may encounter OpenSSL errors with Node.js 17+ due to deprecated legacy cryptographic algorithms.
+
+**Error:** `Error: error:0308010C:digital envelope routines::unsupported`
+
+**Solution:** The package.json scripts have been updated to use the `--openssl-legacy-provider` flag which enables legacy OpenSSL support.
+
+**Affected Commands:**
+- `npm start` - Development server
+- `npm run build` - Production build  
+- `npm run watch` - Development build with file watching
+- `npm test` - Unit tests
+
+**Long-term:** Consider upgrading to Angular 15+ for native Node.js compatibility without the legacy provider flag.

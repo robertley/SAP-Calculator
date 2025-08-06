@@ -5,7 +5,7 @@ import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
 import { Steak } from "../classes/equipment/turtle/steak.class";
 import { Melon } from "../classes/equipment/turtle/melon.class";
 import { Honey } from "../classes/equipment/turtle/honey.class";
-import { LogService } from "./log.servicee";
+import { LogService } from "./log.service";
 import { Chili } from "../classes/equipment/turtle/chili.class";
 import { Mushroom } from "../classes/equipment/turtle/mushroom.class";
 import { Coconut } from "../classes/equipment/turtle/coconut.class";
@@ -58,6 +58,7 @@ import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
+import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 
 @Injectable({
     providedIn: "root"
@@ -78,6 +79,7 @@ export class EquipmentService {
         map.set('Mushroom', new Mushroom(this.logService, this.abilityService, this.petService));
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
+        map.set('Peanut Butter', new PeanutButter());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
         map.set('Egg', new Egg(this.logService, this.abilityService));
