@@ -704,6 +704,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.executeBeforeStartOfBattleEquipment(this.player);
       this.executeBeforeStartOfBattleEquipment(this.opponent);
 
+      this.startOfBattleService.resetStartOfBattleFlags();
       this.startOfBattleService.initStartOfBattleEvents();
       this.startOfBattleService.executeToyPetEvents();
 

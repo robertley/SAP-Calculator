@@ -34,6 +34,7 @@ export abstract class Pet {
     mana: number = 0;
     maxAbilityUses: number = null;
     abilityUses: number = 0;
+    startOfBattleTriggered: boolean = false;
     equipment?: Equipment;
     originalHealth: number;
     originalAttack: number;
