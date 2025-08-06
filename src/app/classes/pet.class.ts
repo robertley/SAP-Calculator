@@ -1231,7 +1231,7 @@ export abstract class Pet {
     }
 
     useDefenseEquipment(snipe=false) {
-
+        debugger;
         if (this.equipment == null) {
             return;
         }

@@ -4,5 +4,6 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 
 export class Rice extends Equipment {
     name = 'Rice';
+    tier = 2;
     equipmentClass: EquipmentClass = 'shop';
 }

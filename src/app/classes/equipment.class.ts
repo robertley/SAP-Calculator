@@ -3,6 +3,7 @@ import { Pet } from "./pet.class";
 export class Equipment {
     equipmentClass: EquipmentClass;
     name: string;
+    tier?: number;
     power?: number;
     originalPower?: number;
     uses?: number;

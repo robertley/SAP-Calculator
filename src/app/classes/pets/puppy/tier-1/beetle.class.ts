@@ -17,6 +17,9 @@ export class Beetle extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let equipment;
         let targetPet = this.petBehind()
+        if (targetPet == null) {
+            return;
+        } 
         switch (this.level) {
             case 1:
                 equipment = new Honey(this.logService, this.abilityService);
