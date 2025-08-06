@@ -1,6 +1,6 @@
 import { clone, cloneDeep, shuffle, sum } from "lodash";
 import { Pet } from "./pet.class";
-import { LogService } from "../services/log.servicee";
+import { LogService } from "../services/log.service";
 import { getOpponent, getRandomInt } from "../util/helper-functions";
 import { AbilityService } from "../services/ability.service";
 import { Toy } from "./toy.class";
@@ -366,7 +366,7 @@ export class Player {
         }
     }
 
-    removeDeadPets() {
+    removeDeadPets(): boolean {
         let petRemoved = false;
         if (!this.pet0?.alive && this.pet0 !== undefined) {
             this.pet0 = null;
@@ -405,7 +405,7 @@ export class Player {
      * @param excludePet pet we want to exclude from being chosen
      * @returns Pet or null
      */
-    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, notFiftyFifty?: boolean) {
+    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, notFiftyFifty?: boolean): Pet {
         let pets = this.petArray;
         if (donut) {
             let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => { !excludePets?.includes(pet) });
@@ -485,7 +485,7 @@ export class Player {
         return pets;
     }
 
-    getPetsWithEquipment(equipmentName: string) {
+    getPetsWithEquipment(equipmentName: string): Pet[] {
         let pets = [];
         for (let pet of this.petArray) {
             if (!pet.alive) {
@@ -498,7 +498,7 @@ export class Player {
         return pets;
     }
 
-    getPetAtPosition(position: number) {
+    getPetAtPosition(position: number): Pet {
         for (let pet of this.petArray) {
             if (pet.position == position) {
                 return pet;
@@ -507,7 +507,7 @@ export class Player {
         return null;
     }
 
-    getLastPet() {
+    getLastPet(): Pet {
         for (let pet of this.petArray.reverse()) {
             if (pet.alive) {
                 return pet;
@@ -589,7 +589,7 @@ export class Player {
         };
     }
 
-    get furthestUpPet() {
+    get furthestUpPet(): Pet {
         for (let pet of this.petArray) {
             if (pet.alive) {
                 return pet;

@@ -1,5 +1,5 @@
 import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.servicee";
+import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Melon } from "../../../equipment/turtle/melon.class";
 import { Pack, Pet } from "../../../pet.class";
@@ -15,7 +15,6 @@ export class Ox extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.equipment = new Melon();
         this.increaseAttack(1);
         this.logService.createLog({
             message: `${this.name} gained Melon and 1 attack.`,
@@ -23,6 +22,7 @@ export class Ox extends Pet {
             player: this.parent,
             tiger: tiger
         })
+        this.givePetEquipment(new Melon());;
         this.abilityUses++;
         super.superFriendAheadFaints(gameApi, pet, tiger);
     }

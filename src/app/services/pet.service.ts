@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Pet } from "../classes/pet.class";
 import { Ant } from "../classes/pets/turtle/tier-1/ant.class";
-import { LogService } from "./log.servicee";
+import { LogService } from "./log.service";
 import { Player } from "../classes/player.class";
 import { Equipment } from "../classes/equipment.class";
 import { Cricket } from "../classes/pets/turtle/tier-1/cricket.class";
@@ -134,6 +134,7 @@ import { Iguana } from "../classes/pets/star/tier-1/iguana.class";
 import { Hummingbird } from "../classes/pets/star/tier-1/hummingbird.class";
 import { Koala } from "../classes/pets/star/tier-2/koala.class";
 import { Yak } from "../classes/pets/star/tier-2/yak.class.";
+import { DumboOctopus } from "../classes/pets/star/tier-2/dumbo-octopus.class";
 import { Salamander } from "../classes/pets/star/tier-2/salamander.class";
 import { Panda } from "../classes/pets/star/tier-2/panda.class";
 import { GuineaPig } from "../classes/pets/star/tier-2/guinea-pig.class";
@@ -368,6 +369,7 @@ import { GreatOne } from "../classes/pets/custom/tier-6/great-one.class";
 import { Leviathan } from "../classes/pets/custom/tier-6/leviathan.class";
 import { QuestingBeast } from "../classes/pets/custom/tier-6/questing-beast.class";
 import { Cockatrice } from "../classes/pets/custom/tier-6/cockatrice.class";
+import {Albatross} from "../classes/pets/custom/tier-6/albatross.class";
 import { ChimGoat } from "../classes/pets/hidden/chim-goat.class";
 import { ChimLion } from "../classes/pets/hidden/chim-lion.class";
 import { ChimSnake } from "../classes/pets/hidden/chim-snake.class";
@@ -650,7 +652,8 @@ export class PetService {
             "Atlantic Puffin",
             "Dove",
             "Stork",
-            "Iguana"
+            "Iguana",
+            "DumboOctopus"
         ])
 
         this.starPackPets.set(3, [
@@ -916,7 +919,8 @@ export class PetService {
             "Great One",
             "Leviathan",
             "Questing Beast",
-            "Cockatrice"
+            "Cockatrice",
+            "Albatross"
         ]);
 
         this.setAllPets();
@@ -1251,7 +1255,8 @@ export class PetService {
                 return new Dove(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Stork':
                 return new Stork(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-
+            case 'DumboOctopus':
+                return new DumboOctopus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             // Tier 3
             case 'Leech':
                 return new Leech(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
@@ -2195,6 +2200,9 @@ export class PetService {
         if (pet instanceof Stork) {
             newPet = new Stork(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof DumboOctopus) {
+            newPet = new DumboOctopus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
 
         // Tier 3
         if (pet instanceof Leech) {
@@ -2721,6 +2729,10 @@ export class PetService {
         if (pet instanceof Cockatrice) {
             newPet = new Cockatrice(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof Albatross) {
+            newPet = new Albatross(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+
 
 
         // Unicorn

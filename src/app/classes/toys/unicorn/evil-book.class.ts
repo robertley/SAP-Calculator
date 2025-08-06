@@ -1,6 +1,6 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../services/ability.service";
-import { LogService } from "../../../services/log.servicee";
+import { LogService } from "../../../services/log.service";
 import { ToyService } from "../../../services/toy.service";
 import { GreatOne } from "../../pets/custom/tier-6/great-one.class";
 import { Toy } from "../../toy.class";

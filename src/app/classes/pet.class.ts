@@ -1,11 +1,11 @@
 import { GameAPI } from "../interfaces/gameAPI.interface";
-import { LogService } from "../services/log.servicee";
+import { LogService } from "../services/log.service";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
 import { Peanut } from "./equipment/turtle/peanut.class";
 import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
-import { Wolverine } from "./pets/turtle/tier-6/wolverine.class";
+import { Albatross } from "./pets/custom/tier-6/albatross.class";
 import { Salt } from "./equipment/puppy/salt.class";
 import { Panther } from "./pets/puppy/tier-5/panther.class";
 import { getOpponent } from "../util/helper-functions";
@@ -18,6 +18,7 @@ import { Crisp } from "./equipment/ailments/crisp.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
 import { cloneDeep } from "lodash";
+import { PeanutButter } from "./equipment/hidden/peanut-butter";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -51,6 +52,7 @@ export abstract class Pet {
     friendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    GainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -85,6 +87,7 @@ export abstract class Pet {
     originalFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     originalFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -152,6 +155,7 @@ export abstract class Pet {
         this.originalFriendAheadAttacks = this.friendAheadAttacks;
         this.originalFriendAheadFaints = this.friendAheadFaints;
         this.originalFriendFaints = this.friendFaints;
+        this.originalGainedPerk = this.GainedPerk;
         this.originalFriendGainedPerk = this.friendGainedPerk;
         this.originalFriendGainedAilment = this.friendGainedAilment;
         this.originalFriendHurt = this.friendHurt;
@@ -270,6 +274,14 @@ export abstract class Pet {
                 return;
             }
             friendFaintsCallback(gameApi, pet, tiger);
+        }
+
+        let GainedPerkCallback = this.GainedPerk?.bind(this);
+        this.GainedPerk = GainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            GainedPerkCallback(gameApi, pet, tiger);
         }
 
         let friendGainedPerkCallback = this.friendGainedPerk?.bind(this);
@@ -532,6 +544,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superGainedPerk(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.GainedPerk(gameApi, pet, true)
+        this.exp = exp;
+    }
+
     protected superFriendGainedPerk(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
@@ -679,6 +701,14 @@ export abstract class Pet {
             })
 
             pet.health = 0;
+        } else if (attackEquipment instanceof PeanutButter && damage > 0 && attackEquipment.uses > 0) {
+            this.logService.createLog({
+                message: `${this.name} attacks ${pet.name} for ${pet.health} (Peanut Butter)`,
+                type: 'attack',
+                player: this.parent
+            })
+
+            pet.health = 0;
         } else {
             pet.health -= damage;
 
@@ -691,14 +721,14 @@ export abstract class Pet {
                 }
                 let powerAmt = `${sign}${power}`;
                 if (attackEquipment instanceof Salt) {
-                    if (pet.tier < this.tier) {
                         powerAmt = `x2`;
-                    } else {
-                        powerAmt = `x1`;
-                    }
                 }
                 if (attackEquipment instanceof Cheese) {
-                    powerAmt = `x2`;
+                    if (damage <= 15) {
+                        powerAmt = '=15';
+                    } else {
+                        powerAmt = '+0';
+                    }
                 }
                 if (attackEquipment instanceof FortuneCookie) {
                     randomEvent = true;
@@ -887,14 +917,14 @@ export abstract class Pet {
      */
     snipePet(pet: Pet, power: number, randomEvent?: boolean, tiger?: boolean, pteranodon?: boolean, fig?: boolean, mana?: boolean) {
 
-        let wolverine = false;
-        if (this.petAhead?.name == 'Wolverine') {
+        let albatross = false;
+        if (this.petAhead?.name == 'Albatross' && pet.tier <= 4) {
             power += this.petAhead.level * 3;
-            wolverine = true;
+            albatross = true;
         }
-        if (this.petBehind()?.name == 'Wolverine') {
+        if (this.petBehind()?.name == 'Albatross' && pet.tier <= 4) {
             power += this.petBehind().level * 3;
-            wolverine = true;
+            albatross = true;
         }
 
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(), power, true);
@@ -934,8 +964,8 @@ export abstract class Pet {
             message += ' (Tiger)'
         }
 
-        if (wolverine) {
-            message += ' (Wolverine)'
+        if (albatross) {
+            message += ' (Albatross)'
         }
 
         if (fig) {
@@ -1108,9 +1138,7 @@ export abstract class Pet {
         }
 
         if (attackEquipment instanceof Salt && !snipe) {
-            if (pet.tier < this.tier) {
-                attackAmt *= (2 + attackMultiplier - 1);
-            }
+            attackAmt *= (2 + attackMultiplier - 1);
         }
 
         let fortuneCookie = false;
@@ -1123,7 +1151,7 @@ export abstract class Pet {
         }
 
         if (attackEquipment instanceof Cheese && !snipe) {
-            attackAmt *= (2 + attackMultiplier - 1);
+            attackAmt = Math.max(15, attackAmt);
         }
 
         if (pet.equipment instanceof Exposed) {
@@ -1168,7 +1196,7 @@ export abstract class Pet {
         this.setAbilityUses();
     }
 
-    get alive() {
+    get alive(): boolean {
         return this.health > 0;
     }
     
@@ -1307,13 +1335,15 @@ export abstract class Pet {
             this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
             this.abilityService.executeEnemyGainedAilmentEvents();
         } else {
+            this.abilityService.triggerGainedPerkEvents(this);
+            this.abilityService.executeGainedPerkEvents();
             this.abilityService.triggerFriendGainedPerkEvents(this);
             this.abilityService.executeFriendGainedPerkEvents();
         }
 
     }
 
-    get level() {
+    get level(): number {
         if (this.exp < 2) {
             return 1;
         }
@@ -1323,7 +1353,7 @@ export abstract class Pet {
         return 3;
     }
 
-    get position() {
+    get position(): number {
         if (this == this.parent.pet0) {
             return 0;
         }
@@ -1346,7 +1376,7 @@ export abstract class Pet {
      * @param seenDead if true, consider pets that are not seenDead. if the pet is dead, but not seen, return null.
      * @returns 
      */
-    petBehind(seenDead = false, deadOrAlive = false) {
+    petBehind(seenDead = false, deadOrAlive = false): Pet {
         for (let i = this.position + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
             if (deadOrAlive) {
@@ -1382,7 +1412,7 @@ export abstract class Pet {
         return mult;
     }
 
-    getPetsAhead(amt: number, includeOpponent=false) {
+    getPetsAhead(amt: number, includeOpponent=false): Pet[] {
         let targetsAhead = [];
         let petAhead = this.petAhead;
         while (petAhead) {
@@ -1409,7 +1439,7 @@ export abstract class Pet {
         return targetsAhead;
     }
 
-    getPetsBehind(amt: number) {
+    getPetsBehind(amt: number): Pet[] {
         let targetsBehind = [];
         let petBehind = this.petBehind();
         while (petBehind) {
@@ -1422,7 +1452,7 @@ export abstract class Pet {
         return targetsBehind;
     }
 
-    kitsuneCheck() {
+    kitsuneCheck(): boolean {
         let petBehind = this.petBehind();
         let first = true;
         while (petBehind) {
@@ -1438,7 +1468,7 @@ export abstract class Pet {
         return false;
     }
 
-    get petAhead() {
+    get petAhead(): Pet {
         for (let i = this.position - 1; i > -1; i--) {
             let pet = this.parent.getPetAtPosition(i);
             if (pet != null && pet.alive) {
@@ -1448,7 +1478,7 @@ export abstract class Pet {
         return null;
     }
 
-    get minExpForLevel() {
+    get minExpForLevel(): number {
         return this.level == 1 ? 0 : this.level == 2 ? 2 : 5;
     }
 }
