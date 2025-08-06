@@ -12,7 +12,7 @@ export class Seal extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 8;
-    friendGainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
+    GainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
         if (pet != this) {
             return;
         }
@@ -27,7 +27,7 @@ export class Seal extends Pet {
                 tiger: tiger
             });
         }
-        this.superFriendGainedPerk(gameApi, pet, tiger);
+        this.superGainedPerk(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

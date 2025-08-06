@@ -6,6 +6,7 @@ import { clone, cloneDeep, shuffle } from "lodash";
 import { GameService } from "./game.service";
 import { Pet } from "../classes/pet.class";
 import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
+import { LogService } from "./log.service";
 
 @Injectable({
     providedIn: "root"
@@ -24,6 +25,7 @@ export class AbilityService {
     private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
+    private GainedPerkEvents: AbilityEvent[]= [];
     private friendGainedPerkEvents: AbilityEvent[]= []; // TODO refactor to work like friendGainedAilment
     private friendGainedAilmentEvents: AbilityEvent[]= [];
     private enemyGainedAilmentEvents: AbilityEvent[]= [];
@@ -407,13 +409,52 @@ export class AbilityService {
         return this.hurtEvents.length > 0;
     }
 
+    // gained perk
+
+    triggerGainedPerkEvents(perkPet: Pet) {
+        for (let pet of perkPet.parent.petArray) {
+            if (pet != perkPet) {
+                 continue;
+            }
+            if (pet.GainedPerk != null) {
+                this.setGainedPerkEvent({
+                    callback: pet.GainedPerk.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: perkPet
+                })
+            }
+        }
+    }
+
+    setGainedPerkEvent(event: AbilityEvent) {
+        this.GainedPerkEvents.push(event);
+    }
+
+    resetGainedPerkEvents() {
+        this.GainedPerkEvents = [];
+    }
+
+    executeGainedPerkEvents() {
+        // shuffle, so that same priority events are in random order
+        this.GainedPerkEvents = shuffle(this.GainedPerkEvents);
+
+        this.GainedPerkEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.GainedPerkEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet);
+        }
+        
+        this.resetGainedPerkEvents();
+
+        
+    }
 
     // friend gained perk
 
     triggerFriendGainedPerkEvents(perkPet: Pet) {
         for (let pet of perkPet.parent.petArray) {
             // if (pet == perkPet) {
-            //     return;
+            //      return;
             // }
             if (pet.friendGainedPerk != null) {
                 this.setFriendGainedPerkEvent({

@@ -52,6 +52,7 @@ export abstract class Pet {
     friendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    GainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -86,6 +87,7 @@ export abstract class Pet {
     originalFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     originalFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -153,6 +155,7 @@ export abstract class Pet {
         this.originalFriendAheadAttacks = this.friendAheadAttacks;
         this.originalFriendAheadFaints = this.friendAheadFaints;
         this.originalFriendFaints = this.friendFaints;
+        this.originalGainedPerk = this.GainedPerk;
         this.originalFriendGainedPerk = this.friendGainedPerk;
         this.originalFriendGainedAilment = this.friendGainedAilment;
         this.originalFriendHurt = this.friendHurt;
@@ -271,6 +274,14 @@ export abstract class Pet {
                 return;
             }
             friendFaintsCallback(gameApi, pet, tiger);
+        }
+
+        let GainedPerkCallback = this.GainedPerk?.bind(this);
+        this.GainedPerk = GainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            GainedPerkCallback(gameApi, pet, tiger);
         }
 
         let friendGainedPerkCallback = this.friendGainedPerk?.bind(this);
@@ -530,6 +541,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
         this.beforeAttack(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superGainedPerk(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.GainedPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -1314,6 +1335,8 @@ export abstract class Pet {
             this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
             this.abilityService.executeEnemyGainedAilmentEvents();
         } else {
+            this.abilityService.triggerGainedPerkEvents(this);
+            this.abilityService.executeGainedPerkEvents();
             this.abilityService.triggerFriendGainedPerkEvents(this);
             this.abilityService.executeFriendGainedPerkEvents();
         }

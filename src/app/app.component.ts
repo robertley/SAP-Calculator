@@ -608,6 +608,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   executeFrequentEvents() {
+    this.abilityService.executeGainedPerkEvents();
     this.abilityService.executeFriendGainedPerkEvents();
     this.abilityService.executeFriendGainedAilmentEvents();
     this.abilityService.executeFriendlyToyBrokeEvents();
