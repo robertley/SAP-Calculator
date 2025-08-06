@@ -81,7 +81,7 @@ import { Frigatebird } from "../classes/pets/puppy/tier-2/frigatebird.class";
 import { Robin } from "../classes/pets/puppy/tier-2/robin.class";
 import { Dromedary } from "../classes/pets/puppy/tier-2/dromedary.class";
 import { Shrimp } from "../classes/pets/puppy/tier-2/shrimp.class";
-import { Toucan } from "../classes/pets/puppy/tier-2/toucan.class";
+import { Toucan } from "../classes/pets/puppy/tier-3/toucan.class";
 import { BelugaSturgeon } from "../classes/pets/puppy/tier-2/beluga-sturgeon.class";
 import { TabbyCat } from "../classes/pets/puppy/tier-2/tabby-cat.class";
 import { Mandrill } from "../classes/pets/puppy/tier-2/mandrill.class";
@@ -89,7 +89,7 @@ import { Lemur } from "../classes/pets/puppy/tier-2/lemur.class";
 import { HoopoeBird } from "../classes/pets/puppy/tier-3/hoopoe-bird.class";
 import { TropicalFish } from "../classes/pets/puppy/tier-3/tropical-fish.class";
 import { HatchingChick } from "../classes/pets/puppy/tier-3/hatching-chick.class";
-import { Goldfish } from "../classes/pets/puppy/tier-3/goldfish.class";
+import { Goldfish } from "../classes/pets/puppy/tier-2/goldfish.class";
 import { Owl } from "../classes/pets/puppy/tier-3/owl.class";
 import { Mole } from "../classes/pets/puppy/tier-3/mole.class";
 import { Raccoon } from "../classes/pets/custom/tier-5/raccoon.class";
@@ -571,18 +571,18 @@ export class PetService {
             "Bat",
             "Dromedary",
             "Shrimp",
-            "Toucan",
             "Beluga Sturgeon",
             "Tabby Cat",
             "Mandrill",
-            "Lemur"
+            "Lemur",
+            "Goldfish"
         ])
 
         this.puppyPackPets.set(3, [
             "Hoopoe Bird",
             "Tropical Fish",
+            "Toucan",
             "Hatching Chick",
-            "Goldfish",
             "Owl",
             "Mole",
             "Flying Squirrel",

@@ -8,7 +8,7 @@ import { Player } from "../../../player.class";
 
 export class Toucan extends Pet {
     name = "Toucan";
-    tier = 2;
+    tier = 3;
     pack: Pack = 'Puppy';
     attack = 3;
     health = 3;
