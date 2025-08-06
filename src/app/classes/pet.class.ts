@@ -700,11 +700,7 @@ export abstract class Pet {
                 }
                 let powerAmt = `${sign}${power}`;
                 if (attackEquipment instanceof Salt) {
-                    if (pet.tier < this.tier) {
                         powerAmt = `x2`;
-                    } else {
-                        powerAmt = `x1`;
-                    }
                 }
                 if (attackEquipment instanceof Cheese) {
                     if (damage <= 15) {
@@ -1121,9 +1117,7 @@ export abstract class Pet {
         }
 
         if (attackEquipment instanceof Salt && !snipe) {
-            if (pet.tier < this.tier) {
-                attackAmt *= (2 + attackMultiplier - 1);
-            }
+            attackAmt *= (2 + attackMultiplier - 1);
         }
 
         let fortuneCookie = false;

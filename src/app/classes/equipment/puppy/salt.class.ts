@@ -5,8 +5,6 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 export class Salt extends Equipment {
     name = 'Salt';
     equipmentClass: EquipmentClass = 'attack';
-    constructor(
-    ) {
-        super()
-    }
+    uses = 1;
+    originalUses = 1;
 }
