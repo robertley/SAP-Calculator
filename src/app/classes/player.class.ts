@@ -236,40 +236,7 @@ export class Player {
             console.warn("No room to Make Room") // should never happen
             return;
         }
-
-        let isSpaceBehind = false;
         let slotWithSpace = null;
-        if (slot < 4) {
-            if (this.pet4 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 4;
-            }
-        }
-        if (slot < 3) {
-            if (this.pet3 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 3;
-            }
-        }
-        if (slot < 2) {
-            if (this.pet2 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 2;
-            }
-        }
-        if (slot < 1) {
-            if (this.pet1 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 1;
-            }
-        }
-        if (isSpaceBehind) {
-            for (let i = slotWithSpace; i > slot; i--) {
-                this[`pet${i}`] = this[`pet${i-1}`];
-            }
-            return;
-        }
-        
         // isSpaceAhead
         let isSpaceAhead = false;
         if (slot > 0) {
@@ -301,6 +268,39 @@ export class Player {
                 this[`pet${i}`] = this[`pet${i+1}`];
             }
         }
+
+        let isSpaceBehind = false;
+        if (slot < 4) {
+            if (this.pet4 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 4;
+            }
+        }
+        if (slot < 3) {
+            if (this.pet3 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 3;
+            }
+        }
+        if (slot < 2) {
+            if (this.pet2 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 2;
+            }
+        }
+        if (slot < 1) {
+            if (this.pet1 == null) {
+                isSpaceBehind = true;
+                slotWithSpace = 1;
+            }
+        }
+        if (isSpaceBehind) {
+            for (let i = slotWithSpace; i > slot; i--) {
+                this[`pet${i}`] = this[`pet${i-1}`];
+            }
+            return;
+        }
+        
 
     }
 
