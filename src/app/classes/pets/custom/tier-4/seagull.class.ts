@@ -18,6 +18,7 @@ import { Peanut } from "../../../equipment/turtle/peanut.class";
 import { Croissant } from "../../../equipment/puppy/croissant.class";
 import { Rice } from "../../../equipment/puppy/rice.class";
 import { Egg } from "../../../equipment/puppy/egg.class";
+import { Lime } from "../../../equipment/puppy/lime.class";
 import { Pie } from "../../../equipment/puppy/pie.class";
 import { Skewer } from "../../../equipment/puppy/skewer.class";
 import { Lemon } from "../../../equipment/puppy/lemon.class";
@@ -113,6 +114,7 @@ export class Seagull extends Pet {
         map.set('Peanut', new Peanut());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
+        map.set('Lime', new Lime());
         map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Salt', new Salt());
         map.set('Pie', new Pie());

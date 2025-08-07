@@ -20,6 +20,7 @@ import { Potato } from "../../equipment/golden/potato.class";
 import { Tomato } from "../../equipment/golden/tomato.class";
 import { Croissant } from "../../equipment/puppy/croissant.class";
 import { Egg } from "../../equipment/puppy/egg.class";
+import { Lime } from "../../equipment/puppy/lime.class";
 import { Lemon } from "../../equipment/puppy/lemon.class";
 import { Pancakes } from "../../equipment/puppy/pancakes.class";
 import { Pie } from "../../equipment/puppy/pie.class";
@@ -107,6 +108,7 @@ export class GoodDog extends Pet {
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
         map.set('Egg', new Egg(this.logService, this.abilityService));
+        map.set('Lime', new Lime());
         map.set('Salt', new Salt());
         map.set('Pie', new Pie());
         map.set('Skewer', new Skewer(this.logService));
