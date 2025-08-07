@@ -11,7 +11,7 @@ export class Hare extends Pet {
     name = "Hare";
     tier = 3;
     pack: Pack = 'Puppy';
-    health = 3;
+    health = 4;
     attack = 4;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
@@ -22,7 +22,9 @@ export class Hare extends Pet {
         let equipmentPets: Pet[] = [];
         for (let pet of enemyPets) {
             if (pet.equipment) {
-                equipmentPets.push(pet);
+                if (this.isUsefulPerk(pet.equipment.name)) {
+                    equipmentPets.push(pet);
+                }
             }
         }
         if (equipmentPets.length == 0) {
@@ -61,5 +63,45 @@ export class Hare extends Pet {
     setAbilityUses(): void {
         super.setAbilityUses();
         this.maxAbilityUses = this.level;
+    }
+
+    private static readonly USEFUL_PERKS: Map<string, number> = new Map([
+        // T2
+        ['Lime', 2], 
+        ['Meat Bone', 2], 
+        ['Cherry', 2], 
+        ['Fairy Dust', 2],
+        // T3  
+        ['Garlic', 3], 
+        ['Gingerbread Man', 3], 
+        ['Fig', 3], 
+        ['Cucumber', 3], 
+        ['Croissant', 3],
+        // T4
+        ['Banana', 4], 
+        ['Love Potion', 4], 
+        ['Pie', 4], 
+        ['Grapes', 4], 
+        ['Cheese', 4], 
+        ['Salt', 4], 
+        ['Fortune Cookie', 4],
+        // T5
+        ['Easter Egg', 5], 
+        ['Magic Beans', 5], 
+        ['Chili', 5], 
+        ['Lemon', 5], 
+        ['Durian', 5],
+        // T6
+        ['Popcorn', 6], 
+        ['Steak', 6], 
+        ['Pancakes', 6], 
+        ['Yggdrasil Fruit', 6], 
+        ['Melon', 6], 
+        ['Tomato', 6], 
+        ['Pita Bread', 6]
+    ]);
+
+    private isUsefulPerk(equipmentName: string): boolean {
+        return Hare.USEFUL_PERKS.has(equipmentName);
     }
 }
