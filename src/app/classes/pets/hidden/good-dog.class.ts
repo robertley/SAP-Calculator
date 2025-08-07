@@ -51,6 +51,7 @@ import { HealthPotion } from "../../equipment/unicorn/health-potion.class";
 import { LovePotion } from "../../equipment/unicorn/love-potion.class";
 import { MagicBeans } from "../../equipment/unicorn/magic-beans.class";
 import { Rambutan } from "../../equipment/unicorn/rambutan.class";
+import { Squash } from "../../equipment/puppy/squash.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
 
@@ -144,6 +145,7 @@ export class GoodDog extends Pet {
         map.set('Health Potion', new HealthPotion(this.logService));
         map.set('Magic Beans', new MagicBeans());
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
+        map.set('Squash', new Squash(this.logService, this.abilityService));
 
         
         return map;
