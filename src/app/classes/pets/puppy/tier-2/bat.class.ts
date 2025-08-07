@@ -14,9 +14,11 @@ export class Bat extends Pet {
     attack = 2;
     health = 4;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
         let opponent = getOpponent(gameApi, this.parent);
-        let excludePets = opponent.getPetsWithEquipment('Weak');
-        let targets = opponent.getRandomPets(this.level, excludePets, null, true);
+        let targets = opponent.getRandomPets(1, null, null, true);
         for (let target of targets) {
             target.givePetEquipment(new Weak());
             this.logService.createLog({
@@ -27,6 +29,7 @@ export class Bat extends Pet {
                 tiger: tiger
             })
         }
+        this.abilityUses++;
         this.superBeforeAttack(gameApi, tiger);
     }
     constructor(protected logService: LogService,
@@ -39,5 +42,9 @@ export class Bat extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

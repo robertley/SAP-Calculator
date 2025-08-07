@@ -12,7 +12,7 @@ export class Axolotl extends Pet {
     attack = 2;
     health = 5;
     friendGainedPerk(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (pet == this) {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         let power = this.level;
@@ -24,6 +24,7 @@ export class Axolotl extends Pet {
             player: this.parent,
             tiger: tiger
         });
+        this.abilityUses++;
         this.superFriendGainedPerk(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
@@ -36,5 +37,9 @@ export class Axolotl extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 3;
     }
 }

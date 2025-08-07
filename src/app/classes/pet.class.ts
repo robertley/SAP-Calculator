@@ -1331,7 +1331,6 @@ export abstract class Pet {
         if (isNaN(this.equipment.uses)) {
             console.warn('uses is NaN', this.equipment)
         }
-        console.log(`AttackDefense trigger: ${this.equipment.name}`)
         this.equipment.uses -= 1;
         if (this.equipment.uses == 0) {
             this.removePerk();

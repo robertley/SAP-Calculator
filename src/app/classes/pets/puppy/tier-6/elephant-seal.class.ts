@@ -1,3 +1,4 @@
+import { random } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -24,23 +25,32 @@ export class ElephantSeal extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    givePetEquipment(equipment: Equipment): void {
-        super.givePetEquipment(equipment);
-        let power = this.level;
-        for (let pet of this.parent.petArray) {
-            if (pet == this) {
-                continue;
-            }
-            if (!pet.alive) {
-                continue;
-            }
-            pet.increaseAttack(power);
-            pet.increaseHealth(power);
+    GainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
+        if (pet != this) {
+            return;
+        }
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
+        let power = this.level * 5;
+        let targets = this.parent.getRandomPets(3, [this], true, false);
+        for (let target of targets) {
+            target.increaseAttack(power);
+            target.increaseHealth(power);
             this.logService.createLog({
-                message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
+                message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: true
             })
         }
+        this.abilityUses++;
+        this.superGainedPerk(gameApi, pet, tiger);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 1;
     }
 }

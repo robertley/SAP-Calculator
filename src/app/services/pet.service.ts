@@ -878,6 +878,7 @@ export class PetService {
             "Basilisk",
         ]);
         this.customPackPets.set(2, [
+            "Frigatebird",
             "Wombat",
             "Frigatebird",
             "Nightcrawler",

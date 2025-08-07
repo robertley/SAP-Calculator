@@ -16,6 +16,8 @@ import { Blackberry } from "../classes/equipment/puppy/blackberry.class";
 import { Croissant } from "../classes/equipment/puppy/croissant.class";
 import { Rice } from "../classes/equipment/puppy/rice.class";
 import { Egg } from "../classes/equipment/puppy/egg.class";
+import { Lime } from "../classes/equipment/puppy/lime.class";
+import { Squash } from "../classes/equipment/puppy/squash.class";
 import { Salt } from "../classes/equipment/puppy/salt.class";
 import { Pie } from "../classes/equipment/puppy/pie.class";
 import { Skewer } from "../classes/equipment/puppy/skewer.class";
@@ -84,7 +86,9 @@ export class EquipmentService {
         map.set('Blackberry', new Blackberry());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
+        map.set('Lime', new Lime());    
         map.set('Egg', new Egg(this.logService, this.abilityService));
+        map.set('Squash', new Squash(this.logService, this.abilityService));
         map.set('Salt', new Salt());
         map.set('Pie', new Pie());
         map.set('Skewer', new Skewer(this.logService));
@@ -138,6 +142,72 @@ export class EquipmentService {
         return map;
     }
 
-    
+    //If change this, need change Hare too
+    private static readonly USEFUL_PERKS: Map<string, number> = new Map([
+        // T2
+        ['Lime', 2], 
+        ['Meat Bone', 2], 
+        ['Cherry', 2], 
+        ['Fairy Dust', 2],
+        // T3  
+        ['Garlic', 3], 
+        ['Gingerbread Man', 3], 
+        ['Fig', 3], 
+        ['Cucumber', 3], 
+        ['Croissant', 3],
+        ['Squash', 3],
+        // T4
+        ['Banana', 4], 
+        ['Love Potion', 4], 
+        ['Pie', 4], 
+        ['Grapes', 4], 
+        ['Cheese', 4], 
+        ['Salt', 4], 
+        ['Fortune Cookie', 4],
+        // T5
+        ['Easter Egg', 5], 
+        ['Magic Beans', 5], 
+        ['Chili', 5], 
+        ['Lemon', 5], 
+        ['Durian', 5],
+        // T6
+        ['Popcorn', 6], 
+        ['Steak', 6], 
+        ['Pancakes', 6], 
+        ['Yggdrasil Fruit', 6], 
+        ['Melon', 6], 
+        ['Tomato', 6], 
+        ['Pita Bread', 6]
+    ]);
+
+    isUsefulPerk(equipmentName: string): boolean {
+        return EquipmentService.USEFUL_PERKS.has(equipmentName);
+    }
+
+    getUsefulPerksByTier(tier: number): Equipment[] {
+        const allEquipment = this.getInstanceOfAllEquipment();
+        const usefulPerksForTier: Equipment[] = [];
+        
+        for (const [name, tierValue] of EquipmentService.USEFUL_PERKS.entries()) {
+            if (tierValue === tier && allEquipment.has(name)) {
+                usefulPerksForTier.push(allEquipment.get(name)!);
+            }
+        }
+        
+        return usefulPerksForTier;
+    }
+
+    getUsefulPerks(): Equipment[] {
+        const allEquipment = this.getInstanceOfAllEquipment();
+        const usefulPerks: Equipment[] = [];
+        
+        for (const name of EquipmentService.USEFUL_PERKS.keys()) {
+            if (allEquipment.has(name)) {
+                usefulPerks.push(allEquipment.get(name)!);
+            }
+        }
+        
+        return usefulPerks;
+    }
 
 }

@@ -12,13 +12,13 @@ export class GarlicPress extends Toy {
                 if (pet?.equipment instanceof Garlic) {
                     continue;
                 }
-                pet.givePetEquipment(new Garlic());
                 this.logService.createLog({
                     message: `${this.name} gave ${pet.name} Garlic.`,
                     type: 'ability',
                     player: this.parent,
                     puma: puma
                 })
+                pet.givePetEquipment(new Garlic());
                 break;
             }
         }
