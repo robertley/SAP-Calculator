@@ -1,0 +1,65 @@
+.select-attack {
+    background-color: gray;
+    color: white;
+}
+.select-health {
+    background-color: #ca0202;
+    color: white;
+}
+.select-mana {
+    background-color: #7388f8;
+    color: white;
+    width: 45%;
+}
+
+.select-attack, .select-health, .select-mana {
+    font-size: 1.5em;
+    padding-right: 0;
+}
+
+.level-bar, .level-bar-numbers {
+    height: 1em;
+    span {
+        width: calc(100% / 5);
+        height: 100%;
+    }
+}
+
+.level-bar {
+    position: relative;
+    span {
+        cursor: pointer;
+        border: 2px solid black;
+        background-color: #9c5900;
+        border-radius: 20%;
+    }
+
+    
+    .remove-exp {
+        border: initial;
+        background-color: initial;
+        border-radius: initial;
+        width: initial;
+        position: absolute;
+        left: 0;
+        bottom: .33em;
+    }
+
+    span.selected {
+        background-color: #feb900;
+    }
+}
+
+.level-3 {
+    text-align: right;
+}
+
+.fly-out {
+    position: absolute;
+    left: 100%;
+    background-color: white;
+    width: 100%;
+    z-index: 1;
+    box-shadow: 12px 4px 9px 7px rgba(0,0,0,0.1);
+
+}

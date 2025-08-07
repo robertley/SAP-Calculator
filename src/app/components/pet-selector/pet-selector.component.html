@@ -1,0 +1,81 @@
+
+<div class="card p-3">
+    <div class="row form-group" [formGroup]="formGroup">
+        <div class="col-12 d-flex level-bar-numbers mb-1">
+            <span>1</span>
+            <span></span>
+            <span>2</span>
+            <span></span>
+            <span class="level-3">3</span>
+        </div>
+        <div class="col-12 d-flex level-bar mb-2">
+            <span (click)="setExp(0)" class="remove-exp" *ngIf="showRemoveExp()">x</span>
+            <span (click)="setExp(1)" [class]="getIsSelected(1) ? 'selected' : ''"></span>
+            <span (click)="setExp(2)" [class]="getIsSelected(2) ? 'selected' : ''"></span>
+            <span (click)="setExp(3)" [class]="getIsSelected(3) ? 'selected' : ''"></span>
+            <span (click)="setExp(4)" [class]="getIsSelected(4) ? 'selected' : ''"></span>
+            <span (click)="setExp(5)" [class]="getIsSelected(5) ? 'selected' : ''"></span>
+        </div>
+        <div class="col-12 mb-2 d-flex">
+            <select class="form-control" formControlName="name">
+                <option [ngValue]="null">None</option>
+                <optgroup label="Token Pets" [hidden]="!showTokenPets">
+                    <option *ngFor="let pet of tokenPets" [ngValue]="pet">{{pet}}</option>
+                </optgroup>
+                <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
+                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                </optgroup>
+            </select>
+            <button *ngIf="showFlyOutButton()" class="btn btn-secondary" (click)="toggleFlyOut()">></button>
+
+            <div class="fly-out border p-3" *ngIf="showFlyOut">
+
+                <div *ngIf="pet.name == 'Beluga Whale'">
+                    <label for="belugaSwallowedPet">Swallowed Pet</label>
+                    <select class="form-control" formControlName="belugaSwallowedPet">
+                        <option [ngValue]="null">None</option>
+                        <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
+                            <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div *ngIf="pet.name == 'Abomination'">
+                    <div *ngFor = "let a of [].constructor(pet.level); index as i">
+                        <label for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
+                        <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}">
+                            <option [ngValue]="null">None</option>
+                            <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of startOfBattlePets | keyvalue">
+                                <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <div *ngIf="pet.name == 'Slime'">
+                    <label for="battlesFought">Battles Fought</label>
+                    <input class="form-control" formControlName="battlesFought" type="number" max="99">
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-12 mb-2">
+            <select class="form-control" formControlName="equipment">
+                <option [ngValue]="null">None</option>
+                <option *ngFor="let equip of equipment | keyvalue" [ngValue]="equip.value">{{equip.key}}</option>
+                <optgroup *ngIf="ailments" label="Ailments">
+                    <option *ngFor="let ailment of ailmentEquipment | keyvalue" [ngValue]="ailment.value">{{ailment.key}}</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="col-12 d-flex justify-content-center" *ngIf="mana">
+            <input class="form-control select-mana" formControlName="mana" type="number" min="0" max="100">
+        </div>
+        <div class="col-6">
+            <input class="form-control select-attack" formControlName="attack" type="number" min="1" [max]="attackHealthMax">
+        </div>
+        <div class="col-6">
+            <input class="form-control select-health" formControlName="health" type="number" min="1" [max]="attackHealthMax">
+        </div>
+    </div>
+</div>

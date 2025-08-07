@@ -1,0 +1,205 @@
+$day: #85ddf2;
+$night: #33377a;
+
+.app-wrapper {
+    height: 100vh;
+}
+
+.day-night-container {
+    min-height: 1em;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.player-card {
+    background-color: #e9c137;
+    display: grid;
+    grid-auto-rows: minmax(min-content, max-content);
+    grid-template-columns: auto 1fr auto;
+}
+
+.back, .front {
+    transform: rotate(180deg);
+    writing-mode: vertical-lr;
+    text-align: center;
+}
+
+.battle-row {
+    background-color: #5ebe09;
+}
+
+.button-bar, .battle-controller {
+    background-color: whitesmoke;
+}
+
+.battle-controller .min-w-input {
+    min-width: 100px;
+}
+
+.small-w-input {
+    width: 60px;
+}
+
+.stats {
+    label {
+        margin-right: .25em;
+    }
+    span {
+        margin-right: 1em;
+    }
+}
+
+.battle-no {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.table-battle-row {
+    cursor: pointer;
+}
+
+.results-bar, .draw-bar, .lose-bar {
+    display: inline-block;
+}
+
+.draw-bar, .lose-bar {
+    height: 100%;
+    position: absolute;
+    right: 0;
+}
+
+.results-bar {
+    max-width: 100%;
+    border: .2em solid black;
+    height: 2em;
+    width: 30em;
+    background-color: lime;
+    position: relative;
+}
+
+.draw-bar {
+    background-color: lightgray;
+}
+
+.lose-bar {
+    background-color: red;
+}
+
+.log-player {
+    background-color: rgb(228, 255, 224);;
+}
+
+.log-opponent {
+    background-color: rgb(255, 224, 224);
+}
+
+.log-container {
+    display: flex;
+    align-content: flex-start;
+}
+
+.random-event {
+    color: purple;
+    font-weight: bold;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.bottom-container {
+    min-height: 30em;
+    > div {
+        min-height: 15em;
+    }
+}
+
+.scroll {
+    overflow: scroll;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+.pre {
+    white-space: pre;
+}
+.btn-link {
+    color: #0d6efd;
+    cursor: pointer;
+}
+
+.zoom-container {
+    button {
+        // font-size: 1.5em;
+        width: 2.5em;
+        // height: 1.75em;
+        // padding: 0;
+    }
+
+    min-width: max-content;
+}
+
+.cdk-drag-placeholder {
+    opacity: 0;
+}
+
+.drag-container {
+    position: relative;
+}
+
+.drag-handle {
+    width: 1.25em;
+    position: absolute;
+    right: 1em;
+    z-index: 1;
+    opacity: .5;
+    cursor: pointer;
+}
+
+.info-link {
+    margin-left: 1em;
+    margin-bottom: .5em;
+}
+
+// if window is xs breakpoint
+@media (max-width: 767.98px) {
+    .card {
+        max-width: 18em;
+    }
+
+    .back, .front {
+        // transform: rotate(180deg);
+        transform: initial;
+        writing-mode: initial;
+    }
+
+    .player-card {
+        grid-template-columns: none;
+    }
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.bug-button {
+    margin-right: .5em;
+    margin-bottom: .25em;
+}
+
+.advanced-input {
+    input {
+        width: 60px;
+    }
+}
