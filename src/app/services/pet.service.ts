@@ -107,9 +107,10 @@ import { WhaleShark } from "../classes/pets/puppy/tier-4/whale-shark.class";
 import { Chameleon } from "../classes/pets/puppy/tier-4/chameleon.class";
 import { Gharial } from "../classes/pets/puppy/tier-4/gharial.class";
 import { Stonefish } from "../classes/pets/puppy/tier-5/stonefish.class";
-import { Poodle } from "../classes/pets/puppy/tier-5/poodle.class";
+import { Poodle } from "../classes/pets/custom/tier-5/poodle.class";
 import { Chicken } from "../classes/pets/puppy/tier-5/chicken.class";
 import { Eagle } from "../classes/pets/puppy/tier-5/eagles.class";
+import { OrchidMantis } from "../classes/pets/puppy/tier-5/orchid-mantis.class";
 import { Panther } from "../classes/pets/puppy/tier-5/panther.class";
 import { Axolotl } from "../classes/pets/puppy/tier-5/axolotl.class";
 import { Goat } from "../classes/pets/puppy/tier-5/goat.class";
@@ -609,10 +610,10 @@ export class PetService {
 
         this.puppyPackPets.set(5, [
             "Stonefish",
-            "Poodle",
             "Goat",
             "Chicken",
             "Eagle",
+            "Orchid Mantis",
             "Panther",
             "Axolotl",
             "Snapping Turtle",
@@ -907,6 +908,7 @@ export class PetService {
         ]);
         this.customPackPets.set(5, [
             "Alpaca",
+            "Poodle",
             "Hyena",
             "Moose",
             "Raccoon",
@@ -1188,6 +1190,8 @@ export class PetService {
                 return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Eagle':
                 return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Orchid Mantis':
+                return new OrchidMantis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);           
             case 'Panther':
                 return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Axolotl':
@@ -2104,6 +2108,9 @@ export class PetService {
         }
         if (pet instanceof Eagle) {
             newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof OrchidMantis) {
+            newPet = new OrchidMantis(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Panther) {
             newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

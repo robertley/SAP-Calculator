@@ -698,8 +698,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setAbilityEquipments(this.player);
       this.setAbilityEquipments(this.opponent);
 
-      this.player.onionCheck();
-      this.opponent.onionCheck();
+      this.pushPetsForwards();
+      this.logService.printState(this.player, this.opponent);
 
       this.executeBeforeStartOfBattleEquipment(this.player);
       this.executeBeforeStartOfBattleEquipment(this.opponent);

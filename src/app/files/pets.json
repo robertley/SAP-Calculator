@@ -331,6 +331,11 @@
             "id": "62"
         },
         {
+            "name": "Mantis",
+            "tier": "1",
+            "id": "663"
+        },
+        {
             "name": "Rock",
             "tier": "1",
             "id": "638"
@@ -1342,6 +1347,11 @@
             "name": "Eagle",
             "tier": "5",
             "id": "27"
+        },
+        {
+            "name": "Eagle",
+            "tier": "5",
+            "id": "662"
         },
         {
             "name": "Egyptian Vulture",
