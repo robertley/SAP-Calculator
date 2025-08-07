@@ -9,7 +9,7 @@ export class Cyclops extends Pet {
     name = "Cyclops";
     tier = 4;
     pack: Pack = 'Unicorn';
-    attack = 4;
+    attack = 2;
     health = 5;
     anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {

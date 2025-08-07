@@ -11,8 +11,8 @@ export class WhaleShark extends Pet {
     name = "Whale Shark";
     tier = 4;
     pack: Pack = 'Puppy';
-    attack = 1;
-    health = 4;
+    attack = 2;
+    health = 6;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -27,7 +27,7 @@ export class WhaleShark extends Pet {
 
     givePetEquipment(equipment: Equipment): void {
         super.givePetEquipment(equipment);
-        this.equipment = null;
+        this.removePerk();
         let power = this.level * 2;
         this.increaseAttack(power);
         this.increaseHealth(power);

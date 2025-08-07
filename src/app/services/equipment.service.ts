@@ -12,6 +12,7 @@ import { Coconut } from "../classes/equipment/turtle/coconut.class";
 import { Peanut } from "../classes/equipment/turtle/peanut.class";
 import { AbilityService } from "./ability.service";
 import { PetService } from "./pet.service";
+import { Blackberry } from "../classes/equipment/puppy/blackberry.class";
 import { Croissant } from "../classes/equipment/puppy/croissant.class";
 import { Rice } from "../classes/equipment/puppy/rice.class";
 import { Egg } from "../classes/equipment/puppy/egg.class";
@@ -82,6 +83,7 @@ export class EquipmentService {
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
         map.set('Peanut Butter', new PeanutButter());
+        map.set('Blackberry', new Blackberry());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
         map.set('Lime', new Lime());    

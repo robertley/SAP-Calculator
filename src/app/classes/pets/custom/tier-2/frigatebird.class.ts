@@ -10,7 +10,7 @@ import { Player } from "../../../player.class";
 export class Frigatebird extends Pet {
     name = "Frigatebird";
     tier = 2;
-    pack: Pack = 'Puppy';
+    pack: Pack = 'Custom';
     attack = 2;
     health = 1;
     friendGainedAilment(gameApi: GameAPI, pet?: Pet): void {

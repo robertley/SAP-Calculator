@@ -1,48 +1,39 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Spooked } from "../../../equipment/ailments/spooked.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { Mantis} from "../../hidden/mantis.class";
 
-export class Barghest extends Pet {
-    name = "Barghest";
-    tier = 1;
-    pack: Pack = 'Unicorn';
-    attack = 2;
-    health = 3;
+export class OrchidMantis extends Pet {
+    name = "Orchid Mantis";
+    tier = 5;
+    pack: Pack = 'Puppy';
+    attack = 8;
+    health = 4;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let oppponetPets = this.parent.opponent.petArray;
-        oppponetPets.reverse();
-        let targets: Pet[] = [];
-        let targetAmt = this.level;
+        let attack =Math.min(Math.floor(this.attack * (this.level * .4)), 50);
+        let health = Math.min(Math.floor(this.health * (this.level * .4)), 50);
+        let mantis = new Mantis(this.logService, this.abilityService, this.parent, health, attack, 0, this.minExpForLevel, null);
 
-        for (let pet of oppponetPets) {
-            if (targets.length >= targetAmt) {
-                break;
-            }
-            if (pet.equipment == null) {
-                targets.push(pet);
-            }
-        }
-
-        for (let target of targets) {
-            
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} Spooked`,
+        let message = `${this.name} spawned Mantis ${mantis.attack}/${mantis.health}.`;
+        this.logService.createLog(
+            {
+                message: message,
                 type: "ability",
                 player: this.parent,
                 tiger: tiger
-            })
-
-            target.givePetEquipment(new Spooked());
-
-        }
+            }
+        )
+        
+        if (this.parent.summonPet(mantis, this.position)) {
+            this.abilityService.triggerSummonedEvents(mantis);
+        };
 
         this.superStartOfBattle(gameApi, tiger);
-
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

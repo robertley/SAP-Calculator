@@ -4,6 +4,7 @@ import { AbilityService } from "../../../../services/ability.service";
 import { EquipmentService } from "../../../../services/equipment.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
+import { Blackberry } from "../../../equipment/puppy/blackberry.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 

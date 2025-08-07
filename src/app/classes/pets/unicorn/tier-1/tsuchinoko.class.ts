@@ -9,8 +9,8 @@ export class Tsuchinoko extends Pet {
     name = "Tsuchinoko";
     tier = 1;
     pack: Pack = 'Unicorn';
-    attack = 1;
-    health = 2;
+    attack = 2;
+    health = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         this.parent.pushPetToFront(this, true);
         this.logService.createLog({

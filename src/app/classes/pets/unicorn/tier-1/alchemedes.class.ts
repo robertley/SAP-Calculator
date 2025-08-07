@@ -9,8 +9,8 @@ export class Alchemedes extends Pet {
     name = "Alchemedes";
     tier = 1;
     pack: Pack = 'Unicorn';
-    attack = 1;
-    health = 4;
+    attack = 3;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let target = this.petAhead;
         if (target == null) {

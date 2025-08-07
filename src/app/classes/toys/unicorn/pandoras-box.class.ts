@@ -13,6 +13,8 @@ import { Peanut } from "../../equipment/turtle/peanut.class";
 import { Player } from "../../player.class";
 import { Toy } from "../../toy.class";
 
+// TO DO: make level of the toy multiply the ailmenet effects
+
 export class PandorasBox extends Toy {
     name = "Pandoras Box";
     tier = 6;

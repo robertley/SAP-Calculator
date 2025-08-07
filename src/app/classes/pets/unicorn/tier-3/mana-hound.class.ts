@@ -9,8 +9,8 @@ export class ManaHound extends Pet {
     name = "Mana Hound";
     tier = 3;
     pack: Pack = 'Unicorn';
-    attack = 2;
-    health = 5;
+    attack = 5;
+    health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let isPlayer = this.parent == gameApi.player;
         let rollAmount;
