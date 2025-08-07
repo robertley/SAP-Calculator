@@ -765,7 +765,6 @@ export abstract class Pet {
                 if (defenseMultiplier > 1) {
                     message += ` x${defenseMultiplier} (Panther)`;
                 }
-
                 pet.useDefenseEquipment();
             }
             
@@ -1231,7 +1230,6 @@ export abstract class Pet {
     }
 
     useDefenseEquipment(snipe=false) {
-        debugger;
         if (this.equipment == null) {
             return;
         }
@@ -1259,7 +1257,7 @@ export abstract class Pet {
             return;
         }
         if (this.equipment.equipmentClass != 'attack'
-            && this.equipment.equipmentClass != 'defense'
+            //&& this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
             && this.equipment.equipmentClass != 'snipe'
         ) {
@@ -1268,6 +1266,7 @@ export abstract class Pet {
         if (isNaN(this.equipment.uses)) {
             console.warn('uses is NaN', this.equipment)
         }
+        console.log(`AttackDefense trigger: ${this.equipment.name}`)
         this.equipment.uses -= 1;
         if (this.equipment.uses == 0) {
             this.equipment = null;
