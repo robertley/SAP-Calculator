@@ -204,7 +204,7 @@ import { SurgeonFish } from "../classes/pets/golden/tier-3/surgeon-fish.class";
 import { Weasel } from "../classes/pets/golden/tier-3/weasel.class";
 import { Guineafowl } from "../classes/pets/golden/tier-3/guineafowl.class";
 import { BettaFish } from "../classes/pets/golden/tier-3/betta-fish.class";
-import { Meerkat } from "../classes/pets/golden/tier-3/meerkat.class";
+import { Meerkat } from "../classes/pets/golden/tier-2/meerkat.class";
 import { FlyingFish } from "../classes/pets/golden/tier-3/flying-fish.class";
 import { Baboon } from "../classes/pets/golden/tier-3/baboon.class";
 import { Osprey } from "../classes/pets/golden/tier-3/osprey.class";
@@ -733,6 +733,7 @@ export class PetService {
             "Door Head Ant",
             "Lizard",
             "Sea Turtle",
+            "Meerkat",
             "African Penguin"
         ])
 
@@ -744,7 +745,6 @@ export class PetService {
             "Weasel",
             "Guineafowl",
             "Betta Fish",
-            "Meerkat",
             "Flying Fish",
             "Baboon",
             "Osprey"

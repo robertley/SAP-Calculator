@@ -10,10 +10,10 @@ import { Weak } from "../../../equipment/ailments/weak.class";
 
 export class Meerkat extends Pet {
     name = "Meerkat";
-    tier = 3;
+    tier = 2;
     pack: Pack = 'Golden';
     attack = 1;
-    health = 3;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let gold;
         if (this.parent == gameApi.player) {
@@ -21,7 +21,7 @@ export class Meerkat extends Pet {
         } else {
             gold = gameApi.opponentGoldSpent;
         }
-        let power = Math.floor(gold / 3) * this.level;
+        let power = Math.floor(gold / 4) * this.level;
         let targetAhead = this.petAhead;
         let targetBehind = this.petBehind();
         if (targetAhead != null) {
