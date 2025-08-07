@@ -12,9 +12,9 @@ export class LovelandFrogman extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 5;
-    friendJumped(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+    beforeFriendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power: Power = {
-            attack: this.level * 2,
+            attack: this.level * 1,
             health: this.level * 2
         };
 
@@ -27,7 +27,7 @@ export class LovelandFrogman extends Pet {
         pet.increaseAttack(power.attack);
         pet.increaseHealth(power.health);
 
-        this.superFriendJumped(gameApi, pet, tiger);
+        this.superBeforeFriendAttacks(gameApi, pet, tiger);
     }
     
     constructor(protected logService: LogService,

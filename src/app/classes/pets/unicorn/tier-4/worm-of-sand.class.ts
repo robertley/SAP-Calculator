@@ -9,8 +9,8 @@ export class WormOfSand extends Pet {
     name = "Worm of Sand";
     tier = 4;
     pack: Pack = 'Unicorn';
-    attack = 3;
-    health = 5;
+    attack = 1;
+    health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

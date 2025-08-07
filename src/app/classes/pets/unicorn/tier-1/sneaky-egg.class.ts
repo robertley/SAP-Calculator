@@ -11,7 +11,7 @@ export class SneakyEgg extends Pet {
     name = "Sneaky Egg";
     tier = 1;
     pack: Pack = 'Unicorn';
-    attack = 2;
+    attack = 1;
     health = 4;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
 

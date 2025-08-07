@@ -1058,6 +1058,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.abilityService.executeBeforeAttackEvents();
+    
+    this.abilityService.triggerBeforeFriendAttacksEvents(this.player, playerPet);
+    this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, opponentPet);
+    this.abilityService.executeBeforeFriendAttacksEvents();
 
     // console.log(playerPet, 'vs', opponentPet)
 

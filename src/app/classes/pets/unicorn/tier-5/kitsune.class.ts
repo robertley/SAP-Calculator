@@ -10,7 +10,7 @@ export class Kitsune extends Pet {
     name = "Kitsune";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 3;
+    attack = 2;
     health = 7;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.petAhead == null) {

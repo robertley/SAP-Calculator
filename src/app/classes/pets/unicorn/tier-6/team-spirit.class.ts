@@ -11,8 +11,8 @@ export class TeamSpirit extends Pet {
     name = "Team Spirit";
     tier = 6;
     pack: Pack = 'Unicorn';
-    attack = 3;
-    health = 4;
+    attack = 4;
+    health = 5;
     anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet.parent != this.parent) {
             return;
@@ -26,7 +26,7 @@ export class TeamSpirit extends Pet {
 
         let power: Power = {
             attack: this.level,
-            health: this.level * 2
+            health: this.level
         }
         for (let target of targets) {
             this.logService.createLog({

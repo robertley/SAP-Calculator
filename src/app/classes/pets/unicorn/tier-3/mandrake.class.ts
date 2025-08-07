@@ -12,21 +12,29 @@ export class Mandrake extends Pet {
     name = "Mandrake";
     tier = 3;
     pack: Pack = 'Unicorn';
-    attack = 2;
-    health = 3;
+    attack = 4;
+    health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponentPets = this.parent.opponent.petArray;
-        let targets = opponentPets.filter(pet => {
-            return pet.tier <= this.level * 2 && pet.faintPet;
+        let potentialTargets = opponentPets.filter(pet => {
+            return pet.tier <= this.level * 2;
         });
 
-        shuffle(targets);
+        let faintPets = potentialTargets.filter(pet => pet.faintPet);
+        let target: Pet;
 
-        targets.sort((a, b) => {
-            return b.tier - a.tier;
-        });
+        if (faintPets.length > 0) {
+            target = faintPets[Math.floor(Math.random() * faintPets.length)];
+        } 
+        else {
+            shuffle(potentialTargets);
+            target = potentialTargets[0];
+        }
 
-        let target = targets[0];
+        // mandrake no longer targets highest tier pets
+        // potentialTargets.sort((a, b) => {
+        //     return b.tier - a.tier;
+        // });
 
         this.logService.createLog({
             message: `${this.name} made ${target.name} Dazed.`,
