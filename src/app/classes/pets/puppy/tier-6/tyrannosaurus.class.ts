@@ -10,8 +10,8 @@ export class Tyrannosaurus extends Pet {
     name = "Tyrannosaurus";
     tier = 6;
     pack: Pack = 'Puppy';
-    attack = 6;
-    health = 4;
+    attack = 7;
+    health = 7;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

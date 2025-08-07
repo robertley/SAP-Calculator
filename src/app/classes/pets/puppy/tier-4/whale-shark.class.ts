@@ -11,8 +11,8 @@ export class WhaleShark extends Pet {
     name = "Whale Shark";
     tier = 4;
     pack: Pack = 'Puppy';
-    attack = 1;
-    health = 4;
+    attack = 2;
+    health = 6;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

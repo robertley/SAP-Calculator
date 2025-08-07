@@ -9,7 +9,7 @@ export class Chinchilla extends Pet {
     tier = 1;
     pack: Pack = 'Puppy';
     attack = 2
-    health = 2;
+    health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

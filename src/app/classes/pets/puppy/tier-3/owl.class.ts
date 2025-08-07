@@ -10,7 +10,7 @@ export class Owl extends Pet {
     name = "Owl";
     tier = 3;
     pack: Pack = 'Puppy';
-    attack = 1;
+    attack = 3;
     health = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

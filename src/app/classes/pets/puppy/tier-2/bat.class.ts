@@ -11,9 +11,9 @@ export class Bat extends Pet {
     name = "Bat";
     tier = 2;
     pack: Pack = 'Puppy';
-    attack = 1;
-    health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+    attack = 2;
+    health = 4;
+    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let excludePets = opponent.getPetsWithEquipment('Weak');
         let targets = opponent.getRandomPets(this.level, excludePets, null, true);
@@ -27,7 +27,7 @@ export class Bat extends Pet {
                 tiger: tiger
             })
         }
-        this.superStartOfBattle(gameApi, tiger);
+        this.superBeforeAttack(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

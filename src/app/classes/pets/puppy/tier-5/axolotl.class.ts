@@ -10,7 +10,7 @@ export class Axolotl extends Pet {
     tier = 5;
     pack: Pack = 'Puppy';
     attack = 2;
-    health = 3;
+    health = 5;
     friendGainedPerk(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (pet == this) {
             return;

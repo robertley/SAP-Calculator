@@ -8,7 +8,7 @@ export class Dragon extends Pet {
     name = "Dragon";
     tier = 6;
     pack: Pack = 'Turtle';
-    attack = 6;
+    attack = 3;
     health = 8;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
