@@ -50,7 +50,7 @@ export class Phoenix extends Pet {
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let power = 6 * this.level;
+                let power = 4 * this.level;
                 let youngPhoenix = new YoungPhoenix(this.logService, this.abilityService, this.parent, power, power, 0);
         
                 this.logService.createLog(

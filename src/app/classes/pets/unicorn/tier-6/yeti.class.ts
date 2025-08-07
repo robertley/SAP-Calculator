@@ -11,7 +11,7 @@ export class Yeti extends Pet {
     tier = 6;
     pack: Pack = 'Unicorn';
     attack = 5;
-    health = 7;
+    health = 9;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

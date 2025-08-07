@@ -31,6 +31,7 @@ export class Player {
 
     trumpets: number = 0;
     spawnedGoldenRetiever: boolean = false;
+    summonedBoatThisBattle: boolean = false;
 
     constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {
     }
@@ -66,6 +67,7 @@ export class Player {
         }
         this.trumpets = 0;
         this.spawnedGoldenRetiever = false;
+        this.summonedBoatThisBattle = false;
     }
 
     setPet(index: number, pet: Pet, init=false) {

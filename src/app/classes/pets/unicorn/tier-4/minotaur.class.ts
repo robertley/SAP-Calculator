@@ -2,20 +2,31 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
+import { Melon } from "../../../equipment/turtle/melon.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Tatzelwurm extends Pet {
-    name = "Tatzelwurm";
+export class Minotaur extends Pet {
+    name = "Minotaur";
     tier = 4;
     pack: Pack = 'Unicorn';
     attack = 3;
-    health = 4;
-    friendAheadFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = pet.level * this.level * 2;
-        let target = this.parent.opponent.getRandomPet();
-        this.snipePet(target, power, true, tiger);
-        this.superFriendAheadFaints(gameApi, pet, tiger);
+    health = 3;
+    friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        let power = this.level * pet.level;
+
+        this.logService.createLog({
+            message: `${this.name} gained ${power} attack and ${power} health.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+
+        this.increaseAttack(power);
+        this.increaseHealth(power);
+
+        this.superFriendAheadAttacks(gameApi, pet, tiger);
+
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

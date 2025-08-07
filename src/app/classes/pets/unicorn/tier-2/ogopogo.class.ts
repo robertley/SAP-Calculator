@@ -9,19 +9,28 @@ export class Ogopogo extends Pet {
     name = "Ogopogo";
     tier = 2;
     pack: Pack = 'Unicorn';
-    attack = 1;
-    health = 2;
+    attack = 3;
+    health = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.furthestUpPet;
+        const potentialTargets = this.parent.petArray.filter(pet => pet !== this);
+        const numberOfTargets = this.level;
+        const targets = potentialTargets.slice(0, numberOfTargets);
         
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${this.level} exp.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
+        if (targets.length === 0) {
+            this.superStartOfBattle(gameApi, tiger);
+            return;
+        }
 
-        target.increaseExp(this.level);
+        for (const target of targets) {
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} +1 experience.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            });
+    
+            target.increaseExp(1);
+        }
 
         this.superStartOfBattle(gameApi, tiger);
     }

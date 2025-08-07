@@ -5,33 +5,41 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class VampireBat extends Pet {
-    name = "Vampire Bat";
-    tier = 5;
+export class Pengobble extends Pet {
+    name = "Pengobble";
+    tier = 1;
     pack: Pack = 'Unicorn';
-    attack = 2;
-    health = 5;
-    maxAbilityUses: number = 2;
-    abilityUses: number = 0;
-    enemyGainedAilment(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        console.log('enemyGainedAilment');
-        if (this.abilityUses >= this.maxAbilityUses) {
+    attack = 1;
+    health = 4;
+    maxAbilityUses = 2;
+    abilityUses = 0;
+
+    private isTriggering = false;
+
+    gainedMana(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.isTriggering || this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let power = this.level * 3;
-        let petHealthPreSnipe = pet.health;
-        let damage = this.snipePet(pet, power, false, tiger);
-        let healthGained = Math.min(damage, petHealthPreSnipe);
+
+        this.isTriggering = true;
+
+        const manaGain = this.level * 2;
+
         this.logService.createLog({
-            message: `${this.name} gained ${healthGained} health.`,
+            message: `${this.name} gained an extra ${manaGain} bonus mana.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         });
-        this.increaseHealth(healthGained);
+
+        this.increaseMana(manaGain);
         this.abilityUses++;
-        this.superEnemyGainedAilment(gameApi, pet, tiger);
+        
+        this.isTriggering = false;
+
+        this.superGainedMana(gameApi, tiger);
     }
+    
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -43,8 +51,10 @@ export class VampireBat extends Pet {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
     }
+
     setAbilityUses(): void {
         super.setAbilityUses();
+        this.abilityUses = 0;
         this.maxAbilityUses = 2;
     }
 }

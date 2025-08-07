@@ -13,20 +13,20 @@ export class Pixiu extends Pet {
     attack = 4;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.mana < 6) {
+        if (this.mana < 4) {
             return;
         }
 
         let power = this.level * 3;
 
         this.logService.createLog({
-            message: `${this.name} spent 6 mana and gained ${power} gold for next turn.`,
+            message: `${this.name} spent 4 mana and gained ${power} gold for next turn.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         });
 
-        this.mana -= 6;
+        this.mana -= 4;
 
         this.superFaint(gameApi, tiger);
     }

@@ -13,17 +13,20 @@ export class Chimera extends Pet {
     name = "Chimera";
     tier = 4;
     pack: Pack = 'Unicorn';
-    attack = 3;
-    health = 3;
+    attack = 2;
+    health = 6;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.mana == 0) {
+        if (this.mana <= 0) {
+            this.superFaint(gameApi, tiger);
             return;
         }
 
-        let power: Power = {
-            attack: this.mana,
-            health: this.mana
-        }
+        const buffMultiplier = Math.floor(this.mana / 2);
+        const bonusAttack = buffMultiplier * 1;
+        const bonusHealth = buffMultiplier * 2;
+
+        const finalAttack = 3 + bonusAttack;
+        const finalHealth = 3 + bonusHealth;
 
         this.logService.createLog(
             {
@@ -37,11 +40,11 @@ export class Chimera extends Pet {
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let lion = new ChimLion(this.logService, this.abilityService, this.parent, power.health, power.attack);
+                let lion = new ChimLion(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
         
                 this.logService.createLog(
                     {
-                        message: `${this.name} spawned a ${lion.name} ${power.attack}/${power.health}.`,
+                        message: `${this.name} spawned a ${lion.name} ${finalAttack}/${finalHealth}.`,
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,
@@ -63,11 +66,11 @@ export class Chimera extends Pet {
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let goat = new ChimGoat(this.logService, this.abilityService, this.parent, power.health, power.attack);
+                let goat = new ChimGoat(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
         
                 this.logService.createLog(
                     {
-                        message: `${this.name} spawned a ${goat.name} ${power.attack}/${power.health}.`,
+                        message: `${this.name} spawned a ${goat.name} ${finalAttack}/${finalHealth}.`,
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,
@@ -89,11 +92,11 @@ export class Chimera extends Pet {
 
         this.abilityService.setSpawnEvent({
             callback: () => {
-                let snake = new ChimSnake(this.logService, this.abilityService, this.parent, power.health, power.attack);
+                let snake = new ChimSnake(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
         
                 this.logService.createLog(
                     {
-                        message: `${this.name} spawned a ${snake.name} ${power.attack}/${power.health}.`,
+                        message: `${this.name} spawned a ${snake.name} ${finalAttack}/${finalHealth}.`,
                         type: "ability",
                         player: this.parent,
                         tiger: tiger,

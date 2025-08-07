@@ -9,23 +9,34 @@ export class Werewolf extends Pet {
     name = "Werewolf";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 7;
-    health = 7;
+    attack = 6;
+    health = 6;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         if (gameApi.day) {
-            return;
+            const manaGain = this.level * 6;
+            this.increaseMana(manaGain);
+            this.logService.createLog({
+                message: `${this.name} gained ${manaGain} mana.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            });
         }
-        let power = this.level;
-        let attack = Math.min(50, this.attack + this.attack * power);
-        let health = Math.min(50, this.health + this.health * power);
-        this.logService.createLog({
-            message: `${this.name} increased its stats by ${power * 100}% (${attack}/${health}).`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger
-        });
-        this.increaseAttack(this.attack * power);
-        this.increaseHealth(this.health * power);
+        else {
+            let power = this.level * 0.5;
+            const attackGain = Math.floor(this.attack * power);
+            const healthGain = Math.floor(this.health * power);
+            let attack = Math.min(50, this.attack + attackGain);
+            let health = Math.min(50, this.health + healthGain);
+            this.logService.createLog({
+                message: `${this.name} increased its stats by ${power * 100}% (${attack}/${health}).`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger
+            });
+            this.increaseAttack(this.attack * power);
+            this.increaseHealth(this.health * power);
+        }
 
     }
     constructor(protected logService: LogService,

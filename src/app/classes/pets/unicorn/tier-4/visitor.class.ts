@@ -11,8 +11,8 @@ export class Visitor extends Pet {
     name = "Visitor";
     tier = 4;
     pack: Pack = 'Unicorn';
-    attack = 5;
-    health = 4;
+    attack = 7;
+    health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
 
         let targets = [

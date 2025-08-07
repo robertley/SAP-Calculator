@@ -10,9 +10,10 @@ export class Gargoyle extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 3;
-    health = 4;
+    health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.mana * this.level;
+        power = power + 2 * this.level;
 
         let target = this.petBehind();
 
