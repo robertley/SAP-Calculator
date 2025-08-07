@@ -77,7 +77,7 @@ import { Chipmunk } from "../classes/pets/puppy/tier-1/chipmunk.class";
 import { Gecko } from "../classes/pets/puppy/tier-1/gecko.class";
 import { Ferret } from "../classes/pets/puppy/tier-1/ferret.class";
 import { Bat } from "../classes/pets/puppy/tier-2/bat.class";
-import { Frigatebird } from "../classes/pets/puppy/tier-2/frigatebird.class";
+import { Frigatebird } from "../classes/pets/custom/tier-2/frigatebird.class";
 import { Robin } from "../classes/pets/puppy/tier-2/robin.class";
 import { Dromedary } from "../classes/pets/puppy/tier-2/dromedary.class";
 import { Shrimp } from "../classes/pets/puppy/tier-2/shrimp.class";
@@ -566,7 +566,6 @@ export class PetService {
         ])
 
         this.puppyPackPets.set(2, [
-            "Frigatebird",
             "Robin",
             "Bat",
             "Dromedary",
@@ -870,6 +869,7 @@ export class PetService {
             "Basilisk",
         ]);
         this.customPackPets.set(2, [
+            "Frigatebird",
             "Wombat",
             "Nightcrawler",
             "Sphinx",
