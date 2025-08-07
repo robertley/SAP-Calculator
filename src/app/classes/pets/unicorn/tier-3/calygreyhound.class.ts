@@ -9,7 +9,7 @@ export class Calygreyhound extends Pet {
     name = "Calygreyhound";
     tier = 3;
     pack: Pack = 'Unicorn';
-    attack = 3;
+    attack = 4;
     health = 4;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.mana == 0) {

@@ -10,25 +10,38 @@ export class FrostWolf extends Pet {
     name = "Frost Wolf";
     tier = 2;
     pack: Pack = 'Unicorn';
-    attack = 1;
+    attack = 2;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let opponetPets = this.parent.opponent.petArray;
         let targets = [];
-        for (let i = 0; i < this.level; i++) {
-            if (opponetPets[i]) {
-                targets.push(opponetPets[i]);
-            }
+        if (opponetPets[0]) {
+            targets.push(opponetPets[0]);
         }
 
         for (let target of targets) {
+            const power = -5 * this.level;
+
+            const coldAilment = new Cold();
+            coldAilment.power = power;
+            coldAilment.originalPower = power;
+
+            let effectMessage = ".";
+            if (this.level === 2) {
+                effectMessage = " twice for double effect.";
+            } else if (this.level === 3) {
+                effectMessage = " thrice for triple effect.";
+            }
+
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} Cold`,
+                message: `${this.name} made ${target.name} Cold${effectMessage}`,
                 type: "ability",
                 player: this.parent,
-                tiger: tiger
-            })
-            target.givePetEquipment(new Cold());
+                tiger: tiger,
+                pteranodon: pteranodon
+            });
+
+            target.givePetEquipment(coldAilment);
         }
 
         this.superFaint(gameApi, tiger);

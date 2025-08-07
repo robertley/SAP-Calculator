@@ -10,14 +10,27 @@ export class Nessie extends Pet {
     name = "Nessie";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 2;
-    health = 4;
+    attack = 3;
+    health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let isPlayer = this.parent === gameApi.player;
         let rolls = isPlayer ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
-        rolls = Math.min(rolls, 7);
-        let attack = Math.min(50, rolls * this.level);
-        let health = Math.min(50, rolls * this.level * 2);
+
+        let attack = this.level * 3;
+        let health = this.level * 3;
+        let firstBoatMessage = '';
+
+        if (!this.parent.summonedBoatThisBattle) {
+            const bonusPerRoll = this.level;
+            const bonusStats = rolls * bonusPerRoll;
+            attack += bonusStats;
+            health += bonusStats;
+            this.parent.summonedBoatThisBattle = true;
+            firstBoatMessage = ` It's the first Boat, so it gains +${bonusStats}/+${bonusStats}!`;
+        }
+
+        attack = Math.min(50, attack);
+        health = Math.min(50, health);
 
         this.abilityService.setSpawnEvent({
             callback: () => {

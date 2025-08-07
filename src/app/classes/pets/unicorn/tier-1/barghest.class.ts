@@ -11,7 +11,7 @@ export class Barghest extends Pet {
     name = "Barghest";
     tier = 1;
     pack: Pack = 'Unicorn';
-    attack = 1;
+    attack = 2;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let oppponetPets = this.parent.opponent.petArray;
