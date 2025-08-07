@@ -24,7 +24,8 @@ export class Seal extends Pet {
                 message: `${this.name} gave ${target.name} ${power} attack.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: true
             });
         }
         this.superGainedPerk(gameApi, pet, tiger);
