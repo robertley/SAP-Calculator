@@ -71,7 +71,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.13';
+  version = '0.6.14';
   sapVersion = '0.33.3-156 BETA'
   lastUpdated = '8/07/2025';
 
