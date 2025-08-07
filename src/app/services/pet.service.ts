@@ -77,6 +77,7 @@ import { Chipmunk } from "../classes/pets/puppy/tier-1/chipmunk.class";
 import { Gecko } from "../classes/pets/puppy/tier-1/gecko.class";
 import { Ferret } from "../classes/pets/puppy/tier-1/ferret.class";
 import { Bat } from "../classes/pets/puppy/tier-2/bat.class";
+import { Bilby } from "../classes/pets/puppy/tier-2/bilby.class";
 import { Frigatebird } from "../classes/pets/puppy/tier-2/frigatebird.class";
 import { Robin } from "../classes/pets/puppy/tier-2/robin.class";
 import { Dromedary } from "../classes/pets/puppy/tier-2/dromedary.class";
@@ -573,6 +574,7 @@ export class PetService {
             "Frigatebird",
             "Robin",
             "Bat",
+            "Bilby",
             "Dromedary",
             "Shrimp",
             "Beluga Sturgeon",
@@ -1120,6 +1122,8 @@ export class PetService {
                 return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bat':
                 return new Bat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Bilby':
+                return new Bilby(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dromedary':
                 return new Dromedary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shrimp':
@@ -2003,6 +2007,9 @@ export class PetService {
         }
         if (pet instanceof Bat) {
             newPet = new Bat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Bilby) {
+            newPet = new Bilby(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dromedary) {
             newPet = new Dromedary(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

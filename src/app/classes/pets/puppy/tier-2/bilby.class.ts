@@ -1,18 +1,34 @@
+import { Garlic } from "app/classes/equipment/turtle/garlic.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class WhaleShark extends Pet {
-    name = "Whale Shark";
-    tier = 4;
+export class Bilby extends Pet {
+    name = "Bilby";
+    tier = 2;
     pack: Pack = 'Puppy';
     attack = 1;
     health = 4;
+    friendLostPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
+        if (this == pet) {
+            return;
+        }
+        this.logService.createLog({
+            message: `${this.name} gave ${pet.name} Garlic.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+        pet.givePetEquipment(new Garlic());
+        this.abilityUses++;
+        super.superFriendLosPerk(gameApi, pet, tiger);
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -24,17 +40,8 @@ export class WhaleShark extends Pet {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
     }
-
-    givePetEquipment(equipment: Equipment): void {
-        super.givePetEquipment(equipment);
-        this.removePerk();
-        let power = this.level * 2;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} removed ${equipment.name} and gained ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent
-        });
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }

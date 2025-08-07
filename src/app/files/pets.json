@@ -333,7 +333,7 @@
         {
             "name": "Mantis",
             "tier": "1",
-            "id": "663"
+            "id": "664"
         },
         {
             "name": "Rock",
@@ -426,6 +426,11 @@
             "name": "Bigfoot",
             "tier": "2",
             "id": "334"
+        },
+        {
+            "name": "Bilby",
+            "tier": "2",
+            "id": "663"
         },
         {
             "name": "Black Necked Stilt",

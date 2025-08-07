@@ -18,6 +18,7 @@ import { Onion } from "../../equipment/golden/onion.class";
 import { PitaBread } from "../../equipment/golden/pita-bread.class";
 import { Potato } from "../../equipment/golden/potato.class";
 import { Tomato } from "../../equipment/golden/tomato.class";
+import { Blackberry } from "../../equipment/puppy/blackberry.class";
 import { Croissant } from "../../equipment/puppy/croissant.class";
 import { Egg } from "../../equipment/puppy/egg.class";
 import { Lemon } from "../../equipment/puppy/lemon.class";

@@ -23,7 +23,7 @@ export class Whale extends Pet {
         }
         let swallowPet = clone(targetPet);
         swallowPet.exp = this.exp;
-        swallowPet.equipment = null;
+        swallowPet.removePerk();
         this.swallowedPets.push(swallowPet);
         targetPet.health = 0;
         this.logService.createLog({

@@ -15,6 +15,7 @@ import { Chili } from "../../../equipment/turtle/chili.class";
 import { Mushroom } from "../../../equipment/turtle/mushroom.class";
 import { Coconut } from "../../../equipment/turtle/coconut.class";
 import { Peanut } from "../../../equipment/turtle/peanut.class";
+import { Blackberry } from "../../../equipment/puppy/blackberry.class";
 import { Croissant } from "../../../equipment/puppy/croissant.class";
 import { Rice } from "../../../equipment/puppy/rice.class";
 import { Egg } from "../../../equipment/puppy/egg.class";
