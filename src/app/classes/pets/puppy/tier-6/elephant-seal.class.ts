@@ -10,8 +10,8 @@ export class ElephantSeal extends Pet {
     name = "Elephant Seal";
     tier = 6;
     pack: Pack = 'Puppy';
-    attack = 3;
-    health = 9;
+    attack = 2;
+    health = 8;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

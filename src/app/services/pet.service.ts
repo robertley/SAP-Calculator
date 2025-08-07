@@ -78,7 +78,6 @@ import { Gecko } from "../classes/pets/puppy/tier-1/gecko.class";
 import { Ferret } from "../classes/pets/puppy/tier-1/ferret.class";
 import { Bat } from "../classes/pets/puppy/tier-2/bat.class";
 import { Bilby } from "../classes/pets/puppy/tier-2/bilby.class";
-import { Frigatebird } from "../classes/pets/puppy/tier-2/frigatebird.class";
 import { Robin } from "../classes/pets/puppy/tier-2/robin.class";
 import { Dromedary } from "../classes/pets/puppy/tier-2/dromedary.class";
 import { Shrimp } from "../classes/pets/puppy/tier-2/shrimp.class";
@@ -258,6 +257,7 @@ import { FormArray } from "@angular/forms";
 import { Jerboa } from "../classes/pets/custom/tier-4/jerboa.class";
 import { FrilledDragon } from "app/classes/pets/custom/tier-1/frilled-dragon";
 import { Wombat } from "app/classes/pets/custom/tier-2/wombat.class";
+import { Frigatebird } from "../classes/pets/custom/tier-2/frigatebird.class";
 import { Aardvark } from "app/classes/pets/custom/tier-3/aardvark.class";
 import { Bear } from "app/classes/pets/custom/tier-3/bear.class";
 import { EmperorTamarin } from "app/classes/pets/custom/tier-3/emperor-tamarin";
@@ -571,7 +571,6 @@ export class PetService {
         ])
 
         this.puppyPackPets.set(2, [
-            "Frigatebird",
             "Robin",
             "Bat",
             "Bilby",
@@ -880,6 +879,7 @@ export class PetService {
         ]);
         this.customPackPets.set(2, [
             "Wombat",
+            "Frigatebird",
             "Nightcrawler",
             "Sphinx",
             "Chupacabra",
@@ -1116,8 +1116,6 @@ export class PetService {
                 return new Ferret(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // tier 2
-            case 'Frigatebird':
-                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Robin':
                 return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bat':
@@ -1495,6 +1493,8 @@ export class PetService {
                 return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wombat':
                 return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Frigatebird':
+                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Aardvark':
                 return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bear':
@@ -1999,9 +1999,6 @@ export class PetService {
         }
 
         // Tier 2
-        if (pet instanceof Frigatebird) {
-            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
-        }
         if (pet instanceof Robin) {
             newPet = new Robin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
@@ -2634,6 +2631,9 @@ export class PetService {
         }
         if (pet instanceof Wombat) {
             newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Frigatebird) {
+            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Aardvark) {
             newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

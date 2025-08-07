@@ -9,8 +9,8 @@ export class TabbyCat extends Pet {
     name = "Tabby Cat";
     tier = 2;
     pack: Pack = 'Puppy';
-    attack = 4;
-    health = 3;
+    attack = 3;
+    health = 2;
     friendGainedPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let targets = this.parent.getRandomPets(2, [this], true, false);
         if (targets.length == 0) {

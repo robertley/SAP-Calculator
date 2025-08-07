@@ -12,7 +12,7 @@ export class Hare extends Pet {
     name = "Hare";
     tier = 3;
     pack: Pack = 'Puppy';
-    health = 3;
+    health = 4;
     attack = 4;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
