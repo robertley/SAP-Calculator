@@ -1,39 +1,45 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Murmel extends Pet {
-    name = "Murmel";
+export class Pengobble extends Pet {
+    name = "Pengobble";
     tier = 1;
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 4;
-    friendGainedExperience(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet.parent != this.parent) {
+    maxAbilityUses = 2;
+    abilityUses = 0;
+
+    private isTriggering = false;
+
+    gainedMana(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.isTriggering || this.abilityUses >= this.maxAbilityUses) {
             return;
         }
 
-        let power: Power = {
-            attack: this.level,
-            health: 0
-        }
+        this.isTriggering = true;
+
+        const manaGain = this.level * 2;
 
         this.logService.createLog({
-            message: `${this.name} gained ${power.attack} attack.`,
+            message: `${this.name} gained an extra ${manaGain} bonus mana.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
-        })
+        });
 
-        this.increaseAttack(power.attack);
+        this.increaseMana(manaGain);
+        this.abilityUses++;
+        
+        this.isTriggering = false;
 
-        this.superFriendGainedExperience(gameApi, pet, tiger);
-
+        this.superGainedMana(gameApi, tiger);
     }
+    
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -44,5 +50,11 @@ export class Murmel extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.abilityUses = 0;
+        this.maxAbilityUses = 2;
     }
 }

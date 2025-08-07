@@ -9,8 +9,8 @@ export class Moth extends Pet {
     name = "Moth";
     tier = 1;
     pack: Pack = 'Puppy';
-    health = 1;
-    attack = 3;
+    health = 3;
+    attack = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let target = this.parent.furthestUpPet;
         let power = 2 * this.level;

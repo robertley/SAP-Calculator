@@ -13,8 +13,8 @@ export class FurBearingTrout extends Pet {
     name = "Fur-Bearing Trout";
     tier = 3;
     pack: Pack = 'Unicorn';
-    attack = 2;
-    health = 3;
+    attack = 3;
+    health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         
         let targets = [];

@@ -8,12 +8,18 @@ import { Player } from "../../../player.class";
 
 export class Toucan extends Pet {
     name = "Toucan";
-    tier = 2;
+    tier = 3;
     pack: Pack = 'Puppy';
-    attack = 3;
+    attack = 4;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    beforeAttack(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.equipment == null) {
+            return;
+        }
+        if (this.equipment.tier > 5) {
+            return;
+        }
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         let pets = this.parent.petArray;
@@ -52,7 +58,8 @@ export class Toucan extends Pet {
             // lemon with one use will copy a one use lemon behind
             target.givePetEquipment(cloneDeep(this.equipment));
         }
-        this.superFaint(gameApi, tiger);
+        this.abilityUses++;
+        this.superBeforeAttack(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -64,5 +71,10 @@ export class Toucan extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 1;
     }
 }

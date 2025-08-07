@@ -30,7 +30,7 @@ export class Raccoon extends Pet {
             player: this.parent
         })
         this.givePetEquipment(target.equipment);
-        target.equipment = null;
+        target.removePerk();
         this.abilityUses++;
     }
     constructor(protected logService: LogService,

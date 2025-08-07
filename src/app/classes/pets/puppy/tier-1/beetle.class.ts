@@ -12,10 +12,14 @@ export class Beetle extends Pet {
     name = "Beetle";
     tier = 1;
     pack: Pack = 'Puppy';
-    attack = 1;
+    attack = 2;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let equipment;
+        let targetPet = this.petBehind()
+        if (targetPet == null) {
+            return;
+        } 
         switch (this.level) {
             case 1:
                 equipment = new Honey(this.logService, this.abilityService);
@@ -28,12 +32,12 @@ export class Beetle extends Pet {
                 break;
         }
         this.logService.createLog({
-            message: `${this.name} gained ${equipment.name} perk.`,
+            message: `${this.name} gave ${targetPet.name} ${equipment.name}.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
-        this.givePetEquipment(equipment);
+        targetPet.givePetEquipment(equipment);
         super.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

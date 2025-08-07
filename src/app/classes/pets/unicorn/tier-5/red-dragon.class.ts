@@ -10,8 +10,8 @@ export class RedDragon extends Pet {
     name = "Red Dragon";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 3;
-    health = 7;
+    attack = 4;
+    health = 8;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponentPets = this.parent.opponent.petArray;
         opponentPets.reverse();

@@ -7,6 +7,7 @@ import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Egg extends Equipment {
     name = 'Egg';
+    tier = 1;
     equipmentClass: EquipmentClass = 'snipe';
     uses = 1;
     originalUses = 1;

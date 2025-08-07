@@ -10,7 +10,7 @@ export class SalmonOfKnowledge extends Pet {
     name = "Salmon of Knowledge";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 1;
+    attack = 5;
     health = 5;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let power = this.level * 2;

@@ -21,7 +21,8 @@ export class SeaSerpent extends Pet {
         opponentPets = opponentPets.filter(pet => pet.alive);
         opponentPets.sort((a, b) => b.health - a.health);
 
-        let power = this.mana * 2;
+        const numTargets = this.level + 1;
+        let power = this.mana;
         let mana = this.mana;
         this.logService.createLog({
             message: `${this.name} spent ${mana} mana.`,
@@ -33,7 +34,7 @@ export class SeaSerpent extends Pet {
 
         this.mana = 0;        
 
-        for (let i = 0; i < this.level; i++) {
+        for (let i = 0; i < numTargets; i++) {
             let target = opponentPets[i];
             if (target == null) {
                 break;

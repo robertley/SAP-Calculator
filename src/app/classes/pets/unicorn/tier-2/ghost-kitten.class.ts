@@ -8,7 +8,7 @@ export class GhostKitten extends Pet {
     name = "Ghost Kitten";
     tier = 2;
     pack: Pack = 'Unicorn';
-    attack = 3;
+    attack = 4;
     health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

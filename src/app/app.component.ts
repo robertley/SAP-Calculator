@@ -73,7 +73,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   version = '0.6.13';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '8/06/2025';
+  lastUpdated = '8/07/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -608,6 +608,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   executeFrequentEvents() {
+    this.abilityService.executeFriendLostPerkEvents();
     this.abilityService.executeGainedPerkEvents();
     this.abilityService.executeFriendGainedPerkEvents();
     this.abilityService.executeFriendGainedAilmentEvents();
@@ -698,12 +699,13 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setAbilityEquipments(this.player);
       this.setAbilityEquipments(this.opponent);
 
-      this.player.onionCheck();
-      this.opponent.onionCheck();
+      this.pushPetsForwards();
+      this.logService.printState(this.player, this.opponent);
 
       this.executeBeforeStartOfBattleEquipment(this.player);
       this.executeBeforeStartOfBattleEquipment(this.opponent);
 
+      this.startOfBattleService.resetStartOfBattleFlags();
       this.startOfBattleService.initStartOfBattleEvents();
       this.startOfBattleService.executeToyPetEvents();
 
@@ -1057,6 +1059,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.abilityService.executeBeforeAttackEvents();
+    
+    this.abilityService.triggerBeforeFriendAttacksEvents(this.player, playerPet);
+    this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, opponentPet);
+    this.abilityService.executeBeforeFriendAttacksEvents();
 
     // console.log(playerPet, 'vs', opponentPet)
 

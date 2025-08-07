@@ -12,24 +12,38 @@ export class Mothman extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let opponetPets = this.parent.opponent.petArray;
-        let ailmentPets = opponetPets.filter(pet => {
-            if (pet.equipment == null) {
-                return false;
-            }
-            return pet.equipment.equipmentClass == 'ailment-attack'
-            || pet.equipment.equipmentClass == 'ailment-defense'
-            || pet.equipment.equipmentClass == 'ailment-other';
-        });
-        shuffle(ailmentPets);
-        for (let i = 0; i < this.level; i++) {
-            if (ailmentPets[i]) {
-                this.snipePet(ailmentPets[i], 2, true, tiger);
-            }
+
+    // This private method handles the core logic to avoid code duplication.
+    private onAilmentGained(pet: Pet, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
         }
-        this.superFaint(gameApi, tiger);
+
+        const power = this.level;
+
+        this.logService.createLog({
+            message: `${this.name} gained +${power} attack and +${power} health because ${pet.name} gained an ailment.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        });
+
+        this.increaseAttack(power);
+        this.increaseHealth(power);
+
+        this.abilityUses++;
     }
+
+    friendGainedAilment(gameApi: GameAPI, pet?: Pet): void {
+        // We pass `false` for the tiger flag because the base 'friendGainedAilment' doesn't support it.
+        this.onAilmentGained(pet, false);
+    }
+
+    enemyGainedAilment(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        this.onAilmentGained(pet, tiger);
+        this.superEnemyGainedAilment(gameApi, pet, tiger);
+    }
+    
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -40,5 +54,10 @@ export class Mothman extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 5;
     }
 }

@@ -29,13 +29,13 @@ export class Mole extends Pet {
             return;
         }
         for (let pet of equipmentPets) {
-            pet.equipment = null;
             this.logService.createLog({
                 message: `${this.name} removed ${pet.name}'s equipment.`,
                 type: 'ability',
                 player: this.parent,
                 pteranodon: pteranodon,
             })
+            pet.removePerk();
         }
         this.abilityService.setSpawnEvent({
             callback: () => {
