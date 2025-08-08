@@ -216,7 +216,7 @@ import { Sealion } from "../classes/pets/golden/tier-4/sealion.class";
 import { Vaquita } from "../classes/pets/golden/tier-4/vaquita.class";
 import { Slug } from "../classes/pets/golden/tier-4/slug.class";
 import { PoisonDartFrog } from "../classes/pets/golden/tier-4/poison-dart-frog.class";
-import { SecretaryBird } from "../classes/pets/golden/tier-4/secretary-bird.class";
+import { SecretaryBird } from "../classes/pets/golden/tier-5/secretary-bird.class";
 import { RoyalFlycatcher } from "../classes/pets/golden/tier-3/royal-flycatcher.class";
 import { Falcon } from "../classes/pets/golden/tier-4/falcon.class";
 import { MantaRay } from "../classes/pets/golden/tier-4/manta-ray.class";
@@ -757,7 +757,6 @@ export class PetService {
             "Vaquita",
             "Slug",
             "Poison Dart Frog",
-            "Secretary Bird",
             "Falcon",
             "Manta Ray",
             "Cockatoo"
@@ -770,6 +769,7 @@ export class PetService {
             "Beluga Whale",
             "Wolf",
             "Silver Fox",
+            "Secretary Bird",
             "Fire Ant",
             "Blue Ringed Octopus",
             "Crane",
