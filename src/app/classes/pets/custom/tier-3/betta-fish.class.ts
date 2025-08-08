@@ -11,7 +11,7 @@ import { Weak } from "../../../equipment/ailments/weak.class";
 export class BettaFish extends Pet {
     name = "Betta Fish";
     tier = 3;
-    pack: Pack = 'Golden';
+    pack: Pack = 'Custom';
     attack = 2;
     health = 3;
     faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {

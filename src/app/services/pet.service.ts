@@ -203,7 +203,7 @@ import { Flea } from "../classes/pets/golden/tier-3/flea.class";
 import { SurgeonFish } from "../classes/pets/golden/tier-3/surgeon-fish.class";
 import { Weasel } from "../classes/pets/golden/tier-3/weasel.class";
 import { Guineafowl } from "../classes/pets/golden/tier-3/guineafowl.class";
-import { BettaFish } from "../classes/pets/golden/tier-3/betta-fish.class";
+import { BettaFish } from "../classes/pets/custom/tier-3/betta-fish.class";
 import { Meerkat } from "../classes/pets/golden/tier-2/meerkat.class";
 import { FlyingFish } from "../classes/pets/golden/tier-3/flying-fish.class";
 import { Baboon } from "../classes/pets/golden/tier-3/baboon.class";
@@ -744,7 +744,6 @@ export class PetService {
             "Surgeon Fish",
             "Weasel",
             "Guineafowl",
-            "Betta Fish",
             "Flying Fish",
             "Baboon",
             "Osprey"
@@ -896,7 +895,8 @@ export class PetService {
             "Tree",
             "Slime",
             "Pegasus",
-            "Deer Lord"
+            "Deer Lord",
+            "Betta Fish"
         ]);
         this.customPackPets.set(4, [
             "Jerboa",
