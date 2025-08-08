@@ -102,3 +102,15 @@ The core simulation runs in `AppComponent.runSimulation()`:
 - `npm test` - Unit tests
 
 **Long-term:** Consider upgrading to Angular 15+ for native Node.js compatibility without the legacy provider flag.
+
+Before Attack Perk
+Reduce Health: eg. Durian / Squash
+	Snipe class, attackCallBack, get target, reduce amt then reduce target pet health.
+Deal Damage: eg. Tomato, Egg
+	Snipe class, attackCallBack, get target, calc damage, apply damage, message, defense equipment, log, and check hurt&knockout ability triggers.
+
+Get Target functions:
+	Target: AttackedPet.pet
+	LastEnemy: AttackedPet.parent.getLastPet()
+	HighestHealth: AttackedPet.parent.getHighestHealthPet()
+	LowestHealth: AttackedPet.parent.getLowestHealthPet()

@@ -114,7 +114,7 @@ export class EquipmentService {
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
         map.set('Pineapple', new Pineapple());
-        map.set('Fig', new Fig())
+        map.set('Fig', new Fig(this.logService, this.abilityService));
 
         map.set('Rambutan', new Rambutan(this.logService));
         map.set('Love Potion', new LovePotion(this.logService));
