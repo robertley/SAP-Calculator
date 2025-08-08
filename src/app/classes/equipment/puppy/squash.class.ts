@@ -20,8 +20,8 @@ export class Squash extends Equipment {
         let reducedTo =  Math.max(1, targetPet.health - power);
         targetPet.health = reducedTo;
         this.logService.createLog({
-            message: `${this.name} reduced ${targetPet.name} health by (${reducedTo})`,
-            type: 'ability',
+            message: `${this.name} reduced ${targetPet.name} health by ${power} (${reducedTo})`,
+            type: 'equipment',
             player: pet.parent,
         });
 
