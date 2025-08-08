@@ -16,7 +16,7 @@ export class Tomato extends Equipment {
             return;
         }
         
-        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 8, true);
+        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 10, true);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
