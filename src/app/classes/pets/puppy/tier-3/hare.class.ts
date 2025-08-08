@@ -93,6 +93,7 @@ export class Hare extends Pet {
         ['Chili', 5], 
         ['Lemon', 5], 
         ['Durian', 5],
+        ['Honeydew Melon', 5],
         // T6
         ['Popcorn', 6], 
         ['Steak', 6], 

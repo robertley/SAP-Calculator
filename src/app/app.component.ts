@@ -681,7 +681,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.initBattle();
       //reset pet to original state, reset turn counter
       this.startBattle();
-
+      //queque toy sob event
       this.initToys();
 
       // // give all pets dazed equipment
