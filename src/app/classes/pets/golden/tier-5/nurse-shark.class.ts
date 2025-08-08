@@ -12,8 +12,8 @@ export class NurseShark extends Pet {
     name = "Nurse Shark";
     tier = 5;
     pack: Pack = 'Golden';
-    attack = 4;
-    health = 6;
+    attack = 5;
+    health = 7;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.trumpets == 0) {
             return;

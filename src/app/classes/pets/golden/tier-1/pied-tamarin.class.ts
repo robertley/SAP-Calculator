@@ -9,7 +9,7 @@ export class PiedTamarin extends Pet {
     name = "Pied Tamarin";
     tier = 1;
     pack: Pack = 'Golden';
-    attack = 1;
+    attack = 2;
     health = 2;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.trumpets < 1) {

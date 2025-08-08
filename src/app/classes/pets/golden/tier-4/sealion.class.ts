@@ -10,8 +10,8 @@ export class Sealion extends Pet {
     name = "Sealion";
     tier = 4;
     pack: Pack = 'Golden';
-    attack = 3;
-    health = 6;
+    attack = 2;
+    health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
