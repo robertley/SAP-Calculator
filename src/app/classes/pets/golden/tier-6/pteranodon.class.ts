@@ -11,8 +11,8 @@ export class Pteranodon extends Pet {
     name = "Pteranodon";
     tier = 6;
     pack: Pack = 'Golden';
-    attack = 5;
-    health = 3;
+    attack = 3;
+    health = 5;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
