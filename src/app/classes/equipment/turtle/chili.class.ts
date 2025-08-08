@@ -75,7 +75,7 @@ export class Chili extends Equipment {
 
         // friend hurt ability
         if (attackPet.alive && damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackedPet);
+            this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackPet);
         }
 
         // enemy hurt ability

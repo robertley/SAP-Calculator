@@ -104,13 +104,20 @@ The core simulation runs in `AppComponent.runSimulation()`:
 **Long-term:** Consider upgrading to Angular 15+ for native Node.js compatibility without the legacy provider flag.
 
 Before Attack Perk
-Reduce Health: eg. Durian / Squash
+Remove Health: reference to Durian / Squash
 	Snipe class, attackCallBack, get target, reduce amt then reduce target pet health.
-Deal Damage: eg. Tomato, Egg
-	Snipe class, attackCallBack, get target, calc damage, apply damage, message, defense equipment, log, and check hurt&knockout ability triggers.
+Deal Damage: reference Tomato, Egg
+    Adjust target and damage accordingly
+Check for it's perk references, make sure still matches.
 
 Get Target functions:
 	Target: AttackedPet.pet
 	LastEnemy: AttackedPet.parent.getLastPet()
 	HighestHealth: AttackedPet.parent.getHighestHealthPet()
 	LowestHealth: AttackedPet.parent.getLowestHealthPet()
+
+Perk References:
+    Add Import and Map to seagull, good-dog, and equipment.service, and other places like usefulPerk, toy or ability where it’s needed.
+
+Move Pet:
+Move the file to right location, update Pack reference, make sure import & pet selector match. Remove old file.
