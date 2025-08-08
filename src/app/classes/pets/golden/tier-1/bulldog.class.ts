@@ -10,20 +10,34 @@ export class Bulldog extends Pet {
     tier = 1;
     pack: Pack = 'Golden';
     attack = 1;
-    health = 3;
+    health = 4;
     afterAttack(gameApi: GameAPI, tiger?: boolean): void {
         if (!this.alive) {
             return;
         }
-        this.attack = Math.min(50, this.health + this.level);
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
+        
+        let attackBonus = this.level * 2;
+        this.attack += attackBonus;
+        
         this.logService.createLog({
-            message: `${this.name} attack is set to ${this.attack}.`,
+            message: `${this.name} gained +${attackBonus} attack.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
-        })
+        });
+        
+        this.abilityUses++;
         this.superAfterAttack(gameApi, tiger);
     }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 1;
+    }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
