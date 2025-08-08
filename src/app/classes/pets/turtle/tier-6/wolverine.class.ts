@@ -12,6 +12,9 @@ export class Wolverine extends Pet {
     attack = 5;
     health = 7;
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (pet == this) {
+            return;
+        }
         if (!tiger) {
             this.abilityUses++
         }
