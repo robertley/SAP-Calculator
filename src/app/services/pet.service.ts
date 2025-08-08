@@ -259,7 +259,7 @@ import { FrilledDragon } from "app/classes/pets/custom/tier-1/frilled-dragon";
 import { Wombat } from "app/classes/pets/custom/tier-2/wombat.class";
 import { Frigatebird } from "../classes/pets/custom/tier-2/frigatebird.class";
 import { Aardvark } from "app/classes/pets/custom/tier-3/aardvark.class";
-import { Bear } from "app/classes/pets/custom/tier-3/bear.class";
+import { Bear } from "app/classes/pets/golden/tier-3/bear.class";
 import { EmperorTamarin } from "app/classes/pets/custom/tier-3/emperor-tamarin";
 import { Porcupine } from "app/classes/pets/custom/tier-3/porcupine.class";
 import { Wasp } from "app/classes/pets/custom/tier-3/wasp.class";
@@ -740,6 +740,7 @@ export class PetService {
         this.goldenPackPets.set(3, [
             "Musk Ox",
             "Flea",
+            "Bear",
             "Royal Flycatcher",
             "Surgeon Fish",
             "Weasel",
@@ -887,7 +888,6 @@ export class PetService {
         ]);
         this.customPackPets.set(3, [
             "Aardvark",
-            "Bear",
             "Emperor Tamarin",
             "Porcupine",
             "Wasp",

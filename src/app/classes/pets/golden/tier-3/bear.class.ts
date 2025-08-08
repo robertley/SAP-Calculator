@@ -10,7 +10,7 @@ import { Honey } from "app/classes/equipment/turtle/honey.class";
 export class Bear extends Pet {
     name = "Bear";
     tier = 3;
-    pack: Pack = 'Custom';
+    pack: Pack = 'Golden';
     attack = 3;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
