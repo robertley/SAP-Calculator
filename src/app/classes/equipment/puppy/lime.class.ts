@@ -1,12 +1,12 @@
 import { Equipment, EquipmentClass } from "../../equipment.class";
 
-export class Garlic extends Equipment {
+export class Lime extends Equipment {
     equipmentClass = 'defense' as EquipmentClass;
-    name = 'Garlic';
-    tier = 3;
-    power = 2;
-    originalPower = 2;
+    name = 'Lime';
+    tier = 2;
+    power = 1;
+    originalPower = 1
     callback: () => {
 
-    }
+    };
 }

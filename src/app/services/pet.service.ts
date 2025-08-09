@@ -77,11 +77,11 @@ import { Chipmunk } from "../classes/pets/puppy/tier-1/chipmunk.class";
 import { Gecko } from "../classes/pets/puppy/tier-1/gecko.class";
 import { Ferret } from "../classes/pets/puppy/tier-1/ferret.class";
 import { Bat } from "../classes/pets/puppy/tier-2/bat.class";
-import { Frigatebird } from "../classes/pets/puppy/tier-2/frigatebird.class";
+import { Bilby } from "../classes/pets/puppy/tier-2/bilby.class";
 import { Robin } from "../classes/pets/puppy/tier-2/robin.class";
 import { Dromedary } from "../classes/pets/puppy/tier-2/dromedary.class";
 import { Shrimp } from "../classes/pets/puppy/tier-2/shrimp.class";
-import { Toucan } from "../classes/pets/puppy/tier-2/toucan.class";
+import { Toucan } from "../classes/pets/puppy/tier-3/toucan.class";
 import { BelugaSturgeon } from "../classes/pets/puppy/tier-2/beluga-sturgeon.class";
 import { TabbyCat } from "../classes/pets/puppy/tier-2/tabby-cat.class";
 import { Mandrill } from "../classes/pets/puppy/tier-2/mandrill.class";
@@ -89,7 +89,7 @@ import { Lemur } from "../classes/pets/puppy/tier-2/lemur.class";
 import { HoopoeBird } from "../classes/pets/puppy/tier-3/hoopoe-bird.class";
 import { TropicalFish } from "../classes/pets/puppy/tier-3/tropical-fish.class";
 import { HatchingChick } from "../classes/pets/puppy/tier-3/hatching-chick.class";
-import { Goldfish } from "../classes/pets/puppy/tier-3/goldfish.class";
+import { Goldfish } from "../classes/pets/puppy/tier-2/goldfish.class";
 import { Owl } from "../classes/pets/puppy/tier-3/owl.class";
 import { Mole } from "../classes/pets/puppy/tier-3/mole.class";
 import { Raccoon } from "../classes/pets/custom/tier-5/raccoon.class";
@@ -107,9 +107,10 @@ import { WhaleShark } from "../classes/pets/puppy/tier-4/whale-shark.class";
 import { Chameleon } from "../classes/pets/puppy/tier-4/chameleon.class";
 import { Gharial } from "../classes/pets/puppy/tier-4/gharial.class";
 import { Stonefish } from "../classes/pets/puppy/tier-5/stonefish.class";
-import { Poodle } from "../classes/pets/puppy/tier-5/poodle.class";
+import { Poodle } from "../classes/pets/custom/tier-5/poodle.class";
 import { Chicken } from "../classes/pets/puppy/tier-5/chicken.class";
 import { Eagle } from "../classes/pets/puppy/tier-5/eagles.class";
+import { OrchidMantis } from "../classes/pets/puppy/tier-5/orchid-mantis.class";
 import { Panther } from "../classes/pets/puppy/tier-5/panther.class";
 import { Axolotl } from "../classes/pets/puppy/tier-5/axolotl.class";
 import { Goat } from "../classes/pets/puppy/tier-5/goat.class";
@@ -256,6 +257,7 @@ import { FormArray } from "@angular/forms";
 import { Jerboa } from "../classes/pets/custom/tier-4/jerboa.class";
 import { FrilledDragon } from "app/classes/pets/custom/tier-1/frilled-dragon";
 import { Wombat } from "app/classes/pets/custom/tier-2/wombat.class";
+import { Frigatebird } from "../classes/pets/custom/tier-2/frigatebird.class";
 import { Aardvark } from "app/classes/pets/custom/tier-3/aardvark.class";
 import { Bear } from "app/classes/pets/custom/tier-3/bear.class";
 import { EmperorTamarin } from "app/classes/pets/custom/tier-3/emperor-tamarin";
@@ -569,23 +571,23 @@ export class PetService {
         ])
 
         this.puppyPackPets.set(2, [
-            "Frigatebird",
             "Robin",
             "Bat",
+            "Bilby",
             "Dromedary",
             "Shrimp",
-            "Toucan",
             "Beluga Sturgeon",
             "Tabby Cat",
             "Mandrill",
-            "Lemur"
+            "Lemur",
+            "Goldfish"
         ])
 
         this.puppyPackPets.set(3, [
             "Hoopoe Bird",
             "Tropical Fish",
+            "Toucan",
             "Hatching Chick",
-            "Goldfish",
             "Owl",
             "Mole",
             "Flying Squirrel",
@@ -609,10 +611,10 @@ export class PetService {
 
         this.puppyPackPets.set(5, [
             "Stonefish",
-            "Poodle",
             "Goat",
             "Chicken",
             "Eagle",
+            "Orchid Mantis",
             "Panther",
             "Axolotl",
             "Snapping Turtle",
@@ -876,7 +878,9 @@ export class PetService {
             "Basilisk",
         ]);
         this.customPackPets.set(2, [
+            "Frigatebird",
             "Wombat",
+            "Frigatebird",
             "Nightcrawler",
             "Sphinx",
             "Chupacabra",
@@ -907,6 +911,7 @@ export class PetService {
         ]);
         this.customPackPets.set(5, [
             "Alpaca",
+            "Poodle",
             "Hyena",
             "Moose",
             "Raccoon",
@@ -1112,12 +1117,12 @@ export class PetService {
                 return new Ferret(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
         
             // tier 2
-            case 'Frigatebird':
-                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Robin':
                 return new Robin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bat':
                 return new Bat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Bilby':
+                return new Bilby(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Dromedary':
                 return new Dromedary(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Shrimp':
@@ -1188,6 +1193,8 @@ export class PetService {
                 return new Chicken(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Eagle':
                 return new Eagle(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Orchid Mantis':
+                return new OrchidMantis(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);           
             case 'Panther':
                 return new Panther(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Axolotl':
@@ -1487,6 +1494,8 @@ export class PetService {
                 return new FrilledDragon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Wombat':
                 return new Wombat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Frigatebird':
+                return new Frigatebird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Aardvark':
                 return new Aardvark(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bear':
@@ -1991,14 +2000,14 @@ export class PetService {
         }
 
         // Tier 2
-        if (pet instanceof Frigatebird) {
-            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
-        }
         if (pet instanceof Robin) {
             newPet = new Robin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Bat) {
             newPet = new Bat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Bilby) {
+            newPet = new Bilby(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Dromedary) {
             newPet = new Dromedary(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
@@ -2104,6 +2113,9 @@ export class PetService {
         }
         if (pet instanceof Eagle) {
             newPet = new Eagle(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof OrchidMantis) {
+            newPet = new OrchidMantis(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Panther) {
             newPet = new Panther(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
@@ -2620,6 +2632,9 @@ export class PetService {
         }
         if (pet instanceof Wombat) {
             newPet = new Wombat(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Frigatebird) {
+            newPet = new Frigatebird(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Aardvark) {
             newPet = new Aardvark(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

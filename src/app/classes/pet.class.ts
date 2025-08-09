@@ -19,6 +19,7 @@ import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
 import { cloneDeep } from "lodash";
 import { PeanutButter } from "./equipment/hidden/peanut-butter";
+import { Blackberry } from "./equipment/puppy/blackberry.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -34,6 +35,7 @@ export abstract class Pet {
     mana: number = 0;
     maxAbilityUses: number = null;
     abilityUses: number = 0;
+    startOfBattleTriggered: boolean = false;
     equipment?: Equipment;
     originalHealth: number;
     originalAttack: number;
@@ -52,6 +54,7 @@ export abstract class Pet {
     friendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    friendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     GainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
@@ -89,6 +92,7 @@ export abstract class Pet {
     originalFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
@@ -159,6 +163,7 @@ export abstract class Pet {
         this.originalFriendAheadAttacks = this.friendAheadAttacks;
         this.originalFriendAheadFaints = this.friendAheadFaints;
         this.originalFriendFaints = this.friendFaints;
+        this.originalFriendLostPerk = this.friendLostPerk;
         this.originalGainedPerk = this.GainedPerk;
         this.originalFriendGainedPerk = this.friendGainedPerk;
         this.originalFriendGainedAilment = this.friendGainedAilment;
@@ -288,6 +293,15 @@ export abstract class Pet {
                 return;
             }
             friendFaintsCallback(gameApi, pet, tiger);
+        }
+
+        
+        let friendLostPerkCallback = this.friendLostPerk?.bind(this);
+        this.friendLostPerk = friendLostPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            friendLostPerkCallback(gameApi, pet, tiger);
         }
 
         let GainedPerkCallback = this.GainedPerk?.bind(this);
@@ -576,6 +590,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superFriendLosPerk(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.friendLostPerk(gameApi, pet, true)
+        this.exp = exp;
+    }
+
     protected superGainedPerk(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
@@ -806,7 +830,6 @@ export abstract class Pet {
                 if (defenseMultiplier > 1) {
                     message += ` x${defenseMultiplier} (Panther)`;
                 }
-
                 pet.useDefenseEquipment();
             }
             
@@ -1272,7 +1295,6 @@ export abstract class Pet {
     }
 
     useDefenseEquipment(snipe=false) {
-
         if (this.equipment == null) {
             return;
         }
@@ -1288,7 +1310,7 @@ export abstract class Pet {
         }
         this.equipment.uses -= 1;
         if (this.equipment.uses == 0) {
-            this.equipment = null;
+            this.removePerk();
         }
     }
 
@@ -1300,7 +1322,7 @@ export abstract class Pet {
             return;
         }
         if (this.equipment.equipmentClass != 'attack'
-            && this.equipment.equipmentClass != 'defense'
+            //&& this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
             && this.equipment.equipmentClass != 'snipe'
         ) {
@@ -1311,7 +1333,7 @@ export abstract class Pet {
         }
         this.equipment.uses -= 1;
         if (this.equipment.uses == 0) {
-            this.equipment = null;
+            this.removePerk();
         }
     }
 
@@ -1370,7 +1392,21 @@ export abstract class Pet {
         if (equipment == null) {
             return;
         }
-        
+        if (equipment instanceof Blackberry) {
+            let multiplier = 1;
+            let pantherMessage = '';
+            if (this.name == "Panther") {
+                multiplier = this.level + 1;
+                pantherMessage = ` (Panther)`;
+            }
+            this.increaseAttack(1 * multiplier);
+            this.increaseHealth(2 * multiplier); 
+            this.logService.createLog({
+                message: `${this.name} gained ${1 * multiplier} attack and ${2 * multiplier} health (Blackberry)${pantherMessage}`,
+                type: 'equipment',
+                player: this.parent,
+            })
+        }
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense' || equipment.equipmentClass == 'ailment-other') {
             this.abilityService.triggerFriendGainedAilmentEvents(this);
             this.abilityService.executeFriendGainedAilmentEvents();
@@ -1384,6 +1420,24 @@ export abstract class Pet {
             this.abilityService.executeFriendGainedPerkEvents();
         }
 
+    }
+
+    removePerk() {
+        if (this.equipment == null) {
+            return;
+        }
+        
+        let wasAilment = this.equipment.equipmentClass == 'ailment-attack' || 
+                         this.equipment.equipmentClass == 'ailment-defense' || 
+                         this.equipment.equipmentClass == 'ailment-other';
+        
+        this.equipment = null;
+        
+        // Only trigger friendLostPerk events for perks, not ailments
+        if (!wasAilment) {
+            this.abilityService.triggerFriendLostPerkEvents(this);
+            this.abilityService.executeFriendLostPerkEvents();
+        }
     }
 
     get level(): number {

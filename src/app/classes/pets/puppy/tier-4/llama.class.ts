@@ -11,7 +11,7 @@ export class Llama extends Pet {
     name = "Llama";
     tier = 4;
     pack: Pack = 'Puppy';
-    attack = 2;
+    attack = 3;
     health = 5;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

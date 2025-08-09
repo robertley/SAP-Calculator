@@ -19,7 +19,7 @@ export class Pangolin extends Pet {
         if (this.petBehind() == null) {
             return;
         }
-        let power = this.level * 5;
+        let power = this.level * 4;
         this.petBehind().increaseHealth(power);
         this.logService.createLog({
             message: `${this.name} gave ${this.petBehind().name} ${power} health.`,

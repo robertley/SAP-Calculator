@@ -11,7 +11,7 @@ export class HoopoeBird extends Pet {
     tier = 3;
     pack: Pack = 'Puppy';
     attack = 3;
-    health = 2;
+    health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let targetFront = opponent.furthestUpPet;

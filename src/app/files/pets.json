@@ -331,6 +331,11 @@
             "id": "62"
         },
         {
+            "name": "Mantis",
+            "tier": "1",
+            "id": "664"
+        },
+        {
             "name": "Rock",
             "tier": "1",
             "id": "638"
@@ -421,6 +426,11 @@
             "name": "Bigfoot",
             "tier": "2",
             "id": "334"
+        },
+        {
+            "name": "Bilby",
+            "tier": "2",
+            "id": "663"
         },
         {
             "name": "Black Necked Stilt",
@@ -1342,6 +1352,11 @@
             "name": "Eagle",
             "tier": "5",
             "id": "27"
+        },
+        {
+            "name": "Eagle",
+            "tier": "5",
+            "id": "662"
         },
         {
             "name": "Egyptian Vulture",

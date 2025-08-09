@@ -70,6 +70,16 @@ export class StartOfBattleService {
         this.nonToyPetEvents = [];
     }
 
+    resetStartOfBattleFlags() {
+        this.gameApi = this.gameService.gameApi;
+        for (let pet of this.gameApi.player.petArray) {
+            pet.startOfBattleTriggered = false;
+        }
+        for (let pet of this.gameApi.opponet.petArray) {
+            pet.startOfBattleTriggered = false;
+        }
+    }
+
     executeToyPetEvents() {
         // shuffle, so that same priority events are in random order
         this.toyPetEvents = shuffle(this.toyPetEvents);
@@ -90,6 +100,13 @@ export class StartOfBattleService {
         this.nonToyPetEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.nonToyPetEvents) {
+            // Check if start-of-battle ability already triggered for this pet
+            if (event.pet.startOfBattleTriggered) {
+                continue;
+            }
+
+            // Mark as triggered before execution
+            event.pet.startOfBattleTriggered = true;
             
             let reorder = event.callback(this.gameApi);
 

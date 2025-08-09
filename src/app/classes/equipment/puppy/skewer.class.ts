@@ -5,6 +5,7 @@ import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Skewer extends Equipment {
     name = 'Skewer';
+    tier = 5;
     equipmentClass = 'skewer' as EquipmentClass;
     power = 0;
     attackCallback = (pet: Pet, attackedPet: Pet) => {
