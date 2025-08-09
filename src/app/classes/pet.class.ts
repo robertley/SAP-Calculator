@@ -831,7 +831,7 @@ export abstract class Pet {
                 if (defenseMultiplier > 1) {
                     message += ` x${defenseMultiplier} (Panther)`;
                 }
-                pet.useDefenseEquipment();
+                //pet.useDefenseEquipment();
             }
             
             if (pet.equipment instanceof Exposed) {
@@ -1327,7 +1327,7 @@ export abstract class Pet {
             return;
         }
         if (this.equipment.equipmentClass != 'attack'
-            //&& this.equipment.equipmentClass != 'defense'
+            && this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
             && this.equipment.equipmentClass != 'snipe'
         ) {

@@ -7,8 +7,8 @@ export class HoneydewMelon extends Equipment {
     power = 10;
     originalPower = 10;
     //one use for attack, one use for defense
-    uses = 2;
-    originalUses = 2;
+    uses = 1;
+    originalUses = 1;
 }
 
 export class HoneydewMelonAttack extends Equipment {
