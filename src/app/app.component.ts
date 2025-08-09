@@ -102,6 +102,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   api = false;
   apiResponse = null;
 
+  private isLoadedFromUrl = false;
+
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
@@ -137,18 +139,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     const params = new URLSearchParams(window.location.search);
     const apiCode = params.get('code'); // This safely gets ONLY the value of the 'code' parameter
 
-    // This new 'if' condition is much more reliable.
     if (apiCode) {
         this.api = true;
         try {
-            // Now we are only parsing the clean data.
             const jsonData = JSON.parse(decodeURIComponent(apiCode));
             this.loadCalculatorFromValue(jsonData);
             this.simulate();
             this.buildApiResponse();
         } catch (e) {
             console.error("Error parsing API data from URL:", e);
-            // If parsing fails, display an error instead of crashing.
             this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
         }
     }
@@ -171,41 +170,34 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // Check for shared data in the URL *before* doing anything else
-    const wasLoadedFromUrl = this.loadStateFromUrl();
+    this.isLoadedFromUrl = this.loadStateFromUrl(true);
 
-    // If data was NOT loaded from the URL, then proceed with loading from local storage
-    if (!wasLoadedFromUrl) {
+    if (!this.isLoadedFromUrl) {
       this.loadLocalStorage();
     }
 
-    // The rest of the initialization
     this.initApp();
     this.initGameApi();
     this.setDayNight();
     this.toys = this.toyService.toys;
   }
 
-  // New method to handle loading from URL
-  loadStateFromUrl(): boolean {
-    // Get the query parameters from the current URL
+  loadStateFromUrl(isInitialLoad: boolean = false): boolean {
     const params = new URLSearchParams(window.location.search);
-    const encodedData = params.get('c'); // Use the same parameter name 'c'
+    const encodedData = params.get('c'); 
 
     if (encodedData) {
       try {
-        // 1. Decode the URL-safe string back to a normal string
         const decodedData = decodeURIComponent(encodedData);
 
-        // 2. Use your existing import logic to load the state
         this.import(decodedData);
         
         console.log("Calculator state loaded from URL.");
-        return true; // Indicate that loading was successful
+        return true; 
       } catch (e) {
         console.error("Failed to parse calculator state from URL.", e);
         alert("Could not load the shared calculator link. The data may be corrupted.");
-        return false; // Indicate that loading failed
+        return false; 
       }
     }
     
@@ -214,6 +206,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit(): void {
+    if (this.isLoadedFromUrl) {
+        this.petSelectors.forEach((petSelector) => {
+            petSelector.fixLoadEquipment();
+        });
+    }
+    
     if (!this.api) {
       this.initModals();
     }
@@ -1301,16 +1299,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
   }
 
-  import(importVal): boolean {
+  import(importVal: string, isInitialLoad: boolean = false): boolean {
     let success = false;
     try {
       const calculator = JSON.parse(importVal);
       
       this.loadCalculatorFromValue(calculator);
       this.initApp();
-      this.petSelectors.forEach((petSelector) => {
-        petSelector.fixLoadEquipment();
-      })
+      if (!isInitialLoad) {
+        setTimeout(() => {
+            if (this.petSelectors) {
+                this.petSelectors.forEach((petSelector) => {
+                    petSelector.fixLoadEquipment();
+                });
+            }
+        }, 0);
+      }
       success = true;
     } catch (e) {
       console.error(e);
@@ -1320,20 +1324,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   generateShareLink(): void {
-    // 1. Get the calculator state as a JSON string
     this.localStorageService.setFormStorage(this.formGroup);
     const calculatorStateString = JSON.stringify(this.formGroup.value);
 
-    // 2. Encode the string to make it URL-safe
-    // This converts characters like '{', '"', and spaces into URL-friendly format (e.g., %7B)
     const encodedData = encodeURIComponent(calculatorStateString);
 
-    // 3. Construct the full URL
-    // We'll use a query parameter, let's call it `c` for "calculator" to keep it short
     const baseUrl = window.location.origin + window.location.pathname;
     const shareableLink = `${baseUrl}?c=${encodedData}`;
 
-    // 4. Copy the link to the user's clipboard and notify them
     navigator.clipboard.writeText(shareableLink).then(() => {
       alert('Shareable link copied to clipboard!');
     }).catch(err => {
@@ -1365,7 +1363,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   get validCustomPacks() {
-    // get all formGroups in formArray that are valid
     let formArray = this.formGroup.get('customPacks') as FormArray;
     let validFormGroups = [];
     for (let formGroup of formArray.controls) {
