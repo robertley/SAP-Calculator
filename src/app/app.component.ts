@@ -116,23 +116,41 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
-    this.loadLocalStorage();
-    this.initApp();
-    this.initGameApi();
-    this.setDayNight();
+    // this.loadLocalStorage();
+    // this.initApp();
+    // this.initGameApi();
+    // this.setDayNight();
 
     // get the end of url
-    let url = window.location.href;
-    let urlSplit = url.split('/');
-    let lastUrl = urlSplit[urlSplit.length - 1];
-    let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
-    // remove ?code= from string
-    code = code.replace('?code=', '');
-    if (code) {
-      this.api = true;
-      this.loadCalculatorFromValue(JSON.parse(code));
-      this.simulate();
-      this.buildApiResponse();
+    // let url = window.location.href;
+    // let urlSplit = url.split('/');
+    // let lastUrl = urlSplit[urlSplit.length - 1];
+    // let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
+    // // remove ?code= from string
+    // code = code.replace('?code=', '');
+    // if (code) {
+    //   this.api = true;
+    //   this.loadCalculatorFromValue(JSON.parse(code));
+    //   this.simulate();
+    //   this.buildApiResponse();
+    // }
+    const params = new URLSearchParams(window.location.search);
+    const apiCode = params.get('code'); // This safely gets ONLY the value of the 'code' parameter
+
+    // This new 'if' condition is much more reliable.
+    if (apiCode) {
+        this.api = true;
+        try {
+            // Now we are only parsing the clean data.
+            const jsonData = JSON.parse(decodeURIComponent(apiCode));
+            this.loadCalculatorFromValue(jsonData);
+            this.simulate();
+            this.buildApiResponse();
+        } catch (e) {
+            console.error("Error parsing API data from URL:", e);
+            // If parsing fails, display an error instead of crashing.
+            this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
+        }
     }
     
   }
@@ -153,8 +171,47 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // Check for shared data in the URL *before* doing anything else
+    const wasLoadedFromUrl = this.loadStateFromUrl();
+
+    // If data was NOT loaded from the URL, then proceed with loading from local storage
+    if (!wasLoadedFromUrl) {
+      this.loadLocalStorage();
+    }
+
+    // The rest of the initialization
+    this.initApp();
+    this.initGameApi();
+    this.setDayNight();
     this.toys = this.toyService.toys;
   }
+
+  // New method to handle loading from URL
+  loadStateFromUrl(): boolean {
+    // Get the query parameters from the current URL
+    const params = new URLSearchParams(window.location.search);
+    const encodedData = params.get('c'); // Use the same parameter name 'c'
+
+    if (encodedData) {
+      try {
+        // 1. Decode the URL-safe string back to a normal string
+        const decodedData = decodeURIComponent(encodedData);
+
+        // 2. Use your existing import logic to load the state
+        this.import(decodedData);
+        
+        console.log("Calculator state loaded from URL.");
+        return true; // Indicate that loading was successful
+      } catch (e) {
+        console.error("Failed to parse calculator state from URL.", e);
+        alert("Could not load the shared calculator link. The data may be corrupted.");
+        return false; // Indicate that loading failed
+      }
+    }
+    
+    return false; // No data found in URL
+  }
+
 
   ngAfterViewInit(): void {
     if (!this.api) {
@@ -1244,8 +1301,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   import(importVal): boolean {
     let success = false;
-    let calculator = JSON.parse(importVal);
     try {
+      const calculator = JSON.parse(importVal);
+      
       this.loadCalculatorFromValue(calculator);
       this.initApp();
       this.petSelectors.forEach((petSelector) => {
@@ -1257,6 +1315,29 @@ export class AppComponent implements OnInit, AfterViewInit {
       // acceptable faliure
     }
     return success;
+  }
+
+  generateShareLink(): void {
+    // 1. Get the calculator state as a JSON string
+    this.localStorageService.setFormStorage(this.formGroup);
+    const calculatorStateString = JSON.stringify(this.formGroup.value);
+
+    // 2. Encode the string to make it URL-safe
+    // This converts characters like '{', '"', and spaces into URL-friendly format (e.g., %7B)
+    const encodedData = encodeURIComponent(calculatorStateString);
+
+    // 3. Construct the full URL
+    // We'll use a query parameter, let's call it `c` for "calculator" to keep it short
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareableLink = `${baseUrl}?c=${encodedData}`;
+
+    // 4. Copy the link to the user's clipboard and notify them
+    navigator.clipboard.writeText(shareableLink).then(() => {
+      alert('Shareable link copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy link: ', err);
+      alert('Failed to copy link. See console for details.');
+    });
   }
 
   get filteredBattles() {
