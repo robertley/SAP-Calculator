@@ -15,7 +15,7 @@ export class Wolf extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power: Power = {
             attack: this.level * 3,
             health: this.level * 2
@@ -49,7 +49,7 @@ export class Wolf extends Pet {
                 priority: this.attack
             })
         }
-        this.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

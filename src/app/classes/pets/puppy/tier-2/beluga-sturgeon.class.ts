@@ -14,7 +14,7 @@ export class BelugaSturgeon extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -34,7 +34,7 @@ export class BelugaSturgeon extends Pet {
                 priority: this.attack
             })
         }
-        this.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

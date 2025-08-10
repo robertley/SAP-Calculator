@@ -13,12 +13,13 @@ export class Tapir extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let excludePets = this.parent.petArray.filter(pet => {
             return pet.name == "Tapir";
         });
         let target = this.parent.getRandomPet(excludePets, true);
         if (target == null) {
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
@@ -45,6 +46,7 @@ export class Tapir extends Pet {
             },
             priority: this.attack
         })
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

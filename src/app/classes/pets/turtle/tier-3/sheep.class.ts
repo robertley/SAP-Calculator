@@ -11,8 +11,7 @@ export class Sheep extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    faint(gameApi, tiger, pteranodon?: boolean) {
-
+    afterFaint(gameApi, tiger, pteranodon?: boolean) {
         for (let i = 0; i < 2; i++) {
             this.abilityService.setSpawnEvent({
                 callback: () => {
@@ -36,7 +35,7 @@ export class Sheep extends Pet {
             })
         }
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

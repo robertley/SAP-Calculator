@@ -13,11 +13,12 @@ export class Nightcrawler extends Pet {
     pack: Pack = 'Custom';
     attack = 1;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let isPlayer = this.parent == gameApi.player;
         let summonedAmount = isPlayer ? gameApi.playerSummonedAmount : gameApi.opponentSummonedAmount;
 
         if (summonedAmount == 0) {
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
@@ -45,7 +46,7 @@ export class Nightcrawler extends Pet {
             priority: this.attack
         })
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

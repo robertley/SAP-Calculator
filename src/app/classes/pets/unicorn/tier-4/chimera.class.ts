@@ -15,9 +15,9 @@ export class Chimera extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 6;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.mana <= 0) {
-            this.superFaint(gameApi, tiger);
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
@@ -61,6 +61,7 @@ export class Chimera extends Pet {
 
         if (this.level == 1) {
             this.mana = 0;
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
@@ -87,6 +88,7 @@ export class Chimera extends Pet {
 
         if (this.level == 2) {
             this.mana = 0;
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
@@ -112,6 +114,7 @@ export class Chimera extends Pet {
         })
 
         this.mana = 0;
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

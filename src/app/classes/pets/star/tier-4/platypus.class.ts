@@ -13,7 +13,7 @@ export class Platypus extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 3;
         let duck = new Duck(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
         let beaver = new Beaver(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
@@ -53,6 +53,7 @@ export class Platypus extends Pet {
             },
             priority: this.attack
         })
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

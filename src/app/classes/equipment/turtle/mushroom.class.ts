@@ -7,37 +7,48 @@ import { Panther } from "../../pets/puppy/tier-5/panther.class";
 // TODO mushroom bug spawning as level 1 even when level 3?
 export class Mushroom extends Equipment {
     name = 'Mushroom';
-    equipmentClass = 'faint' as EquipmentClass;
+    equipmentClass = 'afterFaint' as EquipmentClass;
     callback = (pet: Pet) => {
-        let multiplier = 1;
-        if (pet instanceof Panther) {
-            multiplier = 1 + pet.level;
-        }
-        for (let i = 0; i < multiplier; i++) {
-            let newPet = this.petService.createDefaultVersionOfPet(pet, 1, 1);
-            this.abilityService.setSpawnEvent({
-                callback: () => {       
-                    let pantherMessage = '';
-                    if (i > 0) {
-                        pantherMessage = ` (Panther)`;
-                    }
-
-                    this.logService.createLog(
-                        {
-                            message: `${pet.name} Spawned ${newPet.name} (level ${newPet.level}) (Mushroom)${pantherMessage}`,
-                            type: "ability",
-                            player: pet.parent
-                        }
-                    )
+        let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
+        pet.afterFaint = (gameApi) => {
+            if (originalAfterFaint != null) {
+                originalAfterFaint(gameApi);
+            }
             
-                    if (pet.parent.summonPet(newPet, pet.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(newPet);
-                    }
-                },
-                priority: -1
-            })
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Mushroom') {
+                return;
+            }
+            
+            let multiplier = 1;
+            if (pet instanceof Panther) {
+                multiplier = 1 + pet.level;
+            }
+            for (let i = 0; i < multiplier; i++) {
+                let newPet = this.petService.createDefaultVersionOfPet(pet, 1, 1);
+                
+                let pantherMessage = '';
+                if (i > 0) {
+                    pantherMessage = ` (Panther)`;
+                }
+
+                this.abilityService.setSpawnEvent({
+                    callback: () => {
+                        this.logService.createLog(
+                            {
+                                message: `${pet.name} Spawned ${newPet.name} (level ${newPet.level}) (Mushroom)${pantherMessage}`,
+                                type: "ability",
+                                player: pet.parent
+                            }
+                        )
+                        if (pet.parent.summonPet(newPet, pet.savedPosition)) {
+                            this.abilityService.triggerSummonedEvents(newPet);
+                        }
+                    },
+                    priority: pet.attack
+                });
+            }
         }
-        
     }
 
     constructor(

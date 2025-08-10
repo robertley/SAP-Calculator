@@ -13,7 +13,7 @@ export class Deer extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    faint(gameApi, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi, tiger, pteranodon?: boolean) {
         let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
         this.abilityService.setSpawnEvent({
             callback: () => {
@@ -35,8 +35,9 @@ export class Deer extends Pet {
             priority: this.attack
         })
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

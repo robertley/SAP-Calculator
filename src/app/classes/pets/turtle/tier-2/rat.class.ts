@@ -12,8 +12,7 @@ export class Rat extends Pet {
     pack: Pack = 'Turtle';
     health = 6;
     attack = 3;
-    // TODO broken with a pet that is fainted but not yet removed
-    faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;
@@ -42,7 +41,7 @@ export class Rat extends Pet {
             })
         }
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

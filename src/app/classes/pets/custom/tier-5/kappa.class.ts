@@ -13,7 +13,7 @@ export class Kappa extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let petPool = this.parent == gameApi.player ? gameApi.playerPetPool : gameApi.opponentPetPool;
         let tier3Pets = petPool.get(3);
         for (let i = 0; i < this.level; i++) {
@@ -80,9 +80,8 @@ export class Kappa extends Pet {
                 },
                 priority: this.attack
             });
-    
-            super.superFaint(gameApi, tiger);
         }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -15,8 +15,9 @@ export class BelugaWhale extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 8;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.belugaSwallowedPet == null) {
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
@@ -48,7 +49,7 @@ export class BelugaWhale extends Pet {
             priority: this.attack
         })
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

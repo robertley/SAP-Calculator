@@ -12,7 +12,7 @@ export class Stork extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let summonPetPool;
         let tier = Math.max(1, gameApi.previousShopTier - 1);
         if (this.parent == gameApi.player){
@@ -51,7 +51,7 @@ export class Stork extends Pet {
             },
             priority: this.attack
         })
-        this.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -8,34 +8,48 @@ import { Monkey } from "../../pets/turtle/tier-5/monkey.class";
 
 export class Banana extends Equipment {
     name = 'Banana';
-    equipmentClass = 'faint' as EquipmentClass;
+    equipmentClass = 'afterFaint' as EquipmentClass;
     callback = (pet: Pet) => {
-        let multiplier = 1;
-        if (pet instanceof Panther) {
-            multiplier = 1 + pet.level;
-        }
+        let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
+        pet.afterFaint = (gameApi) => {
+            if (originalAfterFaint != null) {
+                originalAfterFaint(gameApi);
+            }
+            
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Banana') {
+                return;
+            }
+            
+            let multiplier = 1;
+            if (pet instanceof Panther) {
+                multiplier = 1 + pet.level;
+            }
 
-        for (let i = 0; i < multiplier; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let monke = new Monkey(this.logService, this.abilityService, pet.parent, 4, 4, 0, 0);
-                    pet.parent.summonPet(monke, pet.savedPosition);
-        
-                    let pantherMessage = '';
-                    if (i > 0) {
-                        pantherMessage = ` (Panther)`;
-                    }
-                    this.logService.createLog(
-                        {
-                            message: `${pet.name} Spawned Monkey (Banana)${pantherMessage}`,
-                            type: "ability",
-                            player: pet.parent
+            for (let i = 0; i < multiplier; i++) {
+                let monke = new Monkey(this.logService, this.abilityService, pet.parent, 4, 4, 0, 0);
+    
+                let pantherMessage = '';
+                if (i > 0) {
+                    pantherMessage = ` (Panther)`;
+                }
+                
+                this.abilityService.setSpawnEvent({
+                    callback: () => {
+                        this.logService.createLog(
+                            {
+                                message: `${pet.name} Spawned Monkey (Banana)${pantherMessage}`,
+                                type: "ability",
+                                player: pet.parent
+                            }
+                        )
+                        if (pet.parent.summonPet(monke, pet.savedPosition)) {
+                            this.abilityService.triggerSummonedEvents(monke);
                         }
-                    )
-                    this.abilityService.triggerSummonedEvents(monke);
-                },
-                priority: -1
-            })
+                    },
+                    priority: pet.attack
+                });
+            }
         }
     }
 

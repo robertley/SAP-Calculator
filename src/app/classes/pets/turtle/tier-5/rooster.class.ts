@@ -13,7 +13,7 @@ export class Rooster extends Pet {
     pack: Pack = 'Turtle';
     attack = 6;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let attack = Math.floor(this.attack * .5);
         for (let i = 0; i < this.level; i++) {
             this.abilityService.setSpawnEvent({
@@ -34,7 +34,7 @@ export class Rooster extends Pet {
                 player: this.parent
             })
         }
-        this.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

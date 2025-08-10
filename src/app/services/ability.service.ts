@@ -44,6 +44,7 @@ export class AbilityService {
     private manaEvents: AbilityEvent[]= [];
     private friendGainsHealthEvents: AbilityEvent[]= [];
     private friendGainedExperienceEvents: AbilityEvent[] = [];
+    private afterFaintEvents: AbilityEvent[] = [];
 
     // toy events
     private emptyFrontSpaceToyEvents: AbilityEvent[]= [];
@@ -1121,6 +1122,26 @@ export class AbilityService {
         }
         
         this.resetFriendGainedExperienceEvents();
+    }
+
+    setAfterFaintEvent(event: AbilityEvent) {
+        this.afterFaintEvents.push(event);
+    }
+
+    resetAfterFaintEvents() {
+        this.afterFaintEvents = [];
+    }
+
+    executeAfterFaintEvents() {
+        this.afterFaintEvents = shuffle(this.afterFaintEvents);
+        
+        this.afterFaintEvents.sort((a, b) => a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0);
+        
+        for (let event of this.afterFaintEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet);
+        }
+        
+        this.resetAfterFaintEvents();
     }
 
     // toy events

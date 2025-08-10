@@ -11,7 +11,7 @@ export class Cricket extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 1;
-    faint(gameApi, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi, tiger, pteranodon?: boolean) {
         let level = 1;
         let exp = 0;
         if (this.level == 2) {
@@ -42,9 +42,9 @@ export class Cricket extends Pet {
             priority: this.attack
         })
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
         
-    };
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

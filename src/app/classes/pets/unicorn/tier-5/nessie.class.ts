@@ -12,7 +12,7 @@ export class Nessie extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let isPlayer = this.parent === gameApi.player;
         let rolls = isPlayer ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
 
@@ -53,7 +53,7 @@ export class Nessie extends Pet {
             priority: this.attack
         })
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     
     constructor(protected logService: LogService,

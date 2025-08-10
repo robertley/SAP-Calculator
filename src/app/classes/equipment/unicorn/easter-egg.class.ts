@@ -7,34 +7,48 @@ import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class EasterEgg extends Equipment {
     name = 'Easter Egg';
-    equipmentClass = 'faint' as EquipmentClass;
+    equipmentClass = 'afterFaint' as EquipmentClass;
     callback = (pet: Pet) => {
-        let multiplier = 1;
-        if (pet instanceof Panther) {
-            multiplier = 1 + pet.level;
-        }
+        let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
+        pet.afterFaint = (gameApi) => {
+            if (originalAfterFaint != null) {
+                originalAfterFaint(gameApi);
+            }
+            
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Easter Egg') {
+                return;
+            }
+            
+            let multiplier = 1;
+            if (pet instanceof Panther) {
+                multiplier = 1 + pet.level;
+            }
 
-        for (let i = 0; i < multiplier; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let monty = new Monty(this.logService, this.abilityService, pet.parent, null, null, 0, 0);
-                    pet.parent.summonPet(monty, pet.savedPosition);
-        
-                    let pantherMessage = '';
-                    if (i > 0) {
-                        pantherMessage = ` (Panther)`;
-                    }
-                    this.logService.createLog(
-                        {
-                            message: `${pet.name} Spawned Monty (Easter Egg)${pantherMessage}`,
-                            type: "ability",
-                            player: pet.parent
+            for (let i = 0; i < multiplier; i++) {
+                let monty = new Monty(this.logService, this.abilityService, pet.parent, null, null, 0, 0);
+    
+                let pantherMessage = '';
+                if (i > 0) {
+                    pantherMessage = ` (Panther)`;
+                }
+                
+                this.abilityService.setSpawnEvent({
+                    callback: () => {
+                        this.logService.createLog(
+                            {
+                                message: `${pet.name} Spawned Monty (Easter Egg)${pantherMessage}`,
+                                type: "ability",
+                                player: pet.parent
+                            }
+                        )
+                        if (pet.parent.summonPet(monty, pet.savedPosition)) {
+                            this.abilityService.triggerSummonedEvents(monty);
                         }
-                    )
-                    this.abilityService.triggerSummonedEvents(monty);
-                },
-                priority: -1
-            })
+                    },
+                    priority: pet.attack
+                });
+            }
         }
     }
     

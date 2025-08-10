@@ -967,6 +967,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment?.equipmentClass == 'beforeAttack') {
         pet.equipment.callback(pet);
       }
+      if (pet.equipment?.equipmentClass == 'afterFaint') {
+        pet.equipment.callback(pet);
+      }
     }
   }
 
