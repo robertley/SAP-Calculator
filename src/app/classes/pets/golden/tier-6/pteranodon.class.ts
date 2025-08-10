@@ -48,6 +48,7 @@ export class Pteranodon extends Pet {
         }
         
         this.abilityUses++;
+        this.superFriendFaints(gameApi, pet, tiger);
         //debug 
         // this.logService.printState(gameApi.player, gameApi.opponet);
     }

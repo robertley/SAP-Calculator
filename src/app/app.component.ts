@@ -82,7 +82,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   turns = 0;
   battleStarted = false;
 
-  simulationBattleAmt = 1000;
+  simulationBattleAmt = 1;
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;

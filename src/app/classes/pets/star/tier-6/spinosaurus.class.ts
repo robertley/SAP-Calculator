@@ -30,6 +30,8 @@ export class Spinosaurus extends Pet {
             tiger: tiger,
             randomEvent: true
         })
+        
+        super.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

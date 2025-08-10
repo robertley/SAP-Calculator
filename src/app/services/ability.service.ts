@@ -18,7 +18,6 @@ export class AbilityService {
     private faintEvents: AbilityEvent[] = [];
     private summonedEvents: AbilityEvent[] = [];
     private friendFaintsEvents: AbilityEvent[] = [];
-    private spawnEvents: AbilityEvent[] = [];
     private friendAheadAttacksEvents: AbilityEvent[]= [];
     private afterAttackEvents: AbilityEvent[]= [];
     private friendAheadFaintsEvents: AbilityEvent[]= [];
@@ -325,7 +324,7 @@ export class AbilityService {
         this.friendFaintsEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendFaintsEvents) {
-            event.callback(this.gameService.gameApi, event.callbackPet, null);
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
         }
         
         this.resetFriendFaintsEvents();

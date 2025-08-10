@@ -32,9 +32,9 @@ export class Hydra extends Pet {
             if (this.parent.summonPet(head, this.savedPosition)) {
                 this.abilityService.triggerSummonedEvents(head);
             }
-    
-            super.superFaint(gameApi, tiger);
         }
+        
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

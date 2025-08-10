@@ -488,9 +488,12 @@ export abstract class Pet {
     }
 
     tigerCheck(tiger) {
+        console.log(`${this.petBehind(true, true)?.name}, tiger: ${tiger} `)
         if (this.petBehind(true, true)?.name == 'Tiger' && (tiger == null || tiger == false)) {
+            console.log(`tiger check for ${this.name} is True`)
             return true;
         }
+        console.log(`tiger check for ${this.name} is false`)
         return false;
     }
 
@@ -500,7 +503,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(true, true).minExpForLevel;
-        this.startOfBattle(gameApi,true)
+        this.originalStartOfBattle(gameApi,true)
         this.exp = exp;
     
     }
@@ -511,7 +514,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.hurt(gameApi, pet, true)
+        this.originalHurt(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -521,7 +524,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.faint(gameApi, true)
+        this.originalFaint(gameApi, true)
         this.exp = exp;
     }
 
@@ -531,7 +534,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendSummoned(gameApi, pet, true)
+        this.originalFriendSummoned(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -541,7 +544,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAheadAttacks(gameApi, pet, true)
+        this.originalFriendAheadAttacks(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -551,7 +554,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAheadFaints(gameApi, pet, true)
+        this.originalFriendAheadFaints(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -561,7 +564,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.afterAttack(gameApi, true)
+        this.originalAfterAttack(gameApi, true)
         this.exp = exp;
     }
 
@@ -591,7 +594,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendFaints(gameApi, pet, true)
+        this.originalFriendFaints(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -601,7 +604,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.beforeAttack(gameApi, true)
+        this.originalBeforeAttack(gameApi, true)
         this.exp = exp;
     }
 
@@ -611,7 +614,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.beforeFriendAttacks(gameApi, pet, true)
+        this.originalBeforeFriendAttacks(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -621,7 +624,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendLostPerk(gameApi, pet, true)
+        this.originalFriendLostPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -631,7 +634,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.GainedPerk(gameApi, pet, true)
+        this.originalGainedPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -641,7 +644,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendGainedPerk(gameApi, pet, true)
+        this.originalFriendGainedPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -651,7 +654,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.beforeStartOfBattle(gameApi, true)
+        this.originalBeforeStartOfBattle(gameApi, true)
         this.exp = exp;
     }
 
@@ -661,7 +664,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendlyToyBroke(gameApi, true)
+        this.originalFriendlyToyBroke(gameApi, true)
         this.exp = exp;
     }
 
@@ -671,7 +674,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.transform(gameApi, true)
+        this.originalTransform(gameApi, true)
         this.exp = exp;
     }
 
@@ -691,7 +694,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendHurt(gameApi, pet, true)
+        this.originalFriendHurt(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -721,7 +724,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAttacks(gameApi, true)
+        this.originalFriendAttacks(gameApi, true)
         this.exp = exp;
     }
 
@@ -731,7 +734,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.gainedMana(gameApi, true)
+        this.originalGainedMana(gameApi, true)
         this.exp = exp;
     }
 
@@ -741,7 +744,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendJumped(gameApi, pet, true)
+        this.originalFriendJumped(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -761,7 +764,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendGainsHealth(gameApi, pet, true)
+        this.originalFriendGainsHealth(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -771,17 +774,18 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendGainedExperience(gameApi, pet, true)
+        this.originalFriendGainedExperience(gameApi, pet, true)
         this.exp = exp;
     }
 
     protected superAfterFaint(gameApi, tiger=false, pteranodon=false) {
+        console.log(`Going to do tiger check`)
         if (!this.tigerCheck(tiger)) {
             return;
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.afterFaint(gameApi, true, pteranodon);
+        this.originalAfterFaint(gameApi, true, pteranodon);
         this.exp = exp;
     }
 
@@ -1526,7 +1530,8 @@ export abstract class Pet {
      * @returns 
      */
     petBehind(seenDead = false, deadOrAlive = false): Pet {
-        for (let i = this.position + 1; i < 5; i++) {
+        let currentPosition = this.position !== undefined ? this.position : this.savedPosition;
+        for (let i = currentPosition + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
             if (deadOrAlive) {
                 if (pet != null) {
