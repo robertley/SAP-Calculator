@@ -945,6 +945,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pet.equipment.callback(pet);
     }
   }
+  //need to set when gave perk too
   setAbilityEquipments(player) {
     for (let pet of player.petArray) {
       if (pet.equipment instanceof Eggplant) {

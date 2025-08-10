@@ -24,7 +24,6 @@ export class Fig extends Equipment {
                 multiplier = pet.level + 1;
             }
             for (let i = 0; i < multiplier; i++) {
-
                 let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
                 let attackPet = opponent.getLowestHealthPet().pet;
                 if (attackPet == null) {
@@ -87,6 +86,9 @@ export class Fig extends Equipment {
                     this.abilityService.triggerEnemyHurtEvents(pet.parent, attackPet);
                 }
             }
+            
+            // Remove equipment after use
+            pet.givePetEquipment(null);
         }
     }
 

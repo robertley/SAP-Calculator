@@ -21,6 +21,7 @@ import { cloneDeep } from "lodash";
 import { PeanutButter } from "./equipment/hidden/peanut-butter";
 import { Blackberry } from "./equipment/puppy/blackberry.class";
 import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
+import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -1417,6 +1418,9 @@ export abstract class Pet {
 
         if (equipment == null) {
             return;
+        }
+        if (equipment.name == "Pita Bread" || equipment instanceof FairyDust || equipment.equipmentClass == 'beforeAttack') {
+            this.equipment.callback(this);
         }
         if (equipment instanceof Blackberry) {
             let multiplier = 1;
