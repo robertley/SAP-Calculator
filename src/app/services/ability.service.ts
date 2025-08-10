@@ -24,6 +24,7 @@ export class AbilityService {
     private friendAheadFaintsEvents: AbilityEvent[]= [];
     private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
+    private beforeStartOfBattleEvents: AbilityEvent[]= [];
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
     private friendLostPerkEvents: AbilityEvent[]= []; 
     private gainedPerkEvents: AbilityEvent[]= [];
@@ -529,6 +530,41 @@ export class AbilityService {
         this.resetFriendGainedPerkEvents();
 
         
+    }
+
+    // before start of battle
+
+    triggerBeforeStartOfBattleEvents(player: Player) {
+        for (let pet of player.petArray) {
+            if (pet.beforeStartOfBattle != null) {
+                this.setBeforeStartOfBattleEvent({
+                    callback: pet.beforeStartOfBattle.bind(pet),
+                    priority: pet.attack,
+                    player: player
+                })
+            }
+        }
+    }
+
+    setBeforeStartOfBattleEvent(event: AbilityEvent) {
+        this.beforeStartOfBattleEvents.push(event);
+    }
+
+    resetBeforeStartOfBattleEvents() {
+        this.beforeStartOfBattleEvents = [];
+    }
+
+    executeBeforeStartOfBattleEvents() {
+        // shuffle, so that same priority events are in random order
+        this.beforeStartOfBattleEvents = shuffle(this.beforeStartOfBattleEvents);
+
+        this.beforeStartOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.beforeStartOfBattleEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetBeforeStartOfBattleEvents();
     }
 
     // friend gained ailment

@@ -155,9 +155,7 @@ export class Player {
             this.setPet(4, array[4]);
         } catch {
             this.pet4 = null;
-        }
-        this.onionCheck();
-        
+        }        
     }
 
     onionCheck() {

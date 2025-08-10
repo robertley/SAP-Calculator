@@ -113,10 +113,10 @@ export class GoodDog extends Pet {
         map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Lime', new Lime());
         map.set('Salt', new Salt());
-        map.set('Pie', new Pie());
+        map.set('Pie', new Pie(this.logService));
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
-        map.set('Pancakes', new Pancakes());
+        map.set('Pancakes', new Pancakes(this.logService));
         map.set('Strawberry', new Strawberry());
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());

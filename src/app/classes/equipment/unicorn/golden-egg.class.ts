@@ -6,77 +6,83 @@ import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class GoldenEgg extends Equipment {
     name = 'Golden Egg';
-    equipmentClass: EquipmentClass = 'snipe';
-    uses = 1;
-    originalUses = 1;
-    attackCallback = (pet: Pet, attackedPet: Pet) => {
-        let opponentPets = attackedPet.parent.petArray;
-        let attackPet: Pet = null;
-        for (let pet of opponentPets) {
-            if (pet.alive) {
-                attackPet = pet;
-                break;
+    equipmentClass: EquipmentClass = 'beforeAttack';
+    callback = (pet: Pet) => {
+        let originalBeforeAttack = pet.originalBeforeAttack?.bind(pet);
+        pet.beforeAttack = (gameApi) => {
+            if (originalBeforeAttack != null) {
+                originalBeforeAttack(gameApi);
             }
-        }
-
-        if (attackPet == null) {
-            console.warn("egg didn't find target") // p sure this should never happen?
-            return;
-        }
-        
-        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 5, true);
-        let defenseEquipment = damageResp.defenseEquipment;
-        let damage = damageResp.damage;
-
-        attackPet.health -= damage;
-
-        let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
-        if (pet instanceof Panther) {
-            message += ` (Panther)`;
-        }
-
-        if (defenseEquipment != null) {
-            attackPet.useDefenseEquipment();
-            let power = Math.abs(defenseEquipment.power);
-            let sign = '-';
-            if (defenseEquipment.power < 0) {
-                sign = '+';
+            
+            let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
+            let opponentPets = opponent.petArray;
+            let attackPet: Pet = null;
+            for (let opponentPet of opponentPets) {
+                if (opponentPet.alive) {
+                    attackPet = opponentPet;
+                    break;
+                }
             }
-            message += ` (${defenseEquipment.name} ${sign}${power})`;
-        }
 
-        this.logService.createLog({
-            message: message += ` (Golden Egg).`,
-            type: 'attack',
-            player: pet.parent
-        })
+            if (attackPet == null) {
+                console.warn("golden egg didn't find target");
+                return;
+            }
+            
+            let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 5, true);
+            let defenseEquipment = damageResp.defenseEquipment;
+            let damage = damageResp.damage;
 
-        // hurt ability
-        if (attackPet.hurt != null) {
-            this.abilityService.setHurtEvent({
-                callback: attackPet.hurt.bind(attackPet),
-                priority: attackPet.attack,
-                player: attackPet.parent,
-                callbackPet: attackedPet
+            attackPet.health -= damage;
+
+            let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
+            if (pet instanceof Panther) {
+                message += ` (Panther)`;
+            }
+
+            if (defenseEquipment != null) {
+                attackPet.useDefenseEquipment();
+                let power = Math.abs(defenseEquipment.power);
+                let sign = '-';
+                if (defenseEquipment.power < 0) {
+                    sign = '+';
+                }
+                message += ` (${defenseEquipment.name} ${sign}${power})`;
+            }
+
+            this.logService.createLog({
+                message: message += ` (Golden Egg).`,
+                type: 'attack',
+                player: pet.parent
             })
-        }
-        // knockout
-        if (attackPet.health < 1 && pet.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: pet.knockOut.bind(pet),
-                priority: pet.attack,
-                callbackPet: attackPet
-            })
-        }
 
-        // friend hurt ability
-        if (attackPet.alive) {
-            this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackedPet);
-        }
+            // hurt ability
+            if (attackPet.hurt != null) {
+                this.abilityService.setHurtEvent({
+                    callback: attackPet.hurt.bind(attackPet),
+                    priority: attackPet.attack,
+                    player: attackPet.parent,
+                    callbackPet: attackPet
+                })
+            }
+            // knockout
+            if (attackPet.health < 1 && pet.knockOut != null) {
+                this.abilityService.setKnockOutEvent({
+                    callback: pet.knockOut.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: attackPet
+                })
+            }
 
-        // enemy hurt ability
-        if (attackPet.alive && damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(pet.parent, attackPet);
+            // friend hurt ability
+            if (attackPet.alive) {
+                this.abilityService.triggerFriendHurtEvents(attackPet.parent, attackPet);
+            }
+
+            // enemy hurt ability
+            if (attackPet.alive && damage > 0) {
+                this.abilityService.triggerEnemyHurtEvents(pet.parent, attackPet);
+            }
         }
     }
     

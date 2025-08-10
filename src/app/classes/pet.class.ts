@@ -64,6 +64,7 @@ export abstract class Pet {
     beforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    beforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     anyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
     // example of pet that SHOULD be defined: Parrot.
@@ -102,6 +103,7 @@ export abstract class Pet {
     originalBeforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalAfterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     originalBeforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    originalBeforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     originalAnyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
     // example of pet that SHOULD be defined: Parrot.
@@ -173,6 +175,7 @@ export abstract class Pet {
         this.originalBeforeFriendAttacks = this.beforeFriendAttacks;
         this.originalAfterAttack = this.afterAttack;
         this.originalBeforeAttack = this.beforeAttack;
+        this.originalBeforeStartOfBattle = this.beforeStartOfBattle;
         this.originalAnyoneLevelUp = this.anyoneLevelUp;
         this.originalEndTurn = this.endTurn;
         this.originalKnockOut = this.knockOut;
@@ -319,6 +322,14 @@ export abstract class Pet {
                 return;
             }
             friendGainedPerkCallback(gameApi, pet, tiger);
+        }
+
+        let beforeStartOfBattleCallback = this.beforeStartOfBattle?.bind(this);
+        this.beforeStartOfBattle = beforeStartOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            beforeStartOfBattleCallback(gameApi, tiger);
         }
 
         let friendHurtCallback = this.friendHurt?.bind(this);
@@ -618,6 +629,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
         this.friendGainedPerk(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superBeforeStartOfBattle(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.beforeStartOfBattle(gameApi, true)
         this.exp = exp;
     }
 
