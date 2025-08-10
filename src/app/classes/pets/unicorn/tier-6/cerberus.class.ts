@@ -23,25 +23,21 @@ export class Cerberus extends Pet {
             return;
         }
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let exp = 5;
-                let firePup = new FirePup(this.logService, this.abilityService, this.parent, null, null, exp);
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Fire Pup (8/8).`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger
-                    }
-                )
+        let exp = 5;
+        let firePup = new FirePup(this.logService, this.abilityService, this.parent, null, null, exp);
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Fire Pup (8/8).`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger
+            }
+        )
 
-                if (this.parent.summonPet(firePup, 0)) {
-                    this.abilityService.triggerSummonedEvents(firePup);
-                }
-            },
-            priority: this.attack
-        })
+        if (this.parent.summonPet(firePup, 0)) {
+            this.abilityService.triggerSummonedEvents(firePup);
+        }
+
         this.abilityUses++;
 
         super.superFaint(gameApi, tiger);

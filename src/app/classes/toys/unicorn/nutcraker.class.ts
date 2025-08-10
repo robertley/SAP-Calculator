@@ -19,25 +19,21 @@ export class Nutcracker extends Toy {
             return;
         }
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let power = this.level * 6;
-                let salmon = new SalmonOfKnowledge(this.logService, this.abilityService, this.parent, power, power, null, 0);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Salmon of Knowledge (${power}/${power})`,
-                        type: "ability",
-                        player: this.parent
-                    }
-                )
+        let power = this.level * 6;
+        let salmon = new SalmonOfKnowledge(this.logService, this.abilityService, this.parent, power, power, null, 0);
 
-                if (this.parent.summonPet(salmon, 0)) {
-                    this.abilityService.triggerSummonedEvents(salmon);
-                }
-            },
-            priority: 100
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Salmon of Knowledge (${power}/${power})`,
+                type: "ability",
+                player: this.parent
+            }
+        )
+
+        if (this.parent.summonPet(salmon, 0)) {
+            this.abilityService.triggerSummonedEvents(salmon);
+        }
+
 
         this.used = true;
 

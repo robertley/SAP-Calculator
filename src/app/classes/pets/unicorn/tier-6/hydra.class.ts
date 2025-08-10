@@ -13,30 +13,25 @@ export class Hydra extends Pet {
     pack: Pack = 'Unicorn';
     attack = 10;
     health = 6;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let amt = Math.floor(this.attack / 10);
         for (let i = 0; i < amt; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let power = this.level * 5;
-                    let head = new Head(this.logService, this.abilityService, this.parent, power, power);
-            
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} spawned Head (${head.attack}/${head.health}).`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger,
-                            pteranodon: pteranodon
-                        }
-                    )
+            let power = this.level * 5;
+            let head = new Head(this.logService, this.abilityService, this.parent, power, power);
     
-                    if (this.parent.summonPet(head, this.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(head);
-                    }
-                },
-                priority: this.attack
-            })
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Head (${head.attack}/${head.health}).`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )
+
+            if (this.parent.summonPet(head, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(head);
+            }
     
             super.superFaint(gameApi, tiger);
         }

@@ -68,7 +68,7 @@ export class AbilityService {
             this.hasKnockOutEvents ||
             this.hasEmptyFrontSpaceEvents ||
             this.hasFriendFaintsEvents || 
-            this.hasSpawnEvents ||
+            this.hasAfterFaintEvents ||
             this.hasFriendAheadFaintsEvents ||
             this.hasEnemySummonedEvents
     }
@@ -192,33 +192,6 @@ export class AbilityService {
     
     get hasSummonedEvents() {
         return this.summonedEvents.length > 0;
-    }
-
-    // spawn events
-    
-    setSpawnEvent(event: AbilityEvent) {
-        this.spawnEvents.push(event);
-    }
-
-    resetSpawnEvents() {
-        this.spawnEvents = [];
-    }
-
-    executeSpawnEvents() {
-        // // shuffle, so that same priority events are in random order
-        this.spawnEvents = shuffle(this.spawnEvents);
-
-        this.spawnEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.spawnEvents) {
-            event.callback();
-        }
-        
-        this.resetSpawnEvents();
-    }
-
-    get hasSpawnEvents() {
-        return this.spawnEvents.length > 0;
     }
 
     // friend ahead attacks events
@@ -1144,6 +1117,9 @@ export class AbilityService {
         this.resetAfterFaintEvents();
     }
 
+    get hasAfterFaintEvents() {
+        return this.afterFaintEvents.length > 0;
+    }
     // toy events
 
 

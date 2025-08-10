@@ -587,7 +587,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     
     let petRemoved = this.removeDeadPets();
 
-    this.abilityService.executeSpawnEvents();
     this.abilityService.executeSummonedEvents();
     this.abilityService.executeFriendSummonedToyEvents();
     this.abilityService.executeEnemySummonedEvents();

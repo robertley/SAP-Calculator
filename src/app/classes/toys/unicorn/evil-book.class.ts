@@ -14,27 +14,23 @@ export class EvilBook extends Toy {
             health: level * 6,
         };
         let exp = level == 1 ? 0 : level == 2 ? 2 : 5;
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let greatOne = new GreatOne(this.logService, this.abilityService, this.parent, power.health, power.attack, 0, exp);
-                let message = `${this.name} spawned Great One (${power.attack}/${power.health}).`;
-                this.logService.createLog(
-                    {
-                        message: message,
-                        type: "ability",
-                        player: this.parent,
-                        puma: puma
-                    }
-                )
 
-                if (this.parent.summonPet(greatOne, 0)) {
-                    this.abilityService.triggerSummonedEvents(greatOne);
-                }
-            },
-            priority: priority
-        })
+        let greatOne = new GreatOne(this.logService, this.abilityService, this.parent, power.health, power.attack, 0, exp);
+        let message = `${this.name} spawned Great One (${power.attack}/${power.health}).`;
+        this.logService.createLog(
+            {
+                message: message,
+                type: "ability",
+                player: this.parent,
+                puma: puma
+            }
+        )
+
+        if (this.parent.summonPet(greatOne, 0)) {
+            this.abilityService.triggerSummonedEvents(greatOne);
+        }
+
         this.used = true;
-
     }
     constructor(protected logService: LogService, protected toyService: ToyService, protected abilityService: AbilityService, parent, level) {
         super(logService, toyService, parent, level);
