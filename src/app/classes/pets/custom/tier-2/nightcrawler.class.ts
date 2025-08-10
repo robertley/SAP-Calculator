@@ -25,26 +25,21 @@ export class Nightcrawler extends Pet {
         let health = Math.min(50, this.level * summonedAmount);
         let attack = 6;
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0, 0);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Daycrawler (${attack}/${health})`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0, 0);
 
-                if (this.parent.summonPet(dayCrawler, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(dayCrawler);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Daycrawler (${attack}/${health})`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(dayCrawler, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(dayCrawler);
+        }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

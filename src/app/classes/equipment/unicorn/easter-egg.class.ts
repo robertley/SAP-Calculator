@@ -33,21 +33,16 @@ export class EasterEgg extends Equipment {
                     pantherMessage = ` (Panther)`;
                 }
                 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned Monty (Easter Egg)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent
-                            }
-                        )
-                        if (pet.parent.summonPet(monty, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(monty);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Monty (Easter Egg)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
+                    }
+                )
+                if (pet.parent.summonPet(monty, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(monty);
+                }
             }
         }
     }

@@ -18,26 +18,21 @@ export class Slime extends Pet {
         let power = this.level * 2;
 
         for (let i = 0; i < summons; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let slime = new SmallerSlime(this.logService, this.abilityService, this.parent, null, null, 0);
-            
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} spawned Smaller Slime (${power}/${power}).`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger,
-                            pteranodon: pteranodon
-                        }
-                    )
+            let slime = new SmallerSlime(this.logService, this.abilityService, this.parent, null, null, 0);
     
-                    if (this.parent.summonPet(slime, this.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(slime);
-                    }
-                },
-                priority: this.attack
-            })
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Smaller Slime (${power}/${power}).`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )
+
+            if (this.parent.summonPet(slime, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(slime);
+            }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

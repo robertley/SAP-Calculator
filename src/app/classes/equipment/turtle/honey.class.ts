@@ -35,21 +35,16 @@ export class Honey extends Equipment {
                     pantherMessage = ` (Panther)`;
                 }
                 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned Bee (Honey)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent
-                            }
-                        )
-                        if (pet.parent.summonPet(bee, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(bee);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Bee (Honey)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
+                    }
+                )
+                if (pet.parent.summonPet(bee, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(bee);
+                }
             }
         }
     }

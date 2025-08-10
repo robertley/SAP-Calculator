@@ -25,27 +25,23 @@ export class Tapir extends Pet {
 
         target = clone(target);
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                target.exp = this.minExpForLevel;
-                let spawnPet = this.petService.createDefaultVersionOfPet(target);
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a ${spawnPet.name} level ${spawnPet.level}.`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: true
-                    }
-                )
+         
+        target.exp = this.minExpForLevel;
+        let spawnPet = this.petService.createDefaultVersionOfPet(target);
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned a ${spawnPet.name} level ${spawnPet.level}.`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon,
+                randomEvent: true
+            }
+        )
 
-                if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(target);
-                }
-            },
-            priority: this.attack
-        })
+        if (this.parent.summonPet(spawnPet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(target);
+        }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,

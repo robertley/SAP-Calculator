@@ -49,22 +49,17 @@ export class Popcorn extends Equipment {
                     pantherMessage = ` (Panther)`;
                 }
                 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned ${popcornPet.name} (Popcorn)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent,
-                                randomEvent: true
-                            }
-                        )
-                        if (pet.parent.summonPet(popcornPet, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(popcornPet);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned ${popcornPet.name} (Popcorn)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent,
+                        randomEvent: true
+                    }
+                )
+                if (pet.parent.summonPet(popcornPet, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(popcornPet);
+                }
             }
         }
     }

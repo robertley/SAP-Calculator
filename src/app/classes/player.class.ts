@@ -339,7 +339,6 @@ export class Player {
                     callbackPet: pet
                 })
         }
-        this.abilityService.triggerFriendFaintsEvents(pet);
         this.createDeathLog(pet);
     }
 
@@ -368,65 +367,31 @@ export class Player {
 
     removeDeadPets(): boolean {
         let petRemoved = false;
-        if (this.pet0 && !this.pet0.alive) {
-            if (this.pet0.afterFaint) {
-                this.abilityService.setAfterFaintEvent({
-                    callback: this.pet0.afterFaint.bind(this.pet0),
-                    priority: this.pet0.attack,
-                    player: this,
-                    callbackPet: this.pet0
-                });
+        
+        // Map pets to their slots for cleaner iteration
+        const petSlots = [
+            { pet: this.pet0, index: 0 },
+            { pet: this.pet1, index: 1 },
+            { pet: this.pet2, index: 2 },
+            { pet: this.pet3, index: 3 },
+            { pet: this.pet4, index: 4 }
+        ];
+        
+        for (const slot of petSlots) {
+            if (slot.pet && !slot.pet.alive) {
+                if (slot.pet.afterFaint) {
+                    this.abilityService.setAfterFaintEvent({
+                        callback: slot.pet.afterFaint.bind(slot.pet),
+                        priority: slot.pet.attack,
+                        player: this,
+                        callbackPet: slot.pet
+                    });
+                }
+                this.abilityService.triggerFriendFaintsEvents(slot.pet);
+                // Set the pet property to null using the index
+                this[`pet${slot.index}`] = null;
+                petRemoved = true;
             }
-            this.pet0 = null;
-            petRemoved = true;
-        }
-        if (this.pet1 && !this.pet1.alive) {
-            if (this.pet1.afterFaint) {
-                this.abilityService.setAfterFaintEvent({
-                    callback: this.pet1.afterFaint.bind(this.pet1),
-                    priority: this.pet1.attack,
-                    player: this,
-                    callbackPet: this.pet1
-                });
-            }
-            this.pet1 = null;
-            petRemoved = true;
-        }
-        if (this.pet2 && !this.pet2.alive) {
-            if (this.pet2.afterFaint) {
-                this.abilityService.setAfterFaintEvent({
-                    callback: this.pet2.afterFaint.bind(this.pet2),
-                    priority: this.pet2.attack,
-                    player: this,
-                    callbackPet: this.pet2
-                });
-            }
-            this.pet2 = null;
-            petRemoved = true;
-        }
-        if (this.pet3 && !this.pet3.alive) {
-            if (this.pet3.afterFaint) {
-                this.abilityService.setAfterFaintEvent({
-                    callback: this.pet3.afterFaint.bind(this.pet3),
-                    priority: this.pet3.attack,
-                    player: this,
-                    callbackPet: this.pet3
-                });
-            }
-            this.pet3 = null;
-            petRemoved = true;
-        }
-        if (this.pet4 && !this.pet4.alive) {
-            if (this.pet4.afterFaint) {
-                this.abilityService.setAfterFaintEvent({
-                    callback: this.pet4.afterFaint.bind(this.pet4),
-                    priority: this.pet4.attack,
-                    player: this,
-                    callbackPet: this.pet4
-                });
-            }
-            this.pet4 = null;
-            petRemoved = true;
         }
         
         if (petRemoved) {

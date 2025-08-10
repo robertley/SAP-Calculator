@@ -38,26 +38,22 @@ export class Chimera extends Pet {
             }
         )
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let lion = new ChimLion(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a ${lion.name} ${finalAttack}/${finalHealth}.`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+         
+        let lion = new ChimLion(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
 
-                if (this.parent.summonPet(lion, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(lion);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned a ${lion.name} ${finalAttack}/${finalHealth}.`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(lion, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(lion);
+        }
 
         if (this.level == 1) {
             this.mana = 0;
@@ -65,26 +61,22 @@ export class Chimera extends Pet {
             return;
         }
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let goat = new ChimGoat(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a ${goat.name} ${finalAttack}/${finalHealth}.`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+         
+        let goat = new ChimGoat(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
 
-                if (this.parent.summonPet(goat, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(goat);
-                }
-            },
-            priority: this.attack - 1
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned a ${goat.name} ${finalAttack}/${finalHealth}.`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(goat, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(goat);
+        }
 
         if (this.level == 2) {
             this.mana = 0;
@@ -92,26 +84,22 @@ export class Chimera extends Pet {
             return;
         }
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let snake = new ChimSnake(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a ${snake.name} ${finalAttack}/${finalHealth}.`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+         
+        let snake = new ChimSnake(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
 
-                if (this.parent.summonPet(snake, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(snake);
-                }
-            },
-            priority: this.attack - 2
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned a ${snake.name} ${finalAttack}/${finalHealth}.`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(snake, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(snake);
+        }
 
         this.mana = 0;
         super.superAfterFaint(gameApi, tiger, pteranodon);

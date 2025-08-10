@@ -34,21 +34,16 @@ export class Banana extends Equipment {
                     pantherMessage = ` (Panther)`;
                 }
                 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned Monkey (Banana)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent
-                            }
-                        )
-                        if (pet.parent.summonPet(monke, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(monke);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Monkey (Banana)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
+                    }
+                )
+                if (pet.parent.summonPet(monke, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(monke);
+                }
             }
         }
     }

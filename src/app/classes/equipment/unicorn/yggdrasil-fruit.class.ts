@@ -35,37 +35,27 @@ export class YggdrasilFruit extends Equipment {
                     pantherMessage = ` (Panther)`;
                 }
                 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned Tandgnost (Yggdrasil Fruit)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent
-                            }
-                        )
-                        if (pet.parent.summonPet(tandgnost, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(tandgnost);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Tandgnost (Yggdrasil Fruit)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
+                    }
+                )
+                if (pet.parent.summonPet(tandgnost, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(tandgnost);
+                }
                 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned Tandgrisner (Yggdrasil Fruit)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent
-                            }
-                        )
-                        if (pet.parent.summonPet(tandgrisner, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(tandgrisner);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Tandgrisner (Yggdrasil Fruit)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
+                    }
+                )
+                if (pet.parent.summonPet(tandgrisner, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(tandgrisner);
+                }
             }
         }
     }

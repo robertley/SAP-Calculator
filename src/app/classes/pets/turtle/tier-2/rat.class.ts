@@ -21,24 +21,19 @@ export class Rat extends Pet {
         }
 
         for (let i = 0; i < this.level; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    this.logService.createLog({
-                        message: `${this.name} Summoned Dirty Rat on Opponent`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    })
-                    let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0, 0);
-        
-                    let spawned = opponent.summonPet(dirtyRat, 0);
-                    if (spawned) {
-                        this.abilityService.triggerSummonedEvents(dirtyRat);
-                    }
-                },
-                priority: this.attack
+            this.logService.createLog({
+                message: `${this.name} Summoned Dirty Rat on Opponent`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
             })
+            let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0, 0);
+
+            let spawned = opponent.summonPet(dirtyRat, 0);
+            if (spawned) {
+                this.abilityService.triggerSummonedEvents(dirtyRat);
+            }
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

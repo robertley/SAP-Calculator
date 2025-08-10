@@ -32,21 +32,16 @@ export class Mushroom extends Equipment {
                     pantherMessage = ` (Panther)`;
                 }
 
-                this.abilityService.setSpawnEvent({
-                    callback: () => {
-                        this.logService.createLog(
-                            {
-                                message: `${pet.name} Spawned ${newPet.name} (level ${newPet.level}) (Mushroom)${pantherMessage}`,
-                                type: "ability",
-                                player: pet.parent
-                            }
-                        )
-                        if (pet.parent.summonPet(newPet, pet.savedPosition)) {
-                            this.abilityService.triggerSummonedEvents(newPet);
-                        }
-                    },
-                    priority: pet.attack
-                });
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned ${newPet.name} (level ${newPet.level}) (Mushroom)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
+                    }
+                )
+                if (pet.parent.summonPet(newPet, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(newPet);
+                }
             }
         }
     }

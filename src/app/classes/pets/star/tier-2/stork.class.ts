@@ -22,35 +22,30 @@ export class Stork extends Pet {
         }
         
         let summonPetName = summonPetPool[Math.floor(Math.random() * summonPetPool.length)];
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let oldStork = gameApi.oldStork;
-                let summonPet = this.petService.createPet({
-                    name: summonPetName,
-                    attack: oldStork ? null : 3 * this.level,
-                    equipment: null,
-                    exp: this.minExpForLevel,
-                    health: oldStork ? null : 2 * this.level,
-                    mana: 0
-                }, this.parent);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${summonPet.name} Level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        randomEvent: true,
-                        pteranodon: pteranodon
-                    }
-                )
+        let oldStork = gameApi.oldStork;
+        let summonPet = this.petService.createPet({
+            name: summonPetName,
+            attack: oldStork ? null : 3 * this.level,
+            equipment: null,
+            exp: this.minExpForLevel,
+            health: oldStork ? null : 2 * this.level,
+            mana: 0
+        }, this.parent);
 
-                if (this.parent.summonPet(summonPet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(summonPet);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${summonPet.name} Level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: true,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(summonPet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(summonPet);
+        }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,

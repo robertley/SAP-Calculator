@@ -21,33 +21,28 @@ export class BelugaWhale extends Pet {
             return;
         }
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let spawnPet = this.petService.createPet({
-                    attack: null,
-                    equipment: null,
-                    exp: this.minExpForLevel,
-                    health: null,
-                    name: this.belugaSwallowedPet,
-                    mana: 0
-                }, this.parent);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${spawnPet.name} Level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        let spawnPet = this.petService.createPet({
+            attack: null,
+            equipment: null,
+            exp: this.minExpForLevel,
+            health: null,
+            name: this.belugaSwallowedPet,
+            mana: 0
+        }, this.parent);
 
-                if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(spawnPet);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${spawnPet.name} Level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(spawnPet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(spawnPet);
+        }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

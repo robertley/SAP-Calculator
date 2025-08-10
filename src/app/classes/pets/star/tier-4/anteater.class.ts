@@ -14,26 +14,21 @@ export class Anteater extends Pet {
     health = 2;
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 0, 5);
-            
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} spawned 1/1 Ant level 3`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger,
-                            pteranodon: pteranodon
-                        }
-                    )
+            let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 0, 5);
     
-                    if (this.parent.summonPet(ant, this.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(ant);
-                    }
-                },
-                priority: this.attack
-            })
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned 1/1 Ant level 3`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )
+
+            if (this.parent.summonPet(ant, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(ant);
+            }
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);
