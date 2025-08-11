@@ -33,6 +33,8 @@ export class ChocolateCake extends Equipment {
                     priority: pet.attack
                 })
             }
+
+            pet.givePetEquipment(null);
         }
     }
 
