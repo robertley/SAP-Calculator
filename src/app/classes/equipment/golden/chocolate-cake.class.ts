@@ -1,3 +1,4 @@
+import { Panther } from "app/classes/pets/puppy/tier-5/panther.class";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
@@ -11,6 +12,11 @@ export class ChocolateCake extends Equipment {
         pet.beforeAttack = (gameApi) => {
             if (originalBeforeAttack != null) {
                 originalBeforeAttack(gameApi);
+            }
+
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Chocolate Cake') {
+                return;
             }
             
             this.logService.createLog({
