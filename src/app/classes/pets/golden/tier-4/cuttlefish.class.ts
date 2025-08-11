@@ -24,7 +24,17 @@ export class Cuttlefish extends Pet {
             }
             targets.push(target);
         }
+        let power = 3;
         for (let target of targets) {
+            let reducedTo = Math.max(1, target.health - 3);
+            target.health = reducedTo;
+            this.logService.createLog({
+                message: `${this.name} reduced ${target.name} health by ${power} (${reducedTo})`,
+                type: 'ability',
+                player: this.parent,                
+                tiger: tiger,
+                pteranodon: pteranodon
+            });
             target.givePetEquipment(new Ink());
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} Ink.`,

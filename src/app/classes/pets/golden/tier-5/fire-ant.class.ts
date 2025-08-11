@@ -13,8 +13,8 @@ export class FireAnt extends Pet {
     name = "Fire Ant";
     tier = 5;
     pack: Pack = 'Golden';
-    attack = 6;
-    health = 4;
+    attack = 8;
+    health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targets = shuffle(this.parent.petArray.filter(pet => pet != this));
         // sort targets, highest tier to lowest tier

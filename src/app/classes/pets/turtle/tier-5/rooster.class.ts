@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { Bus } from "../../hidden/bus.class";
 import { Chick } from "../../hidden/chick.class";
 
 export class Rooster extends Pet {
@@ -13,28 +14,22 @@ export class Rooster extends Pet {
     pack: Pack = 'Turtle';
     attack = 6;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let attack = Math.floor(this.attack * .5);
+        let chick = new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel);
         for (let i = 0; i < this.level; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    this.logService.createLog({
-                        message: `${this.name} summoned Chick (${attack}).`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    })
-                    this.parent.summonPet(
-                        new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel),
-                        this.savedPosition
-                    )
-                },
-                priority: this.attack,
-                player: this.parent
+            this.logService.createLog({
+                message: `${this.name} spawned Chick (${attack}).`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
             })
+            if (this.parent.summonPet( chick, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(chick);
+            }
         }
-        this.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

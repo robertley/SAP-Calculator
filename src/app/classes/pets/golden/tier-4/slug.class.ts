@@ -13,29 +13,24 @@ export class Slug extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Smaller Slug Level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
 
-                if (this.parent.summonPet(slug, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(slug);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Smaller Slug Level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
 
-        super.superFaint(gameApi, tiger);
+        if (this.parent.summonPet(slug, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(slug);
+        }
+
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

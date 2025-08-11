@@ -8,54 +8,55 @@ import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class YggdrasilFruit extends Equipment {
     name = 'Yggdrasil Fruit';
-    equipmentClass = 'faint' as EquipmentClass;
+    equipmentClass = 'afterFaint' as EquipmentClass;
     callback = (pet?: Pet) => {
-        let multiplier = 1;
-        if (pet instanceof Panther) {
-            multiplier = 1 + pet.level;
-        }
+        let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
+        pet.afterFaint = (gameApi) => {
+            if (originalAfterFaint != null) {
+                originalAfterFaint(gameApi);
+            }
+            
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Yggdrasil Fruit') {
+                return;
+            }
+            
+            let multiplier = 1;
+            if (pet instanceof Panther) {
+                multiplier = 1 + pet.level;
+            }
 
-        for (let i = 0; i < multiplier; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let tan = new Tandgnost(this.logService, this.abilityService, pet.parent, 3, 3, 0);
-                    pet.parent.summonPet(tan, pet.savedPosition);
-        
-                    let pantherMessage = '';
-                    if (i > 0) {
-                        pantherMessage = ` (Panther)`;
+            for (let i = 0; i < multiplier; i++) {
+                let tandgnost = new Tandgnost(this.logService, this.abilityService, pet.parent, 3, 3, 0);
+                let tandgrisner = new Tandgrisner(this.logService, this.abilityService, pet.parent, 3, 3, 0);
+    
+                let pantherMessage = '';
+                if (i > 0) {
+                    pantherMessage = ` (Panther)`;
+                }
+                
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Tandgnost (Yggdrasil Fruit)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
                     }
-                    this.logService.createLog(
-                        {
-                            message: `${pet.name} Spawned Tandgnost (Yggdrasil Fruit)${pantherMessage}`,
-                            type: "ability",
-                            player: pet.parent
-                        }
-                    )
-                    this.abilityService.triggerSummonedEvents(tan);
-                },
-                priority: -1
-            })
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let tan = new Tandgrisner(this.logService, this.abilityService, pet.parent, 3, 3, 0);
-                    pet.parent.summonPet(tan, pet.savedPosition);
-        
-                    let pantherMessage = '';
-                    if (i > 0) {
-                        pantherMessage = ` (Panther)`;
+                )
+                if (pet.parent.summonPet(tandgnost, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(tandgnost);
+                }
+                
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned Tandgrisner (Yggdrasil Fruit)${pantherMessage}`,
+                        type: "ability",
+                        player: pet.parent
                     }
-                    this.logService.createLog(
-                        {
-                            message: `${pet.name} Spawned Tandgrisner (Yggdrasil Fruit)${pantherMessage}`,
-                            type: "ability",
-                            player: pet.parent
-                        }
-                    )
-                    this.abilityService.triggerSummonedEvents(tan);
-                },
-                priority: -1
-            })
+                )
+                if (pet.parent.summonPet(tandgrisner, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(tandgrisner);
+                }
+            }
         }
     }
     constructor(private logService: LogService, private abilityService: AbilityService) {

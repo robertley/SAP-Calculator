@@ -11,8 +11,8 @@ export class Pteranodon extends Pet {
     name = "Pteranodon";
     tier = 6;
     pack: Pack = 'Golden';
-    attack = 5;
-    health = 3;
+    attack = 3;
+    health = 5;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
@@ -24,33 +24,31 @@ export class Pteranodon extends Pet {
         if (!this.alive) {
             return;
         }
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let summonPet = this.petService.createPet(
-                    {
-                        attack: 1,
-                        health: 1,
-                        equipment: null,
-                        exp: pet.exp,
-                        name: pet.name,
-                        mana: 0
-                    }, this.parent
-                );
-                this.logService.createLog({
-                    message: `${this.name} summoned a 1/1 ${pet.name} behind it.`,
-                    type: 'ability',
-                    player: this.parent,
-                    randomEvent: false,
-                    tiger: tiger
-                })
-                this.parent.pushPet(this, 1);
-                if (this.parent.summonPet(summonPet, this.position + 1)) {
-                    this.abilityService.triggerSummonedEvents(summonPet);
-                }
-            },
-            priority: this.attack
+        
+        let summonPet = this.petService.createPet(
+            {
+                attack: 1,
+                health: 1,
+                equipment: null,
+                exp: pet.exp,
+                name: pet.name,
+                mana: 0
+            }, this.parent
+        );
+        this.logService.createLog({
+            message: `${this.name} summoned a 1/1 ${pet.name} behind it.`,
+            type: 'ability',
+            player: this.parent,
+            randomEvent: false,
+            tiger: tiger
         })
+        
+        if (this.parent.summonPetBehind(this, summonPet)) {
+            this.abilityService.triggerSummonedEvents(summonPet);
+        }
+        
         this.abilityUses++;
+        this.superFriendFaints(gameApi, pet, tiger);
         //debug 
         // this.logService.printState(gameApi.player, gameApi.opponet);
     }

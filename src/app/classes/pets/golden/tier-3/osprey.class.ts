@@ -13,30 +13,25 @@ export class Osprey extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let groundhog = new Groundhog(this.logService, this.abilityService, this.parent, null, null, 0, 0);
-            
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} summoned a 2/1 Groundhog`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger,
-                            pteranodon: pteranodon
-                        }
-                    )
+            let groundhog = new Groundhog(this.logService, this.abilityService, this.parent, null, null, 0, 0);
+    
+            this.logService.createLog(
+                {
+                    message: `${this.name} summoned a 2/1 Groundhog`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )
 
-                    if (this.parent.summonPet(groundhog, this.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(groundhog);
-                    }
-                },
-                priority: this.attack
-            })
+            if (this.parent.summonPet(groundhog, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(groundhog);
+            }
         }
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

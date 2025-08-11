@@ -13,7 +13,7 @@ export class Vaquita extends Pet {
     attack = 3;
     health = 4;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let trumpetAmt = Math.floor((this.level * .5) * this.parent.trumpets);
+        let trumpetAmt = Math.max(Math.floor((this.level * .5) * this.parent.trumpets), this.level * 4);
         this.parent.gainTrumpets(trumpetAmt, this, pteranodon);
     }
     constructor(protected logService: LogService,

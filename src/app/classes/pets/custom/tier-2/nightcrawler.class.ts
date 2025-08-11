@@ -13,39 +13,35 @@ export class Nightcrawler extends Pet {
     pack: Pack = 'Custom';
     attack = 1;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let isPlayer = this.parent == gameApi.player;
         let summonedAmount = isPlayer ? gameApi.playerSummonedAmount : gameApi.opponentSummonedAmount;
 
         if (summonedAmount == 0) {
+            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 
         let health = Math.min(50, this.level * summonedAmount);
         let attack = 6;
 
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0, 0);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Daycrawler (${attack}/${health})`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0, 0);
 
-                if (this.parent.summonPet(dayCrawler, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(dayCrawler);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Daycrawler (${attack}/${health})`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
 
-        super.superFaint(gameApi, tiger);
+        if (this.parent.summonPet(dayCrawler, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(dayCrawler);
+        }
+
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

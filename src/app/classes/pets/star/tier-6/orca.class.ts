@@ -12,32 +12,26 @@ export class Orca extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 8;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             let faintPet = this.petService.getRandomFaintPet(this.parent);
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-            
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} spawned ${faintPet.name}.`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger,
-                            randomEvent: true,
-                            pteranodon: pteranodon
-                        }
-                    )
     
-                    if (this.parent.summonPet(faintPet, this.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(faintPet);
-                    }
-                },
-                priority: this.attack
-            })
-    
-            super.superFaint(gameApi, tiger);
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${faintPet.name}.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: true,
+                    pteranodon: pteranodon
+                }
+            )
+
+            if (this.parent.summonPet(faintPet, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(faintPet);
+            }
         }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

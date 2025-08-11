@@ -61,6 +61,7 @@ import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
+import { HoneydewMelon } from "../classes/equipment/golden/honeydew-melon.class";
 import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 
 @Injectable({
@@ -90,10 +91,10 @@ export class EquipmentService {
         map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Squash', new Squash(this.logService, this.abilityService));
         map.set('Salt', new Salt());
-        map.set('Pie', new Pie());
+        map.set('Pie', new Pie(this.logService));
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
-        map.set('Pancakes', new Pancakes());
+        map.set('Pancakes', new Pancakes(this.logService));
         map.set('Strawberry', new Strawberry());
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());
@@ -114,7 +115,7 @@ export class EquipmentService {
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
         map.set('Pineapple', new Pineapple());
-        map.set('Fig', new Fig())
+        map.set('Fig', new Fig(this.logService, this.abilityService));
 
         map.set('Rambutan', new Rambutan(this.logService));
         map.set('Love Potion', new LovePotion(this.logService));
@@ -125,6 +126,7 @@ export class EquipmentService {
         map.set('Magic Beans', new MagicBeans());
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
         map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
+        map.set('Honeydew Melon', new HoneydewMelon());
 
         return map;
     }
@@ -170,6 +172,7 @@ export class EquipmentService {
         ['Chili', 5], 
         ['Lemon', 5], 
         ['Durian', 5],
+        ['Honeydew Melon', 5],
         // T6
         ['Popcorn', 6], 
         ['Steak', 6], 

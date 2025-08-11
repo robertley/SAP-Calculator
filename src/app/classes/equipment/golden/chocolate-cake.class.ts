@@ -7,26 +7,27 @@ export class ChocolateCake extends Equipment {
     name = 'Chocolate Cake';
     equipmentClass = 'beforeAttack' as EquipmentClass;
     callback = (pet: Pet) => {
-        this.logService.createLog({
-            message: `${pet.name} gained 3 exp. (Chocolate Cake)`,
-            type: 'equipment',
-            player: pet.parent
-        })
-        pet.increaseExp(3);
-        pet.health = 0;
-        this.logService.createLog({
-            message: `${pet.name} fainted. (Chocolate Cake)`,
-            type: 'equipment',
-            player: pet.parent
-        })
-
-        if (pet.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: pet.knockOut.bind(pet),
-                priority: pet.attack
+        let originalBeforeAttack = pet.originalBeforeAttack?.bind(pet);
+        pet.beforeAttack = (gameApi) => {
+            if (originalBeforeAttack != null) {
+                originalBeforeAttack(gameApi);
+            }
+            
+            this.logService.createLog({
+                message: `${pet.name} gained 3 exp. (Chocolate Cake)`,
+                type: 'equipment',
+                player: pet.parent
             })
-        }
+            pet.increaseExp(3);
+            pet.health = 0;
 
+            if (pet.knockOut != null) {
+                this.abilityService.setKnockOutEvent({
+                    callback: pet.knockOut.bind(pet),
+                    priority: pet.attack
+                })
+            }
+        }
     }
 
     constructor(private logService: LogService, private abilityService: AbilityService) {

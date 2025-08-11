@@ -12,7 +12,7 @@ export class Mole extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 6;
         let equipmentPets: Pet[] = [];
         for (let pet of this.parent.petArray) {
@@ -37,24 +37,19 @@ export class Mole extends Pet {
             })
             pet.removePerk();
         }
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                this.logService.createLog({
-                    message: `${this.name} summoned a ${power}/${power} Mole.`,
-                    type: 'ability',
-                    player: this.parent,
-                    pteranodon: pteranodon,
-                })
-
-                let mole = new Mole(this.logService, this.abilityService, this.parent, power, power);
-                
-                if (this.parent.summonPet(mole, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(mole);
-                }
-            },
-            priority: this.attack
+        this.logService.createLog({
+            message: `${this.name} summoned a ${power}/${power} Mole.`,
+            type: 'ability',
+            player: this.parent,
+            pteranodon: pteranodon,
         })
 
+        let mole = new Mole(this.logService, this.abilityService, this.parent, power, power);
+        
+        if (this.parent.summonPet(mole, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(mole);
+        }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

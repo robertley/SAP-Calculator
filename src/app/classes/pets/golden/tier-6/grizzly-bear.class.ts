@@ -12,7 +12,7 @@ export class GrizzlyBear extends Pet {
     tier = 6;
     pack: Pack = 'Golden';
     attack = 6;
-    health = 6;
+    health = 8;
     friendAttacks(gameApi: GameAPI, tiger?: boolean): void {
         if (!tiger) {
             this.abilityUses++;

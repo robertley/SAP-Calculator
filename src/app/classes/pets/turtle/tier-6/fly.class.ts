@@ -24,25 +24,23 @@ export class Fly extends Pet {
         if (!this.alive) {
             return;
         }
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel);
-        
-                if (this.parent.summonPet(zombie, faintedPet.savedPosition, true)) {
-                    this.abilityService.triggerSummonedEvents(zombie);
-                    this.abilityUses++;
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} spawned Zombie Fly Level ${this.level}`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger
-                        }
-                    )
+
+        let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel);
+
+        if (this.parent.summonPet(zombie, faintedPet.savedPosition, true)) {
+            this.abilityUses++;
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Zombie Fly Level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger
                 }
-            },
-            priority: -1,
-        })
+            )
+            this.abilityService.triggerSummonedEvents(zombie);
+        }
+
+        super.superFriendFaints(gameApi, faintedPet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

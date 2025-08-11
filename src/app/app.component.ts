@@ -557,54 +557,42 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   abilityCycle() {
-    this.abilityService.executeHurtEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
-    this.abilityService.executeFriendHurtEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
-    this.abilityService.executeEnemyHurtEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
-    this.abilityService.executeFaintEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
-    this.abilityService.executeFriendAheadFaintsEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
+    // First, add all existing events from type-specific arrays to global queue
+    this.abilityService.migrateExistingEventsToQueue();
     
-    this.abilityService.executeKnockOutEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
-    this.abilityService.executeManaEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-    
-    let petRemoved = this.removeDeadPets();
-
-    this.abilityService.executeSpawnEvents();
-    this.abilityService.executeSummonedEvents();
-    this.abilityService.executeFriendSummonedToyEvents();
-    this.abilityService.executeEnemySummonedEvents();
-    
-    this.abilityService.executeFriendFaintsEvents();
-    this.abilityService.executeFriendFaintsToyEvents();
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
-
-    if (petRemoved) {
-      this.emptyFrontSpaceCheck();
+    // Process all events in priority order until queue is empty
+    while (this.abilityService.hasGlobalEvents) {
+      const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
+      
+      if (nextEvent && this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 23) {
+        // We're about to process priority 23+, check if pet removal is needed
+        this.checkPetsAlive();
+        const petsWereRemoved = this.removeDeadPets();
+        
+        if (petsWereRemoved) {
+          // Pet removal might have triggered new higher priority events
+          this.emptyFrontSpaceCheck(); // This might add more events too
+          continue; // Re-evaluate the queue with potentially new higher priority events
+        }
+      }
+      
+      // Normal event processing
+      const event = this.abilityService.getNextHighestPriorityEvent();
+      if (event) {
+        this.abilityService.executeEventCallback(event);
+        this.checkPetsAlive();
+      } else {
+        // This should never happen - hasGlobalEvents was true but queue returned null
+        console.error('AbilityCycle: Expected event from queue but got null. Queue state inconsistent.');
+        break; // Exit the loop to prevent infinite loop
+      }
     }
-
-    this.executeFrequentEvents();
-    this.checkPetsAlive();
-
+    
+    // Final cleanup - remove any remaining dead pets and check empty spaces
+    let petRemoved = this.removeDeadPets();
+    if (petRemoved) {
+      this.emptyFrontSpaceCheck(); // Only queues events, doesn't execute them
+    }
   }
 
   executeFrequentEvents() {
@@ -681,7 +669,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.initBattle();
       //reset pet to original state, reset turn counter
       this.startBattle();
-
+      //queque toy sob event
       this.initToys();
 
       // // give all pets dazed equipment
@@ -696,48 +684,42 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
       
+      //init equipment abilities
       this.setAbilityEquipments(this.player);
       this.setAbilityEquipments(this.opponent);
 
-      this.pushPetsForwards();
-      this.logService.printState(this.player, this.opponent);
+      //before battle phase
+      this.abilityService.triggerBeforeStartOfBattleEvents(this.player);
+      this.abilityService.triggerBeforeStartOfBattleEvents(this.opponent);
+      this.abilityService.executeBeforeStartOfBattleEvents();
 
-      this.executeBeforeStartOfBattleEquipment(this.player);
-      this.executeBeforeStartOfBattleEquipment(this.opponent);
-
-      this.startOfBattleService.resetStartOfBattleFlags();
-      this.startOfBattleService.initStartOfBattleEvents();
-      this.startOfBattleService.executeToyPetEvents();
-
-      // empty front space toy events
-      this.emptyFrontSpaceCheck();
-
-      this.executeFrequentEvents();
-      this.toyService.executeStartOfBattleEvents();
-      this.executeFrequentEvents();
-      this.startOfBattleService.executeNonToyPetEvents();
-      this.executeFrequentEvents();
-
-      this.abilityService.executeSummonedEvents();
-      this.abilityService.executeFriendSummonedToyEvents();
-      this.abilityService.executeEnemySummonedEvents();
-      
-      this.abilityService.triggerTransformEvents(this.player);
-      this.abilityService.triggerTransformEvents(this.opponent);
-      this.abilityService.executeTransformEvents();
+      //normal abilities
       this.checkPetsAlive();
-      if (!this.abilityService.hasAbilityCycleEvents) {
-        this.removeDeadPets();
-      }
       while (this.abilityService.hasAbilityCycleEvents) {
         this.abilityCycle();
       }
-      this.removeDeadPets();
 
-      this.pushPetsForwards();
+      //init sob
+      this.startOfBattleService.resetStartOfBattleFlags();
+      this.startOfBattleService.initStartOfBattleEvents();
+      //merge into pet sob(gecko)
+      this.startOfBattleService.executeToyPetEvents();
 
-      this.logService.printState(this.player, this.opponent);
+      //add churro check
+      this.toyService.executeStartOfBattleEvents(); //toy sob
+      this.executeFrequentEvents();
+      this.startOfBattleService.executeNonToyPetEvents(); //pet sob
+      this.executeFrequentEvents();
       
+      //caterpillar
+      this.abilityService.triggerTransformEvents(this.player);
+      this.abilityService.triggerTransformEvents(this.opponent);
+      this.checkPetsAlive();
+      while (this.abilityService.hasAbilityCycleEvents) {
+        this.abilityCycle();
+      }
+      
+      //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();
       }
@@ -843,56 +825,60 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.battleStarted = false;
       return;
     }
-
     this.pushPetsForwards();
 
-    let amt = 1;
-    if (this.player.pet0 instanceof Panther) {
-      amt = this.player.pet0.level + 1;
-    }
-    for (let i = 0; i < amt; i++) {
-      this.doBeforeAttackEquipment(this.player);
-    }
-    amt = 1;
-    if (this.opponent.pet0 instanceof Panther) {
-      amt = this.opponent.pet0.level + 1;
-    }
-    for (let i = 0; i < amt; i++) {
-      this.doBeforeAttackEquipment(this.opponent);
+    // init before attack events
+    if (this.player.pet0.beforeAttack) {
+      this.abilityService.setBeforeAttackEvent({
+        callback: this.player.pet0.beforeAttack.bind(this.player.pet0),
+        priority: this.player.pet0.attack,
+        player: this.player
+      })
     }
 
-    this.abilityService.executeEqiupmentBeforeAttackEvents();
+    if (this.opponent.pet0.beforeAttack) {
+      this.abilityService.setBeforeAttackEvent({
+        callback: this.opponent.pet0.beforeAttack.bind(this.opponent.pet0),
+        priority: this.opponent.pet0.attack,
+        player: this.opponent
+      })
+    }
 
+    //before attack phase
+    this.abilityService.executeBeforeAttackEvents();
+    
+    this.abilityService.triggerBeforeFriendAttacksEvents(this.player, this.player.pet0);
+    this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, this.opponent.pet0);
+    this.abilityService.executeBeforeFriendAttacksEvents();
+
+    //normal abilities
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
-
-    while(this.abilityService.hasAbilityCycleEvents) {
+    while (this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
     }
-    this.checkPetsAlive();
-    this.removeDeadPets();
 
     if (!this.player.alive() || !this.opponent.alive()) {
       return;
     }
 
     this.pushPetsForwards();
+    //attack
+    this.fight();
 
-    let chocoCakeCheck = this.chocolateCakePresent();
-    if (chocoCakeCheck.cake) {
-      this.doChocolateCakeEvents(chocoCakeCheck);
-    } else {
-      this.fight();
-    }
-    
-    this.abilityCycle();
+    this.player.checkPetsAlive();
+    this.opponent.checkPetsAlive();
 
     while (this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
     }
-    
+    //merge to ability cyle
     this.player.checkGoldenSpawn();
     this.opponent.checkGoldenSpawn();
+    
+    while (this.abilityService.hasAbilityCycleEvents) {
+      this.abilityCycle();
+    }
 
     this.logService.printState(this.player, this.opponent);
   }
@@ -926,6 +912,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pet.equipment.callback(pet);
     }
   }
+  //need to set when gave perk too
   setAbilityEquipments(player) {
     for (let pet of player.petArray) {
       if (pet.equipment instanceof Eggplant) {
@@ -939,6 +926,15 @@ export class AppComponent implements OnInit, AfterViewInit {
         pet.equipment.callback(pet);
       }
       if (pet.equipment instanceof FairyDust) {
+        pet.equipment.callback(pet);
+      }
+      if (pet.equipment?.equipmentClass == 'beforeStartOfBattle') {
+        pet.equipment.callback(pet);
+      }
+      if (pet.equipment?.equipmentClass == 'beforeAttack') {
+        pet.equipment.callback(pet);
+      }
+      if (pet.equipment?.equipmentClass == 'afterFaint') {
         pet.equipment.callback(pet);
       }
     }
@@ -1001,68 +997,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.player.pushPetsForward();
     this.opponent.pushPetsForward();
-
-    this.player.onionCheck();
-    this.opponent.onionCheck();
   }
 
-  doBeforeAttackEquipment(player) {
-    let playerPet = player.pet0;
-    let opponentPet = player == this.player ? this.opponent.pet0 : this.player.pet0;
-
-    let playerEquipment = playerPet.equipment;
-
-    if (playerEquipment?.equipmentClass == 'snipe') {
-      let amt = 1;
-      if (playerPet instanceof Nest && playerEquipment instanceof Egg) {
-        amt = playerPet.level;
-      }
-      for (let i = 0; i < amt; i++) {
-        this.abilityService.setEqiupmentBeforeAttackEvent({
-          callback: () => { playerEquipment.attackCallback(playerPet, opponentPet) },
-          priority: playerPet.attack,
-          player: this.player
-        })
-      }
-    }
-
-    // probably should use equipmentClass beforeAttack but choco cake has its own method
-    if (playerEquipment instanceof Rambutan) {
-      this.abilityService.setEqiupmentBeforeAttackEvent({
-        callback: () => { playerEquipment.callback(playerPet) },
-        priority: playerPet.attack,
-        player: this.player
-      })
-    }
-    
-  }
 
   fight() {
     let playerPet = this.player.pet0;
     let opponentPet = this.opponent.pet0;
-
-    // before attack events
-    if (playerPet.beforeAttack) {
-      this.abilityService.setBeforeAttackEvent({
-        callback: playerPet.beforeAttack.bind(playerPet),
-        priority: playerPet.attack,
-        player: this.player
-      })
-    }
-
-    if (opponentPet.beforeAttack) {
-      this.abilityService.setBeforeAttackEvent({
-        callback: opponentPet.beforeAttack.bind(opponentPet),
-        priority: opponentPet.attack,
-        player: this.opponent
-      })
-    }
-
-    this.abilityService.executeBeforeAttackEvents();
-    
-    this.abilityService.triggerBeforeFriendAttacksEvents(this.player, playerPet);
-    this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, opponentPet);
-    this.abilityService.executeBeforeFriendAttacksEvents();
 
     // console.log(playerPet, 'vs', opponentPet)
 

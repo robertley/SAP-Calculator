@@ -23,7 +23,7 @@ export class SurgeonFish extends Pet {
             return;
         }
         this.parent.spendTrumpets(2, this);
-        let power = this.level * 6;
+        let power = this.level * 4;
         target.increaseHealth(power);
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${power} health.`,

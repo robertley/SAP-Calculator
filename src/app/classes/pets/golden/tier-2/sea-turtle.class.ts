@@ -9,10 +9,10 @@ export class SeaTurtle extends Pet {
     name = "Sea Turtle";
     tier = 2;
     pack: Pack = 'Golden';
-    attack = 2;
-    health = 5;
+    attack = 1;
+    health = 4;
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let power = this.level * 3
+        let power = this.level * 2;
         pet.increaseHealth(power);
         this.logService.createLog({
             message: `${this.name} gave ${pet.name} ${power} health.`,

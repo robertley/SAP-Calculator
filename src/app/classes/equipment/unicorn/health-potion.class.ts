@@ -1,18 +1,24 @@
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Pet } from "../../pet.class";
 
 export class HealthPotion extends Equipment {
     name = 'Health Potion';
     equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
-    callback = (pet) => {
-        let power = pet.level * 3;
-        this.logService.createLog({
-            message: `${pet.name} gained ${power} health (Love Potion).`,
-            type: 'equipment',
-            player: pet.parent
-        })
-
-        pet.increaseHealth(power);
+    callback = (pet: Pet) => {
+        let originalBeforeStartOfBattle = pet.originalBeforeStartOfBattle?.bind(pet);
+        pet.beforeStartOfBattle = (gameApi) => {
+            if (originalBeforeStartOfBattle != null) {
+                originalBeforeStartOfBattle(gameApi);
+            }
+            let power = pet.level * 3;
+            this.logService.createLog({
+                message: `${pet.name} gained ${power} health (Health Potion).`,
+                type: 'equipment',
+                player: pet.parent
+            })
+            pet.increaseHealth(power);
+        }
     }
 
     constructor(private logService: LogService) {

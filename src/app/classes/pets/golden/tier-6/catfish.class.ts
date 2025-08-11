@@ -8,8 +8,8 @@ export class Catfish extends Pet {
     name = "Catfish";
     tier = 6;
     pack: Pack = 'Golden';
-    attack = 3;
-    health = 3;
+    attack = 4;
+    health = 6;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

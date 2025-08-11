@@ -14,7 +14,7 @@ export class Wildebeast extends Pet {
     attack = 8;
     health = 6;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.trumpets < 4) {
+        if (this.parent.trumpets < 2) {
             return;
         }
         if (this.abilityUses >= this.maxAbilityUses) {
@@ -27,7 +27,7 @@ export class Wildebeast extends Pet {
             player: this.parent,
             tiger: tiger
         })
-        this.parent.spendTrumpets(4, this);
+        this.parent.spendTrumpets(2, this);
 
         this.abilityUses++;
     }

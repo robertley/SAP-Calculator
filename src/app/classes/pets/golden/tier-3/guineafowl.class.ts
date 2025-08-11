@@ -13,7 +13,7 @@ export class Guineafowl extends Pet {
     tier = 3;
     pack: Pack = 'Golden';
     attack = 2;
-    health = 4;
+    health = 3;
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = this.level * 2;
         this.parent.gainTrumpets(power, this);

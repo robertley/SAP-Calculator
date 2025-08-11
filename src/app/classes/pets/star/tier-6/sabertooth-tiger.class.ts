@@ -21,33 +21,28 @@ export class SabertoothTiger extends Pet {
             petPool = gameApi.opponentPetPool.get(1);
         }
         let petName = petPool[Math.floor(Math.random() * petPool.length)];
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let pet = this.petService.createPet({
-                    name: petName,
-                    attack: power,
-                    health: power,
-                    equipment: null,
-                    mana: 0,
-                    exp: 0
-                }, this.parent)
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${pet.name} (${power}/${power}).`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        randomEvent: true
-                    }
-                )
+        let summonPet = this.petService.createPet({
+            name: petName,
+            attack: power,
+            health: power,
+            equipment: null,
+            mana: 0,
+            exp: 0
+        }, this.parent)
 
-                if (this.parent.summonPet(pet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(pet);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${summonPet.name} (${power}/${power}).`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: true
+            }
+        )
+
+        if (this.parent.summonPet(summonPet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(summonPet);
+        }
 
         super.superHurt(gameApi, pet, tiger);
     }

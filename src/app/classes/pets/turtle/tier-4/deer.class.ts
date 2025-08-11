@@ -13,30 +13,26 @@ export class Deer extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    faint(gameApi, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi, tiger, pteranodon?: boolean) {
         let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
-        this.abilityService.setSpawnEvent({
-            callback: () => {
         
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Bus level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Bus level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
 
-                if (this.parent.summonPet(bus, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(bus);
-                }
-            },
-            priority: this.attack
-        })
+        if (this.parent.summonPet(bus, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(bus);
+        }
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

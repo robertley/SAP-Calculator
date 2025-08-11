@@ -10,7 +10,7 @@ export class SecretaryBird extends Pet {
     name = "Secretary Bird";
     tier = 4;
     pack: Pack = 'Golden';
-    attack = 2;
+    attack = 3;
     health = 5;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!tiger) {
@@ -23,11 +23,12 @@ export class SecretaryBird extends Pet {
         if (target == null) {
             return;
         }
-        let power = this.level * 3;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
+        let powerAttack = this.level * 3;
+        let powerHealth = this.level * 4;
+        target.increaseAttack(powerAttack);
+        target.increaseHealth(powerHealth);
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${target.name} ${powerAttack} attack and ${powerHealth} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

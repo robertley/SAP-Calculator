@@ -13,46 +13,38 @@ export class Platypus extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 3;
         let duck = new Duck(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
         let beaver = new Beaver(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${power}/${power} Duck level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${power}/${power} Duck level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
 
-                if (this.parent.summonPet(duck, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(duck);
-                }
-            },
-            priority: this.attack
-        })
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${power}/${power} Beaver level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        if (this.parent.summonPet(duck, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(duck);
+        }
 
-                if (this.parent.summonPet(beaver, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(beaver);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${power}/${power} Beaver level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(beaver, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(beaver);
+        }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
