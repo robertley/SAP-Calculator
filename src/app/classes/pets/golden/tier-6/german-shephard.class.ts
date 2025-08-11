@@ -10,7 +10,7 @@ export class GermanShephard extends Pet {
     tier = 6;
     pack: Pack = 'Golden';
     attack = 10;
-    health = 4;
+    health = 6;
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         let power = Math.floor(this.attack * this.level * .25);
         pet.increaseAttack(power);

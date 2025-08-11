@@ -20,6 +20,7 @@ import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
 import { cloneDeep } from "lodash";
 import { PeanutButter } from "./equipment/hidden/peanut-butter";
 import { Blackberry } from "./equipment/puppy/blackberry.class";
+import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -830,7 +831,7 @@ export abstract class Pet {
                 if (defenseMultiplier > 1) {
                     message += ` x${defenseMultiplier} (Panther)`;
                 }
-                pet.useDefenseEquipment();
+                //pet.useDefenseEquipment();
             }
             
             if (pet.equipment instanceof Exposed) {
@@ -1164,9 +1165,13 @@ export abstract class Pet {
             attackEquipment = this.equipment?.equipmentClass == 'attack-snipe' ? this.equipment : null;
             attackAmt = attackEquipment != null ? power + attackEquipment.power : power;
         } else {
-            attackEquipment = this.equipment?.equipmentClass == 'attack'
-            || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
-
+            if (this.equipment instanceof HoneydewMelon) {
+                // Create attack equipment for the one-time +5 damage
+                attackEquipment = new HoneydewMelonAttack();
+            } else {
+                attackEquipment = this.equipment?.equipmentClass == 'attack'
+                || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
+            }
             if (attackEquipment != null) {
             
                 if (manticoreAttackAilments.includes(attackEquipment?.name)) {
@@ -1322,7 +1327,7 @@ export abstract class Pet {
             return;
         }
         if (this.equipment.equipmentClass != 'attack'
-            //&& this.equipment.equipmentClass != 'defense'
+            && this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
             && this.equipment.equipmentClass != 'snipe'
         ) {

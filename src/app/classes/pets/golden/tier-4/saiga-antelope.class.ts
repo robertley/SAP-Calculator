@@ -16,7 +16,13 @@ export class SaigaAntelope extends Pet {
         if (!this.alive) {
             return;
         }
-        this.parent.gainTrumpets(this.level, this);
+        if (!tiger) {
+            this.abilityUses++;
+        }
+        if (this.abilityUses % 2 != 0) {
+            return;
+        }
+        this.parent.gainTrumpets(this.level * 3, this);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

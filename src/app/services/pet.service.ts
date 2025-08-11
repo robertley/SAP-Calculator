@@ -203,8 +203,8 @@ import { Flea } from "../classes/pets/golden/tier-3/flea.class";
 import { SurgeonFish } from "../classes/pets/golden/tier-3/surgeon-fish.class";
 import { Weasel } from "../classes/pets/golden/tier-3/weasel.class";
 import { Guineafowl } from "../classes/pets/golden/tier-3/guineafowl.class";
-import { BettaFish } from "../classes/pets/golden/tier-3/betta-fish.class";
-import { Meerkat } from "../classes/pets/golden/tier-3/meerkat.class";
+import { BettaFish } from "../classes/pets/custom/tier-3/betta-fish.class";
+import { Meerkat } from "../classes/pets/golden/tier-2/meerkat.class";
 import { FlyingFish } from "../classes/pets/golden/tier-3/flying-fish.class";
 import { Baboon } from "../classes/pets/golden/tier-3/baboon.class";
 import { Osprey } from "../classes/pets/golden/tier-3/osprey.class";
@@ -216,7 +216,7 @@ import { Sealion } from "../classes/pets/golden/tier-4/sealion.class";
 import { Vaquita } from "../classes/pets/golden/tier-4/vaquita.class";
 import { Slug } from "../classes/pets/golden/tier-4/slug.class";
 import { PoisonDartFrog } from "../classes/pets/golden/tier-4/poison-dart-frog.class";
-import { SecretaryBird } from "../classes/pets/golden/tier-4/secretary-bird.class";
+import { SecretaryBird } from "../classes/pets/golden/tier-5/secretary-bird.class";
 import { RoyalFlycatcher } from "../classes/pets/golden/tier-3/royal-flycatcher.class";
 import { Falcon } from "../classes/pets/golden/tier-4/falcon.class";
 import { MantaRay } from "../classes/pets/golden/tier-4/manta-ray.class";
@@ -259,7 +259,7 @@ import { FrilledDragon } from "app/classes/pets/custom/tier-1/frilled-dragon";
 import { Wombat } from "app/classes/pets/custom/tier-2/wombat.class";
 import { Frigatebird } from "../classes/pets/custom/tier-2/frigatebird.class";
 import { Aardvark } from "app/classes/pets/custom/tier-3/aardvark.class";
-import { Bear } from "app/classes/pets/custom/tier-3/bear.class";
+import { Bear } from "app/classes/pets/golden/tier-3/bear.class";
 import { EmperorTamarin } from "app/classes/pets/custom/tier-3/emperor-tamarin";
 import { Porcupine } from "app/classes/pets/custom/tier-3/porcupine.class";
 import { Wasp } from "app/classes/pets/custom/tier-3/wasp.class";
@@ -733,18 +733,18 @@ export class PetService {
             "Door Head Ant",
             "Lizard",
             "Sea Turtle",
+            "Meerkat",
             "African Penguin"
         ])
 
         this.goldenPackPets.set(3, [
             "Musk Ox",
             "Flea",
+            "Bear",
             "Royal Flycatcher",
             "Surgeon Fish",
             "Weasel",
             "Guineafowl",
-            "Betta Fish",
-            "Meerkat",
             "Flying Fish",
             "Baboon",
             "Osprey"
@@ -758,7 +758,6 @@ export class PetService {
             "Vaquita",
             "Slug",
             "Poison Dart Frog",
-            "Secretary Bird",
             "Falcon",
             "Manta Ray",
             "Cockatoo"
@@ -771,6 +770,7 @@ export class PetService {
             "Beluga Whale",
             "Wolf",
             "Silver Fox",
+            "Secretary Bird",
             "Fire Ant",
             "Blue Ringed Octopus",
             "Crane",
@@ -888,7 +888,6 @@ export class PetService {
         ]);
         this.customPackPets.set(3, [
             "Aardvark",
-            "Bear",
             "Emperor Tamarin",
             "Porcupine",
             "Wasp",
@@ -896,7 +895,8 @@ export class PetService {
             "Tree",
             "Slime",
             "Pegasus",
-            "Deer Lord"
+            "Deer Lord",
+            "Betta Fish"
         ]);
         this.customPackPets.set(4, [
             "Jerboa",

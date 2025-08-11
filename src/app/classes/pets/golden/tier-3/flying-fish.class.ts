@@ -12,7 +12,7 @@ export class FlyingFish extends Pet {
     name = "Flying Fish";
     tier = 3;
     pack: Pack = 'Golden';
-    attack = 3;
+    attack = 5;
     health = 2;
     maxAbilityUses: number = 2;
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {

@@ -53,6 +53,7 @@ import { LovePotion } from "../../equipment/unicorn/love-potion.class";
 import { MagicBeans } from "../../equipment/unicorn/magic-beans.class";
 import { Rambutan } from "../../equipment/unicorn/rambutan.class";
 import { Squash } from "../../equipment/puppy/squash.class";
+import { HoneydewMelon } from "../../equipment/golden/honeydew-melon.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
 
@@ -136,7 +137,7 @@ export class GoodDog extends Pet {
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
         map.set('Pineapple', new Pineapple());
-        map.set('Fig', new Fig());
+        map.set('Fig', new Fig(this.logService, this.abilityService));
         
         map.set('Rambutan', new Rambutan(this.logService));
         map.set('Love Potion', new LovePotion(this.logService));
@@ -147,6 +148,7 @@ export class GoodDog extends Pet {
         map.set('Magic Beans', new MagicBeans());
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
         map.set('Squash', new Squash(this.logService, this.abilityService));
+        map.set('Honeydew Melon', new HoneydewMelon());
 
         
         return map;
