@@ -23,6 +23,7 @@ export class AbilityService {
     private friendAheadFaintsEvents: AbilityEvent[]= [];
     private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
+    private processedBeforeAttackPets: Set<Pet> = new Set();
     private beforeStartOfBattleEvents: AbilityEvent[]= [];
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
     private friendLostPerkEvents: AbilityEvent[]= []; 
@@ -701,14 +702,50 @@ export class AbilityService {
         this.beforeAttackEvents = [];
     }
 
+    checkAndAddNewBeforeAttackEvents() {
+        let gameApi = this.gameService.gameApi;
+        
+        // Check player's first pet
+        if (gameApi.player.pet0 && gameApi.player.pet0.beforeAttack && !this.processedBeforeAttackPets.has(gameApi.player.pet0)) {
+            this.beforeAttackEvents.push({
+                callback: gameApi.player.pet0.beforeAttack.bind(gameApi.player.pet0),
+                priority: gameApi.player.pet0.attack,
+                player: gameApi.player
+            });
+            this.processedBeforeAttackPets.add(gameApi.player.pet0);
+            // Re-sort the array to maintain priority order
+            this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        }
+        
+        // Check opponent's first pet
+        if (gameApi.opponet.pet0 && gameApi.opponet.pet0.beforeAttack && !this.processedBeforeAttackPets.has(gameApi.opponet.pet0)) {
+            this.beforeAttackEvents.push({
+                callback: gameApi.opponet.pet0.beforeAttack.bind(gameApi.opponet.pet0),
+                priority: gameApi.opponet.pet0.attack,
+                player: gameApi.opponet
+            });
+            this.processedBeforeAttackPets.add(gameApi.opponet.pet0);
+            // Re-sort the array to maintain priority order
+            this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        }
+    }
+
     executeBeforeAttackEvents() {
+        // Clear the set of processed pets at the start of execution
+        this.processedBeforeAttackPets.clear();
+        
         // shuffle, so that same priority events are in random order
         this.beforeAttackEvents = shuffle(this.beforeAttackEvents);
 
         this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
-        for (let event of this.beforeAttackEvents) {
+        // Use queue-based approach to handle events being added during execution
+        while (this.beforeAttackEvents.length > 0) {
+            let event = this.beforeAttackEvents.shift();
             event.callback(this.gameService.gameApi);
+            
+            // Check if new first pets now have beforeAttack abilities that need to be queued
+            this.checkAndAddNewBeforeAttackEvents();
         }
         
         this.resetBeforeAttackEvents();

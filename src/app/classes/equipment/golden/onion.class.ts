@@ -12,6 +12,11 @@ export class Onion extends Equipment {
                 originalBeforeAttack(gameApi);
             }
             
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Onion') {
+                return;
+            }
+            
             this.logService.createLog({
                 message: `${pet.name} pushed itself to the back. (Onion)`,
                 type: 'equipment',
