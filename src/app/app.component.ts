@@ -41,6 +41,35 @@ import { Cherry } from './classes/equipment/golden/cherry.class';
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
 
+const REVERSE_KEY_MAP = {
+  "pP": "playerPack", "oP": "opponentPack", "pT": "playerToy", "pTL": "playerToyLevel",
+  "oT": "opponentToy", "oTL": "opponentToyLevel", "t": "turn", "pGS": "playerGoldSpent",
+  "oGS": "opponentGoldSpent", "pRA": "playerRollAmount", "oRA": "opponentRollAmount",
+  "pSA": "playerSummonedAmount", "oSA": "opponentSummonedAmount", "pL3": "playerLevel3Sold",
+  "oL3": "opponentLevel3Sold", "p": "playerPets", "o": "opponentPets", "an": "angler",
+  "ap": "allPets", "lf": "logFilter", "fs": "fontSize", "cp": "customPacks",
+  "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana",
+  "sa": "showAdvanced", "ae": "ailmentEquipment",
+  // Pet Object Keys
+  "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment"
+};
+
+function expandKeys(data) {
+  if (Array.isArray(data)) {
+      return data.map(item => expandKeys(item));
+  }
+  if (data !== null && typeof data === 'object') {
+      const newObj = {};
+      for (const key in data) {
+          const newKey = REVERSE_KEY_MAP[key] || key;
+          newObj[newKey] = expandKeys(data[key]);
+      }
+      return newObj;
+  }
+  return data;
+}
+
+
 // TODO
 // Weak as equipment option
 // parrot copy abomination log bug?
@@ -188,9 +217,26 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (encodedData) {
       try {
+        let finalJsonString;
         const decodedData = decodeURIComponent(encodedData);
+        if (decodedData.trim().startsWith('{')) {
 
-        this.import(decodedData);
+          const truncatedJson = JSON.parse(decodedData);
+
+          const fullKeyJson = expandKeys(truncatedJson);
+
+          finalJsonString = JSON.stringify(fullKeyJson);
+        } else {
+          const compressedData = atob(encodedData);
+          const decodedData = decodeURIComponent(compressedData);
+          const truncatedJson = JSON.parse(decodedData);
+
+          const fullKeyJson = expandKeys(truncatedJson);
+
+          finalJsonString = JSON.stringify(fullKeyJson);
+        }
+
+        this.import(finalJsonString);
         
         console.log("Calculator state loaded from URL.");
         return true; 
@@ -235,6 +281,41 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   loadCalculatorFromValue(calculator) {
     // this.formGroup.reset();
+    const defaultState = {
+        playerPack: "Turtle",
+        opponentPack: "Turtle",
+        playerToy: null,
+        playerToyLevel: "1",
+        opponentToy: null,
+        opponentToyLevel: "1",
+        turn: 11,
+        playerGoldSpent: 10,
+        opponentGoldSpent: 10,
+        playerRollAmount: 4,
+        opponentRollAmount: 4,
+        playerSummonedAmount: 0,
+        opponentSummonedAmount: 0,
+        playerLevel3Sold: 0,
+        opponentLevel3Sold: 0,
+        playerPets: Array(5).fill(null),
+        opponentPets: Array(5).fill(null),
+        angler: false,
+        allPets: false,
+        logFilter: null,
+        fontSize: 13,
+        customPacks: [],
+        oldStork: false,
+        tokenPets: false,
+        komodoShuffle: false,
+        mana: false,
+        showAdvanced: false,
+        ailmentEquipment: false
+    };
+
+    const finalState = { ...defaultState, ...calculator };
+
+    this.formGroup.patchValue(finalState, { emitEvent: false });
+
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
     this.loadCustomPacks(customPacks);
