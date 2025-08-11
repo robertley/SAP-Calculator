@@ -102,6 +102,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   api = false;
   apiResponse = null;
 
+  private isLoadedFromUrl = false;
+
   constructor(private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
@@ -116,23 +118,38 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
-    this.loadLocalStorage();
-    this.initApp();
-    this.initGameApi();
-    this.setDayNight();
+    // this.loadLocalStorage();
+    // this.initApp();
+    // this.initGameApi();
+    // this.setDayNight();
 
     // get the end of url
-    let url = window.location.href;
-    let urlSplit = url.split('/');
-    let lastUrl = urlSplit[urlSplit.length - 1];
-    let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
-    // remove ?code= from string
-    code = code.replace('?code=', '');
-    if (code) {
-      this.api = true;
-      this.loadCalculatorFromValue(JSON.parse(code));
-      this.simulate();
-      this.buildApiResponse();
+    // let url = window.location.href;
+    // let urlSplit = url.split('/');
+    // let lastUrl = urlSplit[urlSplit.length - 1];
+    // let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
+    // // remove ?code= from string
+    // code = code.replace('?code=', '');
+    // if (code) {
+    //   this.api = true;
+    //   this.loadCalculatorFromValue(JSON.parse(code));
+    //   this.simulate();
+    //   this.buildApiResponse();
+    // }
+    const params = new URLSearchParams(window.location.search);
+    const apiCode = params.get('code'); // This safely gets ONLY the value of the 'code' parameter
+
+    if (apiCode) {
+        this.api = true;
+        try {
+            const jsonData = JSON.parse(decodeURIComponent(apiCode));
+            this.loadCalculatorFromValue(jsonData);
+            this.simulate();
+            this.buildApiResponse();
+        } catch (e) {
+            console.error("Error parsing API data from URL:", e);
+            this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
+        }
     }
     
   }
@@ -153,10 +170,48 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.isLoadedFromUrl = this.loadStateFromUrl(true);
+
+    if (!this.isLoadedFromUrl) {
+      this.loadLocalStorage();
+    }
+
+    this.initApp();
+    this.initGameApi();
+    this.setDayNight();
     this.toys = this.toyService.toys;
   }
 
+  loadStateFromUrl(isInitialLoad: boolean = false): boolean {
+    const params = new URLSearchParams(window.location.search);
+    const encodedData = params.get('c'); 
+
+    if (encodedData) {
+      try {
+        const decodedData = decodeURIComponent(encodedData);
+
+        this.import(decodedData);
+        
+        console.log("Calculator state loaded from URL.");
+        return true; 
+      } catch (e) {
+        console.error("Failed to parse calculator state from URL.", e);
+        alert("Could not load the shared calculator link. The data may be corrupted.");
+        return false; 
+      }
+    }
+    
+    return false; // No data found in URL
+  }
+
+
   ngAfterViewInit(): void {
+    if (this.isLoadedFromUrl) {
+        this.petSelectors.forEach((petSelector) => {
+            petSelector.fixLoadEquipment();
+        });
+    }
+    
     if (!this.api) {
       this.initModals();
     }
@@ -1244,21 +1299,45 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
   }
 
-  import(importVal): boolean {
+  import(importVal: string, isInitialLoad: boolean = false): boolean {
     let success = false;
-    let calculator = JSON.parse(importVal);
     try {
+      const calculator = JSON.parse(importVal);
+      
       this.loadCalculatorFromValue(calculator);
       this.initApp();
-      this.petSelectors.forEach((petSelector) => {
-        petSelector.fixLoadEquipment();
-      })
+      if (!isInitialLoad) {
+        setTimeout(() => {
+            if (this.petSelectors) {
+                this.petSelectors.forEach((petSelector) => {
+                    petSelector.fixLoadEquipment();
+                });
+            }
+        }, 0);
+      }
       success = true;
     } catch (e) {
       console.error(e);
       // acceptable faliure
     }
     return success;
+  }
+
+  generateShareLink(): void {
+    this.localStorageService.setFormStorage(this.formGroup);
+    const calculatorStateString = JSON.stringify(this.formGroup.value);
+
+    const encodedData = encodeURIComponent(calculatorStateString);
+
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareableLink = `${baseUrl}?c=${encodedData}`;
+
+    navigator.clipboard.writeText(shareableLink).then(() => {
+      alert('Shareable link copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy link: ', err);
+      alert('Failed to copy link. See console for details.');
+    });
   }
 
   get filteredBattles() {
@@ -1284,7 +1363,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   get validCustomPacks() {
-    // get all formGroups in formArray that are valid
     let formArray = this.formGroup.get('customPacks') as FormArray;
     let validFormGroups = [];
     for (let formGroup of formArray.controls) {
