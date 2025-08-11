@@ -188,6 +188,7 @@ import { ConeSnail } from "../classes/pets/golden/tier-1/cone-snail.class";
 import { Goose } from "../classes/pets/golden/tier-1/goose.class";
 import { PiedTamarin } from "../classes/pets/golden/tier-1/pied-tamarin.class";
 import { Silkmoth } from "../classes/pets/golden/tier-1/silkmoth.class";
+import { Lemming } from "../classes/pets/golden/tier-1/lemming.class";
 import { Magpie } from "../classes/pets/golden/tier-1/magpie.class";
 import { HerculesBeetle } from "../classes/pets/golden/tier-2/hercules-beetle.class";
 import { Stoat } from "../classes/pets/golden/tier-2/stoat.class";
@@ -225,7 +226,7 @@ import { Nyala } from "../classes/pets/golden/tier-5/nyala.class";
 import { NurseShark } from "../classes/pets/golden/tier-5/nurse-shark.class";
 import { BelugaWhale } from "../classes/pets/golden/tier-5/beluga-whale.class";
 import { Wolf } from "../classes/pets/golden/tier-5/wolf.class";
-import { SilverFox } from "../classes/pets/golden/tier-5/silver-fox.class";
+import { SilverFox } from "../classes/pets/custom/tier-5/silver-fox.class";
 import { FireAnt } from "../classes/pets/golden/tier-5/fire-ant.class";
 import { Cockatoo } from "../classes/pets/golden/tier-5/cockatoo.class";
 import { BlueRingedOctopus } from "../classes/pets/golden/tier-5/blue-ringed-octopus.class";
@@ -718,6 +719,7 @@ export class PetService {
             "Groundhog",
             "Cone Snail",
             "Goose",
+            "Lemming",
             "Pied Tamarin",
             "Opossum",
             "Silkmoth",
@@ -769,7 +771,6 @@ export class PetService {
             "Nurse Shark",
             "Beluga Whale",
             "Wolf",
-            "Silver Fox",
             "Secretary Bird",
             "Fire Ant",
             "Blue Ringed Octopus",
@@ -915,6 +916,7 @@ export class PetService {
             "Hyena",
             "Moose",
             "Raccoon",
+            "Silver Fox",
             "Boitata",
             "Kappa",
             "Mimic",
@@ -1364,6 +1366,8 @@ export class PetService {
                 return new ConeSnail(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goose':
                 return new Goose(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Lemming':
+                return new Lemming(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Pied Tamarin':
                 return new PiedTamarin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Opossum':
@@ -2363,6 +2367,9 @@ export class PetService {
         }
         if (pet instanceof Goose) {
             newPet = new Goose(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Lemming) {
+            newPet = new Lemming(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof PiedTamarin) {
             newPet = new PiedTamarin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

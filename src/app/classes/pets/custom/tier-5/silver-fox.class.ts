@@ -11,7 +11,7 @@ import { Orangutang } from "../../star/tier-4/orangutang.class";
 export class SilverFox extends Pet {
     name = "Silver Fox";
     tier = 5;
-    pack: Pack = 'Golden';
+    pack: Pack = 'Custom';
     attack = 3;
     health = 6;
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
