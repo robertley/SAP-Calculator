@@ -688,10 +688,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.setAbilityEquipments(this.player);
       this.setAbilityEquipments(this.opponent);
 
-      //not needed, change sob summon logic
-      this.pushPetsForwards();
-      this.logService.printState(this.player, this.opponent);
-
       //before battle phase
       this.abilityService.triggerBeforeStartOfBattleEvents(this.player);
       this.abilityService.triggerBeforeStartOfBattleEvents(this.opponent);
@@ -706,7 +702,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       //init sob
       this.startOfBattleService.resetStartOfBattleFlags();
       this.startOfBattleService.initStartOfBattleEvents();
-      //merge into pet sob
+      //merge into pet sob(gecko)
       this.startOfBattleService.executeToyPetEvents();
 
       //add churro check
@@ -852,6 +848,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         player: this.opponent
       })
     }
+    this.pushPetsForwards();
+
     //before attack phase
     this.abilityService.executeBeforeAttackEvents();
     
@@ -870,14 +868,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.pushPetsForwards();
-    //merge into before attack
-    let chocoCakeCheck = this.chocolateCakePresent();
-    if (chocoCakeCheck.cake) {
-      this.doChocolateCakeEvents(chocoCakeCheck);
-    } else {
-      this.fight();
-    }
+    //attack
+    this.fight();
+
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
 
@@ -887,6 +880,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     //merge to ability cyle
     this.player.checkGoldenSpawn();
     this.opponent.checkGoldenSpawn();
+    
+    while (this.abilityService.hasAbilityCycleEvents) {
+      this.abilityCycle();
+    }
 
     this.logService.printState(this.player, this.opponent);
   }

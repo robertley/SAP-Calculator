@@ -29,7 +29,7 @@ export class Lizard extends Pet {
             }
         )
 
-        if (this.parent.summonPet(lizardTail, this.savedPosition)) {
+        if (this.parent.summonPetInFront(this, lizardTail)) {
             this.abilityService.triggerSummonedEvents(lizardTail);
         }
 

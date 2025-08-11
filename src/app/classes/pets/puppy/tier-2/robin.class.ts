@@ -25,8 +25,7 @@ export class Robin extends Pet {
             tiger: tiger
         });
 
-        if (this.parent.summonPet(nest, Math.max(0, this.position))) {
-            this.abilityService.triggerSummonedEvents(nest);
+        if (this.parent.summonPetInFront(this, nest)) {
 
             this.logService.createLog({
                 message: `${this.name} gave Nest an Egg.`,
@@ -37,6 +36,7 @@ export class Robin extends Pet {
             })
 
             nest.givePetEquipment(new Egg(this.logService, this.abilityService));
+            this.abilityService.triggerSummonedEvents(nest);
         }
 
         this.superStartOfBattle(gameApi, tiger);

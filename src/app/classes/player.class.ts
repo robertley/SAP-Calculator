@@ -265,6 +265,7 @@ export class Player {
             for (let i = slotWithSpace; i < slot; i++) {
                 this[`pet${i}`] = this[`pet${i+1}`];
             }
+            return;
         }
 
         let isSpaceBehind = false;
@@ -298,8 +299,6 @@ export class Player {
             }
             return;
         }
-        
-
     }
 
     get petArray(): Pet[] {
@@ -698,7 +697,7 @@ export class Player {
             destination = Math.max(position - spaces, 0);
         }
         if (spaces < 0) {
-            destination = Math.max(position - spaces, 4);
+            destination = Math.min(position - spaces, 4);
         }
         player.summonPet(pet, destination);
         this.onionCheck();
@@ -787,5 +786,64 @@ export class Player {
         }
 
         return mult;
+    }
+
+    summonPetInFront(summoner: Pet, summonedPet: Pet): boolean {
+        if (this.petArray.length == 5) {
+            this.logService.createLog({
+                message: `No room to spawn ${summonedPet.name}!`,
+                type: 'ability',
+                player: this
+            })
+            return false;
+        }
+
+        // Check if ANY space exists in front (positions 0 to summoner.position-1)
+        let hasSpaceInFront = false;
+        for (let pos = 0; pos < summoner.position; pos++) {
+            if (this.getPet(pos) == null) {
+                hasSpaceInFront = true;
+                break;
+            }
+        }
+        
+        if (hasSpaceInFront) {
+            // Let makeRoomForSlot handle the positioning
+            return this.summonPet(summonedPet, summoner.position - 1);
+        } else {
+            // No space in front, move summoner backward and summon in old spot
+            let oldPosition = summoner.position;
+            this.pushPet(summoner, -1);
+            return this.summonPet(summonedPet, oldPosition);
+        }
+    }
+
+    summonPetBehind(summoner: Pet, summonedPet: Pet): boolean {
+        if (this.petArray.length == 5) {
+            this.logService.createLog({
+                message: `No room to spawn ${summonedPet.name}!`,
+                type: 'ability',
+                player: this
+            })
+            return false;
+        }
+
+        // Check if ANY space exists in front (positions 0 to summoner.position-1)
+        let hasSpaceInFront = false;
+        for (let pos = 0; pos < summoner.position; pos++) {
+            if (this.getPet(pos) == null) {
+                hasSpaceInFront = true;
+                break;
+            }
+        }
+        
+        if (hasSpaceInFront) {
+            // Move summoner forward and summon behind
+            this.pushPet(summoner, 1);
+            return this.summonPet(summonedPet, summoner.position + 1);
+        } else {
+            // No space in front, summon directly behind (let makeRoomForSlot handle it)
+            return this.summonPet(summonedPet, summoner.position + 1);
+        }
     }
 }

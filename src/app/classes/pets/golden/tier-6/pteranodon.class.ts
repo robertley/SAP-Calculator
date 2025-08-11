@@ -42,8 +42,8 @@ export class Pteranodon extends Pet {
             randomEvent: false,
             tiger: tiger
         })
-        this.parent.pushPet(this, 1);
-        if (this.parent.summonPet(summonPet, this.position + 1)) {
+        
+        if (this.parent.summonPetBehind(this, summonPet)) {
             this.abilityService.triggerSummonedEvents(summonPet);
         }
         

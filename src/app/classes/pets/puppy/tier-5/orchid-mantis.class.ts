@@ -28,10 +28,9 @@ export class OrchidMantis extends Pet {
                 tiger: tiger
             }
         )
-        
-        if (this.parent.summonPet(mantis, this.position)) {
+        if (this.parent.summonPetInFront(this, mantis)) {
             this.abilityService.triggerSummonedEvents(mantis);
-        };
+        }
 
         this.superStartOfBattle(gameApi, tiger);
     }
