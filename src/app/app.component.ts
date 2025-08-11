@@ -718,10 +718,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       while (this.abilityService.hasAbilityCycleEvents) {
         this.abilityCycle();
       }
-
-      //move to next turn
-      this.pushPetsForwards();
-      this.logService.printState(this.player, this.opponent);
       
       //loop until battle ends
       while (this.battleStarted) {
@@ -829,7 +825,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.battleStarted = false;
       return;
     }
-    //remove onion check
     this.pushPetsForwards();
 
     // init before attack events
@@ -848,7 +843,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         player: this.opponent
       })
     }
-    this.pushPetsForwards();
 
     //before attack phase
     this.abilityService.executeBeforeAttackEvents();
@@ -868,6 +862,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
 
+    this.pushPetsForwards();
     //attack
     this.fight();
 

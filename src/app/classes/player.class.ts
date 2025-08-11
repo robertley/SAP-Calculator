@@ -700,7 +700,6 @@ export class Player {
             destination = Math.min(position - spaces, 4);
         }
         player.summonPet(pet, destination);
-        this.onionCheck();
     }
 
     getRandomStrawberryPet(excludePet?: Pet): Pet {
