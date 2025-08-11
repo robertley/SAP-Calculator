@@ -488,12 +488,9 @@ export abstract class Pet {
     }
 
     tigerCheck(tiger) {
-        console.log(`${this.petBehind(true, true)?.name}, tiger: ${tiger} `)
         if (this.petBehind(true, true)?.name == 'Tiger' && (tiger == null || tiger == false)) {
-            console.log(`tiger check for ${this.name} is True`)
             return true;
         }
-        console.log(`tiger check for ${this.name} is false`)
         return false;
     }
 
@@ -779,7 +776,6 @@ export abstract class Pet {
     }
 
     protected superAfterFaint(gameApi, tiger=false, pteranodon=false) {
-        console.log(`Going to do tiger check`)
         if (!this.tigerCheck(tiger)) {
             return;
         }
