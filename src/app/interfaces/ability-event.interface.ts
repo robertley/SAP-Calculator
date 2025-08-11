@@ -8,4 +8,5 @@ export interface AbilityEvent {
     player?: Player;
     level?: number;
     pet?: Pet;
+    abilityType?: string; // Track which ability type this event belongs to
 }
