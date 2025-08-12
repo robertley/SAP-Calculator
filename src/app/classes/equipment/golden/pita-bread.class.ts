@@ -1,7 +1,6 @@
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class PitaBread extends Equipment {
     name = 'Pita Bread';
@@ -19,19 +18,14 @@ export class PitaBread extends Equipment {
             if (!pet.alive) {
                 return;
             }
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
-            }
-            let power = 15 * multiplier;
+            let power = 15 * this.multiplier;
             pet.increaseHealth(power);
-            let message = `${pet.name} gained ${power} health. (Pita Bread)`;
+            let message = `${pet.name} gained ${power} health. (Pita Bread)${this.multiplierMessage}`;
             message += '.';
             this.logService.createLog({
                 message: message,
                 type: 'equipment',
-                player: pet.parent,
-                pantherMultiplier: multiplier
+                player: pet.parent
             })
             pet.removePerk();
         }

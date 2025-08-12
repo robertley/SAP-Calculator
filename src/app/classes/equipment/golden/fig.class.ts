@@ -2,7 +2,6 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Fig extends Equipment {
     name = 'Fig';
@@ -19,11 +18,7 @@ export class Fig extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
-            }
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
                 let attackPet = opponent.getLowestHealthPet().pet;
                 if (attackPet == null) {
@@ -38,9 +33,7 @@ export class Fig extends Equipment {
                 attackPet.health -= damage;
 
                 let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
-                if (pet instanceof Panther) {
-                    message += ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
 
                 if (defenseEquipment != null) {
                     attackPet.useDefenseEquipment();

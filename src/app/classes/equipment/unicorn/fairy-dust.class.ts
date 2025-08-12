@@ -10,9 +10,9 @@ export class FairyDust extends Equipment {
             if (pet.parent.pet0 != null) {
                 return;
             }
-            let manaAmmt = 2;
+            let manaAmmt = 2 * this.multiplier;
             this.logService.createLog({
-                message: `${pet.name} pushed itself to the front and gained ${manaAmmt} mana(Fairy Dust).`,
+                message: `${pet.name} pushed itself to the front and gained ${manaAmmt} mana(Fairy Dust)${this.multiplierMessage}.`,
                 type: 'ability',
                 player: pet.parent
             })

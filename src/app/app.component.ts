@@ -687,6 +687,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       //init equipment abilities
       this.setAbilityEquipments(this.player);
       this.setAbilityEquipments(this.opponent);
+      
+      //initialize equipment multipliers for existing equipment
+      this.initializeEquipmentMultipliers();
 
       //before battle phase
       this.abilityService.triggerBeforeStartOfBattleEvents(this.player);
@@ -942,18 +945,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   executeBeforeStartOfBattleEquipment(player) {
     for (let pet of player.petArray) {
-      let multiplier = 1;
-      let pantherMessage = '';
-      if (pet instanceof Panther) {
-        multiplier = pet.level + 1;
-        pantherMessage = ` (Panther)`;
-      }
+      let multiplier = pet.equipment.multiplier;
+      let muliplierMessage = pet.equipment.multiplierMessage;
       for (let i = 0; i < multiplier; i++) {
         if (pet.equipment instanceof Pie) {
           pet.increaseAttack(4);
           pet.increaseHealth(4);
           this.logService.createLog({
-            message: `${pet.name} gained ${4} attack and ${4} health (Pie)${pantherMessage}`,
+            message: `${pet.name} gained ${4} attack and ${4} health (Pie)${muliplierMessage}`,
             type: 'equipment',
             player: player
           })
@@ -969,7 +968,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             pett.increaseAttack(2);
             pett.increaseHealth(2);
             this.logService.createLog({
-              message: `${pett.name} gained ${2} attack and ${2} health (Pancake)${pantherMessage}`,
+              message: `${pett.name} gained ${2} attack and ${2} health (Pancake)${muliplierMessage}`,
               type: 'equipment',
               player: player
             })
@@ -1233,6 +1232,23 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
     return validFormGroups;
+  }
+
+  initializeEquipmentMultipliers() {
+    // Initialize multipliers for equipment that pets start the battle with
+    // This ensures Panther level multipliers and Pandora's Box toy multipliers work correctly
+    
+    for (let pet of this.player.petArray) {
+      if (pet.equipment) {
+        pet.setEquipmentMultiplier();
+      }
+    }
+    
+    for (let pet of this.opponent.petArray) {
+      if (pet.equipment) {
+        pet.setEquipmentMultiplier();
+      }
+    }
   }
 
 }

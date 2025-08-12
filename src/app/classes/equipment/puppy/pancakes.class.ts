@@ -2,7 +2,6 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Pancakes extends Equipment {
     name = 'Pancakes';
@@ -14,20 +13,16 @@ export class Pancakes extends Equipment {
             if (originalBeforeStartOfBattle != null) {
                 originalBeforeStartOfBattle(gameApi);
             }
-            let multiplier = 1;
-            let pantherMessage = '';
-            if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
-                pantherMessage = ' (Panther)';
-            }
             for (let pett of pet.parent.petArray) {
                 if (pet == pett) {
                     continue;
                 }
-                pett.increaseAttack(2 * multiplier);
-                pett.increaseHealth(2 * multiplier);
+                let attackGain = 2 * this.multiplier;
+                let healthGain = 2 * this.multiplier;
+                pett.increaseAttack(attackGain);
+                pett.increaseHealth(healthGain);
                 this.logService.createLog({
-                    message: `${pett.name} gained ${2 * multiplier} attack and ${2 * multiplier} health (Pancakes)${pantherMessage}`,
+                    message: `${pett.name} gained ${attackGain} attack and ${healthGain} health (Pancakes)${this.multiplierMessage}`,
                     type: 'equipment',
                     player: pet.parent
                 })

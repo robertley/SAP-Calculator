@@ -3,7 +3,6 @@ import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Nest } from "../../pets/hidden/nest.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Egg extends Equipment {
     name = 'Egg';
@@ -25,8 +24,8 @@ export class Egg extends Equipment {
             // Special case: Nest with Egg triggers multiple times based on Nest level
             if (pet instanceof Nest) {
                 multiplier = pet.level;
-            } else if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
+            } else {
+                multiplier = this.multiplier;
             }
             
             for (let i = 0; i < multiplier; i++) {
@@ -52,9 +51,9 @@ export class Egg extends Equipment {
                 attackPet.health -= damage;
 
                 let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
-                let pantherMessage = '';
-                if (pet instanceof Panther && i > 0) {
-                    pantherMessage = ` (Panther)`;
+                let multiplierMessage = '';
+                if (!(pet instanceof Nest) && i > 0) {
+                    multiplierMessage = this.multiplierMessage;
                 }
 
                 if (defenseEquipment != null) {
@@ -68,7 +67,7 @@ export class Egg extends Equipment {
                 }
 
                 this.logService.createLog({
-                    message: message += ` (Egg)${pantherMessage}.`,
+                    message: message += ` (Egg)${multiplierMessage}.`,
                     type: 'attack',
                     player: pet.parent
                 })

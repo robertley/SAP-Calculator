@@ -19,12 +19,13 @@ export class ChocolateCake extends Equipment {
                 return;
             }
             
+            let expGain = 3 * this.multiplier;
             this.logService.createLog({
-                message: `${pet.name} gained 3 exp. (Chocolate Cake)`,
+                message: `${pet.name} gained ${expGain} exp. (Chocolate Cake)${this.multiplierMessage}`,
                 type: 'equipment',
                 player: pet.parent
             })
-            pet.increaseExp(3);
+            pet.increaseExp(expGain);
             pet.health = 0;
 
             if (pet.knockOut != null) {

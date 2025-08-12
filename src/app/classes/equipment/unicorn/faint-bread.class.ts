@@ -4,7 +4,6 @@ import { LogService } from "../../../services/log.service";
 import { PetService } from "../../../services/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 
 export class FaintBread extends Equipment {
@@ -22,22 +21,14 @@ export class FaintBread extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
-            }
-
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let faintPet = this.petService.getRandomFaintPet(pet.parent, 1);
     
-                let pantherMessage = '';
-                if (i > 0) {
-                    pantherMessage = ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned ${faintPet.name} (Faint Bread)${pantherMessage}`,
+                        message: `${pet.name} Spawned ${faintPet.name} (Faint Bread)${multiplierMessage}`,
                         type: "ability",
                         player: pet.parent,
                         randomEvent: true

@@ -1,6 +1,5 @@
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Rambutan extends Equipment {
     name = 'Rambutan';
@@ -17,15 +16,11 @@ export class Rambutan extends Equipment {
                 return;
             }
             
-            let manaGain = 3;
-            let pantherMessage = '';
-            if (pet instanceof Panther) {
-                manaGain = 3 * (pet.level + 1);
-                pantherMessage = ' (Panther)';
-            }
+            let baseManaGain = 3;
+            let manaGain = baseManaGain * this.multiplier;
             
             this.logService.createLog({
-                message: `${pet.name} gained ${manaGain} mana. (Rambutan)${pantherMessage}`,
+                message: `${pet.name} gained ${manaGain} mana. (Rambutan)${this.multiplierMessage}`,
                 type: 'equipment',
                 player: pet.parent
             })

@@ -1,4 +1,3 @@
-import { Panther } from "app/classes/pets/puppy/tier-5/panther.class";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
@@ -20,11 +19,7 @@ export class Squash extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
-            }
-            for (let i = 0; i < multiplier; i++) {           
+            for (let i = 0; i < this.multiplier; i++) {           
                 // Squash targets the pet being attacked, need to get front pet from opponent
                 let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
                 let targetPet = opponent.pet0;
@@ -36,8 +31,9 @@ export class Squash extends Equipment {
                 let power = 6;
                 let reducedTo = Math.max(1, targetPet.health - power);
                 targetPet.health = reducedTo;
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 this.logService.createLog({
-                    message: `${this.name} reduced ${targetPet.name} health by ${power} (${reducedTo})`,
+                    message: `${this.name} reduced ${targetPet.name} health by ${power} (${reducedTo})${multiplierMessage}`,
                     type: 'equipment',
                     player: pet.parent,
                 });

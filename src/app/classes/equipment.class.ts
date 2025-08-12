@@ -11,6 +11,9 @@ export class Equipment {
     callback: (pet: Pet) => void;
     attackCallback?: (pet: Pet, attackedPet: Pet) => void;
     
+    // Multiplier properties set when equipment is equipped
+    multiplier: number = 1;
+    multiplierMessage: string = '';
 
     constructor() {
         this.originalPower = this.power;

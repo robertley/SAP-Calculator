@@ -15,12 +15,13 @@ export class LovePotion extends Equipment {
             if (petAhead == null) {
                 return;
             }
+            let power = 2 * this.multiplier;
             this.logService.createLog({
-                message: `${pet.name} gave ${petAhead.name} ${2} health (Love Potion).`,
+                message: `${pet.name} gave ${petAhead.name} ${power} health (Love Potion)${this.multiplierMessage}.`,
                 type: 'equipment',
                 player: pet.parent
             })
-            petAhead.increaseHealth(2);
+            petAhead.increaseHealth(power);
         }
     }
 

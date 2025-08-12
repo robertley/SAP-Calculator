@@ -2,7 +2,6 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Tomato extends Equipment {
     name = 'Tomato';
@@ -19,12 +18,7 @@ export class Tomato extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
-            }
-            
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
                 let attackPet = opponent.getLastPet();
                 if (attackPet == null) {
@@ -39,10 +33,7 @@ export class Tomato extends Equipment {
                 attackPet.health -= damage;
 
                 let message = `${pet.name} sniped ${attackPet.name} for ${damage}`;
-                let pantherMessage = '';
-                if (pet instanceof Panther && i > 0) {
-                    pantherMessage = ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
 
                 if (defenseEquipment != null) {
                     attackPet.useDefenseEquipment();
@@ -55,7 +46,7 @@ export class Tomato extends Equipment {
                 }
 
                 this.logService.createLog({
-                    message: message += ` (Tomato)${pantherMessage}.`,
+                    message: message += ` (Tomato)${multiplierMessage}.`,
                     type: 'attack',
                     player: pet.parent
                 })

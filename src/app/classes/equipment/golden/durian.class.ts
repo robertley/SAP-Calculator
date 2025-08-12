@@ -2,7 +2,6 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Durian extends Equipment {
     name = 'Durian';
@@ -19,12 +18,7 @@ export class Durian extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
-            }
-            
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
                 let resp = opponent.getHighestHealthPet();
                 let targetPet = resp.pet;
@@ -37,13 +31,10 @@ export class Durian extends Equipment {
                 let reducedTo = Math.max(1, Math.floor(targetPet.health * (1 - power)));
                 targetPet.health = reducedTo;
                 
-                let pantherMessage = '';
-                if (pet instanceof Panther && i > 0) {
-                    pantherMessage = ' (Panther)';
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog({
-                    message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})${pantherMessage}`,
+                    message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})${multiplierMessage}`,
                     type: 'ability',
                     player: pet.parent,
                     randomEvent: resp.random

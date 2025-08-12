@@ -1,7 +1,6 @@
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Eggplant extends Equipment {
     name = 'Eggplant';
@@ -12,11 +11,7 @@ export class Eggplant extends Equipment {
             if (originalBeforeStartOfBattle != null) {
                 originalBeforeStartOfBattle(gameApi);
             }
-            let amt = 1;
-            if (pet instanceof Panther) {
-                amt = 1 + pet.level;
-            }
-            for (let i = 0; i < amt; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let opponent = pet.parent.opponent;
                 let target = opponent.getPet(pet.position);
                 if (target == null) {

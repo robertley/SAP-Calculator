@@ -11,12 +11,13 @@ export class GingerbreadMan extends Equipment {
             if (originalBeforeStartOfBattle != null) {
                 originalBeforeStartOfBattle(gameApi);
             }
+            let expGain = 1 * this.multiplier;
             this.logService.createLog({
-                message: `${pet.name} gained 1 experience (Gingerbread Man).`,
+                message: `${pet.name} gained ${expGain} experience (Gingerbread Man)${this.multiplierMessage}.`,
                 type: 'equipment',
                 player: pet.parent
             })
-            pet.increaseExp(1);
+            pet.increaseExp(expGain);
         }
     }
 
