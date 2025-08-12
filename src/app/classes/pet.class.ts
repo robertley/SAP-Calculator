@@ -23,6 +23,7 @@ import { Blackberry } from "./equipment/puppy/blackberry.class";
 import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
 import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
+import { Toad } from "./pets/star/tier-3/toad.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -910,7 +911,7 @@ export abstract class Pet {
 
             if (manticoreMult.length > 0 && hasAilment) {
                 for (let mult of manticoreMult) {
-                    message += ` x${mult} (Manticore)`;
+                    message += ` x${mult + 1} (Manticore)`;
                 }
             }
 
@@ -985,11 +986,10 @@ export abstract class Pet {
         for (let pet of this.parent.petArray) {
             if (pet.equipment instanceof Crisp) {
                 let damage = 6;
-                let totalMultiplier = 1;
+                let totalMultiplier = pet.equipment.multiplier ;
                 for (let mult of manticoreMult) {
-                    totalMultiplier += mult - 1;
+                    totalMultiplier += mult;
                 }
-                totalMultiplier += pet.equipment.multiplier - 1;
                 damage *= totalMultiplier;
                 let nurikabe = 0;
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
@@ -999,7 +999,7 @@ export abstract class Pet {
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
                     for (let mult of manticoreMult) {
-                        message += ` x${mult} (Manticore)`;
+                        message += ` x${mult + 1} (Manticore)`;
                     }
                 }
                 if (pet.equipment.multiplier > 1) {
@@ -1067,6 +1067,7 @@ export abstract class Pet {
                 sign = '+';
             }
             message += ` (${defenseEquipment.name} ${sign}${power})`;
+            message += defenseEquipment.multiplierMessage;
         }
         if (attackEquipment != null && attackEquipment.equipmentClass == 'attack-snipe') {
             let power = Math.abs(attackEquipment.power);
@@ -1114,7 +1115,7 @@ export abstract class Pet {
         let hasAilment = manticoreAilments.includes(pet.equipment?.name);
         if (manticoreMult.length > 0 && hasAilment) {
             for (let mult of manticoreMult) {
-                message += ` x${mult} (Manticore)`;
+                message += ` x${mult + 1} (Manticore)`;
             }
         }
 
@@ -1194,15 +1195,11 @@ export abstract class Pet {
         if (defenseEquipment != null) {
 
             if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
-                let power = defenseEquipment.originalPower;
                 for (let mult of manticoreMult) {
-                    power *= mult;
+                    defenseMultiplier += mult;
                 }
-                defenseEquipment.power = power;
-            } else {
-                defenseEquipment.power = defenseEquipment.originalPower;
             }
-
+            defenseEquipment.power = defenseEquipment.originalPower * defenseMultiplier;
         }
 
 
@@ -1223,14 +1220,11 @@ export abstract class Pet {
             if (attackEquipment != null) {
             
                 if (manticoreAttackAilments.includes(attackEquipment?.name)) {
-                    let power = attackEquipment.originalPower;
                     for (let mult of manticoreMult) {
-                        power *= mult;
+                        attackMultiplier += mult;
                     }
-                    attackEquipment.power = power;
-                } else {
-                    attackEquipment.power = attackEquipment.originalPower;
-                }
+                } 
+                attackEquipment.power = attackEquipment.originalPower * attackMultiplier;
 
             }
 
@@ -1238,15 +1232,18 @@ export abstract class Pet {
             if (this.name == 'Monty') {
                 petAttack *= this.level + 1;
             }
-
-            attackAmt = power != null ? power + (
-                attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
-            ) : petAttack + (
-                attackEquipment?.power ? attackEquipment.power * attackMultiplier : 0
-            );
+            //use input power, or pet Attack
+            const baseAttack = power != null ? power : petAttack;
+            //0 if equipment is stuff liek salt
+            const equipmentBonus = attackEquipment?.power? attackEquipment.power : 0;
+            attackAmt = baseAttack + equipmentBonus;
         }
-        let defenseAmt = defenseEquipment?.power ? defenseEquipment.power * defenseMultiplier : 0;
+        let defenseAmt = defenseEquipment?.power ? defenseEquipment.power : 0;
         let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
+        //check garlic
+        if (defenseEquipment?.minimumDamage !== undefined) {
+            min = defenseEquipment.minimumDamage;
+        }
 
         let nurikabe = 0;
         if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
@@ -1263,9 +1260,7 @@ export abstract class Pet {
         if (attackEquipment instanceof FortuneCookie && !snipe) {
             // flip a coin
             if (Math.random() < 0.5) {
-                let totalMultiplier = 2; // Base fortune cookie multiplier
-                totalMultiplier += attackEquipment.multiplier - 1; // Add pandora's box multiplier
-                attackAmt *= totalMultiplier;
+                attackAmt *= (2 + attackMultiplier - 1);
                 fortuneCookie = true;
             }
         }
@@ -1277,7 +1272,7 @@ export abstract class Pet {
         if (pet.equipment instanceof Exposed) {
             let totalMultiplier = 2; // Base exposed multiplier
             for (let mult of manticoreMult) {
-                totalMultiplier += mult - 1; // Add manticore multipliers
+                totalMultiplier += mult; // Add manticore multipliers
             }
             totalMultiplier += pet.equipment.multiplier - 1; // Add pandora's box multiplier
             attackAmt *= totalMultiplier;
@@ -1443,7 +1438,7 @@ export abstract class Pet {
         }
     }
 
-    givePetEquipment(equipment: Equipment, fromPandorasBox: boolean = false) {
+    givePetEquipment(equipment: Equipment, pandorasBoxLevel: number = 1) {
         if (equipment == null) {
             console.warn(`givePetEquipment called with null equipment for pet: ${this.name}`);
             return;
@@ -1451,13 +1446,13 @@ export abstract class Pet {
         if (equipment.name == "Pita Bread" || equipment instanceof FairyDust || equipment.equipmentClass == 'beforeAttack' || equipment.equipmentClass == 'afterFaint') {
             console.log(equipment.name)
             this.equipment = equipment;
-            this.setEquipmentMultiplier(fromPandorasBox);
+            this.setEquipmentMultiplier(pandorasBoxLevel);
             this.equipment.callback(this);
         }
         if (equipment instanceof Blackberry) {
             // Temporarily set the equipment to calculate multiplier
             this.equipment = equipment;
-            this.setEquipmentMultiplier(fromPandorasBox);
+            this.setEquipmentMultiplier(pandorasBoxLevel);
             
             let attackGain = 1 * equipment.multiplier;
             let healthGain = 2 * equipment.multiplier;
@@ -1483,7 +1478,7 @@ export abstract class Pet {
                 return;
             }
             this.equipment = equipment;
-            this.setEquipmentMultiplier(fromPandorasBox);
+            this.setEquipmentMultiplier(pandorasBoxLevel);
 
             this.abilityService.triggerFriendGainedAilmentEvents(this);
             this.abilityService.executeFriendGainedAilmentEvents();
@@ -1494,7 +1489,7 @@ export abstract class Pet {
             this.equipment = equipment;
             
             // Set multiplier properties based on pet and toy
-            this.setEquipmentMultiplier(fromPandorasBox);
+            this.setEquipmentMultiplier(pandorasBoxLevel);
             
             this.abilityService.triggerGainedPerkEvents(this);
             this.abilityService.executeGainedPerkEvents();
@@ -1522,7 +1517,7 @@ export abstract class Pet {
         }
     }
 
-    setEquipmentMultiplier(fromPandorasBox: boolean = false) {
+    setEquipmentMultiplier(pandorasBoxLevel: number = 1) {
         if (!this.equipment) {
             return;
         }
@@ -1531,21 +1526,18 @@ export abstract class Pet {
         let messages: string[] = [];
         
         // Panther multiplies equipment effects based on level
-        if (this.name === 'Panther') {
+        if (this.name === 'Panther' &&
+            this.equipment.equipmentClass !== 'ailment-attack' &&
+            this.equipment.equipmentClass !== 'ailment-defense' &&
+            this.equipment.equipmentClass !== 'ailment-other') {
             multiplier += this.level;
-            messages.push('(Panther)');
+            messages.push(`x${this.level + 1} (Panther)`);
         }
         
         // Pandora's Box multiplies equipment effects based on toy level
-        // Only when the equipment is given BY Pandora's Box
-        if (fromPandorasBox) {
-            const pandorasBox = this.parent.toy;
-            if (pandorasBox && pandorasBox.name === "Pandoras Box") {
-                multiplier += pandorasBox.level - 1;
-                if (pandorasBox.level > 1) {
-                    messages.push(`(x${pandorasBox.level} Pandora's Box)`);
-                }
-            }
+        if (pandorasBoxLevel && pandorasBoxLevel > 1) {
+            multiplier += pandorasBoxLevel - 1;
+            messages.push(`x${pandorasBoxLevel} (Pandora's Box)`);
         }
         
         // Set the multiplier properties
@@ -1616,7 +1608,7 @@ export abstract class Pet {
             //     continue;
             // }
             if (pet.name == 'Manticore') {
-                mult.push(pet.level + 1);
+                mult.push(pet.level);
             }
         }
 

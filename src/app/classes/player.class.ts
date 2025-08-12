@@ -780,7 +780,7 @@ export class Player {
                 // if (petBehind != null && petBehind.name == 'Tiger') {
                 //     mult.push(petBehind.level + 1);
                 // }
-                mult.push(pet.level + 1);
+                mult.push(pet.level);
             }
         }
 

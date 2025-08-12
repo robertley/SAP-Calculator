@@ -74,7 +74,7 @@ export class PandorasBox extends Toy {
                 player: this.parent,
                 randomEvent: true,
             })
-            pet.givePetEquipment(equipment, true);
+            pet.givePetEquipment(equipment, this.level);
         }
     }
 
