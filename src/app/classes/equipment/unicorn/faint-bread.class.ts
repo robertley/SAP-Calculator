@@ -6,8 +6,9 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
-export class Popcorn extends Equipment {
-    name = 'Popcorn';
+
+export class FaintBread extends Equipment {
+    name = 'Faint Bread';
     equipmentClass: EquipmentClass = 'afterFaint';
     callback = (pet: Pet) => {
         let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
@@ -17,7 +18,7 @@ export class Popcorn extends Equipment {
             }
             
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Popcorn') {
+            if (pet.equipment?.name != 'Faint Bread') {
                 return;
             }
             
@@ -27,22 +28,7 @@ export class Popcorn extends Equipment {
             }
 
             for (let i = 0; i < multiplier; i++) {
-                let petPool;
-                if (pet.parent == this.gameService.gameApi.player) {
-                    petPool = this.gameService.gameApi.playerPetPool;
-                } else {
-                    petPool = this.gameService.gameApi.opponentPetPool;
-                }
-                let pets = petPool.get(pet.tier);
-                let petName = pets[Math.floor(Math.random() * pets.length)];
-                let popcornPet = this.petService.createPet({
-                    attack: null,
-                    equipment: null,
-                    exp: 0,
-                    health: null,
-                    name: petName,
-                    mana: 0
-                }, pet.parent);
+                let faintPet = this.petService.getRandomFaintPet(pet.parent, 1);
     
                 let pantherMessage = '';
                 if (i > 0) {
@@ -51,14 +37,14 @@ export class Popcorn extends Equipment {
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned ${popcornPet.name} (Popcorn)${pantherMessage}`,
+                        message: `${pet.name} Spawned ${faintPet.name} (Faint Bread)${pantherMessage}`,
                         type: "ability",
                         player: pet.parent,
                         randomEvent: true
                     }
                 )
-                if (pet.parent.summonPet(popcornPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(popcornPet);
+                if (pet.parent.summonPet(faintPet, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(faintPet);
                 }
             }
         }

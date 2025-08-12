@@ -51,7 +51,7 @@ export class Durian extends Equipment {
             }
             
             // Remove equipment after use
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
 

@@ -3006,72 +3006,23 @@ export class PetService {
         )
     }
 
-    getRandomFaintPet(parent: Player): Pet {
-        let faintPets = [
-            'Ant',
-            'Cricket',
-            'Rat',
-            'Hedgehog',
-            'Flamingo',
-            'Spider',
-            'Badger',
-            'Sheep',
-            'Turtle',
-            'Deer',
-            'Rooster',
-            'Mammoth',
-            'Beluga Sturgeon',
-            'Hoopoe Bird',
-            'Mole',
-            'Pangolin',
-            'Microbe',
-            'Tahr',
-            'Chameleon',
-            'Stonefish',
-            'Chicken',
-            'Eagle',
-            'Snapping Turtle',
-            'Lionfish',
-            'Stork',
-            'Blobfish',
-            'Anteater',
-            'Groundhog',
-            'Pied Tamarin',
-            'Black Necked Stilt',
-            'Squid',
-            'Flea',
-            'Weasel',
-            'Betta Fish',
-            'Osprey',
-            'Cuttlefish',
-            'Vaquita',
-            'Slug',
-            'Nyala',
-            'Nurse Shark',
-            'Wolf',
-            'Fire Ant',
-            'Warthog',
-            'Bear',
-            'Tapir',
-            'Walrus',
-            'Frost Wolf',
-            'Mothman',
-            'Gargoyle',
-            'Bigfoot',
-            'Skeleton Dog',
-            'Fur-Bearing Trout',
-            'Calygreyhound',
-            'Visitor',
-            'Chimera',
-            'Pixiu',
-            'Nessie',
-            'Phoenix',
-            'Sea Serpent',
-            'Hydra',
-            'Nightcrawler',
-            'Slime',
-            'Kappa'
-        ];
+    getRandomFaintPet(parent: Player, tier?: number): Pet {
+        let faintPetsByTier = {
+            1: ['Ant', 'Cricket', 'Groundhog', 'Pied Tamarin'],
+            2: ['Rat', 'Hedgehog', 'Flamingo', 'Spider', 'Stork', 'Beluga Sturgeon', 'Squid', 'Black Necked Stilt', 'Frost Wolf', 'Mothman', 'Gargoyle', 'Bigfoot', 'Nightcrawler'],
+            3: ['Badger', 'Sheep', 'Hoopoe Bird', 'Mole', 'Pangolin', 'Blobfish', 'Flea', 'Weasel', 'Osprey', 'Bear', 'Betta Fish', 'Skeleton Dog', 'Fur-Bearing Trout', 'Calygreyhound', 'Slime'],
+            4: ['Turtle', 'Deer', 'Anteater', 'Microbe', 'Tahr', 'Chameleon', 'Cuttlefish', 'Vaquita', 'Slug', 'Chimera', 'Visitor'],
+            5: ['Rooster', 'Eagle', 'Fire Ant', 'Stonefish', 'Nyala', 'Nurse Shark', 'Wolf', 'Nessie', 'Pixiu', 'Kappa'],
+            6: ['Mammoth', 'Snapping Turtle', 'Lionfish', 'Warthog', 'Walrus', 'Phoenix', 'Sea Serpent', 'Hydra']
+        };
+
+        let faintPets = [];
+        if (tier && faintPetsByTier[tier]) {
+            faintPets = faintPetsByTier[tier];
+        } else {
+            // If no tier specified or invalid tier, use all faint pets
+            faintPets = [].concat(...Object.values(faintPetsByTier));
+        }
         let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
         return this.createPet({
             name: petName,

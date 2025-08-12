@@ -90,7 +90,7 @@ export class Tomato extends Equipment {
             }
             
             // Remove equipment after use
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
 

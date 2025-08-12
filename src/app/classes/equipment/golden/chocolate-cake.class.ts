@@ -34,7 +34,7 @@ export class ChocolateCake extends Equipment {
                 })
             }
 
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
 

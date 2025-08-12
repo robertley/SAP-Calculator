@@ -88,7 +88,7 @@ export class Fig extends Equipment {
             }
             
             // Remove equipment after use
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
 

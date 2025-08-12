@@ -63,6 +63,8 @@ import { Weak } from "../classes/equipment/ailments/weak.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
 import { HoneydewMelon } from "../classes/equipment/golden/honeydew-melon.class";
 import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
+import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
+import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
 
 @Injectable({
     providedIn: "root"
@@ -127,6 +129,8 @@ export class EquipmentService {
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
         map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
         map.set('Honeydew Melon', new HoneydewMelon());
+        map.set('Ambrosia', new Ambrosia());
+        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
 
         return map;
     }

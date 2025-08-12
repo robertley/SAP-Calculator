@@ -103,7 +103,7 @@ export class Egg extends Equipment {
             }
             
             // Remove equipment after use
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
 

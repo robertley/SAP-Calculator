@@ -11,7 +11,7 @@ export class Armadillo extends Pet {
     tier = 5;
     pack: Pack = 'Turtle';
     attack = 2;
-    health = 6;
+    health = 10;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let boostPets = [
             ...this.parent.petArray,

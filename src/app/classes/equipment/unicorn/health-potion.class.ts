@@ -11,13 +11,14 @@ export class HealthPotion extends Equipment {
             if (originalBeforeStartOfBattle != null) {
                 originalBeforeStartOfBattle(gameApi);
             }
-            let power = pet.level * 3;
+            let power = 2;
+            let target = pet.parent.furthestUpPet;
             this.logService.createLog({
-                message: `${pet.name} gained ${power} health (Health Potion).`,
+                message: `${pet.name} gave ${power} health to ${target.name} (Health Potion).`,
                 type: 'equipment',
                 player: pet.parent
             })
-            pet.increaseHealth(power);
+            target.increaseHealth(power);
         }
     }
 

@@ -10,14 +10,15 @@ export class FairyDust extends Equipment {
             if (pet.parent.pet0 != null) {
                 return;
             }
-    
+            let manaAmmt = 2;
             this.logService.createLog({
-                message: `${pet.name} pushed itself to the front (Fairy Dust).`,
+                message: `${pet.name} pushed itself to the front and gained ${manaAmmt} mana(Fairy Dust).`,
                 type: 'ability',
                 player: pet.parent
             })
     
             pet.parent.pushPetToFront(pet, true);
+            pet.increaseMana(manaAmmt);
         }
 
         let originalEmptyFrontSpace = pet.emptyFrontSpace;

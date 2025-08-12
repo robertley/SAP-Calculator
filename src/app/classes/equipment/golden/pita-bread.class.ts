@@ -33,7 +33,7 @@ export class PitaBread extends Equipment {
                 player: pet.parent,
                 pantherMultiplier: multiplier
             })
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
     constructor(

@@ -40,7 +40,7 @@ export class GoldenEgg extends Equipment {
             }
             
             for (let i = 0; i < multiplier; i++) {
-                let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 5, true);
+                let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 6, true);
                 let defenseEquipment = damageResp.defenseEquipment;
                 let damage = damageResp.damage;
 
@@ -98,7 +98,7 @@ export class GoldenEgg extends Equipment {
             }
             
             // Remove equipment after use
-            pet.givePetEquipment(null);
+            pet.removePerk();
         }
     }
     

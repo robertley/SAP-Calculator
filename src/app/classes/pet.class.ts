@@ -22,6 +22,7 @@ import { PeanutButter } from "./equipment/hidden/peanut-butter";
 import { Blackberry } from "./equipment/puppy/blackberry.class";
 import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
 import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
+import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -1009,7 +1010,7 @@ export abstract class Pet {
                     player: pet.parent
                 });
                 pet.health -= damage;
-                pet.givePetEquipment(null);
+                pet.removePerk();
             }
         }
     }
@@ -1436,9 +1437,8 @@ export abstract class Pet {
     }
 
     givePetEquipment(equipment: Equipment) {
-        this.equipment = equipment;
-
         if (equipment == null) {
+            console.warn(`givePetEquipment called with null equipment for pet: ${this.name}`);
             return;
         }
         if (equipment.name == "Pita Bread" || equipment instanceof FairyDust || equipment.equipmentClass == 'beforeAttack' || equipment.equipmentClass == 'afterFaint') {
@@ -1460,12 +1460,26 @@ export abstract class Pet {
             })
         }
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense' || equipment.equipmentClass == 'ailment-other') {
+            if (this.equipment instanceof Ambrosia) {
+                this.equipment.uses--;
+                this.logService.createLog({
+                    message: `${this.name} blocked ${equipment.name}. (Ambrosia)`,
+                    type: 'equipment',
+                    player: this.parent
+                });
+                if (this.equipment.uses == 0) {
+                    this.removePerk();
+                }
+                return;
+            }
+            this.equipment = equipment;
             this.abilityService.triggerFriendGainedAilmentEvents(this);
             this.abilityService.executeFriendGainedAilmentEvents();
 
             this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
             this.abilityService.executeEnemyGainedAilmentEvents();
         } else {
+            this.equipment = equipment;
             this.abilityService.triggerGainedPerkEvents(this);
             this.abilityService.executeGainedPerkEvents();
             this.abilityService.triggerFriendGainedPerkEvents(this);

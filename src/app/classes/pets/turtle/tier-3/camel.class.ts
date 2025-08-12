@@ -8,7 +8,7 @@ export class Camel extends Pet {
     name = "Camel";
     tier = 3;
     pack: Pack = 'Turtle';
-    health = 4;
+    health = 3;
     attack = 3;
     hurt(gameApi, pet, tiger) {
         let boostPet = this.petBehind();
