@@ -17,6 +17,9 @@ export class Tatzelwurm extends Pet {
             power = power * 2;
         }
         let target = this.parent.opponent.getRandomPet();
+        if (target == null) {
+            return;
+        }
         this.snipePet(target, power, true, tiger);
         this.superFriendAheadFaints(gameApi, pet, tiger);
     }

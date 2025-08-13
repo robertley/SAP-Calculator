@@ -18,13 +18,19 @@ export class Vulture extends Pet {
         if (this.abilityUses % 2 == 1) {
             return;
         }
-        let opponent = this.parent.opponent;
-        let target = opponent.getRandomPet(null, null, true);
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 4;
-        this.snipePet(target, power, true, tiger);
+
+        this.abilityService.setCounterEvent({
+            callback: () => {
+                let opponent = this.parent.opponent;
+                let target = opponent.getRandomPet(null, null, true);
+                if (target == null) {
+                    return;
+                }
+                let power = this.level * 4;
+                this.snipePet(target, power, true, tiger);        
+            },
+            priority: this.attack
+        });
         this.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

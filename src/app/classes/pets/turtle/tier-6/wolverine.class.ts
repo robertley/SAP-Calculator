@@ -21,19 +21,24 @@ export class Wolverine extends Pet {
         if (this.abilityUses % 4 != 0) {
             return
         }
-        let targets = [...this.parent.opponent.petArray ];
-        targets = targets.filter(pet => pet.alive);
-        for (let targetPet of targets) {
-            let power = 3 * this.level;
-            let reducedTo =  Math.max(1, Math.floor(targetPet.health - power));
-            targetPet.health = reducedTo;
-            this.logService.createLog({
-                message: `${this.name} reduced ${targetPet.name} health by ${power} (${reducedTo})`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });  
-        } 
+        this.abilityService.setCounterEvent({
+            callback: () => {
+                let targets = [...this.parent.opponent.petArray ];
+                targets = targets.filter(pet => pet.alive);
+                for (let targetPet of targets) {
+                    let power = 3 * this.level;
+                    let reducedTo =  Math.max(1, Math.floor(targetPet.health - power));
+                    targetPet.health = reducedTo;
+                    this.logService.createLog({
+                        message: `${this.name} reduced ${targetPet.name} health by ${power} (${reducedTo})`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger
+                    });  
+                }         
+            },
+            priority: this.attack
+        });
         this.superFriendHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

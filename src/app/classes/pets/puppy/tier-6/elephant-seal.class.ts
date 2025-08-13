@@ -25,7 +25,7 @@ export class ElephantSeal extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    GainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
+    gainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
         if (pet != this) {
             return;
         }

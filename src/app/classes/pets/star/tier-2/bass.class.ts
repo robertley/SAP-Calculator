@@ -24,6 +24,10 @@ export class Bass extends Pet {
 
         if (potentialTargets.length > 0) {
             const target = potentialTargets[Math.floor(Math.random() * potentialTargets.length)];
+
+            if (target == null) {
+                return;
+            }
             
             const expGain = this.level;
 

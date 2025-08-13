@@ -9,6 +9,9 @@ export class ToyGun extends Toy {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
             let target = opponent.getLastPet();
+            if (target == null) {
+                return;
+            }
             this.toyService.snipePet(target, 6, this.parent, this.name, false, puma);
         }
     }

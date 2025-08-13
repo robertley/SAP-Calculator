@@ -15,6 +15,9 @@ export class Seahorse extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let target = opponent.getLastPet();
+        if (target == null) {
+            return;
+        }
         this.parent.pushPet(target, this.level);
         let s = this.level > 1 ? 's' : '';
         this.logService.createLog(

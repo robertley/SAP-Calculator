@@ -13,6 +13,9 @@ export class HealthPotion extends Equipment {
             }
             let power = 2 * this.multiplier;
             let target = pet.parent.furthestUpPet;
+            if (target == null) {
+                return;
+            }
             this.logService.createLog({
                 message: `${pet.name} gave ${power} health to ${target.name} (Health Potion)${this.multiplierMessage}.`,
                 type: 'equipment',

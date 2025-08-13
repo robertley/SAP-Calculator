@@ -26,7 +26,9 @@ export class Kitsune extends Pet {
         pet.mana = 0;
 
         let target = this.petAhead;
-
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
             message: `${this.name} took ${mana} mana from ${pet.name} and gave it to ${target.name} +${this.level * 2}.`,
             type: "ability",

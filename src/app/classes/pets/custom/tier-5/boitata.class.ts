@@ -18,6 +18,9 @@ export class Boitata extends Pet {
             return;
         }
         let target = this.parent.opponent.furthestUpPet;
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
             message: `${this.name} gave ${target.name} Crisp.`,
             type: 'ability',

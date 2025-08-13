@@ -13,6 +13,9 @@ export class Thunderbird extends Pet {
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let target = this.parent.furthestUpPet;
+        if (target == null) {
+            return;
+        }
         let power = this.level * 3;
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${power} mana.`,

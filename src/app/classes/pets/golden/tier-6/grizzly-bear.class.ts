@@ -27,15 +27,20 @@ export class GrizzlyBear extends Pet {
         if (this.abilityUses % 5 != 0) {
             return
         }
-        let targets = shuffle(this.parent.opponent.petArray);
-        let power = this.level * 6;
-        for (let i = 0; i < 2; i++) {
-            let target = targets[i];
-            if (target == null) {
-                break;
-            }
-            this.snipePet(target, power, true, tiger);
-        }
+        this.abilityService.setCounterEvent({
+            callback: () => {
+                let targets = shuffle(this.parent.opponent.petArray);
+                let power = this.level * 6;
+                for (let i = 0; i < 2; i++) {
+                    let target = targets[i];
+                    if (target == null) {
+                        break;
+                    }
+                    this.snipePet(target, power, true, tiger);
+                }        
+            },
+            priority: this.attack
+        });
         this.superFriendAttacks(gameApi, tiger);
     }
     constructor(protected logService: LogService,

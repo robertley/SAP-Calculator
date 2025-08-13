@@ -7,6 +7,9 @@ export class Balloon extends Toy {
     tier = 1;
     onBreak(gameApi?: GameAPI, puma?: boolean) {
         let target = this.parent.furthestUpPet;
+        if (target == null) {
+            return;
+        }
         let power = this.level;
         target.increaseAttack(power);
         target.increaseHealth(power);

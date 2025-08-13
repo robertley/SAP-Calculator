@@ -19,7 +19,7 @@ export class Badger extends Pet {
             opponent = gameApi.player;
         }
 
-        let attackAmt = this.attack * (this.level * .5);
+        let attackAmt = Math.floor(this.attack * (this.level * .5));
         if (this.petBehind()) {
             this.snipePet(this.petBehind(), attackAmt, false, tiger, pteranodon);
         }

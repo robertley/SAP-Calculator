@@ -36,6 +36,10 @@ export class AxehandleHound extends Pet {
         
         let target = targets[Math.floor(Math.random() * targets.length)];
 
+        if (target == null) {
+            return;
+        }
+
         this.logService.createLog({
             message: `${this.name} sniped ${target.name} for ${this.level * 10} damage`,
             type: "ability",

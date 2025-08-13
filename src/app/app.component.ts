@@ -694,7 +694,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   abilityCycle() {
     // First, add all existing events from type-specific arrays to global queue
-    this.abilityService.migrateExistingEventsToQueue();
+    //this.abilityService.migrateExistingEventsToQueue();
     
     // Process all events in priority order until queue is empty
     while (this.abilityService.hasGlobalEvents) {
