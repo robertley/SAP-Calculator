@@ -4,8 +4,8 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class StringRay extends Pet {
-    name = "String Ray";
+export class StingRay extends Pet {
+    name = "Sting Ray";
     tier = 5;
     pack: Pack = 'Puppy';
     attack = 4;

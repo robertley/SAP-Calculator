@@ -116,7 +116,7 @@ import { Axolotl } from "../classes/pets/puppy/tier-5/axolotl.class";
 import { Goat } from "../classes/pets/puppy/tier-5/goat.class";
 import { SnappingTurtle } from "../classes/pets/puppy/tier-5/snapping-turtle.class";
 import { Mosasaurus } from "../classes/pets/puppy/tier-5/mosasaurus.class";
-import { StringRay } from "../classes/pets/puppy/tier-5/string-ray.class";
+import { StingRay } from "../classes/pets/puppy/tier-5/string-ray.class";
 import { MantisShrimp } from "../classes/pets/puppy/tier-6/mantis-shrimp.class";
 import { Lionfish } from "../classes/pets/puppy/tier-6/lion-fish.class";
 import { Tyrannosaurus } from "../classes/pets/puppy/tier-6/tyrannosaurus.class";
@@ -631,7 +631,7 @@ export class PetService {
             "Axolotl",
             "Snapping Turtle",
             "Mosasaurus",
-            "String Ray"
+            "Sting Ray"
         ])
 
         this.puppyPackPets.set(6, [
@@ -1225,8 +1225,8 @@ export class PetService {
                 return new SnappingTurtle(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Mosasaurus':
                 return new Mosasaurus(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-            case 'String Ray':
-                return new StringRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Sting Ray':
+                return new StingRay(this.logService, this.abilityService,  parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // tier 6
             case 'Mantis Shrimp':
@@ -2175,8 +2175,8 @@ export class PetService {
         if (pet instanceof Mosasaurus) {
             newPet = new Mosasaurus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
-        if (pet instanceof StringRay) {
-            newPet = new StringRay(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        if (pet instanceof StingRay) {
+            newPet = new StingRay(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
 
         // Tier 6
