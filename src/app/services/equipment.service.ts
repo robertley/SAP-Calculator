@@ -16,6 +16,7 @@ import { Blackberry } from "../classes/equipment/puppy/blackberry.class";
 import { Croissant } from "../classes/equipment/puppy/croissant.class";
 import { Rice } from "../classes/equipment/puppy/rice.class";
 import { Egg } from "../classes/equipment/puppy/egg.class";
+import { Eucalyptus } from '../classes/equipment/puppy/eucalyptus.class';
 import { Lime } from "../classes/equipment/puppy/lime.class";
 import { Squash } from "../classes/equipment/puppy/squash.class";
 import { Salt } from "../classes/equipment/puppy/salt.class";
@@ -89,6 +90,7 @@ export class EquipmentService {
         map.set('Blackberry', new Blackberry());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
+        map.set('Eucalyptus', new Eucalyptus());
         map.set('Lime', new Lime());    
         map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Squash', new Squash(this.logService, this.abilityService));
@@ -97,7 +99,7 @@ export class EquipmentService {
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
         map.set('Pancakes', new Pancakes(this.logService));
-        map.set('Strawberry', new Strawberry());
+        map.set('Strawberry', new Strawberry(this.logService, this.abilityService));
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());
         map.set('Grapes', new Grapes());

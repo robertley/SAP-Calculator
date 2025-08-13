@@ -2,36 +2,35 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
+import { Strawberry } from "../../../equipment/star/strawberry.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Cassowary extends Pet {
-    name = "Cassowary";
-    tier = 3;
+export class Pheasant extends Pet {
+    name = "Pheasant";
+    tier = 1;
     pack: Pack = 'Star';
-    attack = 5;
-    health = 2;
+    attack = 2;
+    health = 1;
+    abilityUses = 0;
+    maxAbilityUses: number;
 
-    friendGainedPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet.parent !== this.parent || pet.equipment?.name !== 'Strawberry') {
-            this.superFriendGainedPerk(gameApi, pet, tiger);
+    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
 
-        const buffAmount = this.level;
-
         this.logService.createLog({
-            message: `${this.name} gained +${buffAmount} permanent health and +${buffAmount} attack for this battle.`,
+            message: `${this.name} gave ${pet.name} a Strawberry.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         });
 
-        this.increaseHealth(buffAmount);
-        
-        this.increaseAttack(buffAmount);
+        pet.givePetEquipment(new Strawberry());
 
-        this.superFriendGainedPerk(gameApi, pet, tiger);
+        this.abilityUses++;
+        this.superFriendSummoned(gameApi, pet, tiger);
     }
 
     constructor(protected logService: LogService,
@@ -44,5 +43,10 @@ export class Cassowary extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = this.level;
     }
 }
