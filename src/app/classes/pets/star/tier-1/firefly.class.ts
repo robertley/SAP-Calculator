@@ -52,6 +52,7 @@ export class Firefly extends Pet {
         this.superFaint(gameApi, tiger);
     }
 
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

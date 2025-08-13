@@ -34,7 +34,6 @@ export class Chihuahua extends Pet {
 
         this.superStartOfBattle(gameApi, tiger);
     }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -6,6 +6,7 @@ import { Strawberry } from "../../../equipment/star/strawberry.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
+
 export class Pheasant extends Pet {
     name = "Pheasant";
     tier = 1;
@@ -32,7 +33,6 @@ export class Pheasant extends Pet {
         this.abilityUses++;
         this.superFriendSummoned(gameApi, pet, tiger);
     }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -47,6 +47,5 @@ export class Pheasant extends Pet {
 
     setAbilityUses(): void {
         super.setAbilityUses();
-        this.maxAbilityUses = this.level;
     }
 }

@@ -9,7 +9,7 @@ export class Pillbug extends Pet {
     tier = 1;
     pack: Pack = 'Star';
     attack = 2;
-    health = 2;
+    health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

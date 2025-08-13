@@ -11,7 +11,7 @@ export class Bass extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 3;
-
+  
     // A list of pets with a "Sell" ability, needed for targeting. TO DO: add all sell pets
     private sellPets = [
         'Beaver', 'Duck', 'Pig', 'Pillbug', 'Kiwi', 'Mouse', 'Frog', 'Bass'

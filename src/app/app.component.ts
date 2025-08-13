@@ -971,7 +971,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.setBeforeAttackEvent({
         callback: this.player.pet0.beforeAttack.bind(this.player.pet0),
         priority: this.player.pet0.attack,
-        player: this.player
+        player: this.player,
+        pet: this.player.pet0
       })
     }
 
@@ -979,7 +980,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.setBeforeAttackEvent({
         callback: this.opponent.pet0.beforeAttack.bind(this.opponent.pet0),
         priority: this.opponent.pet0.attack,
-        player: this.opponent
+        player: this.opponent,
+        pet: this.opponent.pet0
       })
     }
 
