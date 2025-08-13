@@ -605,6 +605,7 @@ export abstract class Pet {
         this.exp = this.petBehind(null, true).minExpForLevel;
         this.originalBeforeAttack(gameApi, true)
         this.exp = exp;
+
     }
 
     protected superBeforeFriendAttacks(gameApi, pet, tiger=false) {

@@ -13,9 +13,9 @@ export class DropBear extends Pet {
     health = 2;
     // TODO check tiger interaction
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        // if (this.parent.pet0 != null) {
-        //     return;
-        // }
+        if (this.parent.pet0 != null) {
+            return;
+        }
 
         this.logService.createLog({
             message: `${this.name} pushed itself to the front.`,

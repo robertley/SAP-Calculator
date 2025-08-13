@@ -857,7 +857,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       while (this.abilityService.hasAbilityCycleEvents) {
         this.abilityCycle();
       }
-      
       //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();
@@ -965,6 +964,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
     this.pushPetsForwards();
+    this.logService.printState(this.player, this.opponent);
 
     // init before attack events
     if (this.player.pet0.beforeAttack) {
@@ -1020,8 +1020,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     while (this.abilityService.hasAbilityCycleEvents) {
       this.abilityCycle();
     }
-
-    this.logService.printState(this.player, this.opponent);
   }
 
   chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
@@ -1127,10 +1125,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   pushPetsForwards() {
-    let turnOne = this.turns == 1;
-    if (turnOne && this.player.pet0 && this.opponent.pet0) {
-      return;
-    }
 
     this.player.pushPetsForward();
     this.opponent.pushPetsForward();

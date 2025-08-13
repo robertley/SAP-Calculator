@@ -288,6 +288,7 @@ import { Amargasaurus } from '../classes/pets/custom/tier-6/amargasaurus.class';
 import { Opossum } from "../classes/pets/golden/tier-1/oposum.class";
 import { Kiwi } from "../classes/pets/star/tier-1/kiwi.class";
 import { Firefly } from '../classes/pets/star/tier-1/firefly.class';
+import { Bass } from '../classes/pets/star/tier-2/bass.class';
 import { Pigeon } from "../classes/pets/turtle/tier-1/pigeon.class";
 import { Hare } from "../classes/pets/puppy/tier-3/hare.class";
 import { Baku } from "../classes/pets/unicorn/tier-1/baku.class";

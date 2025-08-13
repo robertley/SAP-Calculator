@@ -21,9 +21,8 @@ export class Whale extends Pet {
         if (!targetPet) {
             return;
         }
-        let swallowPet = clone(targetPet);
+        let swallowPet = this.petService.createDefaultVersionOfPet(targetPet, targetPet.attack, targetPet.health);
         swallowPet.exp = this.exp;
-        swallowPet.removePerk();
         this.swallowedPets.push(swallowPet);
         targetPet.health = 0;
         this.logService.createLog({
@@ -35,7 +34,8 @@ export class Whale extends Pet {
         this.superStartOfBattle(gameApi, tiger);
     }
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        for (let pet of this.swallowedPets) {
+        while (this.swallowedPets.length > 0) {
+            let pet = this.swallowedPets.shift();
             this.logService.createLog({
                 message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
                 type: 'ability',

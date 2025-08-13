@@ -15,9 +15,9 @@ export class Cerberus extends Pet {
     attack = 9;
     health = 9;
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        // if (this.parent.pet0 != null) {
-        //     return;
-        // }
+        if (this.parent.pet0 != null) {
+            return;
+        }
 
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
