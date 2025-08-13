@@ -58,6 +58,8 @@ import { MagicBeans } from "../../../equipment/unicorn/magic-beans.class";
 import { Rambutan } from "../../../equipment/unicorn/rambutan.class";
 import { Squash } from "../../../equipment/puppy/squash.class";
 import { HoneydewMelon } from "../../../equipment/golden/honeydew-melon.class";
+import { Ambrosia } from "../../../equipment/unicorn/ambrosia.class";
+import { FaintBread } from "../../../equipment/unicorn/faint-bread.class";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -120,10 +122,10 @@ export class Seagull extends Pet {
         map.set('Lime', new Lime());
         map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Salt', new Salt());
-        map.set('Pie', new Pie());
+        map.set('Pie', new Pie(this.logService));
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
-        map.set('Pancakes', new Pancakes());
+        map.set('Pancakes', new Pancakes(this.logService));
         map.set('Strawberry', new Strawberry());
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());
@@ -156,6 +158,8 @@ export class Seagull extends Pet {
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
         map.set('Squash', new Squash(this.logService, this.abilityService));
         map.set('Honeydew Melon', new HoneydewMelon());
+        map.set('Ambrosia', new Ambrosia());
+        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
 
         return map;
     }

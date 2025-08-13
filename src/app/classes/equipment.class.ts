@@ -11,6 +11,12 @@ export class Equipment {
     callback: (pet: Pet) => void;
     attackCallback?: (pet: Pet, attackedPet: Pet) => void;
     
+    // Multiplier properties set when equipment is equipped
+    multiplier: number = 1;
+    multiplierMessage: string = '';
+    
+    // Optional minimum damage this equipment can reduce attacks to
+    minimumDamage?: number;
 
     constructor() {
         this.originalPower = this.power;
@@ -25,5 +31,5 @@ export class Equipment {
 // currently being used for tomato, egg, but also durian
 // basically it is before attack. Cake is a special case that also has this class name so didnt want to change it
 export type EquipmentClass = 
-    'shop' | 'defense' | 'shield' | 'attack' | 'ailment-defense' | 'ailment-attack' | 'faint' | 'attack-snipe'
+    'shop' | 'defense' | 'shield' | 'attack' | 'ailment-defense' | 'ailment-attack' | 'faint' | 'afterFaint' | 'attack-snipe'
     | 'skewer' | 'snipe' | 'beforeStartOfBattle' | 'beforeAttack' | 'startOfBattle' | 'shield-snipe' | 'hurt' | 'target' | 'ailment-other';

@@ -6,12 +6,19 @@ export class GingerbreadMan extends Equipment {
     name = 'Gingerbread Man';
     equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
     callback = (pet: Pet) => {
-        this.logService.createLog({
-            message: `${pet.name} increased gained 1 experience (Gingerbread Man).`,
-            type: 'equipment',
-            player: pet.parent
-        })
-        pet.increaseExp(1);
+        let originalBeforeStartOfBattle = pet.originalBeforeStartOfBattle?.bind(pet);
+        pet.beforeStartOfBattle = (gameApi) => {
+            if (originalBeforeStartOfBattle != null) {
+                originalBeforeStartOfBattle(gameApi);
+            }
+            let expGain = 1 * this.multiplier;
+            this.logService.createLog({
+                message: `${pet.name} gained ${expGain} experience (Gingerbread Man)${this.multiplierMessage}.`,
+                type: 'equipment',
+                player: pet.parent
+            })
+            pet.increaseExp(expGain);
+        }
     }
 
     constructor(private logService: LogService) {

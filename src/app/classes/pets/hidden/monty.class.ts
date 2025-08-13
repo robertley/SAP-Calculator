@@ -9,8 +9,8 @@ export class Monty extends Pet {
     tier = 1;
     pack: Pack = 'Unicorn';
     hidden: boolean = true;
-    health = 1;
-    attack = 2;
+    health = 3;
+    attack = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

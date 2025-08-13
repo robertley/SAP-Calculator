@@ -17,9 +17,9 @@ export class Emu extends Pet {
         if (!target) {
             return;
         }
-        if (this.parent.pet0 != null) {
-            return;
-        }
+        // if (this.parent.pet0 != null) {
+        //     return;
+        // }
         this.parent.pushPet(target, 4);
         this.logService.createLog({
             message: `${this.name} pushed ${target.name} to the front.`,

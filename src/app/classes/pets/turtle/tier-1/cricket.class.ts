@@ -11,7 +11,7 @@ export class Cricket extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 1;
-    faint(gameApi, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi, tiger, pteranodon?: boolean) {
         let level = 1;
         let exp = 0;
         if (this.level == 2) {
@@ -21,30 +21,25 @@ export class Cricket extends Pet {
             exp = 5;
             level = 3;
         }
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let zombie = new ZombieCricket(this.logService, this.abilityService, this.parent, null, null, null, exp);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Zombie Cricket Level ${level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        let zombie = new ZombieCricket(this.logService, this.abilityService, this.parent, null, null, null, exp);
 
-                if (this.parent.summonPet(zombie, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(zombie);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Zombie Cricket Level ${level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
 
-        super.superFaint(gameApi, tiger);
+        if (this.parent.summonPet(zombie, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(zombie);
+        }
+
+        super.superAfterFaint(gameApi, tiger, pteranodon);
         
-    };
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

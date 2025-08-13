@@ -23,6 +23,8 @@ export class SaigaAntelope extends Pet {
             return;
         }
         this.parent.gainTrumpets(this.level * 3, this);
+        
+        super.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

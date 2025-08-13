@@ -17,25 +17,22 @@ export class Lizard extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let lizardTail = new LizardTail(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Liazrd Tail Level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger
-                    }
-                )
 
-                if (this.parent.summonPet(lizardTail, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(lizardTail);
-                }
-            },
-            priority: this.attack
-        })
+        let lizardTail = new LizardTail(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
+
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned Liazrd Tail Level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger
+            }
+        )
+
+        if (this.parent.summonPetInFront(this, lizardTail)) {
+            this.abilityService.triggerSummonedEvents(lizardTail);
+        }
+
         this.abilityUses++;
 
         super.superFaint(gameApi, tiger);

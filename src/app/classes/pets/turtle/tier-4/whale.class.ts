@@ -34,25 +34,19 @@ export class Whale extends Pet {
         });
         this.superStartOfBattle(gameApi, tiger);
     }
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let pet of this.swallowedPets) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    this.logService.createLog({
-                        message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    })
-                    this.parent.summonPet(pet, this.savedPosition);
-                    this.abilityService.triggerSummonedEvents(pet);
-                },
-                priority: this.attack,
-                player: this.parent
+            this.logService.createLog({
+                message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
             })
-
+            this.parent.summonPet(pet, this.savedPosition);
+            this.abilityService.triggerSummonedEvents(pet);
         }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

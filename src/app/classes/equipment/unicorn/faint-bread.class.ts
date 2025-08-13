@@ -1,12 +1,14 @@
 import { AbilityService } from "../../../services/ability.service";
+import { GameService } from "../../../services/game.service";
 import { LogService } from "../../../services/log.service";
+import { PetService } from "../../../services/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Monty } from "../../pets/hidden/monty.class";
 
-export class EasterEgg extends Equipment {
-    name = 'Easter Egg';
-    equipmentClass = 'afterFaint' as EquipmentClass;
+
+export class FaintBread extends Equipment {
+    name = 'Faint Bread';
+    equipmentClass: EquipmentClass = 'afterFaint';
     callback = (pet: Pet) => {
         let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
         pet.afterFaint = (gameApi) => {
@@ -15,31 +17,38 @@ export class EasterEgg extends Equipment {
             }
             
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Easter Egg') {
+            if (pet.equipment?.name != 'Faint Bread') {
                 return;
             }
             
             for (let i = 0; i < this.multiplier; i++) {
-                let monty = new Monty(this.logService, this.abilityService, pet.parent, null, null, 0, 0);
+                let faintPet = this.petService.getRandomFaintPet(pet.parent, 1);
     
                 let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned Monty (Easter Egg)${multiplierMessage}`,
+                        message: `${pet.name} Spawned ${faintPet.name} (Faint Bread)${multiplierMessage}`,
                         type: "ability",
-                        player: pet.parent
+                        player: pet.parent,
+                        randomEvent: true
                     }
                 )
-                if (pet.parent.summonPet(monty, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(monty);
+                if (pet.parent.summonPet(faintPet, pet.savedPosition)) {
+                    this.abilityService.triggerSummonedEvents(faintPet);
                 }
             }
         }
     }
-    
 
-    constructor(private logService: LogService, private abilityService: AbilityService) {
-        super();
+    constructor(
+        protected logService: LogService,
+        protected abilityService: AbilityService,
+        protected petService: PetService,
+        protected gameService: GameService
+
+    ) {
+        super()
     }
+
 }

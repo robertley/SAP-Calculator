@@ -15,41 +15,36 @@ export class Wolf extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power: Power = {
             attack: this.level * 3,
             health: this.level * 2
         }
         for (let i = 0; i < 3; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let pig = this.petService.createPet({
-                        attack: power.attack,
-                        equipment: null,
-                        exp: this.minExpForLevel,
-                        health: power.health,
-                        name: 'Pig',
-                        mana: 0
-                    }, this.parent);
-            
-                    this.logService.createLog(
-                        {
-                            message: `${this.name} spawned ${pig.name} ${power.attack}/${power.health}`,
-                            type: "ability",
-                            player: this.parent,
-                            tiger: tiger,
-                            pteranodon: pteranodon
-                        }
-                    )
+            let pig = this.petService.createPet({
+                attack: power.attack,
+                equipment: null,
+                exp: this.minExpForLevel,
+                health: power.health,
+                name: 'Pig',
+                mana: 0
+            }, this.parent);
     
-                    if (this.parent.summonPet(pig, this.savedPosition)) {
-                        this.abilityService.triggerSummonedEvents(pig);
-                    }
-                },
-                priority: this.attack
-            })
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${pig.name} ${power.attack}/${power.health}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )
+
+            if (this.parent.summonPet(pig, this.savedPosition)) {
+                this.abilityService.triggerSummonedEvents(pig);
+            }
         }
-        this.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

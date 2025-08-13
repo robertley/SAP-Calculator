@@ -18,12 +18,13 @@ export class AbilityService {
     private faintEvents: AbilityEvent[] = [];
     private summonedEvents: AbilityEvent[] = [];
     private friendFaintsEvents: AbilityEvent[] = [];
-    private spawnEvents: AbilityEvent[] = [];
     private friendAheadAttacksEvents: AbilityEvent[]= [];
     private afterAttackEvents: AbilityEvent[]= [];
     private friendAheadFaintsEvents: AbilityEvent[]= [];
     private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
+    private processedBeforeAttackPets: Set<Pet> = new Set();
+    private beforeStartOfBattleEvents: AbilityEvent[]= [];
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
     private friendLostPerkEvents: AbilityEvent[]= []; 
     private gainedPerkEvents: AbilityEvent[]= [];
@@ -43,6 +44,7 @@ export class AbilityService {
     private manaEvents: AbilityEvent[]= [];
     private friendGainsHealthEvents: AbilityEvent[]= [];
     private friendGainedExperienceEvents: AbilityEvent[] = [];
+    private afterFaintEvents: AbilityEvent[] = [];
 
     // toy events
     private emptyFrontSpaceToyEvents: AbilityEvent[]= [];
@@ -51,24 +53,374 @@ export class AbilityService {
     private friendFaintsToyEvents: AbilityEvent[]= [];
     private friendJumpedToyEvents: AbilityEvent[]= [];
 
+    // Global priority queue system
+    private globalEventQueue: AbilityEvent[] = [];
+    
+    // Priority mapping (lower number = higher priority)
+    private readonly ABILITY_PRIORITIES = {
+        'levelUp': 1,
+        'friendLevelUp': 2,
+        'friendlyLevelUp': 2,
+        'hurt': 3,
+        'friendHurt': 4,
+        'enemyHurt': 4,
+        'gainsMana': 5,
+        'summoned': 6,
+        'friendSummoned': 7,
+        'enemySummoned': 7,
+        'friendJumped': 8,
+        'faint': 9,
+        'friendAheadFaints': 10,
+        'afterFaint': 11,
+        'friendFaints': 12,
+        'enemyFaints': 12,
+        'friendlyToyBroke': 12,
+        'knockOut': 13,
+        'transformed': 14,
+        'friendGainedExperience': 15,
+        'friendlyAteFood': 16,
+        'eatsFood': 16,
+        'abilitiesWithCounters': 17,
+        'friendLostPerk': 18,
+        'gainPerk': 19,
+        'gainAilment': 19,
+        'friendlyGainedPerk': 20,
+        'enemyGainedPerk': 20,
+        'friendlyGainedAilment': 20,
+        'enemyGainedAilment': 20,
+        'petFlung': 21,
+        'manaSnipe': 22,
+        'emptyFrontSpace': 23,
+        'goldenRetrieverSummons': 24
+    };
+
     constructor(private gameService: GameService) {
         
     }
     
 
     get hasAbilityCycleEvents() {
-        return this.hasFaintEvents ||
-            this.hasSummonedEvents ||
-            this.hasHurtEvents ||
-            this.hasEquipmentBeforeAttackEvents || 
-            this.hasFriendHurtEvents ||
-            this.hasEnemyHurtEvents ||
-            this.hasKnockOutEvents ||
-            this.hasEmptyFrontSpaceEvents ||
-            this.hasFriendFaintsEvents || 
-            this.hasSpawnEvents ||
-            this.hasFriendAheadFaintsEvents ||
-            this.hasEnemySummonedEvents
+        // With the new priority queue system, only check the global queue
+        // All events are migrated to globalEventQueue at the start of abilityCycle()
+        return this.globalEventQueue.length > 0;
+    }
+
+    // Binary search insertion for maintaining sorted priority queue
+    private addEventToQueue(event: AbilityEvent) {
+        // Set priority based on ability type
+        const abilityPriority = this.ABILITY_PRIORITIES[event.abilityType] || 999;
+        
+        // Binary search to find insertion point
+        let left = 0;
+        let right = this.globalEventQueue.length;
+        
+        while (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            const midEvent = this.globalEventQueue[mid];
+            const midAbilityPriority = this.ABILITY_PRIORITIES[midEvent.abilityType] || 999;
+            
+            // Compare ability type priority first
+            if (abilityPriority < midAbilityPriority) {
+                right = mid;
+            } else if (abilityPriority > midAbilityPriority) {
+                left = mid + 1;
+            } else {
+                // Same ability type priority, compare individual event priority (higher = first)
+                if (event.priority > midEvent.priority) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+        }
+        
+        // Insert at found position
+        this.globalEventQueue.splice(left, 0, event);
+    }
+
+    // Clear the global event queue
+    clearGlobalEventQueue() {
+        this.globalEventQueue = [];
+    }
+
+    // Check if global queue has events
+    get hasGlobalEvents(): boolean {
+        return this.globalEventQueue.length > 0;
+    }
+
+    // Get the next highest priority event from the queue
+    getNextHighestPriorityEvent(): AbilityEvent | null {
+        return this.globalEventQueue.shift() || null;
+    }
+
+    // Peek at the next highest priority event without removing it
+    peekNextHighestPriorityEvent(): AbilityEvent | null {
+        return this.globalEventQueue.length > 0 ? this.globalEventQueue[0] : null;
+    }
+
+    // Get numeric priority for an ability type
+    getPriorityNumber(abilityType: string): number {
+        return this.ABILITY_PRIORITIES[abilityType] || 999;
+    }
+
+    // Execute event callback with proper parameters based on ability type
+    executeEventCallback(event: AbilityEvent) {
+        const gameApi = this.gameService.gameApi;
+        
+        switch (event.abilityType) {
+            case 'hurt':
+            case 'faint':
+            case 'knockOut':
+            case 'beforeStartOfBattle':
+            case 'equipmentBeforeAttack':
+                // Basic callback: callback(gameApi)
+                event.callback(gameApi);
+                break;
+                
+            case 'friendHurt':
+            case 'enemyHurt':
+            case 'summoned':
+            case 'afterFaint':
+            case 'friendAheadFaints':
+            case 'friendFaints':
+            case 'friendLostPerk':
+            case 'gainPerk':
+            case 'friendGainedPerk':
+            case 'friendGainedAilment':
+            case 'enemyGainedAilment':
+            case 'transformed':
+            case 'friendGainedExperience':
+            case 'levelUp':
+            case 'friendAttacks':
+            case 'beforeFriendAttacks':
+            case 'friendJumped':
+            case 'friendGainsHealth':
+                // Callback with pet: callback(gameApi, callbackPet)
+                event.callback(gameApi, event.callbackPet);
+                break;
+                
+            case 'afterAttack':
+            case 'enemySummoned':
+            case 'friendlyToyBroke':
+            case 'gainAilment':
+            case 'emptyFrontSpace':
+                // Callback with boolean: callback(gameApi, callbackPet, false)
+                event.callback(gameApi, event.callbackPet, false);
+                break;
+                
+            case 'friendSummoned':
+            case 'friendlyLevelUp':
+            case 'friendJumpedToy':
+                // Toy events: callback(gameApi, callbackPet, priority < 100, level)
+                event.callback(gameApi, event.callbackPet, event.priority < 100, event.level);
+                break;
+                
+            case 'emptyFrontSpaceToy':
+                // Special toy callback: callback(gameApi, priority < 100, level, priority)
+                event.callback(gameApi, event.priority < 100, event.level, event.priority);
+                break;
+                
+            case 'gainsMana':
+                // Mana events might use the old gameApi field
+                if (this.gameApi) {
+                    event.callback(this.gameApi, event.callbackPet);
+                } else {
+                    event.callback(gameApi, event.callbackPet);
+                }
+                break;
+                
+            default:
+                // Fallback: try basic callback
+                try {
+                    event.callback(gameApi);
+                } catch (e) {
+                    // If basic fails, try with callbackPet
+                    event.callback(gameApi, event.callbackPet);
+                }
+                break;
+        }
+    }
+
+    // Migrate all existing events from type-specific arrays to global queue
+    migrateExistingEventsToQueue() {
+        // Add events with their ability type
+        this.hurtEvents.forEach(event => {
+            event.abilityType = 'hurt';
+            this.addEventToQueue(event);
+        });
+        this.hurtEvents = [];
+
+        this.friendHurtEvents.forEach(event => {
+            event.abilityType = 'friendHurt';
+            this.addEventToQueue(event);
+        });
+        this.friendHurtEvents = [];
+
+        this.enemyHurtEvents.forEach(event => {
+            event.abilityType = 'enemyHurt';
+            this.addEventToQueue(event);
+        });
+        this.enemyHurtEvents = [];
+
+        this.faintEvents.forEach(event => {
+            event.abilityType = 'faint';
+            this.addEventToQueue(event);
+        });
+        this.faintEvents = [];
+
+        this.friendAheadFaintsEvents.forEach(event => {
+            event.abilityType = 'friendAheadFaints';
+            this.addEventToQueue(event);
+        });
+        this.friendAheadFaintsEvents = [];
+
+        this.knockOutEvents.forEach(event => {
+            event.abilityType = 'knockOut';
+            this.addEventToQueue(event);
+        });
+        this.knockOutEvents = [];
+
+        this.manaEvents.forEach(event => {
+            event.abilityType = 'gainsMana';
+            this.addEventToQueue(event);
+        });
+        this.manaEvents = [];
+
+        this.summonedEvents.forEach(event => {
+            event.abilityType = 'summoned';
+            this.addEventToQueue(event);
+        });
+        this.summonedEvents = [];
+
+        this.enemySummonedEvents.forEach(event => {
+            event.abilityType = 'enemySummoned';
+            this.addEventToQueue(event);
+        });
+        this.enemySummonedEvents = [];
+
+        this.friendFaintsEvents.forEach(event => {
+            event.abilityType = 'friendFaints';
+            this.addEventToQueue(event);
+        });
+        this.friendFaintsEvents = [];
+
+        this.afterFaintEvents.forEach(event => {
+            event.abilityType = 'afterFaint';
+            this.addEventToQueue(event);
+        });
+        this.afterFaintEvents = [];
+
+        this.emptyFrontSpaceEvents.forEach(event => {
+            event.abilityType = 'emptyFrontSpace';
+            this.addEventToQueue(event);
+        });
+        this.emptyFrontSpaceEvents = [];
+
+        // Add toy events
+        this.friendSummonedToyEvents.forEach(event => {
+            event.abilityType = 'friendSummoned';
+            this.addEventToQueue(event);
+        });
+        this.friendSummonedToyEvents = [];
+
+        this.friendFaintsToyEvents.forEach(event => {
+            event.abilityType = 'friendlyToyBroke';
+            this.addEventToQueue(event);
+        });
+        this.friendFaintsToyEvents = [];
+
+        // Add frequent events that were previously in executeFrequentEvents()
+        this.friendLostPerkEvents.forEach(event => {
+            event.abilityType = 'friendLostPerk';
+            this.addEventToQueue(event);
+        });
+        this.friendLostPerkEvents = [];
+
+        this.gainedPerkEvents.forEach(event => {
+            event.abilityType = 'gainPerk';
+            this.addEventToQueue(event);
+        });
+        this.gainedPerkEvents = [];
+
+        this.friendGainedPerkEvents.forEach(event => {
+            event.abilityType = 'friendGainedPerk';
+            this.addEventToQueue(event);
+        });
+        this.friendGainedPerkEvents = [];
+
+        this.friendGainedAilmentEvents.forEach(event => {
+            event.abilityType = 'friendGainedAilment';
+            this.addEventToQueue(event);
+        });
+        this.friendGainedAilmentEvents = [];
+
+        this.friendlyToyBrokeEvents.forEach(event => {
+            event.abilityType = 'friendlyToyBroke';
+            this.addEventToQueue(event);
+        });
+        this.friendlyToyBrokeEvents = [];
+
+        // Add other event types
+        this.levelUpEvents.forEach(event => {
+            event.abilityType = 'levelUp';
+            this.addEventToQueue(event);
+        });
+        this.levelUpEvents = [];
+
+        this.transformEvents.forEach(event => {
+            event.abilityType = 'transformed';
+            this.addEventToQueue(event);
+        });
+        this.transformEvents = [];
+
+        this.friendGainedExperienceEvents.forEach(event => {
+            event.abilityType = 'friendGainedExperience';
+            this.addEventToQueue(event);
+        });
+        this.friendGainedExperienceEvents = [];
+
+        this.friendAttacksEvents.forEach(event => {
+            event.abilityType = 'friendAttacks';
+            this.addEventToQueue(event);
+        });
+        this.friendAttacksEvents = [];
+
+        this.beforeFriendAttacksEvents.forEach(event => {
+            event.abilityType = 'beforeFriendAttacks';
+            this.addEventToQueue(event);
+        });
+        this.beforeFriendAttacksEvents = [];
+
+        this.friendJumpedEvents.forEach(event => {
+            event.abilityType = 'friendJumped';
+            this.addEventToQueue(event);
+        });
+        this.friendJumpedEvents = [];
+
+        this.friendGainsHealthEvents.forEach(event => {
+            event.abilityType = 'friendGainsHealth';
+            this.addEventToQueue(event);
+        });
+        this.friendGainsHealthEvents = [];
+
+        // Add remaining toy events
+        this.emptyFrontSpaceToyEvents.forEach(event => {
+            event.abilityType = 'emptyFrontSpaceToy';
+            this.addEventToQueue(event);
+        });
+        this.emptyFrontSpaceToyEvents = [];
+
+        this.friendlyLevelUpToyEvents.forEach(event => {
+            event.abilityType = 'friendlyLevelUp';
+            this.addEventToQueue(event);
+        });
+        this.friendlyLevelUpToyEvents = [];
+
+        this.friendJumpedToyEvents.forEach(event => {
+            event.abilityType = 'friendJumpedToy';
+            this.addEventToQueue(event);
+        });
+        this.friendJumpedToyEvents = [];
     }
 
     // End of Turn Events
@@ -96,7 +448,8 @@ export class AbilityService {
 
     // Hurt
     setHurtEvent(event: AbilityEvent) {
-        this.hurtEvents.push(event);
+        event.abilityType = 'hurt';
+        this.addEventToQueue(event);
     }
 
     private resetHurtEvents() {
@@ -122,7 +475,8 @@ export class AbilityService {
 
     // Faint
     setFaintEvent(event: AbilityEvent) {
-        this.faintEvents.push(event);
+        event.abilityType = 'faint';
+        this.addEventToQueue(event);
     }
 
     private resetFaintEvents() {
@@ -167,7 +521,8 @@ export class AbilityService {
     }
 
     setSummonedEvent(event: AbilityEvent) {
-        this.summonedEvents.push(event);
+        event.abilityType = 'summoned';
+        this.addEventToQueue(event);
     }
 
     resetSummonedEvents() {
@@ -190,33 +545,6 @@ export class AbilityService {
     
     get hasSummonedEvents() {
         return this.summonedEvents.length > 0;
-    }
-
-    // spawn events
-    
-    setSpawnEvent(event: AbilityEvent) {
-        this.spawnEvents.push(event);
-    }
-
-    resetSpawnEvents() {
-        this.spawnEvents = [];
-    }
-
-    executeSpawnEvents() {
-        // // shuffle, so that same priority events are in random order
-        this.spawnEvents = shuffle(this.spawnEvents);
-
-        this.spawnEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.spawnEvents) {
-            event.callback();
-        }
-        
-        this.resetSpawnEvents();
-    }
-
-    get hasSpawnEvents() {
-        return this.spawnEvents.length > 0;
     }
 
     // friend ahead attacks events
@@ -268,7 +596,8 @@ export class AbilityService {
     // friend ahead feints events
     
     setFriendAheadFaintsEvent(event: AbilityEvent) {
-        this.friendAheadFaintsEvents.push(event);
+        event.abilityType = 'friendAheadFaints';
+        this.addEventToQueue(event);
     }
 
     resetFriendAheadFaintsEvents() {
@@ -295,7 +624,8 @@ export class AbilityService {
     // knockout events
     
     setKnockOutEvent(event: AbilityEvent) {
-        this.knockOutEvents.push(event);
+        event.abilityType = 'knockOut';
+        this.addEventToQueue(event);
     }
 
     resetKnockOutEvents() {
@@ -336,7 +666,8 @@ export class AbilityService {
     }
 
     setFriendFaintsEvent(event: AbilityEvent) {
-        this.friendFaintsEvents.push(event);
+        event.abilityType = 'friendFaints';
+        this.addEventToQueue(event);
     }
 
     resetFriendFaintsEvents() {
@@ -350,7 +681,7 @@ export class AbilityService {
         this.friendFaintsEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.friendFaintsEvents) {
-            event.callback(this.gameService.gameApi, event.callbackPet, null);
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
         }
         
         this.resetFriendFaintsEvents();
@@ -371,14 +702,50 @@ export class AbilityService {
         this.beforeAttackEvents = [];
     }
 
+    checkAndAddNewBeforeAttackEvents() {
+        let gameApi = this.gameService.gameApi;
+        
+        // Check player's first pet
+        if (gameApi.player.pet0 && gameApi.player.pet0.beforeAttack && !this.processedBeforeAttackPets.has(gameApi.player.pet0)) {
+            this.beforeAttackEvents.push({
+                callback: gameApi.player.pet0.beforeAttack.bind(gameApi.player.pet0),
+                priority: gameApi.player.pet0.attack,
+                player: gameApi.player
+            });
+            this.processedBeforeAttackPets.add(gameApi.player.pet0);
+            // Re-sort the array to maintain priority order
+            this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        }
+        
+        // Check opponent's first pet
+        if (gameApi.opponet.pet0 && gameApi.opponet.pet0.beforeAttack && !this.processedBeforeAttackPets.has(gameApi.opponet.pet0)) {
+            this.beforeAttackEvents.push({
+                callback: gameApi.opponet.pet0.beforeAttack.bind(gameApi.opponet.pet0),
+                priority: gameApi.opponet.pet0.attack,
+                player: gameApi.opponet
+            });
+            this.processedBeforeAttackPets.add(gameApi.opponet.pet0);
+            // Re-sort the array to maintain priority order
+            this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        }
+    }
+
     executeBeforeAttackEvents() {
+        // Clear the set of processed pets at the start of execution
+        this.processedBeforeAttackPets.clear();
+        
         // shuffle, so that same priority events are in random order
         this.beforeAttackEvents = shuffle(this.beforeAttackEvents);
 
         this.beforeAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
-        for (let event of this.beforeAttackEvents) {
+        // Use queue-based approach to handle events being added during execution
+        while (this.beforeAttackEvents.length > 0) {
+            let event = this.beforeAttackEvents.shift();
             event.callback(this.gameService.gameApi);
+            
+            // Check if new first pets now have beforeAttack abilities that need to be queued
+            this.checkAndAddNewBeforeAttackEvents();
         }
         
         this.resetBeforeAttackEvents();
@@ -429,7 +796,8 @@ export class AbilityService {
     }
 
     setFriendLostPerkEvent(event: AbilityEvent) {
-        this.friendLostPerkEvents.push(event);
+        event.abilityType = 'friendLostPerk';
+        this.addEventToQueue(event);
     }
 
     resetFriendLostPerkEvents() {
@@ -469,7 +837,8 @@ export class AbilityService {
     }
 
     setGainedPerkEvent(event: AbilityEvent) {
-        this.gainedPerkEvents.push(event);
+        event.abilityType = 'gainPerk';
+        this.addEventToQueue(event);
     }
 
     resetGainedPerkEvents() {
@@ -509,7 +878,8 @@ export class AbilityService {
     }
 
     setFriendGainedPerkEvent(event: AbilityEvent) {
-        this.friendGainedPerkEvents.push(event);
+        event.abilityType = 'friendGainedPerk';
+        this.addEventToQueue(event);
     }
 
     resetFriendGainedPerkEvents() {
@@ -531,6 +901,41 @@ export class AbilityService {
         
     }
 
+    // before start of battle
+
+    triggerBeforeStartOfBattleEvents(player: Player) {
+        for (let pet of player.petArray) {
+            if (pet.beforeStartOfBattle != null) {
+                this.setBeforeStartOfBattleEvent({
+                    callback: pet.beforeStartOfBattle.bind(pet),
+                    priority: pet.attack,
+                    player: player
+                })
+            }
+        }
+    }
+
+    setBeforeStartOfBattleEvent(event: AbilityEvent) {
+        this.beforeStartOfBattleEvents.push(event);
+    }
+
+    resetBeforeStartOfBattleEvents() {
+        this.beforeStartOfBattleEvents = [];
+    }
+
+    executeBeforeStartOfBattleEvents() {
+        // shuffle, so that same priority events are in random order
+        this.beforeStartOfBattleEvents = shuffle(this.beforeStartOfBattleEvents);
+
+        this.beforeStartOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.beforeStartOfBattleEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetBeforeStartOfBattleEvents();
+    }
+
     // friend gained ailment
     
     triggerFriendGainedAilmentEvents(perkPet: Pet) {
@@ -546,7 +951,8 @@ export class AbilityService {
     }
 
     setFriendGainedAilmentEvent(event: AbilityEvent) {
-        this.friendGainedAilmentEvents.push(event);
+        event.abilityType = 'friendGainedAilment';
+        this.addEventToQueue(event);
     }
 
     resetFriendGainedAilmentEvents() {
@@ -583,7 +989,8 @@ export class AbilityService {
     }
 
     setEnemyGainedAilmentEvent(event: AbilityEvent) {
-        this.enemyGainedAilmentEvents.push(event);
+        event.abilityType = 'enemyGainedAilment';
+        this.addEventToQueue(event);
     }
 
     resetEnemyGainedAilmentEvents() {
@@ -620,7 +1027,8 @@ export class AbilityService {
     }
 
     setFriendlyToyBrokeEvent(event: AbilityEvent) {
-        this.friendlyToyBrokeEvents.push(event);
+        event.abilityType = 'friendlyToyBroke';
+        this.addEventToQueue(event);
     }
 
     resetFriendlyToyBrokeEvents() {
@@ -655,7 +1063,8 @@ export class AbilityService {
     }
     
     setTransformEvent(event: AbilityEvent) {
-        this.transformEvents.push(event);
+        event.abilityType = 'transformed';
+        this.addEventToQueue(event);
     }
 
     resetTransformEvents() {
@@ -691,7 +1100,8 @@ export class AbilityService {
     }
     
     setEnemySummonedEvent(event: AbilityEvent) {
-        this.enemySummonedEvents.push(event);
+        event.abilityType = 'enemySummoned';
+        this.addEventToQueue(event);
     }
 
     resetEnemySummonedEvents() {
@@ -731,7 +1141,8 @@ export class AbilityService {
     }
     
     setFriendHurtEvent(event: AbilityEvent) {
-        this.friendHurtEvents.push(event);
+        event.abilityType = 'friendHurt';
+        this.addEventToQueue(event);
     }
 
     resetFriendHurtEvents() {
@@ -772,7 +1183,8 @@ export class AbilityService {
     }
     
     setLevelUpEvent(event: AbilityEvent) {
-        this.levelUpEvents.push(event);
+        event.abilityType = 'levelUp';
+        this.addEventToQueue(event);
     }
 
     resetLevelUpEvents() {
@@ -808,7 +1220,8 @@ export class AbilityService {
     }
     
     setEmptyFrontSpaceEvent(event: AbilityEvent) {
-        this.emptyFrontSpaceEvents.push(event);
+        event.abilityType = 'emptyFrontSpace';
+        this.addEventToQueue(event);
     }
 
     resetEmptyFrontSpaceEvents() {
@@ -852,7 +1265,8 @@ export class AbilityService {
     }
     
     setEnemyHurtEvent(event: AbilityEvent) {
-        this.enemyHurtEvents.push(event);
+        event.abilityType = 'enemyHurt';
+        this.addEventToQueue(event);
     }
 
     resetEnemyHurtEvents() {
@@ -994,7 +1408,8 @@ export class AbilityService {
 
     // mana events
     setManaEvent(event: AbilityEvent) {
-        this.manaEvents.push(event);
+        event.abilityType = 'gainsMana';
+        this.addEventToQueue(event);
     }
 
     resetManaEvents() {
@@ -1087,6 +1502,30 @@ export class AbilityService {
         this.resetFriendGainedExperienceEvents();
     }
 
+    setAfterFaintEvent(event: AbilityEvent) {
+        event.abilityType = 'afterFaint';
+        this.addEventToQueue(event);
+    }
+
+    resetAfterFaintEvents() {
+        this.afterFaintEvents = [];
+    }
+
+    executeAfterFaintEvents() {
+        this.afterFaintEvents = shuffle(this.afterFaintEvents);
+        
+        this.afterFaintEvents.sort((a, b) => a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0);
+        
+        for (let event of this.afterFaintEvents) {
+            event.callback(this.gameService.gameApi, event.callbackPet);
+        }
+        
+        this.resetAfterFaintEvents();
+    }
+
+    get hasAfterFaintEvents() {
+        return this.afterFaintEvents.length > 0;
+    }
     // toy events
 
 

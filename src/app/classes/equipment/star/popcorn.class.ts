@@ -4,61 +4,61 @@ import { LogService } from "../../../services/log.service";
 import { PetService } from "../../../services/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Popcorn extends Equipment {
     name = 'Popcorn';
-    equipmentClass: EquipmentClass = 'faint';
+    equipmentClass: EquipmentClass = 'afterFaint';
     callback = (pet: Pet) => {
-        let multiplier = 1;
-        if (pet instanceof Panther) {
-            multiplier = 1 + pet.level;
-        }
-
-        for (let i = 0; i < multiplier; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    let petPool;
-                    if (pet.parent == this.gameService.gameApi.player) {
-                        petPool = this.gameService.gameApi.playerPetPool;
-                    } else {
-                        petPool = this.gameService.gameApi.opponentPetPool;
+        let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
+        pet.afterFaint = (gameApi) => {
+            if (originalAfterFaint != null) {
+                originalAfterFaint(gameApi);
+            }
+            
+            // Check if equipment is still equipped
+            if (pet.equipment?.name != 'Popcorn') {
+                return;
+            }
+            
+            for (let i = 0; i < this.multiplier; i++) {
+                let petPool;
+                if (pet.parent == this.gameService.gameApi.player) {
+                    petPool = this.gameService.gameApi.playerPetPool;
+                } else {
+                    petPool = this.gameService.gameApi.opponentPetPool;
+                }
+                let pets = petPool.get(pet.tier);
+                let petName = pets[Math.floor(Math.random() * pets.length)];
+                let popcornPet = this.petService.createPet({
+                    attack: null,
+                    equipment: null,
+                    exp: 0,
+                    health: null,
+                    name: petName,
+                    mana: 0
+                }, pet.parent);
+    
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
+                
+                this.logService.createLog(
+                    {
+                        message: `${pet.name} Spawned ${popcornPet.name} (Popcorn)${multiplierMessage}`,
+                        type: "ability",
+                        player: pet.parent,
+                        randomEvent: true
                     }
-                    let pets = petPool.get(pet.tier);
-                    let petName = pets[Math.floor(Math.random() * pets.length)];
-                    let popcornPet = this.petSerivce.createPet({
-                        attack: null,
-                        equipment: null,
-                        exp: 0,
-                        health: null,
-                        name: petName,
-                        mana: 0
-                    }, pet.parent);
-        
-                    let pantherMessage = '';
-                    if (i > 0) {
-                        pantherMessage = ` (Panther)`;
-                    }
-                    this.logService.createLog(
-                        {
-                            message: `${pet.name} Spawned ${popcornPet.name} (Popcorn)${pantherMessage}`,
-                            type: "ability",
-                            player: pet.parent,
-                            randomEvent: true
-                        }
-                    )
-                    pet.parent.summonPet(popcornPet, pet.savedPosition);
+                )
+                if (pet.parent.summonPet(popcornPet, pet.savedPosition)) {
                     this.abilityService.triggerSummonedEvents(popcornPet);
-                },
-                priority: -1
-            })
+                }
+            }
         }
     }
 
     constructor(
         protected logService: LogService,
         protected abilityService: AbilityService,
-        protected petSerivce: PetService,
+        protected petService: PetService,
         protected gameService: GameService
 
     ) {

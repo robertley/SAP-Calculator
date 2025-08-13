@@ -18,33 +18,29 @@ export class Falcon extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let power = this.level * 3;
-                let summonPet = this.petService.createPet({
-                    attack: power,
-                    health: power,
-                    name: pet.name,
-                    exp: this.minExpForLevel,
-                    equipment: null,
-                    mana: 0
-                }, this.parent);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${summonPet.name} ${power}/${power} Level ${this.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger
-                    }
-                )
+        let power = this.level * 3;
+        let summonPet = this.petService.createPet({
+            attack: power,
+            health: power,
+            name: pet.name,
+            exp: this.minExpForLevel,
+            equipment: null,
+            mana: 0
+        }, this.parent);
 
-                if (this.parent.summonPet(summonPet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(summonPet);
-                }
-            },
-            priority: this.attack
-        })
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${summonPet.name} ${power}/${power} Level ${this.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger
+            }
+        )
+
+        if (this.parent.summonPet(summonPet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(summonPet);
+        }
+
         this.abilityUses++;
         super.superKnockOut(gameApi, pet, tiger);
     }

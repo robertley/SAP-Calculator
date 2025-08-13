@@ -12,7 +12,7 @@ export class Eagle extends Pet {
     pack: Pack = 'Puppy';
     attack = 6;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let tier = Math.min(6, gameApi.previousShopTier + 1);
         let pets;
         if (this.parent == gameApi.player) {
@@ -22,35 +22,30 @@ export class Eagle extends Pet {
         }
         let petName = pets[Math.floor(Math.random() * pets.length)];
         let power = this.level * 5;
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let pet = this.petService.createPet({
-                    name: petName,
-                    attack: power,
-                    health: power,
-                    exp: this.minExpForLevel,
-                    equipment: null,
-                    mana: 0
-                }, this.parent);
-        
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${pet.name} Level ${pet.level}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        randomEvent: true,
-                        pteranodon: pteranodon
-                    }
-                )
+        let pet = this.petService.createPet({
+            name: petName,
+            attack: power,
+            health: power,
+            exp: this.minExpForLevel,
+            equipment: null,
+            mana: 0
+        }, this.parent);
 
-                if (this.parent.summonPet(pet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(pet);
-                }
-            },
-            priority: this.attack
-        })
-        this.superFaint(gameApi, tiger);
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${pet.name} Level ${pet.level}`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: true,
+                pteranodon: pteranodon
+            }
+        )
+
+        if (this.parent.summonPet(pet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(pet);
+        }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

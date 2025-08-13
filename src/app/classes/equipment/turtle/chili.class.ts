@@ -3,7 +3,6 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Chili extends Equipment {
     name = 'Chili';
@@ -16,21 +15,16 @@ export class Chili extends Equipment {
             return;
         }
 
-        let multiplier = 1;
-        if (pet instanceof Panther) {
-            multiplier = 1 + pet.level;
-        }
-        
         let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 5);
         let defenseEquipment = damageResp.defenseEquipment;
-        let damage = damageResp.damage * multiplier;
+        let damage = damageResp.damage * this.multiplier;
 
         attackPet.health -= damage;
 
         let message = `${pet.name} attacks ${attackPet.name} for ${damage}`;
 
-        if (pet instanceof Panther) {
-            message += ` x${multiplier} (Panther)`;
+        if (this.multiplier > 1) {
+            message += ` x${this.multiplier}${this.multiplierMessage}`;
         }
 
         if (defenseEquipment != null) {
@@ -42,10 +36,7 @@ export class Chili extends Equipment {
             }
             message += ` (${defenseEquipment.name} ${sign}${power})`;
 
-            if (attackedPet instanceof Panther) {
-                let multiplier = 1 + pet.level;
-                message += ` x${multiplier} (Panther)`;
-            }
+            // Defense equipment multiplier handled by attacked pet's equipment
     
         }
 

@@ -13,7 +13,7 @@ export class Spider extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
         let tier3Pets;
         if (this.parent == gameApi.player) {
             tier3Pets = gameApi.playerPetPool.get(3);
@@ -34,26 +34,21 @@ export class Spider extends Pet {
             name: spawnPetName,
             mana: 0
         }, this.parent);
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
-                        type: "ability",
-                        player: this.parent,
-                        randomEvent: true,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                )
+        this.logService.createLog(
+            {
+                message: `${this.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
+                type: "ability",
+                player: this.parent,
+                randomEvent: true,
+                tiger: tiger,
+                pteranodon: pteranodon
+            }
+        )
 
-                if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(spawnPet);
-                }
-            },
-            priority: this.attack
-        })
-        super.superFaint(gameApi, tiger);
+        if (this.parent.summonPet(spawnPet, this.savedPosition)) {
+            this.abilityService.triggerSummonedEvents(spawnPet);
+        }
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

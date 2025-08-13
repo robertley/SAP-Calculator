@@ -17,25 +17,22 @@ export class TinderBox extends Toy {
             health: level * 6,
         };
         let exp = level == 1 ? 0 : level == 2 ? 2 : 5;
-        this.abilityService.setSpawnEvent({
-            callback: () => {
-                let giantEyesDog = new GiantEyesDog(this.logService, this.abilityService, this.parent, power.health, power.attack, 0, exp);
-                let message = `${this.name} spawned Giant Eyes Dog (${power.attack}/${power.health}).`;
-                this.logService.createLog(
-                    {
-                        message: message,
-                        type: "ability",
-                        player: this.parent,
-                        puma: puma
-                    }
-                )
 
-                if (this.parent.summonPet(giantEyesDog, 0)) {
-                    this.abilityService.triggerSummonedEvents(giantEyesDog);
-                }
-            },
-            priority: priority
-        })
+        let giantEyesDog = new GiantEyesDog(this.logService, this.abilityService, this.parent, power.health, power.attack, 0, exp);
+        let message = `${this.name} spawned Giant Eyes Dog (${power.attack}/${power.health}).`;
+        this.logService.createLog(
+            {
+                message: message,
+                type: "ability",
+                player: this.parent,
+                puma: puma
+            }
+        )
+
+        if (this.parent.summonPet(giantEyesDog, 0)) {
+            this.abilityService.triggerSummonedEvents(giantEyesDog);
+        }
+
         this.used = true;
 
     }

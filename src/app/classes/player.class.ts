@@ -155,9 +155,7 @@ export class Player {
             this.setPet(4, array[4]);
         } catch {
             this.pet4 = null;
-        }
-        this.onionCheck();
-        
+        }        
     }
 
     onionCheck() {
@@ -267,6 +265,7 @@ export class Player {
             for (let i = slotWithSpace; i < slot; i++) {
                 this[`pet${i}`] = this[`pet${i+1}`];
             }
+            return;
         }
 
         let isSpaceBehind = false;
@@ -300,8 +299,6 @@ export class Player {
             }
             return;
         }
-        
-
     }
 
     get petArray(): Pet[] {
@@ -341,7 +338,6 @@ export class Player {
                     callbackPet: pet
                 })
         }
-        this.abilityService.triggerFriendFaintsEvents(pet);
         this.createDeathLog(pet);
     }
 
@@ -370,26 +366,37 @@ export class Player {
 
     removeDeadPets(): boolean {
         let petRemoved = false;
-        if (!this.pet0?.alive && this.pet0 !== undefined) {
-            this.pet0 = null;
-            petRemoved = true;
+        
+        // Map pets to their slots for cleaner iteration
+        const petSlots = [
+            { pet: this.pet0, index: 0 },
+            { pet: this.pet1, index: 1 },
+            { pet: this.pet2, index: 2 },
+            { pet: this.pet3, index: 3 },
+            { pet: this.pet4, index: 4 }
+        ];
+        
+        for (const slot of petSlots) {
+            if (slot.pet && !slot.pet.alive) {
+                if (slot.pet.afterFaint) {
+                    this.abilityService.setAfterFaintEvent({
+                        callback: slot.pet.afterFaint.bind(slot.pet),
+                        priority: slot.pet.attack,
+                        player: this,
+                        callbackPet: slot.pet
+                    });
+                }
+                this.abilityService.triggerFriendFaintsEvents(slot.pet);
+                // Set the pet property to null using the index
+                this[`pet${slot.index}`] = null;
+                petRemoved = true;
+            }
         }
-        if (!this.pet1?.alive) {
-            this.pet1 = null;
-            petRemoved = true;
+        
+        if (petRemoved) {
+            this.abilityService.executeAfterFaintEvents();
         }
-        if (!this.pet2?.alive) {
-            this.pet2 = null;
-            petRemoved = true;
-        }
-        if (!this.pet3?.alive) {
-            this.pet3 = null;
-            petRemoved = true;
-        }
-        if (!this.pet4?.alive) {
-            this.pet4 = null;
-            petRemoved = true;
-        }
+        
         return petRemoved;
     }
 
@@ -690,10 +697,9 @@ export class Player {
             destination = Math.max(position - spaces, 0);
         }
         if (spaces < 0) {
-            destination = Math.max(position - spaces, 4);
+            destination = Math.min(position - spaces, 4);
         }
         player.summonPet(pet, destination);
-        this.onionCheck();
     }
 
     getRandomStrawberryPet(excludePet?: Pet): Pet {
@@ -774,10 +780,69 @@ export class Player {
                 // if (petBehind != null && petBehind.name == 'Tiger') {
                 //     mult.push(petBehind.level + 1);
                 // }
-                mult.push(pet.level + 1);
+                mult.push(pet.level);
             }
         }
 
         return mult;
+    }
+
+    summonPetInFront(summoner: Pet, summonedPet: Pet): boolean {
+        if (this.petArray.length == 5) {
+            this.logService.createLog({
+                message: `No room to spawn ${summonedPet.name}!`,
+                type: 'ability',
+                player: this
+            })
+            return false;
+        }
+
+        // Check if ANY space exists in front (positions 0 to summoner.position-1)
+        let hasSpaceInFront = false;
+        for (let pos = 0; pos < summoner.position; pos++) {
+            if (this.getPet(pos) == null) {
+                hasSpaceInFront = true;
+                break;
+            }
+        }
+        
+        if (hasSpaceInFront) {
+            // Let makeRoomForSlot handle the positioning
+            return this.summonPet(summonedPet, summoner.position - 1);
+        } else {
+            // No space in front, move summoner backward and summon in old spot
+            let oldPosition = summoner.position;
+            this.pushPet(summoner, -1);
+            return this.summonPet(summonedPet, oldPosition);
+        }
+    }
+
+    summonPetBehind(summoner: Pet, summonedPet: Pet): boolean {
+        if (this.petArray.length == 5) {
+            this.logService.createLog({
+                message: `No room to spawn ${summonedPet.name}!`,
+                type: 'ability',
+                player: this
+            })
+            return false;
+        }
+
+        // Check if ANY space exists in front (positions 0 to summoner.position-1)
+        let hasSpaceInFront = false;
+        for (let pos = 0; pos < summoner.position; pos++) {
+            if (this.getPet(pos) == null) {
+                hasSpaceInFront = true;
+                break;
+            }
+        }
+        
+        if (hasSpaceInFront) {
+            // Move summoner forward and summon behind
+            this.pushPet(summoner, 1);
+            return this.summonPet(summonedPet, summoner.position + 1);
+        } else {
+            // No space in front, summon directly behind (let makeRoomForSlot handle it)
+            return this.summonPet(summonedPet, summoner.position + 1);
+        }
     }
 }

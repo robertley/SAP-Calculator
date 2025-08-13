@@ -12,8 +12,7 @@ export class Rat extends Pet {
     pack: Pack = 'Turtle';
     health = 6;
     attack = 3;
-    // TODO broken with a pet that is fainted but not yet removed
-    faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
+    afterFaint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
         let opponent: Player;
         if (gameApi.player == this.parent) {
             opponent = gameApi.opponet;
@@ -22,27 +21,22 @@ export class Rat extends Pet {
         }
 
         for (let i = 0; i < this.level; i++) {
-            this.abilityService.setSpawnEvent({
-                callback: () => {
-                    this.logService.createLog({
-                        message: `${this.name} Summoned Dirty Rat on Opponent`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    })
-                    let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0, 0);
-        
-                    let spawned = opponent.summonPet(dirtyRat, 0);
-                    if (spawned) {
-                        this.abilityService.triggerSummonedEvents(dirtyRat);
-                    }
-                },
-                priority: this.attack
+            this.logService.createLog({
+                message: `${this.name} Summoned Dirty Rat on Opponent`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
             })
+            let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0, 0);
+
+            let spawned = opponent.summonPet(dirtyRat, 0);
+            if (spawned) {
+                this.abilityService.triggerSummonedEvents(dirtyRat);
+            }
         }
 
-        super.superFaint(gameApi, tiger);
+        super.superAfterFaint(gameApi, tiger, pteranodon);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
