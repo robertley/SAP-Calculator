@@ -22,7 +22,12 @@ export class SaigaAntelope extends Pet {
         if (this.abilityUses % 2 != 0) {
             return;
         }
-        this.parent.gainTrumpets(this.level * 3, this);
+        this.abilityService.setCounterEvent({
+            callback: () => {
+                this.parent.gainTrumpets(this.level * 3, this);
+            },
+            priority: this.attack
+        });
         
         super.superFriendFaints(gameApi, pet, tiger);
     }

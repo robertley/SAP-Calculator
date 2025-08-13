@@ -21,7 +21,7 @@ export class Whale extends Pet {
         if (!targetPet) {
             return;
         }
-        let swallowPet = this.petService.createDefaultVersionOfPet(targetPet, targetPet.attack, targetPet.health);
+        let swallowPet = this.petService.createDefaultVersionOfPet(targetPet, targetPet.health, targetPet.attack);
         swallowPet.exp = this.exp;
         this.swallowedPets.push(swallowPet);
         targetPet.health = 0;

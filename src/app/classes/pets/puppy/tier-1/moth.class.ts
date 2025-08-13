@@ -13,6 +13,9 @@ export class Moth extends Pet {
     attack = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let target = this.parent.furthestUpPet;
+        if (target == null) {
+            return;
+        }
         let power = 2 * this.level;
         target.increaseAttack(power);
         this.logService.createLog({

@@ -11,7 +11,7 @@ export class Rabbit extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 1;
-    friendGainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
+    friendAteFood(gameApi: GameAPI, pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

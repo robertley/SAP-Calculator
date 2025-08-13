@@ -16,7 +16,7 @@ export class Crab extends Pet {
             return;
         }
         let highestHealthPet = this.parent.getHighestHealthPet(this).pet;
-        let gainAmmt = .25 * this.level;
+        let gainAmmt = Math.floor(highestHealthPet.health * (.25 * this.level));
         this.increaseHealth(gainAmmt);
         this.logService.createLog({
             message: `${this.name} gained ${gainAmmt * 100}% of ${highestHealthPet.name}'s health (${gainAmmt})`,

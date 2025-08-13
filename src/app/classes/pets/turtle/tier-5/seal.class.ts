@@ -12,7 +12,7 @@ export class Seal extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 8;
-    GainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
+    eatsFood(gameApi: GameAPI, pet, tiger?: boolean): void {
         if (pet != this) {
             return;
         }

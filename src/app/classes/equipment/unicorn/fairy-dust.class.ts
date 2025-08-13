@@ -27,7 +27,13 @@ export class FairyDust extends Equipment {
                 originalEmptyFrontSpace(gameApi, tiger);
             }
 
+            if (pet.equipment?.name != 'Tomato') {
+                return;
+            }
+
             callback(pet);
+            pet.removePerk();
+
         }
     }
     constructor(private logService: LogService) {

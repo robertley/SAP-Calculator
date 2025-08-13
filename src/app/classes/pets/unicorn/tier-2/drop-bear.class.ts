@@ -27,6 +27,9 @@ export class DropBear extends Pet {
         this.parent.pushPetToFront(this, true);
         let power = this.level * 3;
         let target = this.parent.opponent.getLastPet();
+        if (target == null) {
+            return;
+        }
         this.snipePet(target, power, false, tiger);
 
     }

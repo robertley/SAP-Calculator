@@ -16,6 +16,9 @@ export class Butterfly extends Pet {
     transform(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         let target = opponent.getStrongestPet();
+        if (target == null) {
+            return;
+        }
         this.health = target.health;
         this.attack = target.attack;
         this.logService.createLog({

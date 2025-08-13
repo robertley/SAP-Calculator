@@ -78,9 +78,9 @@ export class AbilityService {
         'knockOut': 13,
         'transformed': 14,
         'friendGainedExperience': 15,
-        'friendlyAteFood': 16,
+        'friendAteFood': 16,
         'eatsFood': 16,
-        'abilitiesWithCounters': 17,
+        'counter': 17,
         'friendLostPerk': 18,
         'gainPerk': 19,
         'gainAilment': 19,
@@ -195,6 +195,8 @@ export class AbilityService {
             case 'summoned':
             case 'friendAheadFaints':
             case 'friendFaints':
+            case 'eatsFood':
+            case 'friendAteFood':
             case 'friendLostPerk':
             case 'gainPerk':
             case 'friendGainedPerk':
@@ -232,6 +234,7 @@ export class AbilityService {
                 break;
                 
             case 'gainsMana':
+            case 'counter':
                 // Mana events might use the old gameApi field
                 event.callback();
                 break;
@@ -248,7 +251,7 @@ export class AbilityService {
         }
     }
 
-    // Migrate all existing events from type-specific arrays to global queue
+    // Migrate all existing events from type-specific arrays to global queue, not needed right now
     migrateExistingEventsToQueue() {
         // Add events with their ability type
         this.hurtEvents.forEach(event => {
@@ -451,6 +454,11 @@ export class AbilityService {
         for (let event of endTurnEvents) {
             event.callback(this.gameService.gameApi);
         }
+    }
+    //counter
+    setCounterEvent(event: AbilityEvent) {
+        event.abilityType = 'counter';
+        this.addEventToQueue(event);
     }
 
     // Hurt
@@ -829,17 +837,39 @@ export class AbilityService {
 
         
     }
+    //eats Food
 
-    // gained perk
+    setEatsFoodEvent(event: AbilityEvent) {
+        event.abilityType = 'eatsFood';
+        this.addEventToQueue(event);
+    }
+
+    //friend Ate Food
+    triggerFriendAteFoodEvents(foodPet: Pet) {
+        for (let pet of foodPet.parent.petArray) {
+            if (pet.friendAteFood != null) {
+                this.setFriendAteFoodEvent({
+                    callback: pet.friendAteFood.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: foodPet
+                })
+            }
+        }
+    }
+
+    setFriendAteFoodEvent(event: AbilityEvent) {
+        event.abilityType = 'friendAteFood';
+        this.addEventToQueue(event);
+    }    // gained perk
 
     triggerGainedPerkEvents(perkPet: Pet) {
         for (let pet of perkPet.parent.petArray) {
             if (pet != perkPet) {
                  continue;
             }
-            if (pet.GainedPerk != null) {
+            if (pet.gainedPerk != null) {
                 this.setGainedPerkEvent({
-                    callback: pet.GainedPerk.bind(pet),
+                    callback: pet.gainedPerk.bind(pet),
                     priority: pet.attack,
                     callbackPet: perkPet
                 })

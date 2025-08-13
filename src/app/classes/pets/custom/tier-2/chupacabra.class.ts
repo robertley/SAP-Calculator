@@ -14,6 +14,9 @@ export class Chupacabra extends Pet {
     knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         for (let i = 0; i < this.level * 3; i++) {
             let target = this.parent.getRandomPet([this], true, false, true);
+            if (target == null) {
+                return;
+            }
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} 1 health.`,
                 type: "ability",

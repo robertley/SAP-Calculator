@@ -10,6 +10,9 @@ export class StrinkySock extends Toy {
         for (let i = 0; i < this.level; i++) {
             let highestHealthPetResp = opponent.getHighestHealthPet();
             let target = highestHealthPetResp.pet;
+            if (target == null) {
+                return;
+            }
             let power = .40;
             let reducedTo =  Math.max(1, Math.floor(target.health * (1 - power)));
             target.health = reducedTo;

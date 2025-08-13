@@ -24,6 +24,10 @@ export class Tuna extends Pet {
         if (this.timesHurt > 0) {
             const target = this.parent.getRandomPet([this]);
 
+            if (target == null) {
+                return;
+            }
+
             if (target) {
                 for (let i = 0; i < this.timesHurt; i++) {
                     const buffAmount = this.level;
