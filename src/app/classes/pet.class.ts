@@ -727,6 +727,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superEmptyFrontSpace(gameApi, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.emptyFrontSpace(gameApi, true)
+        this.exp = exp;
+    }
+
     protected superGainedMana(gameApi, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
@@ -886,6 +896,9 @@ export abstract class Pet {
 
             if (damageResp.nurikabe > 0) {
                 message += ` -${damageResp.nurikabe} (Nurikabe)`;
+            }
+            if (damageResp.fairyBallReduction > 0) { 
+                message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
             }
             // if (attackEquipment != null) {
             //     let power = Math.abs(attackEquipment.power);
@@ -1122,6 +1135,9 @@ export abstract class Pet {
         if (damageResp.nurikabe > 0) {
             message += ` -${damageResp.nurikabe} (Nurikabe)`
         }
+        if (damageResp.fairyBallReduction > 0) { 
+            message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
+        }
 
         this.logService.createLog({
             message: message,
@@ -1169,7 +1185,8 @@ export abstract class Pet {
             attackEquipment: Equipment,
             damage: number,
             fortuneCookie: boolean,
-            nurikabe: number
+            nurikabe: number,
+            fairyBallReduction?: number 
         } {
         let attackMultiplier = this.equipment?.multiplier;
         let defenseMultiplier = pet.equipment?.multiplier;
@@ -1283,13 +1300,20 @@ export abstract class Pet {
         if (defenseEquipment instanceof Pepper) {
             damage = Math.min(damage, pet.health - 1);
         }
+
+        let fairyBallReduction = 0;
+        if (pet.name === 'Fairy Ball') {
+            fairyBallReduction = pet.level * 2;
+            damage = Math.max(0, damage - fairyBallReduction);
+        }
         
         return {
             defenseEquipment: defenseEquipment,
             attackEquipment: attackEquipment,
             damage: damage,
             fortuneCookie: fortuneCookie,
-            nurikabe: nurikabe
+            nurikabe: nurikabe,
+            fairyBallReduction: 0 // default value
         }
     } 
 

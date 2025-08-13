@@ -11,27 +11,36 @@ export class Bass extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 3;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let expToGive = this.level;
-        let validTargets = this.parent.petArray.filter(pet => pet.alive && pet.level == 2);
-        
-        if (validTargets.length > 0) {
-            let target = validTargets[Math.floor(Math.random() * validTargets.length)];
-            target.increaseExp(expToGive);
+  
+    // A list of pets with a "Sell" ability, needed for targeting. TO DO: add all sell pets
+    private sellPets = [
+        'Beaver', 'Duck', 'Pig', 'Pillbug', 'Kiwi', 'Mouse', 'Frog', 'Bass'
+    ];
+
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        const potentialTargets = this.parent.petArray.filter(pet => {
+            return pet !== this && this.sellPets.includes(pet.name) && pet.level >= 2;
+        });
+
+        if (potentialTargets.length > 0) {
+            const target = potentialTargets[Math.floor(Math.random() * potentialTargets.length)];
             
-            this.logService.createLog(
-                {
-                    message: `${this.name} gave ${target.name} +${expToGive} experience`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            );
+            const expGain = this.level;
+
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} +${expGain} experience.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            });
+
+            target.increaseExp(expGain);
         }
-        
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+
+        this.superFaint(gameApi, tiger);
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

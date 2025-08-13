@@ -11,39 +11,38 @@ export class Tuna extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 5;
-    hurtCount = 0;
-    
+    timesHurt = 0;
+
+
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        this.hurtCount++;
+        // TO DO: make it so timesHurt is similar to Player Roll Amount, but it is for each pet on the team
+        this.timesHurt++;
         this.superHurt(gameApi, pet, tiger);
     }
-    
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.hurtCount > 0) {
-            let attackBonus = this.level * this.hurtCount;
-            let healthBonus = this.level * this.hurtCount;
-            
-            let validTargets = this.parent.petArray.filter(pet => pet.alive && pet !== this);
-            if (validTargets.length > 0) {
-                let target = validTargets[Math.floor(Math.random() * validTargets.length)];
-                target.increaseAttack(attackBonus);
-                target.increaseHealth(healthBonus);
-                
-                this.logService.createLog(
-                    {
-                        message: `${this.name} gave ${target.name} +${attackBonus}/+${healthBonus} (hurt ${this.hurtCount} time${this.hurtCount > 1 ? 's' : ''})`,
-                        type: "ability",
+
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        if (this.timesHurt > 0) {
+            const target = this.parent.getRandomPet([this]);
+
+            if (target) {
+                for (let i = 0; i < this.timesHurt; i++) {
+                    const buffAmount = this.level;
+
+                    this.logService.createLog({
+                        message: `${this.name} gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
+                        type: 'ability',
                         player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon
-                    }
-                );
+                        tiger: tiger
+                    });
+
+                    target.increaseAttack(buffAmount);
+                    target.increaseHealth(buffAmount);
+                }
             }
         }
-        
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+        this.superFaint(gameApi, tiger);
     }
-    
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -54,5 +53,10 @@ export class Tuna extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.timesHurt = 0;
     }
 }

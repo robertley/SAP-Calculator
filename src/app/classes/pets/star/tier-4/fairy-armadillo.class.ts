@@ -4,36 +4,34 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FairyBall } from "../../hidden/fairy-ball.class";
 
-export class Chihuahua extends Pet {
-    name = "Chihuahua";
-    tier = 1;
-    pack: Pack = 'Puppy';
-    attack = 4;
-    health = 1;
+export class FairyArmadillo extends Pet {
+    name = "Fairy Armadillo";
+    tier = 4;
+    pack: Pack = 'Star';
+    attack = 2;
+    health = 6;
 
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        const opponent = this.parent.opponent;
-        
-        const targetInfo = opponent.getHighestHealthPet();
-        const target = targetInfo.pet;
+    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (this.alive) {
+            const healthGain = this.level * 2;
+            this.increaseHealth(healthGain);
 
-        if (target) {
-            const spaces = this.level;
-            
             this.logService.createLog({
-                message: `${this.name} pushed ${target.name} forward ${spaces} space(s).`,
+                message: `${this.name} gains ${healthGain} permanent health and transforms into a protected ball!`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger,
-                randomEvent: targetInfo.random 
+                tiger: tiger
             });
 
-            opponent.pushPet(target, spaces);
+            const fairyBall = new FairyBall(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, this.equipment);
+            
+            this.parent.setPet(this.position, fairyBall);
         }
-
-        this.superStartOfBattle(gameApi, tiger);
+        this.superHurt(gameApi, pet, tiger);
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -126,7 +126,7 @@ export class Seagull extends Pet {
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
         map.set('Pancakes', new Pancakes(this.logService));
-        map.set('Strawberry', new Strawberry());
+        map.set('Strawberry', new Strawberry(this.logService, this.abilityService));
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());
         map.set('Grapes', new Grapes());
