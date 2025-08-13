@@ -28,7 +28,7 @@ export class WhaleShark extends Pet {
     givePetEquipment(equipment: Equipment): void {
         super.givePetEquipment(equipment);
         this.removePerk();
-        let power = this.level * 2;
+        let power = this.level * 3;
         this.increaseAttack(power);
         this.increaseHealth(power);
         this.logService.createLog({

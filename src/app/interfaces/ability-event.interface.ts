@@ -9,4 +9,5 @@ export interface AbilityEvent {
     level?: number;
     pet?: Pet;
     abilityType?: string; // Track which ability type this event belongs to
+    tieBreaker?: number; // Random number for tie breaking
 }

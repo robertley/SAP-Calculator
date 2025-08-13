@@ -4,7 +4,6 @@ import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Tandgnost } from "../../pets/custom/tier-5/tandgnost.class";
 import { Tandgrisner } from "../../pets/custom/tier-5/tandgrisner.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class YggdrasilFruit extends Equipment {
     name = 'Yggdrasil Fruit';
@@ -21,23 +20,15 @@ export class YggdrasilFruit extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
-            }
-
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let tandgnost = new Tandgnost(this.logService, this.abilityService, pet.parent, 3, 3, 0);
                 let tandgrisner = new Tandgrisner(this.logService, this.abilityService, pet.parent, 3, 3, 0);
     
-                let pantherMessage = '';
-                if (i > 0) {
-                    pantherMessage = ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned Tandgnost (Yggdrasil Fruit)${pantherMessage}`,
+                        message: `${pet.name} Spawned Tandgnost (Yggdrasil Fruit)${multiplierMessage}`,
                         type: "ability",
                         player: pet.parent
                     }
@@ -48,7 +39,7 @@ export class YggdrasilFruit extends Equipment {
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned Tandgrisner (Yggdrasil Fruit)${pantherMessage}`,
+                        message: `${pet.name} Spawned Tandgrisner (Yggdrasil Fruit)${multiplierMessage}`,
                         type: "ability",
                         player: pet.parent
                     }

@@ -216,6 +216,26 @@
             "id": "179"
         },
         {
+            "name": "Lemming",
+            "tier": "1",
+            "id": "665"
+        },
+        {
+            "name": "Chihuahua",
+            "tier": "1",
+            "id": "666"
+        },
+        {
+            "name": "Firefly",
+            "tier": "1",
+            "id": "667"
+        },
+        {
+            "name": "Pheasant",
+            "tier": "1",
+            "id": "668"
+        },
+        {
             "name": "Horse",
             "tier": "1",
             "id": "39"
@@ -686,6 +706,11 @@
             "name": "Dumbo Octupus",
             "tier": "2",
             "id": "661"
+        },
+        {
+            "name": "Bass",
+            "tier": "2",
+            "id": "669"
         }
     ],
     "tier3": [
@@ -988,6 +1013,11 @@
             "name": "Wyvern",
             "tier": "3",
             "id": "385"
+        },
+        {
+            "name": "Tuna",
+            "tier": "3",
+            "id": "670"
         }
     ],
     "tier4": [
@@ -1290,6 +1320,11 @@
             "name": "Worm of Sand",
             "tier": "4",
             "id": "371"
+        },
+        {
+            "name": "Elk",
+            "tier": "4",
+            "id": "671"
         }
     ],
     "tier5": [

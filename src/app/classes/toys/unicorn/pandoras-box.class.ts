@@ -13,7 +13,7 @@ import { Peanut } from "../../equipment/turtle/peanut.class";
 import { Player } from "../../player.class";
 import { Toy } from "../../toy.class";
 
-// TO DO: make level of the toy multiply the ailmenet effects
+// Equipment effects are now multiplied by toy level via Equipment.getMultiplier()
 
 export class PandorasBox extends Toy {
     name = "Pandoras Box";
@@ -74,7 +74,7 @@ export class PandorasBox extends Toy {
                 player: this.parent,
                 randomEvent: true,
             })
-            pet.givePetEquipment(equipment);
+            pet.givePetEquipment(equipment, this.level);
         }
     }
 

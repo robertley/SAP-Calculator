@@ -2,7 +2,6 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class Pie extends Equipment {
     name = 'Pie';
@@ -14,16 +13,12 @@ export class Pie extends Equipment {
             if (originalBeforeStartOfBattle != null) {
                 originalBeforeStartOfBattle(gameApi);
             }
-            let multiplier = 1;
-            let pantherMessage = '';
-            if (pet instanceof Panther) {
-                multiplier = pet.level + 1;
-                pantherMessage = ' (Panther)';
-            }
-            pet.increaseAttack(4 * multiplier);
-            pet.increaseHealth(4 * multiplier);
+            let attackGain = 4 * this.multiplier;
+            let healthGain = 4 * this.multiplier;
+            pet.increaseAttack(attackGain);
+            pet.increaseHealth(healthGain);
             this.logService.createLog({
-                message: `${pet.name} gained ${4 * multiplier} attack and ${4 * multiplier} health (Pie)${pantherMessage}`,
+                message: `${pet.name} gained ${attackGain} attack and ${healthGain} health (Pie)${this.multiplierMessage}`,
                 type: 'equipment',
                 player: pet.parent
             })

@@ -22,7 +22,7 @@ export class Onion extends Equipment {
                 type: 'equipment',
                 player: pet.parent
             })
-            pet.givePetEquipment(null);
+            pet.removePerk();
             pet.parent.pushPetToBack(pet);
             pet.parent.pushPetsForward();
         }

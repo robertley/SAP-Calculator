@@ -31,7 +31,7 @@ export class Unicorn extends Pet {
             player: this.parent
         });
 
-        pet.givePetEquipment(null);
+        pet.removePerk();
         pet.increaseAttack(power);
         pet.increaseHealth(power);
 

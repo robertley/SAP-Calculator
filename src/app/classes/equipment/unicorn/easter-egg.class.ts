@@ -3,7 +3,6 @@ import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Monty } from "../../pets/hidden/monty.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 export class EasterEgg extends Equipment {
     name = 'Easter Egg';
@@ -20,22 +19,14 @@ export class EasterEgg extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
-            }
-
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let monty = new Monty(this.logService, this.abilityService, pet.parent, null, null, 0, 0);
     
-                let pantherMessage = '';
-                if (i > 0) {
-                    pantherMessage = ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned Monty (Easter Egg)${pantherMessage}`,
+                        message: `${pet.name} Spawned Monty (Easter Egg)${multiplierMessage}`,
                         type: "ability",
                         player: pet.parent
                     }

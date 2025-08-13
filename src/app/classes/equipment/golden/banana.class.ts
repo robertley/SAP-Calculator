@@ -3,7 +3,6 @@ import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Bee } from "../../pets/hidden/bee.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 import { Monkey } from "../../pets/turtle/tier-5/monkey.class";
 
 export class Banana extends Equipment {
@@ -21,22 +20,14 @@ export class Banana extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
-            }
-
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let monke = new Monkey(this.logService, this.abilityService, pet.parent, 4, 4, 0, 0);
     
-                let pantherMessage = '';
-                if (i > 0) {
-                    pantherMessage = ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned Monkey (Banana)${pantherMessage}`,
+                        message: `${pet.name} Spawned Monkey (Banana)${multiplierMessage}`,
                         type: "ability",
                         player: pet.parent
                     }

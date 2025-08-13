@@ -8,7 +8,7 @@ export class Kangaroo extends Pet {
     name = "Kangaroo";
     tier = 2;
     pack: Pack = 'Turtle';
-    health = 3;
+    health = 2;
     attack = 2;
     friendAheadAttacks(gameApi, pet, tiger) {
         if (!this.alive) {

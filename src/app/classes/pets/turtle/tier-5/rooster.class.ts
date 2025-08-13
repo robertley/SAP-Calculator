@@ -16,8 +16,8 @@ export class Rooster extends Pet {
     health = 4;
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let attack = Math.floor(this.attack * .5);
-        let chick = new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel);
         for (let i = 0; i < this.level; i++) {
+            let chick = new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel);
             this.logService.createLog({
                 message: `${this.name} spawned Chick (${attack}).`,
                 type: 'ability',

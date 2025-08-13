@@ -11,6 +11,12 @@ export class Equipment {
     callback: (pet: Pet) => void;
     attackCallback?: (pet: Pet, attackedPet: Pet) => void;
     
+    // Multiplier properties set when equipment is equipped
+    multiplier: number = 1;
+    multiplierMessage: string = '';
+    
+    // Optional minimum damage this equipment can reduce attacks to
+    minimumDamage?: number;
 
     constructor() {
         this.originalPower = this.power;

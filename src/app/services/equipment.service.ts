@@ -16,6 +16,7 @@ import { Blackberry } from "../classes/equipment/puppy/blackberry.class";
 import { Croissant } from "../classes/equipment/puppy/croissant.class";
 import { Rice } from "../classes/equipment/puppy/rice.class";
 import { Egg } from "../classes/equipment/puppy/egg.class";
+import { Eucalyptus } from '../classes/equipment/puppy/eucalyptus.class';
 import { Lime } from "../classes/equipment/puppy/lime.class";
 import { Squash } from "../classes/equipment/puppy/squash.class";
 import { Salt } from "../classes/equipment/puppy/salt.class";
@@ -63,6 +64,8 @@ import { Weak } from "../classes/equipment/ailments/weak.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
 import { HoneydewMelon } from "../classes/equipment/golden/honeydew-melon.class";
 import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
+import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
+import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
 
 @Injectable({
     providedIn: "root"
@@ -87,6 +90,7 @@ export class EquipmentService {
         map.set('Blackberry', new Blackberry());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
+        map.set('Eucalyptus', new Eucalyptus());
         map.set('Lime', new Lime());    
         map.set('Egg', new Egg(this.logService, this.abilityService));
         map.set('Squash', new Squash(this.logService, this.abilityService));
@@ -95,7 +99,7 @@ export class EquipmentService {
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
         map.set('Pancakes', new Pancakes(this.logService));
-        map.set('Strawberry', new Strawberry());
+        map.set('Strawberry', new Strawberry(this.logService, this.abilityService));
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());
         map.set('Grapes', new Grapes());
@@ -127,6 +131,8 @@ export class EquipmentService {
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
         map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
         map.set('Honeydew Melon', new HoneydewMelon());
+        map.set('Ambrosia', new Ambrosia());
+        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
 
         return map;
     }

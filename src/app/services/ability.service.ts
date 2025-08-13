@@ -110,6 +110,11 @@ export class AbilityService {
         // Set priority based on ability type
         const abilityPriority = this.ABILITY_PRIORITIES[event.abilityType] || 999;
         
+        // Assign random tie breaker if not already set
+        if (event.tieBreaker === undefined) {
+            event.tieBreaker = Math.random();
+        }
+        
         // Binary search to find insertion point
         let left = 0;
         let right = this.globalEventQueue.length;
@@ -128,8 +133,15 @@ export class AbilityService {
                 // Same ability type priority, compare individual event priority (higher = first)
                 if (event.priority > midEvent.priority) {
                     right = mid;
-                } else {
+                } else if (event.priority < midEvent.priority) {
                     left = mid + 1;
+                } else {
+                    // Same priority - use random tie breaker (lower tieBreaker = first)
+                    if (event.tieBreaker < midEvent.tieBreaker) {
+                        right = mid;
+                    } else {
+                        left = mid + 1;
+                    }
                 }
             }
         }
@@ -168,19 +180,19 @@ export class AbilityService {
         const gameApi = this.gameService.gameApi;
         
         switch (event.abilityType) {
-            case 'hurt':
             case 'faint':
-            case 'knockOut':
             case 'beforeStartOfBattle':
+            case 'afterFaint':
             case 'equipmentBeforeAttack':
+            case 'transformed':
                 // Basic callback: callback(gameApi)
                 event.callback(gameApi);
                 break;
-                
+            case 'hurt':
             case 'friendHurt':
+            case 'knockOut':
             case 'enemyHurt':
             case 'summoned':
-            case 'afterFaint':
             case 'friendAheadFaints':
             case 'friendFaints':
             case 'friendLostPerk':
@@ -188,7 +200,6 @@ export class AbilityService {
             case 'friendGainedPerk':
             case 'friendGainedAilment':
             case 'enemyGainedAilment':
-            case 'transformed':
             case 'friendGainedExperience':
             case 'levelUp':
             case 'friendAttacks':
@@ -222,11 +233,7 @@ export class AbilityService {
                 
             case 'gainsMana':
                 // Mana events might use the old gameApi field
-                if (this.gameApi) {
-                    event.callback(this.gameApi, event.callbackPet);
-                } else {
-                    event.callback(gameApi, event.callbackPet);
-                }
+                event.callback();
                 break;
                 
             default:
@@ -696,6 +703,11 @@ export class AbilityService {
 
     setBeforeAttackEvent(event: AbilityEvent) {
         this.beforeAttackEvents.push(event);
+        
+        // Mark the pet as processed to prevent duplicate events
+        if (event.pet) {
+            this.processedBeforeAttackPets.add(event.pet);
+        }
     }
 
     resetBeforeAttackEvents() {
@@ -731,9 +743,6 @@ export class AbilityService {
     }
 
     executeBeforeAttackEvents() {
-        // Clear the set of processed pets at the start of execution
-        this.processedBeforeAttackPets.clear();
-        
         // shuffle, so that same priority events are in random order
         this.beforeAttackEvents = shuffle(this.beforeAttackEvents);
 
@@ -748,6 +757,8 @@ export class AbilityService {
             this.checkAndAddNewBeforeAttackEvents();
         }
         
+        // Clear the set of processed pets after all events are executed
+        this.processedBeforeAttackPets.clear();
         this.resetBeforeAttackEvents();
     }
 
@@ -1517,7 +1528,7 @@ export class AbilityService {
         this.afterFaintEvents.sort((a, b) => a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0);
         
         for (let event of this.afterFaintEvents) {
-            event.callback(this.gameService.gameApi, event.callbackPet);
+            event.callback(this.gameService.gameApi);
         }
         
         this.resetAfterFaintEvents();

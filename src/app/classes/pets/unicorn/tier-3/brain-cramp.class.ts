@@ -13,6 +13,9 @@ export class BrainCramp extends Pet {
     attack = 1;
     health = 2;
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.parent.pet0 != null) {
+            return;
+        }
         let power = this.level * 2;
 
         this.logService.createLog({

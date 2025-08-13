@@ -27,7 +27,6 @@ export class Flea extends Pet {
             if (target == null) {
                 break;
             }
-            target.givePetEquipment(new Weak());
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} Weak.`,
                 type: 'ability',
@@ -35,6 +34,7 @@ export class Flea extends Pet {
                 tiger: tiger,
                 pteranodon: pteranodon
             })
+            target.givePetEquipment(new Weak());
         }
         this.superFaint(gameApi, tiger);
     }

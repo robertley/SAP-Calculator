@@ -3,7 +3,6 @@ import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { Bee } from "../../pets/hidden/bee.class";
-import { Panther } from "../../pets/puppy/tier-5/panther.class";
 
 // apparently when a pet is kiled from snipes honey spawns are less predictable
 // this ensures that honey spawns are in the front, for now
@@ -22,22 +21,14 @@ export class Honey extends Equipment {
                 return;
             }
             
-            let multiplier = 1;
-            if (pet instanceof Panther) {
-                multiplier = 1 + pet.level;
-            }
-
-            for (let i = 0; i < multiplier; i++) {
+            for (let i = 0; i < this.multiplier; i++) {
                 let bee = new Bee(this.logService, this.abilityService, pet.parent, null, null, 0);
                 
-                let pantherMessage = '';
-                if (i > 0) {
-                    pantherMessage = ` (Panther)`;
-                }
+                let multiplierMessage = (i > 0) ? this.multiplierMessage : '';
                 
                 this.logService.createLog(
                     {
-                        message: `${pet.name} Spawned Bee (Honey)${pantherMessage}`,
+                        message: `${pet.name} Spawned Bee (Honey)${multiplierMessage}`,
                         type: "ability",
                         player: pet.parent
                     }

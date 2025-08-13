@@ -12,9 +12,9 @@ export class TigerBug extends Pet {
     attack = 4;
     health = 4;
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        // if (this.parent.pet0 != null) {
-        //     return;
-        // }
+        if (this.parent.pet0 != null) {
+            return;
+        }
 
         this.logService.createLog({
             message: `${this.name} pushed itself to the front.`,

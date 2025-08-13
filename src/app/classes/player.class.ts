@@ -83,8 +83,8 @@ export class Player {
             if (init) {
                 this.orignalPet0 = pet;
             }
-          }
-          if (index == 1) {
+        }
+        if (index == 1) {
             this.pet1 = pet;
             if (pet != null) {
                 this.pet1.savedPosition = 1;
@@ -92,8 +92,8 @@ export class Player {
             if (init) {
                 this.orignalPet1 = pet;
             }
-          }
-          if (index == 2) {
+        }
+        if (index == 2) {
             this.pet2 = pet;
             if (pet != null) {
                 this.pet2.savedPosition = 2;
@@ -101,8 +101,8 @@ export class Player {
             if (init) {
                 this.orignalPet2 = pet;
             }
-          }
-          if (index == 3) {
+        }
+        if (index == 3) {
             this.pet3 = pet;
             if (pet != null) {
                 this.pet3.savedPosition = 3;
@@ -110,8 +110,8 @@ export class Player {
             if (init) {
                 this.orignalPet3 = pet;
             }
-          }
-          if (index == 4) {
+        }
+        if (index == 4) {
             this.pet4 = pet;
             if (pet != null) {
                 this.pet4.savedPosition = 4;
@@ -216,7 +216,6 @@ export class Player {
             }
             this.setPet(4, spawnPet);
         }
-
         if (spawnPet.summoned) {
             spawnPet.summoned(null);
         }
@@ -780,7 +779,7 @@ export class Player {
                 // if (petBehind != null && petBehind.name == 'Tiger') {
                 //     mult.push(petBehind.level + 1);
                 // }
-                mult.push(pet.level + 1);
+                mult.push(pet.level);
             }
         }
 

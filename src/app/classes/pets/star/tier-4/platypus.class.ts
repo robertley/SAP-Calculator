@@ -14,12 +14,14 @@ export class Platypus extends Pet {
     attack = 2;
     health = 2;
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let power = this.level * 3;
-        let duck = new Duck(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
-        let beaver = new Beaver(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel);
+        let attackPower = 3 * this.level;
+        let healthPower = 2 * this.level;
+        
+        let duck = new Duck(this.logService, this.abilityService, this.parent, healthPower, attackPower, 0, this.minExpForLevel);
+        let beaver = new Beaver(this.logService, this.abilityService, this.parent, healthPower, attackPower, 0, this.minExpForLevel);
         this.logService.createLog(
             {
-                message: `${this.name} spawned ${power}/${power} Duck level ${this.level}`,
+                message: `${this.name} spawned ${attackPower}/${healthPower} Duck level ${this.level}`,
                 type: "ability",
                 player: this.parent,
                 tiger: tiger,
@@ -33,7 +35,7 @@ export class Platypus extends Pet {
 
         this.logService.createLog(
             {
-                message: `${this.name} spawned ${power}/${power} Beaver level ${this.level}`,
+                message: `${this.name} spawned ${attackPower}/${healthPower} Beaver level ${this.level}`,
                 type: "ability",
                 player: this.parent,
                 tiger: tiger,
