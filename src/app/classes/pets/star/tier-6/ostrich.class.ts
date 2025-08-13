@@ -9,8 +9,8 @@ export class Ostrich extends Pet {
     name = "Ostrich";
     tier = 6;
     pack: Pack = 'Star';
-    attack = 2;
-    health = 8;
+    attack = 6;
+    health = 7;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

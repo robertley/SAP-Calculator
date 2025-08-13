@@ -696,6 +696,11 @@ export class AbilityService {
 
     setBeforeAttackEvent(event: AbilityEvent) {
         this.beforeAttackEvents.push(event);
+        
+        // Mark the pet as processed to prevent duplicate events
+        if (event.pet) {
+            this.processedBeforeAttackPets.add(event.pet);
+        }
     }
 
     resetBeforeAttackEvents() {
@@ -731,9 +736,6 @@ export class AbilityService {
     }
 
     executeBeforeAttackEvents() {
-        // Clear the set of processed pets at the start of execution
-        this.processedBeforeAttackPets.clear();
-        
         // shuffle, so that same priority events are in random order
         this.beforeAttackEvents = shuffle(this.beforeAttackEvents);
 
@@ -748,6 +750,8 @@ export class AbilityService {
             this.checkAndAddNewBeforeAttackEvents();
         }
         
+        // Clear the set of processed pets after all events are executed
+        this.processedBeforeAttackPets.clear();
         this.resetBeforeAttackEvents();
     }
 
