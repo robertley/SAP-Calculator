@@ -32,7 +32,7 @@ export class Mushroom extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(newPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(newPet);
+                    this.abilityService.triggerFriendSummonedEvents(newPet);
                 }
             }
         }

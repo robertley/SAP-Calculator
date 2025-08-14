@@ -32,7 +32,7 @@ export class EasterEgg extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(monty, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(monty);
+                    this.abilityService.triggerFriendSummonedEvents(monty);
                 }
             }
         }

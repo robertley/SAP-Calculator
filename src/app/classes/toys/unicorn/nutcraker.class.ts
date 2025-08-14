@@ -31,7 +31,7 @@ export class Nutcracker extends Toy {
         )
 
         if (this.parent.summonPet(salmon, 0)) {
-            this.abilityService.triggerSummonedEvents(salmon);
+            this.abilityService.triggerFriendSummonedEvents(salmon);
         }
 
 

@@ -49,7 +49,7 @@ export class Popcorn extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(popcornPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(popcornPet);
+                    this.abilityService.triggerFriendSummonedEvents(popcornPet);
                 }
             }
         }

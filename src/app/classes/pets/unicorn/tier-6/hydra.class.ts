@@ -30,7 +30,7 @@ export class Hydra extends Pet {
             )
 
             if (this.parent.summonPet(head, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(head);
+                this.abilityService.triggerFriendSummonedEvents(head);
             }
         }
         

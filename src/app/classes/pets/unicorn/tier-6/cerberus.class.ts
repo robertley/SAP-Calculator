@@ -35,7 +35,7 @@ export class Cerberus extends Pet {
         )
 
         if (this.parent.summonPet(firePup, 0)) {
-            this.abilityService.triggerSummonedEvents(firePup);
+            this.abilityService.triggerFriendSummonedEvents(firePup);
         }
 
         this.abilityUses++;

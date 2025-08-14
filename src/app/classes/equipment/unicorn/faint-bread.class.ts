@@ -35,7 +35,7 @@ export class FaintBread extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(faintPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(faintPet);
+                    this.abilityService.triggerFriendSummonedEvents(faintPet);
                 }
             }
         }

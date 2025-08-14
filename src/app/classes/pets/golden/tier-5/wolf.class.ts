@@ -41,7 +41,7 @@ export class Wolf extends Pet {
             )
 
             if (this.parent.summonPet(pig, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(pig);
+                this.abilityService.triggerFriendSummonedEvents(pig);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

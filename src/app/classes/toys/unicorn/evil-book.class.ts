@@ -27,7 +27,7 @@ export class EvilBook extends Toy {
         )
 
         if (this.parent.summonPet(greatOne, 0)) {
-            this.abilityService.triggerSummonedEvents(greatOne);
+            this.abilityService.triggerFriendSummonedEvents(greatOne);
         }
 
         this.used = true;

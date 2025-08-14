@@ -29,7 +29,7 @@ export class OrchidMantis extends Pet {
             }
         )
         if (this.parent.summonPetInFront(this, mantis)) {
-            this.abilityService.triggerSummonedEvents(mantis);
+            this.abilityService.triggerFriendSummonedEvents(mantis);
         }
 
         this.superStartOfBattle(gameApi, tiger);

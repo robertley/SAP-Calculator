@@ -42,7 +42,7 @@ export class Kappa extends Pet {
             )
 
             if (this.parent.summonPet(spawn, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(spawn);
+                this.abilityService.triggerFriendSummonedEvents(spawn);
             }
 
             let opponentSpawnPet = this.petService.createPet(
@@ -68,7 +68,7 @@ export class Kappa extends Pet {
             )
 
             if (this.parent.opponent.summonPet(opponentSpawnPet, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(opponentSpawnPet);
+                this.abilityService.triggerFriendSummonedEvents(opponentSpawnPet);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

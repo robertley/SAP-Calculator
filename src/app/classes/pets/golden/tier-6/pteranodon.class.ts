@@ -44,7 +44,7 @@ export class Pteranodon extends Pet {
         })
         
         if (this.parent.summonPetBehind(this, summonPet)) {
-            this.abilityService.triggerSummonedEvents(summonPet);
+            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
         
         this.abilityUses++;

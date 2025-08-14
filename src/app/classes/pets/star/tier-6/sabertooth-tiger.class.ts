@@ -41,7 +41,7 @@ export class SabertoothTiger extends Pet {
         )
 
         if (this.parent.summonPet(summonPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(summonPet);
+            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
 
         super.superHurt(gameApi, pet, tiger);

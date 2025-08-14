@@ -34,7 +34,7 @@ export class Macaque extends Pet {
         )
         
         if (this.parent.summonPetInFront(this, monke)) {
-            this.abilityService.triggerSummonedEvents(monke);
+            this.abilityService.triggerFriendSummonedEvents(monke);
         }
 
         this.superStartOfBattle(gameApi, tiger);

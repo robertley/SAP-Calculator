@@ -28,7 +28,7 @@ export class Orca extends Pet {
             )
 
             if (this.parent.summonPet(faintPet, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(faintPet);
+                this.abilityService.triggerFriendSummonedEvents(faintPet);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

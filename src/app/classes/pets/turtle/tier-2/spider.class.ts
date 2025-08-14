@@ -46,7 +46,7 @@ export class Spider extends Pet {
         )
 
         if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(spawnPet);
+            this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

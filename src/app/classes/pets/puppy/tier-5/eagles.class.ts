@@ -43,7 +43,7 @@ export class Eagle extends Pet {
         )
 
         if (this.parent.summonPet(pet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(pet);
+            this.abilityService.triggerFriendSummonedEvents(pet);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

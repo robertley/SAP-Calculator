@@ -26,7 +26,7 @@ export class Rooster extends Pet {
                 pteranodon: pteranodon
             })
             if (this.parent.summonPet( chick, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(chick);
+                this.abilityService.triggerFriendSummonedEvents(chick);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

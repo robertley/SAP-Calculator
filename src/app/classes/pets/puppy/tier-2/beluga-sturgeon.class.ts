@@ -26,7 +26,7 @@ export class BelugaSturgeon extends Pet {
                 pteranodon: pteranodon
             })
             if (this.parent.summonPet(dolphin, 4)) {
-                this.abilityService.triggerSummonedEvents(dolphin);
+                this.abilityService.triggerFriendSummonedEvents(dolphin);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

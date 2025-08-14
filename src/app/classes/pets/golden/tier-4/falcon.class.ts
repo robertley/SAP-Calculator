@@ -38,7 +38,7 @@ export class Falcon extends Pet {
         )
 
         if (this.parent.summonPet(summonPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(summonPet);
+            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
 
         this.abilityUses++;

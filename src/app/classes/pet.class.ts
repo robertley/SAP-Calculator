@@ -1490,12 +1490,10 @@ export abstract class Pet {
             });
             this.abilityService.triggerLevelUpEvents(this.parent, this);
             this.abilityService.triggerLevelUpEvents(this.parent.opponent, this);
-            this.abilityService.executeLevelUpEvents();
             this.abilityService.executeFriendlyLevelUpToyEvents();
             this.setAbilityUses();
         }
         this.abilityService.triggerFriendGainedExperienceEvents(this.parent, this);
-        this.abilityService.executeFriendGainedExperienceEvents();
  
     }
 
@@ -1550,10 +1548,8 @@ export abstract class Pet {
             this.setEquipmentMultiplier(pandorasBoxLevel);
 
             this.abilityService.triggerFriendGainedAilmentEvents(this);
-            this.abilityService.executeFriendGainedAilmentEvents();
 
             this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
-            this.abilityService.executeEnemyGainedAilmentEvents();
         } else {
             this.equipment = equipment;
             
@@ -1561,9 +1557,7 @@ export abstract class Pet {
             this.setEquipmentMultiplier(pandorasBoxLevel);
             
             this.abilityService.triggerGainedPerkEvents(this);
-            this.abilityService.executeGainedPerkEvents();
             this.abilityService.triggerFriendGainedPerkEvents(this);
-            this.abilityService.executeFriendGainedPerkEvents();
         }
         if (this.eatsFood) {
             this.abilityService.setEatsFoodEvent({
@@ -1590,7 +1584,6 @@ export abstract class Pet {
         // Only trigger friendLostPerk events for perks, not ailments
         if (!wasAilment) {
             this.abilityService.triggerFriendLostPerkEvents(this);
-            this.abilityService.executeFriendLostPerkEvents();
         }
     }
 

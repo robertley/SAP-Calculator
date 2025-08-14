@@ -1,3 +1,4 @@
+import { eq } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -13,7 +14,8 @@ export class Scorpion extends Pet {
     attack = 1;
     health = 1;
     summoned(gameApi: GameAPI, tiger?: boolean): void {
-        this.equipment = new Peanut();
+        let equipment = new Peanut();
+        this.givePetEquipment(equipment);
         this.logService.createLog({
             message: `${this.name} gained the Peanut perk.`,
             type: 'ability',

@@ -44,7 +44,7 @@ export class Stork extends Pet {
         )
 
         if (this.parent.summonPet(summonPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(summonPet);
+            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

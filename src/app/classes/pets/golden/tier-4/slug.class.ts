@@ -27,7 +27,7 @@ export class Slug extends Pet {
         )
 
         if (this.parent.summonPet(slug, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(slug);
+            this.abilityService.triggerFriendSummonedEvents(slug);
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

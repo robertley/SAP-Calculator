@@ -731,14 +731,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  executeFrequentEvents() {
-    this.abilityService.executeFriendLostPerkEvents();
-    this.abilityService.executeGainedPerkEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-    this.abilityService.executeFriendGainedAilmentEvents();
-    this.abilityService.executeFriendlyToyBrokeEvents();
-  }
-
   checkPetsAlive() {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
@@ -846,9 +838,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       //add churro check
       this.toyService.executeStartOfBattleEvents(); //toy sob
-      this.executeFrequentEvents();
       this.startOfBattleService.executeNonToyPetEvents(); //pet sob
-      this.executeFrequentEvents();
       
       //caterpillar
       this.abilityService.triggerTransformEvents(this.player);
@@ -883,8 +873,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (this.opponent.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
     }
-
-    this.abilityService.executeEmptyFrontSpaceEvents();
 
     if (this.player.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);

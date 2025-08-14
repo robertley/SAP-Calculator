@@ -216,8 +216,11 @@ export class Player {
             }
             this.setPet(4, spawnPet);
         }
-        if (spawnPet.summoned) {
-            spawnPet.summoned(null);
+        if (spawnPet.summoned != null) {
+            this.abilityService.setSummonedEvent({
+                callback: spawnPet.summoned.bind(spawnPet),
+                priority: spawnPet.attack
+            })
         }
 
         let opponent = getOpponent(this.gameService.gameApi, this);
@@ -379,7 +382,7 @@ export class Player {
         for (const slot of petSlots) {
             if (slot.pet && !slot.pet.alive) {
                 if (slot.pet.afterFaint) {
-                    this.abilityService.setAfterFaintEvent({
+                    this.abilityService.setAfterFaintEvents({
                         callback: slot.pet.afterFaint.bind(slot.pet),
                         priority: slot.pet.attack,
                         player: this,
@@ -391,10 +394,6 @@ export class Player {
                 this[`pet${slot.index}`] = null;
                 petRemoved = true;
             }
-        }
-        
-        if (petRemoved) {
-            this.abilityService.executeAfterFaintEvents();
         }
         
         return petRemoved;
@@ -679,8 +678,6 @@ export class Player {
         if (jump) {
             this.abilityService.triggerFriendJumpedEvents(this, pet);
             this.abilityService.triggerFriendJumpedToyEvents(this, pet);
-            this.abilityService.executeFriendJumpedEvents();
-            this.abilityService.executeFriendJumpedToyEvents();
         }
     }
 
@@ -763,7 +760,7 @@ export class Player {
         )
 
         if (this.summonPet(goldenRetriever, 0)) {
-            this.abilityService.triggerSummonedEvents(goldenRetriever);
+            this.abilityService.triggerFriendSummonedEvents(goldenRetriever);
         }
         this.trumpets = 0;
         this.spawnedGoldenRetiever = true;

@@ -36,7 +36,7 @@ export class Robin extends Pet {
             })
 
             nest.givePetEquipment(new Egg(this.logService, this.abilityService));
-            this.abilityService.triggerSummonedEvents(nest);
+            this.abilityService.triggerFriendSummonedEvents(nest);
         }
 
         this.superStartOfBattle(gameApi, tiger);
