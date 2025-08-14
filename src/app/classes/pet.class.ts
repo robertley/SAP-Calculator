@@ -24,6 +24,7 @@ import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-
 import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
 import { Toad } from "./pets/star/tier-3/toad.class";
+import { callbackify } from "util";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
 
@@ -1501,8 +1502,11 @@ export abstract class Pet {
         this.mana += amt;
         this.mana = Math.min(this.mana, 50);
 
-        if (this.gainedMana) {
-            this.gainedMana(null, false);
+        if (this.gainedMana != null) {
+            this.abilityService.setGainManaEvents({
+                callback: this.gainedMana.bind(this),
+                priority: this.attack
+            });
         }
     }
 

@@ -14,36 +14,16 @@ import { LogService } from "./log.service";
 export class AbilityService {
 
     private gameApi: GameAPI;
-    private faintEvents: AbilityEvent[] = [];
-    private summonedEvents: AbilityEvent[] = [];
-    private friendFaintsEvents: AbilityEvent[] = [];
     private friendAheadAttacksEvents: AbilityEvent[]= [];
     private afterAttackEvents: AbilityEvent[]= [];
-    private friendAheadFaintsEvents: AbilityEvent[]= [];
-    private knockOutEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
     private processedBeforeAttackPets: Set<Pet> = new Set();
     private beforeStartOfBattleEvents: AbilityEvent[]= [];
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
-    private friendLostPerkEvents: AbilityEvent[]= []; 
-    private gainedPerkEvents: AbilityEvent[]= [];
-    private friendGainedPerkEvents: AbilityEvent[]= []; // TODO refactor to work like friendGainedAilment
-    private friendGainedAilmentEvents: AbilityEvent[]= [];
-    private enemyGainedAilmentEvents: AbilityEvent[]= [];
-    private friendlyToyBrokeEvents: AbilityEvent[]= [];
-    private transformEvents: AbilityEvent[]= [];
-    private enemySummonedEvents: AbilityEvent[]= [];
-    private friendHurtEvents: AbilityEvent[]= [];
-    private levelUpEvents: AbilityEvent[]= [];
-    private enemyHurtEvents: AbilityEvent[]= [];
-    private emptyFrontSpaceEvents: AbilityEvent[]= [];
     private friendAttacksEvents: AbilityEvent[]= [];
     private beforeFriendAttacksEvents: AbilityEvent[] = [];
-    private friendJumpedEvents: AbilityEvent[]= [];
-    private manaEvents: AbilityEvent[]= [];
     private friendGainsHealthEvents: AbilityEvent[]= [];
     private friendGainedExperienceEvents: AbilityEvent[] = [];
-    private afterFaintEvents: AbilityEvent[] = [];
 
     // toy events
     private emptyFrontSpaceToyEvents: AbilityEvent[]= [];
@@ -233,6 +213,8 @@ export class AbilityService {
                 break;
                 
             case 'gainsMana':
+                event.callback(null);
+                break;
             case 'manaSnipe':
             case 'counter':
                 // Mana events might use the old gameApi field
@@ -709,10 +691,6 @@ export class AbilityService {
         this.addEventToQueue(event);
     }
 
-    get hasEnemySummonedEvents() {
-        return this.enemySummonedEvents.length > 0;
-    }
-
     // friend hurt events
 
     triggerFriendHurtEvents(player: Player, hurtPet: Pet) {
@@ -750,24 +728,6 @@ export class AbilityService {
     setLevelUpEvent(event: AbilityEvent) {
         event.abilityType = 'levelUp';
         this.addEventToQueue(event);
-    }
-
-    resetLevelUpEvents() {
-        this.levelUpEvents = [];
-    }
-
-    executeLevelUpEvents() {
-        // shuffle, so that same priority events are in random order
-        this.levelUpEvents = shuffle(this.levelUpEvents);
-
-        this.levelUpEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.levelUpEvents) {
-            event.callback(this.gameService.gameApi, event.callbackPet, false);
-        }
-        
-        this.resetLevelUpEvents();
-
     }
 
     // empty front space events
@@ -917,6 +877,10 @@ export class AbilityService {
         this.addEventToQueue(event);
     }
 
+    setGainManaEvents(event: AbilityEvent) {
+        event.abilityType = 'gainsMana';
+        this.addEventToQueue(event);
+    }
 
     // friend gains health events
     triggerFriendGainsHealthEvents(player: Player, healthPet: Pet) {
