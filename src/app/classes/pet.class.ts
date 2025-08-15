@@ -24,9 +24,8 @@ import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-
 import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
 import { Toad } from "./pets/star/tier-3/toad.class";
-import { callbackify } from "util";
 
-export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom';
+export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom' | 'Danger';
 
 
 export abstract class Pet {
@@ -66,8 +65,10 @@ export abstract class Pet {
     eatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    friendTransformed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendAttacks?(gameApi: GameAPI, tiger?: boolean): void;
     beforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    enemyAttack?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
     beforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
@@ -108,8 +109,10 @@ export abstract class Pet {
     originalFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
     originalFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalFriendTransformed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAttacks?(gameApi: GameAPI, tiger?: boolean): void;
     originalBeforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalEnemyAttack?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalAfterAttack?(gameApi: GameAPI, tiger?: boolean): void;
     originalBeforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
     originalBeforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
@@ -183,8 +186,10 @@ export abstract class Pet {
         this.originalFriendGainedPerk = this.friendGainedPerk;
         this.originalFriendGainedAilment = this.friendGainedAilment;
         this.originalFriendHurt = this.friendHurt;
+        this.originalFriendTransformed = this.friendTransformed;
         this.originalFriendAttacks = this.friendAttacks;
         this.originalBeforeFriendAttacks = this.beforeFriendAttacks;
+        this.originalEnemyAttack = this.enemyAttack;
         this.originalAfterAttack = this.afterAttack;
         this.originalAfterFaint = this.afterFaint;
         this.originalBeforeAttack = this.beforeAttack;
@@ -368,6 +373,14 @@ export abstract class Pet {
                 return;
             }
             friendHurtCallback(gameApi, pet, tiger);
+        }
+
+        let friendTransformedCallback = this.friendTransformed?.bind(this);
+        this.friendTransformed = friendTransformedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            friendTransformedCallback(gameApi, pet, tiger);
         }
 
         let friendSummonedCallback = this.friendSummoned?.bind(this);
@@ -741,6 +754,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superFriendTransformed(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.originalFriendTransformed(gameApi, pet, true)
+        this.exp = exp;
+    }
+
     protected superAnyoneLevelUp(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
@@ -768,6 +791,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
         this.originalFriendAttacks(gameApi, true)
+        this.exp = exp;
+    }
+
+    protected superEnemyAttack(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.originalEnemyAttack(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -944,6 +977,9 @@ export abstract class Pet {
             if (damageResp.fairyBallReduction > 0) { 
                 message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
             }
+            if (damageResp.fanMusselReduction > 0) {
+                message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
+            }
             // if (attackEquipment != null) {
             //     let power = Math.abs(attackEquipment.power);
             //     let sign = '-';
@@ -985,7 +1021,7 @@ export abstract class Pet {
             }
         }
 
-        // friend attacks events
+        // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
         this.abilityService.triggerFriendAttacksEvents(this.parent, this);
 
         // hurt ability
@@ -1015,14 +1051,6 @@ export abstract class Pet {
             })
         }
 
-        // friend ahead attacks
-        if (this.petBehind(null, true)?.friendAheadAttacks != null) {
-            this.abilityService.setFriendAheadAttacksEvents({
-                callback: this.petBehind(null, true).friendAheadAttacks.bind(this.petBehind(null, true)),
-                priority: this.petBehind(null, true).attack,
-                callbackPet: this
-            });
-        }
 
         // friend hurt ability
         if (pet.alive && damage > 0) {
@@ -1052,6 +1080,13 @@ export abstract class Pet {
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
                     damage = Math.max(0, damage - nurikabe);
+                    pet.abilityUses++;
+                }
+                let fanMusselReduction = 0;
+                if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
+                    fanMusselReduction = pet.level * 1;
+                    damage = Math.max(0, damage - fanMusselReduction);
+                    pet.abilityUses++;
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1064,6 +1099,9 @@ export abstract class Pet {
                 }
                 if (nurikabe > 0) {
                     message += ` -${nurikabe} (Nurikabe)`;
+                }
+                if (fanMusselReduction > 0) {
+                    message += ` -${fanMusselReduction} (Fan Mussel)`;
                 }
                 message += ` (Crisp).`;
 
@@ -1181,6 +1219,9 @@ export abstract class Pet {
         if (damageResp.fairyBallReduction > 0) { 
             message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
         }
+        if (damageResp.fanMusselReduction > 0) {
+            message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`
+        }
 
         this.logService.createLog({
             message: message,
@@ -1229,7 +1270,8 @@ export abstract class Pet {
             damage: number,
             fortuneCookie: boolean,
             nurikabe: number,
-            fairyBallReduction?: number 
+            fairyBallReduction?: number,
+            fanMusselReduction?: number 
         } {
         let attackMultiplier = this.equipment?.multiplier;
         let defenseMultiplier = pet.equipment?.multiplier;
@@ -1312,6 +1354,13 @@ export abstract class Pet {
             pet.abilityUses++;
         }
 
+        let fanMusselReduction = 0;
+        if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
+            fanMusselReduction = pet.level * 1;
+            defenseAmt += fanMusselReduction;
+            pet.abilityUses++;
+        }
+
         if (attackEquipment instanceof Salt && !snipe) {
             attackAmt *= (2 + attackMultiplier - 1);
         }
@@ -1360,7 +1409,8 @@ export abstract class Pet {
             damage: damage,
             fortuneCookie: fortuneCookie,
             nurikabe: nurikabe,
-            fairyBallReduction: 0 // default value
+            fairyBallReduction: fairyBallReduction,
+            fanMusselReduction: fanMusselReduction
         }
     } 
 

@@ -36,6 +36,7 @@ export class Parrot extends Pet {
         this.friendAheadAttacks = copyPet.originalFriendAheadAttacks?.bind(this);
         this.friendAheadFaints = copyPet.originalFriendAheadFaints?.bind(this);
         this.friendFaints = copyPet.originalFriendFaints?.bind(this);
+        this.enemyAttack = copyPet.originalEnemyAttack?.bind(this);
         this.afterAttack = copyPet.originalAfterAttack?.bind(this);
         this.beforeAttack = copyPet.originalBeforeAttack?.bind(this);
         this.beforeStartOfBattle = copyPet.originalBeforeStartOfBattle?.bind(this);
@@ -43,6 +44,8 @@ export class Parrot extends Pet {
         this.summoned = copyPet.originalSummoned?.bind(this);
         this.friendlyToyBroke = copyPet.originalFriendlyToyBroke?.bind(this);
         this.friendGainedAilment = copyPet.originalFriendGainedAilment?.bind(this);
+        this.friendHurt = copyPet.originalFriendHurt?.bind(this);
+        this.friendTransformed = copyPet.originalFriendTransformed?.bind(this);
         this.eatsFood = copyPet.originalEatsFood?.bind(this);
         this.friendAteFood = copyPet.originalFriendAteFood?.bind(this);
         this.friendLostPerk = copyPet.originalFriendLostPerk?.bind(this);

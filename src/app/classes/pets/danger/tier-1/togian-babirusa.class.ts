@@ -4,32 +4,31 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { FairyBall } from "../../hidden/fairy-ball.class";
 
-export class FairyArmadillo extends Pet {
-    name = "Fairy Armadillo";
-    tier = 4;
-    pack: Pack = 'Star';
-    attack = 2;
-    health = 6;
+export class TogianBabirusa extends Pet {
+    name = "Togian Babirusa";
+    tier = 1;
+    pack: Pack = 'Danger';
+    attack = 4;
+    health = 3;
 
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.alive) {
-            const healthGain = this.level * 2;
-            this.increaseHealth(healthGain);
-
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        let target = this.parent.opponent.getRandomPet();
+        
+        if (target) {  // getRandomPet returns null if no living pets
+            target.increaseAttack(1);  // Fixed +1, not this.level * 1
+            target.increaseHealth(1);  // Fixed +1, not this.level * 1
+            
             this.logService.createLog({
-                message: `${this.name} gains ${healthGain} permanent health and transforms into a protected ball!`,
+                message: `${this.name} gave ${target.name} +1 attack and +1 health.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                pteranodon: pteranodon
             });
-
-            const fairyBall = new FairyBall(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, this.equipment);
-            
-            this.parent.transformPet(this, fairyBall);
         }
-        this.superHurt(gameApi, pet, tiger);
+        
+        this.superFaint(gameApi, tiger);
     }
 
     constructor(protected logService: LogService,

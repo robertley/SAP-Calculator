@@ -623,6 +623,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       case 'Unicorn':
         petPool = this.petService.unicornPackPets;
         break;
+      case 'Danger':
+        petPool = this.petService.dangerPackPets;
+        break;
       default:
         petPool = this.petService.playerCustomPackPets.get(pack);
         break;
@@ -840,9 +843,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.toyService.executeStartOfBattleEvents(); //toy sob
       this.startOfBattleService.executeNonToyPetEvents(); //pet sob
       
-      //caterpillar
-      this.abilityService.triggerTransformEvents(this.player);
-      this.abilityService.triggerTransformEvents(this.opponent);
       this.checkPetsAlive();
       while (this.abilityService.hasAbilityCycleEvents) {
         this.abilityCycle();
@@ -1135,8 +1135,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponent.checkPetsAlive();
 
     this.abilityService.executeAfterAttackEvents();
-    this.abilityService.executeFriendAheadAttacksEvents();
-    this.abilityService.executeFriendAttacksEvents();
+    this.abilityService.executeAfterFriendAttackEvents();
   }
 
   endLog(winner?: Player) {

@@ -41,6 +41,31 @@
             "id": "4"
         },
         {
+            "name": "Bombus Dahlbomii",
+            "tier": "1",
+            "id": "674"
+        },
+        {
+            "name": "Ethiopian Wolf",
+            "tier": "1",
+            "id": "675"
+        },
+        {
+            "name": "Fan Mussel",
+            "tier": "1",
+            "id": "676"
+        },
+        {
+            "name": "Togian Babirusa",
+            "tier": "1",
+            "id": "677"
+        },
+        {
+            "name": "Tooth Billed Pigeon",
+            "tier": "1",
+            "id": "678"
+        },
+        {
             "name": "Beetle",
             "tier": "1",
             "id": "88"
@@ -251,6 +276,16 @@
             "id": "643"
         },
         {
+            "name": "Iriomote Cat",
+            "tier": "1",
+            "id": "672"
+        },
+        {
+            "name": "Ili Pika",
+            "tier": "1",
+            "id": "673"
+        },
+        {
             "name": "Kiwi",
             "tier": "1",
             "id": "131"
@@ -426,6 +461,11 @@
             "name": "African Penguin",
             "tier": "2",
             "id": "210"
+        },
+        {
+            "name": "Angry Pygmy Hog",
+            "tier": "2",
+            "id": "679"
         },
         {
             "name": "Atlantic Puffin",
@@ -606,6 +646,26 @@
             "name": "Peacock",
             "tier": "2",
             "id": "54"
+        },
+        {
+            "name": "Proboscis Monkey",
+            "tier": "2",
+            "id": "680"
+        },
+        {
+            "name": "Pygmy Hog",
+            "tier": "2",
+            "id": "681"
+        },
+        {
+            "name": "Saola",
+            "tier": "2",
+            "id": "682"
+        },
+        {
+            "name": "Taita Shrew",
+            "tier": "2",
+            "id": "683"
         },
         {
             "name": "Rat",

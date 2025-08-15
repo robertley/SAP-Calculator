@@ -47,6 +47,7 @@ import { Penguin } from "app/classes/pets/turtle/tier-4/penguin.class";
 import { Deer } from "app/classes/pets/turtle/tier-4/deer.class";
 import { Whale } from "../classes/pets/turtle/tier-4/whale.class";
 import { Bee } from "../classes/pets/hidden/bee.class";
+import { AngryPygmyHog } from "../classes/pets/hidden/angry-pygmy-hog.class";
 import { ZombieCricket } from "../classes/pets/hidden/zombie-cricket.class";
 import { Scorpion } from "../classes/pets/turtle/tier-5/scorpion.class";
 import { Crocodile } from "../classes/pets/turtle/tier-5/crocodile.class";
@@ -358,6 +359,17 @@ import { Cerberus } from "../classes/pets/unicorn/tier-6/cerberus.class";
 import { FirePup } from "../classes/pets/hidden/fire-pup.class";
 import { Hydra } from "../classes/pets/unicorn/tier-6/hydra.class";
 import { Behemoth } from "../classes/pets/unicorn/tier-6/behemoth.class";
+import { IriomoteCat } from "../classes/pets/danger/tier-1/iriomote-cat.class";
+import { IliPika } from "../classes/pets/danger/tier-1/ili-pika.class";
+import { BombusDahlbomii } from "../classes/pets/danger/tier-1/bombus-dahlbomii.class";
+import { EthiopianWolf } from "../classes/pets/danger/tier-1/ethiopian-wolf.class";
+import { FanMussel } from "../classes/pets/danger/tier-1/fan-mussel.class";
+import { TogianBabirusa } from "../classes/pets/danger/tier-1/togian-babirusa.class";
+import { ToothBilledPigeon } from "../classes/pets/danger/tier-1/tooth-billed-pigeon.class";
+import { ProboscisMonkey } from "../classes/pets/danger/tier-2/proboscis-monkey.class";
+import { PygmyHog } from "../classes/pets/danger/tier-2/pygmy-hog.class";
+import { Saola } from "../classes/pets/danger/tier-2/saola.class";
+import { TaitaShrew } from "../classes/pets/danger/tier-2/taita-shrew.class";
 import { Monty } from "../classes/pets/hidden/monty.class";
 import { Rock } from "../classes/pets/hidden/rock.class";
 import { Basilisk } from "../classes/pets/custom/tier-1/basilisk.class";
@@ -405,6 +417,7 @@ export class PetService {
     goldenPackPets: Map<number, string[]> = new Map();
     unicornPackPets: Map<number, string[]> = new Map();
     customPackPets: Map<number, string[]> = new Map();
+    dangerPackPets: Map<number, string[]> = new Map();
     playerCustomPackPets: Map<string, Map<number, string[]>> = new Map();
     allPets: Map<number, string[]> = new Map();
     startOfBattlePets: string[] = [
@@ -894,6 +907,34 @@ export class PetService {
             "Behemoth"
         ]);
 
+        this.dangerPackPets.set(1, [
+            "Iriomote Cat",
+            "Ili Pika",
+            "Bombus Dahlbomii",
+            "Ethiopian Wolf",
+            "Fan Mussel",
+            "Togian Babirusa",
+            "Tooth Billed Pigeon"
+        ]);
+        this.dangerPackPets.set(2, [
+            "Proboscis Monkey",
+            "Pygmy Hog",
+            "Saola",
+            "Taita Shrew"
+        ]);
+        this.dangerPackPets.set(3, [
+            
+        ]);
+        this.dangerPackPets.set(4, [
+            
+        ]);
+        this.dangerPackPets.set(5, [
+            
+        ]);
+        this.dangerPackPets.set(6, [
+            
+        ]);
+
         this.customPackPets.set(1, [
             "Frilled Dragon",
             "Mouse",
@@ -980,6 +1021,9 @@ export class PetService {
           this.allPets.get(tier).push(...pets);
         }
         for (let [tier, pets] of this.unicornPackPets) {
+          this.allPets.get(tier).push(...pets);
+        }
+        for (let [tier, pets] of this.dangerPackPets) {
           this.allPets.get(tier).push(...pets);
         }
         // remove duplicates from each tier
@@ -1627,6 +1671,8 @@ export class PetService {
 
 
             // Token Pets
+            case 'Angry Pygmy Hog':
+                return new AngryPygmyHog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bee':
                 return new Bee(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bus':
@@ -1820,6 +1866,28 @@ export class PetService {
                 return new Hydra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Behemoth':
                 return new Behemoth(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Iriomote Cat':
+                return new IriomoteCat(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Ili Pika':
+                return new IliPika(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Bombus Dahlbomii':
+                return new BombusDahlbomii(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Ethiopian Wolf':
+                return new EthiopianWolf(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Fan Mussel':
+                return new FanMussel(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Togian Babirusa':
+                return new TogianBabirusa(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tooth Billed Pigeon':
+                return new ToothBilledPigeon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Proboscis Monkey':
+                return new ProboscisMonkey(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Pygmy Hog':
+                return new PygmyHog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Saola':
+                return new Saola(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Taita Shrew':
+                return new TaitaShrew(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
         }
     }
@@ -2626,6 +2694,9 @@ export class PetService {
         }
 
         // Token pets
+        if (pet instanceof AngryPygmyHog) {
+            newPet = new AngryPygmyHog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
         if (pet instanceof Bee) {
             newPet = new Bee(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
@@ -3051,6 +3122,39 @@ export class PetService {
         if (pet instanceof Behemoth) {
             newPet = new Behemoth(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
+        if (pet instanceof IriomoteCat) {
+            newPet = new IriomoteCat(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof IliPika) {
+            newPet = new IliPika(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof BombusDahlbomii) {
+            newPet = new BombusDahlbomii(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof EthiopianWolf) {
+            newPet = new EthiopianWolf(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof FanMussel) {
+            newPet = new FanMussel(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof TogianBabirusa) {
+            newPet = new TogianBabirusa(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ToothBilledPigeon) {
+            newPet = new ToothBilledPigeon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof ProboscisMonkey) {
+            newPet = new ProboscisMonkey(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof PygmyHog) {
+            newPet = new PygmyHog(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Saola) {
+            newPet = new Saola(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof TaitaShrew) {
+            newPet = new TaitaShrew(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
 
 
         return newPet;
@@ -3069,6 +3173,8 @@ export class PetService {
             pets = this.goldenPackPets.get(tier);
         } else if (parent.pack == 'Unicorn') {
             pets = this.unicornPackPets.get(tier);
+        } else if (parent.pack == 'Danger') {
+            pets = this.dangerPackPets.get(tier);
         } else {
             pets = this.playerCustomPackPets.get(parent.pack).get(tier);
         }

@@ -14,13 +14,12 @@ import { LogService } from "./log.service";
 export class AbilityService {
 
     private gameApi: GameAPI;
-    private friendAheadAttacksEvents: AbilityEvent[]= [];
     private afterAttackEvents: AbilityEvent[]= [];
     private beforeAttackEvents: AbilityEvent[]= [];
     private processedBeforeAttackPets: Set<Pet> = new Set();
     private beforeStartOfBattleEvents: AbilityEvent[]= [];
     private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
-    private friendAttacksEvents: AbilityEvent[]= [];
+    private afterFriendAttackEvents: AbilityEvent[]= []; // unified friend + enemy attack events
     private beforeFriendAttacksEvents: AbilityEvent[] = [];
     private friendGainsHealthEvents: AbilityEvent[]= [];
     private friendGainedExperienceEvents: AbilityEvent[] = [];
@@ -48,6 +47,8 @@ export class AbilityService {
         'friendSummoned': 7,
         'enemySummoned': 7,
         'friendJumped': 8,
+        'afterFriendAttack': 8.5, // unified friend/enemy attack events
+        'enemyAttack': 8.5, // same priority as afterFriendAttack
         'faint': 9,
         'friendAheadFaints': 10,
         'afterFaint': 11,
@@ -303,28 +304,6 @@ export class AbilityService {
         this.addEventToQueue(event);
     }
 
-    // friend ahead attacks events
-    
-    setFriendAheadAttacksEvents(event: AbilityEvent) {
-        this.friendAheadAttacksEvents.push(event);
-    }
-
-    resetFriendAheadAttacksEvents() {
-        this.friendAheadAttacksEvents = [];
-    }
-
-    executeFriendAheadAttacksEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendAheadAttacksEvents = shuffle(this.friendAheadAttacksEvents);
-
-        this.friendAheadAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendAheadAttacksEvents) {
-            event.callback(this.gameService.gameApi, event.callbackPet);
-        }
-        
-        this.resetFriendAheadAttacksEvents();
-    }
 
     // after attacks events
     
@@ -672,6 +651,25 @@ export class AbilityService {
         this.addEventToQueue(event);
     }
 
+    // friend transformed
+    
+    triggerFriendTransformedEvents(player: Player, transformedPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.friendTransformed != null) {
+                this.setFriendTransformedEvent({
+                    callback: pet.friendTransformed.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: transformedPet
+                })
+            }
+        }
+    }
+
+    setFriendTransformedEvent(event: AbilityEvent) {
+        event.abilityType = 'friendTransformed';
+        this.addEventToQueue(event);
+    }
+
     // enemy summoned
 
     triggerEnemySummonedEvents(player: Player, summonPet: Pet) {
@@ -776,39 +774,32 @@ export class AbilityService {
     // friend attacks events
 
     triggerFriendAttacksEvents(player: Player, attacksPet: Pet) {
+        // Add friendAttacks to unified system
         for (let pet of player.petArray) {
             if (pet == attacksPet) {
                 continue;
             }
             if (pet.friendAttacks != null) {
-                this.setFriendAttacksEvent({
+                this.setAfterFriendAttackEvent({
                     callback: pet.friendAttacks.bind(pet),
                     priority: pet.attack,
+                    abilityType: 'friendAttacks'
                 })
             }
         }
-    }
-    
-    setFriendAttacksEvent(event: AbilityEvent) {
-        this.friendAttacksEvents.push(event);
-    }
-
-    resetFriendAttacksEvents() {
-        this.friendAttacksEvents = [];
-    }
-
-    executeFriendAttacksEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendAttacksEvents = shuffle(this.friendAttacksEvents);
-
-        this.friendAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendAttacksEvents) {
-            event.callback(this.gameService.gameApi, false);
+        
+        // Add friendAheadAttacks to unified system
+        if (attacksPet.petBehind(null, true)?.friendAheadAttacks != null) {
+            this.setAfterFriendAttackEvent({
+                callback: attacksPet.petBehind(null, true).friendAheadAttacks.bind(attacksPet.petBehind(null, true)),
+                priority: attacksPet.petBehind(null, true).attack,
+                callbackPet: attacksPet,
+                abilityType: 'friendAheadAttacks'
+            });
         }
         
-        this.resetFriendAttacksEvents();
-
+        // Trigger enemy attack events for the opponent
+        this.triggerEnemyAttackEvents(attacksPet.parent.opponent, attacksPet);
     }
 
     // before friend attacks events
@@ -847,6 +838,45 @@ export class AbilityService {
         }
         
         this.resetBeforeFriendAttacksEvents();
+    }
+
+    // unified after friend attack events (combines friendAttacks, friendAheadAttacks, enemyAttacks)
+    
+    setAfterFriendAttackEvent(event: AbilityEvent) {
+        this.afterFriendAttackEvents.push(event);
+    }
+
+    resetAfterFriendAttackEvents() {
+        this.afterFriendAttackEvents = [];
+    }
+
+    executeAfterFriendAttackEvents() {
+        // shuffle, so that same priority events are in random order
+        this.afterFriendAttackEvents = shuffle(this.afterFriendAttackEvents);
+
+        // Sort by pet attack priority (higher attack = higher priority)
+        this.afterFriendAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.afterFriendAttackEvents) {
+            event.callback(this.gameService.gameApi, false);
+        }
+        
+        this.resetAfterFriendAttackEvents();
+    }
+
+    // enemy attack events
+    
+    triggerEnemyAttackEvents(player: Player, attackingEnemyPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.enemyAttack != null) {
+                this.setAfterFriendAttackEvent({
+                    callback: pet.enemyAttack.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: attackingEnemyPet,
+                    abilityType: 'enemyAttack'
+                });
+            }
+        }
     }
 
     // friend jumped events

@@ -110,6 +110,9 @@ export class PetSelectorComponent implements OnInit {
     for (let [tier, pets] of this.petService.unicornPackPets) {
       this.pets.get(tier).push(...pets);
     }
+    for (let [tier, pets] of this.petService.dangerPackPets) {
+      this.pets.get(tier).push(...pets);
+    }
     for (let [tier, pets] of this.petService.customPackPets) {
       this.pets.get(tier).push(...pets);
     }
@@ -149,6 +152,8 @@ export class PetSelectorComponent implements OnInit {
       pack = this.petService.goldenPackPets;
     } else if (player.pack == 'Unicorn') {
       pack = this.petService.unicornPackPets;
+    } else if (player.pack == 'Danger') {
+      pack = this.petService.dangerPackPets;
     } else {
       try {
         pack = this.buildCustomPack(player.pack)

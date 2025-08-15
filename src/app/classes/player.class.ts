@@ -24,7 +24,7 @@ export class Player {
     private orignalPet3?: Pet;
     private orignalPet4?: Pet;
 
-    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' = 'Turtle';
+    pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' | 'Danger'= 'Turtle' ;
 
     toy: Toy;
     originalToy: Toy;
@@ -228,6 +228,17 @@ export class Player {
         this.abilityService.triggerEnemySummonedEvents(opponent, spawnPet);
 
         return true;
+    }
+
+    transformPet(originalPet: Pet, newPet: Pet): void {
+        this.setPet(originalPet.position, newPet);
+        if (newPet.transform) {
+            this.abilityService.setTransformEvent({
+                callback: newPet.transform.bind(newPet),
+                priority: newPet.attack
+            });
+        }
+        this.abilityService.triggerFriendTransformedEvents(this, newPet);
     }
 
     // TODO - Revise Logic -- might not be consistent with game

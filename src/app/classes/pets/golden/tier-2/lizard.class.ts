@@ -35,7 +35,7 @@ export class Lizard extends Pet {
 
         this.abilityUses++;
 
-        super.superFaint(gameApi, tiger);
+        super.superHurt(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
