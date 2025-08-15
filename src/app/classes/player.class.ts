@@ -232,6 +232,7 @@ export class Player {
 
     transformPet(originalPet: Pet, newPet: Pet): void {
         this.setPet(originalPet.position, newPet);
+        newPet.applyEquipment(newPet.equipment);
         if (newPet.transform) {
             this.abilityService.setTransformEvent({
                 callback: newPet.transform.bind(newPet),

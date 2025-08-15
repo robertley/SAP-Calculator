@@ -668,6 +668,11 @@
             "id": "683"
         },
         {
+            "name": "White-Bellied Heron",
+            "tier": "2",
+            "id": "684"
+        },
+        {
             "name": "Rat",
             "tier": "2",
             "id": "57"
@@ -805,6 +810,11 @@
             "id": "214"
         },
         {
+            "name": "Blue-Throated Macaw",
+            "tier": "3",
+            "id": "685"
+        },
+        {
             "name": "Brain Cramp",
             "tier": "3",
             "id": "349"
@@ -920,6 +930,11 @@
             "id": "91"
         },
         {
+            "name": "Hirola",
+            "tier": "3",
+            "id": "686"
+        },
+        {
             "name": "Hoopoe Bird",
             "tier": "3",
             "id": "235"
@@ -1003,6 +1018,46 @@
             "name": "Pug",
             "tier": "3",
             "id": "145"
+        },
+        {
+            "name": "Pygmy Hippo",
+            "tier": "3",
+            "id": "687"
+        },
+        {
+            "name": "Roloway Monkey",
+            "tier": "3",
+            "id": "688"
+        },
+        {
+            "name": "Spoon-Billed Sandpiper",
+            "tier": "3",
+            "id": "689"
+        },
+        {
+            "name": "Angelshark",
+            "tier": "4",
+            "id": "690"
+        },
+        {
+            "name": "Bonobo",
+            "tier": "4",
+            "id": "691"
+        },
+        {
+            "name": "Giant Tortoise",
+            "tier": "4",
+            "id": "692"
+        },
+        {
+            "name": "Golden Tamarin",
+            "tier": "4",
+            "id": "693"
+        },
+        {
+            "name": "Longcomb Sawfish",
+            "tier": "4",
+            "id": "694"
         },
         {
             "name": "Puppy",
@@ -1389,6 +1444,16 @@
     ],
     "tier5": [
         {
+            "name": "Aye-aye",
+            "tier": "5",
+            "id": "695"
+        },
+        {
+            "name": "Banggai Cardinalfish",
+            "tier": "5",
+            "id": "696"
+        },
+        {
             "name": "Alpaca",
             "tier": "5",
             "id": "194"
@@ -1579,6 +1644,11 @@
             "id": "96"
         },
         {
+            "name": "Red Panda",
+            "tier": "5",
+            "id": "697"
+        },
+        {
             "name": "Raccoon",
             "tier": "5",
             "id": "158"
@@ -1700,6 +1770,36 @@
         }
     ],
     "tier6": [
+        {
+            "name": "Amsterdam Albatross",
+            "tier": "6",
+            "id": "698"
+        },
+        {
+            "name": "Black Rhino",
+            "tier": "6",
+            "id": "699"
+        },
+        {
+            "name": "Blue Whale",
+            "tier": "6",
+            "id": "700"
+        },
+        {
+            "name": "California Condor",
+            "tier": "6",
+            "id": "701"
+        },
+        {
+            "name": "Green Sea Turtle",
+            "tier": "6",
+            "id": "702"
+        },
+        {
+            "name": "Helmeted Hornbill",
+            "tier": "6",
+            "id": "703"
+        },
         {
             "name": "Anglerfish",
             "tier": "6",

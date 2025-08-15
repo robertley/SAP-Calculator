@@ -14,21 +14,42 @@ export class Bear extends Pet {
     attack = 3;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = [
-            ...this.getPetsAhead(this.level, true),
-            ...this.getPetsBehind(this.level)
-        ];
-        for (let pet of targets) {
-            pet.givePetEquipment(new Honey(this.logService, this.abilityService));
+        const range = this.level;
+        const bearPosition = this.savedPosition;
+        const targets: Pet[] = [];
+
+        // Check friend pets
+        for (const pet of this.parent.petArray) {
+            if (pet.alive) {
+                const distance = Math.abs(pet.position - bearPosition);
+                if (distance > 0 && distance <= range) {
+                    targets.push(pet);
+                }
+            }
+        }
+
+        // Check opponent pets
+        for (const pet of this.parent.opponent.petArray) {
+            if (pet.alive) {
+                const distance = bearPosition + pet.position + 1;
+                if (distance <= range) {
+                    targets.push(pet);
+                }
+            }
+        }
+
+        for (let target of targets) {
+            target.givePetEquipment(new Honey(this.logService, this.abilityService));
             this.logService.createLog({
-                message: `${this.name} gave ${pet.name} Honey.`,
+                message: `${this.name} gave ${target.name} Honey.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon
-            })
+            });
         }
         
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1520,7 +1520,7 @@ export abstract class Pet {
 
     increaseHealth(amt) {
         let max = 50;
-        if (this.name == 'Behemoth') {
+        if (this.name == 'Behemoth' || this.name == 'Giant Tortoise') {
             max = 100;
         }
         this.health = Math.min(Math.max(this.health  + amt, 1), max);
@@ -1574,7 +1574,7 @@ export abstract class Pet {
             // Temporarily set the equipment to calculate multiplier
             this.equipment = equipment;
             this.setEquipmentMultiplier(pandorasBoxLevel);
-            
+         
             let attackGain = 1 * equipment.multiplier;
             let healthGain = 2 * equipment.multiplier;
             this.increaseAttack(attackGain);
@@ -1622,6 +1622,17 @@ export abstract class Pet {
         }
         this.abilityService.triggerFriendAteFoodEvents(this);
 
+    }
+
+    applyEquipment(equipment: Equipment, pandorasBoxLevel: number = 1) {
+        if (equipment == null) {
+            return;
+        }
+        this.equipment = equipment;
+        this.setEquipmentMultiplier(pandorasBoxLevel);
+        if (equipment.name == "Pita Bread" || equipment instanceof FairyDust || equipment.equipmentClass == 'beforeAttack' || equipment.equipmentClass == 'afterFaint') {
+            this.equipment.callback(this);
+        }
     }
 
     removePerk() {
@@ -1751,7 +1762,7 @@ export abstract class Pet {
         }
 
         // get opponent pets
-        if (targetsAhead.length < amt) {
+        if (targetsAhead.length < amt && includeOpponent == true) {
             let opponent = this.parent.opponent;
             let petAhead = opponent.furthestUpPet;
             while (petAhead) {

@@ -1,0 +1,73 @@
+import { clone, shuffle } from "lodash";
+import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { AbilityService } from "../../../../services/ability.service";
+import { LogService } from "../../../../services/log.service";
+import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
+
+export class PygmyHippo extends Pet {
+    name = "Pygmy Hippo";
+    tier = 3;
+    pack: Pack = 'Danger';
+    attack = 2;
+    health = 7;
+    private attackCounter = 0;
+
+    enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        }
+        
+        if (!tiger) {
+            this.attackCounter++;
+        }
+        
+        // Check if counter reached (every 5 attacks)
+        if (this.attackCounter % 5 != 0) {
+            this.superEnemyAttack(gameApi, pet, tiger);
+            return;
+        }
+        
+        // Set counter event to deal damage
+        this.abilityService.setCounterEvent({
+            callback: () => {
+                let damage = Math.floor(this.health * 0.33); // 33% of current health
+                let targetsCount = this.level; // Level determines number of targets
+                
+                // Get all alive enemies using Flea-like logic for proper tie handling
+                let enemies = clone(this.parent.opponent.petArray.filter(enemy => enemy && enemy.alive));
+                shuffle(enemies);
+                enemies = enemies.sort((a, b) => a.health - b.health); // Sort by health ascending (lowest first)
+                
+                // Target the first 'level' enemies (least healthy)
+                for (let i = 0; i < Math.min(targetsCount, enemies.length); i++) {
+                    let target = enemies[i];
+                    this.snipePet(target, damage, true, tiger);
+                }
+                
+                this.logService.createLog({
+                    message: `${this.name} dealt ${damage} damage to ${Math.min(targetsCount, enemies.length)} least healthy enemies.`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger
+                });
+            },
+            priority: this.attack
+        });
+        
+        this.superEnemyAttack(gameApi, pet, tiger);
+    }
+
+    constructor(protected logService: LogService,
+        protected abilityService: AbilityService,
+        parent: Player,
+        health?: number,
+        attack?: number,
+        mana?: number,
+        exp?: number,
+        equipment?: Equipment) {
+        super(logService, abilityService, parent);
+        this.initPet(exp, health, attack, mana, equipment);
+    }
+}
