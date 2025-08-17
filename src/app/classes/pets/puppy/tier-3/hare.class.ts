@@ -85,6 +85,7 @@ export class Hare extends Pet {
         ['Pie', 4], 
         ['Grapes', 4], 
         ['Cheese', 4], 
+        ['Cod Roe', 4],
         ['Salt', 4], 
         ['Fortune Cookie', 4],
         // T5
@@ -94,6 +95,9 @@ export class Hare extends Pet {
         ['Lemon', 5], 
         ['Durian', 5],
         ['Honeydew Melon', 5],
+        ['Maple Syrup', 5],
+        ['Cocoa Bean', 5],
+        ['White Okra', 5],
         // T6
         ['Popcorn', 6], 
         ['Steak', 6], 
@@ -101,6 +105,7 @@ export class Hare extends Pet {
         ['Yggdrasil Fruit', 6], 
         ['Melon', 6], 
         ['Tomato', 6], 
+        ['Sudduth Tomato', 6],
         ['Pita Bread', 6]
     ]);
 

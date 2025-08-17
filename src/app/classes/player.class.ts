@@ -344,7 +344,7 @@ export class Player {
     handleDeath(pet: Pet) {
         pet.seenDead = true;
         pet.setFaintEventIfPresent();
-        let petBehind = pet.petBehind(true, true);
+        let petBehind = pet.petBehind(null, true);
         if (petBehind?.friendAheadFaints != null && petBehind?.alive) {
             this.abilityService.setFriendAheadFaintsEvent({
                     callback: petBehind.friendAheadFaints.bind(petBehind),
@@ -574,6 +574,42 @@ export class Player {
     }
 
     /**
+     * Returns highest attack pet. Returns a random pet of highest attack if there are multiple.
+     * @param excludePet
+     * @returns 
+     */
+    getHighestAttackPet(excludePet?: Pet): {pet: Pet, random: boolean} {
+        let highestAttackPets: Pet[];
+        for (let i in this.petArray) {
+            let index = +i;
+            let pet = this.petArray[index];
+            if (pet == excludePet) {
+                continue;
+            }
+            if (!pet.alive) {
+                continue;
+            }
+            if (highestAttackPets == null) {
+                highestAttackPets = [pet];
+                continue;
+            }
+            if (pet.attack == highestAttackPets[0].attack) {
+                highestAttackPets.push(pet);
+                continue;
+            }
+            if (pet.attack > highestAttackPets[0].attack) {
+                highestAttackPets = [pet];
+            }
+        }
+        let pet = highestAttackPets == null ? null : highestAttackPets[getRandomInt(0, highestAttackPets.length - 1)];
+
+        return {
+            pet: pet,
+            random: pet == null ? false : highestAttackPets.length > 1
+        };
+    }
+
+    /**
      * Returns lowest health pet. Returns a random pet of lowest health if there are multiple. Will only return alive pets.
      * @param excludePet
      * @returns 
@@ -690,6 +726,7 @@ export class Player {
         if (jump) {
             this.abilityService.triggerFriendJumpedEvents(this, pet);
             this.abilityService.triggerFriendJumpedToyEvents(this, pet);
+            this.abilityService.triggerEnemyJumpedEvents(this, pet);
         }
     }
 

@@ -49,8 +49,9 @@ export class Whale extends Pet {
                 tiger: tiger,
                 pteranodon: pteranodon
             })
-            this.parent.summonPet(pet, this.savedPosition);
-            this.abilityService.triggerFriendSummonedEvents(pet);
+            if (this.parent.summonPet(pet, this.savedPosition)) {
+                this.abilityService.triggerFriendSummonedEvents(pet);
+            }       
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

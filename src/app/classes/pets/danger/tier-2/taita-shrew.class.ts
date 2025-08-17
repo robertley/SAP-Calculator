@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -14,7 +15,7 @@ export class TaitaShrew extends Pet {
     health = 2;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let weasel = new Weasel(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, this.equipment);
+        let weasel = new Weasel(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, cloneDeep(this.equipment));
         
         this.logService.createLog({
             message: `${this.name} transformed into ${weasel.name} (level ${this.level}).`,

@@ -19,7 +19,7 @@ export class Caterpillar extends Pet {
         if (this.level < 3) {
             return;
         }
-        let butterfly = new Butterfly(this.logService, this.abilityService, this.parent, 1, 1, this.mana, this.exp, this.equipment);
+        let butterfly = new Butterfly(this.logService, this.abilityService, this.parent, 1, 1, this.mana, this.exp, cloneDeep(this.equipment));
         this.parent.setPet(this.position, butterfly);
         this.logService.createLog({
             message: `${this.name} transformed into a Butterfly.`,

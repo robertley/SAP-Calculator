@@ -1,4 +1,4 @@
-import { clone, shuffle } from "lodash";
+import { clone, cloneDeep, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -12,12 +12,12 @@ export class GoldenTamarin extends Pet {
     tier = 4;
     pack: Pack = 'Danger';
     attack = 4;
-    health = 6;
+    health = 4;
 
     beforeStartOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        // Golden Tamarin pool of tier 5 Start of Battle pets
-        const petNames = ["Crocodile", "Red Dragon",  "Salmon of Knowledge",  "Werewolf"];
-        //missing "Sea Cucumber", "Snow Leopard", "Tarantula Hawk"
+        // Golden Tamarin pool of tier 5+ Start of Battle pets
+        const petNames = ["Crocodile", "Red Dragon",  "Salmon of Knowledge", "Sea Cucumber", "Werewolf", "Tarantula Hawk"];
+        //TO DO: add  "Snow Leopard"
         let randomIndex = Math.floor(Math.random() * petNames.length);
         let selectedPetName = petNames[randomIndex];
         
@@ -27,7 +27,7 @@ export class GoldenTamarin extends Pet {
             attack: this.attack,
             mana: this.mana,
             exp: this.exp,
-            equipment: this.equipment
+            equipment: cloneDeep(this.equipment)
         }, this.parent);
         
         this.parent.transformPet(this, newPet);
@@ -36,7 +36,8 @@ export class GoldenTamarin extends Pet {
             message: `${this.name} transformed into a ${newPet.attack}/${newPet.health} ${newPet.name}.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: true
         });
         
         this.superBeforeStartOfBattle(gameApi, tiger);

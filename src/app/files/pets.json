@@ -286,6 +286,11 @@
             "id": "673"
         },
         {
+            "name": "Malay Tapir",
+            "tier": "1",
+            "id": "704"
+        },
+        {
             "name": "Kiwi",
             "tier": "1",
             "id": "131"
@@ -436,6 +441,11 @@
             "id": "379"
         },
         {
+            "name": "Volcano Snail",
+            "tier": "1",
+            "id": "661"
+        },
+        {
             "name": "Warf",
             "tier": "1",
             "id": "382"
@@ -466,6 +476,16 @@
             "name": "Angry Pygmy Hog",
             "tier": "2",
             "id": "679"
+        },
+        {
+            "name": "Araripe Manakin",
+            "tier": "2",
+            "id": "705"
+        },
+        {
+            "name": "European Mink",
+            "tier": "2",
+            "id": "706"
         },
         {
             "name": "Atlantic Puffin",
@@ -661,6 +681,11 @@
             "name": "Saola",
             "tier": "2",
             "id": "682"
+        },
+        {
+            "name": "Saker Falcon",
+            "tier": "2",
+            "id": "707"
         },
         {
             "name": "Taita Shrew",
@@ -970,6 +995,21 @@
             "id": "168"
         },
         {
+            "name": "Monkey-Faced Bat",
+            "tier": "3",
+            "id": "708"
+        },
+        {
+            "name": "Takin",
+            "tier": "3",
+            "id": "709"
+        },
+        {
+            "name": "Tucuxi",
+            "tier": "3",
+            "id": "710"
+        },
+        {
             "name": "Musk Ox",
             "tier": "3",
             "id": "245"
@@ -1053,6 +1093,16 @@
             "name": "Golden Tamarin",
             "tier": "4",
             "id": "693"
+        },
+        {
+            "name": "Humphead Wrasse",
+            "tier": "4",
+            "id": "711"
+        },
+        {
+            "name": "Kakapo",
+            "tier": "4",
+            "id": "712"
         },
         {
             "name": "Longcomb Sawfish",
@@ -1440,6 +1490,21 @@
             "name": "Elk",
             "tier": "4",
             "id": "671"
+        },
+        {
+            "name": "Goblin Shark",
+            "tier": "4",
+            "id": "719"
+        },
+        {
+            "name": "Red Lipped Batfish",
+            "tier": "4",
+            "id": "720"
+        },
+        {
+            "name": "Platybelodon",
+            "tier": "4",
+            "id": "721"
         }
     ],
     "tier5": [
@@ -1649,6 +1714,16 @@
             "id": "697"
         },
         {
+            "name": "Taita Thrush",
+            "tier": "5",
+            "id": "713"
+        },
+        {
+            "name": "Painted Terrapin",
+            "tier": "5",
+            "id": "714"
+        },
+        {
             "name": "Raccoon",
             "tier": "5",
             "id": "158"
@@ -1677,6 +1752,11 @@
             "name": "Scorpion",
             "tier": "5",
             "id": "65"
+        },
+        {
+            "name": "Sea Cucumber",
+            "tier": "5",
+            "id": "717"
         },
         {
             "name": "Seal",
@@ -1776,6 +1856,11 @@
             "id": "698"
         },
         {
+            "name": "Bay Cat",
+            "tier": "6",
+            "id": "714"
+        },
+        {
             "name": "Black Rhino",
             "tier": "6",
             "id": "699"
@@ -1799,6 +1884,16 @@
             "name": "Helmeted Hornbill",
             "tier": "6",
             "id": "703"
+        },
+        {
+            "name": "Philippine Eagle",
+            "tier": "6",
+            "id": "715"
+        },
+        {
+            "name": "Silky Sifaka",
+            "tier": "6",
+            "id": "716"
         },
         {
             "name": "Anglerfish",
@@ -2034,6 +2129,11 @@
             "name": "Tapir",
             "tier": "6",
             "id": "208"
+        },
+        {
+            "name": "Tarantula Hawk",
+            "tier": "6",
+            "id": "718"
         },
         {
             "name": "Team Spirit",

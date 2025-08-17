@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -23,7 +24,7 @@ export class IriomoteCat extends Pet {
             attack: this.attack,
             health: this.health,
             exp: this.exp,
-            equipment: this.equipment,
+            equipment: cloneDeep(this.equipment),
             mana: this.mana
         }, this.parent);
         

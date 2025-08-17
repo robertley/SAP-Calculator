@@ -17,7 +17,7 @@ export class BanggaiCardinalfish extends Pet {
         let minimumAttack = 5;
         
         let targets = [...this.parent.petArray, ...this.parent.opponent.petArray];
-        targets = targets.filter(pet => pet.alive && pet !== this);
+        targets = targets.filter(pet => pet.alive);
         for (let targetPet of targets) {
             let newAttack = Math.max(targetPet.attack - attackReduction, minimumAttack);
             

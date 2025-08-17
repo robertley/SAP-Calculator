@@ -1,4 +1,4 @@
-import { clone, shuffle } from "lodash";
+import { clone, cloneDeep, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -33,7 +33,7 @@ export class RolowayMonkey extends Pet {
                 attack: target.attack,
                 mana: target.mana,
                 exp: this.exp,
-                equipment: target.equipment
+                equipment: cloneDeep(target.equipment)
             }, this.parent);
             
             this.parent.transformPet(target, newPet);
@@ -42,7 +42,8 @@ export class RolowayMonkey extends Pet {
                 message: `${this.name} transformed ${target.name} into a ${newPet.attack}/${newPet.health} ${newPet.name}.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: true
             });
         }
         

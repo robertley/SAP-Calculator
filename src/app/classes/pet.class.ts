@@ -15,12 +15,15 @@ import { FortuneCookie } from "./equipment/custom/fortune-cookie.class";
 import { Dazed } from "./equipment/ailments/dazed.class";
 import { Exposed } from "./equipment/ailments/exposed.class";
 import { Crisp } from "./equipment/ailments/crisp.class";
+import { Toasty } from "./equipment/ailments/toasty.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
 import { cloneDeep } from "lodash";
 import { PeanutButter } from "./equipment/hidden/peanut-butter";
 import { Blackberry } from "./equipment/puppy/blackberry.class";
 import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
+import { MapleSyrup, MapleSyrupAttack } from "./equipment/golden/maple-syrup.class";
+import { WhiteOkra } from "./equipment/golden/white-okra.class";
 import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
 import { Toad } from "./pets/star/tier-3/toad.class";
@@ -56,6 +59,8 @@ export abstract class Pet {
     faint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
     friendSummoned?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     friendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    adjacentFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    adjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -88,6 +93,7 @@ export abstract class Pet {
     // gameApi is not available currenly but can be added if needed.
     gainedMana?(gameApi: GameAPI, tiger?: boolean): void;
     friendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    enemyJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     enemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -100,6 +106,8 @@ export abstract class Pet {
     originalFaint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
     originalFriendSummoned?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     originalFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalAdjacentFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -130,6 +138,7 @@ export abstract class Pet {
     originalAfterFaint?(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
     originalGainedMana?(gameApi: GameAPI, tiger?: boolean): void;
     originalFriendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalEnemyJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalEnemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void; 
@@ -177,6 +186,8 @@ export abstract class Pet {
         this.originalFaint = this.faint;
         this.originalFriendSummoned = this.friendSummoned;
         this.originalFriendAheadAttacks = this.friendAheadAttacks;
+        this.originalAdjacentFriendAttacks = this.adjacentFriendAttacks;
+        this.originalAdjacentAttacked = this.adjacentAttacked;
         this.originalFriendAheadFaints = this.friendAheadFaints;
         this.originalFriendFaints = this.friendFaints;
         this.originalFriendAteFood = this.friendAteFood;
@@ -206,6 +217,7 @@ export abstract class Pet {
         this.originalAfterFaint = this.afterFaint;
         this.originalGainedMana = this.gainedMana;
         this.originalFriendJumped = this.friendJumped;
+        this.originalEnemyJumped = this.enemyJumped;
         this.originalEnemyGainedAilment = this.enemyGainedAilment;
         this.originalFriendGainsHealth = this.friendGainsHealth;
         this.originalFriendGainedExperience = this.friendGainedExperience;
@@ -439,6 +451,14 @@ export abstract class Pet {
             friendJumpedCallback(gameApi, pet, tiger);
         }
 
+        let enemyJumpedCallback = this.enemyJumped?.bind(this);
+        this.enemyJumped = enemyJumpedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            enemyJumpedCallback(gameApi, pet, tiger);
+        }
+
         let friendlyToyBrokeCallback = this.friendlyToyBroke?.bind(this);
         this.friendlyToyBroke = friendlyToyBrokeCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
             if (!this.abilityValidCheck()) {
@@ -583,6 +603,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superAdjacentFriendAttacks(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.originalAdjacentFriendAttacks(gameApi, pet, true)
+        this.exp = exp;
+    }
+
     protected superFriendAheadFaints(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
@@ -590,6 +620,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
         this.originalFriendAheadFaints(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superAdjacentAttacked(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.originalAdjacentAttacked(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -834,6 +874,16 @@ export abstract class Pet {
         this.exp = exp;
     }
 
+    protected superEnemyJumped(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.originalEnemyJumped(gameApi, pet, true)
+        this.exp = exp;
+    }
+
     protected superEnemyGainedAilment(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
@@ -980,6 +1030,9 @@ export abstract class Pet {
             if (damageResp.fanMusselReduction > 0) {
                 message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
             }
+            if (damageResp.mapleSyrupReduction > 0) {
+                message += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`;
+            }
             // if (attackEquipment != null) {
             //     let power = Math.abs(attackEquipment.power);
             //     let sign = '-';
@@ -1113,6 +1166,53 @@ export abstract class Pet {
                 pet.health -= damage;
                 pet.removePerk();
             }
+            else if (pet.equipment instanceof Toasty && pet.equipment.uses > 0) {
+                let damage = 1;
+                let totalMultiplier = pet.equipment.multiplier;
+                for (let mult of manticoreMult) {
+                    totalMultiplier += mult;
+                }
+                damage *= totalMultiplier;
+                let nurikabe = 0;
+                if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
+                    nurikabe = pet.level * 4;
+                    damage = Math.max(0, damage - nurikabe);
+                    pet.abilityUses++;
+                }
+                let fanMusselReduction = 0;
+                if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
+                    fanMusselReduction = pet.level * 1;
+                    damage = Math.max(0, damage - fanMusselReduction);
+                    pet.abilityUses++;
+                }
+                let message = `${pet.name} took ${damage} damage`;
+                if (manticoreMult.length > 0) {
+                    for (let mult of manticoreMult) {
+                        message += ` x${mult + 1} (Manticore)`;
+                    }
+                }
+                if (pet.equipment.multiplier > 1) {
+                    message += pet.equipment.multiplierMessage;
+                }
+                if (nurikabe > 0) {
+                    message += ` -${nurikabe} (Nurikabe)`;
+                }
+                if (fanMusselReduction > 0) {
+                    message += ` -${fanMusselReduction} (Fan Mussel)`;
+                }
+                message += ` (Toasty).`;
+
+                this.logService.createLog({
+                    message: message,
+                    type: 'ability',
+                    player: pet.parent
+                });
+                pet.health -= damage;
+                pet.equipment.uses--;
+                if (pet.equipment.uses <= 0) {
+                    pet.removePerk();
+                }
+            }
         }
     }
 
@@ -1222,6 +1322,10 @@ export abstract class Pet {
         if (damageResp.fanMusselReduction > 0) {
             message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`
         }
+        if (damageResp.mapleSyrupReduction > 0) {
+            message += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`
+        }
+
 
         this.logService.createLog({
             message: message,
@@ -1271,7 +1375,8 @@ export abstract class Pet {
             fortuneCookie: boolean,
             nurikabe: number,
             fairyBallReduction?: number,
-            fanMusselReduction?: number 
+            fanMusselReduction?: number,
+            mapleSyrupReduction?: number,
         } {
         let attackMultiplier = this.equipment?.multiplier;
         let defenseMultiplier = pet.equipment?.multiplier;
@@ -1315,6 +1420,9 @@ export abstract class Pet {
             if (this.equipment instanceof HoneydewMelon) {
                 // Create attack equipment for the one-time +5 damage
                 attackEquipment = new HoneydewMelonAttack();
+            } else if (this.equipment instanceof MapleSyrup) {
+                // Create attack equipment for the one-time 50% damage reduction
+                attackEquipment = new MapleSyrupAttack();
             } else {
                 attackEquipment = this.equipment?.equipmentClass == 'attack'
                 || this.equipment?.equipmentClass == 'ailment-attack' ? this.equipment : null;
@@ -1361,8 +1469,24 @@ export abstract class Pet {
             pet.abilityUses++;
         }
 
+        let mapleSyrupReduction = 0;
+        if (pet.equipment instanceof MapleSyrup && pet.equipment.uses > 0 && !snipe) {
+            mapleSyrupReduction = Math.floor(attackAmt * 0.5);
+            defenseAmt += mapleSyrupReduction;
+            pet.equipment.uses--;
+        }
+
+
         if (attackEquipment instanceof Salt && !snipe) {
             attackAmt *= (2 + attackMultiplier - 1);
+        }
+
+        if (attackEquipment instanceof MapleSyrupAttack && !snipe) {
+            attackAmt = Math.floor(attackAmt * 0.5);
+            // Consume uses from the original Maple Syrup equipment
+            if (this.equipment instanceof MapleSyrup && this.equipment.uses > 0) {
+                this.equipment.uses--;
+            }
         }
 
         let fortuneCookie = false;
@@ -1377,6 +1501,7 @@ export abstract class Pet {
         if (attackEquipment instanceof Cheese && !snipe) {
             attackAmt = Math.max(15, attackAmt);
         }
+
 
         if (pet.equipment instanceof Exposed) {
             let totalMultiplier = 2; // Base exposed multiplier
@@ -1410,7 +1535,8 @@ export abstract class Pet {
             fortuneCookie: fortuneCookie,
             nurikabe: nurikabe,
             fairyBallReduction: fairyBallReduction,
-            fanMusselReduction: fanMusselReduction
+            fanMusselReduction: fanMusselReduction,
+            mapleSyrupReduction: mapleSyrupReduction,
         }
     } 
 
@@ -1565,26 +1691,8 @@ export abstract class Pet {
             console.warn(`givePetEquipment called with null equipment for pet: ${this.name}`);
             return;
         }
-        if (equipment.name == "Pita Bread" || equipment instanceof FairyDust || equipment.equipmentClass == 'beforeAttack' || equipment.equipmentClass == 'afterFaint') {
-            this.equipment = equipment;
-            this.setEquipmentMultiplier(pandorasBoxLevel);
-            this.equipment.callback(this);
-        }
-        if (equipment instanceof Blackberry) {
-            // Temporarily set the equipment to calculate multiplier
-            this.equipment = equipment;
-            this.setEquipmentMultiplier(pandorasBoxLevel);
-         
-            let attackGain = 1 * equipment.multiplier;
-            let healthGain = 2 * equipment.multiplier;
-            this.increaseAttack(attackGain);
-            this.increaseHealth(healthGain); 
-            this.logService.createLog({
-                message: `${this.name} gained ${attackGain} attack and ${healthGain} health (Blackberry)${equipment.multiplierMessage}`,
-                type: 'equipment',
-                player: this.parent,
-            })
-        }
+        
+        // Handle ailments with Ambrosia or White Okra blocking
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense' || equipment.equipmentClass == 'ailment-other') {
             if (this.equipment instanceof Ambrosia) {
                 this.equipment.uses--;
@@ -1598,21 +1706,44 @@ export abstract class Pet {
                 }
                 return;
             }
-            this.equipment = equipment;
-            this.setEquipmentMultiplier(pandorasBoxLevel);
+            if (this.equipment instanceof WhiteOkra) {
+                this.logService.createLog({
+                    message: `${this.name} blocked ${equipment.name}. (White Okra)`,
+                    type: 'equipment',
+                    player: this.parent
+                });
+                // Remove equipment immediately after blocking ailment
+                this.removePerk();
+                return;
+            }
+            this.applyEquipment(equipment, pandorasBoxLevel);
 
             this.abilityService.triggerFriendGainedAilmentEvents(this);
-
             this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
-        } else {
-            this.equipment = equipment;
-            
-            // Set multiplier properties based on pet and toy
-            this.setEquipmentMultiplier(pandorasBoxLevel);
+        } 
+        // Handle standard equipment
+        else {
+            if (equipment instanceof Blackberry) {
+                // Apply equipment first to get multiplier
+                this.applyEquipment(equipment, pandorasBoxLevel);
+             
+                let attackGain = 1 * equipment.multiplier;
+                let healthGain = 2 * equipment.multiplier;
+                this.increaseAttack(attackGain);
+                this.increaseHealth(healthGain); 
+                this.logService.createLog({
+                    message: `${this.name} gained ${attackGain} attack and ${healthGain} health (Blackberry)${equipment.multiplierMessage}`,
+                    type: 'equipment',
+                    player: this.parent,
+                })
+            } else{
+                this.applyEquipment(equipment, pandorasBoxLevel);
+            }
             
             this.abilityService.triggerGainedPerkEvents(this);
             this.abilityService.triggerFriendGainedPerkEvents(this);
         }
+        
         if (this.eatsFood) {
             this.abilityService.setEatsFoodEvent({
                 callback: this.eatsFood.bind(this),
@@ -1630,7 +1761,7 @@ export abstract class Pet {
         }
         this.equipment = equipment;
         this.setEquipmentMultiplier(pandorasBoxLevel);
-        if (equipment.name == "Pita Bread" || equipment instanceof FairyDust || equipment.equipmentClass == 'beforeAttack' || equipment.equipmentClass == 'afterFaint') {
+        if (this.equipment.callback && this.equipment.equipmentClass != 'beforeStartOfBattle') {
             this.equipment.callback(this);
         }
     }

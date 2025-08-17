@@ -1045,23 +1045,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment instanceof Eggplant) {
         pet.equipment.callback(pet);
         pet.eggplantTouched = true;
-      }
-      if (pet.equipment instanceof PitaBread) {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'startOfBattle') {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment instanceof FairyDust) {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'beforeStartOfBattle') {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'beforeAttack') {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'afterFaint') {
+      } else if (pet.equipment?.callback) {
         pet.equipment.callback(pet);
       }
     }

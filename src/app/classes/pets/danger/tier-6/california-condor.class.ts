@@ -11,7 +11,7 @@ export class CaliforniaCondor extends Pet {
     pack: Pack = 'Danger';
     attack = 10;
     health = 3;
-
+    //To Do: Change ability to copy it's level ability
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!this.alive) {
             return;

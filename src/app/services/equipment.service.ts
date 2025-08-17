@@ -34,13 +34,17 @@ import { Popcorn } from "../classes/equipment/star/popcorn.class";
 import { GameService } from "./game.service";
 import { Cherry } from "../classes/equipment/golden/cherry.class";
 import { ChocolateCake } from "../classes/equipment/golden/chocolate-cake.class";
+import { CodRoe } from "../classes/equipment/golden/cod-roe.class";
 import { Eggplant } from "../classes/equipment/golden/eggplant.class";
 import { Potato } from "../classes/equipment/golden/potato.class";
 import { Banana } from "../classes/equipment/golden/banana.class";
 import { Onion } from "../classes/equipment/golden/onion.class";
 import { PitaBread } from "../classes/equipment/golden/pita-bread.class";
 import { Tomato } from "../classes/equipment/golden/tomato.class";
+import { SudduthTomato } from "../classes/equipment/golden/sudduth-tomato.class";
+import { Unagi } from "../classes/equipment/golden/unagi.class";
 import { Durian } from "../classes/equipment/golden/durian.class";
+import { GrosMichelBanana } from "../classes/equipment/golden/gros-michel-banana.class";
 import { FortuneCookie } from "../classes/equipment/custom/fortune-cookie.class";
 import { Blueberry } from "../classes/equipment/custom/blueberry.class";
 import { Donut } from "../classes/equipment/custom/donut.class";
@@ -61,8 +65,12 @@ import { Dazed } from "../classes/equipment/ailments/dazed.class";
 import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
+import { Tasty } from "../classes/equipment/ailments/tasty.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
 import { HoneydewMelon } from "../classes/equipment/golden/honeydew-melon.class";
+import { MapleSyrup, MapleSyrupAttack } from "../classes/equipment/golden/maple-syrup.class";
+import { CocoaBean } from "../classes/equipment/golden/cocoa-bean.class";
+import { WhiteOkra } from "../classes/equipment/golden/white-okra.class";
 import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
@@ -108,13 +116,17 @@ export class EquipmentService {
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
         map.set('Cherry', new Cherry());
         map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
+        map.set('Cod Roe', new CodRoe(this.logService, this.abilityService));
         map.set('Eggplant', new Eggplant(this.logService));
         map.set('Potato', new Potato());
         map.set('Banana', new Banana(this.logService, this.abilityService));
         map.set('Onion', new Onion(this.logService));
         map.set('Pita Bread', new PitaBread(this.logService));
         map.set('Tomato', new Tomato(this.logService, this.abilityService));
+        map.set('Sudduth Tomato', new SudduthTomato(this.logService));
+        map.set('Unagi', new Unagi(this.logService));
         map.set('Durian', new Durian(this.logService, this.abilityService));
+        map.set('Gros Michel Banana', new GrosMichelBanana(this.logService, this.abilityService, this.petService));
         map.set('Fortune Cookie', new FortuneCookie());
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
@@ -131,6 +143,9 @@ export class EquipmentService {
         map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
         map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
         map.set('Honeydew Melon', new HoneydewMelon());
+        map.set('Maple Syrup', new MapleSyrup());
+        map.set('Cocoa Bean', new CocoaBean(this.logService, this.abilityService, this.petService));
+        map.set('White Okra', new WhiteOkra());
         map.set('Ambrosia', new Ambrosia());
         map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
 
@@ -146,6 +161,7 @@ export class EquipmentService {
         map.set('Ink', new Ink());
         map.set('Spooked', new Spooked());
         map.set('Weak', new Weak());
+        map.set('Tasty', new Tasty(this.logService, this.abilityService));
 
         return map;
     }
@@ -179,6 +195,9 @@ export class EquipmentService {
         ['Lemon', 5], 
         ['Durian', 5],
         ['Honeydew Melon', 5],
+        ['Maple Syrup', 5],
+        ['Cocoa Bean', 5],
+        ['White Okra', 5],
         // T6
         ['Popcorn', 6], 
         ['Steak', 6], 

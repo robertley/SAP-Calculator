@@ -47,8 +47,7 @@ export class AbilityService {
         'friendSummoned': 7,
         'enemySummoned': 7,
         'friendJumped': 8,
-        'afterFriendAttack': 8.5, // unified friend/enemy attack events
-        'enemyAttack': 8.5, // same priority as afterFriendAttack
+        'enemyJumped': 8,
         'faint': 9,
         'friendAheadFaints': 10,
         'afterFaint': 11,
@@ -57,6 +56,7 @@ export class AbilityService {
         'friendlyToyBroke': 12,
         'knockOut': 13,
         'transformed': 14,
+        'friendTransformed': 14.5,
         'friendGainedExperience': 15,
         'friendAteFood': 16,
         'eatsFood': 16,
@@ -187,7 +187,11 @@ export class AbilityService {
             case 'friendAttacks':
             case 'beforeFriendAttacks':
             case 'friendJumped':
+            case 'enemyJumped':
+            case 'friendTransformed':
             case 'friendGainsHealth':
+            case 'friendlyLevelUp':
+            case 'friendSummoned':
                 // Callback with pet: callback(gameApi, callbackPet)
                 event.callback(gameApi, event.callbackPet);
                 break;
@@ -201,13 +205,7 @@ export class AbilityService {
                 event.callback(gameApi, event.callbackPet, false);
                 break;
                 
-            case 'friendSummoned':
-            case 'friendlyLevelUp':
             case 'friendJumpedToy':
-                // Toy events: callback(gameApi, callbackPet, priority < 100, level)
-                event.callback(gameApi, event.callbackPet, event.priority < 100, event.level);
-                break;
-                
             case 'emptyFrontSpaceToy':
                 // Special toy callback: callback(gameApi, priority < 100, level, priority)
                 event.callback(gameApi, event.priority < 100, event.level, event.priority);
@@ -218,7 +216,6 @@ export class AbilityService {
                 break;
             case 'manaSnipe':
             case 'counter':
-                // Mana events might use the old gameApi field
                 event.callback();
                 break;
                 
@@ -798,6 +795,26 @@ export class AbilityService {
             });
         }
         
+        // Add adjacentFriendAttacks to unified system
+        // Check pet ahead
+        if (attacksPet.petAhead?.adjacentFriendAttacks != null) {
+            this.setAfterFriendAttackEvent({
+                callback: attacksPet.petAhead.adjacentFriendAttacks.bind(attacksPet.petAhead),
+                priority: attacksPet.petAhead.attack,
+                callbackPet: attacksPet,
+                abilityType: 'adjacentFriendAttacks'
+            });
+        }
+        // Check pet behind
+        if (attacksPet.petBehind(null, true)?.adjacentFriendAttacks != null) {
+            this.setAfterFriendAttackEvent({
+                callback: attacksPet.petBehind().adjacentFriendAttacks.bind(attacksPet.petBehind()),
+                priority: attacksPet.petBehind().attack,
+                callbackPet: attacksPet,
+                abilityType: 'adjacentFriendAttacks'
+            });
+        }
+        
         // Trigger enemy attack events for the opponent
         this.triggerEnemyAttackEvents(attacksPet.parent.opponent, attacksPet);
     }
@@ -898,6 +915,24 @@ export class AbilityService {
     
     setFriendJumpedEvent(event: AbilityEvent) {
         event.abilityType = 'friendJumped';
+        this.addEventToQueue(event);
+    }
+
+    // enemy jumped events
+    triggerEnemyJumpedEvents(player: Player, jumpPet: Pet) {
+        for (let pet of player.opponent.petArray) {
+            if (pet.enemyJumped != null) {
+                this.setEnemyJumpedEvent({
+                    callback: pet.enemyJumped.bind(pet),
+                    priority: pet.attack,
+                    callbackPet: jumpPet
+                })
+            }
+        }
+    }
+    
+    setEnemyJumpedEvent(event: AbilityEvent) {
+        event.abilityType = 'enemyJumped';
         this.addEventToQueue(event);
     }
 
