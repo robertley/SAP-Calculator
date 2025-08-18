@@ -61,6 +61,55 @@ export class Parrot extends Pet {
         this.emptyFrontSpace = copyPet.originalEmptyFrontSpace?.bind(this);
         this.enemyHurt = copyPet.originalEnemyHurt?.bind(this);
         this.afterFaint = copyPet.originalAfterFaint?.bind(this);
+        this.transform = copyPet.originalTransform?.bind(this);
+        this.adjacentFriendAttacks = copyPet.originalAdjacentFriendAttacks?.bind(this);
+        this.adjacentAttacked = copyPet.originalAdjacentAttacked?.bind(this);
+        this.friendAttacks = copyPet.originalFriendAttacks?.bind(this);
+        this.beforeFriendAttacks = copyPet.originalBeforeFriendAttacks?.bind(this);
+        this.enemyJumped = copyPet.originalEnemyJumped?.bind(this);
+        this.friendGainedExperience = copyPet.originalFriendGainedExperience?.bind(this);
+
+        // Update original* properties so other pets (like Tiger) can copy from Parrot
+        this.originalStartOfBattle = this.startOfBattle;
+        this.originalTransform = this.transform;
+        this.originalHurt = this.hurt;
+        this.originalFaint = this.faint;
+        this.originalFriendSummoned = this.friendSummoned;
+        this.originalFriendAheadAttacks = this.friendAheadAttacks;
+        this.originalFriendAheadFaints = this.friendAheadFaints;
+        this.originalFriendFaints = this.friendFaints;
+        this.originalEnemyAttack = this.enemyAttack;
+        this.originalAfterAttack = this.afterAttack;
+        this.originalBeforeAttack = this.beforeAttack;
+        this.originalBeforeStartOfBattle = this.beforeStartOfBattle;
+        this.originalKnockOut = this.knockOut;
+        this.originalSummoned = this.summoned;
+        this.originalFriendlyToyBroke = this.friendlyToyBroke;
+        this.originalFriendGainedAilment = this.friendGainedAilment;
+        this.originalFriendHurt = this.friendHurt;
+        this.originalFriendTransformed = this.friendTransformed;
+        this.originalEatsFood = this.eatsFood;
+        this.originalFriendAteFood = this.friendAteFood;
+        this.originalFriendLostPerk = this.friendLostPerk;
+        this.originalGainedPerk = this.gainedPerk;
+        this.originalFriendGainedPerk = this.friendGainedPerk;
+        this.originalAnyoneLevelUp = this.anyoneLevelUp;
+        this.originalEnemySummoned = this.enemySummoned;
+        this.originalEnemyPushed = this.enemyPushed;
+        this.originalGainedMana = this.gainedMana;
+        this.originalFriendJumped = this.friendJumped;
+        this.originalEnemyGainedAilment = this.enemyGainedAilment;
+        this.originalFriendGainsHealth = this.friendGainsHealth;
+        this.originalEmptyFrontSpace = this.emptyFrontSpace;
+        this.originalEnemyHurt = this.enemyHurt;
+        this.originalAfterFaint = this.afterFaint;
+        this.originalAdjacentFriendAttacks = this.adjacentFriendAttacks;
+        this.originalAdjacentAttacked = this.adjacentAttacked;
+        this.originalFriendAttacks = this.friendAttacks;
+        this.originalBeforeFriendAttacks = this.beforeFriendAttacks;
+        this.originalEndTurn = this.endTurn;
+        this.originalEnemyJumped = this.enemyJumped;
+        this.originalFriendGainedExperience = this.friendGainedExperience;
 
         if (!(copyPet instanceof Parrot)) {
             this.logService.createLog({

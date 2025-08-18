@@ -1725,9 +1725,9 @@ export class PetService {
             case 'Hippocampus':
                 return new Hippocampus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Goblin Shark':
-                return new GoblinShark(this.logService, this.abilityService, this.petService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+                return new GoblinShark(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Red Lipped Batfish':
-                return new RedLippedBatfish(this.logService, this.abilityService, this.petService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+                return new RedLippedBatfish(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Platybelodon':
                 return new Platybelodon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Boitata':
@@ -3042,10 +3042,10 @@ export class PetService {
             newPet = new Hippocampus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof GoblinShark) {
-            newPet = new GoblinShark(this.logService, this.abilityService, this.petService, pet.parent, attack, health, 0, levelToExp(pet.level));
+            newPet = new GoblinShark(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof RedLippedBatfish) {
-            newPet = new RedLippedBatfish(this.logService, this.abilityService, this.petService, pet.parent, attack, health, 0, levelToExp(pet.level));
+            newPet = new RedLippedBatfish(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof Platybelodon) {
             newPet = new Platybelodon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

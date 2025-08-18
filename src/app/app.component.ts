@@ -829,9 +829,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       //normal abilities
       this.checkPetsAlive();
-      while (this.abilityService.hasAbilityCycleEvents) {
+      do {
         this.abilityCycle();
-      }
+      } while (this.abilityService.hasAbilityCycleEvents);
 
       //init sob
       this.startOfBattleService.resetStartOfBattleFlags();
@@ -844,9 +844,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.startOfBattleService.executeNonToyPetEvents(); //pet sob
       
       this.checkPetsAlive();
-      while (this.abilityService.hasAbilityCycleEvents) {
+      do {
         this.abilityCycle();
-      }
+      } while (this.abilityService.hasAbilityCycleEvents);
       //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();
@@ -983,9 +983,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     //normal abilities
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
-    while (this.abilityService.hasAbilityCycleEvents) {
+    do {
       this.abilityCycle();
-    }
+    } while (this.abilityService.hasAbilityCycleEvents);
 
     if (!this.player.alive() || !this.opponent.alive()) {
       return;
@@ -998,16 +998,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
 
-    while (this.abilityService.hasAbilityCycleEvents) {
+    do {
       this.abilityCycle();
-    }
+    } while (this.abilityService.hasAbilityCycleEvents);
     //merge to ability cyle
     this.player.checkGoldenSpawn();
     this.opponent.checkGoldenSpawn();
     
-    while (this.abilityService.hasAbilityCycleEvents) {
+    do {
       this.abilityCycle();
-    }
+    } while (this.abilityService.hasAbilityCycleEvents);
   }
 
   chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
