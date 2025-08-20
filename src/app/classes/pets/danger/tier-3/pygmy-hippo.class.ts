@@ -53,7 +53,8 @@ export class PygmyHippo extends Pet {
                     tiger: tiger
                 });
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         this.superEnemyAttack(gameApi, pet, tiger);

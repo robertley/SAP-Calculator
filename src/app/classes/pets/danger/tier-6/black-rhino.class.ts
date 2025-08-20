@@ -44,7 +44,8 @@ export class BlackRhino extends Pet {
                     this.snipePet(target, damage, true, tiger);
                 }
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         this.superEnemyAttack(gameApi, pet, tiger);

@@ -59,7 +59,8 @@ export class LongcombSawfish extends Pet {
                 }
                 
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         this.superEnemyAttack(gameApi, pet, tiger);

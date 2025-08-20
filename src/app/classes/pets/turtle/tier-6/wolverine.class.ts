@@ -38,7 +38,8 @@ export class Wolverine extends Pet {
                     });  
                 }         
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         this.superFriendHurt(gameApi, pet, tiger);
     }

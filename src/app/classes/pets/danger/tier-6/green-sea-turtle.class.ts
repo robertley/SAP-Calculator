@@ -50,7 +50,8 @@ export class GreenSeaTurtle extends Pet {
                     });
                 }
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         this.abilityUses++;

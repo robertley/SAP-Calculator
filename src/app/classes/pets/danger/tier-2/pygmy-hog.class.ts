@@ -46,7 +46,8 @@ export class PygmyHog extends Pet {
                 
                 this.parent.transformPet(this, angryPygmyHog);
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         this.superEnemyAttack(gameApi, pet, tiger);

@@ -1,27 +1,16 @@
-import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class SilverFox extends Pet {
-    name = "Silver Fox";
-    tier = 5;
+export class Crow extends Pet {
+    name = "Crow";
+    tier = 4;
     pack: Pack = 'Custom';
     attack = 3;
-    health = 6;
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        this.logService.createLog({
-            message: `${this.name} gained ${this.level} Gold.`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger
-        })
-        this.superBeforeAttack(gameApi, tiger);
-    }
+    health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -217,6 +217,7 @@ export class ToyService {
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
                 player: pet.parent,
+                pet: pet
             })
         }
     }

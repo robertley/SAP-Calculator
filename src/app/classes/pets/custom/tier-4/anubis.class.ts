@@ -29,7 +29,8 @@ export class Anubis extends Pet {
                         callback: () => {
                             pet.faint(gameApi, false, false);
                         },
-                        priority: 100 - pet.position
+                        priority: 100 - pet.position,
+                        pet: pet
                     }
                 )
             }

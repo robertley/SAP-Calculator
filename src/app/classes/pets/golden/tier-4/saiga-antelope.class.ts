@@ -28,7 +28,8 @@ export class SaigaAntelope extends Pet {
             callback: () => {
                 this.parent.gainTrumpets(this.level * 3, this);
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         super.superFriendFaints(gameApi, pet, tiger);

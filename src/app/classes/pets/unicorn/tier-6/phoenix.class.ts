@@ -67,7 +67,8 @@ export class Phoenix extends Pet {
                     this.abilityService.triggerFriendSummonedEvents(youngPhoenix);
                 }
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         })
 
         super.superFaint(gameApi, tiger);

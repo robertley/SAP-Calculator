@@ -31,7 +31,8 @@ export class Vulture extends Pet {
                 let power = this.level * 4;
                 this.snipePet(target, power, true, tiger);        
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         this.superFriendFaints(gameApi, pet, tiger);
     }

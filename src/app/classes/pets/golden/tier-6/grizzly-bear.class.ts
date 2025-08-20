@@ -41,7 +41,8 @@ export class GrizzlyBear extends Pet {
                     this.snipePet(target, power, true, tiger);
                 }        
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         this.superFriendAttacks(gameApi, pet, tiger);
     }
