@@ -193,7 +193,7 @@ export class ToyService {
         let damageResp = this.calculateDamgae(pet, power);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
-        pet.health -= damage;
+        pet.dealDamage(damage);
 
         let message = `${toyName} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {

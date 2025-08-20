@@ -27,7 +27,7 @@ export class GoldenTamarin extends Pet {
             attack: this.attack,
             mana: this.mana,
             exp: this.exp,
-            equipment: cloneDeep(this.equipment)
+            equipment: this.equipment
         }, this.parent);
         
         this.parent.transformPet(this, newPet);

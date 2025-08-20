@@ -1171,7 +1171,7 @@
         },
         {
             "name": "Woodpecker",
-            "tier": "3",
+            "tier": "5",
             "id": "156"
         },
         {
@@ -1197,13 +1197,18 @@
             "id": "331"
         },
         {
+            "name": "Amazon River Dolphin",
+            "tier": "4",
+            "id": "724"
+        },
+        {
             "name": "Bison",
             "tier": "4",
             "id": "5"
         },
         {
             "name": "Blobfish",
-            "tier": "4",
+            "tier": "5",
             "id": "150"
         },
         {
@@ -1353,7 +1358,7 @@
         },
         {
             "name": "Orangutan",
-            "tier": "4",
+            "tier": "3",
             "id": "157"
         },
         {
@@ -1363,7 +1368,7 @@
         },
         {
             "name": "Pelican",
-            "tier": "4",
+            "tier": "5",
             "id": "129"
         },
         {
@@ -1433,7 +1438,7 @@
         },
         {
             "name": "Starfish",
-            "tier": "4",
+            "tier": "5",
             "id": "153"
         },
         {
@@ -1609,9 +1614,19 @@
             "id": "34"
         },
         {
+            "name": "Geometric Tortoise",
+            "tier": "5",
+            "id": "722"
+        },
+        {
             "name": "Hamster",
             "tier": "5",
             "id": "110"
+        },
+        {
+            "name": "Hawaiian Monk Seal",
+            "tier": "5",
+            "id": "723"
         },
         {
             "name": "Hyena",

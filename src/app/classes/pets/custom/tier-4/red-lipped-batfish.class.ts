@@ -17,7 +17,6 @@ export class RedLippedBatfish extends Pet {
         // Get the opposite enemy at the same position
         let target = this.parent.opponent.getPetAtPosition(this.position);
         
-        // If no pet at exact opposite position, target the furthest up enemy
         if (!target || !target.alive) {
             return;
         }

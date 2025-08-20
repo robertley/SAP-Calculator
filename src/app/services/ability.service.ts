@@ -778,8 +778,9 @@ export class AbilityService {
             }
             if (pet.friendAttacks != null) {
                 this.setAfterFriendAttackEvent({
-                    callback: pet.friendAttacks.bind(pet),
+                    callback: () => pet.friendAttacks(this.gameApi, attacksPet, false),
                     priority: pet.attack,
+                    callbackPet: attacksPet,
                     abilityType: 'friendAttacks'
                 })
             }
@@ -795,20 +796,20 @@ export class AbilityService {
             });
         }
         
-        // Add adjacentFriendAttacks to unified system
+        // Add adjacentAttacked to unified system
         // Check pet ahead
-        if (attacksPet.petAhead?.adjacentFriendAttacks != null) {
+        if (attacksPet.petAhead?.adjacentAttacked != null) {
             this.setAfterFriendAttackEvent({
-                callback: attacksPet.petAhead.adjacentFriendAttacks.bind(attacksPet.petAhead),
+                callback: () => attacksPet.petAhead.adjacentAttacked(this.gameApi, attacksPet),
                 priority: attacksPet.petAhead.attack,
                 callbackPet: attacksPet,
                 abilityType: 'adjacentFriendAttacks'
             });
         }
         // Check pet behind
-        if (attacksPet.petBehind(null, true)?.adjacentFriendAttacks != null) {
+        if (attacksPet.petBehind(null, true)?.adjacentAttacked != null) {
             this.setAfterFriendAttackEvent({
-                callback: attacksPet.petBehind().adjacentFriendAttacks.bind(attacksPet.petBehind()),
+                callback: () => attacksPet.petBehind().adjacentAttacked(this.gameApi, attacksPet),
                 priority: attacksPet.petBehind().attack,
                 callbackPet: attacksPet,
                 abilityType: 'adjacentFriendAttacks'
@@ -875,7 +876,7 @@ export class AbilityService {
         this.afterFriendAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.afterFriendAttackEvents) {
-            event.callback(this.gameService.gameApi, false);
+            event.callback(this.gameService.gameApi, event.callbackPet, false);
         }
         
         this.resetAfterFriendAttackEvents();

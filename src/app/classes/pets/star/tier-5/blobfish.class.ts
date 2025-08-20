@@ -5,18 +5,25 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Porcupine extends Pet {
-    name = "Porcupine";
-    tier = 3;
-    pack: Pack = 'Custom';
+export class Blobfish extends Pet {
+    name = "Blobfish";
+    tier = 5;
+    pack: Pack = 'Star';
     attack = 2;
-    health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = 3 * this.level;
-        if (pet == null || !pet.alive){
-            return;
+    health = 10;
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        let targets = this.getPetsBehind(2);
+        for (let target of targets) {
+            let power = this.level;
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} ${power} exp.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            });
+            target.increaseExp(power);    
         }
-        this.snipePet(pet, power);
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

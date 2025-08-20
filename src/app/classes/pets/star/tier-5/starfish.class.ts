@@ -1,23 +1,15 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Porcupine extends Pet {
-    name = "Porcupine";
-    tier = 3;
-    pack: Pack = 'Custom';
-    attack = 2;
-    health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = 3 * this.level;
-        if (pet == null || !pet.alive){
-            return;
-        }
-        this.snipePet(pet, power);
-    }
+export class Starfish extends Pet {
+    name = "Starfish";
+    tier = 5;
+    pack: Pack = 'Star';
+    attack = 3;
+    health = 7;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

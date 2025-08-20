@@ -5,19 +5,12 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Porcupine extends Pet {
-    name = "Porcupine";
-    tier = 3;
+export class Zebra extends Pet {
+    name = "Zebra";
+    tier = 5;
     pack: Pack = 'Custom';
-    attack = 2;
-    health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = 3 * this.level;
-        if (pet == null || !pet.alive){
-            return;
-        }
-        this.snipePet(pet, power);
-    }
+    attack = 3;
+    health = 5;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

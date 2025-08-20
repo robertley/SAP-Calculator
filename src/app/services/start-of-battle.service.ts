@@ -87,6 +87,18 @@ export class StartOfBattleService {
         this.toyPetEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.toyPetEvents) {
+            // Check for pet transformation and redirect ability execution if needed
+            if (event.pet && event.pet.transformed && event.pet.transformedInto) {
+                const transformedPet = event.pet.transformedInto;
+                // Check if transformed pet has startOfBattle ability
+                if (transformedPet.startOfBattle) {
+                    event.callback = transformedPet.startOfBattle.bind(transformedPet);
+                } else {
+                    // Transformed pet doesn't have startOfBattle ability - skip execution
+                    continue;
+                }
+            }
+            
             event.callback(this.gameApi);
         }
 
@@ -105,8 +117,23 @@ export class StartOfBattleService {
                 continue;
             }
 
+            // Check for pet transformation and redirect ability execution if needed
+            let effectivePet = event.pet;
+            if (event.pet.transformed && event.pet.transformedInto) {
+                const transformedPet = event.pet.transformedInto;
+                // Check if transformed pet has startOfBattle ability
+                if (transformedPet.startOfBattle) {
+                    effectivePet = transformedPet;
+                    event.callback = transformedPet.startOfBattle.bind(transformedPet);
+                } else {
+                    // Transformed pet doesn't have startOfBattle ability - skip execution
+                    event.pet.startOfBattleTriggered = true;
+                    continue;
+                }
+            }
+
             // Mark as triggered before execution
-            event.pet.startOfBattleTriggered = true;
+            effectivePet.startOfBattleTriggered = true;
             
             let reorder = event.callback(this.gameApi);
 

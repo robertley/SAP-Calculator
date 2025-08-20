@@ -11,14 +11,16 @@ export class Wolverine extends Pet {
     pack: Pack = 'Turtle';
     attack = 5;
     health = 7;
+    private attackCounter = 0;
+    
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet == this) {
             return;
         }
         if (!tiger) {
-            this.abilityUses++
+            this.attackCounter++
         }
-        if (this.abilityUses % 4 != 0) {
+        if (this.attackCounter % 4 != 0) {
             return
         }
         this.abilityService.setCounterEvent({

@@ -62,7 +62,6 @@ export class Parrot extends Pet {
         this.enemyHurt = copyPet.originalEnemyHurt?.bind(this);
         this.afterFaint = copyPet.originalAfterFaint?.bind(this);
         this.transform = copyPet.originalTransform?.bind(this);
-        this.adjacentFriendAttacks = copyPet.originalAdjacentFriendAttacks?.bind(this);
         this.adjacentAttacked = copyPet.originalAdjacentAttacked?.bind(this);
         this.friendAttacks = copyPet.originalFriendAttacks?.bind(this);
         this.beforeFriendAttacks = copyPet.originalBeforeFriendAttacks?.bind(this);
@@ -103,7 +102,6 @@ export class Parrot extends Pet {
         this.originalEmptyFrontSpace = this.emptyFrontSpace;
         this.originalEnemyHurt = this.enemyHurt;
         this.originalAfterFaint = this.afterFaint;
-        this.originalAdjacentFriendAttacks = this.adjacentFriendAttacks;
         this.originalAdjacentAttacked = this.adjacentAttacked;
         this.originalFriendAttacks = this.friendAttacks;
         this.originalBeforeFriendAttacks = this.beforeFriendAttacks;

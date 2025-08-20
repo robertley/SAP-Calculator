@@ -33,7 +33,7 @@ export class RolowayMonkey extends Pet {
                 attack: target.attack,
                 mana: target.mana,
                 exp: this.exp,
-                equipment: cloneDeep(target.equipment)
+                equipment: target.equipment
             }, this.parent);
             
             this.parent.transformPet(target, newPet);

@@ -24,7 +24,7 @@ export class IriomoteCat extends Pet {
             attack: this.attack,
             health: this.health,
             exp: this.exp,
-            equipment: cloneDeep(this.equipment),
+            equipment: this.equipment,
             mana: this.mana
         }, this.parent);
         

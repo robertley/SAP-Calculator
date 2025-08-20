@@ -19,8 +19,8 @@ export class SakerFalcon extends Pet {
         }
 
         // Check if outnumbered by comparing team sizes (petArray already excludes dead pets)
-        let myAlivePets = this.parent.petArray.filter(friend => friend.alive).length;
-        let enemyAlivePets = this.parent.opponent.petArray.filter(friend => friend.alive).length;
+        let myAlivePets = this.parent.petArray.length;
+        let enemyAlivePets = this.parent.opponent.petArray.length;
 
         if (myAlivePets < enemyAlivePets) {
             let power = this.level * 2;

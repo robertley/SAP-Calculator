@@ -232,6 +232,9 @@ export class Player {
 
     transformPet(originalPet: Pet, newPet: Pet): void {
         this.setPet(originalPet.position, newPet);
+        // Set transformation flags for ability execution tracking
+        originalPet.transformed = true;
+        originalPet.transformedInto = newPet;
         newPet.applyEquipment(newPet.equipment);
         if (newPet.transform) {
             this.abilityService.setTransformEvent({

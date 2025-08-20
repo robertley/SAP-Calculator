@@ -1,32 +1,37 @@
-import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Butterfly } from "../../hidden/butterfly.class";
 
-export class Caterpillar extends Pet {
-    name = "Caterpillar";
-    tier = 4;
-    pack: Pack = 'Puppy';
-    attack = 1;
-    health = 1;
+export class Lion extends Pet {
+    name = "Lion";
+    tier = 5;
+    pack: Pack = 'Custom';
+    attack = 6;
+    health = 6;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.level < 3) {
+        let otherPets = this.parent.petArray.filter(pet => pet !== this);
+        let highestTier = 0;
+        for (let pet of otherPets) {
+            if (pet.tier > highestTier) {
+                highestTier = pet.tier;
+            }
+        }
+        let power = .5 * this.level;
+        if (this.tier <= highestTier) {
             return;
         }
-        let butterfly = new Butterfly(this.logService, this.abilityService, this.parent, 1, 1, this.mana, this.exp, this.equipment);
-        this.parent.setPet(this.position, butterfly);
+        this.increaseAttack(Math.floor(this.attack * power));
+        this.increaseHealth(Math.floor(this.health * power));
         this.logService.createLog({
-            message: `${this.name} transformed into a Butterfly.`,
+            message: `${this.name} increased its attack and health by ${power * 100}% (${this.attack}/${this.health})`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger: tiger
         })
-        this.parent.transformPet(this, butterfly);
+        this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

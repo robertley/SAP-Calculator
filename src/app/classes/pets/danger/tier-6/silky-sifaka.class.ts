@@ -41,7 +41,7 @@ export class SilkySifaka extends Pet {
                 health: targetPet.health,
                 mana: targetPet.mana,
                 exp: levelToExp(this.level),
-                equipment: cloneDeep(targetPet.equipment)
+                equipment: targetPet.equipment
             }, this.parent);
             
             this.parent.transformPet(targetPet, newPet);

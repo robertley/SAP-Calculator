@@ -13,18 +13,20 @@ export class GrizzlyBear extends Pet {
     pack: Pack = 'Golden';
     attack = 6;
     health = 8;
-    friendAttacks(gameApi: GameAPI, tiger?: boolean): void {
+    private attackCounter = 0;
+    
+    friendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!tiger) {
-            this.abilityUses++;
+            this.attackCounter++;
             // this.logService.createLog({
-            //     message: `Grizzly Bear ${this.abilityUses % 5}/5`,
+            //     message: `Grizzly Bear ${this.attackCounter % 5}/5`,
             //     type: 'ability',
             //     player: this.parent
 
             // })
         }
 
-        if (this.abilityUses % 5 != 0) {
+        if (this.attackCounter % 5 != 0) {
             return
         }
         this.abilityService.setCounterEvent({
@@ -41,7 +43,7 @@ export class GrizzlyBear extends Pet {
             },
             priority: this.attack
         });
-        this.superFriendAttacks(gameApi, tiger);
+        this.superFriendAttacks(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

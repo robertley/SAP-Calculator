@@ -1,22 +1,30 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
+import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Porcupine extends Pet {
-    name = "Porcupine";
-    tier = 3;
+export class AtlanticPuffin extends Pet {
+    name = "Atlantic Puffin";
+    tier = 2;
     pack: Pack = 'Custom';
     attack = 2;
-    health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = 3 * this.level;
-        if (pet == null || !pet.alive){
-            return;
+    health = 3;
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let strawPets = this.parent.getPetsWithEquipment('Strawberry').filter(pet => pet !== this);
+        let opponent = getOpponent(gameApi, this.parent);
+        for (let i = 0; i < this.level; i++) {
+            for (let j = 0; j < strawPets.length; j++) {
+                let target = opponent.getRandomPet(null, null, true);
+                if (target == null) {
+                    break;
+                }
+                this.snipePet(target, 2, true, tiger);
+            }
         }
-        this.snipePet(pet, power);
+        this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

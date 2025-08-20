@@ -1,37 +1,26 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class SaigaAntelope extends Pet {
-    name = "Saiga Antelope";
+export class Eel extends Pet {
+    name = "Eel";
     tier = 4;
-    pack: Pack = 'Golden';
+    pack: Pack = 'Custom';
     attack = 4;
-    health = 3;
-    private attackCounter = 0;
-    
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        }
-        if (!tiger) {
-            this.attackCounter++;
-        }
-        if (this.attackCounter % 2 != 0) {
-            return;
-        }
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                this.parent.gainTrumpets(this.level * 3, this);
-            },
-            priority: this.attack
-        });
-        
-        super.superFriendFaints(gameApi, pet, tiger);
+    health = 2;
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let power = .5 * this.level;
+        this.health = Math.min(50, Math.floor(this.health * (1 + power)));
+        this.logService.createLog({
+            message: `${this.name} has gained ${power * 100}% health. (${this.health})`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+        this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

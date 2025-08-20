@@ -1,37 +1,28 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class SaigaAntelope extends Pet {
-    name = "Saiga Antelope";
-    tier = 4;
-    pack: Pack = 'Golden';
-    attack = 4;
-    health = 3;
-    private attackCounter = 0;
-    
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
+export class Iguana extends Pet {
+    name = "Iguana";
+    tier = 2;
+    pack: Pack = 'Star';
+    attack = 2;
+    health = 4;
+    // Using the summonPet method when pushing, so this works on push, too.
+    // might need to revisit later.
+    enemySummoned(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (pet == null) {
             return;
         }
-        if (!tiger) {
-            this.attackCounter++;
-        }
-        if (this.attackCounter % 2 != 0) {
+        if (!pet.alive) {
             return;
         }
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                this.parent.gainTrumpets(this.level * 3, this);
-            },
-            priority: this.attack
-        });
-        
-        super.superFriendFaints(gameApi, pet, tiger);
+        let power = this.level * 2;
+        this.snipePet(pet, power, false, tiger);
+        this.superEnemySummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

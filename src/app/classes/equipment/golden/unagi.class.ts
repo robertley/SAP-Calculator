@@ -21,13 +21,7 @@ export class Unagi extends Equipment {
             let target = pet.parent.opponent.getRandomPet();
             if (target) {
                 let damage = 2 * this.multiplier;
-                pet.snipePet(target, damage, true);
-                
-                this.logService.createLog({
-                    message: `${pet.name} dealt ${damage} damage to ${target.name} (Unagi)${this.multiplierMessage}`,
-                    type: 'equipment',
-                    player: pet.parent
-                });
+                pet.snipePet(target, damage, true, false, false, true, false);
             }
         }
     }
