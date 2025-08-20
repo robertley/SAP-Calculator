@@ -226,6 +226,11 @@
             "id": "658"
         },
         {
+            "name": "Salmon",
+            "tier": "1",
+            "id": "726"
+        },
+        {
             "name": "Goose",
             "tier": "1",
             "id": "232"
@@ -801,6 +806,11 @@
             "name": "Bass",
             "tier": "2",
             "id": "669"
+        },
+        {
+            "name": "Shima Enaga",
+            "tier": "2",
+            "id": "725"
         }
     ],
     "tier3": [
