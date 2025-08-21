@@ -9,7 +9,7 @@ import { Player } from "../../../player.class";
 export class Komodo extends Pet {
     name = "Komodo";
     tier = 6;
-    pack: Pack = 'Star';
+    pack: Pack = 'Custom';
     attack = 6;
     health = 6;
     endTurn(gameApi: GameAPI): void {

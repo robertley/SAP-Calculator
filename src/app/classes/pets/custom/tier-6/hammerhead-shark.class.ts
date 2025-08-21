@@ -8,7 +8,7 @@ import { Player } from "../../../player.class";
 export class HammerheadShark extends Pet {
     name = "Hammerhead Shark";
     tier = 6;
-    pack: Pack = 'Star';
+    pack: Pack = 'Custom';
     attack = 5;
     health = 5;
     constructor(protected logService: LogService,

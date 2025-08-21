@@ -11,11 +11,11 @@ export class Spinosaurus extends Pet {
     tier = 6;
     pack: Pack = 'Star';
     attack = 4;
-    health = 8;
+    health = 4;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power: Power = {
-            attack: this.level * 3,
-            health: this.level * 2
+            attack: this.level * 2,
+            health: this.level * 3
         }
         let target = this.parent.getRandomPet([this], true, false, true);
         if (target == null) {

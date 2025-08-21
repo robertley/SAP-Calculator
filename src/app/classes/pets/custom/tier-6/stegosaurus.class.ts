@@ -8,7 +8,7 @@ import { Player } from "../../../player.class";
 export class Stegosaurus extends Pet {
     name = "Stegosaurus";
     tier = 6;
-    pack: Pack = 'Star';
+    pack: Pack = 'Custom';
     attack = 3;
     health = 8;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {

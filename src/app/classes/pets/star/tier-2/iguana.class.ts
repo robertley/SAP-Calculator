@@ -11,8 +11,17 @@ export class Iguana extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 4;
-    // Using the summonPet method when pushing, so this works on push, too.
-    // might need to revisit later.
+    enemyPushed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (pet == null) {
+            return;
+        }
+        if (!pet.alive) {
+            return;
+        }
+        let power = this.level * 2;
+        this.snipePet(pet, power, false, tiger);
+        this.superEnemyPushed(gameApi, pet, tiger);
+    }
     enemySummoned(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet == null) {
             return;
