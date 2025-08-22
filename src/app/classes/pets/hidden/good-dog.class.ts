@@ -58,6 +58,7 @@ import { Ambrosia } from "../../equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../../equipment/unicorn/faint-bread.class";
 import { Seaweed } from "../../equipment/star/seaweed.class";
 import { Caramel } from "../../equipment/star/caramel.class";
+import { Baguette } from "../../equipment/star/baguette.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
 // TO DO: Add all perks
@@ -157,6 +158,7 @@ export class GoodDog extends Pet {
         map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
         map.set('Seaweed', new Seaweed(this.logService, this.abilityService, this.petService));
         map.set('Caramel', new Caramel(this.logService, this.abilityService));
+        map.set('Baguette', new Baguette(this.logService, this.abilityService));
 
         
         return map;

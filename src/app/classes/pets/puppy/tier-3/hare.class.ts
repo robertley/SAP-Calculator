@@ -110,7 +110,9 @@ export class Hare extends Pet {
         // Hidden
         ['Seaweed', 5],
         // Golden  
-        ['Caramel', 4]
+        ['Caramel', 4],
+        // Star
+        ['Baguette', 4]
     ]);
 
     private isUsefulPerk(equipmentName: string): boolean {

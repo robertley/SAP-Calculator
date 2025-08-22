@@ -7,8 +7,8 @@ import { Player } from "../../../player.class";
 
 export class Alpaca extends Pet {
     name = "Alpaca";
-    tier = 5;
-    pack: Pack = 'Custom';
+    tier = 6;
+    pack: Pack = 'Star';
     attack = 3;
     health = 7;
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
@@ -18,9 +18,9 @@ export class Alpaca extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        pet.increaseExp(1);
+        pet.increaseExp(3);
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} 1 exp.`,
+            message: `${this.name} gave ${pet.name} 3 exp.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

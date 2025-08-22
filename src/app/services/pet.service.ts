@@ -283,7 +283,7 @@ import { Dragonfly } from "../classes/pets/custom/tier-4/dragonfly.class";
 import { Lynx } from "../classes/pets/custom/tier-4/lynx.class";
 import { Seagull } from "../classes/pets/custom/tier-4/seagull.class";
 import { EquipmentService } from "./equipment.service";
-import { Alpaca } from "../classes/pets/custom/tier-5/alpaca.class";
+import { Alpaca } from "../classes/pets/star/tier-6/alpaca.class";
 import { Hyena } from "../classes/pets/custom/tier-5/hyena.class";
 import { Moose } from "../classes/pets/custom/tier-5/moose.class";
 import { Lioness } from "../classes/pets/custom/tier-6/lioness.class";
@@ -784,7 +784,8 @@ export class PetService {
             "Real Velociraptor",
             "Sabertooth Tiger",
             "Ammonite",
-            "Velociraptor"
+            "Velociraptor",
+            "Alpaca"
         ])
 
         this.goldenPackPets.set(1, [
@@ -1058,7 +1059,6 @@ export class PetService {
             "Crow"
         ]);
         this.customPackPets.set(5, [
-            "Alpaca",
             "Poodle",
             "Hyena",
             "Moose",
