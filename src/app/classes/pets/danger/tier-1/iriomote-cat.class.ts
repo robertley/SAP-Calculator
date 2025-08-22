@@ -7,7 +7,7 @@ import { getRandomInt } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-
+//TO DO: Add all pets tier 1-3
 export class IriomoteCat extends Pet {
     name = "Iriomote Cat";
     tier = 1;

@@ -46,6 +46,7 @@ export class AbilityService {
         'summoned': 6,
         'friendSummoned': 7,
         'enemySummoned': 7,
+        'enemyPushed': 7,
         'friendJumped': 8,
         'enemyJumped': 8,
         'faint': 9,
@@ -55,7 +56,7 @@ export class AbilityService {
         'enemyFaints': 12, //not added
         'friendlyToyBroke': 12,
         'knockOut': 13,
-        'transformed': 14,
+        'transform': 14,
         'friendTransformed': 14.5,
         'friendGainedExperience': 15,
         'friendAteFood': 16,
@@ -74,10 +75,10 @@ export class AbilityService {
         'goldenRetrieverSummons': 24
     };
 
+
     constructor(private gameService: GameService) {
         
-    }
-    
+    }    
 
     get hasAbilityCycleEvents() {
         // With the new priority queue system, only check the global queue
@@ -159,13 +160,29 @@ export class AbilityService {
     executeEventCallback(event: AbilityEvent) {
         const gameApi = this.gameService.gameApi;
         
+        // Check for pet transformation and redirect ability execution if needed
+        const executingPet = event.pet;
+        
+        if (executingPet && executingPet.transformed && executingPet.transformedInto && event.abilityType) {
+            const transformedPet = executingPet.transformedInto;
+            
+            // If transformed pet has the same ability method, execute on transformed pet
+            if (typeof transformedPet[event.abilityType] === 'function') {
+                // Replace the callback with the transformed pet's method
+                event.callback = transformedPet[event.abilityType].bind(transformedPet);
+            } else {
+                // Transformed pet doesn't have this ability method - skip execution
+                return;
+            }
+        }
+        
         switch (event.abilityType) {
             case 'faint':
             case 'beforeStartOfBattle':
             case 'afterFaint':
             case 'equipmentBeforeAttack':
             case 'summoned':
-            case 'transformed':
+            case 'transform':
                 // Basic callback: callback(gameApi)
                 event.callback(gameApi);
                 break;
@@ -198,6 +215,7 @@ export class AbilityService {
                 
             case 'afterAttack':
             case 'enemySummoned':
+            case 'enemyPushed':
             case 'friendlyToyBroke':
             case 'gainAilment':
             case 'emptyFrontSpace':
@@ -230,6 +248,7 @@ export class AbilityService {
                 break;
         }
     }
+
 
     // End of Turn Events
 
@@ -274,6 +293,7 @@ export class AbilityService {
     // Summoned
     setSummonedEvent(event: AbilityEvent) {
         event.abilityType = 'summoned';
+        // Extract executing pet from callback if not already set
         this.addEventToQueue(event);
     }
     
@@ -290,7 +310,8 @@ export class AbilityService {
                 this.setFriendSummonedEvent({
                     callback: pet.friendSummoned.bind(pet),
                     priority: pet.attack,
-                    callbackPet: summonedPet
+                    callbackPet: summonedPet,
+                    pet: pet
                 })
             }
         }
@@ -349,6 +370,7 @@ export class AbilityService {
                 this.setFriendFaintsEvent({
                     callback: pet.friendFaints.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: faintedPet
                 })
             }
@@ -461,6 +483,7 @@ export class AbilityService {
                 this.setFriendLostPerkEvent({
                     callback: pet.friendLostPerk.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: perkPet
                 })
             }
@@ -485,6 +508,7 @@ export class AbilityService {
                 this.setFriendAteFoodEvent({
                     callback: pet.friendAteFood.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: foodPet
                 })
             }
@@ -505,6 +529,7 @@ export class AbilityService {
                 this.setGainedPerkEvent({
                     callback: pet.gainedPerk.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: perkPet
                 })
             }
@@ -527,6 +552,7 @@ export class AbilityService {
                 this.setFriendGainedPerkEvent({
                     callback: pet.friendGainedPerk.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: perkPet
                 })
             }
@@ -546,6 +572,7 @@ export class AbilityService {
                 this.setBeforeStartOfBattleEvent({
                     callback: pet.beforeStartOfBattle.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     player: player
                 })
             }
@@ -581,6 +608,7 @@ export class AbilityService {
                 this.setFriendGainedAilmentEvent({
                     callback: pet.friendGainedAilment.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: perkPet
                 })
             }
@@ -600,6 +628,7 @@ export class AbilityService {
                 this.setEnemyGainedAilmentEvent({
                     callback: pet.enemyGainedAilment.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: perkPet
                 })
             }
@@ -619,7 +648,8 @@ export class AbilityService {
             if (pet.friendlyToyBroke != null) {
                 this.setFriendlyToyBrokeEvent({
                     callback: pet.friendlyToyBroke.bind(pet),
-                    priority: pet.attack
+                    priority: pet.attack,
+                    pet: pet
                 })
             }
         }
@@ -637,14 +667,15 @@ export class AbilityService {
             if (pet.transform != null) {
                 this.setTransformEvent({
                     callback: pet.transform.bind(pet),
-                    priority: pet.attack
+                    priority: pet.attack,
+                    pet: pet
                 })
             }
         }
     }
     
     setTransformEvent(event: AbilityEvent) {
-        event.abilityType = 'transformed';
+        event.abilityType = 'transform';
         this.addEventToQueue(event);
     }
 
@@ -656,6 +687,7 @@ export class AbilityService {
                 this.setFriendTransformedEvent({
                     callback: pet.friendTransformed.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: transformedPet
                 })
             }
@@ -675,6 +707,7 @@ export class AbilityService {
                 this.setEnemySummonedEvent({
                     callback: pet.enemySummoned.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: summonPet
                 })
             }
@@ -686,6 +719,26 @@ export class AbilityService {
         this.addEventToQueue(event);
     }
 
+    // enemy pushed events
+
+    triggerEnemyPushedEvents(player: Player, pushedPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.enemyPushed != null) {
+                this.setEnemyPushedEvent({
+                    callback: pet.enemyPushed.bind(pet),
+                    priority: pet.attack,
+                    pet: pet,
+                    callbackPet: pushedPet
+                })
+            }
+        }
+    }
+    
+    setEnemyPushedEvent(event: AbilityEvent) {
+        event.abilityType = 'enemyPushed';
+        this.addEventToQueue(event);
+    }
+
     // friend hurt events
 
     triggerFriendHurtEvents(player: Player, hurtPet: Pet) {
@@ -694,6 +747,7 @@ export class AbilityService {
                 this.setFriendHurtEvent({
                     callback: pet.friendHurt.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: hurtPet
                 })
             }
@@ -714,6 +768,7 @@ export class AbilityService {
                 this.setLevelUpEvent({
                     callback: pet.anyoneLevelUp.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: levelUpPet
                 })
             }
@@ -733,7 +788,8 @@ export class AbilityService {
             if (pet.emptyFrontSpace != null) {
                 this.setEmptyFrontSpaceEvent({
                     callback: pet.emptyFrontSpace.bind(pet),
-                    priority: pet.attack
+                    priority: pet.attack,
+                    pet: pet,
                 })
             }
         }
@@ -757,6 +813,7 @@ export class AbilityService {
                 this.setEnemyHurtEvent({
                     callback: pet.enemyHurt.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: hurtPet
                 })
             }
@@ -780,6 +837,7 @@ export class AbilityService {
                 this.setAfterFriendAttackEvent({
                     callback: () => pet.friendAttacks(this.gameApi, attacksPet, false),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: attacksPet,
                     abilityType: 'friendAttacks'
                 })
@@ -791,6 +849,7 @@ export class AbilityService {
             this.setAfterFriendAttackEvent({
                 callback: attacksPet.petBehind(null, true).friendAheadAttacks.bind(attacksPet.petBehind(null, true)),
                 priority: attacksPet.petBehind(null, true).attack,
+                pet: attacksPet.petBehind(null, true),
                 callbackPet: attacksPet,
                 abilityType: 'friendAheadAttacks'
             });
@@ -802,6 +861,7 @@ export class AbilityService {
             this.setAfterFriendAttackEvent({
                 callback: () => attacksPet.petAhead.adjacentAttacked(this.gameApi, attacksPet),
                 priority: attacksPet.petAhead.attack,
+                pet: attacksPet.petAhead,
                 callbackPet: attacksPet,
                 abilityType: 'adjacentFriendAttacks'
             });
@@ -811,6 +871,7 @@ export class AbilityService {
             this.setAfterFriendAttackEvent({
                 callback: () => attacksPet.petBehind().adjacentAttacked(this.gameApi, attacksPet),
                 priority: attacksPet.petBehind().attack,
+                pet: attacksPet.petBehind(),
                 callbackPet: attacksPet,
                 abilityType: 'adjacentFriendAttacks'
             });
@@ -831,6 +892,7 @@ export class AbilityService {
                 this.setBeforeFriendAttacksEvent({
                     callback: pet.beforeFriendAttacks.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: attackingPet
                 });
             }
@@ -890,6 +952,7 @@ export class AbilityService {
                 this.setAfterFriendAttackEvent({
                     callback: pet.enemyAttack.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: attackingEnemyPet,
                     abilityType: 'enemyAttack'
                 });
@@ -908,6 +971,7 @@ export class AbilityService {
                 this.setFriendJumpedEvent({
                     callback: pet.friendJumped.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: jumpPet
                 })
             }
@@ -926,6 +990,7 @@ export class AbilityService {
                 this.setEnemyJumpedEvent({
                     callback: pet.enemyJumped.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: jumpPet
                 })
             }
@@ -958,6 +1023,7 @@ export class AbilityService {
                 this.setFriendGainsHealthEvent({
                     callback: pet.friendGainsHealth.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     callbackPet: healthPet
                 })
             }
@@ -995,6 +1061,7 @@ export class AbilityService {
                 this.setFriendGainedExperienceEvent({
                     callback: p.friendGainedExperience.bind(p),
                     priority: p.attack,
+                    pet: p,
                     callbackPet: pet
                 });
             }

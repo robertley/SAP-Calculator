@@ -1859,6 +1859,11 @@
             "id": "135"
         },
         {
+            "name": "Ibex",
+            "tier": "5",
+            "id": "727"
+        },
+        {
             "name": "Werewolf",
             "tier": "5",
             "id": "383"
@@ -2116,7 +2121,7 @@
             "id": "205"
         },
         {
-            "name": "Sabertooth Tiger",
+            "name": "Harpy Eagle",
             "tier": "6",
             "id": "148"
         },
@@ -2176,7 +2181,7 @@
             "id": "78"
         },
         {
-            "name": "Velociraptor",
+            "name": "Therizinosaurus",
             "tier": "6",
             "id": "115"
         },
@@ -2214,6 +2219,16 @@
             "name": "Albatross",
             "tier": 6,
             "id": "660"
+        },
+        {
+            "name": "Real Velociraptor",
+            "tier": "6",
+            "id": "728"
+        },
+        {
+            "name": "Sabertooth Tiger",
+            "tier": "6",
+            "id": "729"
         }
     ]
 }

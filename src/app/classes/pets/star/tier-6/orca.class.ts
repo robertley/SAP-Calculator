@@ -5,7 +5,7 @@ import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-
+// TO DO: Update faint pool, and add all faint pets
 export class Orca extends Pet {
     name = "Orca";
     tier = 6;

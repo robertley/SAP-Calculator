@@ -49,7 +49,7 @@ const REVERSE_KEY_MAP = {
   "oL3": "opponentLevel3Sold", "p": "playerPets", "o": "opponentPets", "an": "angler",
   "ap": "allPets", "lf": "logFilter", "fs": "fontSize", "cp": "customPacks",
   "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana",
-  "sa": "showAdvanced", "ae": "ailmentEquipment",
+  "sa": "showAdvanced", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
   // Pet Object Keys
   "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment"
 };
@@ -295,6 +295,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         opponentRollAmount: 4,
         playerSummonedAmount: 0,
         opponentSummonedAmount: 0,
+        playerTransformationAmount: 0,
+        opponentTransformationAmount: 0,
         playerLevel3Sold: 0,
         opponentLevel3Sold: 0,
         playerPets: Array(5).fill(null),
@@ -341,6 +343,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
     this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
+    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
     this.gameService.gameApi.day = this.dayNight;
     this.gameService.gameApi.turnNumber = this.formGroup.get('turn').value;
   }
@@ -381,6 +385,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
     this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
+    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
   }
 
   loadCustomPacks(customPacks) {
@@ -456,6 +462,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       opponentLevel3Sold: new FormControl(0),
       playerSummonedAmount: new FormControl(0),
       opponentSummonedAmount: new FormControl(0),
+      playerTransformationAmount: new FormControl(0),
+      opponentTransformationAmount: new FormControl(0),
       showAdvanced: new FormControl(false),
       ailmentEquipment: new FormControl(false),
     })
@@ -544,6 +552,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('opponentSummonedAmount').valueChanges.subscribe((value) => {
       this.gameService.gameApi.opponentSummonedAmount = value;
     });
+    this.formGroup.get('playerTransformationAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerTransformationAmount = value;
+    });
+    this.formGroup.get('opponentTransformationAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentTransformationAmount = value;
+    });
+
   }
 
   toggleAdvanced() {
@@ -566,6 +581,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
           battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
+          sabertoothTimesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
+          tunaTimesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
         })
       }
     );
@@ -587,6 +604,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
           battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
+          sabertoothTimesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
+          tunaTimesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
         })
       }
     );
@@ -912,6 +931,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.battles.push(this.currBattle);
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
     this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
+    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
+    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
+
   }
 
   reset() {

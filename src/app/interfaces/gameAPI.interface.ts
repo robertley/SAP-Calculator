@@ -20,5 +20,7 @@ export interface GameAPI {
     opponentLevel3Sold?: number;
     playerSummonedAmount?: number;
     opponentSummonedAmount?: number;
+    playerTransformationAmount?: number;
+    opponentTransformationAmount?: number;
 
 }

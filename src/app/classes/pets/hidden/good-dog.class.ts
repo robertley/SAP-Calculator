@@ -58,7 +58,7 @@ import { Ambrosia } from "../../equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../../equipment/unicorn/faint-bread.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
-
+// TO DO: Add all perks
 export class GoodDog extends Pet {
     name = "Good Dog";
     tier = 5;

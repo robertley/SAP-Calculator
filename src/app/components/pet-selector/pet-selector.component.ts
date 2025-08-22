@@ -223,6 +223,8 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('mana').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
+    this.formGroup.get('sabertoothTimesHurt').valueChanges.subscribe((value) => { this.setSabertoothTimesHurt(value) });
+    this.formGroup.get('tunaTimesHurt').valueChanges.subscribe((value) => { this.setTunaTimesHurt(value) });
   }
 
   setExp(amt: number) {
@@ -306,8 +308,24 @@ export class PetSelectorComponent implements OnInit {
     pet.battlesFought = value;
   }
 
+  setSabertoothTimesHurt(value: number) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    pet.timesHurt = value;
+  }
+
+  setTunaTimesHurt(value: number) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    pet.timesHurt = value;
+  }
+
   showFlyOutButton() {
-    let flyOutPets = ['Beluga Whale', 'Abomination', 'Slime'];
+    let flyOutPets = ['Beluga Whale', 'Abomination', 'Slime', 'Sabertooth Tiger', 'Tuna'];
     return flyOutPets.includes(this.formGroup.get('name').value);
   }
 
