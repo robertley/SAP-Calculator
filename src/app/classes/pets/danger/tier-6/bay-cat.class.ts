@@ -14,9 +14,8 @@ export class BayCat extends Pet {
     health = 5;
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        //TO DO: Add: "Tasmanian Devil", 
         let bayPool = [
-            "Skunk", "Fossa", "Kraken", "Lynx", "Humphead Wrasse", "Goblin Shark", "Red lipped Batfish", "Platybelodon"           
+            "Skunk", "Fossa", "Kraken", "Lynx", "Humphead Wrasse", "Goblin Shark", "Red lipped Batfish", "Platybelodon" , "Tasmanian Devil"          
         ];
         
         for (let i = 0; i < this.level; i++) {

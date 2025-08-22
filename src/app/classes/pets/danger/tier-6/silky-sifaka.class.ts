@@ -19,10 +19,9 @@ export class SilkySifaka extends Pet {
     health = 6;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        //TO DO: Add "Ammonite"
         let sifakaPool = [
             "Mammoth", "Lionfish",  "Orca", "Sabertooth Tiger",
-            "Warthog", "Hydra", "Phoenix", "Bay Cat", "Walrus"
+            "Warthog", "Hydra", "Phoenix", "Bay Cat", "Walrus", "Ammonite"
         ];
         
         let petsBehind = [];

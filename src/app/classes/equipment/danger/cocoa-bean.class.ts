@@ -71,7 +71,6 @@ export class CocoaBean extends Equipment {
             transformedPet.abilityUses = 0;
             transformedPet.maxAbilityUses = randomEnemy.maxAbilityUses;
 
-            //TO DO: Copy Tuna Hurt Count
             if ((randomEnemy as any).hurtThisBattle !== undefined) {
                 (transformedPet as any).hurtThisBattle = (randomEnemy as any).hurtThisBattle;
             }
@@ -81,7 +80,8 @@ export class CocoaBean extends Equipment {
                 player: pet.parent,
                 randomEvent: enemies.length > 1
             });
-            
+            //TO DO: Copy Friend Summoned, frined sold, roll etc
+
             pet.parent.transformPet(pet, transformedPet);
         }
     }

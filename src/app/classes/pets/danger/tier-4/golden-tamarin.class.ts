@@ -16,8 +16,7 @@ export class GoldenTamarin extends Pet {
 
     beforeStartOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         // Golden Tamarin pool of tier 5+ Start of Battle pets
-        const petNames = ["Crocodile", "Red Dragon",  "Salmon of Knowledge", "Sea Cucumber", "Werewolf", "Tarantula Hawk"];
-        //TO DO: add  "Snow Leopard"
+        const petNames = ["Crocodile", "Red Dragon",  "Salmon of Knowledge", "Sea Cucumber", "Werewolf", "Tarantula Hawk", "Snow Leopard"];
         let randomIndex = Math.floor(Math.random() * petNames.length);
         let selectedPetName = petNames[randomIndex];
         
