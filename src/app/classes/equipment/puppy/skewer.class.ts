@@ -26,7 +26,7 @@ export class Skewer extends Equipment {
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage * this.multiplier;
 
-        attackPet.dealDamage(damage);
+        pet.dealDamage(attackPet, damage);
 
         let message = `${pet.name} attacks ${attackPet.name} for ${damage}`;
 

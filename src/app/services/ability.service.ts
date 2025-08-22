@@ -869,9 +869,9 @@ export class AbilityService {
         // Check pet behind
         if (attacksPet.petBehind(null, true)?.adjacentAttacked != null) {
             this.setAfterFriendAttackEvent({
-                callback: () => attacksPet.petBehind().adjacentAttacked(this.gameApi, attacksPet),
-                priority: attacksPet.petBehind().attack,
-                pet: attacksPet.petBehind(),
+                callback: () => attacksPet.petBehind(null, true).adjacentAttacked(this.gameApi, attacksPet),
+                priority: attacksPet.petBehind(null, true).attack,
+                pet: attacksPet.petBehind(null, true),
                 callbackPet: attacksPet,
                 abilityType: 'adjacentFriendAttacks'
             });

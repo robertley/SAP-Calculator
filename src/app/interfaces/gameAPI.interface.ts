@@ -22,5 +22,6 @@ export interface GameAPI {
     opponentSummonedAmount?: number;
     playerTransformationAmount?: number;
     opponentTransformationAmount?: number;
+    isInStartOfBattleFlag?: boolean;
 
 }

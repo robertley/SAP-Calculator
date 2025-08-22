@@ -859,6 +859,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.startOfBattleService.executeToyPetEvents();
 
       //add churro check
+      this.gameService.gameApi.isInStartOfBattleFlag = true;
       this.toyService.executeStartOfBattleEvents(); //toy sob
       this.startOfBattleService.executeNonToyPetEvents(); //pet sob
       
@@ -866,6 +867,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       do {
         this.abilityCycle();
       } while (this.abilityService.hasAbilityCycleEvents);
+      this.gameService.gameApi.isInStartOfBattleFlag = false;
       //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();

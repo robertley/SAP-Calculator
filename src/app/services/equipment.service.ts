@@ -74,6 +74,7 @@ import { HoneydewMelon } from "../classes/equipment/golden/honeydew-melon.class"
 import { MapleSyrup, MapleSyrupAttack } from "../classes/equipment/golden/maple-syrup.class";
 import { CocoaBean } from "../classes/equipment/danger/cocoa-bean.class";
 import { WhiteOkra } from "../classes/equipment/danger/white-okra.class";
+import { WhiteTruffle } from "../classes/equipment/danger/white-truffle.class";
 import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
@@ -152,6 +153,7 @@ export class EquipmentService {
         map.set('Maple Syrup', new MapleSyrup());
         map.set('Cocoa Bean', new CocoaBean(this.logService, this.abilityService, this.petService));
         map.set('White Okra', new WhiteOkra());
+        map.set('White Truffle', new WhiteTruffle(this.logService, this.abilityService));
         map.set('Ambrosia', new Ambrosia());
         map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
 
@@ -204,6 +206,7 @@ export class EquipmentService {
         ['Maple Syrup', 5],
         ['Cocoa Bean', 5],
         ['White Okra', 5],
+        ['White Truffle', 5],
         // T6
         ['Popcorn', 6], 
         ['Steak', 6], 

@@ -42,9 +42,11 @@ export class HawaiianMonkSeal extends Pet {
 
     setAbilityUses(): void {
         super.setAbilityUses();
+    }
+    resetPet(): void {
+        super.resetPet();
         this.friendBuffedThisTurn.clear();
     }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

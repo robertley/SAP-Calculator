@@ -219,7 +219,8 @@ export class Player {
         if (spawnPet.summoned != null) {
             this.abilityService.setSummonedEvent({
                 callback: spawnPet.summoned.bind(spawnPet),
-                priority: spawnPet.attack
+                priority: spawnPet.attack,
+                pet: spawnPet
             })
         }
 
@@ -230,8 +231,29 @@ export class Player {
         return true;
     }
 
+    // Low-level pet positioning without triggering summoning events
+    setPetPosition(pet: Pet, position: number): boolean {
+        if (position < 0 || position > 4) {
+            return false;
+        }
+        
+        // If there's a pet at the destination, use makeRoomForSlot to handle it
+        if (this.getPet(position) != null) {
+            this.makeRoomForSlot(position);
+        }
+        
+        this.setPet(position, pet);
+        return true;
+    }
+
     transformPet(originalPet: Pet, newPet: Pet): void {
         this.setPet(originalPet.position, newPet);
+        let isPlayer = this == this.gameService.gameApi.player;
+        if (isPlayer) {
+            this.gameService.gameApi.playerTransformationAmount++;
+        } else {
+            this.gameService.gameApi.opponentTransformationAmount++;
+        }
         // Set transformation flags for ability execution tracking
         originalPet.transformed = true;
         originalPet.transformedInto = newPet;
@@ -239,7 +261,8 @@ export class Player {
         if (newPet.transform) {
             this.abilityService.setTransformEvent({
                 callback: newPet.transform.bind(newPet),
-                priority: newPet.attack
+                priority: newPet.attack,
+                pet: newPet
             });
         }
         this.abilityService.triggerFriendTransformedEvents(this, newPet);
@@ -353,7 +376,8 @@ export class Player {
                     callback: petBehind.friendAheadFaints.bind(petBehind),
                     priority: petBehind.attack,
                     player: this,
-                    callbackPet: pet
+                    callbackPet: pet,
+                    pet: petBehind
                 })
         }
         this.createDeathLog(pet);
@@ -401,7 +425,8 @@ export class Player {
                         callback: slot.pet.afterFaint.bind(slot.pet),
                         priority: slot.pet.attack,
                         player: this,
-                        callbackPet: slot.pet
+                        callbackPet: slot.pet,
+                        pet: slot.pet
                     });
                 }
                 this.abilityService.triggerFriendFaintsEvents(slot.pet);
@@ -613,6 +638,42 @@ export class Player {
     }
 
     /**
+     * Returns lowest attack pet. Returns a random pet of lowest attack if there are multiple.
+     * @param excludePet
+     * @returns 
+     */
+    getLowestAttackPet(excludePet?: Pet): {pet: Pet, random: boolean} {
+        let lowestAttackPets: Pet[];
+        for (let i in this.petArray) {
+            let index = +i;
+            let pet = this.petArray[index];
+            if (pet == excludePet) {
+                continue;
+            }
+            if (!pet.alive) {
+                continue;
+            }
+            if (lowestAttackPets == null) {
+                lowestAttackPets = [pet];
+                continue;
+            }
+            if (pet.attack == lowestAttackPets[0].attack) {
+                lowestAttackPets.push(pet);
+                continue;
+            }
+            if (pet.attack < lowestAttackPets[0].attack) {
+                lowestAttackPets = [pet];
+            }
+        }
+        let pet = lowestAttackPets == null ? null : lowestAttackPets[getRandomInt(0, lowestAttackPets.length - 1)];
+
+        return {
+            pet: pet,
+            random: pet == null ? false : lowestAttackPets.length > 1
+        };
+    }
+
+    /**
      * Returns lowest health pet. Returns a random pet of lowest health if there are multiple. Will only return alive pets.
      * @param excludePet
      * @returns 
@@ -646,6 +707,38 @@ export class Player {
             pet: pet,
             random: pet == null ? false : lowestHealthPets.length > 1
         };
+    }
+
+    /**
+     * Returns multiple lowest health pets sorted by health (lowest first), excluding pets that already have specified equipment
+     * @param count Number of pets to return
+     * @param excludeEquipment Optional equipment name to exclude pets that already have it
+     * @returns Array of pets sorted by health (lowest first)
+     */
+    getLowestHealthPets(count: number, excludeEquipment?: string): Pet[] {
+        let targets = [...this.petArray];
+        targets = targets.filter((pet) => pet.alive);
+        if (excludeEquipment) {
+            targets = targets.filter((pet) => pet.equipment?.name != excludeEquipment);
+        }
+        targets.sort((a, b) => a.health - b.health);
+        return targets.slice(0, count);
+    }
+
+    /**
+     * Returns multiple highest health pets sorted by health (highest first), excluding pets that already have specified equipment
+     * @param count Number of pets to return  
+     * @param excludeEquipment Optional equipment name to exclude pets that already have it
+     * @returns Array of pets sorted by health (highest first)
+     */
+    getHighestHealthPets(count: number, excludeEquipment?: string): Pet[] {
+        let targets = [...this.petArray];
+        targets = targets.filter((pet) => pet.alive);
+        if (excludeEquipment) {
+            targets = targets.filter((pet) => pet.equipment?.name != excludeEquipment);
+        }
+        targets.sort((a, b) => b.health - a.health);
+        return targets.slice(0, count);
     }
 
     get furthestUpPet(): Pet {
@@ -748,7 +841,13 @@ export class Player {
         if (spaces < 0) {
             destination = Math.min(position - spaces, 4);
         }
-        player.summonPet(pet, destination);
+        
+        // Use setPetPosition instead of summonPet to avoid triggering enemySummoned events
+        if (player.setPetPosition(pet, destination)) {
+            // Trigger enemy push events for the opponent
+            let opponent = getOpponent(this.gameService.gameApi, player);
+            this.abilityService.triggerEnemyPushedEvents(opponent, pet);
+        }
     }
 
     getRandomStrawberryPet(excludePet?: Pet): Pet {

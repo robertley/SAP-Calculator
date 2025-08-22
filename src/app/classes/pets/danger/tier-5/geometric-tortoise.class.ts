@@ -33,9 +33,9 @@ export class GeometricTortoise extends Pet {
         this.superHurt(gameApi, pet, tiger);
     }
 
-    dealDamage(amt: number): void {
+    dealDamage(target: Pet, amt: number): void {
         this.damageTakenList.push(amt);
-        super.dealDamage(amt);
+        super.dealDamage(target, amt);
     }
 
     constructor(protected logService: LogService,
