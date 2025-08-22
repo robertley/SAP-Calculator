@@ -6,6 +6,7 @@ import { PetService } from "../../../services/pet.service";
 // TODO mushroom bug spawning as level 1 even when level 3?
 export class Mushroom extends Equipment {
     name = 'Mushroom';
+    tier = 6;
     equipmentClass = 'afterFaint' as EquipmentClass;
     callback = (pet: Pet) => {
         let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
@@ -32,7 +33,7 @@ export class Mushroom extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(newPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(newPet);
+                    this.abilityService.triggerFriendSummonedEvents(newPet);
                 }
             }
         }

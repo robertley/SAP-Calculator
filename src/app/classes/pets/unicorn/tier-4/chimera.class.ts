@@ -52,7 +52,7 @@ export class Chimera extends Pet {
         )
 
         if (this.parent.summonPet(lion, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(lion);
+            this.abilityService.triggerFriendSummonedEvents(lion);
         }
 
         if (this.level == 1) {
@@ -75,7 +75,7 @@ export class Chimera extends Pet {
         )
 
         if (this.parent.summonPet(goat, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(goat);
+            this.abilityService.triggerFriendSummonedEvents(goat);
         }
 
         if (this.level == 2) {
@@ -98,7 +98,7 @@ export class Chimera extends Pet {
         )
 
         if (this.parent.summonPet(snake, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(snake);
+            this.abilityService.triggerFriendSummonedEvents(snake);
         }
 
         this.mana = 0;

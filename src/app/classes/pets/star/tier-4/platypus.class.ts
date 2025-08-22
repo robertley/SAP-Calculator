@@ -30,7 +30,7 @@ export class Platypus extends Pet {
         )
 
         if (this.parent.summonPet(duck, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(duck);
+            this.abilityService.triggerFriendSummonedEvents(duck);
         }
 
         this.logService.createLog(
@@ -44,7 +44,7 @@ export class Platypus extends Pet {
         )
 
         if (this.parent.summonPet(beaver, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(beaver);
+            this.abilityService.triggerFriendSummonedEvents(beaver);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

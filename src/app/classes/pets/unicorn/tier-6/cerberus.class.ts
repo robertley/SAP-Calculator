@@ -2,7 +2,6 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Crisp } from "../../../equipment/ailments/crisp.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { FirePup } from "../../hidden/fire-pup.class";
@@ -35,7 +34,7 @@ export class Cerberus extends Pet {
         )
 
         if (this.parent.summonPet(firePup, 0)) {
-            this.abilityService.triggerSummonedEvents(firePup);
+            this.abilityService.triggerFriendSummonedEvents(firePup);
         }
 
         this.abilityUses++;

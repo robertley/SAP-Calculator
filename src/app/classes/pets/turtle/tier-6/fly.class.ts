@@ -37,7 +37,7 @@ export class Fly extends Pet {
                     tiger: tiger
                 }
             )
-            this.abilityService.triggerSummonedEvents(zombie);
+            this.abilityService.triggerFriendSummonedEvents(zombie);
         }
 
         super.superFriendFaints(gameApi, faintedPet, tiger);

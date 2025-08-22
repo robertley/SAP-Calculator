@@ -48,7 +48,7 @@ export class Phoenix extends Pet {
             }
         }
 
-        this.abilityService.setAfterFaintEvent({
+        this.abilityService.setAfterFaintEvents({
             callback: () => {
                 let power = 4 * this.level;
                 let youngPhoenix = new YoungPhoenix(this.logService, this.abilityService, this.parent, power, power, 0);
@@ -64,10 +64,11 @@ export class Phoenix extends Pet {
                 )
 
                 if (this.parent.summonPet(youngPhoenix, this.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(youngPhoenix);
+                    this.abilityService.triggerFriendSummonedEvents(youngPhoenix);
                 }
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         })
 
         super.superFaint(gameApi, tiger);

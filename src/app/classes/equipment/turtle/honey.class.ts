@@ -34,7 +34,7 @@ export class Honey extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(bee, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(bee);
+                    this.abilityService.triggerFriendSummonedEvents(bee);
                 }
             }
         }

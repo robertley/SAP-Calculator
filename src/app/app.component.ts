@@ -49,7 +49,7 @@ const REVERSE_KEY_MAP = {
   "oL3": "opponentLevel3Sold", "p": "playerPets", "o": "opponentPets", "an": "angler",
   "ap": "allPets", "lf": "logFilter", "fs": "fontSize", "cp": "customPacks",
   "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana",
-  "sa": "showAdvanced", "ae": "ailmentEquipment",
+  "sa": "showAdvanced", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
   // Pet Object Keys
   "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment"
 };
@@ -100,9 +100,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.16';
+  version = '0.6.17';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '8/13/2025';
+  lastUpdated = '8/22/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -295,6 +295,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         opponentRollAmount: 4,
         playerSummonedAmount: 0,
         opponentSummonedAmount: 0,
+        playerTransformationAmount: 0,
+        opponentTransformationAmount: 0,
         playerLevel3Sold: 0,
         opponentLevel3Sold: 0,
         playerPets: Array(5).fill(null),
@@ -341,6 +343,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
     this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
+    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
     this.gameService.gameApi.day = this.dayNight;
     this.gameService.gameApi.turnNumber = this.formGroup.get('turn').value;
   }
@@ -381,6 +385,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
     this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
+    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
+    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
   }
 
   loadCustomPacks(customPacks) {
@@ -456,6 +462,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       opponentLevel3Sold: new FormControl(0),
       playerSummonedAmount: new FormControl(0),
       opponentSummonedAmount: new FormControl(0),
+      playerTransformationAmount: new FormControl(0),
+      opponentTransformationAmount: new FormControl(0),
       showAdvanced: new FormControl(false),
       ailmentEquipment: new FormControl(false),
     })
@@ -544,6 +552,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('opponentSummonedAmount').valueChanges.subscribe((value) => {
       this.gameService.gameApi.opponentSummonedAmount = value;
     });
+    this.formGroup.get('playerTransformationAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerTransformationAmount = value;
+    });
+    this.formGroup.get('opponentTransformationAmount').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentTransformationAmount = value;
+    });
+
   }
 
   toggleAdvanced() {
@@ -566,6 +581,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
           battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
+          sabertoothTimesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
+          tunaTimesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
         })
       }
     );
@@ -587,6 +604,8 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
           battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
+          sabertoothTimesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
+          tunaTimesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
         })
       }
     );
@@ -622,6 +641,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
       case 'Unicorn':
         petPool = this.petService.unicornPackPets;
+        break;
+      case 'Danger':
+        petPool = this.petService.dangerPackPets;
         break;
       default:
         petPool = this.petService.playerCustomPackPets.get(pack);
@@ -731,14 +753,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  executeFrequentEvents() {
-    this.abilityService.executeFriendLostPerkEvents();
-    this.abilityService.executeGainedPerkEvents();
-    this.abilityService.executeFriendGainedPerkEvents();
-    this.abilityService.executeFriendGainedAilmentEvents();
-    this.abilityService.executeFriendlyToyBrokeEvents();
-  }
-
   checkPetsAlive() {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
@@ -834,9 +848,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       //normal abilities
       this.checkPetsAlive();
-      while (this.abilityService.hasAbilityCycleEvents) {
+      do {
         this.abilityCycle();
-      }
+      } while (this.abilityService.hasAbilityCycleEvents);
 
       //init sob
       this.startOfBattleService.resetStartOfBattleFlags();
@@ -845,18 +859,15 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.startOfBattleService.executeToyPetEvents();
 
       //add churro check
+      this.gameService.gameApi.isInStartOfBattleFlag = true;
       this.toyService.executeStartOfBattleEvents(); //toy sob
-      this.executeFrequentEvents();
       this.startOfBattleService.executeNonToyPetEvents(); //pet sob
-      this.executeFrequentEvents();
       
-      //caterpillar
-      this.abilityService.triggerTransformEvents(this.player);
-      this.abilityService.triggerTransformEvents(this.opponent);
       this.checkPetsAlive();
-      while (this.abilityService.hasAbilityCycleEvents) {
+      do {
         this.abilityCycle();
-      }
+      } while (this.abilityService.hasAbilityCycleEvents);
+      this.gameService.gameApi.isInStartOfBattleFlag = false;
       //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();
@@ -883,8 +894,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (this.opponent.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
     }
-
-    this.abilityService.executeEmptyFrontSpaceEvents();
 
     if (this.player.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);
@@ -924,6 +933,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.battles.push(this.currBattle);
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
     this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
+    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
+    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
+
   }
 
   reset() {
@@ -995,9 +1007,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     //normal abilities
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
-    while (this.abilityService.hasAbilityCycleEvents) {
+    do {
       this.abilityCycle();
-    }
+    } while (this.abilityService.hasAbilityCycleEvents);
 
     if (!this.player.alive() || !this.opponent.alive()) {
       return;
@@ -1010,16 +1022,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
 
-    while (this.abilityService.hasAbilityCycleEvents) {
+    do {
       this.abilityCycle();
-    }
+    } while (this.abilityService.hasAbilityCycleEvents);
     //merge to ability cyle
     this.player.checkGoldenSpawn();
     this.opponent.checkGoldenSpawn();
     
-    while (this.abilityService.hasAbilityCycleEvents) {
+    do {
       this.abilityCycle();
-    }
+    } while (this.abilityService.hasAbilityCycleEvents);
   }
 
   chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
@@ -1057,23 +1069,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       if (pet.equipment instanceof Eggplant) {
         pet.equipment.callback(pet);
         pet.eggplantTouched = true;
-      }
-      if (pet.equipment instanceof PitaBread) {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'startOfBattle') {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment instanceof FairyDust) {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'beforeStartOfBattle') {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'beforeAttack') {
-        pet.equipment.callback(pet);
-      }
-      if (pet.equipment?.equipmentClass == 'afterFaint') {
+      } else if (pet.equipment?.callback) {
         pet.equipment.callback(pet);
       }
     }
@@ -1147,8 +1143,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponent.checkPetsAlive();
 
     this.abilityService.executeAfterAttackEvents();
-    this.abilityService.executeFriendAheadAttacksEvents();
-    this.abilityService.executeFriendAttacksEvents();
+    this.abilityService.executeAfterFriendAttackEvents();
   }
 
   endLog(winner?: Player) {

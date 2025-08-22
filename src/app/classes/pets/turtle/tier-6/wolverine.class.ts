@@ -11,14 +11,16 @@ export class Wolverine extends Pet {
     pack: Pack = 'Turtle';
     attack = 5;
     health = 7;
+    private attackCounter = 0;
+    
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet == this) {
             return;
         }
         if (!tiger) {
-            this.abilityUses++
+            this.attackCounter++
         }
-        if (this.abilityUses % 4 != 0) {
+        if (this.attackCounter % 4 != 0) {
             return
         }
         this.abilityService.setCounterEvent({
@@ -26,18 +28,18 @@ export class Wolverine extends Pet {
                 let targets = [...this.parent.opponent.petArray ];
                 targets = targets.filter(pet => pet.alive);
                 for (let targetPet of targets) {
-                    let power = 3 * this.level;
-                    let reducedTo =  Math.max(1, Math.floor(targetPet.health - power));
-                    targetPet.health = reducedTo;
+                    let power = -3 * this.level;
+                    targetPet.increaseHealth(power);
                     this.logService.createLog({
-                        message: `${this.name} reduced ${targetPet.name} health by ${power} (${reducedTo})`,
+                        message: `${this.name} reduced ${targetPet.name} health by ${Math.abs(power)}`,
                         type: 'ability',
                         player: this.parent,
                         tiger: tiger
                     });  
                 }         
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         this.superFriendHurt(gameApi, pet, tiger);
     }

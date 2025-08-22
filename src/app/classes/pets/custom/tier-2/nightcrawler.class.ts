@@ -38,7 +38,7 @@ export class Nightcrawler extends Pet {
         )
 
         if (this.parent.summonPet(dayCrawler, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(dayCrawler);
+            this.abilityService.triggerFriendSummonedEvents(dayCrawler);
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

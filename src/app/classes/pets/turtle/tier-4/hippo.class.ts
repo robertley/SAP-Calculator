@@ -11,15 +11,15 @@ export class Hippo extends Pet {
     tier = 4;
     pack: Pack = 'Turtle';
     attack = 4;
-    health = 7;
+    health = 6;
     knockOut(gameAPI, pet: Pet, tiger) {
         if (this.health < 1) {
             return;
         }
-        let power = 2 * this.level;
-        if (pet.tier > 3) {
-            power *= 2;
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
         }
+        let power = 3 * this.level;
         this.increaseAttack(power);
         this.increaseHealth(power);
         this.logService.createLog({
@@ -40,5 +40,9 @@ export class Hippo extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 3;
     }
 }

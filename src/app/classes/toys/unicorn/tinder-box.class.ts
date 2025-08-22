@@ -30,7 +30,7 @@ export class TinderBox extends Toy {
         )
 
         if (this.parent.summonPet(giantEyesDog, 0)) {
-            this.abilityService.triggerSummonedEvents(giantEyesDog);
+            this.abilityService.triggerFriendSummonedEvents(giantEyesDog);
         }
 
         this.used = true;

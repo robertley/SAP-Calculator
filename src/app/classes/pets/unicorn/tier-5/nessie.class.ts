@@ -46,7 +46,7 @@ export class Nessie extends Pet {
         )
 
         if (this.parent.summonPet(nessieQ, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(nessieQ);
+            this.abilityService.triggerFriendSummonedEvents(nessieQ);
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

@@ -12,21 +12,24 @@ export class SaigaAntelope extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 3;
+    private attackCounter = 0;
+    
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!this.alive) {
             return;
         }
         if (!tiger) {
-            this.abilityUses++;
+            this.attackCounter++;
         }
-        if (this.abilityUses % 2 != 0) {
+        if (this.attackCounter % 2 != 0) {
             return;
         }
         this.abilityService.setCounterEvent({
             callback: () => {
                 this.parent.gainTrumpets(this.level * 3, this);
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         
         super.superFriendFaints(gameApi, pet, tiger);

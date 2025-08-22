@@ -34,7 +34,7 @@ export class Cricket extends Pet {
         )
 
         if (this.parent.summonPet(zombie, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(zombie);
+            this.abilityService.triggerFriendSummonedEvents(zombie);
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

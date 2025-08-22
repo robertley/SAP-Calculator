@@ -12,37 +12,35 @@ export class Tuna extends Pet {
     attack = 3;
     health = 5;
     timesHurt = 0;
+    private hurtThisBattle = this.timesHurt;
 
 
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        // TO DO: make it so timesHurt is similar to Player Roll Amount, but it is for each pet on the team
-        this.timesHurt++;
+        this.hurtThisBattle++;
         this.superHurt(gameApi, pet, tiger);
     }
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.timesHurt > 0) {
+        let totalHurt = this.hurtThisBattle;
+        for (let i = 0; i < totalHurt; i++) {
             const target = this.parent.getRandomPet([this]);
 
             if (target == null) {
-                return;
+                continue;
             }
 
-            if (target) {
-                for (let i = 0; i < this.timesHurt; i++) {
-                    const buffAmount = this.level;
+            const buffAmount = this.level;
 
-                    this.logService.createLog({
-                        message: `${this.name} gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger
-                    });
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: true
+            });
 
-                    target.increaseAttack(buffAmount);
-                    target.increaseHealth(buffAmount);
-                }
-            }
+            target.increaseAttack(buffAmount);
+            target.increaseHealth(buffAmount);
         }
         this.superFaint(gameApi, tiger);
     }
@@ -61,6 +59,9 @@ export class Tuna extends Pet {
 
     setAbilityUses(): void {
         super.setAbilityUses();
-        this.timesHurt = 0;
+    }
+    resetPet(): void {
+        this.hurtThisBattle = this.timesHurt;
+        super.resetPet();
     }
 }

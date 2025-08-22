@@ -11,11 +11,13 @@ export class Vulture extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 3;
+    private attackCounter = 0;
+    
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (!tiger) {
-            this.abilityUses++;
+            this.attackCounter++;
         }
-        if (this.abilityUses % 2 == 1) {
+        if (this.attackCounter % 2 == 1) {
             return;
         }
 
@@ -29,7 +31,8 @@ export class Vulture extends Pet {
                 let power = this.level * 4;
                 this.snipePet(target, power, true, tiger);        
             },
-            priority: this.attack
+            priority: this.attack,
+            pet: this
         });
         this.superFriendFaints(gameApi, pet, tiger);
     }

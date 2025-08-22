@@ -14,11 +14,29 @@ export class Visitor extends Pet {
     attack = 7;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        const range = this.level;
+        const visitorPosition = this.savedPosition;
+        const targets: Pet[] = [];
 
-        let targets = [
-            ...this.getPetsAhead(this.level, true),
-            ...this.getPetsBehind(this.level)
-        ];
+        // Check friend pets
+        for (const pet of this.parent.petArray) {
+            if (pet.alive) {
+                const distance = Math.abs(pet.position - visitorPosition);
+                if (distance > 0 && distance <= range) {
+                    targets.push(pet);
+                }
+            }
+        }
+
+        // Check opponent pets
+        for (const pet of this.parent.opponent.petArray) {
+            if (pet.alive) {
+                const distance = visitorPosition + pet.position + 1;
+                if (distance <= range) {
+                    targets.push(pet);
+                }
+            }
+        }
 
         for (let target of targets) {
             target.givePetEquipment(new Exposed());
@@ -28,7 +46,7 @@ export class Visitor extends Pet {
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon
-            })
+            });
         }
         
         this.superFaint(gameApi, tiger);

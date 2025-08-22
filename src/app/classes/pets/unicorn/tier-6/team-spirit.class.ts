@@ -3,7 +3,6 @@ import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Crisp } from "../../../equipment/ailments/crisp.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 

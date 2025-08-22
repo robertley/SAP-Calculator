@@ -5,20 +5,21 @@ import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-
+// TO DO: Update faint pool, and add all faint pets
 export class Orca extends Pet {
     name = "Orca";
     tier = 6;
     pack: Pack = 'Star';
-    attack = 4;
-    health = 8;
+    attack = 5;
+    health = 7;
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             let faintPet = this.petService.getRandomFaintPet(this.parent);
-    
+            faintPet.attack = 6;
+            faintPet.health= 6;
             this.logService.createLog(
                 {
-                    message: `${this.name} spawned ${faintPet.name}.`,
+                    message: `${this.name} spawned a 6/6 ${faintPet.name}.`,
                     type: "ability",
                     player: this.parent,
                     tiger: tiger,
@@ -28,7 +29,7 @@ export class Orca extends Pet {
             )
 
             if (this.parent.summonPet(faintPet, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(faintPet);
+                this.abilityService.triggerFriendSummonedEvents(faintPet);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

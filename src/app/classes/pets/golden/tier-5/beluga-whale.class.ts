@@ -6,7 +6,6 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Orangutang } from "../../star/tier-4/orangutang.class";
 import { PetService } from "../../../../services/pet.service";
 
 export class BelugaWhale extends Pet {
@@ -41,7 +40,7 @@ export class BelugaWhale extends Pet {
         )
 
         if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(spawnPet);
+            this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

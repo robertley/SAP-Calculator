@@ -34,7 +34,7 @@ export class SneakyEgg extends Pet {
         )
 
         if (this.parent.summonPet(egg, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(egg);
+            this.abilityService.triggerFriendSummonedEvents(egg);
         }
 
         this.superStartOfBattle(gameApi, tiger);

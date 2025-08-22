@@ -33,7 +33,7 @@ export class Banana extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(monke, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(monke);
+                    this.abilityService.triggerFriendSummonedEvents(monke);
                 }
             }
         }

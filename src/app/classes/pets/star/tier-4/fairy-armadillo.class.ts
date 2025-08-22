@@ -1,3 +1,4 @@
+import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -27,7 +28,7 @@ export class FairyArmadillo extends Pet {
 
             const fairyBall = new FairyBall(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, this.equipment);
             
-            this.parent.setPet(this.position, fairyBall);
+            this.parent.transformPet(this, fairyBall);
         }
         this.superHurt(gameApi, pet, tiger);
     }

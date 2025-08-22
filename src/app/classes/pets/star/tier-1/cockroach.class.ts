@@ -36,7 +36,7 @@ export class Cockroach extends Pet {
             });
             newCockroach.increaseExp(expToGain);
             
-            this.abilityService.triggerSummonedEvents(newCockroach);
+            this.abilityService.triggerFriendSummonedEvents(newCockroach);
         }
 
         this.superFaint(gameApi, tiger);

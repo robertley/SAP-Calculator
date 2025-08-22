@@ -34,7 +34,7 @@ export class YggdrasilFruit extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(tandgnost, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(tandgnost);
+                    this.abilityService.triggerFriendSummonedEvents(tandgnost);
                 }
                 
                 this.logService.createLog(
@@ -45,7 +45,7 @@ export class YggdrasilFruit extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(tandgrisner, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(tandgrisner);
+                    this.abilityService.triggerFriendSummonedEvents(tandgrisner);
                 }
             }
         }

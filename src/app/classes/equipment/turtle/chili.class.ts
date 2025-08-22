@@ -19,7 +19,7 @@ export class Chili extends Equipment {
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage * this.multiplier;
 
-        attackPet.health -= damage;
+        pet.dealDamage(attackPet, damage);
 
         let message = `${pet.name} attacks ${attackPet.name} for ${damage}`;
 
@@ -52,7 +52,8 @@ export class Chili extends Equipment {
                 callback: attackPet.hurt.bind(attackPet),
                 priority: attackPet.attack,
                 player: attackPet.parent,
-                callbackPet: attackedPet
+                callbackPet: attackedPet,
+                pet: attackPet
             })
         }
         // knockout
@@ -60,7 +61,8 @@ export class Chili extends Equipment {
             this.abilityService.setKnockOutEvent({
                 callback: pet.knockOut.bind(pet),
                 priority: pet.attack,
-                callbackPet: attackPet
+                callbackPet: attackPet,
+                pet: pet
             })
         }
 

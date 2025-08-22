@@ -27,7 +27,7 @@ export class Anteater extends Pet {
             )
 
             if (this.parent.summonPet(ant, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(ant);
+                this.abilityService.triggerFriendSummonedEvents(ant);
             }
         }
 

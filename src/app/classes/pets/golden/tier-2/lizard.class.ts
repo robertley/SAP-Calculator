@@ -30,12 +30,12 @@ export class Lizard extends Pet {
         )
 
         if (this.parent.summonPetInFront(this, lizardTail)) {
-            this.abilityService.triggerSummonedEvents(lizardTail);
+            this.abilityService.triggerFriendSummonedEvents(lizardTail);
         }
 
         this.abilityUses++;
 
-        super.superFaint(gameApi, tiger);
+        super.superHurt(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

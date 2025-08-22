@@ -6,7 +6,6 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Orangutang } from "../../star/tier-4/orangutang.class";
 
 export class NurseShark extends Pet {
     name = "Nurse Shark";

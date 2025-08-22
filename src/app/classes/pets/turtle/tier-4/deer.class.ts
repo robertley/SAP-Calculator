@@ -27,7 +27,7 @@ export class Deer extends Pet {
         )
 
         if (this.parent.summonPet(bus, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(bus);
+            this.abilityService.triggerFriendSummonedEvents(bus);
         }
 
         super.superAfterFaint(gameApi, tiger, pteranodon);

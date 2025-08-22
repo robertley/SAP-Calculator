@@ -5,23 +5,34 @@ import { Pet } from "../../pet.class";
 
 export class Strawberry extends Equipment {
     name = 'Strawberry';
-    equipmentClass: EquipmentClass = 'faint';
+    equipmentClass = 'defense' as EquipmentClass;
+    tier = 1;
+    uses = 2;
+    originalUses = 2;
 
-    // This callback is executed when the pet holding the Strawberry faints.
     callback = (pet: Pet) => {
-        const target = pet.parent.getLastPet();
+        let originalFaint = pet.originalFaint?.bind(pet);
+                
+        pet.faint = (gameApi, tiger, pteranodon) => {
+            // Call original faint ability first
+            if (originalFaint != null) {
+                originalFaint(gameApi, tiger, pteranodon);
+            }
 
-        if (target) {
-            const buffAmount = 1;
+            // Add Strawberry effect
+            const target = pet.parent.getLastPet();
+            if (target) {
+                const buffAmount = 1;
 
-            this.logService.createLog({
-                message: `${pet.name} (Strawberry) gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
-                type: 'ability',
-                player: pet.parent
-            });
+                this.logService.createLog({
+                    message: `${pet.name} (Strawberry) gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
+                    type: 'equipment',
+                    player: pet.parent
+                });
 
-            target.increaseAttack(buffAmount);
-            target.increaseHealth(buffAmount);
+                target.increaseAttack(buffAmount);
+                target.increaseHealth(buffAmount);
+            }
         }
     }
 

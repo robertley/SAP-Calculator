@@ -1,3 +1,4 @@
+import { PeanutButter } from "app/classes/equipment/hidden/peanut-butter";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -15,9 +16,9 @@ export class Walrus extends Pet {
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targets = this.parent.getRandomPets(this.level, null, true, null);
         for (let target of targets) {
-            target.givePetEquipment(new Peanut());
+            target.givePetEquipment(new PeanutButter());
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} a Peanut.`,
+                message: `${this.name} gave ${target.name} a Peanut Butter.`,
                 type: "ability",
                 player: this.parent,
                 tiger: tiger,

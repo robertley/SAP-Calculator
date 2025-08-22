@@ -15,8 +15,12 @@ export class Skunk extends Pet {
         let opponent = getOpponent(gameApi, this.parent);
         let highestHealthPetResp = opponent.getHighestHealthPet();
         let targetPet = highestHealthPetResp.pet;
+        if (targetPet == null) {
+            return;
+        }
         let power = .33 * this.level;
         let reducedTo =  Math.max(1, Math.floor(targetPet.health * (1 - power)));
+
         targetPet.health = reducedTo;
         this.logService.createLog({
             message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})`,

@@ -21,8 +21,14 @@ export class Whale extends Pet {
         if (!targetPet) {
             return;
         }
-        let swallowPet = this.petService.createDefaultVersionOfPet(targetPet, targetPet.health, targetPet.attack);
-        swallowPet.exp = this.exp;
+        let swallowPet = this.petService.createPet({
+            name: targetPet.name,
+            attack: targetPet.attack,
+            health: targetPet.health,
+            exp: this.exp,
+            equipment: null,
+            mana: 0
+        }, this.parent);
         this.swallowedPets.push(swallowPet);
         targetPet.health = 0;
         this.logService.createLog({
@@ -43,8 +49,9 @@ export class Whale extends Pet {
                 tiger: tiger,
                 pteranodon: pteranodon
             })
-            this.parent.summonPet(pet, this.savedPosition);
-            this.abilityService.triggerSummonedEvents(pet);
+            if (this.parent.summonPet(pet, this.savedPosition)) {
+                this.abilityService.triggerFriendSummonedEvents(pet);
+            }       
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

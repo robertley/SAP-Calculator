@@ -24,7 +24,7 @@ export class WhaleShark extends Pet {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
     }
-
+    //overwrites gave pet equipment
     givePetEquipment(equipment: Equipment): void {
         super.givePetEquipment(equipment);
         this.removePerk();

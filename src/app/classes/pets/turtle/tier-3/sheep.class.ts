@@ -26,7 +26,7 @@ export class Sheep extends Pet {
             )
 
             if (this.parent.summonPet(ram, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(ram);
+                this.abilityService.triggerFriendSummonedEvents(ram);
             }
         }
 

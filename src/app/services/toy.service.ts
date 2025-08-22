@@ -193,7 +193,7 @@ export class ToyService {
         let damageResp = this.calculateDamgae(pet, power);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
-        pet.health -= damage;
+        pet.dealDamage(pet, damage);
 
         let message = `${toyName} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
@@ -217,6 +217,7 @@ export class ToyService {
                 callback: pet.hurt.bind(pet),
                 priority: pet.attack,
                 player: pet.parent,
+                pet: pet
             })
         }
     }

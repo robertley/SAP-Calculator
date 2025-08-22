@@ -47,7 +47,7 @@ export class Mole extends Pet {
         let mole = new Mole(this.logService, this.abilityService, this.parent, power, power);
         
         if (this.parent.summonPet(mole, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(mole);
+            this.abilityService.triggerFriendSummonedEvents(mole);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

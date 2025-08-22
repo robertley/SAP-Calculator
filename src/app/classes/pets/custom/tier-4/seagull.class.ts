@@ -60,6 +60,9 @@ import { Squash } from "../../../equipment/puppy/squash.class";
 import { HoneydewMelon } from "../../../equipment/golden/honeydew-melon.class";
 import { Ambrosia } from "../../../equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../../../equipment/unicorn/faint-bread.class";
+import { Seaweed } from "../../../equipment/star/seaweed.class";
+import { Caramel } from "../../../equipment/star/caramel.class";
+import { Baguette } from "../../../equipment/star/baguette.class";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -160,6 +163,9 @@ export class Seagull extends Pet {
         map.set('Honeydew Melon', new HoneydewMelon());
         map.set('Ambrosia', new Ambrosia());
         map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
+        map.set('Seaweed', new Seaweed(this.logService, this.abilityService, this.petService));
+        map.set('Caramel', new Caramel(this.logService, this.abilityService));
+        map.set('Baguette', new Baguette(this.logService, this.abilityService));
 
         return map;
     }

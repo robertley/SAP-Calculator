@@ -8,6 +8,7 @@ import { Dazed } from "../../equipment/ailments/dazed.class";
 import { Exposed } from "../../equipment/ailments/exposed.class";
 import { Ink } from "../../equipment/ailments/ink.class";
 import { Spooked } from "../../equipment/ailments/spooked.class";
+import { Toasty } from "../../equipment/ailments/toasty.class";
 import { Weak } from "../../equipment/ailments/weak.class";
 import { Peanut } from "../../equipment/turtle/peanut.class";
 import { Player } from "../../player.class";
@@ -27,6 +28,7 @@ export class PandorasBox extends Toy {
             new Exposed(),
             // new Ink(), // excluded
             new Spooked(),
+            new Toasty(),
             new Weak()
         ];
         

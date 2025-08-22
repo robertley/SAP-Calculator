@@ -19,7 +19,7 @@ export class Crab extends Pet {
         let gainAmmt = Math.floor(highestHealthPet.health * (.25 * this.level));
         this.increaseHealth(gainAmmt);
         this.logService.createLog({
-            message: `${this.name} gained ${gainAmmt * 100}% of ${highestHealthPet.name}'s health (${gainAmmt})`,
+            message: `${this.name} gained ${.25 * this.level * 100}% of ${highestHealthPet.name}'s health (${gainAmmt})`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

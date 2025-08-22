@@ -22,20 +22,21 @@ export class Basilisk extends Pet {
         }
                 
         let healthBonus = this.level * 2;
+        let health = target.health + healthBonus;
+        health = Math.min(health, 50);
 
+        // Create Rock with enhanced health and original stats
+        let rock = new Rock(this.logService, this.abilityService, target.parent, health, target.attack, target.mana, target.exp, target.equipment);
         this.logService.createLog({
             message: `${this.name} turned ${target.name} into a Rock with + ${healthBonus} health.`,
             type: "ability",
             player: this.parent,
             tiger: tiger
-        })
+        });
+        // Use proper transformPet method
+        target.parent.transformPet(target, rock);
 
-        let health = target.health + healthBonus;
-        let maxHealth = 50;
-        health = Math.min(health, maxHealth);
 
-        let position = target.position;
-        target.parent.setPet(position, new Rock(this.logService, this.abilityService, target.parent, health, target.attack, target.mana, target.exp, target.equipment), false);
 
         this.superStartOfBattle(gameApi, tiger);
     }

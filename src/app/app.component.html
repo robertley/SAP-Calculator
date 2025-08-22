@@ -31,6 +31,7 @@
               <option value="Star">Star</option>
               <option value="Golden">Golden</option>
               <option value="Unicorn">Unicorn</option>
+              <option value="Danger">Danger</option>
               <optgroup label="Custom Packs">
                 <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
                 <option value="Add Custom Pack">Add Custom Pack</option>
@@ -46,6 +47,7 @@
               <option value="Star">Star</option>
               <option value="Golden">Golden</option>
               <option value="Unicorn">Unicorn</option>
+              <option value="Danger">Danger</option>
               <optgroup label="Custom Packs">
                 <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
                 <option value="Add Custom Pack">Add Custom Pack</option>
@@ -215,6 +217,16 @@
             <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amt</label>
             <input class="form-control" id="turn" type="number" formControlName="opponentSummonedAmount" max="99"/>
           </div>
+          <div class="form-group advanced-input ms-3">
+            <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation Amt</label>
+            <input class="form-control" id="turn" type="number" formControlName="playerTransformationAmount" max="99"/>
+          </div>
+    
+          <div class="form-group advanced-input ms-3">
+            <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation Amt</label>
+            <input class="form-control" id="turn" type="number" formControlName="opponentTransformationAmount" max="99"/>
+          </div>
+
         </div>
       </div>
     </div>

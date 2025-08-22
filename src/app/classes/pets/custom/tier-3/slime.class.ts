@@ -31,7 +31,7 @@ export class Slime extends Pet {
             )
 
             if (this.parent.summonPet(slime, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(slime);
+                this.abilityService.triggerFriendSummonedEvents(slime);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

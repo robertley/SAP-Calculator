@@ -28,7 +28,7 @@ export class Osprey extends Pet {
             )
 
             if (this.parent.summonPet(groundhog, this.savedPosition)) {
-                this.abilityService.triggerSummonedEvents(groundhog);
+                this.abilityService.triggerFriendSummonedEvents(groundhog);
             }
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

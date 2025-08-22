@@ -16,6 +16,10 @@ export class Popcorn extends Equipment {
             }
             
             // Check if equipment is still equipped
+            console.log('pet:', pet);
+            console.log('equipment:', pet.equipment);
+            console.log('this:', this);
+            console.log(pet.equipment?.name);
             if (pet.equipment?.name != 'Popcorn') {
                 return;
             }
@@ -49,7 +53,7 @@ export class Popcorn extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(popcornPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(popcornPet);
+                    this.abilityService.triggerFriendSummonedEvents(popcornPet);
                 }
             }
         }

@@ -10,41 +10,50 @@ export class SabertoothTiger extends Pet {
     name = "Sabertooth Tiger";
     tier = 6;
     pack: Pack = 'Star';
-    attack = 6;
-    health = 6;
+    attack = 4;
+    health = 5;
+    timesHurt = 0;
+    private hurtThisBattle = this.timesHurt;
+
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = this.level * 5;
-        let petPool: string[];
-        if (this.parent == gameApi.player) {
-            petPool = gameApi.playerPetPool.get(1);
-        } else {
-            petPool = gameApi.opponentPetPool.get(1);
-        }
-        let petName = petPool[Math.floor(Math.random() * petPool.length)];
-        let summonPet = this.petService.createPet({
-            name: petName,
-            attack: power,
-            health: power,
-            equipment: null,
-            mana: 0,
-            exp: 0
-        }, this.parent)
+        this.hurtThisBattle++;
+        this.superHurt(gameApi, pet, tiger);
+    }
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${summonPet.name} (${power}/${power}).`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        let totalHurt = this.hurtThisBattle;
+        if (totalHurt > 0) {
+            for (let i = 0; i < this.level; i++) { // 1/2/3 Mammoths based on level
+                let mammothAttack = 4 + (2 * totalHurt);
+                let mammothHealth = 12 + (3 * totalHurt);
+                
+                let mammoth = this.petService.createPet({
+                    name: "Mammoth",
+                    attack: mammothAttack,
+                    health: mammothHealth,
+                    equipment: null,
+                    mana: 0,
+                    exp: 0
+                }, this.parent);
+
+                this.logService.createLog({
+                    message: `${this.name} summoned ${mammoth.name} (${mammothAttack}/${mammothHealth}).`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger
+                });
+
+                if (this.parent.summonPet(mammoth, this.savedPosition)) {
+                    this.abilityService.triggerFriendSummonedEvents(mammoth);
+                }
             }
-        )
-
-        if (this.parent.summonPet(summonPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(summonPet);
         }
+        this.superAfterFaint(gameApi, tiger);
+    }
 
-        super.superHurt(gameApi, pet, tiger);
+    resetPet(): void {
+        this.hurtThisBattle = this.timesHurt;
+        super.resetPet();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

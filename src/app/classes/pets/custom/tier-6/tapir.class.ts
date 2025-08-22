@@ -40,7 +40,7 @@ export class Tapir extends Pet {
         )
 
         if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-            this.abilityService.triggerSummonedEvents(target);
+            this.abilityService.triggerFriendSummonedEvents(target);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

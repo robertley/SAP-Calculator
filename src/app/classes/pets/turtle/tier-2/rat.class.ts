@@ -32,7 +32,7 @@ export class Rat extends Pet {
 
             let spawned = opponent.summonPet(dirtyRat, 0);
             if (spawned) {
-                this.abilityService.triggerSummonedEvents(dirtyRat);
+                this.abilityService.triggerFriendSummonedEvents(dirtyRat);
             }
         }
 

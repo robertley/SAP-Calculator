@@ -1,11 +1,9 @@
-import { getOpponent } from "app/util/helper-functions";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Honey } from "app/classes/equipment/turtle/honey.class";
 
 export class Porcupine extends Pet {
     name = "Porcupine";
@@ -15,6 +13,9 @@ export class Porcupine extends Pet {
     health = 6;
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = 3 * this.level;
+        if (pet == null || !pet.alive){
+            return;
+        }
         this.snipePet(pet, power);
     }
     constructor(protected logService: LogService,

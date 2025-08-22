@@ -5,7 +5,7 @@ import { PetService } from "../../../services/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 
-
+//TO DO: Add all tier 1 faint pet
 export class FaintBread extends Equipment {
     name = 'Faint Bread';
     equipmentClass: EquipmentClass = 'afterFaint';
@@ -35,7 +35,7 @@ export class FaintBread extends Equipment {
                     }
                 )
                 if (pet.parent.summonPet(faintPet, pet.savedPosition)) {
-                    this.abilityService.triggerSummonedEvents(faintPet);
+                    this.abilityService.triggerFriendSummonedEvents(faintPet);
                 }
             }
         }
