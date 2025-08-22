@@ -13,7 +13,7 @@ export class SabertoothTiger extends Pet {
     attack = 4;
     health = 5;
     timesHurt = 0;
-    private hurtThisBattle = 0;
+    private hurtThisBattle = this.timesHurt;
 
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         this.hurtThisBattle++;
@@ -21,7 +21,7 @@ export class SabertoothTiger extends Pet {
     }
 
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let totalHurt = this.timesHurt + this.hurtThisBattle;
+        let totalHurt = this.hurtThisBattle;
         if (totalHurt > 0) {
             for (let i = 0; i < this.level; i++) { // 1/2/3 Mammoths based on level
                 let mammothAttack = 4 + (2 * totalHurt);
@@ -51,10 +51,10 @@ export class SabertoothTiger extends Pet {
         this.superAfterFaint(gameApi, tiger);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
+    resetPet(): void {
+        this.hurtThisBattle = this.timesHurt;
+        super.resetPet();
     }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         protected petService: PetService,

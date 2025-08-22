@@ -13,8 +13,7 @@ export class TaitaThrush extends Pet {
     health = 4;
 
     adjacentAttacked(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (!this.alive || this.abilityUses >= this.maxAbilityUses) {
-            this.superAdjacentAttacked(gameApi, pet, tiger);
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         

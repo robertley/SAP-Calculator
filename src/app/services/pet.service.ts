@@ -393,6 +393,7 @@ import { Tucuxi } from "../classes/pets/danger/tier-3/tucuxi.class";
 import { RolowayMonkey } from "../classes/pets/danger/tier-3/roloway-monkey.class";
 import { SpoonBilledSandpiper } from "../classes/pets/danger/tier-3/spoon-billed-sandpiper.class";
 import { AmamiRabbit } from "../classes/pets/danger/tier-3/amami-rabbit.class";
+import { TreeKangaroo } from "../classes/pets/danger/tier-3/tree-kangaroo.class";
 import { Angelshark } from "../classes/pets/danger/tier-4/angelshark.class";
 import { Bonobo } from "../classes/pets/danger/tier-4/bonobo.class";
 import { GiantTortoise } from "../classes/pets/danger/tier-4/giant-tortoise.class";
@@ -989,6 +990,7 @@ export class PetService {
             "Hirola",
             "Monkey-Faced Bat",
             "Takin",
+            "Tree Kangaroo",
             "Tucuxi",
             "Pygmy Hippo",
             "Roloway Monkey",
@@ -2053,6 +2055,8 @@ export class PetService {
                 return new WhiteBelliedHeron(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Amami Rabbit':
                 return new AmamiRabbit(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Tree Kangaroo':
+                return new TreeKangaroo(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Blue-Throated Macaw':
                 return new BlueThroatedMacaw(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Hirola':
@@ -3467,6 +3471,9 @@ export class PetService {
         }
         if (pet instanceof AmamiRabbit) {
             newPet = new AmamiRabbit(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof TreeKangaroo) {
+            newPet = new TreeKangaroo(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BlueThroatedMacaw) {
             newPet = new BlueThroatedMacaw(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

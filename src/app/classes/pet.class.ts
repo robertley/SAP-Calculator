@@ -1615,9 +1615,6 @@ export abstract class Pet {
         this.lastAttacker = null;
         
         // Reset battle-specific counters while preserving user-configured values
-        if (this.hasOwnProperty('hurtThisBattle')) {
-            (this as any).hurtThisBattle = 0;
-        }
         if (this.hasOwnProperty('attackCounter')) {
             (this as any).attackCounter = 0;
         }
@@ -1652,7 +1649,7 @@ export abstract class Pet {
     // Jump attack method for abilities that attack and then advance turn
     jumpAttack(target: Pet, tiger?: boolean, damage?: number, randomEvent: boolean = false) {
         
-        // Set current target for tracking, TO DO: maybe remove this
+        // Set current target for tracking
         target.lastAttacker = this;
         
         let attackPet: Pet;

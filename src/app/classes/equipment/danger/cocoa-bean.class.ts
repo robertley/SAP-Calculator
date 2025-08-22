@@ -72,7 +72,9 @@ export class CocoaBean extends Equipment {
             transformedPet.maxAbilityUses = randomEnemy.maxAbilityUses;
 
             //TO DO: Copy Tuna Hurt Count
-            
+            if ((randomEnemy as any).hurtThisBattle !== undefined) {
+                (transformedPet as any).hurtThisBattle = (randomEnemy as any).hurtThisBattle;
+            }
             this.logService.createLog({
                 message: `${pet.name} transformed into ${transformedPet.name} (Cocoa Bean)`,
                 type: 'equipment',

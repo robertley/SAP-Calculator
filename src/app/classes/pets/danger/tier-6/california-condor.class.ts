@@ -135,7 +135,7 @@ export class CaliforniaCondor extends Pet {
 
     setAbilityUses(): void {
         super.setAbilityUses();
-        this.maxAbilityUses = this.level; // 1/2/3 times per battle based on level
+        this.maxAbilityUses = 2;
     }
 
     resetPet(): void {

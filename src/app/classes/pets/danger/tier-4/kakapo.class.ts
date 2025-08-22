@@ -22,16 +22,15 @@ export class Kakapo extends Pet {
         }
         
         let expGain = 3;
-        
-        pet.increaseExp(expGain);
-        
         this.logService.createLog({
             message: `${this.name} gave ${pet.name} +${expGain} experience.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         });
-        
+
+        pet.increaseExp(expGain);
+             
         this.abilityUses++;
         this.superFriendTransformed(gameApi, pet, tiger);
     }
