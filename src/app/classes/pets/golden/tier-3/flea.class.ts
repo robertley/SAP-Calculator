@@ -15,18 +15,9 @@ export class Flea extends Pet {
     attack = 3;
     health = 2;
     faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = clone(this.parent.opponent.petArray);
-        shuffle(targets);
-        targets = targets.sort((a, b) => {
-            return a.health > b.health ? -1 : b.health > a.health ? 1 : 0;
-        }).filter((target) => {
-            return target.equipment?.name != 'Weak';
-        });
-        for (let i = 0; i < this.level; i++) {
-            let target = targets[i];
-            if (target == null) {
-                break;
-            }
+        let targets = this.parent.opponent.getHighestHealthPets(this.level, 'Weak');
+        
+        for (let target of targets) {
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} Weak.`,
                 type: 'ability',

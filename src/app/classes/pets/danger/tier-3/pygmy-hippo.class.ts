@@ -1,4 +1,3 @@
-import { clone, shuffle } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -33,25 +32,11 @@ export class PygmyHippo extends Pet {
         this.abilityService.setCounterEvent({
             callback: () => {
                 let damage = Math.floor(this.health * 0.33); // 33% of current health
-                let targetsCount = this.level; // Level determines number of targets
+                let targets = this.parent.opponent.getLowestHealthPets(this.level);
                 
-                // Get all alive enemies using Flea-like logic for proper tie handling
-                let enemies = clone(this.parent.opponent.petArray.filter(enemy => enemy && enemy.alive));
-                shuffle(enemies);
-                enemies = enemies.sort((a, b) => a.health - b.health); // Sort by health ascending (lowest first)
-                
-                // Target the first 'level' enemies (least healthy)
-                for (let i = 0; i < Math.min(targetsCount, enemies.length); i++) {
-                    let target = enemies[i];
+                for (let target of targets) {
                     this.snipePet(target, damage, true, tiger);
                 }
-                
-                this.logService.createLog({
-                    message: `${this.name} dealt ${damage} damage to ${Math.min(targetsCount, enemies.length)} least healthy enemies.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
             },
             priority: this.attack,
             pet: this

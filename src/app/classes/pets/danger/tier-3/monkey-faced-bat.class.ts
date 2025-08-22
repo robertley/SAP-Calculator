@@ -24,7 +24,7 @@ export class MonkeyFacedBat extends Pet {
         }
 
         // Get 2 random friends (excluding self)
-        let targets = this.parent.getRandomPets(2, [this]);
+        let targets = this.parent.getRandomPets(2, [this], true);
         
         for (let target of targets) {
             let power = this.level; // 1/2/3 based on level

@@ -453,6 +453,10 @@ import { ChimSnake } from "../classes/pets/hidden/chim-snake.class";
 import { Head } from "../classes/pets/hidden/head.class";
 import { GoodDog } from "../classes/pets/hidden/good-dog.class";
 import { Salmon } from "../classes/pets/hidden/salmon.class";
+import { MimicOctopus } from "../classes/pets/hidden/mimic-octopus.class";
+import { Ammonite } from "../classes/pets/star/tier-6/ammonite.class";
+import { Velociraptor } from "../classes/pets/star/tier-6/velociraptor.class";
+import { BabyUrchin } from "../classes/pets/hidden/baby-urchin.class";
 
 @Injectable({
     providedIn: 'root'
@@ -778,7 +782,9 @@ export class PetService {
             "Orca",
             "Spinosaurus",
             "Real Velociraptor",
-            "Sabertooth Tiger"
+            "Sabertooth Tiger",
+            "Ammonite",
+            "Velociraptor"
         ])
 
         this.goldenPackPets.set(1, [
@@ -1836,6 +1842,14 @@ export class PetService {
                 return new GoodDog(this.logService, this.abilityService, this, this.gameService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Salmon':
                 return new Salmon(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Mimic Octopus':
+                return new MimicOctopus(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Ammonite':
+                return new Ammonite(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Velociraptor':
+                return new Velociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Baby Urchin':
+                return new BabyUrchin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Fairy Ball':
                 return new FairyBall(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp);
             
@@ -2976,6 +2990,18 @@ export class PetService {
         }
         if (pet instanceof Salmon) {
             newPet = new Salmon(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof MimicOctopus) {
+            newPet = new MimicOctopus(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Ammonite) {
+            newPet = new Ammonite(this.logService, this.abilityService, this, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof Velociraptor) {
+            newPet = new Velociraptor(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof BabyUrchin) {
+            newPet = new BabyUrchin(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof FairyBall) {
             newPet = new FairyBall(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

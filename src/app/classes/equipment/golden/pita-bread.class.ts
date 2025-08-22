@@ -4,6 +4,7 @@ import { Pet } from "../../pet.class";
 
 export class PitaBread extends Equipment {
     name = 'Pita Bread';
+    tier = 6;
     power = 0;
     equipmentClass = 'hurt' as EquipmentClass;
     callback = (pet: Pet) => {

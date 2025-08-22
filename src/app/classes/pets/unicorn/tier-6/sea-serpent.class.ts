@@ -17,11 +17,6 @@ export class SeaSerpent extends Pet {
             return;
         }
 
-        let opponentPets = this.parent.opponent.petArray;
-        opponentPets = opponentPets.filter(pet => pet.alive);
-        opponentPets.sort((a, b) => b.health - a.health);
-
-        const numTargets = this.level + 1;
         let power = this.mana;
         let mana = this.mana;
         this.logService.createLog({
@@ -32,15 +27,18 @@ export class SeaSerpent extends Pet {
             pteranodon: pteranodon
         })
 
-        this.mana = 0;        
+        this.mana = 0;
 
-        for (let i = 0; i < numTargets; i++) {
-            let target = opponentPets[i];
-            if (target == null) {
-                break;
-            }
+        // First, snipe the most healthy enemy
+        let highestHealthResult = this.parent.opponent.getHighestHealthPet();
+        if (highestHealthResult.pet != null) {
+            this.snipePet(highestHealthResult.pet, power, highestHealthResult.random, tiger, pteranodon);
+        }
 
-            this.snipePet(target, power, false, tiger, pteranodon);
+        // Then snipe level number of random enemies (excluding the first target)
+        let randomTargets = this.parent.opponent.getRandomPets(this.level, [highestHealthResult.pet], null, true);
+        for (let target of randomTargets) {
+            this.snipePet(target, power, true, tiger, pteranodon);
         }
 
         this.superFaint(gameApi, tiger);

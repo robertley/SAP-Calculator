@@ -16,16 +16,7 @@ export class Calygreyhound extends Pet {
             return;
         }
 
-        let target1resp = this.parent.opponent.getHighestHealthPet();
-        let target2resp = this.parent.opponent.getHighestHealthPet(target1resp.pet);
-        let targets: Pet[] = [];
-        if (target1resp.pet != null) {
-            targets.push(target1resp.pet);
-        }
-
-        if (target2resp.pet != null) {
-            targets.push(target2resp.pet);
-        }
+        let targets = this.parent.opponent.getHighestHealthPets(2);
 
         let power = this.level * this.mana;
 

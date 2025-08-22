@@ -35,15 +35,43 @@ export class CocoaBean extends Equipment {
             
             let randomEnemy = enemies[Math.floor(Math.random() * enemies.length)];
             
-            // Create exact copy of enemy (equipment consumed)
+            // Create proper Pet instance (equipment consumed)
             let transformedPet = this.petService.createPet({
                 name: randomEnemy.name,
                 attack: randomEnemy.attack,
                 health: randomEnemy.health,
-                mana: randomEnemy.mana,
-                exp: randomEnemy.exp,
+                mana: pet.mana,
+                exp: pet.exp,
                 equipment: null
             }, pet.parent);
+            
+            // Copy special state that needs to be preserved
+            if (randomEnemy.swallowedPets && randomEnemy.swallowedPets.length > 0) {
+                transformedPet.swallowedPets = [];
+                // Recreate swallowed pets with correct parent
+                for (let swallowedPet of randomEnemy.swallowedPets) {
+                    let newSwallowedPet = this.petService.createPet({
+                        name: swallowedPet.name,
+                        attack: swallowedPet.attack,
+                        health: swallowedPet.health,
+                        mana: swallowedPet.mana,
+                        exp: swallowedPet.exp,
+                        equipment: swallowedPet.equipment
+                    }, pet.parent);
+                    transformedPet.swallowedPets.push(newSwallowedPet);
+                }
+            }
+            
+            // Copy private counters if they exist (for counter-based abilities)
+            if ((randomEnemy as any).attackCounter !== undefined) {
+                (transformedPet as any).attackCounter = (randomEnemy as any).attackCounter;
+            }
+            
+            // Copy ability usage tracking
+            transformedPet.abilityUses = 0;
+            transformedPet.maxAbilityUses = randomEnemy.maxAbilityUses;
+
+            //TO DO: Copy Tuna Hurt Count
             
             this.logService.createLog({
                 message: `${pet.name} transformed into ${transformedPet.name} (Cocoa Bean)`,

@@ -5,6 +5,7 @@ import { Pet } from "../../pet.class";
 
 export class Tomato extends Equipment {
     name = 'Tomato';
+    tier = 6;
     equipmentClass: EquipmentClass = 'beforeAttack';
     callback = (pet: Pet) => {
         let originalBeforeAttack = pet.originalBeforeAttack?.bind(pet);

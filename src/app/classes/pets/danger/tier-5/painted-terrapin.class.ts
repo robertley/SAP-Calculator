@@ -3,7 +3,7 @@ import { AbilityService } from "../../../../services/ability.service";
 import { EquipmentService } from "../../../../services/equipment.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { WhiteOkra } from "../../../equipment/golden/white-okra.class";
+import { WhiteOkra } from "../../../equipment/danger/white-okra.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 

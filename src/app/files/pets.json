@@ -231,6 +231,26 @@
             "id": "726"
         },
         {
+            "name": "Mimic Octopus",
+            "tier": "6",
+            "id": "727"
+        },
+        {
+            "name": "Ammonite",
+            "tier": "6",
+            "id": "730"
+        },
+        {
+            "name": "Velociraptor",
+            "tier": "6",
+            "id": "732"
+        },
+        {
+            "name": "Baby Urchin",
+            "tier": "2",
+            "id": "731"
+        },
+        {
             "name": "Goose",
             "tier": "1",
             "id": "232"
