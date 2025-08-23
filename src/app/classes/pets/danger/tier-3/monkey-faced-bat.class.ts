@@ -13,8 +13,7 @@ export class MonkeyFacedBat extends Pet {
     health = 4;
 
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive || this.abilityUses >= this.maxAbilityUses) {
-            this.superFriendHurt(gameApi, pet, tiger);
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
 

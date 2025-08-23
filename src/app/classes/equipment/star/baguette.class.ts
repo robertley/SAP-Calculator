@@ -27,15 +27,17 @@ export class Baguette extends Equipment {
             }
             
             // Remove the front-most enemy's equipment
-            let removedEquipment = frontMostEnemy.equipment.name;
-            frontMostEnemy.removePerk();
-            
-            this.logService.createLog({
-                message: `${pet.name} removed ${removedEquipment} from ${frontMostEnemy.name} (Baguette)`,
-                type: 'equipment',
-                player: pet.parent,
-            });
-            pet.removePerk();
+            if (frontMostEnemy.equipment != null) {
+                let removedEquipment = frontMostEnemy.equipment.name;
+                frontMostEnemy.removePerk();
+                
+                this.logService.createLog({
+                    message: `${pet.name} removed ${removedEquipment} from ${frontMostEnemy.name} (Baguette)`,
+                    type: 'equipment',
+                    player: pet.parent,
+                });
+                pet.removePerk();
+            }
         }
     }
 

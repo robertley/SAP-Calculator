@@ -437,7 +437,7 @@ export class AbilityService {
             event.callback(this.gameService.gameApi);
             
             // Check if new first pets now have beforeAttack abilities that need to be queued
-            this.checkAndAddNewBeforeAttackEvents();
+            //this.checkAndAddNewBeforeAttackEvents();
         }
         
         // Clear the set of processed pets after all events are executed
