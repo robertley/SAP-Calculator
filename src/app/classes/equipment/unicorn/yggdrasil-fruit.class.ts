@@ -16,7 +16,7 @@ export class YggdrasilFruit extends Equipment {
             }
             
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Yggdrasil Fruit') {
+            if (pet.equipment !== this) {
                 return;
             }
             

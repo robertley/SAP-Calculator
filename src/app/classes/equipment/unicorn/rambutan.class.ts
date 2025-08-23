@@ -12,7 +12,7 @@ export class Rambutan extends Equipment {
             }
             
             // Check if equipment is still equipped  
-            if (pet.equipment?.name != 'Rambutan') {
+            if (pet.equipment !== this) {
                 return;
             }
             

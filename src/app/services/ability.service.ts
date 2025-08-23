@@ -388,15 +388,15 @@ export class AbilityService {
         this.beforeAttackEvents.push(event);
         
         // Mark the pet as processed to prevent duplicate events
-        if (event.pet) {
-            this.processedBeforeAttackPets.add(event.pet);
-        }
+        // if (event.pet) {
+        //     this.processedBeforeAttackPets.add(event.pet);
+        // }
     }
 
     resetBeforeAttackEvents() {
         this.beforeAttackEvents = [];
     }
-
+    //TO DO: Probably can remove this
     checkAndAddNewBeforeAttackEvents() {
         let gameApi = this.gameService.gameApi;
         
@@ -435,13 +435,10 @@ export class AbilityService {
         while (this.beforeAttackEvents.length > 0) {
             let event = this.beforeAttackEvents.shift();
             event.callback(this.gameService.gameApi);
-            
-            // Check if new first pets now have beforeAttack abilities that need to be queued
-            //this.checkAndAddNewBeforeAttackEvents();
         }
         
         // Clear the set of processed pets after all events are executed
-        this.processedBeforeAttackPets.clear();
+        //this.processedBeforeAttackPets.clear();
         this.resetBeforeAttackEvents();
     }
 
