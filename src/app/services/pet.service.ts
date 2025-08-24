@@ -1818,7 +1818,7 @@ export class PetService {
                 return new Butterfly(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chick':
                 return new Chick(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-            case 'Dirty Ray':
+            case 'Dirty Rat':
                 return new DirtyRat(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Golden Retriever':
                 return new GoldenRetriever(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);

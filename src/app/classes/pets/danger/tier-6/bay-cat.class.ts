@@ -13,9 +13,9 @@ export class BayCat extends Pet {
     attack = 7;
     health = 5;
 
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let bayPool = [
-            "Skunk", "Fossa", "Kraken", "Lynx", "Humphead Wrasse", "Goblin Shark", "Red lipped Batfish", "Platybelodon" , "Tasmanian Devil"          
+            "Skunk", "Fossa", "Kraken", "Lynx", "Humphead Wrasse", "Goblin Shark", "Red Lipped Batfish", "Platybelodon" , "Tasmanian Devil"          
         ];
         
         for (let i = 0; i < this.level; i++) {
@@ -55,7 +55,7 @@ export class BayCat extends Pet {
             }
         }
         
-        this.superFaint(gameApi, tiger);
+        this.superAfterFaint(gameApi, tiger);
     }
 
     constructor(protected logService: LogService,
