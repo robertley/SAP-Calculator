@@ -1560,8 +1560,8 @@ export abstract class Pet {
             attackAmt *= totalMultiplier;
         }
         let damage: number;
-        if (attackAmt <= 0) {
-            damage = 0;
+        if (attackAmt <= min) {
+            damage = Math.max(attackAmt, 0);
         } else {
             damage = Math.max(min, attackAmt - defenseAmt);
         }

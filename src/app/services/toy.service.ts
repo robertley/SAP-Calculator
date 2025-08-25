@@ -228,7 +228,12 @@ export class ToyService {
 
         let defenseAmt = defenseEquipment?.power ?? 0;
         let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
-        let damage = Math.max(min, power - defenseAmt);
+        let damage: number;
+        if (power <= min) {
+            damage = Math.max(power, 0);
+        } else {
+            damage = Math.max(min, power - defenseAmt);
+        }
         return {
             defenseEquipment: defenseEquipment,
             damage: damage
