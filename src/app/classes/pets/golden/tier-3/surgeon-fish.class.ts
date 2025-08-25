@@ -14,9 +14,9 @@ export class SurgeonFish extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 3;
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petBehind();
-        if (target == null) {
+    faint(gameApi: GameAPI, tiger?: boolean): void {
+        let targets = this.getPetsBehind(2);
+        if (targets.length == 0) {
             return;
         }
         if (this.parent.trumpets < 2) {
@@ -24,14 +24,20 @@ export class SurgeonFish extends Pet {
         }
         this.parent.spendTrumpets(2, this);
         let power = this.level * 4;
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        this.superBeforeAttack(gameApi, tiger);
+        for (let target of targets) {
+            if (target == null) {
+                return;
+            }
+            target.increaseHealth(power);
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} ${power} health.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            })
+    
+        }
+        this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

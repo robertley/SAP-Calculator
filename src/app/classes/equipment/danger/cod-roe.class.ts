@@ -8,10 +8,14 @@ export class CodRoe extends Equipment {
     name = 'Cod Roe';
     equipmentClass = 'afterFaint' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalAfterFaint = pet.originalAfterFaint?.bind(pet);
-        pet.afterFaint = (gameApi) => {
+        let originalAfterFaint = pet.afterFaint?.bind(pet);
+        pet.afterFaint = (gameApi, tiger) => {
             if (originalAfterFaint != null) {
-                originalAfterFaint(gameApi);
+                originalAfterFaint(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             
             // Check if equipment is still equipped

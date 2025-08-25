@@ -8,13 +8,17 @@ export class WhiteTruffle extends Equipment {
     equipmentClass = 'faint' as EquipmentClass;
     
     callback = (pet: Pet) => {
-        let originalFriendFaints = pet.originalFriendFaints?.bind(pet);
+        let originalFriendFaints =pet.friendFaints?.bind(pet);
         pet.friendFaints = (gameApi, faintedPet, tiger) => {
             if (faintedPet == pet) {
                 return;
             }
             if (originalFriendFaints != null) {
                 originalFriendFaints(gameApi, faintedPet, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             
             // Check if equipment is still equipped and has uses remaining

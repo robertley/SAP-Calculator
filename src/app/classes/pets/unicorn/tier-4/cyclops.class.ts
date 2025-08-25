@@ -12,21 +12,30 @@ export class Cyclops extends Pet {
     attack = 2;
     health = 5;
     anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+
+        if (pet.parent != this.parent || pet == this) {
+            return;
+        }
+        let manaGain = this.level * 2;
+        this.logService.createLog({
+            message: `${this.name} gave ${pet.name} ${manaGain} mana.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+        pet.increaseMana(manaGain);
+
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        if (pet.parent != this.parent) {
-            return;
-        }
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} 1 exp and 2 mana.`,
+            message: `${this.name} gave ${pet.name} 1 exp.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
 
         pet.increaseExp(1);
-        pet.increaseMana(2);
 
         this.abilityUses++;
         this.superAnyoneLevelUp(gameApi, pet, tiger);

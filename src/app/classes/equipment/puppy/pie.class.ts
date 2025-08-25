@@ -8,10 +8,14 @@ export class Pie extends Equipment {
     tier = 4;
     equipmentClass: EquipmentClass = 'beforeStartOfBattle';
     callback = (pet: Pet) => {
-        let originalBeforeStartOfBattle = pet.originalBeforeStartOfBattle?.bind(pet);
-        pet.beforeStartOfBattle = (gameApi) => {
+        let originalBeforeStartOfBattle =pet.beforeStartOfBattle?.bind(pet);
+        pet.beforeStartOfBattle = (gameApi, tiger) => {
             if (originalBeforeStartOfBattle != null) {
-                originalBeforeStartOfBattle(gameApi);
+                originalBeforeStartOfBattle(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             let attackGain = 4 * this.multiplier;
             let healthGain = 4 * this.multiplier;

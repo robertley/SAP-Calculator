@@ -7,9 +7,13 @@ export class SudduthTomato extends Equipment {
     equipmentClass = 'hurt' as EquipmentClass;
     callback = (pet: Pet) => {
         let originalHurt = pet.hurt?.bind(pet);
-        pet.hurt = (gameApi) => {
+        pet.hurt = (gameApi, pet, tiger) => {
             if (originalHurt != null) {
-                originalHurt(gameApi);
+                originalHurt(gameApi, pet, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             
             // Check if equipment is still equipped

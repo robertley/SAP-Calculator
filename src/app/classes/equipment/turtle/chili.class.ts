@@ -45,36 +45,6 @@ export class Chili extends Equipment {
             type: 'attack',
             player: pet.parent
         })
-
-        // hurt ability
-        if (attackPet.hurt != null && damage > 0) {
-            this.abilityService.setHurtEvent({
-                callback: attackPet.hurt.bind(attackPet),
-                priority: attackPet.attack,
-                player: attackPet.parent,
-                callbackPet: attackedPet,
-                pet: attackPet
-            })
-        }
-        // knockout
-        if (attackPet.health < 1 && pet.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: pet.knockOut.bind(pet),
-                priority: pet.attack,
-                callbackPet: attackPet,
-                pet: pet
-            })
-        }
-
-        // friend hurt ability
-        if (attackPet.alive && damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(attackedPet.parent, attackPet);
-        }
-
-        // enemy hurt ability
-        if (pet.alive && damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(pet.parent, attackPet);
-        }
     }
 
     constructor(private logService: LogService, private abilityService: AbilityService) {

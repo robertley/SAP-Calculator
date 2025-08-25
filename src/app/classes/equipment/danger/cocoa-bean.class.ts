@@ -14,10 +14,14 @@ export class CocoaBean extends Equipment {
     uses = 1;
     originalUses = 1;
     callback = (pet: Pet) => {
-        let originalBeforeAttack = pet.originalBeforeAttack?.bind(pet);
-        pet.beforeAttack = (gameApi) => {
+        let originalBeforeAttack =pet.beforeAttack?.bind(pet);
+        pet.beforeAttack = (gameApi, tiger) => {
             if (originalBeforeAttack != null) {
-                originalBeforeAttack(gameApi);
+                originalBeforeAttack(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             
             // Check if equipment is still equipped
@@ -81,11 +85,10 @@ export class CocoaBean extends Equipment {
                 randomEvent: enemies.length > 1
             });
             //TO DO: Copy Friend Summoned, frined sold, roll etc
-
             pet.parent.transformPet(pet, transformedPet);
         }
     }
-
+    
     constructor(
         protected logService: LogService,
         protected abilityService: AbilityService,

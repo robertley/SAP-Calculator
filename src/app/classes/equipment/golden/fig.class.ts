@@ -7,10 +7,14 @@ export class Fig extends Equipment {
     name = 'Fig';
     equipmentClass: EquipmentClass = 'beforeAttack';
     callback = (pet: Pet) => {
-        let originalBeforeAttack = pet.originalBeforeAttack?.bind(pet);
-        pet.beforeAttack = (gameApi) => {
+        let originalBeforeAttack =pet.beforeAttack?.bind(pet);
+        pet.beforeAttack = (gameApi, tiger) => {
             if (originalBeforeAttack != null) {
-                originalBeforeAttack(gameApi);
+                originalBeforeAttack(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
 
             // Check if equipment is still equipped

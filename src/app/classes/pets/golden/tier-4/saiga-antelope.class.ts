@@ -15,8 +15,8 @@ export class SaigaAntelope extends Pet {
     private attackCounter = 0;
     
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
+        if (pet == this) {
+            return
         }
         if (!tiger) {
             this.attackCounter++;

@@ -11,12 +11,16 @@ export class Strawberry extends Equipment {
     originalUses = 2;
 
     callback = (pet: Pet) => {
-        let originalFaint = pet.originalFaint?.bind(pet);
+        let originalFaint =pet.faint?.bind(pet);
                 
         pet.faint = (gameApi, tiger, pteranodon) => {
             // Call original faint ability first
             if (originalFaint != null) {
                 originalFaint(gameApi, tiger, pteranodon);
+            }
+            
+            if (tiger) {
+                return;
             }
 
             // Add Strawberry effect

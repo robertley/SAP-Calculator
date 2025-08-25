@@ -21,9 +21,6 @@ export class Fly extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        if (!this.alive) {
-            return;
-        }
 
         let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel);
 

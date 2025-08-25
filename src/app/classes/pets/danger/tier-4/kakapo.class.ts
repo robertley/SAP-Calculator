@@ -12,12 +12,9 @@ export class Kakapo extends Pet {
     attack = 2;
     health = 3;
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        }
+ 
         
         if (this.abilityUses >= this.maxAbilityUses) {
-            this.superFriendTransformed(gameApi, pet, tiger);
             return;
         }
         

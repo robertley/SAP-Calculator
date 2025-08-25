@@ -15,9 +15,7 @@ export class AyeAye extends Pet {
     private attackCounter = 0;
 
     enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        }
+ 
         
         if (!tiger) {
             this.attackCounter++;

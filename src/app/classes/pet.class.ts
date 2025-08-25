@@ -565,7 +565,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(true, true).minExpForLevel;
-        this.originalStartOfBattle(gameApi,true)
+        this.startOfBattle(gameApi,true)
         this.exp = exp;
     
     }
@@ -576,7 +576,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalHurt(gameApi, pet, true)
+        this.hurt(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -586,7 +586,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFaint(gameApi, true)
+        this.faint(gameApi, true)
         this.exp = exp;
     }
 
@@ -596,7 +596,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendSummoned(gameApi, pet, true)
+        this.friendSummoned(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -606,7 +606,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendAheadAttacks(gameApi, pet, true)
+        this.friendAheadAttacks(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -616,7 +616,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendAheadFaints(gameApi, pet, true)
+        this.friendAheadFaints(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -626,7 +626,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalAdjacentAttacked(gameApi, pet, true)
+        this.adjacentAttacked(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -636,7 +636,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalAfterAttack(gameApi, true)
+        this.afterAttack(gameApi, true)
         this.exp = exp;
     }
 
@@ -666,7 +666,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendFaints(gameApi, pet, true)
+        this.friendFaints(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -676,7 +676,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalBeforeAttack(gameApi, true)
+        this.beforeAttack(gameApi, true)
         this.exp = exp;
 
     }
@@ -687,7 +687,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalBeforeFriendAttacks(gameApi, pet, true)
+        this.beforeFriendAttacks(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -697,7 +697,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendLostPerk(gameApi, pet, true)
+        this.friendLostPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -707,7 +707,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalGainedPerk(gameApi, pet, true)
+        this.gainedPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -717,7 +717,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendGainedPerk(gameApi, pet, true)
+        this.friendGainedPerk(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -727,7 +727,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalEatsFood(gameApi, pet, true)
+        this.eatsFood(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -737,7 +737,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendAteFood(gameApi, pet, true)
+        this.friendAteFood(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -747,7 +747,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalBeforeStartOfBattle(gameApi, true)
+        this.beforeStartOfBattle(gameApi, true)
         this.exp = exp;
     }
 
@@ -757,7 +757,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendlyToyBroke(gameApi, true)
+        this.friendlyToyBroke(gameApi, true)
         this.exp = exp;
     }
 
@@ -767,7 +767,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalTransform(gameApi, true)
+        this.transform(gameApi, true)
         this.exp = exp;
     }
 
@@ -797,7 +797,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendHurt(gameApi, pet, true)
+        this.friendHurt(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -807,7 +807,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendTransformed(gameApi, pet, true)
+        this.friendTransformed(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -837,7 +837,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendAttacks(gameApi, pet, true)
+        this.friendAttacks(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -847,7 +847,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalEnemyAttack(gameApi, pet, true)
+        this.enemyAttack(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -867,7 +867,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalGainedMana(gameApi, true)
+        this.gainedMana(gameApi, true)
         this.exp = exp;
     }
 
@@ -877,7 +877,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendJumped(gameApi, pet, true)
+        this.friendJumped(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -887,7 +887,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalEnemyJumped(gameApi, pet, true)
+        this.enemyJumped(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -907,7 +907,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendGainsHealth(gameApi, pet, true)
+        this.friendGainsHealth(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -917,7 +917,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalFriendGainedExperience(gameApi, pet, true)
+        this.friendGainedExperience(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -927,7 +927,7 @@ export abstract class Pet {
         }
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
-        this.originalAfterFaint(gameApi, true, pteranodon);
+        this.afterFaint(gameApi, true, pteranodon);
         this.exp = exp;
     }
 
@@ -1108,17 +1108,6 @@ export abstract class Pet {
         // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
         this.abilityService.triggerFriendAttacksEvents(this.parent, this);
 
-        // hurt ability
-        if (pet.hurt != null && damage > 0) {
-            this.abilityService.setHurtEvent({
-                callback: pet.hurt.bind(pet),
-                priority: pet.attack,
-                player: pet.parent,
-                callbackPet: this,
-                pet: pet
-            })
-        }
-
         // after attack
         if (this.afterAttack != null) {
             this.abilityService.setAfterAttackEvent({
@@ -1127,28 +1116,6 @@ export abstract class Pet {
                 pet: this
             })
         }
-
-        // knockout
-        if (pet.health < 1 && this.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: this.knockOut.bind(this),
-                priority: this.attack,
-                callbackPet: pet,
-                pet: this
-            })
-        }
-
-
-        // friend hurt ability
-        if (pet.alive && damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
-        }
-
-        // enemy hurt ability
-        if (pet.alive && damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
-        }
-
         this.applyCrisp();
 
     }
@@ -1246,6 +1213,7 @@ export abstract class Pet {
                 if (pet.equipment.uses <= 0) {
                     pet.removePerk();
                 }
+
             }
         }
     }
@@ -1378,37 +1346,6 @@ export abstract class Pet {
             pteranodon: pteranodon
         });
         
-        // hurt ability
-        if (pet.hurt != null && damage > 0) {
-            this.abilityService.setHurtEvent({
-                callback: pet.hurt.bind(pet),
-                priority: pet.attack,
-                player: pet.parent,
-                callbackPet: this,
-                pet: pet 
-            })
-        }
-
-        // knockout
-        if (pet.health < 1 && this.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: this.knockOut.bind(this),
-                priority: this.attack,
-                callbackPet: pet,
-                pet: this
-            })
-        }
-
-        // friend hurt ability
-        if (pet.alive && damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
-        }
-
-        // enemy hurt ability
-        if (pet.alive && damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
-        }
-
         return damage;
     }
 
@@ -1645,6 +1582,50 @@ export abstract class Pet {
         this.endTurn = this.originalEndTurn;
         this.knockOut = this.originalKnockOut;
         this.summoned = this.originalSummoned;
+        // set faint ability to handle mana ability
+        let faintCallback = this.faint?.bind(this);
+        if (faintCallback != null) {
+            this.faintPet = true;
+        }
+        this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
+            if (faintCallback != null) {
+                if (!this.abilityValidCheck()) {
+                    return;
+                }
+                faintCallback(gameApi, tiger, pteranodon);
+            }
+
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+
+            if (this.kitsuneCheck()) {
+                return;
+            }
+            
+            if (this.mana > 0) {
+                
+                let manaEvent: AbilityEvent;
+
+                manaEvent = {
+                    priority: this.attack,
+                    player: this.parent,
+                    callback: () => {
+                        let target = getOpponent(gameApi, this.parent).getRandomPet([], false, true);
+                        if (target == null) {
+                            return;
+                        }
+                        if (this.mana == 0) {
+                            return;
+                        }
+                        this.snipePet(target, this.mana, true, false, false, false, true);
+                    }
+                }
+
+                this.abilityService.setManaEvent(manaEvent);
+            }
+        }
+        
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target
@@ -1825,13 +1806,44 @@ export abstract class Pet {
         this.abilityService.executeFriendGainsHealthEvents();
     }
 
-    dealDamage(target: Pet, amt: number) {
-        target.health -= amt;
+    dealDamage(pet: Pet, damage: number) {
+        pet.health -= damage;
         
         // Track who killed this pet
-        if (target.health <= 0 && target.alive) {
-            target.killedBy = this;
+        if (pet.health <= 0 && pet.alive) {
+            pet.killedBy = this;
         }
+        // hurt ability
+        if (pet.hurt != null && damage > 0) {
+            this.abilityService.setHurtEvent({
+                callback: pet.hurt.bind(pet),
+                priority: pet.attack,
+                player: pet.parent,
+                callbackPet: this,
+                pet: pet 
+            })
+        }
+
+        // knockout
+        if (pet.health < 1 && this.knockOut != null) {
+            this.abilityService.setKnockOutEvent({
+                callback: this.knockOut.bind(this),
+                priority: this.attack,
+                callbackPet: pet,
+                pet: this
+            })
+        }
+
+        // friend hurt ability
+        if (pet.alive && damage > 0) {
+            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+        }
+
+        // enemy hurt ability
+        if (pet.alive && damage > 0) {
+            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
+        }
+
     }
 
     increaseExp(amt) {

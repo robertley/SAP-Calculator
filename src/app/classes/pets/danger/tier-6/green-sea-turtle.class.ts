@@ -15,12 +15,9 @@ export class GreenSeaTurtle extends Pet {
     private attackCounter = 0;
 
     enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        }
+ 
         
         if (this.abilityUses >= this.maxAbilityUses) {
-            this.superEnemyAttack(gameApi, pet, tiger);
             return;
         }
         
