@@ -16,7 +16,7 @@ export class Tatzelwurm extends Pet {
         if(pet.level == 3) {
             power = power * 2;
         }
-        let target = this.parent.opponent.getRandomPet();
+        let target = this.parent.opponent.furthestUpPet;
         if (target == null) {
             return;
         }
