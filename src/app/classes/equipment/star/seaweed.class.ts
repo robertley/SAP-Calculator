@@ -15,7 +15,7 @@ export class Seaweed extends Equipment {
             }
             
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Seaweed') {
+            if (pet.equipment !== this) {
                 return;
             }
             

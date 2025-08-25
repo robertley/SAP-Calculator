@@ -14,7 +14,7 @@ export class GoldenEgg extends Equipment {
             }
             
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Golden Egg') {
+            if (pet.equipment !== this) {
                 return;
             }
             

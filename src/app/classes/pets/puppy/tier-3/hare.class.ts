@@ -33,9 +33,7 @@ export class Hare extends Pet {
         }
         // get random equipment
         let randomEquipmentPet = equipmentPets[Math.floor(Math.random() * equipmentPets.length)];
-        // let equipment = this.equipmentService.getInstanceOfAllEquipment().get(randomEquipmentPet.equipment.name);
-        let equipment = cloneDeep(randomEquipmentPet.equipment);
-        equipment.reset();
+        let equipment = randomEquipmentPet.equipment;
 
         this.logService.createLog({
             message: `${this.name} copied ${equipment.name} from ${randomEquipmentPet.name}.`,

@@ -1560,8 +1560,8 @@ export abstract class Pet {
             attackAmt *= totalMultiplier;
         }
         let damage: number;
-        if (attackAmt <= 0) {
-            damage = 0;
+        if (attackAmt <= min) {
+            damage = Math.max(attackAmt, 0);
         } else {
             damage = Math.max(min, attackAmt - defenseAmt);
         }
@@ -1619,6 +1619,32 @@ export abstract class Pet {
             (this as any).attackCounter = 0;
         }
         this.killedBy = null;
+        
+        // Restore original ability methods to fix equipment copying persistence issues
+        this.beforeAttack = this.originalBeforeAttack;
+        this.afterAttack = this.originalAfterAttack;
+        this.beforeFriendAttacks = this.originalBeforeFriendAttacks;
+        this.enemyAttack = this.originalEnemyAttack;
+        this.friendAttacks = this.originalFriendAttacks;
+        this.hurt = this.originalHurt;
+        this.faint = this.originalFaint;
+        this.friendSummoned = this.originalFriendSummoned;
+        this.friendAheadAttacks = this.originalFriendAheadAttacks;
+        this.adjacentAttacked = this.originalAdjacentAttacked;
+        this.friendAheadFaints = this.originalFriendAheadFaints;
+        this.friendFaints = this.originalFriendFaints;
+        this.friendAteFood = this.originalFriendAteFood;
+        this.eatsFood = this.originalEatsFood;
+        this.friendGainedPerk = this.originalFriendGainedPerk;
+        this.friendGainedAilment = this.originalFriendGainedAilment;
+        this.friendHurt = this.originalFriendHurt;
+        this.friendTransformed = this.originalFriendTransformed;
+        this.afterFaint = this.originalAfterFaint;
+        this.beforeStartOfBattle = this.originalBeforeStartOfBattle;
+        this.anyoneLevelUp = this.originalAnyoneLevelUp;
+        this.endTurn = this.originalEndTurn;
+        this.knockOut = this.originalKnockOut;
+        this.summoned = this.originalSummoned;
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target

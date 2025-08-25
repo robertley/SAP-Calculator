@@ -14,7 +14,7 @@ export class Fig extends Equipment {
             }
 
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Fig') {
+            if (pet.equipment != this) {
                 return;
             }
             

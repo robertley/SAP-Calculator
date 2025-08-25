@@ -14,7 +14,7 @@ export class Caramel extends Equipment {
             }
 
             // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Caramel') {
+            if (pet.equipment !== this) {
                 return;
             }
             

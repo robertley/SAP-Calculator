@@ -100,9 +100,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.17';
+  version = '0.6.18';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '8/22/2025';
+  lastUpdated = '8/24/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -978,45 +978,57 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.pushPetsForwards();
     this.logService.printState(this.player, this.opponent);
 
-    // init before attack events
-    if (this.player.pet0.beforeAttack) {
-      this.abilityService.setBeforeAttackEvent({
-        callback: this.player.pet0.beforeAttack.bind(this.player.pet0),
-        priority: this.player.pet0.attack,
-        player: this.player,
-        pet: this.player.pet0
-      })
+    while (true) {  // init before attack events
+      let originalPlayerAttackingPet = this.player.pet0;
+      let originalOppoentAttackingPet = this.opponent.pet0;
+      if (this.player.pet0.beforeAttack) {
+        this.abilityService.setBeforeAttackEvent({
+          callback: this.player.pet0.beforeAttack.bind(this.player.pet0),
+          priority: this.player.pet0.attack,
+          player: this.player,
+          pet: this.player.pet0
+        })
+      }
+
+      if (this.opponent.pet0.beforeAttack) {
+        this.abilityService.setBeforeAttackEvent({
+          callback: this.opponent.pet0.beforeAttack.bind(this.opponent.pet0),
+          priority: this.opponent.pet0.attack,
+          player: this.opponent,
+          pet: this.opponent.pet0
+        })
+      }
+
+      //before attack phase
+      this.abilityService.executeBeforeAttackEvents();
+      
+      this.abilityService.triggerBeforeFriendAttacksEvents(this.player, this.player.pet0);
+      this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, this.opponent.pet0);
+      this.abilityService.executeBeforeFriendAttacksEvents();
+
+      //normal abilities
+      this.player.checkPetsAlive();
+      this.opponent.checkPetsAlive();
+      do {
+        this.abilityCycle();
+      } while (this.abilityService.hasAbilityCycleEvents);
+
+      if (!this.player.alive() || !this.opponent.alive()) {
+        return;
+      }
+
+      this.pushPetsForwards();
+      if (originalPlayerAttackingPet.transformed) {
+        originalPlayerAttackingPet = originalPlayerAttackingPet.transformedInto;
+      }
+      if (originalOppoentAttackingPet.transformed) {
+        originalOppoentAttackingPet = originalOppoentAttackingPet.transformedInto;
+      }
+      if (this.player.pet0 == originalPlayerAttackingPet && this.opponent.pet0 == originalOppoentAttackingPet) {
+        break
+      }
     }
-
-    if (this.opponent.pet0.beforeAttack) {
-      this.abilityService.setBeforeAttackEvent({
-        callback: this.opponent.pet0.beforeAttack.bind(this.opponent.pet0),
-        priority: this.opponent.pet0.attack,
-        player: this.opponent,
-        pet: this.opponent.pet0
-      })
-    }
-
-    //before attack phase
-    this.abilityService.executeBeforeAttackEvents();
-    
-    this.abilityService.triggerBeforeFriendAttacksEvents(this.player, this.player.pet0);
-    this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, this.opponent.pet0);
-    this.abilityService.executeBeforeFriendAttacksEvents();
-
-    //normal abilities
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
-    do {
-      this.abilityCycle();
-    } while (this.abilityService.hasAbilityCycleEvents);
-
-    if (!this.player.alive() || !this.opponent.alive()) {
-      return;
-    }
-
-    this.pushPetsForwards();
-    //attack
+      //attack
     this.fight();
 
     this.player.checkPetsAlive();

@@ -12,6 +12,7 @@ export class Toucan extends Pet {
     pack: Pack = 'Puppy';
     attack = 4;
     health = 3;
+    private attacked = false;
     beforeAttack(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.equipment == null) {
             return;
@@ -19,7 +20,7 @@ export class Toucan extends Pet {
         if (this.equipment.tier > 5) {
             return;
         }
-        if (this.abilityUses >= this.maxAbilityUses) {
+        if (this.attacked) {
             return;
         }
         let pets = this.parent.petArray;
@@ -52,14 +53,17 @@ export class Toucan extends Pet {
                 pteranodon: pteranodon
             })
 
-            // TODO
-            // might need a new instance
-            // deep copy might actually be correct.
-            // lemon with one use will copy a one use lemon behind
-            target.givePetEquipment(cloneDeep(this.equipment));
+            target.givePetEquipment(this.equipment);
         }
-        this.abilityUses++;
         this.superBeforeAttack(gameApi, tiger);
+    }
+    attackPet(pet: Pet, jumpAttack?: boolean, power?: number, random?: boolean): void {
+        this.attacked = true;
+        super.attackPet(pet, jumpAttack, power, random);
+    }
+    resetPet(): void {
+        this.attacked = false
+        super.resetPet();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -71,10 +75,5 @@ export class Toucan extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 1;
     }
 }

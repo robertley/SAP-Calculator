@@ -19,6 +19,9 @@ export class TasmanianDevil extends Pet {
         if (targetResp.pet && targetResp.pet.alive) {
             let damage = Math.floor(this.attack * percentage);
             this.jumpAttackPrep(targetResp.pet)
+            if (this.transformed && this.transformedInto) {
+                damage = Math.floor(this.transformedInto.attack * percentage);
+            }
             this.jumpAttack(targetResp.pet, tiger, damage);
         }
         

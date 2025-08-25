@@ -16,11 +16,7 @@ export class Popcorn extends Equipment {
             }
             
             // Check if equipment is still equipped
-            console.log('pet:', pet);
-            console.log('equipment:', pet.equipment);
-            console.log('this:', this);
-            console.log(pet.equipment?.name);
-            if (pet.equipment?.name != 'Popcorn') {
+            if (pet.equipment !== this) {
                 return;
             }
             
