@@ -9,9 +9,13 @@ export class PitaBread extends Equipment {
     equipmentClass = 'hurt' as EquipmentClass;
     callback = (pet: Pet) => {
         let originalHurt = pet.hurt?.bind(pet);
-        pet.hurt = (gameApi) => {
+        pet.hurt = (gameApi, pet, tiger) => {
             if (originalHurt != null) {
-                originalHurt(gameApi);
+                originalHurt(gameApi, pet, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             if (pet.equipment?.name != 'Pita Bread') {
                 return;

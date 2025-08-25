@@ -209,17 +209,7 @@ export class ToyService {
             type: "attack",
             randomEvent: randomEvent,
             player: parent
-        });
-        
-        // hurt ability
-        if (pet.hurt != null) {
-            this.abilityService.setHurtEvent({
-                callback: pet.hurt.bind(pet),
-                priority: pet.attack,
-                player: pet.parent,
-                pet: pet
-            })
-        }
+        });      
     }
 
     calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, damage: number} {

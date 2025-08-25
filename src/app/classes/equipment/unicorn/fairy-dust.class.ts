@@ -26,6 +26,10 @@ export class FairyDust extends Equipment {
             if (originalEmptyFrontSpace != null) {
                 originalEmptyFrontSpace(gameApi, tiger);
             }
+            
+            if (tiger) {
+                return;
+            }
 
             if (pet.equipment?.name != 'Tomato') {
                 return;

@@ -231,21 +231,6 @@ export class Player {
         return true;
     }
 
-    // Low-level pet positioning without triggering summoning events
-    setPetPosition(pet: Pet, position: number): boolean {
-        if (position < 0 || position > 4) {
-            return false;
-        }
-        
-        // If there's a pet at the destination, use makeRoomForSlot to handle it
-        if (this.getPet(position) != null) {
-            this.makeRoomForSlot(position);
-        }
-        
-        this.setPet(position, pet);
-        return true;
-    }
-
     transformPet(originalPet: Pet, newPet: Pet): void {
         this.setPet(originalPet.position, newPet);
         let isPlayer = this == this.gameService.gameApi.player;
@@ -267,13 +252,10 @@ export class Player {
         }
         this.abilityService.triggerFriendTransformedEvents(this, newPet);
     }
-
-    // TODO - Revise Logic -- might not be consistent with game
-    makeRoomForSlot(slot: number) {
-        if (this.petArray.length == 5) {
-            console.warn("No room to Make Room") // should never happen
-            return;
-        }
+    /** 
+     *@returns if able to make space
+    */
+    pushForwardFromSlot(slot: number) {
         let slotWithSpace = null;
         // isSpaceAhead
         let isSpaceAhead = false;
@@ -305,9 +287,15 @@ export class Player {
             for (let i = slotWithSpace; i < slot; i++) {
                 this[`pet${i}`] = this[`pet${i+1}`];
             }
-            return;
+            return true;
         }
-
+        return false;
+    }
+    /**
+     * @returns if able to make space
+     */
+    pushBackwardFromSlot(slot: number) {
+        let slotWithSpace = null;
         let isSpaceBehind = false;
         if (slot < 4) {
             if (this.pet4 == null) {
@@ -338,6 +326,18 @@ export class Player {
                 this[`pet${i}`] = this[`pet${i-1}`];
             }
             return;
+        }
+
+    }
+    makeRoomForSlot(slot: number) {
+        if (this.petArray.length == 5) {
+            console.warn("No room to Make Room") // should never happen
+            return;
+        }
+        if (this.pushForwardFromSlot(slot)) {
+            return;
+        } else {
+            this.pushBackwardFromSlot(slot)
         }
     }
 
@@ -837,17 +837,23 @@ export class Player {
         let destination;
         if (spaces > 0) {
             destination = Math.max(position - spaces, 0);
+            if (this.getPet(destination) != null) {
+                this.pushForwardFromSlot(destination);
+            }          
+            this.setPet(destination, pet);
+            
         }
         if (spaces < 0) {
             destination = Math.min(position - spaces, 4);
+            if (this.getPet(destination) != null) {
+                this.pushBackwardFromSlot(destination);
+            }          
+            this.setPet(destination, pet);
         }
+
+        let opponent = getOpponent(this.gameService.gameApi, player);
+        this.abilityService.triggerEnemyPushedEvents(opponent, pet);
         
-        // Use setPetPosition instead of summonPet to avoid triggering enemySummoned events
-        if (player.setPetPosition(pet, destination)) {
-            // Trigger enemy push events for the opponent
-            let opponent = getOpponent(this.gameService.gameApi, player);
-            this.abilityService.triggerEnemyPushedEvents(opponent, pet);
-        }
     }
 
     getRandomStrawberryPet(excludePet?: Pet): Pet {

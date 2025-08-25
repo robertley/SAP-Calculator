@@ -7,11 +7,16 @@ export class Cherry extends Equipment {
     name = 'Cherry';
     equipmentClass: EquipmentClass = 'beforeStartOfBattle';
     callback = (pet: Pet) => {
-        let originalBeforeStartOfBattle = pet.originalBeforeStartOfBattle?.bind(pet);
-        pet.beforeStartOfBattle = (gameApi) => {
+        let originalBeforeStartOfBattle =pet.beforeStartOfBattle?.bind(pet);
+        pet.beforeStartOfBattle = (gameApi, tiger) => {
             if (originalBeforeStartOfBattle != null) {
-                originalBeforeStartOfBattle(gameApi);
+                originalBeforeStartOfBattle(gameApi, tiger);
             }
+            
+            if (tiger) {
+                return;
+            }
+            
             pet.parent.gainTrumpets(2 * this.multiplier, pet, false, this.multiplier, true);
         }
     }

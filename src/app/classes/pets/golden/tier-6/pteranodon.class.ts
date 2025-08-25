@@ -20,10 +20,6 @@ export class Pteranodon extends Pet {
         if (pet.name == this.name) {
             return;
         }
-        // maybe this should be more generic and not just for pteranodon
-        if (!this.alive) {
-            return;
-        }
         
         let summonPet = this.petService.createPet(
             {

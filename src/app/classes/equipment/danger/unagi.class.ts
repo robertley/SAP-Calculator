@@ -6,10 +6,14 @@ export class Unagi extends Equipment {
     name = 'Unagi';
     equipmentClass = 'startOfBattle' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalStartOfBattle = pet.originalStartOfBattle?.bind(pet);
-        pet.startOfBattle = (gameApi) => {
+        let originalStartOfBattle =pet.startOfBattle?.bind(pet);
+        pet.startOfBattle = (gameApi, tiger) => {
             if (originalStartOfBattle != null) {
-                originalStartOfBattle(gameApi);
+                originalStartOfBattle(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             
             // Check if equipment is still equipped

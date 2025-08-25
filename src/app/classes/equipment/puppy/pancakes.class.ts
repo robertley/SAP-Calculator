@@ -8,10 +8,14 @@ export class Pancakes extends Equipment {
     tier = 6;
     equipmentClass: EquipmentClass = 'beforeStartOfBattle';
     callback = (pet: Pet) => {
-        let originalBeforeStartOfBattle = pet.originalBeforeStartOfBattle?.bind(pet);
-        pet.beforeStartOfBattle = (gameApi) => {
+        let originalBeforeStartOfBattle =pet.beforeStartOfBattle?.bind(pet);
+        pet.beforeStartOfBattle = (gameApi, tiger) => {
             if (originalBeforeStartOfBattle != null) {
-                originalBeforeStartOfBattle(gameApi);
+                originalBeforeStartOfBattle(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             for (let pett of pet.parent.petArray) {
                 if (pet == pett) {

@@ -23,9 +23,7 @@ export class PhilippineEagle extends Pet {
     }
 
     private anyoneJumpedAbility(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        }
+ 
 
         let target = this.parent.getRandomPet([this]);
         if (!target) {

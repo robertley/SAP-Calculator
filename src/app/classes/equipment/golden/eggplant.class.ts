@@ -6,10 +6,14 @@ export class Eggplant extends Equipment {
     name = 'Eggplant';
     equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalBeforeStartOfBattle = pet.originalBeforeStartOfBattle?.bind(pet);
-        pet.beforeStartOfBattle = (gameApi) => {
+        let originalBeforeStartOfBattle =pet.beforeStartOfBattle?.bind(pet);
+        pet.beforeStartOfBattle = (gameApi, tiger) => {
             if (originalBeforeStartOfBattle != null) {
-                originalBeforeStartOfBattle(gameApi);
+                originalBeforeStartOfBattle(gameApi, tiger);
+            }
+            
+            if (tiger) {
+                return;
             }
             for (let i = 0; i < this.multiplier; i++) {
                 let opponent = pet.parent.opponent;
