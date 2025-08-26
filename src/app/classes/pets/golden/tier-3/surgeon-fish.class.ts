@@ -12,7 +12,7 @@ export class SurgeonFish extends Pet {
     name = "Surgeon Fish";
     tier = 3;
     pack: Pack = 'Golden';
-    attack = 3;
+    attack = 4;
     health = 3;
     faint(gameApi: GameAPI, tiger?: boolean): void {
         let targets = this.getPetsBehind(2);

@@ -14,7 +14,7 @@ export class Peacock extends Pet {
         if (this.health < 1) {
             return;
         }
-        let boost = this.level * 4;
+        let boost = this.level * 3;
         this.increaseAttack(boost);
         this.logService.createLog({
             message: `${this.name} increased attack by ${boost} (${this.attack})`,
