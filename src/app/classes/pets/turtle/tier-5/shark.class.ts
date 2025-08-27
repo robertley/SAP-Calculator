@@ -15,9 +15,9 @@ export class Shark extends Pet {
     attack = 2;
     health = 2;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.health <= 0) {
+        if (!this.alive) {
             return;
-        }
+        } 
         if (pet == this) {
             return;
         }

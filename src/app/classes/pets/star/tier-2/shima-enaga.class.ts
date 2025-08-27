@@ -13,7 +13,10 @@ export class ShimaEnaga extends Pet {
     attack = 2;
     health = 3;
 
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {       
+    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {   
+        if (!this.alive) {
+            return;
+        }     
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

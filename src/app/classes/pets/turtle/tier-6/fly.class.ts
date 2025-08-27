@@ -15,6 +15,9 @@ export class Fly extends Pet {
     health = 5;
     maxAbilityUses: number = 3;
     friendFaints(gameApi: GameAPI, faintedPet?: Pet, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        } 
         if (faintedPet instanceof ZombieFly) {
             return;
         }

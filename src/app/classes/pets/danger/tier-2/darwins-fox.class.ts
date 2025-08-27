@@ -17,7 +17,10 @@ export class DarwinsFox extends Pet {
         if (!pet) {
             return;
         }
-                
+        //TO DO: Check if it should still activate before attack abilities
+        if (!this.alive) {
+            return;
+        }    
         // Check ability uses limit
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
