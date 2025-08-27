@@ -102,7 +102,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   version = '0.6.18';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '8/24/2025';
+  lastUpdated = '8/27/2025';
 
   title = 'sap-calculator';
   player: Player;
