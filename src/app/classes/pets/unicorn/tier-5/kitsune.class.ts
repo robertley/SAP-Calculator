@@ -13,9 +13,6 @@ export class Kitsune extends Pet {
     health = 7;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         //TO DO: Check trigger order
-        if (!this.alive) {
-            return;
-        } 
         if (this.petAhead == null) {
             return;
         }
