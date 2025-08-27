@@ -13,6 +13,9 @@ export class Spinosaurus extends Pet {
     attack = 4;
     health = 4;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        } 
         let power: Power = {
             attack: this.level * 2,
             health: this.level * 3

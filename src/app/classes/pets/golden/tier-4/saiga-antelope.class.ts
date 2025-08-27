@@ -18,6 +18,9 @@ export class SaigaAntelope extends Pet {
         if (pet == this) {
             return
         }
+        if (!this.alive) {
+            return;
+        } 
         if (!tiger) {
             this.attackCounter++;
         }

@@ -959,7 +959,7 @@ export abstract class Pet {
                 player: this.parent,
                 randomEvent: random
             })
-
+            this.dealDamage(pet,damage);
             pet.killedBy = this;
             pet.health = 0;
         } else if (attackEquipment instanceof PeanutButter && damage > 0 && attackEquipment.uses > 0) {
@@ -971,6 +971,7 @@ export abstract class Pet {
             })
 
             pet.killedBy = this;
+            this.dealDamage(pet,damage);
             pet.health = 0;
         } else {
             this.dealDamage(pet, damage);
@@ -1835,12 +1836,12 @@ export abstract class Pet {
         }
 
         // friend hurt ability
-        if (pet.alive && damage > 0) {
+        if (damage > 0) {
             this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
         }
 
         // enemy hurt ability
-        if (pet.alive && damage > 0) {
+        if (damage > 0) {
             this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
         }
 

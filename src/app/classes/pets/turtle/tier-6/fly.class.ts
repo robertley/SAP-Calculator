@@ -13,9 +13,11 @@ export class Fly extends Pet {
     pack: Pack = 'Turtle';
     attack = 5;
     health = 5;
-    maxAbilityUses: number = 3;
-    friendFaints(gameApi: GameAPI, faintedPet?: Pet, tiger?: boolean): void {
-        if (faintedPet instanceof ZombieFly) {
+    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        } 
+        if (pet instanceof ZombieFly) {
             return;
         }
         if (this.abilityUses >= this.maxAbilityUses) {
@@ -24,7 +26,7 @@ export class Fly extends Pet {
 
         let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel);
 
-        if (this.parent.summonPet(zombie, faintedPet.savedPosition, true)) {
+        if (this.parent.summonPet(zombie, pet.savedPosition, true)) {
             this.abilityUses++;
             this.logService.createLog(
                 {
@@ -37,7 +39,11 @@ export class Fly extends Pet {
             this.abilityService.triggerFriendSummonedEvents(zombie);
         }
 
-        super.superFriendFaints(gameApi, faintedPet, tiger);
+        super.superFriendFaints(gameApi, pet, tiger);
+    }
+    setAbilityUses() {
+        super.setAbilityUses();
+        this.maxAbilityUses = 3;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

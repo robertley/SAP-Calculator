@@ -14,6 +14,9 @@ export class Pteranodon extends Pet {
     attack = 3;
     health = 5;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        } 
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

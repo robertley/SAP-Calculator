@@ -12,6 +12,9 @@ export class Donkey extends Pet {
     attack = 4;
     health = 6;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        } 
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }

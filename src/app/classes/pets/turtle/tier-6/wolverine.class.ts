@@ -19,6 +19,13 @@ export class Wolverine extends Pet {
         }
         if (!tiger) {
             this.attackCounter++
+            this.logService.createLog({
+                message: `${this.name} increased counter: (${this.attackCounter % 4}/4)}`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            });  
+
         }
         if (this.attackCounter % 4 != 0) {
             return
