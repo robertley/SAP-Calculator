@@ -68,6 +68,11 @@ export class Parrot extends Pet {
         this.enemyJumped = copyPet.originalEnemyJumped?.bind(this);
         this.friendGainedExperience = copyPet.originalFriendGainedExperience?.bind(this);
 
+        // Copy maxAbilityUses property if the copied pet has it set
+        this.maxAbilityUses = copyPet.maxAbilityUses;
+        this.setAbilityUses = copyPet.setAbilityUses?.bind(this);
+        this.setAbilityUses();
+
         // Update original* properties so other pets (like Tiger) can copy from Parrot
         this.originalStartOfBattle = this.startOfBattle;
         this.originalTransform = this.transform;
