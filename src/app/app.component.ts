@@ -1,7 +1,8 @@
-import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Injector, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
+import { InjectorService } from './services/injector.service';
 import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
 import { createPack, money_round } from './util/helper-functions';
@@ -134,6 +135,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private isLoadedFromUrl = false;
 
   constructor(private logService: LogService,
+    private injector: Injector,
     private abilityService: AbilityService,
     private gameService: GameService,
     private equipmentService: EquipmentService,
@@ -142,6 +144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private startOfBattleService: StartOfBattleService,
     private localStorageService: LocalStorageService
   ) {
+    InjectorService.setInjector(this.injector);
     this.player = new Player(logService, abilityService, gameService);
     this.opponent = new Player(logService, abilityService, gameService);
     this.gameService.init(this.player, this.opponent);

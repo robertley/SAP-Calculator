@@ -11,6 +11,7 @@ import { Mushroom } from "../classes/equipment/turtle/mushroom.class";
 import { Coconut } from "../classes/equipment/turtle/coconut.class";
 import { Peanut } from "../classes/equipment/turtle/peanut.class";
 import { AbilityService } from "./ability.service";
+import { InjectorService } from "./injector.service";
 import { PetService } from "./pet.service";
 import { Blackberry } from "../classes/equipment/puppy/blackberry.class";
 import { Croissant } from "../classes/equipment/puppy/croissant.class";
@@ -84,10 +85,11 @@ import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
 })
 export class EquipmentService {
 
-    constructor(private logService: LogService, private abilityService: AbilityService, private petService: PetService, private gameService: GameService) {}
+    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {}
 
     // Also update seagull !
     getInstanceOfAllEquipment() {
+        const petService = InjectorService.getInjector().get(PetService);
         let map: Map<string, Equipment> = new Map();
         map.set('Garlic', new Garlic());
         map.set('Meat Bone', new MeatBone());
@@ -95,7 +97,7 @@ export class EquipmentService {
         map.set('Melon', new Melon())
         map.set('Honey', new Honey(this.logService, this.abilityService))
         map.set('Chili', new Chili(this.logService, this.abilityService))
-        map.set('Mushroom', new Mushroom(this.logService, this.abilityService, this.petService));
+        map.set('Mushroom', new Mushroom(this.logService, this.abilityService, petService));
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
         map.set('Peanut Butter', new PeanutButter());
@@ -118,7 +120,7 @@ export class EquipmentService {
         map.set('Grapes', new Grapes());
         map.set('Carrot', new Carrot());
         map.set('Pepper', new Pepper());
-        map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
+        map.set('Popcorn', new Popcorn(this.logService, this.abilityService, petService, this.gameService));
         map.set('Cherry', new Cherry());
         map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
         map.set('Cod Roe', new CodRoe(this.logService, this.abilityService));
@@ -131,8 +133,8 @@ export class EquipmentService {
         map.set('Sudduth Tomato', new SudduthTomato(this.logService));
         map.set('Unagi', new Unagi(this.logService));
         map.set('Durian', new Durian(this.logService, this.abilityService));
-        map.set('Gros Michel Banana', new GrosMichelBanana(this.logService, this.abilityService, this.petService));
-        map.set('Seaweed', new Seaweed(this.logService, this.abilityService, this.petService));
+        map.set('Gros Michel Banana', new GrosMichelBanana(this.logService, this.abilityService, petService));
+        map.set('Seaweed', new Seaweed(this.logService, this.abilityService, petService));
         map.set('Fortune Cookie', new FortuneCookie());
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
@@ -151,11 +153,11 @@ export class EquipmentService {
         map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
         map.set('Honeydew Melon', new HoneydewMelon());
         map.set('Maple Syrup', new MapleSyrup());
-        map.set('Cocoa Bean', new CocoaBean(this.logService, this.abilityService, this.petService));
+        map.set('Cocoa Bean', new CocoaBean(this.logService, this.abilityService, petService));
         map.set('White Okra', new WhiteOkra());
         map.set('White Truffle', new WhiteTruffle(this.logService, this.abilityService));
         map.set('Ambrosia', new Ambrosia());
-        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
+        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, petService, this.gameService));
 
         return map;
     }

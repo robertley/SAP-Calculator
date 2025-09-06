@@ -63,6 +63,7 @@ import { FaintBread } from "../../../equipment/unicorn/faint-bread.class";
 import { Seaweed } from "../../../equipment/star/seaweed.class";
 import { Caramel } from "../../../equipment/star/caramel.class";
 import { Baguette } from "../../../equipment/star/baguette.class";
+import { InjectorService } from "../../../../services/injector.service";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -71,6 +72,9 @@ export class Seagull extends Pet {
     attack = 4;
     health = 3;
     abilityUses: number;
+    private get equipmentService(): EquipmentService {
+        return InjectorService.getInjector().get(EquipmentService);
+    }
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
@@ -79,7 +83,7 @@ export class Seagull extends Pet {
             return;
         }
 
-        pet.givePetEquipment(this.getInstanceOfAllEquipment().get(this.equipment.name));
+        pet.givePetEquipment(this.equipmentService.getInstanceOfAllEquipment().get(this.equipment.name));
         this.logService.createLog({
             message: `${this.name} gave ${pet.name} a ${this.equipment.name}`,
             type: 'ability',
@@ -106,67 +110,5 @@ export class Seagull extends Pet {
     setAbilityUses(): void {
         super.setAbilityUses();
         this.maxAbilityUses = this.level;
-    }
-
-    // avoids circular dependency
-    getInstanceOfAllEquipment() {
-        let map: Map<string, Equipment> = new Map();
-        map.set('Garlic', new Garlic());
-        map.set('Meat Bone', new MeatBone());
-        map.set('Steak', new Steak());
-        map.set('Melon', new Melon())
-        map.set('Honey', new Honey(this.logService, this.abilityService))
-        map.set('Chili', new Chili(this.logService, this.abilityService))
-        map.set('Mushroom', new Mushroom(this.logService, this.abilityService, this.petService));
-        map.set('Coconut', new Coconut());
-        map.set('Peanut', new Peanut());
-        map.set('Croissant', new Croissant());
-        map.set('Rice', new Rice());
-        map.set('Lime', new Lime());
-        map.set('Egg', new Egg(this.logService, this.abilityService));
-        map.set('Salt', new Salt());
-        map.set('Pie', new Pie(this.logService));
-        map.set('Skewer', new Skewer(this.logService));
-        map.set('Lemon', new Lemon());
-        map.set('Pancakes', new Pancakes(this.logService));
-        map.set('Strawberry', new Strawberry(this.logService, this.abilityService));
-        map.set('Cucumber', new Cucumber());
-        map.set('Cheese', new Cheese());
-        map.set('Grapes', new Grapes());
-        map.set('Carrot', new Carrot());
-        map.set('Pepper', new Pepper());
-        map.set('Popcorn', new Popcorn(this.logService, this.abilityService, this.petService, this.gameService));
-        map.set('Cherry', new Cherry());
-        map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
-        map.set('Eggplant', new Eggplant(this.logService));
-        map.set('Potato', new Potato());
-        map.set('Banana', new Banana(this.logService, this.abilityService));
-        map.set('Onion', new Onion(this.logService));
-        map.set('Pita Bread', new PitaBread(this.logService));
-        map.set('Tomato', new Tomato(this.logService, this.abilityService));
-        map.set('Durian', new Durian(this.logService, this.abilityService));
-        map.set('Fortune Cookie', new FortuneCookie());
-        map.set('Blueberry', new Blueberry());
-        map.set('Donut', new Donut());
-        map.set('Pineapple', new Pineapple());
-        map.set('Fig', new Fig(this.logService, this.abilityService));
-        
-        map.set('Rambutan', new Rambutan(this.logService));
-        map.set('Love Potion', new LovePotion(this.logService));
-        map.set('Fairy Dust', new FairyDust(this.logService));
-        map.set('Gingerbread Man', new GingerbreadMan(this.logService));
-        map.set('Easter Egg', new EasterEgg(this.logService, this.abilityService));
-        map.set('Health Potion', new HealthPotion(this.logService));
-        map.set('Magic Beans', new MagicBeans());
-        map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
-        map.set('Squash', new Squash(this.logService, this.abilityService));
-        map.set('Honeydew Melon', new HoneydewMelon());
-        map.set('Ambrosia', new Ambrosia());
-        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, this.petService, this.gameService));
-        map.set('Seaweed', new Seaweed(this.logService, this.abilityService, this.petService));
-        map.set('Caramel', new Caramel(this.logService, this.abilityService));
-        map.set('Baguette', new Baguette(this.logService, this.abilityService));
-
-        return map;
     }
 }
