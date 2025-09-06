@@ -1296,7 +1296,7 @@ export abstract class Pet {
             message += ' (Albatross)'
         }
 
-        if (equipment) {
+        if (equipment && this.equipment) {
             message += ` (${this.equipment.name})`
         }
 
