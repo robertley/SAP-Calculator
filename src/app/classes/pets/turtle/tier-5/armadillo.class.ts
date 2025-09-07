@@ -13,11 +13,12 @@ export class Armadillo extends Pet {
     attack = 2;
     health = 10;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let boostPets = [
-            ...this.parent.petArray,
-            ...getOpponent(gameApi, this.parent).petArray
-        ];
-        for (let pet of boostPets) {
+        let targetsResp = this.parent.getAll(true, this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
+        for (let pet of targets) {
             if (!pet.alive) {
                 continue;
             }
@@ -27,7 +28,8 @@ export class Armadillo extends Pet {
                 message: `${this.name} increased health of ${pet.name} by ${power}.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsResp.random
             })
         }
 

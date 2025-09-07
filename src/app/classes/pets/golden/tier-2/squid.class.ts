@@ -18,11 +18,9 @@ export class Squid extends Pet {
             return;
         }
         let hasTarget = false;
-        let targets = this.parent.opponent.petArray.filter(pet => {
-            return pet.health > 0 && pet.equipment?.name != 'Ink';
-        })
-        for (let i = 0; i < this.level; i++) {
-            let target = targets[i];
+        let targetResp = this.parent.opponent.getFurthestUpPets(this.level, "Ink", this);
+        let targets = targetResp.pets;
+        for (let target of targets) {
             if (target == null) {
                 break;
             }
@@ -34,6 +32,7 @@ export class Squid extends Pet {
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
+                randomEvent: targetResp.random
             })
         }
         if (hasTarget) {

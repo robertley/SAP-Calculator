@@ -20,13 +20,19 @@ export class Bulldog extends Pet {
         }
         
         let attackBonus = this.level * 2;
-        this.attack += attackBonus;
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        target.increaseAttack(attackBonus);
         
         this.logService.createLog({
             message: `${this.name} gained +${attackBonus} attack.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
         
         this.abilityUses++;

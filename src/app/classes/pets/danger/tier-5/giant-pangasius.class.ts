@@ -29,9 +29,9 @@ export class GiantPangasius extends Pet {
         
         if (transformations > 0) {
             for (let i = 0; i < transformations; i++) {
-                let target = this.parent.opponent.getRandomPet(null, null, true);
-                if (target) {
-                    this.snipePet(target, damage, true, tiger);
+                let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
+                if (targetResp.pet) {
+                    this.snipePet(targetResp.pet, damage, targetResp.random, tiger);
                 }
             }
         }

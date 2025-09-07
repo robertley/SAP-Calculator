@@ -13,35 +13,48 @@ export class Tucuxi extends Pet {
     health = 3;
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let target = this.parent.getLastPet();
+        // Get target for push effect
+        let pushTargetResp = this.parent.getLastPet([this], this);
+        let pushTarget = pushTargetResp.pet;
         
-        // Don't target self
-        if (!target || target === this) {
+        // Safety check for push target
+        if (!pushTarget) {
             return;
         }
 
         // Push target to front (this will handle occupied front slot automatically)
-        this.parent.pushPetToFront(target, false);
+        this.parent.pushPetToFront(pushTarget, false);
         
         this.logService.createLog({
-            message: `${this.name} pushed ${target.name} to the front`,
+            message: `${this.name} pushed ${pushTarget.name} to the front`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            pteranodon: pteranodon
+            pteranodon: pteranodon,
+            randomEvent: pushTargetResp.random
         });
+
+        // Get target for buff effect (could be different if Silly)
+        let buffTargetResp = this.parent.getLastPet([this], this);
+        let buffTarget = buffTargetResp.pet;
+        
+        // Safety check for buff target
+        if (!buffTarget) {
+            return;
+        }
 
         // Give level-based buffs (3/6/9 attack and health)
         let power = this.level * 3;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
+        buffTarget.increaseAttack(power);
+        buffTarget.increaseHealth(power);
         
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} +${power} attack and +${power} health`,
+            message: `${this.name} gave ${buffTarget.name} +${power} attack and +${power} health`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            pteranodon: pteranodon
+            pteranodon: pteranodon,
+            randomEvent: buffTargetResp.random
         });
 
         this.superFaint(gameApi, tiger);

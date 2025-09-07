@@ -24,16 +24,18 @@ export class SneakyEgg extends Pet {
 
         let egg = new CrackedEgg(this.logService, this.abilityService, this.parent, power.health, power.attack, 0);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned a ${power.attack}/${power.health} Cracked Egg`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-            }
-        )
+        let summonResult = this.parent.summonPet(egg, this.savedPosition, false, this);
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned a ${power.attack}/${power.health} Cracked Egg`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: summonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(egg, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(egg);
         }
 

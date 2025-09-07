@@ -14,14 +14,24 @@ export class HoopoeBird extends Pet {
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
-        let targetFront = opponent.furthestUpPet;
-        let targetBack = opponent.getLastPet();
+        
+        // Get front target
+        let targetFrontResp = opponent.getFurthestUpPet(this);
+        let targetFront = targetFrontResp.pet;
+        
+        // Get back target (could be different if Silly)
+        let targetBackResp = opponent.getLastPet(undefined, this);
+        let targetBack = targetBackResp.pet;
+        
         let power =  2 * this.level;
-        if (!targetFront) {
-            return;
+        
+        if (targetFront) {
+            this.snipePet(targetFront, power, targetFrontResp.random, tiger, pteranodon);
         }
-        this.snipePet(targetFront, power, false, tiger, pteranodon);
-        this.snipePet(targetBack, power, false, tiger, pteranodon);
+        if (targetBack) {
+            this.snipePet(targetBack, power, targetBackResp.random, tiger, pteranodon);
+        }
+        
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

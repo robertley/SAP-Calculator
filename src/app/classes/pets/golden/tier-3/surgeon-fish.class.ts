@@ -15,7 +15,8 @@ export class SurgeonFish extends Pet {
     attack = 4;
     health = 3;
     faint(gameApi: GameAPI, tiger?: boolean): void {
-        let targets = this.getPetsBehind(2);
+        let targetsBehindResp = this.parent.nearestPetsBehind(2, this);
+        let targets = targetsBehindResp.pets
         if (targets.length == 0) {
             return;
         }
@@ -25,9 +26,6 @@ export class SurgeonFish extends Pet {
         this.parent.spendTrumpets(2, this);
         let power = this.level * 4;
         for (let target of targets) {
-            if (target == null) {
-                return;
-            }
             target.increaseHealth(power);
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} ${power} health.`,

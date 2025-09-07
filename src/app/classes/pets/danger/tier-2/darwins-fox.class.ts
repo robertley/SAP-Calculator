@@ -28,15 +28,21 @@ export class DarwinsFox extends Pet {
                 
         // Find who killed the friend
         if (pet.killedBy && pet.killedBy.alive) {
-            this.jumpAttackPrep(pet.killedBy)
-            this.jumpAttack(pet.killedBy, tiger);           
-        } else {
-            let target = this.parent.opponent.furthestUpPet;
+            let targetResp = this.parent.getSpecificPet(this, pet.killedBy);
+            let target = targetResp.pet;
             if (!target) {
                 return;
             }
             this.jumpAttackPrep(target)
-            this.jumpAttack(target, tiger)
+            this.jumpAttack(target, tiger, undefined, targetResp.random);           
+        } else {
+            let targetResp = this.parent.opponent.getFurthestUpPet(this);
+            let target = targetResp.pet;
+            if (!target) {
+                return;
+            }
+            this.jumpAttackPrep(target)
+            this.jumpAttack(target, tiger, undefined, targetResp.random)
         }
         this.abilityUses++;
         this.superFriendFaints(gameApi, pet, tiger);

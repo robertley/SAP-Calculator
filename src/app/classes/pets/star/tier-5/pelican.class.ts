@@ -16,51 +16,50 @@ export class Pelican extends Pet {
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let swallowCount = this.level;
-        let swallowed = 0;
+        let targetsAheadResp = this.parent.nearestPetsAhead(5, this);
+        let strawberryPets = targetsAheadResp.pets.filter(pet => pet.equipment instanceof Strawberry);
+        let swallowTargets = strawberryPets.slice(0, swallowCount);
         
-        // Look for friends ahead with Strawberry equipment
-        let currentPet = this.petAhead;
-        while (currentPet && swallowed < swallowCount) {
-            if (currentPet.equipment instanceof Strawberry) {
-                // Create Salmon copy to swallow (transform the swallowed pet into Salmon)
-                let salmon = this.petService.createPet({
-                    name: 'Salmon',
-                    attack: currentPet.attack,
-                    health: currentPet.health,
-                    exp: this.minExpForLevel,
-                    equipment: null,
-                    mana: 0
-                }, this.parent);
-                
-                this.swallowedPets.push(salmon);
-                currentPet.health = 0;
-                
-                this.logService.createLog({
-                    message: `${this.name} swallowed ${currentPet.name}`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
-                
-                swallowed++;
-            }
-            currentPet = currentPet.petAhead;
+        for (let currentPet of swallowTargets) {
+            // Create Salmon copy to swallow (transform the swallowed pet into Salmon)
+            let salmon = this.petService.createPet({
+                name: 'Salmon',
+                attack: currentPet.attack,
+                health: currentPet.health,
+                exp: this.minExpForLevel,
+                equipment: null,
+                mana: 0
+            }, this.parent);
+            
+            this.swallowedPets.push(salmon);
+            currentPet.health = 0;
+            
+            this.logService.createLog({
+                message: `${this.name} swallowed ${currentPet.name}`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: targetsAheadResp.random
+            });
         }
         
         this.superStartOfBattle(gameApi, tiger);
     }
-
+    //TO DO: Move into sob ability
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         while (this.swallowedPets.length > 0) {
             let pet = this.swallowedPets.shift();
-            this.logService.createLog({
-                message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-            if (this.parent.summonPet(pet, this.savedPosition)) {
+            let summonResult = this.parent.summonPet(pet, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                })
+                
                 this.abilityService.triggerFriendSummonedEvents(pet);
             }       
         }

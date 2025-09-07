@@ -17,16 +17,18 @@ export class Seal extends Pet {
             return;
         }
         let power = this.level;
-        let targets = this.parent.getRandomPets(3, [this], true, false);
-        for (let target of targets) {
-            target.increaseAttack(power);
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} attack.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true
-            });
+        let targetsResp = this.parent.getRandomPets(3, [this], true, false, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                target.increaseAttack(power);
+                this.logService.createLog({
+                    message: `${this.name} gave ${target.name} ${power} attack.`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: targetsResp.random
+                });
+            }
         }
         this.superGainedPerk(gameApi, pet, tiger);
     }

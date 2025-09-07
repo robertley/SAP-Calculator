@@ -13,47 +13,42 @@ export class SumatranTiger extends Pet {
     health = 5;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        // Get the opposite enemy at the same position
-        let oppositeEnemy = this.parent.opponent.getPetAtPosition(this.position);
+        let targetResp = this.parent.getOppositeEnemyPet(this);
+        let oppositeEnemy = targetResp.pet;
         
-        if (oppositeEnemy && oppositeEnemy.alive) {
+        if (oppositeEnemy) {
             // Jump-attack the opposite enemy
             this.jumpAttackPrep(oppositeEnemy)
-            this.jumpAttack(oppositeEnemy, tiger);
+            this.jumpAttack(oppositeEnemy, tiger, null, targetResp.random);
             
             // Level 2 and 3: Deal damage to adjacent enemies
             if (this.level >= 2) {
                 let damage = this.level == 2 ? 6 : 12; // 6 for level 2, 12 for level 3
-                this.dealAdjacentDamage(oppositeEnemy, damage, tiger);
+                let adjacentTargets: Pet[] = [];
+                if (targetResp.random) {
+                    //TO DO: Swap to silly targetting
+                    adjacentTargets = this.parent.getRandomLivingPets(2).pets
+                } else {
+                    // Get pet behind target (higher position number)
+                    let petBehind = oppositeEnemy.petBehind();
+                    if (petBehind && petBehind.alive) {
+                        adjacentTargets.push(petBehind);
+                    }
+                    
+                    // Get pet in front of target (lower position number)  
+                    let petInFront = oppositeEnemy.petAhead;
+                    if (petInFront && petInFront.alive) {
+                        adjacentTargets.push(petInFront);
+                    }
+                }
+                // Deal damage to all adjacent enemies
+                for (let adjacentTarget of adjacentTargets) {
+                    this.snipePet(adjacentTarget, damage, targetResp.random, tiger);
+                }
             }
         }
         
         this.superStartOfBattle(gameApi, tiger);
-    }
-    
-    private dealAdjacentDamage(target: Pet, damage: number, tiger?: boolean): void {
-        let adjacentTargets: Pet[] = [];
-        
-        // Get pet behind target (higher position number)
-        if (target.position < 4) {
-            let petBehind = target.parent.getPetAtPosition(target.position + 1);
-            if (petBehind && petBehind.alive) {
-                adjacentTargets.push(petBehind);
-            }
-        }
-        
-        // Get pet in front of target (lower position number)  
-        if (target.position > 0) {
-            let petInFront = target.parent.getPetAtPosition(target.position - 1);
-            if (petInFront && petInFront.alive) {
-                adjacentTargets.push(petInFront);
-            }
-        }
-        
-        // Deal damage to all adjacent enemies
-        for (let adjacentTarget of adjacentTargets) {
-            this.snipePet(adjacentTarget, damage, true, tiger);
-        }
     }
 
     constructor(protected logService: LogService,

@@ -194,17 +194,69 @@ export class ToyService {
     }
 
     snipePet(pet: Pet, power: number, parent: Player, toyName: string, randomEvent=false, puma=false) {
-        let damageResp = this.calculateDamgae(pet, power);
+        let damageResp = this.calculateDamgae(pet, this.getManticoreMult(parent), power);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
-        pet.dealDamage(pet, damage);
+
+        let ghostKitten = pet.name == 'Ghost Kitten';
+        let ghostKittenMitigation = 0;
+        if (ghostKitten) {
+            ghostKittenMitigation = pet.level * 3;
+            damage = Math.max(0, damage - ghostKittenMitigation);
+        }
+        this.dealDamage(pet, damage, parent);
 
         let message = `${toyName} sniped ${pet.name} for ${damage}.`;
         if (defenseEquipment != null) {
-            pet.useDefenseEquipment()
-            message += ` (${defenseEquipment.name} -${defenseEquipment.power})`;
+            pet.useDefenseEquipment(true)
+            let power = Math.abs(defenseEquipment.power);
+            let sign = '-';
+            if (defenseEquipment.power < 0) {
+                sign = '+';
+            }
+            if (defenseEquipment.name === 'Strawberry') {
+                let sparrowLevel = pet.getSparrowLevel();
+                if (sparrowLevel > 0) {
+                    power = sparrowLevel * 5;
+                    message += ` (Strawberry -${power} (Sparrow))`;
+                }
+            } else {
+                message += ` (${defenseEquipment.name} ${sign}${power})`;
+            }
+            message += defenseEquipment.multiplierMessage;
+        }
+        if (ghostKitten) {
+            message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
+        }
+        if (pet.equipment?.name == 'Exposed') {
+            message += 'x2 (Exposed)';
+            if (pet.equipment.multiplier > 1) {
+                message += pet.equipment.multiplierMessage;
+            }
+        }
+        let manticoreMult = this.getManticoreMult(parent);
+        let manticoreAilments = [
+            'Weak',
+            'Cold',
+            'Exposed',
+            'Spooked'
+        ]
+        let hasAilment = manticoreAilments.includes(pet.equipment?.name);
+        if (manticoreMult.length > 0 && hasAilment) {
+            for (let mult of manticoreMult) {
+                message += ` x${mult + 1} (Manticore)`;
+            }
         }
 
+        if (damageResp.nurikabe > 0) {
+            message += ` -${damageResp.nurikabe} (Nurikabe)`
+        }
+        if (damageResp.fairyBallReduction > 0) { 
+            message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
+        }
+        if (damageResp.fanMusselReduction > 0) {
+            message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`
+        }
         if (puma) {
             message += ` (Puma)`;
         }
@@ -213,25 +265,146 @@ export class ToyService {
             type: "attack",
             randomEvent: randomEvent,
             player: parent
-        });      
+        });
+        return damage;  
     }
 
-    calculateDamgae(pet: Pet, power?: number): {defenseEquipment: Equipment, damage: number} {
-        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
-        || pet.equipment?.equipmentClass == 'shield' ? pet.equipment : null;
+    calculateDamgae(pet: Pet, manticoreMult: number[], power?: number): 
+        {
+            defenseEquipment: Equipment, 
+            damage: number
+            nurikabe: number,
+            fairyBallReduction?: number,
+            fanMusselReduction?: number,
+        } {
+        let defenseMultiplier = pet.equipment?.multiplier;
+        const manticoreDefenseAilments = [
+            'Cold',
+            'Weak',
+            'Spooked'
+        ];
 
-        let defenseAmt = defenseEquipment?.power ?? 0;
-        let min = defenseEquipment?.equipmentClass == 'shield' ? 0 : 1;
+        const manticoreAttackAilments = [
+            'Ink'
+        ];
+
+        const manticoreOtherAilments = [
+            'Exposed'
+        ]
+        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
+        || pet.equipment?.equipmentClass == 'shield'
+        || pet.equipment?.equipmentClass == 'ailment-defense'
+        || pet.equipment?.equipmentClass == 'shield-snipe' ? pet.equipment : null;
+
+        if (defenseEquipment != null) {
+            if (defenseEquipment.name == "Maple Syrup") {
+                defenseEquipment = null;
+            }
+            if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
+                for (let mult of manticoreMult) {
+                    defenseMultiplier += mult;
+                }
+            }
+            defenseEquipment.power = defenseEquipment.originalPower * defenseMultiplier;
+        }
+
+        let defenseAmt = defenseEquipment?.power ? defenseEquipment.power : 0;
+        let sparrowLevel = pet.getSparrowLevel();
+        if (pet.equipment?.name === 'Strawberry' && sparrowLevel > 0) {
+            defenseAmt += sparrowLevel * 5;
+        }
+        let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
+        //check garlic
+        if (defenseEquipment?.minimumDamage !== undefined) {
+            min = defenseEquipment.minimumDamage;
+        }
+
+        if (pet.equipment?.name == "Exposed") {
+            let totalMultiplier = 2; // Base exposed multiplier
+            for (let mult of manticoreMult) {
+                totalMultiplier += mult; // Add manticore multipliers
+            }
+            totalMultiplier += pet.equipment.multiplier - 1; // Add pandora's box multiplier
+            power *= totalMultiplier;
+        }
+
         let damage: number;
         if (power <= min) {
-            damage = Math.max(power, 0);
+            damage = Math.max(power - defenseAmt, 0);
         } else {
             damage = Math.max(min, power - defenseAmt);
         }
+        let fairyBallReduction = 0;
+        if (pet.name === 'Fairy Ball' && damage > 0) {
+            fairyBallReduction = pet.level * 2;
+            damage = Math.max(1, damage - fairyBallReduction);
+        }
+
+        let nurikabe = 0;
+        if (pet.name == 'Nurikabe' && pet.abilityUses < 3 && damage > 0) {
+            nurikabe = pet.level * 4;
+            damage = Math.max(1, damage - fairyBallReduction);
+            pet.abilityUses++;
+        }
+
+        let fanMusselReduction = 0;
+        if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses && damage > 0) {
+            fanMusselReduction = pet.level * 1;
+            damage = Math.max(1, damage - fairyBallReduction);
+            pet.abilityUses++;
+        }
         return {
             defenseEquipment: defenseEquipment,
-            damage: damage
+            damage: damage,
+            nurikabe: nurikabe,
+            fairyBallReduction: fairyBallReduction,
+            fanMusselReduction: fanMusselReduction,
         }
+    }
+    dealDamage(pet: Pet, damage: number, ToyParent: Player) {
+        pet.health -= damage;
+
+        // hurt ability
+        if (pet.hurt != null && damage > 0) {
+            this.abilityService.setHurtEvent({
+                callback: pet.hurt.bind(pet),
+                priority: pet.attack,
+                player: pet.parent,
+                pet: pet 
+            })
+        }
+        // friend hurt ability
+        if (damage > 0) {
+            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+        }
+
+        // enemy hurt ability
+        if (damage > 0) {
+            this.abilityService.triggerEnemyHurtEvents(ToyParent, pet);
+        }
+    }
+    getManticoreMult(parent: Player): number[] {
+        let mult = [];
+        for (let pet of parent.petArray) {
+            // if (!pet.alive) {
+            //     continue;
+            // }
+            if (pet.name == 'Manticore') {
+                mult.push(pet.level);
+            }
+        }
+
+        return mult;
+    }
+
+    getSparrowLevel(parent: Player): number {
+        let highestLevel = 0;
+        for (let pet of parent.petArray) {
+            if (pet.name == 'Sparrow') {
+                highestLevel = Math.max(highestLevel, pet.level);
+            }
+        }
+        return highestLevel;
     }
 
     setStartOfBattleEvent(event: AbilityEvent) {

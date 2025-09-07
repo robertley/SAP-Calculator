@@ -17,15 +17,21 @@ export class LovelandFrogman extends Pet {
             attack: this.level * 1,
             health: this.level * 2
         };
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
 
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power.attack} attack and ${power.health} health.`,
+            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            randomEvent: targetResp.random
         });
 
-        pet.increaseAttack(power.attack);
-        pet.increaseHealth(power.health);
+        target.increaseAttack(power.attack);
+        target.increaseHealth(power.health);
 
         this.superBeforeFriendAttacks(gameApi, pet, tiger);
     }

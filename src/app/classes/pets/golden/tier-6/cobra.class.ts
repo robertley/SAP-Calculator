@@ -12,12 +12,12 @@ export class Cobra extends Pet {
     attack = 12;
     health = 6;
     friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let target = this.parent.opponent.getRandomPet(null, null, true);
-        if (target == null) {
+        let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
+        if (targetResp.pet == null) {
             return;
         }
         let power = Math.floor(this.attack * .2 * this.level);
-        this.snipePet(target, power, true, tiger);
+        this.snipePet(targetResp.pet, power, targetResp.random, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

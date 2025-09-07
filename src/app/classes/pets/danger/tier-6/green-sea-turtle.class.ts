@@ -34,8 +34,8 @@ export class GreenSeaTurtle extends Pet {
         this.abilityService.setCounterEvent({
             callback: () => {
                 // Give all friendly pets Melon
-                let targets = [...this.parent.petArray];
-                targets = targets.filter(pet => pet.alive && pet !== this);
+                let targetsResp = this.parent.getAll(false, this);
+                let targets = targetsResp.pets;
                 for (let targetPet of targets) {
                     
                     targetPet.givePetEquipment(new Melon(), this.level);

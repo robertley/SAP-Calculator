@@ -25,7 +25,8 @@ export class PhilippineEagle extends Pet {
     private anyoneJumpedAbility(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
  
 
-        let target = this.parent.getRandomPet([this]);
+        let targetResp = this.parent.getRandomPet([this], false, false, false, this);
+        let target = targetResp.pet;
         if (!target) {
             return;
         }
@@ -37,7 +38,8 @@ export class PhilippineEagle extends Pet {
             message: `${this.name} gave ${target.name} +${buffAmount} attack`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
         target.increaseHealth(buffAmount);
@@ -45,7 +47,8 @@ export class PhilippineEagle extends Pet {
             message: `${this.name} gave ${target.name} +${buffAmount} health`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
     }
 

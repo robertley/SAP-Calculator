@@ -12,12 +12,12 @@ export class WitchBroom extends Toy {
         let excludePets = opponent.petArray.filter(pet => pet.equipment != null);
         let targets = [];
         for (let i = 0; i < this.level; i++) {
-            let target = opponent.getRandomPet(excludePets, null, true);
-            if (target == null) {
+            let targetResp = opponent.getRandomPet(excludePets, false, true, false, null);
+            if (targetResp.pet == null) {
                 break;
             }
-            excludePets.push(target);
-            targets.push(target);
+            excludePets.push(targetResp.pet);
+            targets.push(targetResp.pet);
         }
         for (let target of targets) {
             this.logService.createLog({

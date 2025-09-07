@@ -17,30 +17,29 @@ export class Tuna extends Pet {
 
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         this.hurtThisBattle++;
-        this.superHurt(gameApi, pet, tiger);
     }
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let totalHurt = this.hurtThisBattle;
         for (let i = 0; i < totalHurt; i++) {
-            const target = this.parent.getRandomPet([this]);
+            const targetResp = this.parent.getRandomPet([this], true, false, true, this);
 
-            if (target == null) {
+            if (targetResp.pet == null) {
                 continue;
             }
 
             const buffAmount = this.level;
 
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
+                message: `${this.name} gave ${targetResp.pet.name} +${buffAmount} attack and +${buffAmount} health.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: true
+                randomEvent: targetResp.random
             });
 
-            target.increaseAttack(buffAmount);
-            target.increaseHealth(buffAmount);
+            targetResp.pet.increaseAttack(buffAmount);
+            targetResp.pet.increaseHealth(buffAmount);
         }
         this.superFaint(gameApi, tiger);
     }

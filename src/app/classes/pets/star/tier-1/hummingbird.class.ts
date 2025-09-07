@@ -1,3 +1,4 @@
+import { Strawberry } from "app/classes/equipment/star/strawberry.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
@@ -13,23 +14,21 @@ export class Hummingbird extends Pet {
     attack = 2;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.getRandomStrawberryPet(this);
-        if (target == null) {
+        let targetsResp = this.parent.nearestPetsBehind(this.level, this, 'Strawberry');
+        if (targetsResp.pets.length === 0) {
             return;
         }
-        let power: Power = {
-            attack: this.level * 2,
-            health: this.level,
+        
+        for (let target of targetsResp.pets) {
+            target.givePetEquipment(new Strawberry(this.logService, this.abilityService));
+            this.logService.createLog({
+                message: `${this.name} gave ${target.name} strawberry.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: targetsResp.random
+            })
         }
-        target.increaseHealth(power.health);
-        target.increaseAttack(power.attack);
-        this.logService.createLog({
-            message: `${this.name} increased ${target.name}'s attack by ${power.attack} and health by ${power.health}.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: true
-        })
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

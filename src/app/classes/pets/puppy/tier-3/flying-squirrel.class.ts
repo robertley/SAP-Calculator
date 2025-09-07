@@ -1,7 +1,6 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -14,19 +13,31 @@ export class FlyingSquirrel extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 3;
-    private get toyService(): ToyService {
-        return InjectorService.getInjector().get(ToyService);
-    }
     friendlyToyBroke(gameApi: GameAPI, tiger?: boolean): void {
-        const originalToy = this.parent.originalToy;
-        if (!originalToy) {
+        let power = this.level * 2
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
             return;
         }
-
-        const newToy = this.toyService.createToy(originalToy.name, this.parent, originalToy.level);
+        target.increaseAttack(power)
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} +${power} attack`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger,
+            randomEvent: targetResp.random
+        })
+        if (this.parent.brokenToy == null) {
+            return
+        }
+        //TO DO: Might need to change to create new object, might need to reset Used & trigger
+        const newToy = InjectorService.getInjector().get(ToyService).createToy(this.parent.brokenToy.name, this.parent);
+        newToy.level = Math.min(this.level, this.parent.brokenToy.level);
+        
         this.parent.setToy(newToy);
         this.logService.createLog({
-            message: `${this.parent.toy.name} respawned!`,
+            message: `${newToy.name} respawned (Level ${newToy.level})!`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

@@ -5,20 +5,26 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class GermanShephard extends Pet {
-    name = "German Shephard";
+export class GermanShepherd extends Pet {
+    name = "German Shepherd";
     tier = 6;
     pack: Pack = 'Golden';
     attack = 10;
     health = 6;
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
         let power = Math.floor(this.attack * this.level * .25);
-        pet.increaseAttack(power);
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        target.increaseAttack(power);
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power} attack.`,
+            message: `${this.name} gave ${target.name} ${power} attack.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
     }
     constructor(protected logService: LogService,

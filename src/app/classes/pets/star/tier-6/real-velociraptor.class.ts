@@ -11,6 +11,7 @@ export class RealVelociraptor extends Pet {
     pack: Pack = 'Star';
     attack = 6;
     health = 5;
+    //TO DO: Refactor this into pet memory
     private friendAppliedThisTurn: Set<Pet> = new Set();
 
     friendLostPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {  
@@ -25,15 +26,21 @@ export class RealVelociraptor extends Pet {
         // Create new instance of the lost equipment
         let restoredPerk = this.createEquipmentInstance(pet.lastLostEquipment);
         if (restoredPerk) {
-            pet.givePetEquipment(restoredPerk);
+            let targetResp = this.parent.getSpecificPet(this, pet);
+            let target = targetResp.pet;
+            if (target == null) {
+                return
+            }
+            target.givePetEquipment(restoredPerk);
             
             this.logService.createLog({
-                message: `${this.name} returned ${restoredPerk.name} to ${pet.name}.`,
+                message: `${this.name} returned ${restoredPerk.name} to ${target.name}.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
-            this.friendAppliedThisTurn.add(pet);
+            this.friendAppliedThisTurn.add(target);
             this.abilityUses++;
         }
         

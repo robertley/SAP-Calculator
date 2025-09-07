@@ -15,14 +15,21 @@ export class Jellyfish extends Pet {
         if (pet.parent != this.parent) {
             return;
         }
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+
         let power = this.level;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
+        target.increaseAttack(power);
+        target.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} increased attack by ${power} and health by ${power}`,
+            message: `${this.name} gave ${target.name} attack by ${power} and health by ${power}`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent:targetResp.random
         })
         this.superAnyoneLevelUp(gameApi, pet, tiger);
     }

@@ -15,28 +15,19 @@ export class PaintedTerrapin extends Pet {
     attack = 4;
 
     faint(gameApi, tiger, pteranodon?: boolean) {
-        for (let i = 0; i < this.level; i++) {
-            let targetPet = this.petBehind();
-            while(targetPet) {
-                if (targetPet.equipment instanceof WhiteOkra) {
-                    targetPet = targetPet.petBehind();
-                    continue;
-                }
-                break;
-            }
-            if (targetPet == null) {
-                return;
-            }
+        let targetsResp = this.parent.nearestPetsBehind(this.level, this, "White Okra");
+        let targets = targetsResp.pets;
+        for (let targetPet of targets) {
             this.logService.createLog({
                 message: `${this.name} gave ${targetPet.name} White Okra perk`,
                 type: 'ability',
                 tiger: tiger,
                 player: this.parent,
-                pteranodon: pteranodon
+                pteranodon: pteranodon,
+                randomEvent: targetsResp.random
             })
             targetPet.givePetEquipment(new WhiteOkra());
         }
-
         this.superFaint(gameApi, tiger);
     }
 

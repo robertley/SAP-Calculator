@@ -14,32 +14,36 @@ export class Cockroach extends Pet {
     attack = 1;
     health = 1;
 
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+    afterfaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         const expToGain = this.level;
         
         const newCockroach = new SummonedCockroach(this.logService, this.abilityService, this.parent, 1, 1, 0, 0);
 
-        this.logService.createLog({
-            message: `${this.name} fainted and summoned a 1/1 Cockroach.`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger,
-            pteranodon: pteranodon
-        });
-
-        if (this.parent.summonPet(newCockroach, this.savedPosition)) {
+        let summonResult = this.parent.summonPet(newCockroach, this.savedPosition, false, this);
+        if (summonResult.success) {
             this.logService.createLog({
-                message: `The summoned ${newCockroach.name} gained +${expToGain} experience.`,
+                message: `${this.name} summoned a 1/1 Cockroach.`,
+                type: "ability",
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon,
+                randomEvent: summonResult.randomEvent
+            });
+
+            let targetRespt = this.parent.getThis(newCockroach)
+            targetRespt.pet.increaseExp(expToGain);
+            this.logService.createLog({
+                message: `${this.name} gave ${targetRespt.pet.name} +${expToGain} exp.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetRespt.random
             });
-            newCockroach.increaseExp(expToGain);
-            
+
             this.abilityService.triggerFriendSummonedEvents(newCockroach);
         }
 
-        this.superFaint(gameApi, tiger);
+        this.superAfterFaint(gameApi, tiger);
     }
 
     constructor(protected logService: LogService,

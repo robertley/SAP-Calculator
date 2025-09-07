@@ -19,10 +19,9 @@ export class TaitaThrush extends Pet {
         
         let power = this.level; // 1/2/3 based on level
         
-        // Get all friends (excluding self)
-        let friends = this.parent.petArray.filter(friend => friend !== this && friend.alive);
+        let friendsResp = this.parent.getAll(false, this, true); // excludeSelf = true
         
-        for (let friend of friends) {
+        for (let friend of friendsResp.pets) {
             friend.increaseAttack(power);
             friend.increaseHealth(power);
             
@@ -30,7 +29,8 @@ export class TaitaThrush extends Pet {
                 message: `${this.name} gave ${friend.name} +${power} attack and +${power} health`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: friendsResp.random
             });
         }
         

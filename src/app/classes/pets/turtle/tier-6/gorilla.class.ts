@@ -16,17 +16,23 @@ export class Gorilla extends Pet {
         if (!this.alive) {
             return;
         }
-        if (this.abilityUses < this.maxAbilityUses) {
-            this.abilityUses++;
-            this.equipment = new Coconut();
-            this.logService.createLog({
-                message: `${this.name} gained a Coconut.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            })
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet
+        if (target == null) {
+            return;
         }
 
+        target.givePetEquipment(new Coconut());
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} a Coconut.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
+        this.abilityUses++;
         super.superHurt(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

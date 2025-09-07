@@ -11,12 +11,12 @@ export class HawaiianMonkSeal extends Pet {
     pack: Pack = 'Danger';
     attack = 3;
     health = 4;
+    //TO DO: Refactor this into pet memory
     private friendBuffedThisTurn: Set<Pet> = new Set();
 
     friendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-
-        // Use the attacking friend passed as parameter
-        let attackingFriend = pet;
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let attackingFriend = targetResp.pet;
 
         if (!attackingFriend || this.friendBuffedThisTurn.has(attackingFriend)) {
             return;
@@ -33,7 +33,8 @@ export class HawaiianMonkSeal extends Pet {
                     message: `${this.name} gave ${attackingFriend.name} ${healthBonus} health`,
                     type: 'ability',
                     player: this.parent,
-                    tiger: tiger
+                    tiger: tiger,
+                    randomEvent: targetResp.random
                 });
             }
         }

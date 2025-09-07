@@ -14,11 +14,11 @@ export class Snake extends Pet {
     health = 6;
     friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = this.level * 5;
-        let target = getOpponent(gameApi, this.parent).getRandomPet(null, null, true);
-        if (!target) {
+        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true, false, this);
+        if (!targetResp.pet) {
             return;
         }
-        this.snipePet(target, power, true, tiger);
+        this.snipePet(targetResp.pet, power, targetResp.random, tiger);
         this.superFriendAheadAttacks(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

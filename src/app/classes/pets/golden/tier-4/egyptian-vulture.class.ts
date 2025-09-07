@@ -16,27 +16,27 @@ export class EgyptianVulture extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let friendBehind = this.petBehind();
-        while (friendBehind != null) {
-            if (friendBehind.faint == null) {
-                friendBehind = friendBehind.petBehind();
-                continue;
+        // Find all pets behind and filter for ones with faint abilities
+        let targetsBehindResp = this.parent.nearestPetsBehind(5, this);
+        let friendBehind = null;
+        for (let petBehind of targetsBehindResp.pets) {
+            if (petBehind.faint != null) {
+                friendBehind = petBehind;
+                break;
             }
-            break;
         }
         if (friendBehind == null) {
-            return;
-        }
-        if (friendBehind.faint == null) {
             return;
         }
         this.logService.createLog({
             message: `${this.name} activated ${friendBehind.name}'s ability.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsBehindResp.random
         })
         friendBehind.faint(gameApi, false);
+        this.abilityUses++;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

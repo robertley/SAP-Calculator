@@ -11,12 +11,17 @@ export class Horse extends Pet {
     health = 1;
     attack = 2;
     friendSummoned(gameApi, pet, tiger) {
-        pet.increaseAttack(this.level);
+        let targetResp = this.parent.getSpecificPet(this, pet)
+        if (targetResp.pet == null) {
+            return
+        }
+        targetResp.pet.increaseAttack(this.level);
         this.logService.createLog({
             message: `${this.name} gave ${pet.name} ${this.level} attack`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         super.superFriendSummoned(gameApi, pet, tiger);
     }

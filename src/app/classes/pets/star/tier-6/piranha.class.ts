@@ -12,9 +12,8 @@ export class Piranha extends Pet {
     attack = 10;
     health = 4;
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetPets = this.parent.petArray.filter(pet => {
-            return pet !== this && pet.alive
-        });
+        let targetPetsResp = this.parent.getRandomPets(5, null, null, null, this, false);
+        let targetPets = targetPetsResp.pets;
         let power = this.level * 3;
         for (let target of targetPets) {
             target.increaseAttack(power);
@@ -22,7 +21,8 @@ export class Piranha extends Pet {
                 message: `${this.name} gave ${target.name} ${power} attack.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetPetsResp.random
             })
         }
         this.superHurt(gameApi, pet, tiger);

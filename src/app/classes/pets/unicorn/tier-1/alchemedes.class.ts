@@ -12,16 +12,19 @@ export class Alchemedes extends Pet {
     attack = 3;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petAhead;
-        if (target == null) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
+            this.superStartOfBattle(gameApi, tiger);
             return;
         }
+        let target = targetsAheadResp.pets[0];
 
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${this.level} mana.`,
             type: "ability",
             player: this.parent,
-            randomEvent: false,
+            tiger: tiger,
+            randomEvent: targetsAheadResp.random,
         })
 
         target.increaseMana(this.level);

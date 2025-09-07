@@ -18,15 +18,22 @@ export class JerseyDevil extends Pet {
         mult = Math.min(mult, 5);
         let power = this.level * mult;
 
+        let targetResp = this.parent.getThis(pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power} attack and ${power} health`,
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health`,
             type: "ability",
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
         
-        pet.increaseAttack(power);
-        pet.increaseHealth(power);
+        target.increaseAttack(power);
+        target.increaseHealth(power);
 
         this.superFriendSummoned(gameApi, pet, tiger);
     }

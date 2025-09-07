@@ -20,8 +20,8 @@ export class TeamSpirit extends Pet {
             return;
         }
 
-        let targets = this.parent.petArray;
-        targets = targets.filter(pet => pet != this);
+        let targetResp = this.parent.getRandomPets(5, [this], false, false, this);
+        let targets = targetResp.pets;
 
         let power: Power = {
             attack: this.level,
@@ -32,7 +32,8 @@ export class TeamSpirit extends Pet {
                 message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             })
 
             target.increaseAttack(power.attack);

@@ -22,10 +22,11 @@ export class SecretaryBird extends Pet {
         if (this.abilityUses % 2 == 1) {
             return;
         }
-        let target = this.petAhead;
-        if (target == null) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
             return;
         }
+        let target = targetsAheadResp.pets[0];
         let powerAttack = this.level * 3;
         let powerHealth = this.level * 4;
         target.increaseAttack(powerAttack);
@@ -34,7 +35,8 @@ export class SecretaryBird extends Pet {
             message: `${this.name} gave ${target.name} ${powerAttack} attack and ${powerHealth} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsAheadResp.random
         })
         this.superFriendFaints(gameApi, pet, tiger);
     }

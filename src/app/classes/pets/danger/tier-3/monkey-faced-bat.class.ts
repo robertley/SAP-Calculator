@@ -23,19 +23,22 @@ export class MonkeyFacedBat extends Pet {
         }
 
         // Get 2 random friends (excluding self)
-        let targets = this.parent.getRandomPets(2, [this], true);
+        let targetsResp = this.parent.getRandomPets(2, [this], true, false, this);
         
-        for (let target of targets) {
-            let power = this.level; // 1/2/3 based on level
-            target.increaseAttack(power);
-            target.increaseHealth(power);
-            
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} attack and ${power} health`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                let power = this.level; // 1/2/3 based on level
+                target.increaseAttack(power);
+                target.increaseHealth(power);
+                
+                this.logService.createLog({
+                    message: `${this.name} gave ${target.name} ${power} attack and ${power} health`,
+                    type: 'ability',
+                    player: this.parent,
+                    randomEvent: targetsResp.random,
+                    tiger: tiger
+                });
+            }
         }
 
         this.abilityUses++;

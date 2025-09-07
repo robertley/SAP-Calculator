@@ -12,21 +12,18 @@ export class WhiteTiger extends Pet {
     attack = 4;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targets: Pet[] = [];
-        let target = this.petBehind();
-        while (target && targets.length < this.level) {
-            targets.push(target);
-            target = target.petBehind();
-        }
-        for (let target of targets) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this);
+        for (let target of targetsBehindResp.pets) {
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} +3 experience.`,
                 type: "ability",
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsBehindResp.random
             })
             target.increaseExp(3);
         }
+        this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

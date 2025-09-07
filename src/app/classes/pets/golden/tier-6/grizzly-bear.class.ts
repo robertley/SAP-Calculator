@@ -31,14 +31,11 @@ export class GrizzlyBear extends Pet {
         }
         this.abilityService.setCounterEvent({
             callback: () => {
-                let targets = shuffle(this.parent.opponent.petArray);
+                let targetResp = this.parent.opponent.getRandomPets(2, [], true, false, this);
+                let targets = targetResp.pets;
                 let power = this.level * 6;
-                for (let i = 0; i < 2; i++) {
-                    let target = targets[i];
-                    if (target == null) {
-                        break;
-                    }
-                    this.snipePet(target, power, true, tiger);
+                for (let target of targets) {
+                    this.snipePet(target, power, targetResp.random, tiger);
                 }        
             },
             priority: this.attack,

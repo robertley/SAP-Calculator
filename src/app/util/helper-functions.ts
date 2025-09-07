@@ -41,7 +41,7 @@ export function getRandomInt(min, max) {
 export function money_round(num) {
   return Math.ceil(num * 100) / 100;
 }
-
+//TO DO: This is useless, replace all this with parent.opponent
 export function getOpponent(gameApi: GameAPI, player: Player): Player {
   let opponent;
   if (gameApi.player == player) {

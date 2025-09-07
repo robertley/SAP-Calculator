@@ -32,17 +32,25 @@ export class PygmyHog extends Pet {
         // Set counter event to transform
         this.abilityService.setCounterEvent({
             callback: () => {
+                let targetResp = this.parent.getThis(this);
+                let target = targetResp.pet;
+                
+                if (!target) {
+                    return;
+                }
+                
                 let transformedStats = this.level * 5; // 5/5, 10/10, 15/15
-                let angryPygmyHog = new AngryPygmyHog(this.logService, this.abilityService, this.parent, transformedStats, transformedStats, this.mana, this.exp, new Garlic());
+                let angryPygmyHog = new AngryPygmyHog(this.logService, this.abilityService, this.parent, transformedStats, transformedStats, target.mana, target.exp, new Garlic());
                 
                 this.logService.createLog({
-                    message: `${this.name} transformed into ${angryPygmyHog.name} (${transformedStats}/${transformedStats}) with Garlic!`,
+                    message: `${this.name} transformed ${target.name} into ${angryPygmyHog.name} (${transformedStats}/${transformedStats}) with Garlic!`,
                     type: 'ability',
                     player: this.parent,
-                    tiger: tiger
+                    tiger: tiger,
+                    randomEvent: targetResp.random
                 });
                 
-                this.parent.transformPet(this, angryPygmyHog);
+                this.parent.transformPet(target, angryPygmyHog);
             },
             priority: this.attack,
             pet: this

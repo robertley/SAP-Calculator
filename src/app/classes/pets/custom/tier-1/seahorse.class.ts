@@ -14,15 +14,14 @@ export class Seahorse extends Pet {
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
-        let target = opponent.getLastPet();
-        if (target == null) {
+        let targetResp = opponent.getLastPet();
+        if (targetResp.pet == null) {
             return;
         }
-        this.parent.pushPet(target, this.level);
-        let s = this.level > 1 ? 's' : '';
+        this.parent.pushPet(targetResp.pet, this.level);
         this.logService.createLog(
             {
-                message: `${this.name} pushes ${target.name} forward ${this.level} space${s}.`,
+                message: `${this.name} pushes ${targetResp.pet.name} forward ${this.level} space(s).`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger

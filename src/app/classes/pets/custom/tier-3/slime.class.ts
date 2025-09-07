@@ -20,17 +20,20 @@ export class Slime extends Pet {
         for (let i = 0; i < summons; i++) {
             let slime = new SmallerSlime(this.logService, this.abilityService, this.parent, null, null, 0);
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Smaller Slime (${power}/${power}).`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            )
+            let summonResult = this.parent.summonPet(slime, this.savedPosition, false, this);
+            
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned Smaller Slime (${power}/${power}).`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    }
+                )
 
-            if (this.parent.summonPet(slime, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(slime);
             }
         }

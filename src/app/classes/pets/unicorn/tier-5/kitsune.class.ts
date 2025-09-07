@@ -12,31 +12,41 @@ export class Kitsune extends Pet {
     attack = 2;
     health = 7;
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        //TO DO: Check trigger order
         if (this.petAhead == null) {
+            return
+        }
+        //TO DO: Check trigger order
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        if (targetResp.pet == null) {
             return;
         }
+        let target = targetResp.pet;
+        let mana = target.mana;
 
-        let mana = pet.mana;
-
-        if (mana == 0) {
-            return;
-        }
-
-        pet.mana = 0;
-
-        let target = this.petAhead;
-        if (target == null) {
-            return;
-        }
+        target.mana = 0;
         this.logService.createLog({
-            message: `${this.name} took ${mana} mana from ${pet.name} and gave it to ${target.name} +${this.level * 2}.`,
+            message: `${this.name} took ${mana} mana from ${target.name}.`,
             type: "ability",
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
-        target.increaseMana(mana + this.level * 2);
+        let buffTargetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (buffTargetsAheadResp.pets.length == null) {
+            return;
+        }
+        let buffTarget = buffTargetsAheadResp.pets[0];
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} +${mana + this.level * 2} mana.`,
+            type: "ability",
+            player: this.parent,
+            tiger: tiger,
+            randomEvent: buffTargetsAheadResp.random
+        });
+
+        buffTarget.increaseMana(mana + this.level * 2);
+        this.superFriendFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

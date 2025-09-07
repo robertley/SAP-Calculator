@@ -6,49 +6,39 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
 export class AxehandleHound extends Pet {
+    //TO DO: needs update
     name = "Axehandle Hound";
     tier = 1;
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 1;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
+        if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
         let oppponetPets = this.parent.opponent.petArray;
-        let petMap: Map<string, Pet[]> = new Map();
-
+        let petSet: Set<string> = new Set();
+        let duplicate = false;
         for (let pet of oppponetPets) {
-            if (petMap.has(pet.name)) {
-                petMap.get(pet.name).push(pet);
+            if (petSet.has(pet.name)) {
+                duplicate = true;
+                break;
             } else {
-                petMap.set(pet.name, [pet]);
+                petSet.add(pet.name)
             }
         }
-
-        let targets = [];
-        for (let [key, value] of petMap) {
-            if (value.length > 1) {
-                targets.push(...value);
-            }
+        if (duplicate == false) {
+            return;
         }
-
+        let targetsResp = this.parent.opponent.getAll(false, this);
+        let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;
         }
-        
-        let target = targets[Math.floor(Math.random() * targets.length)];
-
-        if (target == null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} sniped ${target.name} for ${this.level * 10} damage`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger
-        })
-
-        this.snipePet(target, this.level * 10, true, tiger);
-
+        for (let target of targets) {
+            this.snipePet(target, this.level * 2, true, tiger);
+        }      
+        this.abilityUses++;
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,
@@ -61,5 +51,9 @@ export class AxehandleHound extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+    setAbilityUses(): void {
+        super.setAbilityUses();
+        this.maxAbilityUses = 1;
     }
 }

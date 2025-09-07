@@ -13,18 +13,22 @@ export class MalayTapir extends Pet {
     health = 2;
 
     adjacentAttacked(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (!this.alive) {
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        
+        if (!target) {
             return;
         }
 
         let healthGain = this.level * 1;
-        this.increaseHealth(healthGain);
+        target.increaseHealth(healthGain);
         
         this.logService.createLog({
-            message: `${this.name} gained ${healthGain} health`,
+            message: `${this.name} gave ${target.name} ${healthGain} health`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
         this.superAdjacentAttacked(gameApi, pet, tiger);

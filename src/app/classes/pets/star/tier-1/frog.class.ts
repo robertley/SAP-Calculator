@@ -15,25 +15,36 @@ export class Frog extends Pet {
         if (this.level > 1) {
             return;
         }
-        let petInFront = this.petAhead;
-        let petInBack = this.petBehind();
-        if (petInFront == null || petInBack == null) {
+        
+        // Get pets ahead and behind with Silly-aware targeting
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        
+        if (targetsAheadResp.pets.length === 0 || targetsBehindResp.pets.length === 0) {
             return;
         }
+        
+        let petInFront = targetsAheadResp.pets[0];
+        let petInBack = targetsBehindResp.pets[0];
+        
         let petInFrontAttack = petInFront.attack;
         let petInFrontHealth = petInFront.health;
         let petInBackAttack = petInBack.attack;
         let petInBackHealth = petInBack.health;
+        
         petInFront.attack = petInBackAttack;
         petInFront.health = petInBackHealth;
         petInBack.attack = petInFrontAttack;
         petInBack.health = petInFrontHealth;
+        
+        let isRandom = targetsAheadResp.random || targetsBehindResp.random;
         this.logService.createLog({
             message: `${this.name} swapped the attack and health of ${petInFront.name} and ${petInBack.name}.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
-        })
+            tiger: tiger,
+            randomEvent: isRandom
+        });
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

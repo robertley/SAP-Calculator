@@ -13,7 +13,13 @@ export class Mammoth extends Pet {
     health = 12;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 2;
-        for (let pet of this.parent.petArray.filter(pet => {return pet != this && pet.alive})) {
+        let targetResp = this.parent.getRandomPets(5, null, null, null, this);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
+
+        for (let pet of targets) {
             pet.increaseAttack(power);
             pet.increaseHealth(power);
             this.logService.createLog({
@@ -22,6 +28,7 @@ export class Mammoth extends Pet {
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
+                randomEvent: targetResp.random
             })
         }
         super.superFaint(gameApi, tiger);

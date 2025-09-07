@@ -18,17 +18,19 @@ export class Hydra extends Pet {
             let power = this.level * 5;
             let head = new Head(this.logService, this.abilityService, this.parent, power, power);
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Head (${head.attack}/${head.health}).`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            )
+            let summonResult = this.parent.summonPet(head, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned Head (${head.attack}/${head.health}).`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    }
+                )
 
-            if (this.parent.summonPet(head, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(head);
             }
         }

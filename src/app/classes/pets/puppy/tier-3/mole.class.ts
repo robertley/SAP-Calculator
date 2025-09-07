@@ -23,7 +23,7 @@ export class Mole extends Pet {
                 equipmentPets.push(pet);
             }
         }
-        // grab first three equipment pets
+        // TO DO: Sort By distance to remove perk from nearest friend
         equipmentPets = equipmentPets.slice(0, 2);
         if (equipmentPets.length < 2) {
             return;
@@ -37,16 +37,19 @@ export class Mole extends Pet {
             })
             pet.removePerk();
         }
-        this.logService.createLog({
-            message: `${this.name} summoned a ${power}/${power} Mole.`,
-            type: 'ability',
-            player: this.parent,
-            pteranodon: pteranodon,
-        })
-
         let mole = new Mole(this.logService, this.abilityService, this.parent, power, power);
         
-        if (this.parent.summonPet(mole, this.savedPosition)) {
+        let summonResult = this.parent.summonPet(mole, this.savedPosition, false, this);
+        if (summonResult.success) {
+            this.logService.createLog({
+                message: `${this.name} summoned a ${power}/${power} Mole.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                pteranodon: pteranodon,
+                randomEvent: summonResult.randomEvent
+            })
+
             this.abilityService.triggerFriendSummonedEvents(mole);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

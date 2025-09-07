@@ -16,13 +16,19 @@ export class Reindeer extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.givePetEquipment(new Melon());
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
+        target.givePetEquipment(new Melon());
         this.abilityUses++;
         this.logService.createLog({
-            message: `${this.name} gained Melon.`,
+            message: `${this.name} gave ${target.name} Melon.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superAfterAttack(gameApi, tiger);
     }

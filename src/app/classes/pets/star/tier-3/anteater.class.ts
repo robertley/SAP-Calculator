@@ -16,17 +16,19 @@ export class Anteater extends Pet {
         for (let i = 0; i < this.level; i++) {
             let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 0, 5);
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned 1/1 Ant level 3`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            )
+            let summonResult = this.parent.summonPet(ant, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned 1/1 Ant level 3`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    }
+                )
 
-            if (this.parent.summonPet(ant, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(ant);
             }
         }

@@ -18,7 +18,9 @@ export class GiantOtter extends Pet {
     beforeStartOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let statBonus = this.level * 3; // 3/6/9 based on level
         
-        let friends = this.parent.petArray.filter((p: Pet) => p.alive && p != this);
+        let targetResp = this.parent.getAll(false, this, true); 
+        let friends = targetResp.pets;
+        
         for (let friend of friends) {
             friend.increaseAttack(statBonus);
             friend.increaseHealth(statBonus);
@@ -38,7 +40,8 @@ export class GiantOtter extends Pet {
                 message: `${this.name} gave ${friend.name} +${statBonus} attack and +${statBonus} health`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
         }
         

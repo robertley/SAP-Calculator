@@ -24,9 +24,11 @@ export class Lynx extends Pet {
             power += pet.level;
         }
 
-        let targets = opponent.getRandomPets(this.level, null, null, true);
-        for (let target of targets) {
-            this.snipePet(target, power, true, tiger);
+        let targetsResp = opponent.getRandomPets(this.level, null, null, true, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                this.snipePet(target, power, targetsResp.random, tiger);
+            }
         }
 
         super.superStartOfBattle(gameApi, tiger);

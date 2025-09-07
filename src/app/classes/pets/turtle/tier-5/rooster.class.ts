@@ -18,14 +18,19 @@ export class Rooster extends Pet {
         let attack = Math.max(Math.floor(this.attack * .5), 1);
         for (let i = 0; i < this.level; i++) {
             let chick = new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel);
-            this.logService.createLog({
-                message: `${this.name} spawned Chick (${attack}).`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-            if (this.parent.summonPet( chick, this.savedPosition)) {
+            
+            let summonResult = this.parent.summonPet(chick, this.savedPosition, false, this);
+            
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${this.name} spawned Chick (${attack}).`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                })
+                
                 this.abilityService.triggerFriendSummonedEvents(chick);
             }
         }

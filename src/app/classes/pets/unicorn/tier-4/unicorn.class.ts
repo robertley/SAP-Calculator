@@ -17,22 +17,27 @@ export class Unicorn extends Pet {
         }
 
         let power = this.level * 2;
-
         this.logService.createLog({
             message: `${this.name} removed ailment from ${pet.name}.`,
             type: 'ability',
             player: this.parent
         });
+        pet.removePerk();
 
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            randomEvent: targetResp.random
         });
 
-        pet.removePerk();
-        pet.increaseAttack(power);
-        pet.increaseHealth(power);
+        target.increaseAttack(power);
+        target.increaseHealth(power);
 
         this.abilityUses++;
     }

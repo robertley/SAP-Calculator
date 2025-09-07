@@ -14,22 +14,26 @@ export class Cassowary extends Pet {
 
     friendGainedPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet.parent !== this.parent || pet.equipment?.name !== 'Strawberry') {
-            this.superFriendGainedPerk(gameApi, pet, tiger);
             return;
         }
 
         const buffAmount = this.level;
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
 
         this.logService.createLog({
-            message: `${this.name} gained +${buffAmount} permanent health and +${buffAmount} attack for this battle.`,
+            message: `${this.name} gave ${target.name} +${buffAmount} permanent health and +${buffAmount} attack for this battle.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         });
 
-        this.increaseHealth(buffAmount);
+        target.increaseHealth(buffAmount);
         
-        this.increaseAttack(buffAmount);
+        target.increaseAttack(buffAmount);
 
         this.superFriendGainedPerk(gameApi, pet, tiger);
     }

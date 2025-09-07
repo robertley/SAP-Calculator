@@ -13,20 +13,23 @@ export class Hippo extends Pet {
     attack = 4;
     health = 6;
     knockOut(gameAPI, pet: Pet, tiger) {
-        if (this.health < 1) {
-            return;
-        }
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         let power = 3 * this.level;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
+        target.increaseAttack(power);
+        target.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gained ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superKnockOut(gameAPI, pet, tiger);
     }

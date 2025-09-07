@@ -16,12 +16,12 @@ export class Lionfish extends Pet {
         let opponent = getOpponent(gameApi, this.parent);
         let snipeAmt = 1 + Math.floor(this.attack / 10);
         for (let i = 0; i < snipeAmt; i++) {
-            let target = opponent.getRandomPet(null, null, true);
-            if (target == null) {
+            let targetResp = opponent.getRandomPet([], false, true, false, this);
+            if (targetResp.pet == null) {
                 return;
             }
             let power = this.level * 3;
-            this.snipePet(target, power, true, tiger, pteranodon);
+            this.snipePet(targetResp.pet, power, targetResp.random, tiger, pteranodon);
         }
         this.superFaint(gameApi, tiger);
     }

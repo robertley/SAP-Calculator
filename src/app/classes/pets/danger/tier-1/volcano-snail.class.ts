@@ -14,18 +14,14 @@ export class VolcanoSnail extends Pet {
     health = 4;
 
     faint(gameApi?: GameAPI, tiger?: boolean): void {
-        let opponent = this.parent.opponent;
-        let targets = opponent.petArray.filter(pet => pet.alive && !pet.equipment);
+        let excludePet = [...this.parent.opponent.petArray].filter((pet) => pet.equipment != null);
+        let targetResp = this.parent.opponent.getRandomPets(3, excludePet, null, null, this );
         
-        if (targets.length === 0) {
+        if (targetResp.pets.length === 0) {
             return;
         }
 
-        let numTargets = this.level;
-        for (let i = 0; i < numTargets && targets.length > 0; i++) {
-            let randomIndex = Math.floor(Math.random() * targets.length);
-            let target = targets[randomIndex];
-            
+        for (let target of targetResp.pets) {
             let toasty = new Toasty();
             target.givePetEquipment(toasty);
             
@@ -33,11 +29,9 @@ export class VolcanoSnail extends Pet {
                 message: `${this.name} made ${target.name} Toasty`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
-            
-            // Remove from targets to avoid duplicates
-            targets.splice(randomIndex, 1);
         }
         
         this.superFaint(gameApi, tiger);

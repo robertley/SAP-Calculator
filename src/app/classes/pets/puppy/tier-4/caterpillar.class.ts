@@ -19,14 +19,20 @@ export class Caterpillar extends Pet {
         if (this.level < 3) {
             return;
         }
-        let butterfly = new Butterfly(this.logService, this.abilityService, this.parent, 1, 1, this.mana, this.exp, this.equipment);
-        this.parent.setPet(this.position, butterfly);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        let butterfly = new Butterfly(this.logService, this.abilityService, target.parent, target.health, target.attack, target.mana, target.exp, target.equipment);
+        this.parent.transformPet(target, butterfly);
         this.logService.createLog({
             message: `${this.name} transformed into a Butterfly.`,
             type: 'ability',
-            player: this.parent
+            player: this.parent,
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
-        this.parent.transformPet(this, butterfly);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

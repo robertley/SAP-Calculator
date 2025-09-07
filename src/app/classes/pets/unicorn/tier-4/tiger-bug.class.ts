@@ -25,20 +25,35 @@ export class TigerBug extends Pet {
 
         this.parent.pushPetToFront(this, true);
 
-        let target1 = this.parent.opponent.furthestUpPet;
-        let target2 = target1?.petBehind();
+        let target1Resp = this.parent.opponent.getFurthestUpPet(this);
+        let target1 = target1Resp.pet;
         let targets = [];
+        let isRandom = target1Resp.random;
 
         if (target1) {
             targets.push(target1);
         }
+
+        // Get second target
+        let target2: Pet = null;
+        if (isRandom) {
+            // If Silly, get new random target for second hit
+            let target2Resp = this.parent.opponent.getFurthestUpPet(this);
+            target2 = target2Resp.pet;
+        } else {
+            // Normal behavior - target behind first target
+            target2 = target1?.petBehind();
+        }
+
         if (target2) {
             targets.push(target2);
         }
 
         let power = this.level * 3;
         for (let target of targets) {
-            this.snipePet(target, power, false, tiger);
+            if (target != null) {
+                this.snipePet(target, power, isRandom, tiger);
+            }
         }
     }
     constructor(protected logService: LogService,

@@ -16,17 +16,19 @@ export class Deer extends Pet {
     afterFaint(gameApi, tiger, pteranodon?: boolean) {
         let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
         
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned Bus level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        let summonResult = this.parent.summonPet(bus, this.savedPosition, false, this);
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Bus level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(bus, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(bus);
         }
 

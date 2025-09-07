@@ -13,24 +13,18 @@ export class Turtle extends Pet {
     attack = 2;
     health = 5;
     faint(gameApi, tiger, pteranodon?: boolean) {
-        for (let i = 0; i < this.level; i++) {
-            let targetPet = this.petBehind();
-            while(targetPet) {
-                if (targetPet.equipment instanceof Melon) {
-                    targetPet = targetPet.petBehind();
-                    continue;
-                }
-                break;
-            }
-            if (targetPet == null) {
-                return;
-            }
+        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, "Melon");
+        if (targetsBehindResp.pets.length === 0) {
+            return;
+        }
+        for (let targetPet of targetsBehindResp.pets) {
             this.logService.createLog({
                 message: `${this.name} gave ${targetPet.name} Melon.`,
                 type: 'ability',
                 tiger: tiger,
                 player: this.parent,
-                pteranodon: pteranodon
+                pteranodon: pteranodon,
+                randomEvent: targetsBehindResp.random
             })
             targetPet.givePetEquipment(new Melon());
         }

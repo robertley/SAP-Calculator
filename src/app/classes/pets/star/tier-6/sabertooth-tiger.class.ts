@@ -36,14 +36,17 @@ export class SabertoothTiger extends Pet {
                     exp: 0
                 }, this.parent);
 
-                this.logService.createLog({
-                    message: `${this.name} summoned ${mammoth.name} (${mammothAttack}/${mammothHealth}).`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                let summonResult = this.parent.summonPet(mammoth, this.savedPosition, false, this);
+                if (summonResult.success) {
+                    this.logService.createLog({
+                        message: `${this.name} summoned ${mammoth.name} (${mammothAttack}/${mammothHealth}).`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    });
 
-                if (this.parent.summonPet(mammoth, this.savedPosition)) {
                     this.abilityService.triggerFriendSummonedEvents(mammoth);
                 }
             }

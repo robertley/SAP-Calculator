@@ -22,10 +22,10 @@ export class Unagi extends Equipment {
             }
             
             // Get random enemy target
-            let target = pet.parent.opponent.getRandomPet();
-            if (target) {
+            let targetResp = pet.parent.opponent.getRandomPet([], false, true, false, pet);
+            if (targetResp.pet) {
                 let damage = 2 * this.multiplier;
-                pet.snipePet(target, damage, true, false, false, true, false);
+                pet.snipePet(targetResp.pet, damage, true, false, false, true, false);
             }
         }
     }

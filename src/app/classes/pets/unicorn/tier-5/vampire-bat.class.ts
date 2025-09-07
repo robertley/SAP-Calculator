@@ -14,21 +14,33 @@ export class VampireBat extends Pet {
     maxAbilityUses: number = 2;
     abilityUses: number = 0;
     enemyGainedAilment(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        console.log('enemyGainedAilment');
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
         let power = this.level * 4;
-        let petHealthPreSnipe = pet.health;
-        let damage = this.snipePet(pet, power, false, tiger);
+        let snipeTargetResp = this.parent.getSpecificPet(this, pet);
+        let snipeTarget = snipeTargetResp.pet;
+        if (snipeTarget == null) {
+            return;
+        }
+        let petHealthPreSnipe = snipeTarget.health;
+        let damage = this.snipePet(snipeTarget, power, false, tiger);
         let healthGained = Math.min(damage, petHealthPreSnipe);
+
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gained ${healthGained} health.`,
+            message: `${this.name} gave ${target.name} ${healthGained} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
-        this.increaseHealth(healthGained);
+        target.increaseHealth(healthGained);
+
         this.abilityUses++;
         this.superEnemyGainedAilment(gameApi, pet, tiger);
     }

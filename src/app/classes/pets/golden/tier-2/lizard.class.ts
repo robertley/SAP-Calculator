@@ -20,16 +20,18 @@ export class Lizard extends Pet {
 
         let lizardTail = new LizardTail(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned Liazrd Tail Level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger
-            }
-        )
-
-        if (this.parent.summonPetInFront(this, lizardTail)) {
+        let summonResult = this.parent.summonPetInFront(this, lizardTail);
+        
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Liazrd Tail Level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: summonResult.randomEvent
+                }
+            )    
             this.abilityService.triggerFriendSummonedEvents(lizardTail);
         }
 

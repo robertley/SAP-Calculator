@@ -15,15 +15,15 @@ export class RolowayMonkey extends Pet {
     health = 5;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targets = this.getPetsAhead(2, false);
-        if (!targets || targets.length === 0) {
+        let targetResp = this.parent.nearestPetsAhead(2, this);
+        if (targetResp.pets.length === 0) {
             return;
         }
 
         // Pool of useful hurt pets to transform into
         const petNames = ["Camel", "Peacock", "Porcupine", "Lizard", "Guineafowl"];
 
-        for (let target of targets) {
+        for (let target of targetResp.pets) {
             let randomIndex = Math.floor(Math.random() * petNames.length);
             let selectedPetName = petNames[randomIndex];
             

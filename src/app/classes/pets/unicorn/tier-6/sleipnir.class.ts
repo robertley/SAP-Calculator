@@ -13,24 +13,23 @@ export class Sleipnir extends Pet {
     health = 5;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let manaAmt = Math.floor(this.attack / 2);
-        let target = this.parent.furthestUpPet;
-        let targets = [];
-        while(target) {
-            targets.push(target);
-            if (targets.length >= this.level) {
-                break;
-            }
-            target = target.petBehind();
+        let TargetsResp = this.parent.getFurthestUpPets(this.level, null, this);
+        let targets = TargetsResp.pets
+        if (targets.length == 0) {
+            return;
         }
         for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${manaAmt} mana.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            })
+            if (target != null) {
+                this.logService.createLog({
+                    message: `${this.name} gave ${target.name} ${manaAmt} mana.`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: TargetsResp.random
+                })
 
-            target.increaseMana(manaAmt);
+                target.increaseMana(manaAmt);
+            }
         }
 
         this.superStartOfBattle(gameApi, tiger);

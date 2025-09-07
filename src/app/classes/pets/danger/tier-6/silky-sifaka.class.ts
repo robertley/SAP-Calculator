@@ -24,13 +24,8 @@ export class SilkySifaka extends Pet {
             "Warthog", "Hydra", "Phoenix", "Bay Cat", "Walrus", "Ammonite"
         ];
         
-        let petsBehind = [];
-        let currentPet = this.petBehind();
-        while (currentPet && petsBehind.length < 2) {
-            petsBehind.push(currentPet);
-            currentPet = currentPet.petBehind();
-        }
-        
+        let targetsResp = this.parent.nearestPetsBehind(2, this);
+        let petsBehind = targetsResp.pets
         // Transform each friend behind
         for (let targetPet of petsBehind) {
             let randomPetName = sifakaPool[Math.floor(Math.random() * sifakaPool.length)];

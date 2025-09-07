@@ -17,22 +17,31 @@ export class Cyclops extends Pet {
             return;
         }
         let manaGain = this.level * 2;
+        let manaTargetResp = this.parent.getThis(this);
+        let manaTarget = manaTargetResp.pet
+        if (manaTarget == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${manaGain} mana.`,
+            message: `${this.name} gave ${manaTarget.name} ${manaGain} mana.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: manaTargetResp.random
         })
-        pet.increaseMana(manaGain);
+        manaTarget.increaseMana(manaGain);
 
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
+        let expTargetResp = this.parent.getThis(this);
+        let expTarget = expTargetResp.pet;
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} 1 exp.`,
+            message: `${this.name} gave ${expTarget.name} 1 exp.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: expTargetResp.random
         })
 
         pet.increaseExp(1);

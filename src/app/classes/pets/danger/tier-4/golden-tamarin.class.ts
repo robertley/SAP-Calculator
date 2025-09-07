@@ -15,6 +15,13 @@ export class GoldenTamarin extends Pet {
     health = 4;
 
     beforeStartOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        
+        if (!target) {
+            return;
+        }
+        
         // Golden Tamarin pool of tier 5+ Start of Battle pets
         const petNames = ["Crocodile", "Red Dragon",  "Salmon of Knowledge", "Sea Cucumber", "Werewolf", "Tarantula Hawk", "Snow Leopard"];
         let randomIndex = Math.floor(Math.random() * petNames.length);
@@ -22,17 +29,17 @@ export class GoldenTamarin extends Pet {
         
         let newPet = this.petService.createPet({
             name: selectedPetName,
-            health: this.health,
-            attack: this.attack,
-            mana: this.mana,
-            exp: this.exp,
-            equipment: this.equipment
+            health: target.health,
+            attack: target.attack,
+            mana: target.mana,
+            exp: target.exp,
+            equipment: target.equipment
         }, this.parent);
         
-        this.parent.transformPet(this, newPet);
+        this.parent.transformPet(target, newPet);
         
         this.logService.createLog({
-            message: `${this.name} transformed into a ${newPet.attack}/${newPet.health} ${newPet.name}.`,
+            message: `${this.name} transformed ${target.name} into a ${newPet.attack}/${newPet.health} ${newPet.name}.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,

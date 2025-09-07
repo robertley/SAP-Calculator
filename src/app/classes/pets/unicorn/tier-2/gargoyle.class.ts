@@ -15,17 +15,20 @@ export class Gargoyle extends Pet {
         let power = this.mana * this.level;
         power = power + 2 * this.level;
 
-        let target = this.petBehind();
-
-        if (target == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
+            this.superFaint(gameApi, tiger);
             return;
         }
+        let target = targetsBehindResp.pets[0];
         
         this.logService.createLog({
             message: `${this.name} spent ${this.mana} mana and gave ${power} health to ${target.name}.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon,
+            randomEvent: targetsBehindResp.random
         })
 
         target.increaseHealth(power);

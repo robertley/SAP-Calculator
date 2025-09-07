@@ -32,8 +32,11 @@ export class Wolverine extends Pet {
         }
         this.abilityService.setCounterEvent({
             callback: () => {
-                let targets = [...this.parent.opponent.petArray ];
-                targets = targets.filter(pet => pet.alive);
+                let targetResp = this.parent.opponent.getRandomPets(5, null, null, null, this);
+                let targets = targetResp.pets
+                if (targets.length == 0) {
+                    return;
+                }      
                 for (let targetPet of targets) {
                     let power = -3 * this.level;
                     targetPet.increaseHealth(power);
@@ -41,7 +44,8 @@ export class Wolverine extends Pet {
                         message: `${this.name} reduced ${targetPet.name} health by ${Math.abs(power)}`,
                         type: 'ability',
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        randomEvent: targetResp.random
                     });  
                 }         
             },

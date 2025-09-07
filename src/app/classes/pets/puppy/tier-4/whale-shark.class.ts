@@ -25,16 +25,29 @@ export class WhaleShark extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
     //overwrites gave pet equipment
+    //TO DO: need more accurate way to implement the ability
     givePetEquipment(equipment: Equipment): void {
         super.givePetEquipment(equipment);
         this.removePerk();
-        let power = this.level * 3;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} removed ${equipment.name} and gained ${power} attack and ${power} health.`,
+            message: `${this.name} removed ${equipment.name}`,
             type: 'ability',
             player: this.parent
+        });
+
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        let power = this.level * 3;
+        target.increaseAttack(power);
+        target.increaseHealth(power);
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+            type: 'ability',
+            player: this.parent,
+            randomEvent: targetResp.random
         });
     }
 }

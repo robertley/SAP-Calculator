@@ -32,18 +32,20 @@ export class Stork extends Pet {
             mana: 0
         }, this.parent);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${summonPet.name} Level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true,
-                pteranodon: pteranodon
-            }
-        )
+        let summonResult = this.parent.summonPet(summonPet, this.savedPosition, false, this);
+        
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${summonPet.name} Level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: true,
+                    pteranodon: pteranodon
+                }
+            )
 
-        if (this.parent.summonPet(summonPet, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

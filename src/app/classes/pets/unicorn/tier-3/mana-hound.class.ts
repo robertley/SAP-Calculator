@@ -22,17 +22,18 @@ export class ManaHound extends Pet {
 
         rollAmount = Math.min(rollAmount, 5);
 
-        let target = this.petAhead;
-
-        if (target == null) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
             return;
         }
+        let target = targetsAheadResp.pets[0];
         let manaAmt = rollAmount * this.level;
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${manaAmt} mana.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsAheadResp.random
         })
 
         target.increaseMana(manaAmt);

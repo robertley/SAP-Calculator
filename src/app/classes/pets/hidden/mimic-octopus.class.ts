@@ -13,11 +13,11 @@ export class MimicOctopus extends Pet {
     health = 6;
 
     afterAttack(gameApi?: GameAPI, tiger?: boolean): void {
-        let targets = this.parent.opponent.getLowestHealthPets(this.level);
+        let targetsResp = this.parent.opponent.getLowestHealthPets(this.level, undefined, this);
         
-        for (let target of targets) {
+        for (let target of targetsResp.pets) {
             let damage = 4;
-            this.snipePet(target, damage, true, tiger);
+            this.snipePet(target, damage, targetsResp.random, tiger);
         }
 
         this.superAfterAttack(gameApi, tiger);

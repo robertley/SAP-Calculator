@@ -12,7 +12,7 @@ export class Abomination extends Pet {
     pack: Pack = 'Unicorn';
     attack = 6;
     health = 5;
-    // TODO double check tiger interaction
+    // TODO double check tiger interaction, and update ability, and swallow pet selection
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let swallowedPets = [];
         let oneSwallowed = false;

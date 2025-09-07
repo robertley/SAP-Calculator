@@ -8,8 +8,6 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { PetService } from "../../../../services/pet.service";
 import { clone } from "lodash";
 
-// TODO
-// Research tiger behavior
 export class Whale extends Pet {
     name = "Whale";
     tier = 4;
@@ -17,10 +15,11 @@ export class Whale extends Pet {
     attack = 3;
     health = 7;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetPet = this.petAhead;
-        if (!targetPet) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
             return;
         }
+        let targetPet = targetsAheadResp.pets[0];
         let swallowPet = this.petService.createPet({
             name: targetPet.name,
             attack: targetPet.attack,
@@ -35,21 +34,28 @@ export class Whale extends Pet {
             message: `${this.name} swallowed ${targetPet.name}`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsAheadResp.random
         });
         this.superStartOfBattle(gameApi, tiger);
     }
+    //TO DO: Move this inside sob ability
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         while (this.swallowedPets.length > 0) {
             let pet = this.swallowedPets.shift();
-            this.logService.createLog({
-                message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-            if (this.parent.summonPet(pet, this.savedPosition)) {
+            
+            let summonResult = this.parent.summonPet(pet, this.savedPosition, false, this);
+            
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                })
+                
                 this.abilityService.triggerFriendSummonedEvents(pet);
             }       
         }

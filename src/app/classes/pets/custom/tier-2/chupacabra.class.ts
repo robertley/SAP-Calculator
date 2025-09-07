@@ -13,18 +13,18 @@ export class Chupacabra extends Pet {
     health = 2;
     knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         for (let i = 0; i < this.level * 3; i++) {
-            let target = this.parent.getRandomPet([this], true, false, true);
-            if (target == null) {
+            let targetResp = this.parent.getRandomPet([this], true, false, true, this);
+            if (targetResp.pet == null) {
                 return;
             }
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} 1 health.`,
+                message: `${this.name} gave ${targetResp.pet.name} 1 health.`,
                 type: "ability",
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: true
+                randomEvent: targetResp.random
             })
-            target.increaseHealth(1);
+            targetResp.pet.increaseHealth(1);
         }
         this.superKnockOut(gameApi, pet, tiger);
     }

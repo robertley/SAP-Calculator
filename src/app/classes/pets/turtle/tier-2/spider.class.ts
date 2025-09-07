@@ -34,18 +34,21 @@ export class Spider extends Pet {
             name: spawnPetName,
             mana: 0
         }, this.parent);
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
-                type: "ability",
-                player: this.parent,
-                randomEvent: true,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        
+        let summonResult = this.parent.summonPet(spawnPet, this.savedPosition, false, this);
+        
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
+                    type: "ability",
+                    player: this.parent,
+                    randomEvent: true, // Spider's normal ability is random (pet selection) + Silly can add more randomization
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )
 
-        if (this.parent.summonPet(spawnPet, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

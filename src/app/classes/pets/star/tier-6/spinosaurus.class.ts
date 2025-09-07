@@ -20,18 +20,18 @@ export class Spinosaurus extends Pet {
             attack: this.level * 2,
             health: this.level * 3
         }
-        let target = this.parent.getRandomPet([this], true, false, true);
-        if (target == null) {
+        let targetResp = this.parent.getRandomPet([this], true, false, true, this);
+        if (targetResp.pet == null) {
             return;
         }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
+        targetResp.pet.increaseAttack(power.attack);
+        targetResp.pet.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
+            message: `${this.name} gave ${targetResp.pet.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            randomEvent: true
+            randomEvent: targetResp.random
         })
         
         super.superFriendFaints(gameApi, pet, tiger);

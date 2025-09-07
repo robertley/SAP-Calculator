@@ -12,19 +12,23 @@ export class Pug extends Pet {
     attack = 5;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.petAhead == null) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
+            this.superStartOfBattle(gameApi, tiger);
             return;
         }
+        let target = targetsAheadResp.pets[0];
         let power = this.level;
         this.logService.createLog(
             {
-                message: `${this.name} gave ${this.petAhead.name} ${power} exp.`,
+                message: `${this.name} gave ${target.name} ${power} exp.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsAheadResp.random
             }
         )
-        this.petAhead.increaseExp(power);
+        target.increaseExp(power);
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

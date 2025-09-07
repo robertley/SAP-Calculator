@@ -15,10 +15,12 @@ export class BettaFish extends Pet {
     attack = 2;
     health = 3;
     faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let target = this.petBehind();
-        if (target == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
+            this.superFaint(gameApi, tiger);
             return;
         }
+        let target = targetsBehindResp.pets[0];
         let power: Power = {
             health: this.level * 2,
             attack: this.level * 4
@@ -31,6 +33,7 @@ export class BettaFish extends Pet {
             player: this.parent,
             tiger: tiger,
             pteranodon: pteranodon,
+            randomEvent: targetsBehindResp.random
         })
         
         this.superFaint(gameApi, tiger);

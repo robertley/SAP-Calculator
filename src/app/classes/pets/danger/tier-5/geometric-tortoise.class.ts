@@ -24,9 +24,9 @@ export class GeometricTortoise extends Pet {
         }
         let reflectDamage = Math.floor(damageTaken * reflectPercentage);
         if (reflectDamage > 0) {
-            let target = this.parent.opponent.getRandomPet([], false, true);
-            if (target) {
-                this.snipePet(target, reflectDamage, true, tiger);
+            let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
+            if (targetResp.pet) {
+                this.snipePet(targetResp.pet, reflectDamage, targetResp.random, tiger);
             }
         }
 

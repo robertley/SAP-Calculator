@@ -12,18 +12,25 @@ export class AtlanticPuffin extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let strawPets = this.parent.getPetsWithEquipment('Strawberry').filter(pet => pet !== this);
-        let opponent = getOpponent(gameApi, this.parent);
-        for (let i = 0; i < this.level; i++) {
-            for (let j = 0; j < strawPets.length; j++) {
-                let target = opponent.getRandomPet(null, null, true);
-                if (target == null) {
-                    break;
-                }
-                this.snipePet(target, 2, true, tiger);
-            }
+    friendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        if (pet.equipment?.name != 'Strawberry') {
+            return
         }
+        this.logService.createLog({
+            message: `${this.name} removed ${pet.name}'s ${pet.equipment.name}.`,
+            type: "ability",
+            player: this.parent,
+            tiger: tiger,
+        })
+        pet.removePerk()
+        let power = 2 * this.level;
+        let targetResp = this.parent.opponent.getLastPet()
+        let target = targetResp.pet
+        if (target == null) {
+            return;
+        } 
+        this.snipePet(target, power, targetResp.random, tiger)
+
         this.superStartOfBattle(gameApi, tiger);
     }
     constructor(protected logService: LogService,

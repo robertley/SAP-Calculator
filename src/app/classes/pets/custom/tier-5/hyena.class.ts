@@ -38,8 +38,8 @@ export class Hyena extends Pet {
     }
 
     level1Ability(gameApi: GameAPI, tiger?: boolean): void {
-        let allPets = [...gameApi.player.petArray, ...gameApi.opponet.petArray];
-        for (let pet of allPets) {
+        let allPetsResp = this.parent.getAll(true, this);
+        for (let pet of allPetsResp.pets) {
             let health = pet.health;
             let attack = pet.attack;
             pet.health = attack;

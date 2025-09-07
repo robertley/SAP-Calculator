@@ -2,7 +2,6 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Melon } from "../../../equipment/turtle/melon.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
@@ -14,16 +13,20 @@ export class Minotaur extends Pet {
     health = 3;
     friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let power = this.level * pet.level;
-
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gained ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
-
-        this.increaseAttack(power);
-        this.increaseHealth(power);
+        target.increaseAttack(power);
+        target.increaseHealth(power);
 
         this.superFriendAheadAttacks(gameApi, pet, tiger);
 

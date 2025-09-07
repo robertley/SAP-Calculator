@@ -14,30 +14,12 @@ export class Visitor extends Pet {
     attack = 7;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        const range = this.level;
-        const visitorPosition = this.savedPosition;
-        const targets: Pet[] = [];
-
-        // Check friend pets
-        for (const pet of this.parent.petArray) {
-            if (pet.alive) {
-                const distance = Math.abs(pet.position - visitorPosition);
-                if (distance > 0 && distance <= range) {
-                    targets.push(pet);
-                }
-            }
+        let targetResp = this.parent.getPetsWithinXSpaces(this, this.level);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
+            return;
         }
-
-        // Check opponent pets
-        for (const pet of this.parent.opponent.petArray) {
-            if (pet.alive) {
-                const distance = visitorPosition + pet.position + 1;
-                if (distance <= range) {
-                    targets.push(pet);
-                }
-            }
-        }
-
+        //TO DO: Add Icky
         for (let target of targets) {
             target.givePetEquipment(new Exposed());
             this.logService.createLog({

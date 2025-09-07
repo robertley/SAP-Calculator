@@ -17,18 +17,34 @@ export class FairyArmadillo extends Pet {
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.alive) {
             const healthGain = this.level * 2;
-            this.increaseHealth(healthGain);
-
+            const targetResp = this.parent.getThis(this);
+            const target = targetResp.pet
+            if (target == null) {
+                return
+            }
+            target.increaseHealth(healthGain);
             this.logService.createLog({
-                message: `${this.name} gains ${healthGain} permanent health and transforms into a protected ball!`,
+                message: `${this.name} gave ${target.name} ${healthGain} permanent health and transforms into a protected ball!`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
 
-            const fairyBall = new FairyBall(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, this.equipment);
-            
-            this.parent.transformPet(this, fairyBall);
+            const transformTargetResp = this.parent.getThis(this);
+            const transformTarget = transformTargetResp.pet
+            if (transformTarget == null) {
+                return
+            }
+            const fairyBall = new FairyBall(this.logService, this.abilityService, transformTarget.parent, transformTarget.health, transformTarget.attack, transformTarget.mana, transformTarget.exp, transformTarget.equipment);
+            this.logService.createLog({
+                message: `${this.name} transformed ${transformTarget.name} into a protected ball!`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: transformTargetResp.random
+            });
+            transformTarget.parent.transformPet(transformTarget, fairyBall);
         }
         this.superHurt(gameApi, pet, tiger);
     }

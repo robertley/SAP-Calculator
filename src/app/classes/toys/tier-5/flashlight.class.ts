@@ -9,6 +9,9 @@ export class Flashlight extends Toy {
     onBreak(gameApi?: GameAPI, puma?: boolean) {
         let power = this.level * 6;
         let target = this.parent.furthestUpPet;
+        if (target == null) {
+            return;
+        }
         target.increaseAttack(power);
         target.increaseHealth(power);
         this.logService.createLog({

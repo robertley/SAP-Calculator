@@ -494,6 +494,36 @@
             "name": "Zombie Fly",
             "tier": "1",
             "id": "31"
+        },
+        {
+            "name": "Pengobble",
+            "tier": "1",
+            "id": "743"
+        },
+        {
+            "name": "Gibbon",
+            "tier": "1",
+            "id": "748"
+        },
+        {
+            "name": "Termite",
+            "tier": "1",
+            "id": "749"
+        },
+        {
+            "name": "Fairy Ball",
+            "tier": "1",
+            "id": "751"
+        },
+        {
+            "name": "Nessie Q",
+            "tier": "1",
+            "id": "752"
+        },
+        {
+            "name": "Summoned Cockroach",
+            "tier": "1",
+            "id": "753"
         }
     ],
     "tier2": [
@@ -1575,6 +1605,21 @@
             "name": "Tasmanian Devil",
             "tier": "4",
             "id": "736"
+        },
+        {
+            "name": "Fairy Armadillo",
+            "tier": "4",
+            "id": "745"
+        },
+        {
+            "name": "Siamese",
+            "tier": "4",
+            "id": "746"
+        },
+        {
+            "name": "Sparrow",
+            "tier": "4",
+            "id": "747"
         }
     ],
     "tier5": [
@@ -1681,7 +1726,7 @@
         {
             "name": "Geometric Tortoise",
             "tier": "5",
-            "id": "722"
+            "id": "742"
         },
         {
             "name": "Giant Pangasius",
@@ -1701,7 +1746,7 @@
         {
             "name": "Marine Iguana",
             "tier": "5",
-            "id": "741"
+            "id": "755"
         },
         {
             "name": "Hyena",
@@ -1947,6 +1992,11 @@
             "name": "Zebra",
             "tier": "5",
             "id": "155"
+        },
+        {
+            "name": "Amalgamation",
+            "tier": "5",
+            "id": "750"
         }
     ],
     "tier6": [
@@ -2304,6 +2354,11 @@
             "name": "Sabertooth Tiger",
             "tier": "6",
             "id": "729"
+        },
+        {
+            "name": "Farmer Dog",
+            "tier": "6",
+            "id": "754"
         }
     ]
 }

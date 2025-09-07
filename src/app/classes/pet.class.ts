@@ -42,6 +42,7 @@ export abstract class Pet {
     health: number;
     attack: number;
     mana: number = 0;
+    disabled: boolean = false;
     maxAbilityUses: number = null;
     abilityUses: number = 0;
     startOfBattleTriggered: boolean = false;
@@ -175,7 +176,7 @@ export abstract class Pet {
         this.parent = parent;
     }
 
-    initPet(exp, health, attack, mana, equipment) {
+    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment) {
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
@@ -231,7 +232,7 @@ export abstract class Pet {
 
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
-        if (faintCallback != null) {
+        if (faintCallback != null || this.afterFaint != null) {
             this.faintPet = true;
         }
         this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
@@ -258,14 +259,14 @@ export abstract class Pet {
                     priority: this.attack,
                     player: this.parent,
                     callback: () => {
-                        let target = getOpponent(gameApi, this.parent).getRandomPet([], false, true);
-                        if (target == null) {
+                        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true, false, this);
+                        if (targetResp.pet == null) {
                             return;
                         }
                         if (this.mana == 0) {
                             return;
                         }
-                        this.snipePet(target, this.mana, true, false, false, false, true);
+                        this.snipePet(targetResp.pet, this.mana, true, false, false, false, true);
                     }
                 }
 
@@ -534,6 +535,9 @@ export abstract class Pet {
 
     abilityValidCheck() {
         if (this.savedPosition == null) {
+            return false;
+        }
+        if (this.disabled) {
             return false;
         }
         if (this.equipment instanceof Dazed) {
@@ -1366,7 +1370,8 @@ export abstract class Pet {
 
         const manticoreDefenseAilments = [
             'Cold',
-            'Weak'
+            'Weak',
+            'Spooked'
         ];
 
         const manticoreAttackAilments = [
@@ -1447,20 +1452,6 @@ export abstract class Pet {
             min = defenseEquipment.minimumDamage;
         }
 
-        let nurikabe = 0;
-        if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
-            nurikabe = pet.level * 4;
-            defenseAmt += nurikabe;
-            pet.abilityUses++;
-        }
-
-        let fanMusselReduction = 0;
-        if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
-            fanMusselReduction = pet.level * 1;
-            defenseAmt += fanMusselReduction;
-            pet.abilityUses++;
-        }
-
         let mapleSyrupReduction = 0;
         if (pet.equipment instanceof MapleSyrup && pet.equipment.uses > 0 && !snipe) {
             attackAmt = Math.floor(attackAmt * Math.pow(0.5, defenseMultiplier));
@@ -1499,7 +1490,7 @@ export abstract class Pet {
         }
         let damage: number;
         if (attackAmt <= min) {
-            damage = Math.max(attackAmt, 0);
+            damage = Math.max(attackAmt - defenseAmt, 0);
         } else {
             damage = Math.max(min, attackAmt - defenseAmt);
         }
@@ -1507,12 +1498,27 @@ export abstract class Pet {
         if (defenseEquipment instanceof Pepper) {
             damage = Math.min(damage, pet.health - 1);
         }
-
+        //TO DO: Might need to move all pet's less damage ability down here, or into Deal Damage
         let fairyBallReduction = 0;
-        if (pet.name === 'Fairy Ball') {
+        if (pet.name === 'Fairy Ball' && damage > 0) {
             fairyBallReduction = pet.level * 2;
-            damage = Math.max(0, damage - fairyBallReduction);
+            damage = Math.max(1, damage - fairyBallReduction);
         }
+
+        let nurikabe = 0;
+        if (pet.name == 'Nurikabe' && pet.abilityUses < 3 && damage > 0) {
+            nurikabe = pet.level * 4;
+            damage = Math.max(1, damage - fairyBallReduction);
+            pet.abilityUses++;
+        }
+
+        let fanMusselReduction = 0;
+        if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses && damage > 0) {
+            fanMusselReduction = pet.level * 1;
+            damage = Math.max(1, damage - fairyBallReduction);
+            pet.abilityUses++;
+        }
+
         
         return {
             defenseEquipment: defenseEquipment,
@@ -1535,6 +1541,7 @@ export abstract class Pet {
         this.exp = this.originalExp;
         this.done = false;
         this.seenDead = false;
+        this.disabled = false;
         try {
             this.equipment?.reset();
         } catch (error) {
@@ -1585,9 +1592,10 @@ export abstract class Pet {
         this.summoned = this.originalSummoned;
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
-        if (faintCallback != null) {
+        if (faintCallback != null || this.afterFaint != null) {
             this.faintPet = true;
         }
+
         this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
             if (faintCallback != null) {
                 if (!this.abilityValidCheck()) {
@@ -1612,14 +1620,15 @@ export abstract class Pet {
                     priority: this.attack,
                     player: this.parent,
                     callback: () => {
-                        let target = getOpponent(gameApi, this.parent).getRandomPet([], false, true);
+                        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true);
+                        let target = targetResp.pet;
                         if (target == null) {
                             return;
                         }
                         if (this.mana == 0) {
                             return;
                         }
-                        this.snipePet(target, this.mana, true, false, false, false, true);
+                        this.snipePet(target, this.mana, targetResp.random, false, false, false, true);
                     }
                 }
 
@@ -1693,23 +1702,6 @@ export abstract class Pet {
         attackPet.abilityService.triggerEnemyJumpedEvents(target.parent, attackPet);
     }
 
-    // Helper method to get ability target (handles Silly ailment)
-    getAbilityTarget(originalTarget: Pet): Pet {
-        if (this.equipment instanceof Silly) {
-            // Get random enemy when Silly
-            let randomTarget = this.parent.opponent.getRandomPet([], false, true);
-            if (randomTarget) {
-                this.logService.createLog({
-                    message: `${this.name}'s ability target was randomized due to Silly`,
-                    type: 'ability',
-                    player: this.parent
-                });
-                return randomTarget;
-            }
-        }
-        return originalTarget;
-    }
-
     get alive(): boolean {
         return this.health > 0;
     }
@@ -1750,7 +1742,7 @@ export abstract class Pet {
             return;
         }
 
-        if (this.equipment.name == 'Exposed' || this.equipment.name == 'Cold') {
+        if (this.equipment.equipmentClass == 'ailment-defense' || this.equipment.name == 'Exposed') {
             // skip the next if
         }
         else if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
@@ -1772,10 +1764,14 @@ export abstract class Pet {
         if (this.equipment.uses == null) {
             return;
         }
+        
         if (this.equipment.equipmentClass != 'attack'
             && this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
             && this.equipment.equipmentClass != 'snipe'
+            && this.equipment.equipmentClass != 'ailment-attack'
+            && this.equipment.equipmentClass != 'ailment-defense'
+            && this.equipment.name != 'Exposed'
         ) {
             return;
         }
@@ -1793,25 +1789,34 @@ export abstract class Pet {
         if (this.name == 'Behemoth') {
             max = 100;
         }
+        if (!this.alive) {
+            return;
+        }
         this.attack = Math.min(Math.max(this.attack + amt, 1), max);
     }
 
-    increaseHealth(amt) {
+    increaseHealth(amt: number) {
         let max = 50;
         if (this.name == 'Behemoth' || this.name == 'Giant Tortoise') {
             max = 100;
         }
-        
-        this.health = Math.min(Math.max(this.health  + amt, 1), max);
+        if (!this.alive) {
+            return;
+        }
+        this.health = Math.min(Math.max(this.health + amt, 1), max);
+
         this.abilityService.triggerFriendGainsHealthEvents(this.parent, this);
         this.abilityService.executeFriendGainsHealthEvents();
     }
 
     dealDamage(pet: Pet, damage: number) {
+        if (!pet.alive) {
+            return;
+        }
         pet.health -= damage;
         
         // Track who killed this pet
-        if (pet.health <= 0 && pet.alive) {
+        if (pet.health <= 0) {
             pet.killedBy = this;
         }
         // hurt ability
@@ -1885,6 +1890,9 @@ export abstract class Pet {
             console.warn(`givePetEquipment called with null equipment for pet: ${this.name}`);
             return;
         }
+        if (!this.alive) {
+            return;
+        }
         
         // Handle ailments with Ambrosia or White Okra blocking
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense' || equipment.equipmentClass == 'ailment-other') {
@@ -1936,17 +1944,17 @@ export abstract class Pet {
             
             this.abilityService.triggerGainedPerkEvents(this);
             this.abilityService.triggerFriendGainedPerkEvents(this);
+            if (this.eatsFood) {
+                this.abilityService.setEatsFoodEvent({
+                    callback: this.eatsFood.bind(this),
+                    priority: this.attack,
+                    callbackPet: this,
+                    pet: this
+                })
+            }
+            this.abilityService.triggerFriendAteFoodEvents(this);    
         }
         
-        if (this.eatsFood) {
-            this.abilityService.setEatsFoodEvent({
-                callback: this.eatsFood.bind(this),
-                priority: this.attack,
-                callbackPet: this,
-                pet: this
-            })
-        }
-        this.abilityService.triggerFriendAteFoodEvents(this);
 
     }
 
@@ -1985,7 +1993,7 @@ export abstract class Pet {
             return;
         }
         
-        let multiplier = 1;
+        let multiplier = this.equipment?.multiplier || 1;
         let messages: string[] = [];
         
         // Panther multiplies equipment effects based on level
@@ -2089,12 +2097,17 @@ export abstract class Pet {
     }
 
 
-    getPetsAhead(amt: number, includeOpponent=false): Pet[] {
+    getPetsAhead(amt: number, includeOpponent=false, excludeEquipment?: string): Pet[] {
         let targetsAhead = [];
         let petAhead = this.petAhead;
         while (petAhead) {
-            if (targetsAhead.length >= this.level) {
+            if (targetsAhead.length >= amt) {
                 break;
+            }
+            // Skip pets that already have the excluded equipment
+            if (excludeEquipment && petAhead.equipment?.name === excludeEquipment) {
+                petAhead = petAhead.petAhead;
+                continue;
             }
             targetsAhead.push(petAhead);
             petAhead = petAhead.petAhead;
@@ -2108,6 +2121,11 @@ export abstract class Pet {
                 if (targetsAhead.length >= amt) {
                     break;
                 }
+                // Skip pets that already have the excluded equipment
+                if (excludeEquipment && petAhead.equipment?.name === excludeEquipment) {
+                    petAhead = petAhead.petBehind();
+                    continue;
+                }
                 targetsAhead.push(petAhead);
                 petAhead = petAhead.petBehind();
             }
@@ -2116,9 +2134,13 @@ export abstract class Pet {
         return targetsAhead;
     }
 
-    getPetsBehind(amt: number): Pet[] {
+    getPetsBehind(amt: number, excludeEquipment?: string): Pet[] {
         let targetsBehind = [];
         let petBehind = this.petBehind();
+        // Skip pets that already have the excluded equipment
+        if (excludeEquipment && petBehind.equipment?.name === excludeEquipment) {
+            petBehind = petBehind.petBehind();
+        }
         while (petBehind) {
             if (targetsBehind.length >= amt) {
                 break;

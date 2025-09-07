@@ -12,24 +12,13 @@ export class Hawk extends Pet {
     attack = 4;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let opponent = this.parent.opponent;
-        let position = this.position;
-        let target = opponent.getPetAtPosition(this.position);
-
-        // find closes pet, behind or forward
-        let distance = 1;
-        while (target == null && distance < 5) {
-            target = opponent.getPetAtPosition(position + distance);
-            if (target == null) {
-                target = opponent.getPetAtPosition(position - distance);
-            }
-            distance++;
+        let targetResp = this.parent.getOppositeEnemyPet(this);
+        let target = targetResp.pet;
+        
+        if (target) {
+            let power = this.level * 7;
+            this.snipePet(target, power, targetResp.random, tiger);
         }
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 7;
-        this.snipePet(target, power, false, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

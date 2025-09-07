@@ -12,22 +12,22 @@ export class Dodo extends Pet {
     health = 2;
     attack = 4;
     startOfBattle(gameApi, tiger) {
-        let boostPet = this.petAhead;
-        if (boostPet == null) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
             return;
         }
+        let boostPet = targetsAheadResp.pets[0];
         let boostAmt = Math.floor(this.attack * (this.level * .5));
         boostPet.increaseAttack(boostAmt);
         this.logService.createLog({
             message: `${this.name} gave ${boostPet.name} ${boostAmt} attack.`,
             player: this.parent,
             type: 'ability',
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsAheadResp.random
         })
         
         super.superStartOfBattle(gameApi, tiger);
-
-        return true;
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

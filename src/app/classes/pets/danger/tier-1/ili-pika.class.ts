@@ -13,24 +13,33 @@ export class IliPika extends Pet {
     health = 2;
 
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        
+        if (!target) {
+            return;
+        }
+        
         let power = this.level * 1;
         
         // Determine highest stat
-        if (pet.attack > pet.health) {
-            pet.increaseAttack(power);
+        if (target.attack > target.health) {
+            target.increaseAttack(power);
             this.logService.createLog({
-                message: `${this.name} give ${power} attack to ${pet.name}.`,
+                message: `${this.name} give ${power} attack to ${target.name}.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
         } else {
-            pet.increaseHealth(power);
+            target.increaseHealth(power);
             this.logService.createLog({
-                message: `${this.name} give ${power} health to ${pet.name}.`,
+                message: `${this.name} give ${power} health to ${target.name}.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
         }
         

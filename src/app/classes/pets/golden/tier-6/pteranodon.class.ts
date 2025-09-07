@@ -34,15 +34,15 @@ export class Pteranodon extends Pet {
                 mana: 0
             }, this.parent
         );
-        this.logService.createLog({
-            message: `${this.name} summoned a 1/1 ${pet.name} behind it.`,
-            type: 'ability',
-            player: this.parent,
-            randomEvent: false,
-            tiger: tiger
-        })
-        
-        if (this.parent.summonPetBehind(this, summonPet)) {
+        let result = this.parent.summonPetBehind(this, summonPet);
+        if (result.success) {
+            this.logService.createLog({
+                message: `${this.name} summoned a 1/1 ${pet.name} behind it.`,
+                type: 'ability',
+                player: this.parent,
+                randomEvent: result.randomEvent,
+                tiger: tiger,
+            })
             this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
         

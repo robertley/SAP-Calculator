@@ -12,21 +12,27 @@ export class Kakapo extends Pet {
     attack = 2;
     health = 3;
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
- 
-        
         if (this.abilityUses >= this.maxAbilityUses) {
+            return;
+        }
+        
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        
+        if (!target) {
             return;
         }
         
         let expGain = 3;
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} +${expGain} experience.`,
+            message: `${this.name} gave ${target.name} +${expGain} experience.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
-        pet.increaseExp(expGain);
+        target.increaseExp(expGain);
              
         this.abilityUses++;
         this.superFriendTransformed(gameApi, pet, tiger);

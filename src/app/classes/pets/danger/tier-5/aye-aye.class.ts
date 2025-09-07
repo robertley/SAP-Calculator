@@ -35,26 +35,32 @@ export class AyeAye extends Pet {
                     let lemurHealth = 3; // Base Lemur stats
                     let lemur = new Lemur(this.logService, this.abilityService, this.parent, lemurHealth, lemurAttack, 0, 0);
                     
-                    if (this.parent.summonPet(lemur, this.savedPosition)) {
+                    let summonResult = this.parent.summonPet(lemur, this.savedPosition, false, this);
+                    if (summonResult.success) {
                         this.logService.createLog({
                             message: `${this.name} summoned a ${lemurAttack}/${lemurHealth} ${lemur.name}.`,
                             type: 'ability',
                             player: this.parent,
-                            tiger: tiger
+                            tiger: tiger,
+                            randomEvent: summonResult.randomEvent
                         });
+                        
+                        this.abilityService.triggerFriendSummonedEvents(lemur);
                     }
                 }
                 
                 // Give all friends +attack and +health
                 let statGain = this.level * 3; // 3/6/9 based on level
-                for (let friend of this.parent.petArray.filter(pet => pet != this && pet.alive)) {
+                let friendsResp = this.parent.getAll(false, this, true); // excludeSelf = true
+                for (let friend of friendsResp.pets) {
                     friend.increaseAttack(statGain);
                     friend.increaseHealth(statGain);
                     this.logService.createLog({
                         message: `${this.name} gave ${friend.name} +${statGain} attack and +${statGain} health.`,
                         type: 'ability',
                         player: this.parent,
-                        tiger: tiger
+                        tiger: tiger,
+                        randomEvent: friendsResp.random
                     });
                 }
             },

@@ -21,8 +21,8 @@ export class TarantulaHawk extends Pet {
         }
 
         // Get all alive enemies
-        let opponent = this.parent == gameApi.player ? gameApi.opponet : gameApi.player;
-        let enemies = opponent.petArray.filter(enemy => enemy.alive);
+        let enemiesResp = this.parent.opponent.getAll(false, this);
+        let enemies = enemiesResp.pets;
         
         if (enemies.length == 0) {
             return;

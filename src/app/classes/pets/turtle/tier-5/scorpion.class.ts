@@ -15,12 +15,18 @@ export class Scorpion extends Pet {
     health = 1;
     summoned(gameApi: GameAPI, tiger?: boolean): void {
         let equipment = new Peanut();
-        this.givePetEquipment(equipment);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        target.givePetEquipment(equipment);
         this.logService.createLog({
-            message: `${this.name} gained the Peanut perk.`,
+            message: `${this.name} gave ${target.name} the Peanut perk.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superSummoned(gameApi, tiger);
     }

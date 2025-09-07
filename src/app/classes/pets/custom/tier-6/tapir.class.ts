@@ -17,30 +17,32 @@ export class Tapir extends Pet {
         let excludePets = this.parent.petArray.filter(pet => {
             return pet.name == "Tapir";
         });
-        let target = this.parent.getRandomPet(excludePets, true);
-        if (target == null) {
+        let targetResp = this.parent.getRandomPet(excludePets, true, false, false, this);
+        if (targetResp.pet == null) {
             super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
-
-        target = clone(target);
+        //TO DO, check if clone operates correctly
+        let target = clone(targetResp.pet);
 
          
         target.exp = this.minExpForLevel;
         let spawnPet = this.petService.createDefaultVersionOfPet(target);
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned a ${spawnPet.name} level ${spawnPet.level}.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon,
-                randomEvent: true
-            }
-        )
+        
+        let summonResult = this.parent.summonPet(spawnPet, this.savedPosition, false, this);
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned a ${spawnPet.name} level ${spawnPet.level}.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: true
+                }
+            )
 
-        if (this.parent.summonPet(spawnPet, this.savedPosition)) {
-            this.abilityService.triggerFriendSummonedEvents(target);
+            this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);
     }

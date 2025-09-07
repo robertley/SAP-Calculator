@@ -20,18 +20,19 @@ export class Badger extends Pet {
         }
 
         let attackAmt = Math.floor(this.attack * (this.level * .5));
-        if (this.petBehind()) {
-            this.snipePet(this.petBehind(), attackAmt, false, tiger, pteranodon);
+        
+        // Target behind (friendly only)
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length > 0) {
+            let target = targetsBehindResp.pets[0];
+            this.snipePet(target, attackAmt, targetsBehindResp.random, tiger, pteranodon);
         }
-        let snipeAhead;
-        if (this.petAhead) {
-            snipeAhead = this.petAhead;
-        } else {
-            snipeAhead = opponent.furthestUpPet;
-        }
-
-        if (snipeAhead != null) {
-            this.snipePet(snipeAhead, attackAmt, false, tiger, pteranodon);
+        
+        // Target ahead (including opponents if no friendlies available)
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this, undefined, true);
+        if (targetsAheadResp.pets.length > 0) {
+            let target = targetsAheadResp.pets[0];
+            this.snipePet(target, attackAmt, targetsAheadResp.random, tiger, pteranodon);
         }
 
         super.superFaint(gameApi, tiger);

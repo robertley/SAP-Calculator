@@ -12,19 +12,19 @@ export class Triceratops extends Pet {
     attack = 5;
     health = 6;
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let target = this.parent.getRandomPet([this], true, null, true);
+        let targetResp = this.parent.getRandomPet([this], true, false, true, this);
         let power = this.level * 3;
-        if (target == null) {
+        if (targetResp.pet == null) {
             return;
         }
-        target.increaseAttack(power);
-        target.increaseHealth(power);
+        targetResp.pet.increaseAttack(power);
+        targetResp.pet.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${targetResp.pet.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            randomEvent: true
+            randomEvent: targetResp.random
         });
         this.superHurt(gameApi, pet, tiger);
     }

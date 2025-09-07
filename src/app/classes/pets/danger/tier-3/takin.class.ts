@@ -25,15 +25,17 @@ export class Takin extends Pet {
 
         let attackGain = this.level;
         let healthGain = this.level * 2;
-        
-        this.increaseAttack(attackGain);
-        this.increaseHealth(healthGain);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet
+        target.increaseAttack(attackGain);
+        target.increaseHealth(healthGain);
 
         this.logService.createLog({
-            message: `${this.name} gained ${attackGain} attack and ${healthGain} health.`,
+            message: `${this.name} gave ${target.name} ${attackGain} attack and ${healthGain} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
         this.superFriendHurt(gameApi, pet, tiger);

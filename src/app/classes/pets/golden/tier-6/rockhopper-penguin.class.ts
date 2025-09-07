@@ -7,13 +7,10 @@ import { Player } from "../../../player.class";
 
 export class RockhopperPenguin extends Pet {
     name = "Rockhopper Penguin";
-    tier = 4;
+    tier = 6;
     pack: Pack = 'Golden';
     attack = 2;
     health = 5;
-    maxAbilityUses = 1;
-    abilityUses = 0;
-
     emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
@@ -22,15 +19,22 @@ export class RockhopperPenguin extends Pet {
             return;
         }
 
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+
         this.logService.createLog({
             message: `${this.name} jumps to the front!`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
         // The 'true' argument triggers the 'friendJumped' event.
-        this.parent.pushPetToFront(this, true);
+        this.parent.pushPetToFront(target, true);
 
         const trumpetsGained = this.level * 12;
         this.parent.gainTrumpets(trumpetsGained, this);

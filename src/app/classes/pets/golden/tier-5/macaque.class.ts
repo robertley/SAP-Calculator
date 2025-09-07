@@ -18,23 +18,24 @@ export class Macaque extends Pet {
         let power = this.level * 12;
         let monke = new Orangutang(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel, this.equipment);
 
-        let message = `${this.name} spawned Orangutang ${monke.attack}/${monke.health}`;
-        if (this.equipment != null) {
-            message += ` with ${this.equipment.name}`;
-        }
-        message += `.`;
-
-        this.logService.createLog(
-            {
-                message: message,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger
-            }
-        )
-        
-        if (this.parent.summonPetInFront(this, monke)) {
+        let result = this.parent.summonPetInFront(this, monke);
+        if (result.success) {
             this.abilityService.triggerFriendSummonedEvents(monke);
+            let message = `${this.name} spawned Orangutang ${monke.attack}/${monke.health}`;
+            if (this.equipment != null) {
+                message += ` with ${this.equipment.name}`;
+            }
+            message += `.`;
+    
+            this.logService.createLog(
+                {
+                    message: message,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: result.randomEvent
+                }
+            )
         }
 
         this.superStartOfBattle(gameApi, tiger);

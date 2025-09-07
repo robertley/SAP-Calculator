@@ -101,9 +101,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.18';
+  version = '0.6.19';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '8/27/2025';
+  lastUpdated = '9/6/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -681,7 +681,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (player == this.opponent) {
       levelControlName = 'opponentToyLevel';
     }
-    let level = this.formGroup.get(levelControlName).value;
+    let level = Number(this.formGroup.get(levelControlName).value);
     player.toy = this.toyService.createToy(toy, player, level);
     player.originalToy = player.toy;
   }
@@ -810,7 +810,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   runSimulation() {
-    debugger;
     //save info to local
     this.localStorageService.setFormStorage(this.formGroup);
     //clear previous simulation results
@@ -974,6 +973,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     if (finished) {
+      this.logService.printState(this.player, this.opponent);
       this.endLog(winner);
       this.battleStarted = false;
       return;

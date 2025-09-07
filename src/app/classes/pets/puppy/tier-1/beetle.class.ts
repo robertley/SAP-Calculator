@@ -15,11 +15,13 @@ export class Beetle extends Pet {
     attack = 2;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let equipment;
-        let targetPet = this.petBehind()
-        if (targetPet == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
+            super.superStartOfBattle(gameApi, tiger);
             return;
-        } 
+        }
+        let targetPet = targetsBehindResp.pets[0];
+        let equipment;
         switch (this.level) {
             case 1:
                 equipment = new Honey(this.logService, this.abilityService);
@@ -35,7 +37,8 @@ export class Beetle extends Pet {
             message: `${this.name} gave ${targetPet.name} ${equipment.name}.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsBehindResp.random
         })
         targetPet.givePetEquipment(equipment);
         super.superStartOfBattle(gameApi, tiger);

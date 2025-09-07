@@ -30,17 +30,18 @@ export class HarpyEagle extends Pet {
             exp: 0
         }, this.parent)
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${summonPet.name} (${power}/${power}).`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true
-            }
-        )
+        let summonResult = this.parent.summonPet(summonPet, this.savedPosition, false, this);
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${summonPet.name} (${power}/${power}).`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: true
+                }
+            )
 
-        if (this.parent.summonPet(summonPet, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
 

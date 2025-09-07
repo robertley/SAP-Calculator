@@ -15,17 +15,20 @@ export class Sheep extends Pet {
         for (let i = 0; i < 2; i++) {
             let ram = new Ram(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Ram (${ram.attack}/${ram.health}).`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            )
+            let summonResult = this.parent.summonPet(ram, this.savedPosition, false, this);
+            
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned Ram (${ram.attack}/${ram.health}).`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    }
+                )
 
-            if (this.parent.summonPet(ram, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(ram);
             }
         }

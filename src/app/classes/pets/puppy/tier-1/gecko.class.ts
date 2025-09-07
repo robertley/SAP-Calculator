@@ -18,9 +18,14 @@ export class Gecko extends Pet {
         }
 
         let power = this.level * 2;
-        this.increaseHealth(power);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
+        target.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gained ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

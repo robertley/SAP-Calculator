@@ -14,18 +14,22 @@ export class Butterfly extends Pet {
     health = 1;
     attack = 1;
     transform(gameApi: GameAPI, tiger?: boolean): void {
-        let opponent = getOpponent(gameApi, this.parent);
-        let target = opponent.getStrongestPet();
-        if (target == null) {
+        if (!this.alive) {
             return;
         }
-        this.health = target.health;
-        this.attack = target.attack;
+        let opponent = getOpponent(gameApi, this.parent);
+        let targetResp = opponent.getStrongestPet(this);
+        if (targetResp.pet == null) {
+            return;
+        }
+        this.health = targetResp.pet.health;
+        this.attack = targetResp.pet.attack;
         this.logService.createLog({
             message: `${this.name} copied stats from the strongest enemy (${this.attack}/${this.health}).`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superTransform(gameApi, tiger);
     }

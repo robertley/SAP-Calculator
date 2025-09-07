@@ -27,18 +27,20 @@ export class Takhi extends Pet {
         }, this.parent);
         
         if (africanWildDog) {
-            if (this.parent.summonPet(africanWildDog, this.savedPosition)) {
-                this.abilityService.triggerFriendSummonedEvents(africanWildDog)
+            let summonResult = this.parent.summonPet(africanWildDog, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${this.name} summoned a ${africanWildDog.attack}/${africanWildDog.health} ${africanWildDog.name}`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                });
+                
+                this.abilityService.triggerFriendSummonedEvents(africanWildDog);
+                africanWildDog.startOfBattle(gameApi, tiger);               
             }
-            
-            this.logService.createLog({
-                message: `${this.name} summoned a ${africanWildDog.attack}/${africanWildDog.health} ${africanWildDog.name}`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            });
-            africanWildDog.startOfBattle(gameApi, tiger);               
         }
         
         this.superAfterFaint(gameApi, tiger);

@@ -14,30 +14,48 @@ export class Ammonite extends Pet {
     health = 3;
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let friendBehind = this.petBehind();
-        if (friendBehind != null) {
-            let rolls = this.parent === gameApi.player ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
-            let expToGive = Math.floor(rolls / 2) * this.level;
-            
-            let mimicOctopus = this.petService.createPet({
-                name: "Mimic Octopus",
-                attack: friendBehind.attack,
-                health: friendBehind.health,
-                equipment: friendBehind.equipment,
-                mana: friendBehind.mana,
-                exp: friendBehind.exp
-            }, this.parent);
-
-            this.logService.createLog({
-                message: `${this.name} transformed ${friendBehind.name} into ${mimicOctopus.name} with +${expToGive} experience.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });
-
-            this.parent.transformPet(friendBehind, mimicOctopus);
-            mimicOctopus.increaseExp(expToGive);
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
+            return;
         }
+        let friendBehind = targetsBehindResp.pets[0];
+        let rolls = this.parent === gameApi.player ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
+        let expToGive = Math.floor(rolls / 2) * this.level;
+        
+        let mimicOctopus = this.petService.createPet({
+            name: "Mimic Octopus",
+            attack: friendBehind.attack,
+            health: friendBehind.health,
+            equipment: friendBehind.equipment,
+            mana: friendBehind.mana,
+            exp: friendBehind.exp
+        }, this.parent);
+
+        this.logService.createLog({
+            message: `${this.name} transformed ${friendBehind.name} into ${mimicOctopus.name}`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger,
+            pteranodon: pteranodon,
+            randomEvent: targetsBehindResp.random
+        });
+        this.parent.transformPet(friendBehind, mimicOctopus);
+
+        let expTargetResp = this.parent.getThis(mimicOctopus);
+        let target = expTargetResp.pet
+        if (target == null) {
+            return;
+        }
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} +${expToGive} experience.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger,
+            pteranodon: pteranodon,
+            randomEvent: expTargetResp.random
+        });
+
+        target.increaseExp(expToGive);
 
         this.superFaint(gameApi, tiger);
     }

@@ -17,17 +17,18 @@ export class Osprey extends Pet {
         for (let i = 0; i < this.level; i++) {
             let groundhog = new Groundhog(this.logService, this.abilityService, this.parent, null, null, 0, 0);
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} summoned a 2/1 Groundhog`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            )
-
-            if (this.parent.summonPet(groundhog, this.savedPosition)) {
+            let summonResult = this.parent.summonPet(groundhog, this.savedPosition, false, this)
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} summoned a 2/1 Groundhog`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    }
+                )    
                 this.abilityService.triggerFriendSummonedEvents(groundhog);
             }
         }

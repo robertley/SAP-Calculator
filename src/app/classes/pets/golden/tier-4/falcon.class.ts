@@ -27,17 +27,19 @@ export class Falcon extends Pet {
             equipment: null,
             mana: 0
         }, this.parent);
+        let summonResult = this.parent.summonPet(summonPet, this.savedPosition, false, this)
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${summonPet.name} ${power}/${power} Level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger
-            }
-        )
-
-        if (this.parent.summonPet(summonPet, this.savedPosition)) {
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${summonPet.name} ${power}/${power} Level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: summonResult.randomEvent
+                }
+            )
+    
             this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
 

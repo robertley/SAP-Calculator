@@ -28,17 +28,20 @@ export class Wolf extends Pet {
                 mana: 0
             }, this.parent);
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned ${pig.name} ${power.attack}/${power.health}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                }
-            )
+            let summonResult = this.parent.summonPet(pig, this.savedPosition, false, this);
+            
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned ${pig.name} ${power.attack}/${power.health}`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    }
+                )
 
-            if (this.parent.summonPet(pig, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(pig);
             }
         }

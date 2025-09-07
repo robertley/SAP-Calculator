@@ -20,7 +20,7 @@ export class Dolphin extends Pet {
         }
 
         for (let i = 0; i < this.level; i++) {
-            let lowestHealthResp = opponent.getLowestHealthPet();
+            let lowestHealthResp = opponent.getLowestHealthPet(null, this);
             if (!lowestHealthResp.pet) {
                 break;
             }

@@ -8,11 +8,11 @@ export class ToyGun extends Toy {
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
-            let target = opponent.getLastPet();
-            if (target == null) {
+            let targetResp = opponent.getLastPet();
+            if (targetResp.pet == null) {
                 return;
             }
-            this.toyService.snipePet(target, 6, this.parent, this.name, false, puma);
+            this.toyService.snipePet(targetResp.pet, 6, this.parent, this.name, false, puma);
         }
     }
 }

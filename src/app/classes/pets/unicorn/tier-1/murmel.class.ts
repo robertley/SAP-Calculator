@@ -21,15 +21,20 @@ export class Murmel extends Pet {
             attack: this.level,
             health: 0
         }
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet
+        if (target == null) {
+            return;
+        }
 
         this.logService.createLog({
-            message: `${this.name} gained ${power.attack} attack.`,
+            message: `${this.name} gave ${target.name} ${power.attack} attack.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
 
-        this.increaseAttack(power.attack);
+        target.increaseAttack(power.attack);
 
         this.superFriendGainedExperience(gameApi, pet, tiger);
 

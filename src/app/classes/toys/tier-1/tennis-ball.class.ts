@@ -7,15 +7,15 @@ export class TennisBall extends Toy {
     tier = 1;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
-        let target = opponent.getRandomPet(null, null, true);
-        if (target == null) {
+        let targetResp = opponent.getRandomPet([], false, true, false, null);
+        if (targetResp.pet == null) {
             return;
         }
-        this.toyService.snipePet(target, this.level, this.parent, this.name, true, puma);
-        target = opponent.getRandomPet(null, null, true);
-        if (target == null) {
+        this.toyService.snipePet(targetResp.pet, this.level, this.parent, this.name, true, puma);
+        targetResp = opponent.getRandomPet([], false, true, false, null);
+        if (targetResp.pet == null) {
             return;
         }
-        this.toyService.snipePet(target, this.level, this.parent, this.name, true, puma);
+        this.toyService.snipePet(targetResp.pet, this.level, this.parent, this.name, true, puma);
     }
 }

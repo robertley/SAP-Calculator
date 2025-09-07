@@ -12,8 +12,11 @@ export class Elephant extends Pet {
     attack = 3;
     afterAttack(gameApi, tiger) {
         for (let i = 0; i < this.level; i++) {
-            if (this.petBehind())
-                this.snipePet(this.petBehind(), 1, false, tiger);
+            let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+            if (targetsBehindResp.pets.length > 0) {
+                let target = targetsBehindResp.pets[0];
+                this.snipePet(target, 1, targetsBehindResp.random, tiger);
+            }
         }
         super.superAfterAttack(gameApi, tiger);
     }

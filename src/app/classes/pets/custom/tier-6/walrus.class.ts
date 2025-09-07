@@ -14,17 +14,19 @@ export class Walrus extends Pet {
     attack = 7;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = this.parent.getRandomPets(this.level, null, true, null);
-        for (let target of targets) {
-            target.givePetEquipment(new PeanutButter());
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} a Peanut Butter.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon,
-                randomEvent: true
-            })
+        let targetsResp = this.parent.getRandomPets(this.level, null, true, false, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                target.givePetEquipment(new PeanutButter());
+                this.logService.createLog({
+                    message: `${this.name} gave ${target.name} a Peanut Butter.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: targetsResp.random
+                })
+            }
         }
     }
     constructor(protected logService: LogService,

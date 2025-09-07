@@ -20,12 +20,18 @@ export class Wildebeast extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.givePetEquipment(new Coconut());
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        target.givePetEquipment(new Coconut());
         this.logService.createLog({
             message: `${this.name} gave itself a Coconut.`,
             type: "ability",
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.parent.spendTrumpets(2, this);
 

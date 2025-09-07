@@ -70,19 +70,26 @@ export class GoodDog extends Pet {
     health = 3;
     hidden: boolean = true;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targets = this.parent.petArray;
+        let targetsResp = this.parent.getRandomPets(10, [this], null, null, this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
 
         let equipmentMap = this.getInstanceOfAllEquipment();
-
         let equipmentArray = Array.from(equipmentMap.values());
 
         for (let pet of targets) {
+            if (!pet.alive) {
+                continue;
+            }
             let equipment = equipmentArray[Math.floor(Math.random() * equipmentArray.length)];
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} ${equipment.name}`,
                 type: "ability",
                 player: this.parent,
-                randomEvent: true,
+                randomEvent: targetsResp.random,
+                tiger: tiger
             })
             pet.givePetEquipment(equipment);
         }

@@ -18,14 +18,15 @@ export class Bat extends Pet {
             return;
         }
         let opponent = getOpponent(gameApi, this.parent);
-        let targets = opponent.getRandomPets(1, null, null, true);
-        for (let target of targets) {
+        let targetsResp = opponent.getRandomPet(null, null, true, null, this);
+        let target = targetsResp.pet;
+        if (target != null) {
             target.givePetEquipment(new Weak());
             this.logService.createLog({
                 message: `${this.name} made ${target.name} weak.`,
                 type: 'ability',
                 player: this.parent,
-                randomEvent: true,
+                randomEvent: targetsResp.random,
                 tiger: tiger
             })
         }

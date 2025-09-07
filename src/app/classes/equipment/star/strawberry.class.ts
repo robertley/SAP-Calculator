@@ -24,18 +24,19 @@ export class Strawberry extends Equipment {
             }
 
             // Add Strawberry effect
-            const target = pet.parent.getLastPet();
-            if (target) {
+            const targetResp = pet.parent.getLastPet();
+            if (targetResp.pet) {
                 const buffAmount = 1;
 
                 this.logService.createLog({
-                    message: `${pet.name} (Strawberry) gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
+                    message: `${pet.name} (Strawberry) gave ${targetResp.pet.name} +${buffAmount} attack and +${buffAmount} health.`,
                     type: 'equipment',
-                    player: pet.parent
+                    player: pet.parent,
+                    randomEvent: targetResp.random
                 });
 
-                target.increaseAttack(buffAmount);
-                target.increaseHealth(buffAmount);
+                targetResp.pet.increaseAttack(buffAmount);
+                targetResp.pet.increaseHealth(buffAmount);
             }
         }
     }

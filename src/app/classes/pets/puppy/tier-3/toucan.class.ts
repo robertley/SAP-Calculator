@@ -15,9 +15,6 @@ export class Toucan extends Pet {
     attack = 4;
     health = 3;
     private attacked = false;
-    private get equipmentService(): EquipmentService {
-        return InjectorService.getInjector().get(EquipmentService);
-    }
     beforeAttack(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.equipment == null) {
             return;
@@ -58,7 +55,7 @@ export class Toucan extends Pet {
                 pteranodon: pteranodon
             })
 
-            const newEquipmentInstance = this.equipmentService.getInstanceOfAllEquipment().get(this.equipment.name);
+            const newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name);
             if (newEquipmentInstance) {
                 target.givePetEquipment(newEquipmentInstance);
             }

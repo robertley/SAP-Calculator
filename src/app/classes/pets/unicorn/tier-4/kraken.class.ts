@@ -13,8 +13,11 @@ export class Kraken extends Pet {
     health = 7;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
 
-        let targets = [ ...this.parent.petArray, ...this.parent.opponent.petArray ];
-        targets = targets.filter(pet => pet.alive && pet !== this); 
+        let targetsResp = this.parent.getAll(true, this, true);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
+        } 
         for (let targetPet of targets) {
             // multiplying has a weird bug with 0.33 * 2 = 0.6600000000000001 type ish
             let power = this.level == 1 ? .15 : this.level == 2 ? .3 : .45;
@@ -24,7 +27,8 @@ export class Kraken extends Pet {
                 message: `${this.name} reduced ${targetPet.name} health by ${(power * 100).toFixed(0)}% (${reducedTo})`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsResp.random
             });
     
         }

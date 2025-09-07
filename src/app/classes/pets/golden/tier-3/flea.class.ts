@@ -15,15 +15,16 @@ export class Flea extends Pet {
     attack = 3;
     health = 2;
     faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = this.parent.opponent.getHighestHealthPets(this.level, 'Weak');
+        let targetsResp = this.parent.opponent.getHighestHealthPets(this.level, 'Weak', this);
         
-        for (let target of targets) {
+        for (let target of targetsResp.pets) {
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} Weak.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                pteranodon: pteranodon
+                pteranodon: pteranodon,
+                randomEvent: targetsResp.random
             })
             target.givePetEquipment(new Weak());
         }

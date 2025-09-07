@@ -12,6 +12,7 @@ export class Mandrill extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 4;
+    //TO DO: Check silly interactions
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let toyLevelMax = this.level * 2;
         if (this.parent.toy?.tier <= toyLevelMax) {
@@ -23,7 +24,7 @@ export class Mandrill extends Pet {
                     break;
                 }
             }
-            this.parent.breakToy(hasFlyingSquirrel);
+            this.parent.breakToy();
             this.abilityService.triggerFriendlyToyBrokeEvents(this.parent);
         }
     }
