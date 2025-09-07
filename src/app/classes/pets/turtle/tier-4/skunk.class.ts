@@ -13,7 +13,7 @@ export class Skunk extends Pet {
     health = 5;
     startOfBattle(gameApi, tiger) {
         let opponent = getOpponent(gameApi, this.parent);
-        let highestHealthPetResp = opponent.getHighestHealthPet();
+        let highestHealthPetResp = opponent.getHighestHealthPet(undefined, this);
         let targetPet = highestHealthPetResp.pet;
         if (targetPet == null) {
             return;
@@ -27,7 +27,7 @@ export class Skunk extends Pet {
             type: 'ability',
             player: this.parent,
             randomEvent: highestHealthPetResp.random,
-            tiger
+            tiger: tiger
         });
 
         this.superStartOfBattle(gameApi, tiger);

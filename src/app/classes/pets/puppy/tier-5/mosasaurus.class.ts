@@ -14,12 +14,22 @@ export class Mosasaurus extends Pet {
     health = 6;
     friendlyToyBroke(gameApi: GameAPI, tiger?: boolean): void {
         let targets = [];
-        if (this.petAhead) {
-            targets.push(this.petAhead);
+        let randomEvent = false;
+
+        // Target ahead with Silly-aware targeting
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length > 0) {
+            targets.push(targetsAheadResp.pets[0]);
+            randomEvent = targetsAheadResp.random;
         }
-        if (this.petBehind()) {
-            targets.push(this.petBehind());
+
+        // Target behind with Silly-aware targeting
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length > 0) {
+            targets.push(targetsBehindResp.pets[0]);
+            randomEvent = randomEvent || targetsBehindResp.random;
         }
+
         if (targets.length == 0) {
             return;
         }
@@ -32,7 +42,7 @@ export class Mosasaurus extends Pet {
                 message: `${this.name} gave ${target.name} ${power.attack} attach and ${power.health} health.`,
                 type: 'ability',
                 player: this.parent,
-                randomEvent: false,
+                randomEvent: randomEvent,
                 tiger: tiger
             });
             target.increaseHealth(power.health);

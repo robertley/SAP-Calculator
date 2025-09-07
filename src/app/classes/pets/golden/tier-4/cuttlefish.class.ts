@@ -15,26 +15,31 @@ export class Cuttlefish extends Pet {
     attack = 8;
     health = 4;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let opponentPets = this.parent.opponent.petArray;
-        let targets: Pet[] = [];
-        for (let i = 0; i < this.level; i++) {
-            let target = opponentPets[opponentPets.length - (i + 1)];
-            if (target == null) {
-                break;
-            }
-            targets.push(target);
+        let targetsResp = this.parent.opponent.getLastPets(this.level, null, this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
         }
         let power = 3;
+        
         for (let target of targets) {
-            let reducedTo = Math.max(1, target.health - 3);
-            target.health = reducedTo;
+            target.increaseHealth(-power);
             this.logService.createLog({
-                message: `${this.name} reduced ${target.name} health by ${power} (${reducedTo})`,
+                message: `${this.name} reduced ${target.name} health by ${power})`,
                 type: 'ability',
                 player: this.parent,                
                 tiger: tiger,
-                pteranodon: pteranodon
+                pteranodon: pteranodon,
+                randomEvent: targetsResp.random
             });
+        }
+        let InkTargetsResp = this.parent.opponent.getLastPets(this.level, null, this);
+        let InkTargets = InkTargetsResp.pets;
+        if (InkTargets.length == 0) {
+            return;
+        }
+        
+        for (let target of InkTargets) {
             target.givePetEquipment(new Ink());
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} Ink.`,
@@ -44,6 +49,7 @@ export class Cuttlefish extends Pet {
                 pteranodon: pteranodon
             })
         }
+
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

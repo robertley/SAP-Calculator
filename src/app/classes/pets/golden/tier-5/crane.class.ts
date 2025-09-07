@@ -21,24 +21,34 @@ export class Crane extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-
-        this.petAhead.increaseAttack(5);
+        let attackTargetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (attackTargetsAheadResp.pets.length == 0) {
+            return
+        }
+        let attackTarget = attackTargetsAheadResp.pets[0];
+        attackTarget.increaseAttack(5);
         this.logService.createLog({
-            message: `${this.name} gave ${this.petAhead.name} 5 attack.`,
+            message: `${this.name} gave ${attackTarget.name} 5 attack.`,
             type: "ability",
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: attackTargetsAheadResp.random
         })
-        this.petAhead.givePetEquipment(new Melon());
+        let equipmentTargetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (equipmentTargetsAheadResp.pets.length == 0) {
+            return;
+        }
+        let equipmentTarget = equipmentTargetsAheadResp.pets[0];
+        equipmentTarget.givePetEquipment(new Melon());
         this.logService.createLog({
-            message: `${this.name} gave ${this.petAhead.name} a Melon.`,
+            message: `${this.name} gave ${equipmentTarget.name} Melon.`,
             type: "ability",
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: equipmentTargetsAheadResp.random
         })
         this.abilityUses++;
         this.superFriendHurt(gameApi, pet, tiger);
-
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -17,15 +17,18 @@ export class BelugaSturgeon extends Pet {
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         for (let i = 0; i < this.level; i++) {
             let dolphin = new Dolphin(this.logService, this.abilityService, this.parent, 3, 2, 0, 0, new Rice());
-            this.logService.createLog({
-                message: `${this.name} summoned a 2/3 Dolphin with Rice in the back.`,
-                type: 'ability',
-                player: this.parent,
-                randomEvent: false,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-            if (this.parent.summonPet(dolphin, 4)) {
+            
+            let summonResult = this.parent.summonPet(dolphin, 4, false, this);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${this.name} summoned a 2/3 Dolphin with Rice in the back.`,
+                    type: 'ability',
+                    player: this.parent,
+                    randomEvent: summonResult.randomEvent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                })
+                
                 this.abilityService.triggerFriendSummonedEvents(dolphin);
             }
         }

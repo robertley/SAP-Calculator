@@ -14,7 +14,7 @@ export class HumphreadWrasse extends Pet {
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let percentage = 0.3 * this.level; // 30%/60%/90%
-        let targetResp = this.parent.opponent.getHighestAttackPet();
+        let targetResp = this.parent.opponent.getHighestAttackPet(undefined, this);
         
         if (!targetResp.pet) {
             return;

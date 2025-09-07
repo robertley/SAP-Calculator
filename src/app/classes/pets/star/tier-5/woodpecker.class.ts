@@ -17,9 +17,10 @@ export class Woodpecker extends Pet {
         
         for (let i = 0; i < triggers; i++) {
             // Find the nearest two pets ahead
-            let targets = this.getPetsAhead(2, true)
+            let targetsResp = this.parent.nearestPetsAhead(2, this, null, true);
+            let targets = targetsResp.pets;
             for (let target of targets) {
-                this.snipePet(target, 2, false, tiger);
+                this.snipePet(target, 2, targetsResp.random, tiger);
             }
         }
         this.superStartOfBattle(gameApi, tiger);

@@ -13,8 +13,7 @@ export class SakerFalcon extends Pet {
     health = 3;
 
     beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        if (!this.alive || this.abilityUses >= this.maxAbilityUses) {
-            this.superBeforeAttack(gameApi, tiger);
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
 
@@ -23,15 +22,24 @@ export class SakerFalcon extends Pet {
         let enemyAlivePets = this.parent.opponent.petArray.length;
 
         if (myAlivePets < enemyAlivePets) {
+            let targetResp = this.parent.getThis(this);
+            let target = targetResp.pet;
+            
+            if (!target) {
+                this.superBeforeAttack(gameApi, tiger);
+                return;
+            }
+
             let power = this.level * 2;
-            this.increaseAttack(power);
-            this.increaseHealth(power);
+            target.increaseAttack(power);
+            target.increaseHealth(power);
 
             this.logService.createLog({
-                message: `${this.name} gained ${power} attack and ${power} health (outnumbered)`,
+                message: `${this.name} gave ${target.name} ${power} attack and ${power} health (outnumbered)`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
 
             this.abilityUses++;

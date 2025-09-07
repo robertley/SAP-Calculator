@@ -6,7 +6,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Mantis} from "../../hidden/mantis.class";
+import { PrayingMantis} from "../../star/tier-4/praying-mantis.class";
 
 export class OrchidMantis extends Pet {
     name = "Orchid Mantis";
@@ -17,18 +17,19 @@ export class OrchidMantis extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let attack =Math.min(Math.floor(this.attack * (this.level * .4)), 50);
         let health = Math.min(Math.floor(this.health * (this.level * .4)), 50);
-        let mantis = new Mantis(this.logService, this.abilityService, this.parent, health, attack, 0, this.minExpForLevel, null);
+        let mantis = new PrayingMantis(this.logService, this.abilityService, this.parent, health, attack, 0, this.minExpForLevel, null);
 
-        let message = `${this.name} spawned Mantis ${mantis.attack}/${mantis.health}.`;
-        this.logService.createLog(
-            {
-                message: message,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger
-            }
-        )
-        if (this.parent.summonPetInFront(this, mantis)) {
+        let result = this.parent.summonPetInFront(this, mantis);
+        if (result.success) {
+            this.logService.createLog(
+                {
+                    message:`${this.name} spawned Mantis ${mantis.attack}/${mantis.health}.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: result.randomEvent
+                }
+            )
             this.abilityService.triggerFriendSummonedEvents(mantis);
         }
 

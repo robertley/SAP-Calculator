@@ -26,14 +26,17 @@ export class Fly extends Pet {
 
         let zombie = new ZombieFly(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel);
 
-        if (this.parent.summonPet(zombie, pet.savedPosition, true)) {
+        let summonResult = this.parent.summonPet(zombie, pet.savedPosition, true, this);
+        
+        if (summonResult.success) {
             this.abilityUses++;
             this.logService.createLog(
                 {
                     message: `${this.name} spawned Zombie Fly Level ${this.level}`,
                     type: "ability",
                     player: this.parent,
-                    tiger: tiger
+                    tiger: tiger,
+                    randomEvent: summonResult.randomEvent
                 }
             )
             this.abilityService.triggerFriendSummonedEvents(zombie);

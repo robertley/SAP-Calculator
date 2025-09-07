@@ -19,16 +19,23 @@ export class Toad extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        if (pet.equipment instanceof Weak) {
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
             return;
         }
-        pet.givePetEquipment(new Weak());
+
+        if (target.equipment instanceof Weak) {
+            return;
+        }
+        target.givePetEquipment(new Weak());
         this.abilityUses++;
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} Weak.`,
+            message: `${this.name} gave ${target.name} Weak.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.enemyHurt(gameApi, pet, tiger);
     }

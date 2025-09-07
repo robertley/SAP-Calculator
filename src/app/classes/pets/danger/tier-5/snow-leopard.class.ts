@@ -14,31 +14,41 @@ export class SnowLeopard extends Pet {
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let statGain = this.level * 5; // 5/10/15
-        let randomTarget = this.parent.opponent.getRandomPet([], false, true);
+        let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
         
         // Then jump-attack random enemy
-        if (randomTarget && randomTarget.alive) {
-            this.jumpAttackPrep(randomTarget)
+        if (targetResp.pet && targetResp.pet.alive) {
+            this.jumpAttackPrep(targetResp.pet)
+            
+            // Apply stat gain to transformed pet if transformed, otherwise use Silly-aware self-targeting
             if (this.transformed && this.transformedInto) {
-                this.transformedInto.increaseAttack(statGain);
-                this.transformedInto.increaseHealth(statGain);
-                this.logService.createLog({
-                    message: `${this.transformedInto.name} gained ${statGain} attack and ${statGain} health`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                let selfTargetResp = this.parent.getThis(this.transformedInto);
+                if (selfTargetResp.pet) {        
+                    this.transformedInto.increaseAttack(statGain);
+                    this.transformedInto.increaseHealth(statGain);
+                    this.logService.createLog({
+                        message: `${this.name} gave ${this.transformedInto.name} ${statGain} attack and ${statGain} health`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        randomEvent: selfTargetResp.random
+                    });
+                }
             } else {
-                this.increaseAttack(statGain);
-                this.increaseHealth(statGain);
-                this.logService.createLog({
-                    message: `${this.name} gained ${statGain} attack and ${statGain} health`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                let selfTargetResp = this.parent.getThis(this);
+                if (selfTargetResp.pet) {        
+                    selfTargetResp.pet.increaseAttack(statGain);
+                    selfTargetResp.pet.increaseHealth(statGain);
+                    this.logService.createLog({
+                        message: `${this.name} gave ${selfTargetResp.pet.name} ${statGain} attack and ${statGain} health`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        randomEvent: selfTargetResp.random
+                    });
+                }
             }
-            this.jumpAttack(randomTarget, tiger, null, true);
+            this.jumpAttack(targetResp.pet, tiger, null, targetResp.random);
         }
         
         this.superStartOfBattle(gameApi, tiger);

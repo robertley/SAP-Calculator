@@ -15,14 +15,33 @@ export class Ox extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        this.increaseAttack(1);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet
+        if (target == null) {
+            return
+        }
+        target.increaseAttack(1);
         this.logService.createLog({
-            message: `${this.name} gained Melon and 1 attack.`,
+            message: `${this.name} gave ${target.name} +1 attack.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
-        this.givePetEquipment(new Melon());;
+        let melonTargetResp = this.parent.getThis(this);
+        let melonTarget = melonTargetResp.pet
+        if (melonTarget == null) {
+            return
+        }
+        melonTarget.givePetEquipment(new Melon());;
+        this.logService.createLog({
+            message: `${this.name} gave ${melonTarget.name} Melon.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger,
+            randomEvent: melonTargetResp.random
+        })
+
         this.abilityUses++;
         super.superFriendAheadFaints(gameApi, pet, tiger);
     }

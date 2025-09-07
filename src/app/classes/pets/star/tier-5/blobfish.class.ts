@@ -12,14 +12,16 @@ export class Blobfish extends Pet {
     attack = 2;
     health = 10;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = this.getPetsBehind(2);
+        let targetsResp = this.parent.nearestPetsBehind(2, this);
+        let targets = targetsResp.pets
         for (let target of targets) {
             let power = this.level;
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} ${power} exp.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsResp.random
             });
             target.increaseExp(power);    
         }

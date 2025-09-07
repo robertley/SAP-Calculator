@@ -13,38 +13,38 @@ export class Dove extends Pet {
     attack = 2;
     health = 1;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = this.parent.getPetsWithEquipment('Strawberry').filter(pet => {
-            return pet !== this && pet.alive;
+        let excludePets = this.parent.petArray.filter(pet => {
+            return pet == this || pet.equipment?.name != 'Strawberry'
         });
-        targets = shuffle(targets);
-        let power = this.level * 2;
-        let random = false;
-        if (targets.length > 2) {
-            random = true;
+        let targetResp = this.parent.getRandomPets(3, excludePets, null, null, this);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
+            return
         }
-        if (targets.length > 0) {
-            let target = targets[0];
-            target.increaseAttack(power);
-            target.increaseHealth(power);
+        for (let target of targets) {
+            //TO DO: Double check if this should be possilbe, and change to actually activating strawberry
+            if (target.equipment.name != 'Strawberry') {
+                continue;
+            }
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} attack ${power} health.`,
+                message: `${this.name} activated ${target.name}'s Strawberry.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: random,
+                randomEvent: targetResp.random,
                 pteranodon: pteranodon
             })
-        }
-        if (targets.length > 1) {
-            let target = targets[1];
-            target.increaseAttack(power);
-            target.increaseHealth(power);
+            let backMostPetResp = target.parent.getLastPet(null, target);
+            let backMostPet = backMostPetResp.pet;
+            let power = this.level + backMostPet.equipment.multiplier - 1;
+            backMostPet.increaseAttack(power);
+            backMostPet.increaseHealth(power);
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} attack ${power} health.`,
-                type: 'ability',
+                message: `${target.name} gave ${backMostPet.name} ${power} attack ${power} health (Strawberry) (x${this.level} ${this.name}).`,
+                type: 'equipment',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: random
+                pteranodon: pteranodon
             })
         }
         this.superFaint(gameApi, tiger);

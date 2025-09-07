@@ -15,22 +15,27 @@ export class AmazonRiverDolphin extends Pet {
     adjacentAttacked(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
 
         // Choice: Deal damage to its target OR gain attack
-        let target = pet.currentTarget;
-        console.log(target)
+        let targetResp = this.parent.getSpecificPet(this, pet.currentTarget);
+        let target = targetResp.pet;
         if (target && target.alive) {
             let damage = 3 * this.level;
-            this.snipePet(target, damage, false, tiger);
+            this.snipePet(target, damage, targetResp.random, tiger);
         } else {
-            if (!this.alive) {
+            let targetResp = this.parent.getThis(this);
+            let selfTarget = targetResp.pet;
+            
+            if (!selfTarget) {
                 return;
             }
+            
             let attackBonus = 3 * this.level;
-            this.increaseAttack(attackBonus);
+            selfTarget.increaseAttack(attackBonus);
             this.logService.createLog({
-                message: `${this.name} gained ${attackBonus} attack`,
+                message: `${this.name} gave ${selfTarget.name} ${attackBonus} attack`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
         }
     }

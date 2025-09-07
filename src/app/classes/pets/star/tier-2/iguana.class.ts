@@ -12,25 +12,24 @@ export class Iguana extends Pet {
     attack = 2;
     health = 4;
     enemyPushed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet == null) {
-            return;
-        }
-        if (!pet.alive) {
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null || !target.alive) {
             return;
         }
         let power = this.level * 2;
-        this.snipePet(pet, power, false, tiger);
+        this.snipePet(target, power, targetResp.random, tiger);
+
         this.superEnemyPushed(gameApi, pet, tiger);
     }
     enemySummoned(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet == null) {
-            return;
-        }
-        if (!pet.alive) {
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null || !target.alive) {
             return;
         }
         let power = this.level * 2;
-        this.snipePet(pet, power, false, tiger);
+        this.snipePet(target, power, targetResp.random, tiger);
         this.superEnemySummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

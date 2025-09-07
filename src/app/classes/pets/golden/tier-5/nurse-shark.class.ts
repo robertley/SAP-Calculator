@@ -18,19 +18,14 @@ export class NurseShark extends Pet {
             return;
         }
         let power = Math.min(this.parent.trumpets, 6) * 3;
-        let hasTarget = false;
-        let targets = shuffle(clone(this.parent.opponent.petArray));
-        for (let i = 0; i < this.level; i++) {
-            let target = targets[i];
-            if (target == null) {
-                break;
-            }
-            hasTarget = true;
-            this.snipePet(target, power, true, tiger, pteranodon);
+        let targetResp = this.parent.opponent.getRandomPets( 2, [], false, true, this);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
+            return;
         }
-
-        if (hasTarget) {
-            this.parent.spendTrumpets(Math.min(this.parent.trumpets, 6), this, pteranodon);
+        this.parent.spendTrumpets(Math.min(this.parent.trumpets, 6), this, pteranodon);
+        for (let target of targets) {
+            this.snipePet(target, power, targetResp.random, tiger, pteranodon);
         }
         this.superFaint(gameApi, tiger);
     }

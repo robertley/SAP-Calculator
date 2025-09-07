@@ -14,20 +14,11 @@ export class Barghest extends Pet {
     attack = 2;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let oppponetPets = this.parent.opponent.petArray;
-        oppponetPets.reverse();
-        let targets: Pet[] = [];
-        let targetAmt = this.level;
-
-        for (let pet of oppponetPets) {
-            if (targets.length >= targetAmt) {
-                break;
-            }
-            if (pet.equipment == null) {
-                targets.push(pet);
-            }
+        let targetsResp = this.parent.opponent.getLastPets(this.level, 'perk-less', this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
         }
-
         for (let target of targets) {
             
             this.logService.createLog({
@@ -38,7 +29,6 @@ export class Barghest extends Pet {
             })
 
             target.givePetEquipment(new Spooked());
-
         }
 
         this.superStartOfBattle(gameApi, tiger);

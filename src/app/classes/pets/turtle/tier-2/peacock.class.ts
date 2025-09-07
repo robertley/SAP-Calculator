@@ -15,13 +15,17 @@ export class Peacock extends Pet {
             return;
         }
         let boost = this.level * 3;
-        this.increaseAttack(boost);
-        this.logService.createLog({
-            message: `${this.name} increased attack by ${boost} (${this.attack})`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
+        let selfTargetResp = this.parent.getThis(this);
+        if (selfTargetResp.pet) {
+            selfTargetResp.pet.increaseAttack(boost);
+            this.logService.createLog({
+                message: `${this.name} gave ${selfTargetResp.pet.name} ${boost} attack.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: selfTargetResp.random
+            });
+        }
 
         super.superHurt(gameApi, pet, tiger);
     }

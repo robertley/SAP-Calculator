@@ -18,13 +18,19 @@ export class Boar extends Pet {
             attack: this.level * 4,
             health: this.level * 2
         }
-        this.increaseAttack(power.attack);
-        this.increaseHealth(power.health);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet
+        if (target == null) {
+            return;
+        }
+        target.increaseAttack(power.attack);
+        target.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${this.name} gained ${power.attack} attack and ${power.health} health.`,
+            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superBeforeAttack(gameApi, tiger);
     }

@@ -30,10 +30,10 @@ export class PygmyHippo extends Pet {
         this.abilityService.setCounterEvent({
             callback: () => {
                 let damage = Math.floor(this.health * 0.33); // 33% of current health
-                let targets = this.parent.opponent.getLowestHealthPets(this.level);
+                let targetsResp = this.parent.opponent.getLowestHealthPets(this.level, undefined, this);
                 
-                for (let target of targets) {
-                    this.snipePet(target, damage, true, tiger);
+                for (let target of targetsResp.pets) {
+                    this.snipePet(target, damage, targetsResp.random, tiger);
                 }
             },
             priority: this.attack,

@@ -12,15 +12,30 @@ export class Tsuchinoko extends Pet {
     attack = 2;
     health = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        this.parent.pushPetToFront(this, true);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
+        this.parent.pushPetToFront(target, true);
         this.logService.createLog({
-            message: `${this.name} pushed itself to the front and gained ${this.level} experience.`,
+            message: `${this.name} pushed ${target.name} to the front and gained ${this.level} experience.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         })
-
-        this.increaseExp(this.level);
+        let expTargetResp = this.parent.getThis(this);
+        let expTarget = expTargetResp.pet;
+        if (expTarget == null) {
+            return
+        }
+        expTarget.increaseExp(this.level);
+        this.logService.createLog({
+            message: `${this.name} gave ${expTarget.name} +${this.level} experience.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger
+        })
 
         this.superStartOfBattle(gameApi, tiger);
     }

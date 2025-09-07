@@ -4,6 +4,8 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { getOpponent } from "../../../../util/helper-functions";
+import { Silly } from "app/classes/equipment/ailments/silly.class";
 
 export class TreeKangaroo extends Pet {
     name = "Tree Kangaroo";
@@ -12,6 +14,22 @@ export class TreeKangaroo extends Pet {
     attack = 3;
     health = 3;
 
+    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        let targetResp = getOpponent(gameApi, this.parent).getLastPet(undefined, this);
+        let targetPet = targetResp.pet;
+        if (targetPet) {
+            targetPet.givePetEquipment(new Silly());
+            this.logService.createLog({
+                message: `${this.name} gave ${targetPet.name} Silly`,
+                type: 'ability',
+                tiger: tiger,
+                player: this.parent,
+                randomEvent: targetResp.random
+            })
+        }
+        //TO DO: Add Activation and can't activate itself
+        super.superStartOfBattle(gameApi, tiger);
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

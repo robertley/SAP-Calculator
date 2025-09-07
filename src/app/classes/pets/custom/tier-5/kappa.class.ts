@@ -30,18 +30,19 @@ export class Kappa extends Pet {
                 }, this.parent
             );
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned a ${spawn.name} (14/16).`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: true
-                }
-            )
+            let summonResult = this.parent.summonPet(spawn, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned a ${spawn.name} (14/16).`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: true
+                    }
+                )
 
-            if (this.parent.summonPet(spawn, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(spawn);
             }
 
@@ -56,18 +57,19 @@ export class Kappa extends Pet {
                 }, this.parent.opponent
             );
     
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned a ${opponentSpawnPet.name} (14/16) for the opponent.`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: true
-                }
-            )
+            let opponentSummonResult = this.parent.opponent.summonPet(opponentSpawnPet, this.savedPosition, false, this);
+            if (opponentSummonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned a ${opponentSpawnPet.name} (14/16) for the opponent.`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: true
+                    }
+                )
 
-            if (this.parent.opponent.summonPet(opponentSpawnPet, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(opponentSpawnPet);
             }
         }

@@ -12,31 +12,27 @@ export class Roc extends Pet {
     attack = 4;
     health = 4;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-
-        let petsAhead = [];
-        let target = this.petAhead;
-        while (target) {
-            petsAhead.push(target);
-            target = target.petAhead;
-        }
-
+        let petsAhead = this.getPetsAhead(5);
         if (petsAhead.length == 0) {
             return;
         }
 
         let excludePets = this.parent.petArray.filter(pet => pet == this || !petsAhead.includes(pet));
-
+        //TO DO: Make it spread evenly
         for (let i = 0; i < this.level * 3; i++) {
-            let target = this.parent.getRandomPet(excludePets, true);
+            let targetResp = this.parent.getRandomPet(excludePets, true, false, false, this);
+            if (targetResp.pet == null) {
+                break;
+            }
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} 2 mana.`,
+                message: `${this.name} gave ${targetResp.pet.name} 2 mana.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: true
+                randomEvent: targetResp.random
             })
 
-            target.increaseMana(2);
+            targetResp.pet.increaseMana(2);
         }
 
         this.superStartOfBattle(gameApi, tiger);

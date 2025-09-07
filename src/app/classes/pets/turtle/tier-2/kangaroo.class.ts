@@ -14,14 +14,18 @@ export class Kangaroo extends Pet {
         if (!this.alive) {
             return;
         }
-        this.increaseAttack(this.level)
-        this.increaseHealth(this.level)
-        this.logService.createLog({
-    message: `${this.name} gained ${this.level} attack and ${this.level} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger
-        })
+        let selfTargetResp = this.parent.getThis(this);
+        if (selfTargetResp.pet) {
+            selfTargetResp.pet.increaseAttack(this.level);
+            selfTargetResp.pet.increaseHealth(this.level);
+            this.logService.createLog({
+                message: `${this.name} gave ${selfTargetResp.pet.name} ${this.level} attack and ${this.level} health.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: selfTargetResp.random
+            });
+        }
         super.superFriendAheadAttacks(gameApi, pet, tiger)
     }
     constructor(protected logService: LogService,

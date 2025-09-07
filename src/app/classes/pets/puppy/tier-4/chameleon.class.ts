@@ -27,6 +27,7 @@ export class Chameleon extends Pet {
             player: this.parent,
             pteranodon: pteranodon,
         })
+        //TO DO: This logic would trigger puma
         if (toy.onBreak) {
             this.parent.breakToy(true)
         }

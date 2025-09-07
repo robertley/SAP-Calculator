@@ -13,12 +13,12 @@ export class Jackalope extends Pet {
     health = 3;
     // TODO check if sniping before drop bear is correct
     friendJumped(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let target = this.parent.opponent.getRandomPet();
-        if (target == null) {
+        let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
+        if (targetResp.pet == null) {
             return;
         }
 
-        this.snipePet(target, this.level * 2, true, tiger);
+        this.snipePet(targetResp.pet, this.level * 2, targetResp.random, tiger);
         this.superFriendJumped(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

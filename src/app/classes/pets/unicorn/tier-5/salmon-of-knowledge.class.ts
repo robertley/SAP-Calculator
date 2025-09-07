@@ -1,3 +1,4 @@
+import { getOpponent } from "app/util/helper-functions";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
@@ -14,29 +15,23 @@ export class SalmonOfKnowledge extends Pet {
     health = 5;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let power = this.level * 2;
-        let playerPets = this.parent.petArray;
-        let opponentPets = this.parent.opponent.petArray;
         let targets = [];
-        if (playerPets[0] != null) {
-            targets.push(playerPets[0]);
-        }
-        if (playerPets[1] != null) {
-            targets.push(playerPets[1]);
-        }
-        if (opponentPets[0] != null) {
-            targets.push(opponentPets[0]);
-        }
-        if (opponentPets[1] != null) {
-            targets.push(opponentPets[1]);
-        }
+        
+        // Get 2 furthest up pets from friendly team
+        let friendlyTargets = this.parent.getFurthestUpPets(2, null, this);
+        targets.push(...friendlyTargets.pets);
+        
+        // Get 2 furthest up pets from enemy team
+        let enemyTargets = this.parent.opponent.getFurthestUpPets(2, null, this);
+        targets.push(...enemyTargets.pets);
+        
         for (let target of targets) {
-            if (target == this) {
-                continue;
-            }
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} ${power} exp.`,
                 type: 'ability',
-                player: this.parent
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: friendlyTargets.random || enemyTargets.random
             });
             target.increaseExp(power);
         }

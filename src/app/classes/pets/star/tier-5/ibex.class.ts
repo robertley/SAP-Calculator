@@ -11,6 +11,7 @@ export class Ibex extends Pet {
     pack: Pack = 'Star';
     attack = 6;
     health = 7;
+    //TO DO: Refactor these private stuff into pet memory
     private affectedEnemies: Set<Pet> = new Set();
 
     private processEnemyTrigger(pet: Pet, tiger?: boolean): void {
@@ -23,22 +24,27 @@ export class Ibex extends Pet {
         if (this.affectedEnemies.size >= this.maxAbilityUses) {
             return;
         }
-        
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
         // Calculate 70% health reduction
         let healthReduction = Math.floor(pet.health * 0.7);
         
         // Apply damage
-        pet.increaseHealth(-healthReduction);
+        target.increaseHealth(-healthReduction);
         
-        // Track this enemy
-        this.affectedEnemies.add(pet);
+        // TO DO: Check which pet to add for silly interaction
+        this.affectedEnemies.add(target);
         
         // Log the effect
         this.logService.createLog({
             message: `${this.name} removed ${healthReduction} health from ${pet.name} (70%)`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
     }
 

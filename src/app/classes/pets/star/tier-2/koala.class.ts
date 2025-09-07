@@ -17,18 +17,23 @@ export class Koala extends Pet {
 
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet === this || this.abilityUses >= this.maxAbilityUses) {
-            this.superFriendHurt(gameApi, pet, tiger);
+            return;
+        }
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
             return;
         }
 
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} Eucalyptus perk.`,
+            message: `${this.name} gave ${target.name} Eucalyptus perk.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
-        pet.givePetEquipment(new Eucalyptus());
+        target.givePetEquipment(new Eucalyptus());
 
         this.abilityUses++;
         this.superFriendHurt(gameApi, pet, tiger);

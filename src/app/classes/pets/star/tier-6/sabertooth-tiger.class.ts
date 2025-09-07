@@ -24,8 +24,8 @@ export class SabertoothTiger extends Pet {
         let totalHurt = this.hurtThisBattle;
         if (totalHurt > 0) {
             for (let i = 0; i < this.level; i++) { // 1/2/3 Mammoths based on level
-                let mammothAttack = 4 + (2 * totalHurt);
-                let mammothHealth = 12 + (3 * totalHurt);
+                let mammothAttack = 2 * totalHurt;
+                let mammothHealth = 3 * totalHurt;
                 
                 let mammoth = this.petService.createPet({
                     name: "Mammoth",
@@ -36,14 +36,17 @@ export class SabertoothTiger extends Pet {
                     exp: 0
                 }, this.parent);
 
-                this.logService.createLog({
-                    message: `${this.name} summoned ${mammoth.name} (${mammothAttack}/${mammothHealth}).`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                let summonResult = this.parent.summonPet(mammoth, this.savedPosition, false, this);
+                if (summonResult.success) {
+                    this.logService.createLog({
+                        message: `${this.name} summoned ${mammoth.name} (${mammothAttack}/${mammothHealth}).`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        pteranodon: pteranodon,
+                        randomEvent: summonResult.randomEvent
+                    });
 
-                if (this.parent.summonPet(mammoth, this.savedPosition)) {
                     this.abilityService.triggerFriendSummonedEvents(mammoth);
                 }
             }

@@ -1,3 +1,4 @@
+import { flatMap } from "lodash";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
@@ -42,7 +43,9 @@ export class Caramel extends Equipment {
             if (targetPet == null) {
                 return;
             }
-            
+             // Deal combined damage to highest health enemy
+            pet.snipePet(targetPet, totalDamage, highestHealthResult.random, tiger, false, true, false);        
+
             // Remove Caramel equipment from all pets that have it
             for (let caramelPet of caramelPets) {
                 caramelPet.removePerk();
@@ -53,9 +56,7 @@ export class Caramel extends Equipment {
                     tiger: false
                 });
             }
-            
-            // Deal combined damage to highest health enemy
-            pet.snipePet(targetPet, totalDamage, highestHealthResult.random, false, false, true, false);        
+           
         }
     }
 

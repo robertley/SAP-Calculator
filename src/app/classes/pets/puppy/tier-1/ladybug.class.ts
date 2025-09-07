@@ -13,13 +13,17 @@ export class Ladybug extends Pet {
     health = 2;
     friendGainedPerk(gameApi: GameAPI, pet, tiger?: boolean): void {
         let power = this.level * 2;
-        this.increaseAttack(power);
-        this.logService.createLog({
-            message: `${this.name} gained ${power} attack.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
+        let selfTargetResp = this.parent.getThis(this);
+        if (selfTargetResp.pet) {
+            selfTargetResp.pet.increaseAttack(power);
+            this.logService.createLog({
+                message: `${this.name} gave ${selfTargetResp.pet.name} ${power} attack.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: selfTargetResp.random
+            });
+        }
         this.superFriendGainedPerk(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

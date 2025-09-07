@@ -15,15 +15,23 @@ export class Crab extends Pet {
         if (!this.alive) {
             return;
         }
-        let highestHealthPet = this.parent.getHighestHealthPet(this).pet;
-        let gainAmmt = Math.floor(highestHealthPet.health * (.25 * this.level));
-        this.increaseHealth(gainAmmt);
-        this.logService.createLog({
-            message: `${this.name} gained ${.25 * this.level * 100}% of ${highestHealthPet.name}'s health (${gainAmmt})`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        }),
+        let highestHealthResp = this.parent.getHighestHealthPet(this, this);
+        if (highestHealthResp.pet == null) {
+            return;
+        }
+        //TO DO: Double Check Silly Logic for crab
+        let gainAmmt = Math.floor(highestHealthResp.pet.health * (.25 * this.level));
+        let selfTargetResp = this.parent.getThis(this);
+        if (selfTargetResp.pet) {
+            selfTargetResp.pet.increaseHealth(gainAmmt);
+            this.logService.createLog({
+                message: `${this.name} gave ${selfTargetResp.pet.name} ${.25 * this.level * 100}% of ${highestHealthResp.pet.name}'s health (${gainAmmt})`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: selfTargetResp.random
+            });
+        }
         
         super.superStartOfBattle(gameApi, tiger);
     }

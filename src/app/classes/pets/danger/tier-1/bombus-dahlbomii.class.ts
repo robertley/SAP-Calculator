@@ -11,6 +11,7 @@ export class BombusDahlbomii extends Pet {
     pack: Pack = 'Danger';
     attack = 1;
     health = 2;
+    //TO DO, add attackCounter property to pet class
     private attackCounter = 0;
 
     enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
@@ -33,10 +34,11 @@ export class BombusDahlbomii extends Pet {
         // Set counter event to deal damage
         this.abilityService.setCounterEvent({
             callback: () => {
-                let target = this.parent.opponent.furthestUpPet; // First enemy
+                let targetResp = this.parent.opponent.getFurthestUpPet(this); // First enemy
+                let target = targetResp.pet;
                 if (target) {
                     let damage = this.level * 1;
-                    this.snipePet(target, damage, true, tiger);
+                    this.snipePet(target, damage, targetResp.random, tiger);
                 }
             },
             priority: this.attack,

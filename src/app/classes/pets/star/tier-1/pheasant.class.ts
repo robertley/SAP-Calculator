@@ -20,15 +20,20 @@ export class Pheasant extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
 
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} a Strawberry.`,
+            message: `${this.name} gave ${target}.name} a Strawberry.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger
         });
 
-        pet.givePetEquipment(new Strawberry());
+        target.givePetEquipment(new Strawberry(this.logService, this.abilityService));
 
         this.abilityUses++;
         this.superFriendSummoned(gameApi, pet, tiger);

@@ -13,12 +13,21 @@ export class AfricanWildDog extends Pet {
     health = 1;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.opponent.furthestUpPet?.petBehind();
+        let targetResp = this.parent.opponent.getFurthestUpPet(this);
+        if (targetResp.pet == null) {
+            return
+        }
+        let target: Pet;
+        if (targetResp.random) {
+            target = targetResp.pet;
+        } else {
+            target = targetResp.pet?.petBehind();
+        }
         
-        if (target && target.alive) {
+        if (target) {
             let damage = this.level * 3;
             this.jumpAttackPrep(target)
-            this.jumpAttack(target, tiger, damage);
+            this.jumpAttack(target, tiger, damage, targetResp.random);
         }
         
         this.superStartOfBattle(gameApi, tiger);

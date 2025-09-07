@@ -5,7 +5,6 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-
 export class CaliforniaCondor extends Pet {
     name = "California Condor";
     tier = 6;

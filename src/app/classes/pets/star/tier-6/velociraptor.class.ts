@@ -43,7 +43,8 @@ export class Velociraptor extends Pet {
             let healthBonus = this.level * 3;
             
             // Give all friends the bonus
-            let friendlyPets = this.parent.petArray.filter(p => p.alive);
+            let friendlyPetsResp = this.parent.getRandomPets(5, null, null, null, this);
+            let friendlyPets = friendlyPetsResp.pets;
             for (let friendPet of friendlyPets) {
                 friendPet.increaseAttack(attackBonus);
                 friendPet.increaseHealth(healthBonus);
@@ -52,7 +53,8 @@ export class Velociraptor extends Pet {
                     message: `${this.name} gave ${friendPet.name} +${attackBonus} attack and +${healthBonus} health`,
                     type: 'ability',
                     player: this.parent,
-                    tiger: tiger
+                    tiger: tiger,
+                    randomEvent: friendlyPetsResp.random
                 });
             }
         }

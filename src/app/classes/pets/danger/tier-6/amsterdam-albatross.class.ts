@@ -21,12 +21,16 @@ export class AmsterdamAlbatross extends Pet {
         
         let attackGain = 1 * this.level;
         let healthGain = 2 * this.level;
-        
-        pet.increaseAttack(attackGain);
-        pet.increaseHealth(healthGain);
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet
+        if (target == null) {
+            return
+        }
+        target.increaseAttack(attackGain);
+        target.increaseHealth(healthGain);
         
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} +${attackGain} attack and +${healthGain} health.`,
+            message: `${this.name} gave ${target.name} +${attackGain} attack and +${healthGain} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

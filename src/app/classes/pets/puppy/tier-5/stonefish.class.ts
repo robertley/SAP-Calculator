@@ -13,11 +13,12 @@ export class Stonefish extends Pet {
     attack = 7;
     health = 4;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let opponent = getOpponent(gameApi, this.parent);
-        if (opponent.pet0 == null || !opponent.pet0.alive) {
+        let targetResp = this.parent.getSpecificPet(this, this.killedBy);
+        let target = targetResp.pet;
+        if (target == null || !target.alive) {
             return;
         }
-        this.snipePet(opponent.pet0, this.attack * this.level, false, tiger, pteranodon);
+        this.snipePet(target, this.attack * this.level, false, tiger, pteranodon);
         this.superFaint(gameApi, tiger);
     }
     constructor(protected logService: LogService,

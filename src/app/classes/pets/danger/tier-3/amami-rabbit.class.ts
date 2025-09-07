@@ -14,36 +14,40 @@ export class AmamiRabbit extends Pet {
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let attackGain = this.level * 1;
-        let targetResp = this.parent.opponent.getHighestAttackPet();
-        
-
+        let targetResp = this.parent.opponent.getHighestAttackPet(undefined, this);
         
         // Then jump-attack the highest attack enemy
         if (targetResp.pet && targetResp.pet.alive) {
             this.jumpAttackPrep(targetResp.pet);
             
-            // Gain attack first - apply to transformed pet if transformed
+            // Apply attack gain to transformed pet if transformed, otherwise to target pet
             if (this.transformed && this.transformedInto) {
-                this.transformedInto.increaseAttack(attackGain);
-                this.logService.createLog({
-                    message: `${this.transformedInto.name} gained ${attackGain} attack`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                let selfTargetResp = this.parent.getThis(this.transformedInto);
+                if (selfTargetResp.pet) {        
+                    this.transformedInto.increaseAttack(attackGain);
+                    this.logService.createLog({
+                        message: `${this.name} gave ${this.transformedInto.name} ${attackGain} attack`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        randomEvent: selfTargetResp.random
+                    });
+                }
             } else {
-                this.increaseAttack(attackGain);
-                this.logService.createLog({
-                    message: `${this.name} gained ${attackGain} attack`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                let selfTargetResp = this.parent.getThis(this);
+                if (selfTargetResp.pet) {        
+                    selfTargetResp.pet.increaseAttack(attackGain);
+                    this.logService.createLog({
+                        message: `${this.name} gave ${selfTargetResp.pet.name} ${attackGain} attack`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        randomEvent: selfTargetResp.random
+                    });
+                }
             }
-            
-            this.jumpAttack(targetResp.pet, tiger);
         }
-        
+        this.jumpAttack(targetResp.pet, tiger, undefined, targetResp.random);
         this.superStartOfBattle(gameApi, tiger);
     }
 

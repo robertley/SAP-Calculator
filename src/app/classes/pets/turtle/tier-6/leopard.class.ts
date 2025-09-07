@@ -14,9 +14,11 @@ export class Leopard extends Pet {
     health = 4;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let power = Math.floor(this.attack * .5);
-        let targets = this.parent.opponent.getRandomPets(this.level, null, null, true);
-        for (let target of targets) {
-            this.snipePet(target, power, true, tiger);
+        let targetsResp = this.parent.opponent.getRandomPets(this.level, null, null, true, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                this.snipePet(target, power, targetsResp.random, tiger);
+            }
         }
         this.superStartOfBattle(gameApi, tiger);
     }

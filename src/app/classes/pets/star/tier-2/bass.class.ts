@@ -18,29 +18,29 @@ export class Bass extends Pet {
     ];
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        const potentialTargets = this.parent.petArray.filter(pet => {
-            return pet !== this && this.sellPets.includes(pet.name) && pet.level >= 2;
+        const excludePets = this.parent.petArray.filter(pet => {
+            return pet == this && !this.sellPets.includes(pet.name) && pet.level < 2;
         });
 
-        if (potentialTargets.length > 0) {
-            const target = potentialTargets[Math.floor(Math.random() * potentialTargets.length)];
-
-            if (target == null) {
-                return;
-            }
-            
-            const expGain = this.level;
-
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} +${expGain} experience.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            });
-
-            target.increaseExp(expGain);
+        let targetResp = this.parent.getRandomPet(excludePets, true, null, null, this);
+        const target = targetResp.pet;
+        if (target == null) {
+            return;
         }
+        
+        const expGain = this.level;
+
+        this.logService.createLog({
+            message: `${this.name} gave ${target.name} +${expGain} experience.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger,
+            pteranodon: pteranodon,
+            randomEvent: targetResp.random
+        });
+
+        target.increaseExp(expGain);
+        
 
         this.superFaint(gameApi, tiger);
     }

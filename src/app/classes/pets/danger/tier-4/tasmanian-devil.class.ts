@@ -14,7 +14,7 @@ export class TasmanianDevil extends Pet {
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let percentage = this.level * 0.5; // 50%/100%/150%
-        let targetResp = this.parent.opponent.getLowestAttackPet();
+        let targetResp = this.parent.opponent.getLowestAttackPet(undefined, this);
         
         if (targetResp.pet && targetResp.pet.alive) {
             let damage = Math.floor(this.attack * percentage);
@@ -22,7 +22,7 @@ export class TasmanianDevil extends Pet {
             if (this.transformed && this.transformedInto) {
                 damage = Math.floor(this.transformedInto.attack * percentage);
             }
-            this.jumpAttack(targetResp.pet, tiger, damage);
+            this.jumpAttack(targetResp.pet, tiger, damage, targetResp.random);
         }
         
         this.superStartOfBattle(gameApi, tiger);

@@ -17,7 +17,8 @@ export class Boitata extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let target = this.parent.opponent.furthestUpPet;
+        let targetResp = this.parent.opponent.getFurthestUpPet(this);
+        let target = targetResp.pet;
         if (target == null) {
             return;
         }
@@ -25,7 +26,8 @@ export class Boitata extends Pet {
             message: `${this.name} gave ${target.name} Crisp.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         target.givePetEquipment(new Crisp());
         this.abilityUses++;

@@ -14,26 +14,16 @@ export class Therizinosaurus extends Pet {
     attack = 3;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let strawberryPets = this.parent.getPetsWithEquipment('Strawberry').filter(pet => { 
-            return pet !== this && pet.alive
-        });
-        strawberryPets = shuffle(strawberryPets);
-        let coconutPets: Pet[] = [];
-        for (let i = 0; i < this.level; i++) {
-            let pet = strawberryPets[i];
-            if (pet == null) {
-                break;
-            }
-            coconutPets.push(strawberryPets[i]);
-        }
-        for (let pet of coconutPets) {
+        let targetsResp = this.parent.getFurthestUpPets(this.level, null, this, 'Strawberry')
+        let targets = targetsResp.pets
+        for (let pet of targets) {
             pet.givePetEquipment(new Coconut());
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} Coconut.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: this.level < strawberryPets.length
+                randomEvent: targetsResp.random
             })
         }
         

@@ -29,16 +29,17 @@ export class BayCat extends Pet {
                 exp: 0
             }, this.parent);
             
-            this.logService.createLog({
-                message: `${this.name} summoned ${summonedPet.name}`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon,
-                randomEvent: true
-            });
-            
-            if (this.parent.summonPet(summonedPet, this.savedPosition)) {
+            let summonResult = this.parent.summonPet(summonedPet, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${this.name} summoned ${summonedPet.name}`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: true
+                });
+                
                 // Activate start of battle ability
                 if (summonedPet.startOfBattle) {
                     this.logService.createLog({

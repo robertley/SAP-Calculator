@@ -14,13 +14,14 @@ export class Octopus extends Pet {
     health = 8;
     afterAttack(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
-        let targets = opponent.getRandomPets(this.level, null, null, true);
+        let targetsResp = opponent.getRandomPets(this.level, null, null, true, this);
+        let targets = targetsResp.pets;
         let power = 6;
         for (let target of targets) {
             if (target == null) {
                 return;
             }
-            this.snipePet(target, power, true, tiger);
+            this.snipePet(target, power, targetsResp.random, tiger);
         }
         this.superAfterAttack(gameApi, tiger);
     }

@@ -12,17 +12,19 @@ export class ConeSnail extends Pet {
     attack = 1;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petBehind();
-        if (target == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
             return;
         }
+        let target = targetsBehindResp.pets[0];
         let power = this.level * 2;
         target.increaseHealth(power);
         this.logService.createLog({
             message: `${this.name} gave ${target.name} ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsBehindResp.random
         })
         this.superStartOfBattle(gameApi, tiger);
     }

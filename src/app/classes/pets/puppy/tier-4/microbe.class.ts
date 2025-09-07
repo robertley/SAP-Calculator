@@ -14,12 +14,12 @@ export class Microbe extends Pet {
     attack = 1;
     health = 1;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetPets = this.parent.petArray.filter(pet => pet != this);
-        targetPets = [
-            ...targetPets,
-            ...getOpponent(gameApi, this.parent).petArray
-        ];
-        for (let pet of targetPets) {
+        let targetsResp = this.parent.getAll(true, this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
+        for (let pet of targets) {
             if (!pet.alive) {
                 continue;
             }
@@ -29,6 +29,7 @@ export class Microbe extends Pet {
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
+                randomEvent: targetsResp.random
             })
             pet.givePetEquipment(new Weak());
         }

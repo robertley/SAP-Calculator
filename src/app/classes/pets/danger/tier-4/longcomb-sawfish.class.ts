@@ -32,20 +32,23 @@ export class LongcombSawfish extends Pet {
                 let healthGain = this.level * 4; // 4/8/12 health gain based on level
                 let healthRemoval = this.level * -4; // 4/8/12 health removal based on level
                 
-                // Gain health
-                this.increaseHealth(healthGain);
-                
-                // Gain health
-                this.logService.createLog({
-                    message: `${this.name} gained ${healthGain} health`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+                // Gain health for self
+                let selfTargetResp = this.parent.getThis(this);
+                let selfTarget = selfTargetResp.pet;
+                if (selfTarget) {
+                    selfTarget.increaseHealth(healthGain);
+                    this.logService.createLog({
+                        message: `${this.name} gave ${selfTarget.name} ${healthGain} health`,
+                        type: 'ability',
+                        player: this.parent,
+                        tiger: tiger,
+                        randomEvent: selfTargetResp.random
+                    });
+                }
                 
                 // Remove health from all alive enemies
-                let targets = [...this.parent.opponent.petArray];
-                targets = targets.filter(enemy => enemy.alive);
+                let targetsResp = this.parent.opponent.getAll(false, this);
+                let targets = targetsResp.pets;
                 for (let targetPet of targets) {
                     targetPet.increaseHealth(healthRemoval);
                     this.logService.createLog({

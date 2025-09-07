@@ -18,10 +18,12 @@ export class Panda extends Pet {
             attack: Math.floor(this.attack * percentage),
             health: Math.floor(this.health * percentage)
         }
-        let target = this.petAhead;
-        if (target == null) {
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length === 0) {
+            this.superStartOfBattle(gameApi, tiger);
             return;
         }
+        let target = targetsAheadResp.pets[0];
         target.increaseAttack(power.attack);
         target.increaseHealth(power.health);
         this.logService.createLog(
@@ -29,7 +31,8 @@ export class Panda extends Pet {
                 message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsAheadResp.random
             }
         )
         this.health = 0;

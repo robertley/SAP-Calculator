@@ -7,6 +7,7 @@ import { Equipment } from "../../../equipment.class";
 import { Blackberry } from "../../../equipment/puppy/blackberry.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { Strawberry } from "app/classes/equipment/star/strawberry.class";
 
 export class Hare extends Pet {
     name = "Hare";
@@ -65,6 +66,10 @@ export class Hare extends Pet {
     }
 
     private static readonly USEFUL_PERKS: Map<string, number> = new Map([
+        //T1
+        ['Honey', 1],
+        ['Strawberry', 1],
+        ['Egg', 1],
         // T2
         ['Lime', 2], 
         ['Meat Bone', 2], 

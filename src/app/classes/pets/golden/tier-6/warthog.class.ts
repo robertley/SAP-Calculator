@@ -15,19 +15,19 @@ export class Warthog extends Pet {
         let power = this.level;
         let triggers = Math.floor(this.attack / 3);
         for (let i = 0; i < triggers; i++) {
-            let target = this.parent.getRandomPet(null, true, null, true);
-            if (target == null) {
+            let targetResp = this.parent.getRandomPet([], true, false, true, this);
+            if (targetResp.pet == null) {
                 break;
             }
-            target.increaseAttack(power);
-            target.increaseHealth(power);
+            targetResp.pet.increaseAttack(power);
+            targetResp.pet.increaseHealth(power);
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+                message: `${this.name} gave ${targetResp.pet.name} ${power} attack and ${power} health.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
-                randomEvent: true
+                randomEvent: targetResp.random
             })
         }
     }

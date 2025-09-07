@@ -13,18 +13,19 @@ export class TogianBabirusa extends Pet {
     health = 3;
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let target = this.parent.opponent.getRandomPet();
+        let targetResp = this.parent.opponent.getRandomPet([], false, false, false, this);
         
-        if (target) {  // getRandomPet returns null if no living pets
-            target.increaseAttack(1);  // Fixed +1, not this.level * 1
-            target.increaseHealth(1);  // Fixed +1, not this.level * 1
+        if (targetResp.pet) {  // getRandomPet returns null if no living pets
+            targetResp.pet.increaseAttack(1);  // Fixed +1, not this.level * 1
+            targetResp.pet.increaseHealth(1);  // Fixed +1, not this.level * 1
             
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} +1 attack and +1 health.`,
+                message: `${this.name} gave ${targetResp.pet.name} +1 attack and +1 health.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                pteranodon: pteranodon
+                pteranodon: pteranodon,
+                randomEvent: targetResp.random
             });
         }
         

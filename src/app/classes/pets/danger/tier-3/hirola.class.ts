@@ -19,14 +19,18 @@ export class Hirola extends Pet {
             let wolfHealth = this.level * 2;
             let wolf = new EthiopianWolf(this.logService, this.abilityService, this.parent, wolfHealth, wolfAttack, this.mana, this.exp);
             
-            if (this.parent.summonPet(wolf, this.savedPosition)) {
+            let summonResult = this.parent.summonPet(wolf, this.savedPosition, false, this);
+            if (summonResult.success) {
                 this.logService.createLog({
                     message: `${this.name} summoned a ${wolfAttack}/${wolfHealth} ${wolf.name}.`,
                     type: 'ability',
                     player: this.parent,
                     tiger: tiger,
-                    pteranodon: pteranodon
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
                 });
+                
+                this.abilityService.triggerFriendSummonedEvents(wolf);
             }
         }
         

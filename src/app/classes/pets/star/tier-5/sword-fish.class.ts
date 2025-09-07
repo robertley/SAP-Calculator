@@ -13,7 +13,7 @@ export class SwordFish extends Pet {
     health = 5;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = this.parent.opponent;
-        let highestHealthPetResp = opponent.getHighestHealthPet();
+        let highestHealthPetResp = opponent.getHighestHealthPet(undefined, this);
         let target = highestHealthPetResp.pet;
         let power = this.attack * this.level;
         if (target != null) {

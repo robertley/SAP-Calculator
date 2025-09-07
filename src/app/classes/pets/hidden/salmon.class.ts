@@ -20,9 +20,9 @@ export class Salmon extends Pet {
         let damage = this.level * 5;
         
         for (let i = 0; i < attacks; i++) {
-            let target = this.parent.opponent.getRandomPet([], false, true);
-            if (target) {
-                this.snipePet(target, damage, true, tiger);
+            let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
+            if (targetResp.pet) {
+                this.snipePet(targetResp.pet, damage, targetResp.random, tiger);
             }
         }
         

@@ -15,32 +15,21 @@ export class Tahr extends Pet {
     attack = 5;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.petBehind() == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, "Chili");
+        if (targetsBehindResp.pets.length === 0) {
+            this.superFaint(gameApi, tiger);
             return;
         }
-        let pet = this.petBehind();
-        let petsBehind = [pet];
-        while (pet.petBehind() != null) {
-            pet = pet.petBehind();
-            petsBehind.push(pet);
-        }
-        let count = 1;
-        for (let pet of petsBehind) {
-            if (count > this.level) {
-                break;
-            }
-            if (pet.equipment instanceof Chili) {
-                continue;
-            }
+        for (let pet of targetsBehindResp.pets) {
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} Chili.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
+                randomEvent: targetsBehindResp.random
             })
             pet.givePetEquipment(new Chili(this.logService, this.abilityService));
-            count++;
         }
         this.superFaint(gameApi, tiger);
     }

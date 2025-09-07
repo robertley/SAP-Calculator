@@ -23,17 +23,20 @@ export class Cricket extends Pet {
         }
         let zombie = new ZombieCricket(this.logService, this.abilityService, this.parent, null, null, null, exp);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned Zombie Cricket Level ${level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
-
-        if (this.parent.summonPet(zombie, this.savedPosition)) {
+        let summonResult = this.parent.summonPet(zombie, this.savedPosition, false, this);
+        
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Zombie Cricket Level ${level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                }
+            )
+            
             this.abilityService.triggerFriendSummonedEvents(zombie);
         }
 

@@ -16,11 +16,11 @@ export class Tatzelwurm extends Pet {
         if(pet.level == 3) {
             power = power * 2;
         }
-        let target = this.parent.opponent.furthestUpPet;
-        if (target == null) {
+        let targetResp = this.parent.opponent.getFurthestUpPet(this);
+        if (targetResp.pet == null) {
             return;
         }
-        this.snipePet(target, power, true, tiger);
+        this.snipePet(targetResp.pet, power, targetResp.random, tiger);
         this.superFriendAheadFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

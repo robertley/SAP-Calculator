@@ -15,7 +15,7 @@ export class Chihuahua extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         const opponent = this.parent.opponent;
         
-        const targetInfo = opponent.getHighestHealthPet();
+        const targetInfo = opponent.getHighestHealthPet(undefined, this);
         const target = targetInfo.pet;
 
         if (target) {

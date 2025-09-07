@@ -13,15 +13,27 @@ export class BabyUrchin extends Pet {
     health = 1;
     
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = [this.parent.opponent.furthestUpPet];
+        let firstTargetResp = this.parent.opponent.getFurthestUpPet(this);
+        let targets = [firstTargetResp.pet];
+        let isRandom = firstTargetResp.random;
         if (targets[0] == null) {
             this.superFaint(gameApi, tiger);
             return;
         }
         
         for (let i = 0; i < this.level - 1; i++) {
-            let currTarget = targets[i];
-            let target = currTarget.petBehind();
+            let target: Pet;
+            if (isRandom) {
+                // If Silly, get new random target for each additional hit
+                let nextTargetResp = this.parent.opponent.getFurthestUpPet(this);
+                target = nextTargetResp.pet;
+                // Keep using isRandom = true for all targets when Silly
+            } else {
+                // Normal behavior - target behind current target
+                let currTarget = targets[i];
+                target = currTarget.petBehind();
+            }
+            
             if (target == null) {
                 break;
             }
@@ -29,14 +41,17 @@ export class BabyUrchin extends Pet {
         }
         
         for (let target of targets) {
-            target.increaseHealth(-4);
-            this.logService.createLog({
-                message: `${this.name} removed 4 health from ${target.name}.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon,
-            })
+            if (target != null) {
+                target.increaseHealth(-4);
+                this.logService.createLog({
+                    message: `${this.name} removed 4 health from ${target.name}.`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: isRandom
+                })
+            }
         }
 
         this.superFaint(gameApi, tiger);

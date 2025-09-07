@@ -23,12 +23,18 @@ export class DoorHeadAnt extends Pet {
             tiger: tiger
         })
         let power = this.level * 4;
-        this.increaseHealth(power);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        target.increaseHealth(power);
         this.logService.createLog({
             message: `${this.name} gained ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
     }
     constructor(protected logService: LogService,

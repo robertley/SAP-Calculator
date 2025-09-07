@@ -13,24 +13,18 @@ export class RedDragon extends Pet {
     attack = 4;
     health = 8;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let opponentPets = this.parent.opponent.petArray;
-        opponentPets.reverse();
-        let targets = [];
-        for (let pet of opponentPets) {
-            if (pet.equipment instanceof Crisp) {
-                continue;
-            }
-            if (targets.length >= this.level) {
-                break;
-            }
-            targets.push(pet);
+        let targetsResp = this.parent.opponent.getLastPets(this.level, 'Crisp', this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
         }
         for (let target of targets) {
             this.logService.createLog({
                 message: `${this.name} gave ${target.name} Crisp.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsResp.random
             });
             target.givePetEquipment(new Crisp());
         }

@@ -12,6 +12,7 @@ export class MarineIguana extends Pet {
     pack: Pack = 'Danger';
     attack = 4;
     health = 5;
+    //TO DO: Refactor into pet memory
     private targetsThisTurn: Pet[] = [];
 
     beforeFriendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
@@ -19,22 +20,30 @@ export class MarineIguana extends Pet {
             return;
         }
 
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let attackingFriend = targetResp.pet;
+        
+        if (!attackingFriend) {
+            return;
+        }
+
         // Check if we've already given this friend Melon this turn
-        if (this.targetsThisTurn.includes(pet)) {
+        if (this.targetsThisTurn.includes(attackingFriend)) {
             return;
         }
 
         // Give the friend Melon
-        pet.givePetEquipment(new Melon());
+        attackingFriend.givePetEquipment(new Melon());
         
         // Track this friend so we don't target them again this turn
-        this.targetsThisTurn.push(pet);
+        this.targetsThisTurn.push(attackingFriend);
         
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} Melon`,
+            message: `${this.name} gave ${attackingFriend.name} Melon`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
         this.abilityUses++;

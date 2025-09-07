@@ -13,15 +13,18 @@ export class Pegasus extends Pet {
     attack = 1;
     health = 3;
     friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let targets = this.parent.getRandomPets(3, [this], true);
-        for (let target of targets) {
-            target.increaseAttack(this.level);
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${this.level} attack.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });
+        let targetsResp = this.parent.getRandomPets(3, [this], true, false, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                target.increaseAttack(this.level);
+                this.logService.createLog({
+                    message: `${this.name} gave ${target.name} ${this.level} attack.`,
+                    type: 'ability',
+                    player: this.parent,
+                    randomEvent: targetsResp.random,
+                    tiger: tiger
+                });
+            }
         }
     }
     constructor(protected logService: LogService,

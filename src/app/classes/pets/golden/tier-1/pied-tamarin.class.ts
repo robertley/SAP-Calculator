@@ -15,11 +15,13 @@ export class PiedTamarin extends Pet {
         if (this.parent.trumpets < 1) {
             return;
         }
-        let targets = this.parent.opponent.getRandomPets(this.level, null, null, true);
-        for (let target of targets) {
-            this.snipePet(target, 3, true, tiger, pteranodon);
+        let targetsResp = this.parent.opponent.getRandomPets(this.level, null, null, true, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                this.snipePet(target, 3, targetsResp.random, tiger, pteranodon);
+            }
         }
-        if (targets.length > 0) {
+        if (targetsResp.pets.length > 0) {
             this.parent.spendTrumpets(1, this, pteranodon);
         }
     }

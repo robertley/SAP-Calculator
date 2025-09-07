@@ -12,18 +12,20 @@ export class SkeletonDog extends Pet {
     attack = 3;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targets = this.parent.getRandomPets(this.level, [this], true);
-        for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${1} attack and ${1} health to ${target.name}.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true
-            })
+        let targetsResp = this.parent.getRandomPets(this.level, [this], true, false, this);
+        for (let target of targetsResp.pets) {
+            if (target != null) {
+                this.logService.createLog({
+                    message: `${this.name} gave ${1} attack and ${1} health to ${target.name}.`,
+                    type: 'ability',
+                    player: this.parent,
+                    tiger: tiger,
+                    randomEvent: targetsResp.random
+                })
 
-            target.increaseAttack(1);
-            target.increaseHealth(1);
+                target.increaseAttack(1);
+                target.increaseHealth(1);
+            }
         }
 
         this.superFaint(gameApi, tiger);

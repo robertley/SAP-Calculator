@@ -25,14 +25,13 @@ export class Tomato extends Equipment {
             
             for (let i = 0; i < this.multiplier; i++) {
                 let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
-                let attackPet = opponent.getLastPet();
-                if (attackPet == null) {
-                    console.warn("tomato didn't find target");
-                    continue;
+                let targetResp = opponent.getLastPet();
+                if (targetResp.pet == null) {
+                    break;
                 }
                 
                 // Use proper snipePet method which handles all the damage logic correctly
-                pet.snipePet(attackPet, 10, true, false, false, true, false);
+                pet.snipePet(targetResp.pet, 10, targetResp.random, false, false, true, false);
             }
             
             // Remove equipment after use

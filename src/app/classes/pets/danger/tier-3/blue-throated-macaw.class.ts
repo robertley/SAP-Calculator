@@ -13,17 +13,26 @@ export class BlueThroatedMacaw extends Pet {
     health = 4;
 
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        
+        if (!target) {
+            this.superFriendTransformed(gameApi, pet, tiger);
+            return;
+        }
+        
         let attackGain = 2 * this.level;
         let healthGain = 1 * this.level;
         
-        pet.increaseAttack(attackGain);
-        pet.increaseHealth(healthGain);
+        target.increaseAttack(attackGain);
+        target.increaseHealth(healthGain);
         
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} +${attackGain} attack and +${healthGain} health.`,
+            message: `${this.name} gave ${target.name} +${attackGain} attack and +${healthGain} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
         
         this.superFriendTransformed(gameApi, pet, tiger);

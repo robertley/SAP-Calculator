@@ -30,16 +30,12 @@ export class BlackRhino extends Pet {
         this.abilityService.setCounterEvent({
             callback: () => {
                 let damage = 30; // Fixed 30 damage
-                let targetsCount = this.level; // Level determines number of targets (1/2/3)
                 
                 // Get all alive enemies and shuffle for random selection
-                let enemies = clone(this.parent.opponent.petArray.filter(enemy => enemy && enemy.alive));
-                shuffle(enemies);
-                
-                // Target the first 'level' enemies (random)
-                for (let i = 0; i < Math.min(targetsCount, enemies.length); i++) {
-                    let target = enemies[i];
-                    this.snipePet(target, damage, true, tiger);
+                let targetsResp = this.parent.opponent.getRandomPets(this.level, [], false, true, this)
+                let targets = targetsResp.pets
+                for (let target of targets) {
+                    this.snipePet(target, damage, targetsResp.random, tiger);
                 }
             },
             priority: this.attack,

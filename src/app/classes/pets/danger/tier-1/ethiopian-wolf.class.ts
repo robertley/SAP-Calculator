@@ -13,9 +13,9 @@ export class EthiopianWolf extends Pet {
     health = 3;
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        const targets = this.parent.opponent.petArray.slice(0, this.level);
+        let targetResp = this.parent.opponent.getFurthestUpPets(this.level, undefined, this);
         
-        for (const target of targets) {
+        for (const target of targetResp.pets) {
             if (target?.alive) {
                 target.increaseAttack(-1);
                 this.logService.createLog({
@@ -23,7 +23,8 @@ export class EthiopianWolf extends Pet {
                     type: 'ability',
                     player: this.parent,
                     tiger: tiger,
-                    pteranodon: pteranodon
+                    pteranodon: pteranodon,
+                    randomEvent: targetResp.random
                 });
             }
         }

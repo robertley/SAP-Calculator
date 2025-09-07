@@ -22,25 +22,32 @@ export class Meerkat extends Pet {
             gold = gameApi.opponentGoldSpent;
         }
         let power = Math.floor(gold / 4) * this.level;
-        let targetAhead = this.petAhead;
-        let targetBehind = this.petBehind();
-        if (targetAhead != null) {
+        // Get pets ahead and behind with Silly-aware targeting
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        
+        if (targetsAheadResp.pets.length > 0) {
+            let targetAhead = targetsAheadResp.pets[0];
             targetAhead.increaseAttack(power);
             this.logService.createLog({
                 message: `${this.name} gave ${targetAhead.name} ${power} attack.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
-            })
+                tiger: tiger,
+                randomEvent: targetsAheadResp.random
+            });
         }
-        if (targetBehind != null) {
+        
+        if (targetsBehindResp.pets.length > 0) {
+            let targetBehind = targetsBehindResp.pets[0];
             targetBehind.increaseAttack(power);
             this.logService.createLog({
                 message: `${this.name} gave ${targetBehind.name} ${power} attack.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
-            })
+                tiger: tiger,
+                randomEvent: targetsBehindResp.random
+            });
         }
         this.superFaint(gameApi, tiger);
     }

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Log } from "../interfaces/log.interface";
 import { FormGroup } from "@angular/forms";
+import { cloneDeep } from 'lodash';
 
 @Injectable({
     providedIn: 'root'
@@ -18,21 +19,27 @@ export class LocalStorageService {
     }
 
     setFormStorage(formGroup: FormGroup) {
-        let value = formGroup.value;
-        // remove all fields from equipment except for the name
-        for (let pet of value.playerPets) {
-            if (pet.equipment != null) {
-                pet.equipment = {
-                    name: pet.equipment.name
+        let value = cloneDeep(formGroup.value);
+
+        const petsToClean = [...(value.playerPets || []), ...(value.opponentPets || [])];
+
+        for (const pet of petsToClean) {
+            // This check is important because the array can have null slots
+            if (pet) {
+                // Remove all complex objects and circular references
+                delete pet.parent;
+                delete pet.logService;
+                delete pet.abilityService;
+                delete pet.gameService;
+                delete pet.petService;
+
+                // Simplify equipment to just its name
+                if (pet.equipment != null) {
+                    pet.equipment = {
+                        name: pet.equipment.name
+                    };
                 }
-            } 
-        }
-        for (let pet of value.opponentPets) {
-            if (pet.equipment != null) {
-                pet.equipment = {
-                    name: pet.equipment.name
-                }
-            } 
+            }
         }
         this.setStorage(value);
     }

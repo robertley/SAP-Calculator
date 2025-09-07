@@ -29,22 +29,22 @@ export class Ant extends Pet {
         let power: Power = this.level == 1 ? { health: 1, attack: 1 } :
             this.level == 2 ? { health: 2, attack: 2 } : { health: 3, attack: 3 };
 
-        let boostPet = this.parent.getRandomPet([this], true, false, true);
-        if (boostPet == null) {
+        let boostResp = this.parent.getRandomPet([this], true, false, true, this);
+        if (boostResp.pet == null) {
             return;
         }
 
         this.logService.createLog({
-            message: `${this.name} gave ${boostPet.name} ${power.attack} attack and ${power.health} health.`,
+            message: `${this.name} gave ${boostResp.pet.name} ${power.attack} attack and ${power.health} health.`,
             type: "ability",
-            randomEvent: true,
+            randomEvent: boostResp.random,
             player: this.parent,
             tiger: tiger,
             pteranodon: pteranodon
         })
 
-        boostPet.increaseAttack(power.attack);
-        boostPet.increaseHealth(power.health);
+        boostResp.pet.increaseAttack(power.attack);
+        boostResp.pet.increaseHealth(power.health);
 
         this.superFaint(gameApi, tiger);
         this.done = true;

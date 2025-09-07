@@ -41,17 +41,19 @@ export class Chimera extends Pet {
          
         let lion = new ChimLion(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned a ${lion.name} ${finalAttack}/${finalHealth}.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        let lionSummonResult = this.parent.summonPet(lion, this.savedPosition, false, this);
+        if (lionSummonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned a ${lion.name} ${finalAttack}/${finalHealth}.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: lionSummonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(lion, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(lion);
         }
 
@@ -64,17 +66,19 @@ export class Chimera extends Pet {
          
         let goat = new ChimGoat(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned a ${goat.name} ${finalAttack}/${finalHealth}.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        let goatSummonResult = this.parent.summonPet(goat, this.savedPosition, false, this);
+        if (goatSummonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned a ${goat.name} ${finalAttack}/${finalHealth}.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: goatSummonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(goat, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(goat);
         }
 
@@ -87,17 +91,19 @@ export class Chimera extends Pet {
          
         let snake = new ChimSnake(this.logService, this.abilityService, this.parent, finalHealth, finalAttack);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned a ${snake.name} ${finalAttack}/${finalHealth}.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        let snakeSummonResult = this.parent.summonPet(snake, this.savedPosition, false, this);
+        if (snakeSummonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned a ${snake.name} ${finalAttack}/${finalHealth}.`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: snakeSummonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(snake, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(snake);
         }
 

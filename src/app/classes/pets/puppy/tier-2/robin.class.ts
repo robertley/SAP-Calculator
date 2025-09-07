@@ -24,14 +24,13 @@ export class Robin extends Pet {
             randomEvent: false,
             tiger: tiger
         });
-
-        if (this.parent.summonPetInFront(this, nest)) {
-
+        let result = this.parent.summonPetInFront(this, nest);
+        if (result.success) {
             this.logService.createLog({
                 message: `${this.name} gave Nest an Egg.`,
                 type: 'ability',
                 player: this.parent,
-                randomEvent: false,
+                randomEvent: result.randomEvent,
                 tiger: tiger
             })
 

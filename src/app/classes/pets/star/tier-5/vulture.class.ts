@@ -27,12 +27,12 @@ export class Vulture extends Pet {
         this.abilityService.setCounterEvent({
             callback: () => {
                 let opponent = this.parent.opponent;
-                let target = opponent.getRandomPet(null, null, true);
-                if (target == null) {
+                let targetResp = opponent.getRandomPet([], false, true, false, this);
+                if (targetResp.pet == null) {
                     return;
                 }
                 let power = this.level * 4;
-                this.snipePet(target, power, true, tiger);        
+                this.snipePet(targetResp.pet, power, targetResp.random, tiger);        
             },
             priority: this.attack,
             pet: this

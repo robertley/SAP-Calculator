@@ -12,7 +12,8 @@ export class Moth extends Pet {
     health = 3;
     attack = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.furthestUpPet;
+        let targetResp = this.parent.getFurthestUpPet(this);
+        let target = targetResp.pet
         if (target == null) {
             return;
         }
@@ -22,7 +23,8 @@ export class Moth extends Pet {
             message: `${this.name} gave ${target.name} ${power} attack.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superStartOfBattle(gameApi, tiger);
     }

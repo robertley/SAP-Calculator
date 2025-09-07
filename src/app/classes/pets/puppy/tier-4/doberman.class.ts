@@ -31,13 +31,31 @@ export class Doberman extends Pet {
         }
 
         let power = this.level * 8;
-        this.increaseAttack(power);
-        this.givePetEquipment(new Coconut());
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
+        target.increaseAttack(power);
         this.logService.createLog({
-            message: `${this.name} gained ${power} attack and gained a Coconut.`,
+            message: `${this.name} gave ${target.name} ${power} attack.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
+        })
+        let coconutTargetResp = this.parent.getThis(this);
+        let coconutTarget = coconutTargetResp.pet;
+        if (coconutTarget == null) {
+            return;
+        }
+        coconutTarget.givePetEquipment(new Coconut());
+        this.logService.createLog({
+            message: `${this.name} gave ${coconutTarget.name} Coconut.`,
+            type: 'ability',
+            player: this.parent,
+            tiger: tiger,
+            randomEvent: coconutTargetResp.random
         })
         this.superStartOfBattle(gameApi, tiger);
     }

@@ -16,17 +16,18 @@ export class Calygreyhound extends Pet {
             return;
         }
 
-        let targets = this.parent.opponent.getHighestHealthPets(2);
+        let targetsResp = this.parent.opponent.getHighestHealthPets(2, undefined, this);
 
         let power = this.level * this.mana;
 
-        for (let target of targets) {
+        for (let target of targetsResp.pets) {
             target.health = Math.max(1, target.health - power);
             this.logService.createLog({
                 message: `${this.name} reduced ${target.name}'s health by ${power} (${target.health}).`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsResp.random
             })
 
         }

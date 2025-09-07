@@ -13,13 +13,13 @@ export class Warf extends Pet {
     health = 2;
     gainedMana(gameApi: GameAPI, tiger?: boolean): void {
 
-        let target = this.parent.opponent.getRandomPet([], null, true);
+        let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
 
-        if (target == null) {
+        if (targetResp.pet == null) {
             return;
         }
 
-        this.snipePet(target, this.level, true, tiger);
+        this.snipePet(targetResp.pet, this.level, targetResp.random, tiger);
 
         this.superGainedMana(gameApi, tiger);
 

@@ -11,32 +11,27 @@ export class Pengobble extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 4;
-    maxAbilityUses = 2;
-    abilityUses = 0;
-
-    private isTriggering = false;
-
     gainedMana(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.isTriggering || this.abilityUses >= this.maxAbilityUses) {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-
-        this.isTriggering = true;
-
         const manaGain = this.level * 2;
-
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
         this.logService.createLog({
-            message: `${this.name} gained an extra ${manaGain} bonus mana.`,
+            message: `${this.name} gave ${target.name} an extra ${manaGain} bonus mana.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
-        this.increaseMana(manaGain);
+        this.mana += manaGain;
         this.abilityUses++;
         
-        this.isTriggering = false;
-
         this.superGainedMana(gameApi, tiger);
     }
     
@@ -54,7 +49,6 @@ export class Pengobble extends Pet {
 
     setAbilityUses(): void {
         super.setAbilityUses();
-        this.abilityUses = 0;
         this.maxAbilityUses = 2;
     }
 }

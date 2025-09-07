@@ -16,9 +16,8 @@ export class BanggaiCardinalfish extends Pet {
         let attackReduction = this.level * 6; // 6/12/18 based on level
         let minimumAttack = 5;
         
-        let targets = [...this.parent.petArray, ...this.parent.opponent.petArray];
-        targets = targets.filter(pet => pet.alive);
-        for (let targetPet of targets) {
+        let targetResp = this.parent.getAll(true, this); // includeOpponent = true
+        for (let targetPet of targetResp.pets) {
             let newAttack = Math.max(targetPet.attack - attackReduction, minimumAttack);
             
             targetPet.attack = newAttack;
@@ -26,7 +25,8 @@ export class BanggaiCardinalfish extends Pet {
                 message: `${this.name} reduced ${targetPet.name} attack by ${attackReduction} to (${newAttack}).`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
         }
         

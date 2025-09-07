@@ -14,26 +14,25 @@ export class Amargasaurus extends Pet {
     pack: Pack = 'Star';
     attack = 5;
     health = 7;
+    //TO DO: Need to add this to pet memory
     healthRestoredThisTurn = 0;
 
     friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let currentTargetPet: Pet;
 
         // Special handling ONLY for Fairy Armadillo to account for its transformation.
-        if (pet instanceof FairyArmadillo) {
-            currentTargetPet = pet.parent.getPetAtPosition(pet.savedPosition);
+        if (pet.transformed) {
+            currentTargetPet = pet.transformedInto;
             currentTargetPet.originalHealth = pet.originalHealth;
         } else {
             currentTargetPet = pet;
         }
 
-        if (!currentTargetPet) {
-            this.superFriendHurt(gameApi, pet, tiger);
+        if (!currentTargetPet || !currentTargetPet.alive) {
             return;
         }
 
         if (currentTargetPet === this) {
-            this.superFriendHurt(gameApi, pet, tiger);
             return;
         }
 
@@ -41,7 +40,6 @@ export class Amargasaurus extends Pet {
         const healthMissing = currentTargetPet.originalHealth - currentTargetPet.health;
 
         if (healthMissing <= 0 || this.healthRestoredThisTurn >= maxHealthToRestore) {
-            this.superFriendHurt(gameApi, pet, tiger);
             return;
         }
 
@@ -49,14 +47,19 @@ export class Amargasaurus extends Pet {
         const healthToRestore = Math.min(healthMissing, remainingRestorePower);
 
         if (healthToRestore > 0) {
+            let targetResp = this.parent.getSpecificPet(this, currentTargetPet)
+            let target = targetResp.pet;
+            if (target == null) {
+                return;
+            }
             this.logService.createLog({
-                message: `${this.name} restored ${healthToRestore} health to ${currentTargetPet.name}.`,
+                message: `${this.name} restored ${healthToRestore} health to ${target.name}.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger
             });
 
-            currentTargetPet.increaseHealth(healthToRestore);
+            target.increaseHealth(healthToRestore);
             this.healthRestoredThisTurn += healthToRestore;
         }
 

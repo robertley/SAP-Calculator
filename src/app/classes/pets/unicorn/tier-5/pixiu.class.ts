@@ -17,7 +17,6 @@ export class Pixiu extends Pet {
         }
 
         let power = this.level * 3;
-
         this.logService.createLog({
             message: `${this.name} spent 4 mana and gained ${power} gold for next turn.`,
             type: 'ability',

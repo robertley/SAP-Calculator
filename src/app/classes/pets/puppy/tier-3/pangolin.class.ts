@@ -14,19 +14,24 @@ export class Pangolin extends Pet {
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.parent.toy == null) {
+            this.superFaint(gameApi, tiger);
             return;
         }
-        if (this.petBehind() == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
+            this.superFaint(gameApi, tiger);
             return;
         }
+        let target = targetsBehindResp.pets[0];
         let power = this.level * 4;
-        this.petBehind().increaseHealth(power);
+        target.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gave ${this.petBehind().name} ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            pteranodon: pteranodon
+            pteranodon: pteranodon,
+            randomEvent: targetsBehindResp.random
         });
         this.superFaint(gameApi, tiger);
     }

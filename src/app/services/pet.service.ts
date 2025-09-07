@@ -241,7 +241,7 @@ import { BelugaWhale } from "../classes/pets/golden/tier-5/beluga-whale.class";
 import { Wolf } from "../classes/pets/golden/tier-5/wolf.class";
 import { SilverFox } from "../classes/pets/custom/tier-5/silver-fox.class";
 import { FireAnt } from "../classes/pets/golden/tier-5/fire-ant.class";
-import { Cockatoo } from "../classes/pets/golden/tier-5/cockatoo.class";
+import { Cockatoo } from "../classes/pets/golden/tier-4/cockatoo.class";
 import { BlueRingedOctopus } from "../classes/pets/golden/tier-5/blue-ringed-octopus.class";
 import { Crane } from "../classes/pets/golden/tier-5/crane.class";
 import { Emu } from "../classes/pets/golden/tier-5/emu.class";
@@ -252,7 +252,7 @@ import { Pteranodon } from "../classes/pets/golden/tier-6/pteranodon.class";
 import { Warthog } from "../classes/pets/golden/tier-6/warthog.class";
 import { Cobra } from "../classes/pets/golden/tier-6/cobra.class";
 import { GrizzlyBear } from "../classes/pets/golden/tier-6/grizzly-bear.class";
-import { GermanShephard } from "../classes/pets/golden/tier-6/german-shephard.class";
+import { GermanShepherd } from "../classes/pets/golden/tier-6/german-shepherd.class";
 import { BirdOfParadise } from "../classes/pets/golden/tier-6/bird-of-paradise.class";
 import { Oyster } from "../classes/pets/golden/tier-6/oyster.class";
 import { RockhopperPenguin } from '../classes/pets/golden/tier-6/rockhopper-penguin.class';
@@ -873,7 +873,7 @@ export class PetService {
             "Warthog",
             "Cobra",
             "Grizzly Bear",
-            "German Shephard",
+            "German Shepherd",
             "Bird of Paradise",
             "Oyster",
             "Rockhopper Penguin"
@@ -1695,8 +1695,8 @@ export class PetService {
                 return new Cobra(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Grizzly Bear':
                 return new GrizzlyBear(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
-            case 'German Shephard':
-                return new GermanShephard(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'German Shepherd':
+                return new GermanShepherd(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Bird of Paradise':
                 return new BirdOfParadise(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Oyster':
@@ -2937,8 +2937,8 @@ export class PetService {
         if (pet instanceof GrizzlyBear) {
             newPet = new GrizzlyBear(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
-        if (pet instanceof GermanShephard) {
-            newPet = new GermanShephard(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        if (pet instanceof GermanShepherd) {
+            newPet = new GermanShepherd(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof BirdOfParadise) {
             newPet = new BirdOfParadise(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

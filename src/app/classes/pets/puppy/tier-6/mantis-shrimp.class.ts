@@ -15,11 +15,12 @@ export class MantisShrimp extends Pet {
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
-            let target = opponent.furthestUpPet;
+            let targetResp = opponent.getFurthestUpPet(this);
+            let target = targetResp.pet;
             if (target == null) {
                 return;
             }
-            this.snipePet(target, 10, false, tiger);
+            this.snipePet(target, 10, targetResp.random, tiger);
         }
         this.superStartOfBattle(gameApi, tiger);
     }

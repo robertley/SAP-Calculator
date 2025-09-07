@@ -15,14 +15,20 @@ export class Axolotl extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
         let power = this.level;
-        pet.increaseAttack(power);
-        pet.increaseHealth(power);
+        target.increaseAttack(power);
+        target.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
         this.abilityUses++;
         this.superFriendGainedPerk(gameApi, pet, tiger);

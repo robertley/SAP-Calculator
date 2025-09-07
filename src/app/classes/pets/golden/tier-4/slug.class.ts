@@ -16,17 +16,19 @@ export class Slug extends Pet {
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned Smaller Slug Level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
-
-        if (this.parent.summonPet(slug, this.savedPosition)) {
+        let summonResult = this.parent.summonPet(slug, this.savedPosition, false, this)
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned Smaller Slug Level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                }
+            )
+    
             this.abilityService.triggerFriendSummonedEvents(slug);
         }
 

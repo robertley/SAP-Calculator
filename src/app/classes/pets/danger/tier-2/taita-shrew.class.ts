@@ -15,16 +15,24 @@ export class TaitaShrew extends Pet {
     health = 2;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let weasel = new Weasel(this.logService, this.abilityService, this.parent, this.health, this.attack, this.mana, this.exp, this.equipment);
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        
+        if (!target) {
+            return;
+        }
+        
+        let weasel = new Weasel(this.logService, this.abilityService, this.parent, target.health, target.attack, target.mana, target.exp, target.equipment);
         
         this.logService.createLog({
-            message: `${this.name} transformed into ${weasel.name} (level ${this.level}).`,
+            message: `${this.name} transformed ${target.name} into ${weasel.name} (level ${this.level}).`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
         
-        this.parent.transformPet(this, weasel);
+        this.parent.transformPet(target, weasel);
         this.superStartOfBattle(gameApi, tiger);
     }
 

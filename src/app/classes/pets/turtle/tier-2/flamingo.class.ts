@@ -17,49 +17,16 @@ export class Flamingo extends Pet {
             attack: this.level,
             health: this.level
         }
-        let pets = this.parent.petArray;
-
-        let index;
-        for (let i in pets) {
-            let pet = pets[+i]
-            if (pet == this) {
-                index = +i;
-            }
+        let targetsResp = this.parent.nearestPetsBehind(2, this);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
         }
-        let pet1;
-        let pet2;
-        for (let i = index; i < 5; i++) {
-            let pet = pets[i];
-            if (pet == null) {
-                continue;
-            }
-            if (pet.health > 0) {
-                if (pet1 == null) {
-                    pet1 = pet;
-                    continue;
-                }
-                pet2 = pet;
-                break;
-            }
-        }
-        if (pet1) {
-            let boostPet = pet1;
-            boostPet.increaseAttack(this.level);
-            boostPet.increaseHealth(this.level);
+        for (let target of targets) {
+            target.increaseAttack(this.level);
+            target.increaseHealth(this.level);
             this.logService.createLog({
-                message: `${this.name} gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-        }
-        if (pet2) {
-            let boostPet = pet2;
-            boostPet.increaseAttack(this.level);
-            boostPet.increaseHealth(this.level);
-            this.logService.createLog({
-                message: `Flamingo gave ${boostPet.name} ${this.level} attack and ${this.level} health.`,
+                message: `${this.name} gave ${target.name} ${this.level} attack and ${this.level} health.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,

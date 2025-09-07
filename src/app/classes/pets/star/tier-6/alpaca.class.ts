@@ -18,12 +18,18 @@ export class Alpaca extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        pet.increaseExp(3);
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return
+        }
+        target.increaseExp(3);
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} 3 exp.`,
+            message: `${this.name} gave ${target.name} 3 exp.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.abilityUses++;
         this.superFriendSummoned(gameApi, pet, tiger);

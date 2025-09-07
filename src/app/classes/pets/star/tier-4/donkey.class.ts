@@ -19,13 +19,13 @@ export class Donkey extends Pet {
             return;
         }
         let opponent = this.parent.opponent;
-        let target = opponent.getLastPet();
-        if (target == null) {
+        let targetResp = opponent.getLastPet();
+        if (targetResp.pet == null) {
             return;
         }
-        this.parent.pushPet(target, target.position);
+        this.parent.pushPet(targetResp.pet, targetResp.pet.position);
         this.logService.createLog({
-            message: `${this.name} pushed ${target.name} to the front.`,
+            message: `${this.name} pushed ${targetResp.pet.name} to the front.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

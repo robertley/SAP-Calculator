@@ -20,13 +20,19 @@ export class FlyingFish extends Pet {
             return;
         }
         let power = this.level * 2;
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power} exp.`,
+            message: `${this.name} gave ${target.name} ${power} exp.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
-        pet.increaseExp(power);
+        target.increaseExp(power);
         this.abilityUses++;
         this.superFriendSummoned(gameApi, pet, tiger);
     }

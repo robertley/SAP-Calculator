@@ -17,18 +17,20 @@ export class Orca extends Pet {
             let faintPet = this.petService.getRandomFaintPet(this.parent);
             faintPet.attack = 6;
             faintPet.health= 6;
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned a 6/6 ${faintPet.name}.`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    randomEvent: true,
-                    pteranodon: pteranodon
-                }
-            )
+            
+            let summonResult = this.parent.summonPet(faintPet, this.savedPosition, false, this);
+            if (summonResult.success) {
+                this.logService.createLog(
+                    {
+                        message: `${this.name} spawned a 6/6 ${faintPet.name}.`,
+                        type: "ability",
+                        player: this.parent,
+                        tiger: tiger,
+                        randomEvent: true,
+                        pteranodon: pteranodon
+                    }
+                )
 
-            if (this.parent.summonPet(faintPet, this.savedPosition)) {
                 this.abilityService.triggerFriendSummonedEvents(faintPet);
             }
         }

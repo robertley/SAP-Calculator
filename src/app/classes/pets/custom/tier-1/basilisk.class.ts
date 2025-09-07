@@ -13,14 +13,15 @@ export class Basilisk extends Pet {
     health = 2;
     attack = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.petAhead;
-        if (target == null) {
-            target = this.parent.opponent.petArray[0];
-        }
-        if (target == null) {
+        // Target ahead (including opponents if no friendlies available)
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this, undefined, true);
+        if (targetsAheadResp.pets.length === 0) {
             return;
         }
-                
+        let target = targetsAheadResp.pets[0];
+        if (target == null || !target.alive) {
+            return
+        }
         let healthBonus = this.level * 2;
         let health = target.health + healthBonus;
         health = Math.min(health, 50);
@@ -31,12 +32,11 @@ export class Basilisk extends Pet {
             message: `${this.name} turned ${target.name} into a Rock with + ${healthBonus} health.`,
             type: "ability",
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsAheadResp.random
         });
         // Use proper transformPet method
         target.parent.transformPet(target, rock);
-
-
 
         this.superStartOfBattle(gameApi, tiger);
     }

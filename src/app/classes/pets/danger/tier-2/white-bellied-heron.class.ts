@@ -14,19 +14,20 @@ export class WhiteBelliedHeron extends Pet {
     health = 2;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targets = this.getPetsAhead(this.level, false);
-        if (targets == null) {
+        let targetResp = this.parent.nearestPetsAhead(this.level, this);
+        if (targetResp.pets.length === 0) {
             return;
         }
         
-        for (let pet of targets) {
+        for (let pet of targetResp.pets) {
             let equipment = new MeatBone();
             pet.givePetEquipment(equipment);
             this.logService.createLog({
                 message: `${this.name} gave ${pet.name} a Meat Bone.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
         }
         

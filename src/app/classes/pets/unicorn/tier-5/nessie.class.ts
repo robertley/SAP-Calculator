@@ -35,17 +35,19 @@ export class Nessie extends Pet {
          
         let nessieQ = new NessieQ(this.logService, this.abilityService, this.parent, health, attack, 0);
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned a Nessie? ${attack}/${health}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        let summonResult = this.parent.summonPet(nessieQ, this.savedPosition, false, this);
+        if (summonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned a Nessie? ${attack}/${health}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: summonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(nessieQ, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(nessieQ);
         }
 

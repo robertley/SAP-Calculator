@@ -45,15 +45,16 @@ export class ShimaEnaga extends Pet {
             mana: 0
         }, this.parent);
 
-        this.logService.createLog({
-            message: `${this.name} summoned a (${power}/${power}) ${newPet.name} }`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: true
-        });
-        
-        if (this.parent.summonPet(newPet, pet.position)) {
+        let summonResult = this.parent.summonPet(newPet, pet.position, false, this);
+        if (summonResult.success) {
+            this.logService.createLog({
+                message: `${this.name} summoned a (${power}/${power}) ${newPet.name} }`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: true
+            });
+            
             this.abilityService.triggerFriendSummonedEvents(newPet);
         }
         

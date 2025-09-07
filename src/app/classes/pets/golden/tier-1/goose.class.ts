@@ -12,7 +12,8 @@ export class Goose extends Pet {
     attack = 2;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.opponent.furthestUpPet;
+        let targetResp = this.parent.opponent.getFurthestUpPet(this);
+        let target = targetResp.pet;
         if (target == null) {
             return;
         }
@@ -22,7 +23,8 @@ export class Goose extends Pet {
             message: `${this.name} removed ${power} attack from ${target.name}.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
         this.superStartOfBattle(gameApi, tiger);
     }

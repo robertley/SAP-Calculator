@@ -15,27 +15,34 @@ export class IriomoteCat extends Pet {
     attack = 2;
     health = 2;
     beforeStartOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let allTier1Pets = this.petService.allPets.get(this.level);
-        let randomIndex = getRandomInt(0, allTier1Pets.length - 1);
-        let randomPetName = allTier1Pets[randomIndex];
+        let targetResp = this.parent.getThis(this);
+        let target = targetResp.pet;
+        
+        if (!target || !target.alive) {
+            return;
+        }
+        
+        let allTierXPets = this.petService.allPets.get(this.level);
+        let randomIndex = getRandomInt(0, allTierXPets.length - 1);
+        let randomPetName = allTierXPets[randomIndex];
         
         let transformedPet = this.petService.createPet({
             name: randomPetName,
-            attack: this.attack,
-            health: this.health,
-            exp: this.exp,
-            equipment: this.equipment,
-            mana: this.mana
+            attack: target.attack,
+            health: target.health,
+            exp: target.exp,
+            equipment: target.equipment,
+            mana: target.mana
         }, this.parent);
         
         this.logService.createLog({
-            message: `${this.name} transformed into a ${randomPetName}.`,
+            message: `${this.name} transformed ${target.name} into a ${randomPetName}.`,
             type: 'ability',
             player: this.parent,
             randomEvent: true
         });
         
-        this.parent.transformPet(this, transformedPet);
+        this.parent.transformPet(target, transformedPet);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

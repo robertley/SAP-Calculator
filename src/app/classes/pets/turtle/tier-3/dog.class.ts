@@ -17,14 +17,18 @@ export class Dog extends Pet {
         }
         let boostAtkAmt = this.level * 2;
         let boostHealthAmt = this.level;
-        this.increaseAttack(boostAtkAmt);
-        this.increaseHealth(boostHealthAmt);
-        this.logService.createLog({
-            message: `${this.name} gained ${boostAtkAmt} attack and ${boostHealthAmt} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
+        let selfTargetResp = this.parent.getThis(this);
+        if (selfTargetResp.pet) {
+            selfTargetResp.pet.increaseAttack(boostAtkAmt);
+            selfTargetResp.pet.increaseHealth(boostHealthAmt);
+            this.logService.createLog({
+                message: `${this.name} gave ${selfTargetResp.pet.name} ${boostAtkAmt} attack and ${boostHealthAmt} health.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger,
+                randomEvent: selfTargetResp.random
+            });
+        }
         super.superFriendSummoned(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,

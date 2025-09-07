@@ -17,25 +17,26 @@ export class Fossa extends Pet {
         const rollAmount = isPlayer ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
 
         if (rollAmount <= 0) {
-            this.superStartOfBattle(gameApi, tiger);
             return;
         }
 
         const healthToRemove = this.level * rollAmount;
 
-        const targets = this.parent.opponent.petArray.slice(0, 2);
+        let targetResp = this.parent.getFurthestUpPets(2, null, this);
+        let targets = targetResp.pets
+        if (targets.length == 0){
+            return;
+        }
 
-        for (const target of targets) {
-            if (target?.alive) {
-                this.logService.createLog({
-                    message: `${this.name} removed ${healthToRemove} health from ${target.name}.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
+        for (let target of targets) {
+            this.logService.createLog({
+                message: `${this.name} removed ${healthToRemove} health from ${target.name}.`,
+                type: 'ability',
+                player: this.parent,
+                tiger: tiger
+            });
 
-                target.health -= healthToRemove;
-            }
+            target.increaseHealth(-healthToRemove);           
         }
 
         this.superStartOfBattle(gameApi, tiger);

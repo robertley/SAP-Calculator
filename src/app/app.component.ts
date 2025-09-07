@@ -1,7 +1,8 @@
-import { Component, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Injector, ViewChildren, QueryList, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Player } from './classes/player.class';
 import { Pet } from './classes/pet.class';
 
+import { InjectorService } from './services/injector.service';
 import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
 import { createPack, money_round } from './util/helper-functions';
@@ -100,9 +101,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.6.18';
+  version = '0.6.19';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '8/27/2025';
+  lastUpdated = '9/6/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -134,6 +135,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private isLoadedFromUrl = false;
 
   constructor(private logService: LogService,
+    private injector: Injector,
     private abilityService: AbilityService,
     private gameService: GameService,
     private equipmentService: EquipmentService,
@@ -142,6 +144,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private startOfBattleService: StartOfBattleService,
     private localStorageService: LocalStorageService
   ) {
+    InjectorService.setInjector(this.injector);
     this.player = new Player(logService, abilityService, gameService);
     this.opponent = new Player(logService, abilityService, gameService);
     this.gameService.init(this.player, this.opponent);
@@ -678,7 +681,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (player == this.opponent) {
       levelControlName = 'opponentToyLevel';
     }
-    let level = this.formGroup.get(levelControlName).value;
+    let level = Number(this.formGroup.get(levelControlName).value);
     player.toy = this.toyService.createToy(toy, player, level);
     player.originalToy = player.toy;
   }
@@ -807,7 +810,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   runSimulation() {
-    debugger;
     //save info to local
     this.localStorageService.setFormStorage(this.formGroup);
     //clear previous simulation results
@@ -971,6 +973,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     if (finished) {
+      this.logService.printState(this.player, this.opponent);
       this.endLog(winner);
       this.battleStarted = false;
       return;
@@ -1348,7 +1351,28 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   generateShareLink(): void {
     this.localStorageService.setFormStorage(this.formGroup);
-    const calculatorStateString = JSON.stringify(this.formGroup.value);
+
+    const rawValue = this.formGroup.value;
+    const cleanValue = cloneDeep(rawValue);
+
+    const petsToClean = [...(cleanValue.playerPets || []), ...(cleanValue.opponentPets || [])];
+
+    for (const pet of petsToClean) {
+      if (pet) {
+          // Remove all complex objects and circular references
+          delete pet.parent;
+          delete pet.logService;
+          delete pet.abilityService;
+          delete pet.gameService;
+          delete pet.petService; 
+
+          if (pet.equipment) {
+              pet.equipment = { name: pet.equipment.name };
+          }
+      }
+  }
+
+    const calculatorStateString = JSON.stringify(cleanValue);
 
     const encodedData = encodeURIComponent(calculatorStateString);
 

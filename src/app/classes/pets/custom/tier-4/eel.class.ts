@@ -12,6 +12,9 @@ export class Eel extends Pet {
     attack = 4;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
+        if (!this.alive) {
+            return;
+        }
         let power = .5 * this.level;
         this.health = Math.min(50, Math.floor(this.health * (1 + power)));
         this.logService.createLog({

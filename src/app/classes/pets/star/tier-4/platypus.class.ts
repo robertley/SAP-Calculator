@@ -19,31 +19,36 @@ export class Platypus extends Pet {
         
         let duck = new Duck(this.logService, this.abilityService, this.parent, healthPower, attackPower, 0, this.minExpForLevel);
         let beaver = new Beaver(this.logService, this.abilityService, this.parent, healthPower, attackPower, 0, this.minExpForLevel);
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${attackPower}/${healthPower} Duck level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        
+        let duckSummonResult = this.parent.summonPet(duck, this.savedPosition, false, this);
+        if (duckSummonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${attackPower}/${healthPower} Duck level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: duckSummonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(duck, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(duck);
         }
 
-        this.logService.createLog(
-            {
-                message: `${this.name} spawned ${attackPower}/${healthPower} Beaver level ${this.level}`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
+        let beaverSummonResult = this.parent.summonPet(beaver, this.savedPosition, false, this);
+        if (beaverSummonResult.success) {
+            this.logService.createLog(
+                {
+                    message: `${this.name} spawned ${attackPower}/${healthPower} Beaver level ${this.level}`,
+                    type: "ability",
+                    player: this.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon,
+                    randomEvent: beaverSummonResult.randomEvent
+                }
+            )
 
-        if (this.parent.summonPet(beaver, this.savedPosition)) {
             this.abilityService.triggerFriendSummonedEvents(beaver);
         }
         super.superAfterFaint(gameApi, tiger, pteranodon);

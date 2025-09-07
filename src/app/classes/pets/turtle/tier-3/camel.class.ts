@@ -11,21 +11,21 @@ export class Camel extends Pet {
     health = 3;
     attack = 3;
     hurt(gameApi, pet, tiger) {
-        let boostPet = this.petBehind();
-        if (boostPet == null) {
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length === 0) {
             return;
         }
+        let boostPet = targetsBehindResp.pets[0];
         let boostAmt = this.level * 2;
-        if (boostPet) {
-            boostPet.increaseAttack(this.level);
-            boostPet.increaseHealth(boostAmt);
-        }
+        boostPet.increaseAttack(this.level);
+        boostPet.increaseHealth(boostAmt);
         this.logService.createLog({
             message: `${this.name} gave ${boostPet.name} ${this.level} attack and ${boostAmt} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
-        })
+            tiger: tiger,
+            randomEvent: targetsBehindResp.random
+        });
 
         super.superHurt(gameApi, pet, tiger);
     }

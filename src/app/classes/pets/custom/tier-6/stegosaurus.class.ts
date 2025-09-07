@@ -13,19 +13,19 @@ export class Stegosaurus extends Pet {
     health = 8;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let equipmentPets = this.parent.petArray.filter(pet => pet.equipment != null);
-        let target = this.parent.getRandomPet([...equipmentPets, this], true, false, true);
-        if (target == null) {
+        let targetResp = this.parent.getRandomPet([...equipmentPets, this], true, false, true, this);
+        if (targetResp.pet == null) {
             return;
         }
         let power = this.level * gameApi.turnNumber;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
+        targetResp.pet.increaseAttack(power);
+        targetResp.pet.increaseHealth(power);
         this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+            message: `${this.name} gave ${targetResp.pet.name} ${power} attack and ${power} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger,
-            randomEvent: true
+            randomEvent: targetResp.random
         })
         this.superStartOfBattle(gameApi, tiger);
 

@@ -19,13 +19,19 @@ export class Bilby extends Pet {
         if (this == pet) {
             return;
         }
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet
+        if (target == null) {
+            return;
+        }
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} Garlic.`,
+            message: `${this.name} gave ${target.name} Garlic.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
-        pet.givePetEquipment(new Garlic());
+        target.givePetEquipment(new Garlic());
         this.abilityUses++;
         super.superFriendLosPerk(gameApi, pet, tiger);
     }

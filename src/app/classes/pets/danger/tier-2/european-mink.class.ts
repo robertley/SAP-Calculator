@@ -13,31 +13,37 @@ export class EuropeanMink extends Pet {
     health = 3;
 
     adjacentAttacked(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (!this.alive || this.abilityUses >= this.maxAbilityUses) {
+        if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
 
         let power = this.level;
-        let targetAhead = this.petAhead;
-        let targetBehind = this.petBehind();
-
-        if (targetAhead != null) {
+        
+        // Target ahead with Silly-aware targeting
+        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
+        if (targetsAheadResp.pets.length > 0) {
+            let targetAhead = targetsAheadResp.pets[0];
             targetAhead.increaseAttack(power);
             this.logService.createLog({
                 message: `${this.name} gave ${targetAhead.name} ${power} attack.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsAheadResp.random
             });
         }
 
-        if (targetBehind != null) {
+        // Target behind with Silly-aware targeting
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
+        if (targetsBehindResp.pets.length > 0) {
+            let targetBehind = targetsBehindResp.pets[0];
             targetBehind.increaseAttack(power);
             this.logService.createLog({
                 message: `${this.name} gave ${targetBehind.name} ${power} attack.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetsBehindResp.random
             });
         }
 

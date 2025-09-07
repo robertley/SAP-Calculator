@@ -18,20 +18,19 @@ export class Turkey extends Pet {
             attack: 3 * this.level,
             health: 1 * this.level
         }
-        try {
-            pet.increaseAttack(power.attack);
-            pet.increaseHealth(power.health);
-        } catch (error) {
-            console.error(error);
-            console.log(pet);
-            throw error;
+        let targetResp = this.parent.getSpecificPet(this, pet);
+        let target = targetResp.pet
+        if (target == null) {
+            return;
         }
-
+        target.increaseAttack(power.attack);
+        target.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power.attack} attack and ${power.health} health.`,
+            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         })
 
         super.superFriendSummoned(gameApi, pet, tiger);

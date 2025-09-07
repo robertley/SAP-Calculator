@@ -12,19 +12,14 @@ export class Hedgehog extends Pet {
     attack = 4;
     health = 2;
     faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
-        let targetPets = gameApi.player.petArray.filter((pet) => {
-            return pet != this && pet.alive;
-        })
-        targetPets.reverse();
-        targetPets = [
-            ...targetPets,
-            ...gameApi.opponet.petArray.filter((pet) => {
-                return pet.alive;
-            })
-        ];
+        let targetsResp = this.parent.getAll(true, this);
+        let targts = targetsResp.pets
+        if (targts.length == 0) {
+            return;
+        }
         let damage = this.level * 2;
-        for (let pet of targetPets) {
-            this.snipePet(pet, damage, false, tiger, pteranodon);
+        for (let pet of targts) {
+            this.snipePet(pet, damage, targetsResp.random, tiger, pteranodon);
         }
 
         super.superFaint(gameApi, tiger);

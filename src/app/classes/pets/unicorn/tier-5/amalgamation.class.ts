@@ -19,20 +19,26 @@ export class Amalgamation extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
+        let targetResp = this.parent.getThis(pet);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
+        }
 
         let attackAmount = this.level * 3;
         let manaAmount = this.level * 4;
 
         this.logService.createLog({
-            message: `${this.name} gave ${pet.name} +${attackAmount} attack, +${manaAmount} mana, and Spooked.`,
+            message: `${this.name} gave ${target.name} +${attackAmount} attack, +${manaAmount} mana, and Spooked.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetResp.random
         });
 
-        pet.increaseAttack(attackAmount);
-        pet.increaseMana(manaAmount);
-        pet.givePetEquipment(new Spooked());
+        target.increaseAttack(attackAmount);
+        target.increaseMana(manaAmount);
+        target.givePetEquipment(new Spooked());
 
         this.abilityUses++;
         this.superFriendSummoned(gameApi, pet, tiger);
