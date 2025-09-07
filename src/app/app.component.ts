@@ -1351,7 +1351,28 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   generateShareLink(): void {
     this.localStorageService.setFormStorage(this.formGroup);
-    const calculatorStateString = JSON.stringify(this.formGroup.value);
+
+    const rawValue = this.formGroup.value;
+    const cleanValue = cloneDeep(rawValue);
+
+    const petsToClean = [...(cleanValue.playerPets || []), ...(cleanValue.opponentPets || [])];
+
+    for (const pet of petsToClean) {
+      if (pet) {
+          // Remove all complex objects and circular references
+          delete pet.parent;
+          delete pet.logService;
+          delete pet.abilityService;
+          delete pet.gameService;
+          delete pet.petService; 
+
+          if (pet.equipment) {
+              pet.equipment = { name: pet.equipment.name };
+          }
+      }
+  }
+
+    const calculatorStateString = JSON.stringify(cleanValue);
 
     const encodedData = encodeURIComponent(calculatorStateString);
 
