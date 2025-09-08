@@ -43,7 +43,7 @@ export class Velociraptor extends Pet {
             let healthBonus = this.level * 3;
             
             // Give all friends the bonus
-            let friendlyPetsResp = this.parent.getRandomPets(5, null, null, null, this);
+            let friendlyPetsResp = this.parent.getAll(false, this, true);
             let friendlyPets = friendlyPetsResp.pets;
             for (let friendPet of friendlyPets) {
                 friendPet.increaseAttack(attackBonus);
