@@ -1446,11 +1446,6 @@ export abstract class Pet {
         if (pet.equipment?.name === 'Strawberry' && sparrowLevel > 0) {
             defenseAmt += sparrowLevel * 5;
         }
-        let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
-        //check garlic
-        if (defenseEquipment?.minimumDamage !== undefined) {
-            min = defenseEquipment.minimumDamage;
-        }
 
         let mapleSyrupReduction = 0;
         if (pet.equipment instanceof MapleSyrup && pet.equipment.uses > 0 && !snipe) {
@@ -1488,9 +1483,15 @@ export abstract class Pet {
             totalMultiplier += pet.equipment.multiplier - 1; // Add pandora's box multiplier
             attackAmt *= totalMultiplier;
         }
+        let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
+        //check garlic
+        if (defenseEquipment?.minimumDamage !== undefined) {
+            min = defenseEquipment.minimumDamage;
+        }
+
         let damage: number;
-        if (attackAmt <= min) {
-            damage = Math.max(attackAmt - defenseAmt, 0);
+        if (attackAmt <= min && defenseAmt > 0) {
+                damage = Math.max(attackAmt, 0);
         } else {
             damage = Math.max(min, attackAmt - defenseAmt);
         }

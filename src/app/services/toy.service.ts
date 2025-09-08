@@ -313,11 +313,6 @@ export class ToyService {
         if (pet.equipment?.name === 'Strawberry' && sparrowLevel > 0) {
             defenseAmt += sparrowLevel * 5;
         }
-        let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
-        //check garlic
-        if (defenseEquipment?.minimumDamage !== undefined) {
-            min = defenseEquipment.minimumDamage;
-        }
 
         if (pet.equipment?.name == "Exposed") {
             let totalMultiplier = 2; // Base exposed multiplier
@@ -327,10 +322,14 @@ export class ToyService {
             totalMultiplier += pet.equipment.multiplier - 1; // Add pandora's box multiplier
             power *= totalMultiplier;
         }
-
+        let min = defenseEquipment?.equipmentClass == 'shield' || defenseEquipment?.equipmentClass == 'shield-snipe' ? 0 : 1;
+        //check garlic
+        if (defenseEquipment?.minimumDamage !== undefined) {
+            min = defenseEquipment.minimumDamage;
+        }
         let damage: number;
-        if (power <= min) {
-            damage = Math.max(power - defenseAmt, 0);
+        if (power <= min && defenseAmt > 0) {
+            damage = Math.max(power, 0);
         } else {
             damage = Math.max(min, power - defenseAmt);
         }
