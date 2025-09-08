@@ -32,7 +32,7 @@ export class Wolverine extends Pet {
         }
         this.abilityService.setCounterEvent({
             callback: () => {
-                let targetResp = this.parent.opponent.getRandomPets(5, null, null, null, this);
+                let targetResp = this.parent.opponent.getAll(false, this);
                 let targets = targetResp.pets
                 if (targets.length == 0) {
                     return;
