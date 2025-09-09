@@ -7,9 +7,9 @@ export class SudduthTomato extends Equipment {
     equipmentClass = 'hurt' as EquipmentClass;
     callback = (pet: Pet) => {
         let originalHurt = pet.hurt?.bind(pet);
-        pet.hurt = (gameApi, pet, tiger) => {
+        pet.hurt = (gameApi, attacker, tiger) => {
             if (originalHurt != null) {
-                originalHurt(gameApi, pet, tiger);
+                originalHurt(gameApi, attacker, tiger);
             }
             
             if (tiger) {

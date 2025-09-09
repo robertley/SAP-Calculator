@@ -70,7 +70,7 @@ export class GoodDog extends Pet {
     health = 3;
     hidden: boolean = true;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.getRandomPets(10, [this], null, null, this);
+        let targetsResp = this.parent.getAll(true, this);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;
