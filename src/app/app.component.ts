@@ -52,7 +52,7 @@ const REVERSE_KEY_MAP = {
   "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana",
   "sa": "showAdvanced", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
   // Pet Object Keys
-  "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment"
+  "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment", "bSP": "belugaSwallowedPet"
 };
 
 function expandKeys(data) {
