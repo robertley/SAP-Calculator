@@ -20,7 +20,7 @@ export class TeamSpirit extends Pet {
             return;
         }
 
-        let targetResp = this.parent.getRandomPets(5, [this], false, false, this);
+        let targetResp = this.parent.getAll(false, this, true);
         let targets = targetResp.pets;
 
         let power: Power = {

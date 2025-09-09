@@ -12,7 +12,7 @@ export class Piranha extends Pet {
     attack = 10;
     health = 4;
     hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetPetsResp = this.parent.getRandomPets(5, null, null, null, this, false);
+        let targetPetsResp = this.parent.getAll(false, this, true);
         let targetPets = targetPetsResp.pets;
         let power = this.level * 3;
         for (let target of targetPets) {

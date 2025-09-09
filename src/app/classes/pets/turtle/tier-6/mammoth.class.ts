@@ -13,7 +13,7 @@ export class Mammoth extends Pet {
     health = 12;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let power = this.level * 2;
-        let targetResp = this.parent.getRandomPets(5, null, null, null, this);
+        let targetResp = this.parent.getAll(false, this);
         let targets = targetResp.pets;
         if (targets.length == 0) {
             return;
