@@ -12,9 +12,8 @@ export class Ogopogo extends Pet {
     attack = 3;
     health = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        const potentialTargets = this.parent.petArray.filter(pet => pet !== this);
-        const numberOfTargets = this.level;
-        const targets = potentialTargets.slice(0, numberOfTargets);
+        const targetResp = this.parent.getFurthestUpPets(this.level, null, this, null, [this]); 
+        const targets = targetResp.pets;
         
         if (targets.length === 0) {
             this.superStartOfBattle(gameApi, tiger);
@@ -26,7 +25,8 @@ export class Ogopogo extends Pet {
                 message: `${this.name} gave ${target.name} +1 experience.`,
                 type: 'ability',
                 player: this.parent,
-                tiger: tiger
+                tiger: tiger,
+                randomEvent: targetResp.random
             });
     
             target.increaseExp(1);

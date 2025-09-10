@@ -988,7 +988,32 @@ export class Player {
         
         return { pets: targets, random: isRandom };
     }
+        /**
+     * Returns a pet that's tier X or lower
+     * @param excludeEquipment Optional equipment name to exclude pets that already have it
+     * @param callingPet Pet calling this method (for Silly ailment detection)
+     * @returns Array of pets sorted by tier (highest first)
+     */
+    getTierXOrLowerPet(tier: number, excludeEquipment?: string, callingPet?: Pet): {pet: Pet, random: boolean} {
+        // Check for Silly ailment - return random living pets
+        if (callingPet && this.hasSilly(callingPet)) {
+            let petResp = this.getRandomLivingPet();
+            return { pet: petResp.pet, random: petResp.random };
+        }
 
+        let availablePets = [...this.petArray].filter((pet) => pet.alive && pet.tier <= tier);
+        if (excludeEquipment) {
+            availablePets = availablePets.filter((pet) => pet.equipment?.name != excludeEquipment);
+        }
+        
+        if (availablePets.length === 0) {
+            return { pet: null, random: false };
+        }
+        
+        let index = getRandomInt(0, availablePets.length - 1);
+        return { pet: availablePets[index], random: availablePets.length > 1 };
+
+    }
     get furthestUpPet(): Pet {
         for (let pet of this.petArray) {
             if (pet.alive) {
@@ -997,7 +1022,6 @@ export class Player {
         }
         return null;
     }
-  //TO DO: this function might be useless
     getFurthestUpPet(callingPet?: Pet): {pet: Pet, random: boolean} {
         // Check for Silly ailment - return random living pet, ignoring all positioning
         if (callingPet && this.hasSilly(callingPet)) {

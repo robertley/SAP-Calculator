@@ -13,19 +13,17 @@ export class PygmyHog extends Pet {
     pack: Pack = 'Danger';
     attack = 1;
     health = 2;
-    private attackCounter = 0;
 
     enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
  
         
         
         if (!tiger) {
-            this.attackCounter++;
+            this.abilityCounter++;
         }
         
         // Check if counter reached (every 5 attacks)
-        if (this.attackCounter % 5 != 0) {
-            this.superEnemyAttack(gameApi, pet, tiger);
+        if (this.abilityCounter % 5 != 0) {
             return;
         }
         

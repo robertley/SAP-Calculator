@@ -12,7 +12,6 @@ export class SaigaAntelope extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 3;
-    private attackCounter = 0;
     
     friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (pet == this) {
@@ -22,9 +21,9 @@ export class SaigaAntelope extends Pet {
             return;
         } 
         if (!tiger) {
-            this.attackCounter++;
+            this.abilityCounter++;
         }
-        if (this.attackCounter % 2 != 0) {
+        if (this.abilityCounter % 2 != 0) {
             return;
         }
         this.abilityService.setCounterEvent({

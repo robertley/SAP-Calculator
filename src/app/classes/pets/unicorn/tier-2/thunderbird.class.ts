@@ -12,8 +12,12 @@ export class Thunderbird extends Pet {
     attack = 2;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.getFurthesetUpPets(1, null, this, null, [this]);
-        let target = targetsResp.pets[0];
+        let targetsResp = this.parent.nearestPetsAhead(2, this);
+        let targets = targetsResp.pets;
+        if (targets.length < 2) {
+            return;
+        }
+        let target = targetsResp.pets[1];
         if (target == null) {
             return;
         }
@@ -22,7 +26,8 @@ export class Thunderbird extends Pet {
             message: `${this.name} gave ${target.name} ${power} mana.`,
             type: 'ability',
             player: this.parent,
-            tiger: tiger
+            tiger: tiger,
+            randomEvent: targetsResp.random
         })
         target.increaseMana(power);
 

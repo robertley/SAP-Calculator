@@ -12,8 +12,6 @@ export class MarineIguana extends Pet {
     pack: Pack = 'Danger';
     attack = 4;
     health = 5;
-    //TO DO: Refactor into pet memory
-    private targetsThisTurn: Pet[] = [];
 
     beforeFriendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
@@ -28,7 +26,7 @@ export class MarineIguana extends Pet {
         }
 
         // Check if we've already given this friend Melon this turn
-        if (this.targetsThisTurn.includes(attackingFriend)) {
+        if (this.targettedFriends.has(attackingFriend)) {
             return;
         }
 
@@ -36,7 +34,7 @@ export class MarineIguana extends Pet {
         attackingFriend.givePetEquipment(new Melon());
         
         // Track this friend so we don't target them again this turn
-        this.targetsThisTurn.push(attackingFriend);
+        this.targettedFriends.add(attackingFriend);
         
         this.logService.createLog({
             message: `${this.name} gave ${attackingFriend.name} Melon`,
@@ -54,10 +52,7 @@ export class MarineIguana extends Pet {
         super.setAbilityUses();
         this.maxAbilityUses = this.level; // 1/2/3 different friends per turn based on level
     }
-    resetPet(): void {
-        super.resetPet();
-        this.targetsThisTurn = [];
-    }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
