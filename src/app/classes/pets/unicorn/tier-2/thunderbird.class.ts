@@ -12,7 +12,8 @@ export class Thunderbird extends Pet {
     attack = 2;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let target = this.parent.furthestUpPet;
+        let targetsResp = this.parent.getFurthesetUpPets(1, null, this, null, [this]);
+        let target = targetsResp.pets[0];
         if (target == null) {
             return;
         }
