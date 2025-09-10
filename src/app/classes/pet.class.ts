@@ -1112,7 +1112,7 @@ export abstract class Pet {
                 player: this.parent,
                 randomEvent: random
             });
-    
+            //TO DO: Maybe all other ability equipment should follow this pattern
             let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
             if (skewerEquipment != null) {
                 skewerEquipment.attackCallback(this, pet);
@@ -1144,17 +1144,28 @@ export abstract class Pet {
                     totalMultiplier += mult;
                 }
                 damage *= totalMultiplier;
+                let fairyBallReduction = 0;
+                if (pet.name === 'Fairy Ball' && damage > 0) {
+                    fairyBallReduction = pet.level * 2;
+                    damage = Math.max(1, damage - fairyBallReduction);
+                }
                 let nurikabe = 0;
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
-                    damage = Math.max(0, damage - nurikabe);
+                    damage = Math.max(1, damage - nurikabe);
                     pet.abilityUses++;
                 }
                 let fanMusselReduction = 0;
                 if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
                     fanMusselReduction = pet.level * 1;
-                    damage = Math.max(0, damage - fanMusselReduction);
+                    damage = Math.max(1, damage - fanMusselReduction);
                     pet.abilityUses++;
+                }
+                let ghostKitten = pet.name == 'Ghost Kitten';
+                let ghostKittenMitigation = 1;
+                if (ghostKitten) {
+                    ghostKittenMitigation = pet.level * 3;
+                    damage = Math.max(1, damage - ghostKittenMitigation);
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1165,11 +1176,17 @@ export abstract class Pet {
                 if (pet.equipment.multiplier > 1) {
                     message += pet.equipment.multiplierMessage;
                 }
+                if (fairyBallReduction > 0) {
+                    message += `-${fairyBallReduction} (FairyBall)`
+                }
                 if (nurikabe > 0) {
                     message += ` -${nurikabe} (Nurikabe)`;
                 }
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
+                }
+                if (ghostKitten) {
+                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
                 }
                 message += ` (Crisp).`;
 
@@ -1188,17 +1205,28 @@ export abstract class Pet {
                     totalMultiplier += mult;
                 }
                 damage *= totalMultiplier;
+                let fairyBallReduction = 0;
+                if (pet.name === 'Fairy Ball' && damage > 0) {
+                    fairyBallReduction = pet.level * 2;
+                    damage = Math.max(1, damage - fairyBallReduction);
+                }
                 let nurikabe = 0;
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
-                    damage = Math.max(0, damage - nurikabe);
+                    damage = Math.max(1, damage - nurikabe);
                     pet.abilityUses++;
                 }
                 let fanMusselReduction = 0;
                 if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
                     fanMusselReduction = pet.level * 1;
-                    damage = Math.max(0, damage - fanMusselReduction);
+                    damage = Math.max(1, damage - fanMusselReduction);
                     pet.abilityUses++;
+                }
+                let ghostKitten = pet.name == 'Ghost Kitten';
+                let ghostKittenMitigation = 1;
+                if (ghostKitten) {
+                    ghostKittenMitigation = pet.level * 3;
+                    damage = Math.max(1, damage - ghostKittenMitigation);
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1209,11 +1237,17 @@ export abstract class Pet {
                 if (pet.equipment.multiplier > 1) {
                     message += pet.equipment.multiplierMessage;
                 }
+                if (fairyBallReduction > 0) {
+                    message += `-${fairyBallReduction} (FairyBall)`
+                }
                 if (nurikabe > 0) {
                     message += ` -${nurikabe} (Nurikabe)`;
                 }
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
+                }
+                if (ghostKitten) {
+                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
                 }
                 message += ` (Toasty).`;
 
@@ -1264,7 +1298,7 @@ export abstract class Pet {
         let ghostKittenMitigation = 0;
         if (ghostKitten) {
             ghostKittenMitigation = pet.level * 3;
-            damage = Math.max(0, damage - ghostKittenMitigation);
+            damage = Math.max(1, damage - ghostKittenMitigation);
         }
         this.dealDamage(pet, damage);
 
