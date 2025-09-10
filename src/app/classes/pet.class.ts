@@ -51,6 +51,7 @@ export abstract class Pet {
     originalHealth: number;
     originalAttack: number;
     originalMana: number;
+    originalTimesHurt: number = 0;
     originalEquipment?: Equipment;
     originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
     exp?: number = 0;
@@ -156,6 +157,8 @@ export abstract class Pet {
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
     belugaSwallowedPet: string;
+    timesHurt: number = 0;
+    timesAttacked: number = 0;
     toyPet = false;
     battlesFought: number = 0;
     // fixes bug where eggplant ability is triggered multiple times
@@ -937,7 +940,8 @@ export abstract class Pet {
 
 
     attackPet(pet: Pet,  jumpAttack: boolean = false, power?: number, random: boolean = false) {
-
+        this.timesAttacked++;
+        pet.timesAttacked++;
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(), power);
         let attackEquipment = damageResp.attackEquipment;
         let defenseEquipment = damageResp.defenseEquipment;
@@ -1539,6 +1543,8 @@ export abstract class Pet {
         this.equipment = this.originalEquipment;
         this.lastLostEquipment = null;
         this.mana = this.originalMana;
+        this.timesHurt = this.originalTimesHurt;
+        this.timesAttacked = 0;
         this.exp = this.originalExp;
         this.done = false;
         this.seenDead = false;
@@ -1819,6 +1825,9 @@ export abstract class Pet {
         // Track who killed this pet
         if (pet.health <= 0) {
             pet.killedBy = this;
+        }
+        if (damage>0) {
+            pet.timesHurt++;
         }
         // hurt ability
         if (pet.hurt != null && damage > 0) {

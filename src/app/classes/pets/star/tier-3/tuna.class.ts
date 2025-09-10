@@ -11,16 +11,9 @@ export class Tuna extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 5;
-    timesHurt = 0;
-    private hurtThisBattle = this.timesHurt;
-
-
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        this.hurtThisBattle++;
-    }
 
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let totalHurt = this.hurtThisBattle;
+        let totalHurt = this.timesHurt;
         for (let i = 0; i < totalHurt; i++) {
             const targetResp = this.parent.getRandomPet([this], true, false, true, this);
 
@@ -51,16 +44,11 @@ export class Tuna extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment,
+        timesHurt?: number) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-    }
-    resetPet(): void {
-        this.hurtThisBattle = this.timesHurt;
-        super.resetPet();
+        this.timesHurt = timesHurt ?? 0;
+        this.originalTimesHurt = this.timesHurt;
     }
 }

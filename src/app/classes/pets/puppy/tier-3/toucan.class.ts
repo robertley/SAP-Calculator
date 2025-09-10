@@ -14,7 +14,6 @@ export class Toucan extends Pet {
     pack: Pack = 'Puppy';
     attack = 4;
     health = 3;
-    private attacked = false;
     beforeAttack(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.equipment == null) {
             return;
@@ -22,7 +21,7 @@ export class Toucan extends Pet {
         if (this.equipment.tier > 5) {
             return;
         }
-        if (this.attacked) {
+        if (this.timesAttacked >= 1) {
             return;
         }
         let pets = this.parent.petArray;
@@ -61,14 +60,6 @@ export class Toucan extends Pet {
             }
         }
         this.superBeforeAttack(gameApi, tiger);
-    }
-    attackPet(pet: Pet, jumpAttack?: boolean, power?: number, random?: boolean): void {
-        this.attacked = true;
-        super.attackPet(pet, jumpAttack, power, random);
-    }
-    resetPet(): void {
-        this.attacked = false
-        super.resetPet();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

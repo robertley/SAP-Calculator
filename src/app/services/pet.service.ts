@@ -1487,7 +1487,7 @@ export class PetService {
             case 'Anteater':
                 return new Anteater(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Tuna': 
-                return new Tuna(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+                return new Tuna(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.timesHurt);
 
             // Tier 4
             case 'Orangutang':
@@ -1561,7 +1561,7 @@ export class PetService {
             case 'Real Velociraptor':
                 return new RealVelociraptor(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Sabertooth Tiger':
-                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+                return new SabertoothTiger(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.timesHurt);
             case 'Orca':
                 return new Orca(this.logService, this.abilityService, this, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Spinosaurus':
@@ -3668,6 +3668,7 @@ export interface PetForm {
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
     battlesFought?: number;
+    timesHurt?: number;
 }
 
 function levelToExp(level: number) {
