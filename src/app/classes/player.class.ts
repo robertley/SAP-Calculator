@@ -997,7 +997,7 @@ export class Player {
         }
         return null;
     }
-
+  //TO DO: this function might be useless
     getFurthestUpPet(callingPet?: Pet): {pet: Pet, random: boolean} {
         // Check for Silly ailment - return random living pet, ignoring all positioning
         if (callingPet && this.hasSilly(callingPet)) {
@@ -1020,14 +1020,14 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns Object with pets array and random boolean (for Silly compatibility)
      */
-    getFurthestUpPets(count: number, excludeEquipment?: string, callingPet?: Pet, onlyEquipment?: string): {pets: Pet[], random: boolean} {
+    getFurthestUpPets(count: number, excludeEquipment?: string, callingPet?: Pet, onlyEquipment?: string, excludePets?: Pet[]): {pets: Pet[], random: boolean} {
         // Check for Silly ailment - return random living pets
         if (callingPet && this.hasSilly(callingPet)) {
             let petsResp = this.getRandomLivingPets(count);
             return { pets: petsResp.pets, random: petsResp.random};
         }
 
-        let availablePets = [...this.petArray].filter((pet) => pet.alive);
+        let availablePets = [...this.petArray].filter((pet) => pet.alive && !excludePets?.includes(pet));
         if (excludeEquipment) {
             if (excludeEquipment == 'perk-less') {
                 availablePets = availablePets.filter((pet) => pet.equipment == null || pet.equipment?.name.startsWith('ailment'));
