@@ -41,24 +41,54 @@ export abstract class Pet {
     parent: Player;
     health: number;
     attack: number;
-    mana: number = 0;
-    disabled: boolean = false;
-    maxAbilityUses: number = null;
-    abilityUses: number = 0;
-    startOfBattleTriggered: boolean = false;
+    exp?: number = 0;
     equipment?: Equipment;
+    mana: number = 0;
+    //memories
+    swallowedPets?: Pet[] = [];
+    abominationSwallowedPet1?: string;
+    abominationSwallowedPet2?: string;
+    abominationSwallowedPet3?: string;
+    belugaSwallowedPet: string;
+    timesHurt: number = 0;
+    timesAttacked: number = 0;
+    battlesFought: number = 0;
+    currentTarget?: Pet; // Who this pet is currently attacking
+    lastAttacker?: Pet; // Who last attacked this pet //TO DO: This might be useless
+    killedBy?: Pet; // Who caused this pet to faint
+    transformedInto: Pet | null = null;
     lastLostEquipment?: Equipment;
+    abilityCounter: number = 0;
+    targettedFriends: Set<Pet> = new Set();
+
     originalHealth: number;
     originalAttack: number;
     originalMana: number;
-    originalTimesHurt: number = 0;
     originalEquipment?: Equipment;
-    originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
-    exp?: number = 0;
     originalExp?: number = 0;
+    originalTimesHurt: number = 0;
+
+    //flags
     faintPet: boolean = false;
+    toyPet = false;
     transformed: boolean = false;
-    transformedInto: Pet | null = null;
+    disabled: boolean = false;
+    startOfBattleTriggered: boolean = false;
+    // flags to make sure events/logs are not triggered multiple times
+    done = false;
+    seenDead = false;
+    // fixes bug where eggplant ability is triggered multiple times
+    // if we already set eggplant ability make sure not to set it again
+    eggplantTouched = false;
+    cherryTouched = false;
+    //ability memory
+    maxAbilityUses: number = null;
+    abilityUses: number = 0;
+
+    savedPosition: 0 | 1 | 2 | 3 | 4;
+    originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
+
+    // Battle context tracking for complex abilities
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
@@ -148,30 +178,6 @@ export abstract class Pet {
     originalFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void; 
 
-    savedPosition: 0 | 1 | 2 | 3 | 4;
-    // flags to make sure events/logs are not triggered multiple times
-    done = false;
-    seenDead = false;
-    swallowedPets?: Pet[] = [];
-    abominationSwallowedPet1?: string;
-    abominationSwallowedPet2?: string;
-    abominationSwallowedPet3?: string;
-    belugaSwallowedPet: string;
-    timesHurt: number = 0;
-    timesAttacked: number = 0;
-    toyPet = false;
-    battlesFought: number = 0;
-    // fixes bug where eggplant ability is triggered multiple times
-    // if we already set eggplant ability make sure not to set it again
-    eggplantTouched = false;
-    cherryTouched = false;
-
-    // Battle context tracking for complex abilities
-    currentTarget?: Pet; // Who this pet is currently attacking
-    lastAttacker?: Pet; // Who last attacked this pet //TO DO: This might be useless
-    killedBy?: Pet; // Who caused this pet to faint
-
-
     constructor(
         protected logService: LogService,
         protected abilityService: AbilityService,
@@ -190,48 +196,6 @@ export abstract class Pet {
         this.equipment = equipment;
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
-
-        this.originalStartOfBattle = this.startOfBattle;
-        this.originalTransform = this.transform;
-        // this.originalStartOfTurn = this.startOfTurn;
-        this.originalHurt = this.hurt;
-        this.originalFaint = this.faint;
-        this.originalFriendSummoned = this.friendSummoned;
-        this.originalFriendAheadAttacks = this.friendAheadAttacks;
-        this.originalAdjacentAttacked = this.adjacentAttacked;
-        this.originalFriendAheadFaints = this.friendAheadFaints;
-        this.originalFriendFaints = this.friendFaints;
-        this.originalFriendAteFood = this.friendAteFood;
-        this.originalEatsFood = this.eatsFood;
-        this.originalFriendLostPerk = this.friendLostPerk;
-        this.originalGainedPerk = this.gainedPerk;
-        this.originalFriendGainedPerk = this.friendGainedPerk;
-        this.originalFriendGainedAilment = this.friendGainedAilment;
-        this.originalFriendHurt = this.friendHurt;
-        this.originalFriendTransformed = this.friendTransformed;
-        this.originalFriendAttacks = this.friendAttacks;
-        this.originalBeforeFriendAttacks = this.beforeFriendAttacks;
-        this.originalEnemyAttack = this.enemyAttack;
-        this.originalAfterAttack = this.afterAttack;
-        this.originalAfterFaint = this.afterFaint;
-        this.originalBeforeAttack = this.beforeAttack;
-        this.originalBeforeStartOfBattle = this.beforeStartOfBattle;
-        this.originalAnyoneLevelUp = this.anyoneLevelUp;
-        this.originalEndTurn = this.endTurn;
-        this.originalKnockOut = this.knockOut;
-        this.originalSummoned = this.summoned;
-        this.originalFriendlyToyBroke = this.friendlyToyBroke;
-        this.originalEnemySummoned = this.enemySummoned;
-        this.originalEnemyPushed = this.enemyPushed;
-        this.originalEnemyHurt = this.enemyHurt;
-        this.originalEmptyFrontSpace = this.emptyFrontSpace;
-        this.originalAfterFaint = this.afterFaint;
-        this.originalGainedMana = this.gainedMana;
-        this.originalFriendJumped = this.friendJumped;
-        this.originalEnemyJumped = this.enemyJumped;
-        this.originalEnemyGainedAilment = this.enemyGainedAilment;
-        this.originalFriendGainsHealth = this.friendGainsHealth;
-        this.originalFriendGainedExperience = this.friendGainedExperience;
 
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
@@ -532,7 +496,48 @@ export abstract class Pet {
             afterFaintCallback(gameApi, tiger, pteranodon);
         }
     
-        
+        this.originalStartOfBattle = this.startOfBattle;
+        this.originalTransform = this.transform;
+        // this.originalStartOfTurn = this.startOfTurn;
+        this.originalHurt = this.hurt;
+        this.originalFaint = this.faint;
+        this.originalFriendSummoned = this.friendSummoned;
+        this.originalFriendAheadAttacks = this.friendAheadAttacks;
+        this.originalAdjacentAttacked = this.adjacentAttacked;
+        this.originalFriendAheadFaints = this.friendAheadFaints;
+        this.originalFriendFaints = this.friendFaints;
+        this.originalFriendAteFood = this.friendAteFood;
+        this.originalEatsFood = this.eatsFood;
+        this.originalFriendLostPerk = this.friendLostPerk;
+        this.originalGainedPerk = this.gainedPerk;
+        this.originalFriendGainedPerk = this.friendGainedPerk;
+        this.originalFriendGainedAilment = this.friendGainedAilment;
+        this.originalFriendHurt = this.friendHurt;
+        this.originalFriendTransformed = this.friendTransformed;
+        this.originalFriendAttacks = this.friendAttacks;
+        this.originalBeforeFriendAttacks = this.beforeFriendAttacks;
+        this.originalEnemyAttack = this.enemyAttack;
+        this.originalAfterAttack = this.afterAttack;
+        this.originalAfterFaint = this.afterFaint;
+        this.originalBeforeAttack = this.beforeAttack;
+        this.originalBeforeStartOfBattle = this.beforeStartOfBattle;
+        this.originalAnyoneLevelUp = this.anyoneLevelUp;
+        this.originalEndTurn = this.endTurn;
+        this.originalKnockOut = this.knockOut;
+        this.originalSummoned = this.summoned;
+        this.originalFriendlyToyBroke = this.friendlyToyBroke;
+        this.originalEnemySummoned = this.enemySummoned;
+        this.originalEnemyPushed = this.enemyPushed;
+        this.originalEnemyHurt = this.enemyHurt;
+        this.originalEmptyFrontSpace = this.emptyFrontSpace;
+        this.originalAfterFaint = this.afterFaint;
+        this.originalGainedMana = this.gainedMana;
+        this.originalFriendJumped = this.friendJumped;
+        this.originalEnemyJumped = this.enemyJumped;
+        this.originalEnemyGainedAilment = this.enemyGainedAilment;
+        this.originalFriendGainsHealth = this.friendGainsHealth;
+        this.originalFriendGainedExperience = this.friendGainedExperience;
+
         this.setAbilityUses();
     }
 
@@ -1543,9 +1548,21 @@ export abstract class Pet {
         this.equipment = this.originalEquipment;
         this.lastLostEquipment = null;
         this.mana = this.originalMana;
+        this.exp = this.originalExp;
+        //clear memories
         this.timesHurt = this.originalTimesHurt;
         this.timesAttacked = 0;
-        this.exp = this.originalExp;
+        this.abilityCounter = 0;
+        this.transformed = false;
+        this.transformedInto = null;
+        this.currentTarget = null;
+        this.lastAttacker = null;
+        this.killedBy = null;
+        this.swallowedPets = [];
+        this.targettedFriends.clear();
+        this.savedPosition = this.originalSavedPosition;
+        this.setAbilityUses();
+        //reset flags
         this.done = false;
         this.seenDead = false;
         this.disabled = false;
@@ -1556,21 +1573,6 @@ export abstract class Pet {
             console.error(error)
             // window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
         }
-        this.swallowedPets = [];
-        this.savedPosition = this.originalSavedPosition;
-        this.setAbilityUses();
-        
-        // Reset battle context tracking
-        this.transformed = false;
-        this.transformedInto = null;
-        this.currentTarget = null;
-        this.lastAttacker = null;
-        
-        // Reset battle-specific counters while preserving user-configured values
-        if (this.hasOwnProperty('attackCounter')) {
-            (this as any).attackCounter = 0;
-        }
-        this.killedBy = null;
         
         // Restore original ability methods to fix equipment copying persistence issues
         this.beforeAttack = this.originalBeforeAttack;
@@ -1605,14 +1607,7 @@ export abstract class Pet {
 
         this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
             if (faintCallback != null) {
-                if (!this.abilityValidCheck()) {
-                    return;
-                }
-                faintCallback(gameApi, tiger, pteranodon);
-            }
-
-            if (!this.abilityValidCheck()) {
-                return;
+                 faintCallback(gameApi, tiger, pteranodon);
             }
 
             if (this.kitsuneCheck()) {
