@@ -1,7 +1,6 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Exposed } from "../../../equipment/ailments/exposed.class";
 import { Pack, Pet } from "../../../pet.class";

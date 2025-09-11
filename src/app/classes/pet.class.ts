@@ -41,23 +41,54 @@ export abstract class Pet {
     parent: Player;
     health: number;
     attack: number;
-    mana: number = 0;
-    disabled: boolean = false;
-    maxAbilityUses: number = null;
-    abilityUses: number = 0;
-    startOfBattleTriggered: boolean = false;
+    exp?: number = 0;
     equipment?: Equipment;
+    mana: number = 0;
+    //memories
+    swallowedPets?: Pet[] = [];
+    abominationSwallowedPet1?: string;
+    abominationSwallowedPet2?: string;
+    abominationSwallowedPet3?: string;
+    belugaSwallowedPet: string;
+    timesHurt: number = 0;
+    timesAttacked: number = 0;
+    battlesFought: number = 0;
+    currentTarget?: Pet; // Who this pet is currently attacking
+    lastAttacker?: Pet; // Who last attacked this pet //TO DO: This might be useless
+    killedBy?: Pet; // Who caused this pet to faint
+    transformedInto: Pet | null = null;
     lastLostEquipment?: Equipment;
+    abilityCounter: number = 0;
+    targettedFriends: Set<Pet> = new Set();
+
     originalHealth: number;
     originalAttack: number;
     originalMana: number;
     originalEquipment?: Equipment;
-    originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
-    exp?: number = 0;
     originalExp?: number = 0;
+    originalTimesHurt: number = 0;
+
+    //flags
     faintPet: boolean = false;
+    toyPet = false;
     transformed: boolean = false;
-    transformedInto: Pet | null = null;
+    disabled: boolean = false;
+    startOfBattleTriggered: boolean = false;
+    // flags to make sure events/logs are not triggered multiple times
+    done = false;
+    seenDead = false;
+    // fixes bug where eggplant ability is triggered multiple times
+    // if we already set eggplant ability make sure not to set it again
+    eggplantTouched = false;
+    cherryTouched = false;
+    //ability memory
+    maxAbilityUses: number = null;
+    abilityUses: number = 0;
+
+    savedPosition: 0 | 1 | 2 | 3 | 4;
+    originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
+
+    // Battle context tracking for complex abilities
     startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
@@ -147,27 +178,46 @@ export abstract class Pet {
     originalFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void; 
 
-    savedPosition: 0 | 1 | 2 | 3 | 4;
-    // flags to make sure events/logs are not triggered multiple times
-    done = false;
-    seenDead = false;
-    swallowedPets?: Pet[] = [];
-    abominationSwallowedPet1?: string;
-    abominationSwallowedPet2?: string;
-    abominationSwallowedPet3?: string;
-    belugaSwallowedPet: string;
-    toyPet = false;
-    battlesFought: number = 0;
-    // fixes bug where eggplant ability is triggered multiple times
-    // if we already set eggplant ability make sure not to set it again
-    eggplantTouched = false;
-    cherryTouched = false;
-
-    // Battle context tracking for complex abilities
-    currentTarget?: Pet; // Who this pet is currently attacking
-    lastAttacker?: Pet; // Who last attacked this pet //TO DO: This might be useless
-    killedBy?: Pet; // Who caused this pet to faint
-
+    // Reset abilities (wrapped versions for reset functionality)
+    resetStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
+    resetTransform?(gameApi: GameAPI, tiger?: boolean): void;
+    resetHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFaint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
+    resetFriendSummoned?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
+    resetFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
+    resetFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
+    resetFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendTransformed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetBeforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEnemyAttack?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetAfterAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    resetBeforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
+    resetBeforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
+    resetAnyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEndTurn?(gameApi: GameAPI): void;
+    resetKnockOut?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetSummoned?(gameApi: GameAPI, tiger?: boolean): void;
+    resetFriendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
+    resetEnemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEnemyPushed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEnemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEmptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
+    resetAfterFaint?(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
+    resetGainedMana?(gameApi: GameAPI, tiger?: boolean): void;
+    resetFriendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEnemyJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetEnemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetFriendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
 
     constructor(
         protected logService: LogService,
@@ -188,6 +238,7 @@ export abstract class Pet {
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
 
+        // Store original abilities before wrapping
         this.originalStartOfBattle = this.startOfBattle;
         this.originalTransform = this.transform;
         // this.originalStartOfTurn = this.startOfTurn;
@@ -222,7 +273,6 @@ export abstract class Pet {
         this.originalEnemyPushed = this.enemyPushed;
         this.originalEnemyHurt = this.enemyHurt;
         this.originalEmptyFrontSpace = this.emptyFrontSpace;
-        this.originalAfterFaint = this.afterFaint;
         this.originalGainedMana = this.gainedMana;
         this.originalFriendJumped = this.friendJumped;
         this.originalEnemyJumped = this.enemyJumped;
@@ -230,6 +280,50 @@ export abstract class Pet {
         this.originalFriendGainsHealth = this.friendGainsHealth;
         this.originalFriendGainedExperience = this.friendGainedExperience;
 
+        this.initAbilities();
+        // Store wrapped abilities for reset functionality
+        this.resetStartOfBattle = this.startOfBattle;
+        this.resetTransform = this.transform;
+        this.resetHurt = this.hurt;
+        this.resetFaint = this.faint;
+        this.resetFriendSummoned = this.friendSummoned;
+        this.resetFriendAheadAttacks = this.friendAheadAttacks;
+        this.resetAdjacentAttacked = this.adjacentAttacked;
+        this.resetFriendAheadFaints = this.friendAheadFaints;
+        this.resetFriendFaints = this.friendFaints;
+        this.resetFriendAteFood = this.friendAteFood;
+        this.resetEatsFood = this.eatsFood;
+        this.resetFriendLostPerk = this.friendLostPerk;
+        this.resetGainedPerk = this.gainedPerk;
+        this.resetFriendGainedPerk = this.friendGainedPerk;
+        this.resetFriendGainedAilment = this.friendGainedAilment;
+        this.resetFriendHurt = this.friendHurt;
+        this.resetFriendTransformed = this.friendTransformed;
+        this.resetFriendAttacks = this.friendAttacks;
+        this.resetBeforeFriendAttacks = this.beforeFriendAttacks;
+        this.resetEnemyAttack = this.enemyAttack;
+        this.resetAfterAttack = this.afterAttack;
+        this.resetAfterFaint = this.afterFaint;
+        this.resetBeforeAttack = this.beforeAttack;
+        this.resetBeforeStartOfBattle = this.beforeStartOfBattle;
+        this.resetAnyoneLevelUp = this.anyoneLevelUp;
+        this.resetEndTurn = this.endTurn;
+        this.resetKnockOut = this.knockOut;
+        this.resetSummoned = this.summoned;
+        this.resetFriendlyToyBroke = this.friendlyToyBroke;
+        this.resetEnemySummoned = this.enemySummoned;
+        this.resetEnemyPushed = this.enemyPushed;
+        this.resetEnemyHurt = this.enemyHurt;
+        this.resetEmptyFrontSpace = this.emptyFrontSpace;
+        this.resetGainedMana = this.gainedMana;
+        this.resetFriendJumped = this.friendJumped;
+        this.resetEnemyJumped = this.enemyJumped;
+        this.resetEnemyGainedAilment = this.enemyGainedAilment;
+        this.resetFriendGainsHealth = this.friendGainsHealth;
+        this.resetFriendGainedExperience = this.friendGainedExperience;
+    }
+
+    initAbilities() {
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
         if (faintCallback != null || this.afterFaint != null) {
@@ -528,8 +622,6 @@ export abstract class Pet {
             }
             afterFaintCallback(gameApi, tiger, pteranodon);
         }
-    
-        
         this.setAbilityUses();
     }
 
@@ -937,7 +1029,8 @@ export abstract class Pet {
 
 
     attackPet(pet: Pet,  jumpAttack: boolean = false, power?: number, random: boolean = false) {
-
+        this.timesAttacked++;
+        pet.timesAttacked++;
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(), power);
         let attackEquipment = damageResp.attackEquipment;
         let defenseEquipment = damageResp.defenseEquipment;
@@ -1103,7 +1196,7 @@ export abstract class Pet {
                 player: this.parent,
                 randomEvent: random
             });
-    
+            //TO DO: Maybe all other ability equipment should follow this pattern
             let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
             if (skewerEquipment != null) {
                 skewerEquipment.attackCallback(this, pet);
@@ -1135,17 +1228,28 @@ export abstract class Pet {
                     totalMultiplier += mult;
                 }
                 damage *= totalMultiplier;
+                let fairyBallReduction = 0;
+                if (pet.name === 'Fairy Ball' && damage > 0) {
+                    fairyBallReduction = pet.level * 2;
+                    damage = Math.max(1, damage - fairyBallReduction);
+                }
                 let nurikabe = 0;
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
-                    damage = Math.max(0, damage - nurikabe);
+                    damage = Math.max(1, damage - nurikabe);
                     pet.abilityUses++;
                 }
                 let fanMusselReduction = 0;
                 if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
                     fanMusselReduction = pet.level * 1;
-                    damage = Math.max(0, damage - fanMusselReduction);
+                    damage = Math.max(1, damage - fanMusselReduction);
                     pet.abilityUses++;
+                }
+                let ghostKitten = pet.name == 'Ghost Kitten';
+                let ghostKittenMitigation = 1;
+                if (ghostKitten) {
+                    ghostKittenMitigation = pet.level * 3;
+                    damage = Math.max(1, damage - ghostKittenMitigation);
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1156,11 +1260,17 @@ export abstract class Pet {
                 if (pet.equipment.multiplier > 1) {
                     message += pet.equipment.multiplierMessage;
                 }
+                if (fairyBallReduction > 0) {
+                    message += `-${fairyBallReduction} (FairyBall)`
+                }
                 if (nurikabe > 0) {
                     message += ` -${nurikabe} (Nurikabe)`;
                 }
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
+                }
+                if (ghostKitten) {
+                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
                 }
                 message += ` (Crisp).`;
 
@@ -1179,17 +1289,28 @@ export abstract class Pet {
                     totalMultiplier += mult;
                 }
                 damage *= totalMultiplier;
+                let fairyBallReduction = 0;
+                if (pet.name === 'Fairy Ball' && damage > 0) {
+                    fairyBallReduction = pet.level * 2;
+                    damage = Math.max(1, damage - fairyBallReduction);
+                }
                 let nurikabe = 0;
                 if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
-                    damage = Math.max(0, damage - nurikabe);
+                    damage = Math.max(1, damage - nurikabe);
                     pet.abilityUses++;
                 }
                 let fanMusselReduction = 0;
                 if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
                     fanMusselReduction = pet.level * 1;
-                    damage = Math.max(0, damage - fanMusselReduction);
+                    damage = Math.max(1, damage - fanMusselReduction);
                     pet.abilityUses++;
+                }
+                let ghostKitten = pet.name == 'Ghost Kitten';
+                let ghostKittenMitigation = 1;
+                if (ghostKitten) {
+                    ghostKittenMitigation = pet.level * 3;
+                    damage = Math.max(1, damage - ghostKittenMitigation);
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1200,11 +1321,17 @@ export abstract class Pet {
                 if (pet.equipment.multiplier > 1) {
                     message += pet.equipment.multiplierMessage;
                 }
+                if (fairyBallReduction > 0) {
+                    message += `-${fairyBallReduction} (FairyBall)`
+                }
                 if (nurikabe > 0) {
                     message += ` -${nurikabe} (Nurikabe)`;
                 }
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
+                }
+                if (ghostKitten) {
+                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
                 }
                 message += ` (Toasty).`;
 
@@ -1255,7 +1382,7 @@ export abstract class Pet {
         let ghostKittenMitigation = 0;
         if (ghostKitten) {
             ghostKittenMitigation = pet.level * 3;
-            damage = Math.max(0, damage - ghostKittenMitigation);
+            damage = Math.max(1, damage - ghostKittenMitigation);
         }
         this.dealDamage(pet, damage);
 
@@ -1540,6 +1667,20 @@ export abstract class Pet {
         this.lastLostEquipment = null;
         this.mana = this.originalMana;
         this.exp = this.originalExp;
+        //clear memories
+        this.timesHurt = this.originalTimesHurt;
+        this.timesAttacked = 0;
+        this.abilityCounter = 0;
+        this.transformed = false;
+        this.transformedInto = null;
+        this.currentTarget = null;
+        this.lastAttacker = null;
+        this.killedBy = null;
+        this.swallowedPets = [];
+        this.targettedFriends.clear();
+        this.savedPosition = this.originalSavedPosition;
+        this.setAbilityUses();
+        //reset flags
         this.done = false;
         this.seenDead = false;
         this.disabled = false;
@@ -1550,23 +1691,10 @@ export abstract class Pet {
             console.error(error)
             // window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
         }
-        this.swallowedPets = [];
-        this.savedPosition = this.originalSavedPosition;
-        this.setAbilityUses();
-        
-        // Reset battle context tracking
-        this.transformed = false;
-        this.transformedInto = null;
-        this.currentTarget = null;
-        this.lastAttacker = null;
-        
-        // Reset battle-specific counters while preserving user-configured values
-        if (this.hasOwnProperty('attackCounter')) {
-            (this as any).attackCounter = 0;
-        }
-        this.killedBy = null;
         
         // Restore original ability methods to fix equipment copying persistence issues
+        this.startOfBattle = this.originalStartOfBattle;
+        this.transform = this.originalTransform;
         this.beforeAttack = this.originalBeforeAttack;
         this.afterAttack = this.originalAfterAttack;
         this.beforeFriendAttacks = this.originalBeforeFriendAttacks;
@@ -1581,6 +1709,8 @@ export abstract class Pet {
         this.friendFaints = this.originalFriendFaints;
         this.friendAteFood = this.originalFriendAteFood;
         this.eatsFood = this.originalEatsFood;
+        this.friendLostPerk = this.originalFriendLostPerk;
+        this.gainedPerk = this.originalGainedPerk;
         this.friendGainedPerk = this.originalFriendGainedPerk;
         this.friendGainedAilment = this.originalFriendGainedAilment;
         this.friendHurt = this.originalFriendHurt;
@@ -1591,6 +1721,17 @@ export abstract class Pet {
         this.endTurn = this.originalEndTurn;
         this.knockOut = this.originalKnockOut;
         this.summoned = this.originalSummoned;
+        this.friendlyToyBroke = this.originalFriendlyToyBroke;
+        this.enemySummoned = this.originalEnemySummoned;
+        this.enemyPushed = this.originalEnemyPushed;
+        this.enemyHurt = this.originalEnemyHurt;
+        this.emptyFrontSpace = this.originalEmptyFrontSpace;
+        this.gainedMana = this.originalGainedMana;
+        this.friendJumped = this.originalFriendJumped;
+        this.enemyJumped = this.originalEnemyJumped;
+        this.enemyGainedAilment = this.originalEnemyGainedAilment;
+        this.friendGainsHealth = this.originalFriendGainsHealth;
+        this.friendGainedExperience = this.originalFriendGainedExperience;
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
         if (faintCallback != null || this.afterFaint != null) {
@@ -1599,14 +1740,7 @@ export abstract class Pet {
 
         this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
             if (faintCallback != null) {
-                if (!this.abilityValidCheck()) {
-                    return;
-                }
-                faintCallback(gameApi, tiger, pteranodon);
-            }
-
-            if (!this.abilityValidCheck()) {
-                return;
+                 faintCallback(gameApi, tiger, pteranodon);
             }
 
             if (this.kitsuneCheck()) {
@@ -1820,6 +1954,9 @@ export abstract class Pet {
         if (pet.health <= 0) {
             pet.killedBy = this;
         }
+        if (damage>0) {
+            pet.timesHurt++;
+        }
         // hurt ability
         if (pet.hurt != null && damage > 0) {
             this.abilityService.setHurtEvent({
@@ -1858,7 +1995,8 @@ export abstract class Pet {
         this.increaseAttack(amt);
         this.increaseHealth(amt);
         this.exp = Math.min(this.exp + amt, 5);
-        if (this.level > level) {
+        let timesLevelled = this.level - level; 
+        for (let i = 0; i < timesLevelled; i++) {
             this.logService.createLog({
                 message: `${this.name} leveled up to level ${this.level}.`,
                 type: 'ability',
@@ -1869,8 +2007,9 @@ export abstract class Pet {
             this.abilityService.executeFriendlyLevelUpToyEvents();
             this.setAbilityUses();
         }
-        this.abilityService.triggerFriendGainedExperienceEvents(this.parent, this);
- 
+        for (let i = 0; i < Math.min(amt, 5); i++) {
+            this.abilityService.triggerFriendGainedExperienceEvents(this.parent, this);
+        } 
     }
 
     increaseMana(amt) {

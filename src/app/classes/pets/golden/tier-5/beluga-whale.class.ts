@@ -16,7 +16,6 @@ export class BelugaWhale extends Pet {
     health = 8;
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         if (this.belugaSwallowedPet == null) {
-            super.superAfterFaint(gameApi, tiger, pteranodon);
             return;
         }
 

@@ -178,6 +178,10 @@ export class EquipmentService {
 
     //If change this, need change Hare too
     private static readonly USEFUL_PERKS: Map<string, number> = new Map([
+        //T1
+        ['Honey', 1],
+        ['Strawberry', 1],
+        ['Egg', 1],
         // T2
         ['Lime', 2], 
         ['Meat Bone', 2], 
@@ -196,6 +200,7 @@ export class EquipmentService {
         ['Pie', 4], 
         ['Grapes', 4], 
         ['Cheese', 4], 
+        ['Cod Roe', 4],
         ['Salt', 4], 
         ['Fortune Cookie', 4],
         // T5
@@ -208,7 +213,6 @@ export class EquipmentService {
         ['Maple Syrup', 5],
         ['Cocoa Bean', 5],
         ['White Okra', 5],
-        ['White Truffle', 5],
         // T6
         ['Popcorn', 6], 
         ['Steak', 6], 
@@ -216,7 +220,14 @@ export class EquipmentService {
         ['Yggdrasil Fruit', 6], 
         ['Melon', 6], 
         ['Tomato', 6], 
-        ['Pita Bread', 6]
+        ['Sudduth Tomato', 6],
+        ['Pita Bread', 6],
+        // Hidden
+        ['Seaweed', 5],
+        // Golden  
+        ['Caramel', 4],
+        // Star
+        ['Baguette', 4]
     ]);
 
     isUsefulPerk(equipmentName: string): boolean {

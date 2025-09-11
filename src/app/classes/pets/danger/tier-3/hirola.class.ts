@@ -14,15 +14,13 @@ export class Hirola extends Pet {
     health = 2;
 
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        for (let i = 0; i < 2; i++) {
-            let wolfAttack = this.level * 1;
-            let wolfHealth = this.level * 2;
-            let wolf = new EthiopianWolf(this.logService, this.abilityService, this.parent, wolfHealth, wolfAttack, this.mana, this.exp);
+        for (let i = 0; i < this.level; i++) {
+            let wolf = new EthiopianWolf(this.logService, this.abilityService, this.parent, 3, 4, this.mana, this.exp);
             
             let summonResult = this.parent.summonPet(wolf, this.savedPosition, false, this);
             if (summonResult.success) {
                 this.logService.createLog({
-                    message: `${this.name} summoned a ${wolfAttack}/${wolfHealth} ${wolf.name}.`,
+                    message: `${this.name} summoned a ${4}/${3} ${wolf.name}.`,
                     type: 'ability',
                     player: this.parent,
                     tiger: tiger,

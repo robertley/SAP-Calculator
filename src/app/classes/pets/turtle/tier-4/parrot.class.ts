@@ -5,6 +5,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+
 // TODO - verify parrot has all ability methods
 // fix bug with parrot copying parrot working despite order
 export class Parrot extends Pet {
@@ -28,49 +29,51 @@ export class Parrot extends Pet {
         if (copyPet == null) {
             return;
         }
-        this.startOfBattle = copyPet.originalStartOfBattle?.bind(this);
-        this.hurt = copyPet.originalHurt?.bind(this);
-        this.faint = copyPet.originalFaint?.bind(this);
-        this.friendSummoned = copyPet.originalFriendSummoned?.bind(this);
-        this.friendAheadAttacks = copyPet.originalFriendAheadAttacks?.bind(this);
-        this.friendAheadFaints = copyPet.originalFriendAheadFaints?.bind(this);
-        this.friendFaints = copyPet.originalFriendFaints?.bind(this);
-        this.enemyAttack = copyPet.originalEnemyAttack?.bind(this);
-        this.afterAttack = copyPet.originalAfterAttack?.bind(this);
-        this.beforeAttack = copyPet.originalBeforeAttack?.bind(this);
-        this.beforeStartOfBattle = copyPet.originalBeforeStartOfBattle?.bind(this);
-        this.knockOut = copyPet.originalKnockOut?.bind(this);
-        this.summoned = copyPet.originalSummoned?.bind(this);
-        this.friendlyToyBroke = copyPet.originalFriendlyToyBroke?.bind(this);
-        this.friendGainedAilment = copyPet.originalFriendGainedAilment?.bind(this);
-        this.friendHurt = copyPet.originalFriendHurt?.bind(this);
-        this.friendTransformed = copyPet.originalFriendTransformed?.bind(this);
-        this.eatsFood = copyPet.originalEatsFood?.bind(this);
-        this.friendAteFood = copyPet.originalFriendAteFood?.bind(this);
-        this.friendLostPerk = copyPet.originalFriendLostPerk?.bind(this);
-        this.gainedPerk = copyPet.originalGainedPerk?.bind(this);
-        this.friendGainedPerk = copyPet.originalFriendGainedPerk?.bind(this);
-        this.anyoneLevelUp = copyPet.originalAnyoneLevelUp?.bind(this);
-        this.enemySummoned = copyPet.originalEnemySummoned?.bind(this);
-        this.enemyPushed = copyPet.originalEnemyPushed?.bind(this);
-        this.gainedMana = copyPet.originalGainedMana?.bind(this);
-        this.friendJumped = copyPet.originalFriendJumped?.bind(this);
-        this.enemyGainedAilment = copyPet.originalEnemyGainedAilment?.bind(this);
-        this.friendGainsHealth = copyPet.originalFriendGainsHealth?.bind(this);
-        this.emptyFrontSpace = copyPet.originalEmptyFrontSpace?.bind(this);
-        this.enemyHurt = copyPet.originalEnemyHurt?.bind(this);
-        this.afterFaint = copyPet.originalAfterFaint?.bind(this);
-        this.transform = copyPet.originalTransform?.bind(this);
-        this.adjacentAttacked = copyPet.originalAdjacentAttacked?.bind(this);
-        this.friendAttacks = copyPet.originalFriendAttacks?.bind(this);
-        this.beforeFriendAttacks = copyPet.originalBeforeFriendAttacks?.bind(this);
-        this.enemyJumped = copyPet.originalEnemyJumped?.bind(this);
-        this.friendGainedExperience = copyPet.originalFriendGainedExperience?.bind(this);
+        this.startOfBattle = copyPet.originalStartOfBattle;
+        this.hurt = copyPet.originalHurt;
+        this.faint = copyPet.originalFaint;
+        this.friendSummoned = copyPet.originalFriendSummoned;
+        this.friendAheadAttacks = copyPet.originalFriendAheadAttacks;
+        this.friendAheadFaints = copyPet.originalFriendAheadFaints;
+        this.friendFaints = copyPet.originalFriendFaints;
+        this.enemyAttack = copyPet.originalEnemyAttack;
+        this.afterAttack = copyPet.originalAfterAttack;
+        this.beforeAttack = copyPet.originalBeforeAttack;
+        this.beforeStartOfBattle = copyPet.originalBeforeStartOfBattle;
+        this.knockOut = copyPet.originalKnockOut;
+        this.summoned = copyPet.originalSummoned;
+        this.friendlyToyBroke = copyPet.originalFriendlyToyBroke;
+        this.friendGainedAilment = copyPet.originalFriendGainedAilment;
+        this.friendHurt = copyPet.originalFriendHurt;
+        this.friendTransformed = copyPet.originalFriendTransformed;
+        this.eatsFood = copyPet.originalEatsFood;
+        this.friendAteFood = copyPet.originalFriendAteFood;
+        this.friendLostPerk = copyPet.originalFriendLostPerk;
+        this.gainedPerk = copyPet.originalGainedPerk;
+        this.friendGainedPerk = copyPet.originalFriendGainedPerk;
+        this.anyoneLevelUp = copyPet.originalAnyoneLevelUp;
+        this.enemySummoned = copyPet.originalEnemySummoned;
+        this.enemyPushed = copyPet.originalEnemyPushed;
+        this.gainedMana = copyPet.originalGainedMana;
+        this.friendJumped = copyPet.originalFriendJumped;
+        this.enemyGainedAilment = copyPet.originalEnemyGainedAilment;
+        this.friendGainsHealth = copyPet.originalFriendGainsHealth;
+        this.emptyFrontSpace = copyPet.originalEmptyFrontSpace;
+        this.enemyHurt = copyPet.originalEnemyHurt;
+        this.afterFaint = copyPet.originalAfterFaint;
+        this.transform = copyPet.originalTransform;
+        this.adjacentAttacked = copyPet.originalAdjacentAttacked;
+        this.friendAttacks = copyPet.originalFriendAttacks;
+        this.beforeFriendAttacks = copyPet.originalBeforeFriendAttacks;
+        this.enemyJumped = copyPet.originalEnemyJumped;
+        this.friendGainedExperience = copyPet.originalFriendGainedExperience;
 
         // Copy maxAbilityUses property if the copied pet has it set
         this.maxAbilityUses = copyPet.maxAbilityUses;
         this.setAbilityUses = copyPet.setAbilityUses?.bind(this);
-        this.setAbilityUses();
+        
+        // Initialize ability wrappers for the copied abilities
+        this.initAbilities();
         //TO DO: Copy other stuff like swallow reset, etc
         if (!(copyPet instanceof Parrot)) {
             this.logService.createLog({

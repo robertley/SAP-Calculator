@@ -11,7 +11,7 @@ export class ElephantSeal extends Pet {
     name = "Elephant Seal";
     tier = 6;
     pack: Pack = 'Puppy';
-    attack = 2;
+    attack = 4;
     health = 8;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -32,7 +32,7 @@ export class ElephantSeal extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let power = this.level * 5;
+        let power = this.level * 4;
         let targetsResp = this.parent.getRandomPets(3, [this], true, false, this);
         for (let target of targetsResp.pets) {
             if (target != null) {

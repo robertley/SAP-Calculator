@@ -1,3 +1,4 @@
+import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
@@ -10,6 +11,9 @@ export class Bigfoot extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 3;
+    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
+        return
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

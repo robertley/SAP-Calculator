@@ -9,8 +9,8 @@ export class Kakapo extends Pet {
     name = "Kakapo";
     tier = 4;
     pack: Pack = 'Danger';
-    attack = 2;
-    health = 3;
+    attack = 3;
+    health = 5;
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;

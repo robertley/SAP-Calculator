@@ -9,7 +9,7 @@ export class Fossa extends Pet {
     name = "Fossa";
     tier = 4;
     pack: Pack = 'Star';
-    attack = 4;
+    attack = 6;
     health = 5;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {

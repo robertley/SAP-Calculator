@@ -1,4 +1,3 @@
-import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -14,40 +13,25 @@ export class Toucan extends Pet {
     pack: Pack = 'Puppy';
     attack = 4;
     health = 3;
-    private attacked = false;
     beforeAttack(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.equipment == null) {
+        if (this.timesAttacked >= 1) {
             return;
         }
-        if (this.equipment.tier > 5) {
-            return;
+        let newEquipmentInstance: Equipment;
+        if (this.equipment == null || this.equipment.tier > 5) {
+            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get('egg');
+        } else {
+            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name); 
         }
-        if (this.attacked) {
-            return;
-        }
-        let pets = this.parent.petArray;
-        let targets: Pet[] = [];
-        let foundSelf = false;
-        for (let pet of pets) {
-            if (pet == this) {
-                foundSelf = true;
-            }
-            if (!foundSelf) {
-                continue;
-            }
-            if (pet.equipment?.name == this.equipment.name) {
-                continue;
-            }
-            targets.push(pet);
-        }
-        for (let i = 0; i < this.level; i++) {
-            let target = targets[i];
-            if (target == null) {
-                break;
-            }
 
+        let targetsResp = this.parent.nearestPetsBehind(this.level, this, newEquipmentInstance.name);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
+        for (let target of targets) {
             this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${this.equipment.name}`,
+                message: `${this.name} gave ${target.name} ${newEquipmentInstance.name}`,
                 type: 'ability',
                 player: this.parent,
                 randomEvent: false,
@@ -55,20 +39,9 @@ export class Toucan extends Pet {
                 pteranodon: pteranodon
             })
 
-            const newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name);
-            if (newEquipmentInstance) {
-                target.givePetEquipment(newEquipmentInstance);
-            }
+            target.givePetEquipment(newEquipmentInstance);
         }
         this.superBeforeAttack(gameApi, tiger);
-    }
-    attackPet(pet: Pet, jumpAttack?: boolean, power?: number, random?: boolean): void {
-        this.attacked = true;
-        super.attackPet(pet, jumpAttack, power, random);
-    }
-    resetPet(): void {
-        this.attacked = false
-        super.resetPet();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

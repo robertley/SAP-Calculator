@@ -45,7 +45,7 @@
                         <label for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
                         <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}">
                             <option [ngValue]="null">None</option>
-                            <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of startOfBattlePets | keyvalue">
+                            <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                                 <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
                             </optgroup>
                         </select>
@@ -58,13 +58,13 @@
                 </div>
 
                 <div *ngIf="pet.name == 'Sabertooth Tiger'">
-                    <label for="sabertoothTimesHurt">Times Hurt</label>
-                    <input class="form-control" formControlName="sabertoothTimesHurt" type="number" min="0" max="99">
+                    <label for="timesHurt">Times Hurt</label>
+                    <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
                 </div>
 
                 <div *ngIf="pet.name == 'Tuna'">
-                    <label for="tunaTimesHurt">Times Hurt</label>
-                    <input class="form-control" formControlName="tunaTimesHurt" type="number" min="0" max="99">
+                    <label for="timesHurt">Times Hurt</label>
+                    <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
                 </div>
                 
             </div>

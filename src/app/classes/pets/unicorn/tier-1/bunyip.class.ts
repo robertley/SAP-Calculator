@@ -19,15 +19,15 @@ export class Bunyip extends Pet {
         } else {
             rollAmount = gameApi.opponentRollAmount;
         }
+        rollAmount = Math.min(this.level * 2, rollAmount)
         let targetResp = this.parent.getThis(this);
         let target = targetResp.pet;
         if (target == null) {
             return
         }
-        let newHealth = this.level + rollAmount;
-        target.increaseHealth(newHealth - target.health)
+        target.increaseHealth(rollAmount)
         this.logService.createLog({
-            message: `${this.name} set its health to ${newHealth}.`,
+            message: `${this.name} gave ${target.name} ${rollAmount} health.`,
             type: 'ability',
             player: this.parent,
             tiger: tiger

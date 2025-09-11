@@ -22,35 +22,6 @@ export class Skewer extends Equipment {
             return;
         }
 
-        let damageResp = pet.calculateDamgae(attackPet, pet.getManticoreMult(), 3);
-        let defenseEquipment = damageResp.defenseEquipment;
-        let damage = damageResp.damage * this.multiplier;
-
-        pet.dealDamage(attackPet, damage);
-
-        let message = `${pet.name} attacks ${attackPet.name} for ${damage}`;
-
-        if (this.multiplier > 1) {
-            message += ` x${this.multiplier}${this.multiplierMessage}`;
-        }
-
-        if (defenseEquipment != null) {
-            attackPet.useDefenseEquipment();
-            let power = Math.abs(defenseEquipment.power);
-            let sign = '-';
-            if (defenseEquipment.power < 0) {
-                sign = '+';
-            }
-            message += ` (${defenseEquipment.name} ${sign}${power})`;
-
-            // Defense equipment multiplier handled by attacked pet's equipment
-    
-        }
-
-        this.logService.createLog({
-            message: message += ` (Skewer).`,
-            type: 'attack',
-            player: pet.parent
-        })
+        pet.snipePet(attackPet, 3, false, null, null, true);
     }
 }

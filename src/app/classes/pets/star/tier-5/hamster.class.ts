@@ -9,7 +9,7 @@ export class Hamster extends Pet {
     name = "Hamster";
     tier = 5;
     pack: Pack = 'Star';
-    attack = 2;
+    attack = 4;
     health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

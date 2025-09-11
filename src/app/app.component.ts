@@ -52,7 +52,7 @@ const REVERSE_KEY_MAP = {
   "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana",
   "sa": "showAdvanced", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
   // Pet Object Keys
-  "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment", "bSP": "belugaSwallowedPet"
+  "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment", "bSP": "belugaSwallowedPet", "tH": "timesHurt"
 };
 
 function expandKeys(data) {
@@ -584,8 +584,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
           battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
-          sabertoothTimesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
-          tunaTimesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
+          timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
         })
       }
     );
@@ -607,8 +606,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
           battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
-          sabertoothTimesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
-          tunaTimesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
+          timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
         })
       }
     );

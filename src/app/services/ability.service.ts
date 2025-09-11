@@ -680,6 +680,9 @@ export class AbilityService {
     
     triggerFriendTransformedEvents(player: Player, transformedPet: Pet) {
         for (let pet of player.petArray) {
+            if (pet == transformedPet) {
+                continue;
+            }
             if (pet.friendTransformed != null) {
                 this.setFriendTransformedEvent({
                     callback: pet.friendTransformed.bind(pet),

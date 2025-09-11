@@ -17,7 +17,7 @@ export class Cyclops extends Pet {
             return;
         }
         let manaGain = this.level * 2;
-        let manaTargetResp = this.parent.getThis(this);
+        let manaTargetResp = this.parent.getSpecificPet(this, pet);
         let manaTarget = manaTargetResp.pet
         if (manaTarget == null) {
             return;
@@ -34,7 +34,7 @@ export class Cyclops extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let expTargetResp = this.parent.getThis(this);
+        let expTargetResp = this.parent.getSpecificPet(this, pet);
         let expTarget = expTargetResp.pet;
         this.logService.createLog({
             message: `${this.name} gave ${expTarget.name} 1 exp.`,

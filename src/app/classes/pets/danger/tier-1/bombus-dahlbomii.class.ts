@@ -11,9 +11,6 @@ export class BombusDahlbomii extends Pet {
     pack: Pack = 'Danger';
     attack = 1;
     health = 2;
-    //TO DO, add attackCounter property to pet class
-    private attackCounter = 0;
-
     enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
  
         
@@ -22,11 +19,11 @@ export class BombusDahlbomii extends Pet {
         }
         
         if (!tiger) {
-            this.attackCounter++;
+            this.abilityCounter++;
         }
         
         // Check if counter reached (every 2 attacks)
-        if (this.attackCounter % 2 != 0) {
+        if (this.abilityCounter % 2 != 0) {
             this.superEnemyAttack(gameApi, pet, tiger);
             return;
         }

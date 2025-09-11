@@ -5,8 +5,6 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Dazed } from "../../../equipment/ailments/dazed.class";
-import { shuffle } from "../../../../util/helper-functions";
 import { Rambutan } from "../../../equipment/unicorn/rambutan.class";
 
 export class FurBearingTrout extends Pet {

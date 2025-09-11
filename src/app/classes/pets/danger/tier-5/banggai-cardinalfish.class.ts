@@ -14,7 +14,7 @@ export class BanggaiCardinalfish extends Pet {
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let attackReduction = this.level * 6; // 6/12/18 based on level
-        let minimumAttack = 5;
+        let minimumAttack = 4;
         
         let targetResp = this.parent.getAll(true, this); // includeOpponent = true
         for (let targetPet of targetResp.pets) {

@@ -12,17 +12,16 @@ export class AyeAye extends Pet {
     pack: Pack = 'Danger';
     attack = 3;
     health = 5;
-    private attackCounter = 0;
 
     enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
  
         
         if (!tiger) {
-            this.attackCounter++;
+            this.abilityCounter++;
         }
         
         // Check if counter reached (every 8 attacks)
-        if (this.attackCounter % 8 != 0) {
+        if (this.abilityCounter % 8 != 0) {
             this.superEnemyAttack(gameApi, pet, tiger);
             return;
         }
