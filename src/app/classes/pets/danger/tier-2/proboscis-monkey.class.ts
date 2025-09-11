@@ -9,7 +9,7 @@ export class ProboscisMonkey extends Pet {
     name = "Proboscis Monkey";
     tier = 2;
     pack: Pack = 'Danger';
-    attack = 3;
+    attack = 4;
     health = 4;
 
     constructor(protected logService: LogService,

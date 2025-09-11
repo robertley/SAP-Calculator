@@ -43,3 +43,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# C# and C++ files
+*.cs
+c++/
+src/app/c++/

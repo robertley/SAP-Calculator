@@ -52,6 +52,7 @@ export class GoblinShark extends Pet {
     afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         while (this.swallowedPets.length > 0) {
             let pet = this.swallowedPets.shift();
+            pet.health = 1;
             let summonResult = this.parent.summonPet(pet, this.savedPosition, false, this);
             if (summonResult.success) {
                 this.logService.createLog({

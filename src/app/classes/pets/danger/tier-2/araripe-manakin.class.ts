@@ -34,7 +34,7 @@ export class AraripeManakin extends Pet {
             return;
         }
 
-        let healthGain = this.level * 2;
+        let healthGain = this.level * 3;
         target.increaseHealth(healthGain);
         
         this.logService.createLog({
@@ -50,7 +50,7 @@ export class AraripeManakin extends Pet {
 
     setAbilityUses(): void {
         super.setAbilityUses();
-        this.maxAbilityUses = 3;
+        this.maxAbilityUses = 2;
     }
 
     constructor(protected logService: LogService,

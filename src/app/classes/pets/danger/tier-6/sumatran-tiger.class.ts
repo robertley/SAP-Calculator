@@ -9,8 +9,8 @@ export class SumatranTiger extends Pet {
     name = "Sumatran Tiger";
     tier = 6;
     pack: Pack = 'Danger';
-    attack = 8;
-    health = 5;
+    attack = 9;
+    health = 9;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let targetResp = this.parent.getOppositeEnemyPet(this);

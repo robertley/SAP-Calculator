@@ -10,7 +10,7 @@ export class IliPika extends Pet {
     tier = 1;
     pack: Pack = 'Danger';
     attack = 2;
-    health = 2;
+    health = 3;
 
     friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
         let targetResp = this.parent.getSpecificPet(this, pet);

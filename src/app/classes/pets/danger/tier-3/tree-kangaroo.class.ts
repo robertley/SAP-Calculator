@@ -12,7 +12,7 @@ export class TreeKangaroo extends Pet {
     tier = 3;
     pack: Pack = 'Danger';
     attack = 3;
-    health = 3;
+    health = 5;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let targetResp = getOpponent(gameApi, this.parent).getLastPet(undefined, this);

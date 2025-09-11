@@ -13,7 +13,7 @@ export class Mandrake extends Pet {
     tier = 3;
     pack: Pack = 'Unicorn';
     attack = 4;
-    health = 2;
+    health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let targetResp = this.parent.opponent.getTierXOrLowerPet(this.level*2, "Dazed", this);
         let target = targetResp.pet;

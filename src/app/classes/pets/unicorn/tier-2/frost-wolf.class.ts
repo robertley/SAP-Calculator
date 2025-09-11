@@ -15,7 +15,6 @@ export class FrostWolf extends Pet {
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targetResp = this.parent.opponent.getFurthestUpPet(this);
         let target = targetResp.pet;
-        const power = -5 * this.level;
 
         const coldAilment = new Cold();
         coldAilment.multiplier += this.level - 1;
@@ -28,11 +27,12 @@ export class FrostWolf extends Pet {
         }
 
         this.logService.createLog({
-            message: `${this.name} made ${target.name} Cold${effectMessage}`,
+            message: `${this.name} made ${target.name} Cold ${effectMessage}`,
             type: "ability",
             player: this.parent,
             tiger: tiger,
-            pteranodon: pteranodon
+            pteranodon: pteranodon,
+            randomEvent: targetResp.random
         });
 
         target.givePetEquipment(coldAilment);
