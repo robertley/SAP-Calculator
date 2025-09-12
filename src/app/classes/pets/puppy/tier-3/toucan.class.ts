@@ -19,7 +19,7 @@ export class Toucan extends Pet {
         }
         let newEquipmentInstance: Equipment;
         if (this.equipment == null || this.equipment.tier > 5) {
-            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get('egg');
+            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get('Egg');
         } else {
             newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name); 
         }

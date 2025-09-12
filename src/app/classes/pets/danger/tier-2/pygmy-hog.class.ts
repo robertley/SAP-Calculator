@@ -14,10 +14,7 @@ export class PygmyHog extends Pet {
     attack = 1;
     health = 2;
 
-    enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
- 
-        
-        
+    enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {  
         if (!tiger) {
             this.abilityCounter++;
         }

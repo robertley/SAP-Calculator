@@ -34,6 +34,7 @@ export class PandorasBox extends Toy {
         
         // https://superautopets.wiki.gg/wiki/Pandoras_Box
         let excludedPerks = [
+            'Cake Slice',
             'Carrot',
             'Cherry',
             'Chocolate Cake',

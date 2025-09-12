@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Equipment } from "../classes/equipment.class";
 import { Garlic } from "../classes/equipment/turtle/garlic.class";
+import { Cake } from "../classes/equipment/turtle/cake.class";
 import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
 import { Steak } from "../classes/equipment/turtle/steak.class";
 import { Melon } from "../classes/equipment/turtle/melon.class";
@@ -35,6 +36,7 @@ import { Carrot } from "../classes/equipment/star/carrot.class";
 import { Popcorn } from "../classes/equipment/star/popcorn.class";
 import { GameService } from "./game.service";
 import { Cherry } from "../classes/equipment/golden/cherry.class";
+import { BokChoy } from "../classes/equipment/golden/bok-choy.class";
 import { ChocolateCake } from "../classes/equipment/golden/chocolate-cake.class";
 import { CodRoe } from "../classes/equipment/danger/cod-roe.class";
 import { Eggplant } from "../classes/equipment/golden/eggplant.class";
@@ -44,13 +46,17 @@ import { Onion } from "../classes/equipment/golden/onion.class";
 import { PitaBread } from "../classes/equipment/golden/pita-bread.class";
 import { Tomato } from "../classes/equipment/golden/tomato.class";
 import { SudduthTomato } from "../classes/equipment/danger/sudduth-tomato.class";
-import { Unagi } from "../classes/equipment/danger/unagi.class";
+import { Unagi } from "../classes/equipment/custom/unagi.class";
 import { Durian } from "../classes/equipment/golden/durian.class";
 import { GrosMichelBanana } from "../classes/equipment/danger/gros-michel-banana.class";
 import { Seaweed } from "../classes/equipment/star/seaweed.class";
 import { FortuneCookie } from "../classes/equipment/custom/fortune-cookie.class";
 import { Blueberry } from "../classes/equipment/custom/blueberry.class";
 import { Donut } from "../classes/equipment/custom/donut.class";
+import { CashewNut } from "../classes/equipment/custom/cashew-nut.class";
+import { Nachos } from "../classes/equipment/custom/nachos.class";
+import { Pumpkin } from "../classes/equipment/custom/pumpkin.class";
+import { Kiwifruit } from "../classes/equipment/custom/kiwifruit.class";
 import { Pineapple } from "../classes/equipment/custom/pineapple.class";
 import { Fig } from "../classes/equipment/golden/fig.class";
 import { Caramel } from "../classes/equipment/star/caramel.class";
@@ -77,6 +83,7 @@ import { CocoaBean } from "../classes/equipment/danger/cocoa-bean.class";
 import { WhiteOkra } from "../classes/equipment/danger/white-okra.class";
 import { WhiteTruffle } from "../classes/equipment/danger/white-truffle.class";
 import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
+import { CakeSlice } from "../classes/equipment/hidden/cake-slice.class";
 import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
 
@@ -92,6 +99,7 @@ export class EquipmentService {
         const petService = InjectorService.getInjector().get(PetService);
         let map: Map<string, Equipment> = new Map();
         map.set('Garlic', new Garlic());
+        map.set('Cake', new Cake());
         map.set('Meat Bone', new MeatBone());
         map.set('Steak', new Steak());
         map.set('Melon', new Melon())
@@ -101,6 +109,7 @@ export class EquipmentService {
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
         map.set('Peanut Butter', new PeanutButter());
+        map.set('Cake Slice', new CakeSlice());
         map.set('Blackberry', new Blackberry());
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
@@ -122,6 +131,7 @@ export class EquipmentService {
         map.set('Pepper', new Pepper());
         map.set('Popcorn', new Popcorn(this.logService, this.abilityService, petService, this.gameService));
         map.set('Cherry', new Cherry());
+        map.set('Bok Choy', new BokChoy());
         map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
         map.set('Cod Roe', new CodRoe(this.logService, this.abilityService));
         map.set('Eggplant', new Eggplant(this.logService));
@@ -138,6 +148,10 @@ export class EquipmentService {
         map.set('Fortune Cookie', new FortuneCookie());
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
+        map.set('Cashew Nut', new CashewNut(this.logService, this.abilityService));
+        map.set('Nachos', new Nachos(this.logService, this.abilityService));
+        map.set('Pumpkin', new Pumpkin());
+        map.set('Kiwifruit', new Kiwifruit());
         map.set('Pineapple', new Pineapple());
         map.set('Fig', new Fig(this.logService, this.abilityService));
         map.set('Caramel', new Caramel(this.logService, this.abilityService));
@@ -182,10 +196,15 @@ export class EquipmentService {
         ['Honey', 1],
         ['Strawberry', 1],
         ['Egg', 1],
+        ['Cake Slice', 1],
+        ['Cashew Nut', 1],
+        ['Nachos', 1],
         // T2
         ['Lime', 2], 
         ['Meat Bone', 2], 
         ['Cherry', 2], 
+        ['Bok Choy', 2],
+        ['Kiwifruit', 2],
         ['Fairy Dust', 2],
         // T3  
         ['Garlic', 3], 

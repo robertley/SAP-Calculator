@@ -15,7 +15,9 @@ export class FrostWolf extends Pet {
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         let targetResp = this.parent.opponent.getFurthestUpPet(this);
         let target = targetResp.pet;
-
+        if (target == null) {
+            return;
+        }
         const coldAilment = new Cold();
         coldAilment.multiplier += this.level - 1;
 

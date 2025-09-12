@@ -6,8 +6,8 @@ export class MapleSyrup extends Equipment {
     equipmentClass = 'shield' as EquipmentClass;
     power = 0; 
     originalPower = 0;
-    uses = 1;
-    originalUses = 1;
+    uses = 2;
+    originalUses = 2;
 }
 
 export class MapleSyrupAttack extends Equipment {

@@ -53,7 +53,7 @@ export class AbilityService {
         'friendAheadFaints': 10,
         'afterFaint': 11,
         'friendFaints': 12,
-        'enemyFaints': 12, //not added
+        'enemyFaintss': 12,
         'friendlyToyBroke': 12,
         'knockOut': 13,
         'transform': 14,
@@ -192,6 +192,7 @@ export class AbilityService {
             case 'enemyHurt':
             case 'friendAheadFaints':
             case 'friendFaints':
+            case 'enemyFaintss':
             case 'eatsFood':
             case 'friendAteFood':
             case 'friendLostPerk':
@@ -379,6 +380,22 @@ export class AbilityService {
 
     setFriendFaintsEvent(event: AbilityEvent) {
         event.abilityType = 'friendFaints';
+        this.addEventToQueue(event);
+    }
+    triggerenemyFaintsEvents(faintedPet: Pet) {
+        for (let pet of faintedPet.parent.opponent.petArray.filter(p => p.alive)) {
+            if (pet.enemyFaints != null) {
+                this.setenemyFaintsEvent({
+                    callback: pet.enemyFaints.bind(pet),
+                    priority: pet.attack,
+                    pet: pet,
+                    callbackPet: faintedPet
+                })
+            }
+        }
+    }
+    setenemyFaintsEvent(event: AbilityEvent) {
+        event.abilityType = 'enemyFaintss';
         this.addEventToQueue(event);
     }
 
