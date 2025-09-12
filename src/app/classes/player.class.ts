@@ -445,7 +445,7 @@ export class Player {
                     slot.pet.disabled = true;
                 }
                 this.abilityService.triggerFriendFaintsEvents(slot.pet);
-                this.abilityService.triggerenemyFaintsEvents(slot.pet);
+                this.abilityService.triggerEnemyFaintsEvents(slot.pet);
                 // Mark pet as disabled before removing
                 // Set the pet property to null using the index
                 this[`pet${slot.index}`] = null;

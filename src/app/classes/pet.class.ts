@@ -146,7 +146,7 @@ export abstract class Pet {
     originalAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalenemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalEnemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -190,7 +190,7 @@ export abstract class Pet {
     resetAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     resetFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetenemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalEnemynemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -252,7 +252,7 @@ export abstract class Pet {
         this.originalAdjacentAttacked = this.adjacentAttacked;
         this.originalFriendAheadFaints = this.friendAheadFaints;
         this.originalFriendFaints = this.friendFaints;
-        this.originalenemyFaints = this.enemyFaints;
+        this.originalEnemyFaints = this.enemyFaints;
         this.originalFriendAteFood = this.friendAteFood;
         this.originalEatsFood = this.eatsFood;
         this.originalFriendLostPerk = this.friendLostPerk;
@@ -295,7 +295,7 @@ export abstract class Pet {
         this.resetAdjacentAttacked = this.adjacentAttacked;
         this.resetFriendAheadFaints = this.friendAheadFaints;
         this.resetFriendFaints = this.friendFaints;
-        this.resetenemyFaints = this.enemyFaints;
+        this.originalEnemynemyFaints = this.enemyFaints;
         this.resetFriendAteFood = this.friendAteFood;
         this.resetEatsFood = this.eatsFood;
         this.resetFriendLostPerk = this.friendLostPerk;
@@ -779,7 +779,7 @@ export abstract class Pet {
         this.exp = exp;
     }
 
-    protected superenemyFaints(gameApi, pet, tiger=false) {
+    protected superEnemyFaints(gameApi, pet, tiger=false) {
         if (!this.tigerCheck(tiger)) {
             return;
         }
@@ -1730,7 +1730,7 @@ export abstract class Pet {
         this.adjacentAttacked = this.resetAdjacentAttacked;
         this.friendAheadFaints = this.resetFriendAheadFaints;
         this.friendFaints = this.resetFriendFaints;
-        this.enemyFaints = this.resetenemyFaints;
+        this.enemyFaints = this.originalEnemynemyFaints;
         this.friendAteFood = this.resetFriendAteFood;
         this.eatsFood = this.resetEatsFood;
         this.friendLostPerk = this.resetFriendLostPerk;

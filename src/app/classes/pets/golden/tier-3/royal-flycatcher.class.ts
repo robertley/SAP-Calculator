@@ -32,7 +32,7 @@ export class RoyalFlycatcher extends Pet {
             priority: this.attack,
             pet: this
         });
-        this.superenemyFaints(gameApi, pet, tiger);
+        this.superEnemyFaints(gameApi, pet, tiger);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
