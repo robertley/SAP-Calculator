@@ -13,7 +13,7 @@ export class Turtle extends Pet {
     health = 5;
     faint(gameApi, tiger, pteranodon?: boolean) {
         let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, "Melon");
-        if (targetsBehindResp.pets.length === 0) {
+        if (targetsBehindResp.pets.length == 0) {
             return;
         }
         for (let targetPet of targetsBehindResp.pets) {

@@ -99,6 +99,7 @@ export abstract class Pet {
     adjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     friendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    enemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     gainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -145,6 +146,7 @@ export abstract class Pet {
     originalAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    originalenemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     originalFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -188,6 +190,7 @@ export abstract class Pet {
     resetAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
     resetFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
+    resetenemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
     resetFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -249,6 +252,7 @@ export abstract class Pet {
         this.originalAdjacentAttacked = this.adjacentAttacked;
         this.originalFriendAheadFaints = this.friendAheadFaints;
         this.originalFriendFaints = this.friendFaints;
+        this.originalenemyFaints = this.enemyFaints;
         this.originalFriendAteFood = this.friendAteFood;
         this.originalEatsFood = this.eatsFood;
         this.originalFriendLostPerk = this.friendLostPerk;
@@ -291,6 +295,7 @@ export abstract class Pet {
         this.resetAdjacentAttacked = this.adjacentAttacked;
         this.resetFriendAheadFaints = this.friendAheadFaints;
         this.resetFriendFaints = this.friendFaints;
+        this.resetenemyFaints = this.enemyFaints;
         this.resetFriendAteFood = this.friendAteFood;
         this.resetEatsFood = this.eatsFood;
         this.resetFriendLostPerk = this.friendLostPerk;
@@ -430,6 +435,14 @@ export abstract class Pet {
                 return;
             }
             friendFaintsCallback(gameApi, pet, tiger);
+        }
+
+        let enemyFaintsCallback = this.enemyFaints?.bind(this);
+        this.enemyFaints = enemyFaintsCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
+            if (!this.abilityValidCheck()) {
+                return;
+            }
+            enemyFaintsCallback(gameApi, pet, tiger);
         }
 
         
@@ -763,6 +776,16 @@ export abstract class Pet {
         let exp = this.exp;
         this.exp = this.petBehind(null, true).minExpForLevel;
         this.friendFaints(gameApi, pet, true)
+        this.exp = exp;
+    }
+
+    protected superenemyFaints(gameApi, pet, tiger=false) {
+        if (!this.tigerCheck(tiger)) {
+            return;
+        }
+        let exp = this.exp;
+        this.exp = this.petBehind(null, true).minExpForLevel;
+        this.enemyFaints(gameApi, pet, true)
         this.exp = exp;
     }
 
@@ -1692,46 +1715,47 @@ export abstract class Pet {
             // window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
         }
         
-        // Restore original ability methods to fix equipment copying persistence issues
-        this.startOfBattle = this.originalStartOfBattle;
-        this.transform = this.originalTransform;
-        this.beforeAttack = this.originalBeforeAttack;
-        this.afterAttack = this.originalAfterAttack;
-        this.beforeFriendAttacks = this.originalBeforeFriendAttacks;
-        this.enemyAttack = this.originalEnemyAttack;
-        this.friendAttacks = this.originalFriendAttacks;
-        this.hurt = this.originalHurt;
-        this.faint = this.originalFaint;
-        this.friendSummoned = this.originalFriendSummoned;
-        this.friendAheadAttacks = this.originalFriendAheadAttacks;
-        this.adjacentAttacked = this.originalAdjacentAttacked;
-        this.friendAheadFaints = this.originalFriendAheadFaints;
-        this.friendFaints = this.originalFriendFaints;
-        this.friendAteFood = this.originalFriendAteFood;
-        this.eatsFood = this.originalEatsFood;
-        this.friendLostPerk = this.originalFriendLostPerk;
-        this.gainedPerk = this.originalGainedPerk;
-        this.friendGainedPerk = this.originalFriendGainedPerk;
-        this.friendGainedAilment = this.originalFriendGainedAilment;
-        this.friendHurt = this.originalFriendHurt;
-        this.friendTransformed = this.originalFriendTransformed;
-        this.afterFaint = this.originalAfterFaint;
-        this.beforeStartOfBattle = this.originalBeforeStartOfBattle;
-        this.anyoneLevelUp = this.originalAnyoneLevelUp;
-        this.endTurn = this.originalEndTurn;
-        this.knockOut = this.originalKnockOut;
-        this.summoned = this.originalSummoned;
-        this.friendlyToyBroke = this.originalFriendlyToyBroke;
-        this.enemySummoned = this.originalEnemySummoned;
-        this.enemyPushed = this.originalEnemyPushed;
-        this.enemyHurt = this.originalEnemyHurt;
-        this.emptyFrontSpace = this.originalEmptyFrontSpace;
-        this.gainedMana = this.originalGainedMana;
-        this.friendJumped = this.originalFriendJumped;
-        this.enemyJumped = this.originalEnemyJumped;
-        this.enemyGainedAilment = this.originalEnemyGainedAilment;
-        this.friendGainsHealth = this.originalFriendGainsHealth;
-        this.friendGainedExperience = this.originalFriendGainedExperience;
+        // Restore reset ability methods to fix equipment copying persistence issues
+        this.startOfBattle = this.resetStartOfBattle;
+        this.transform = this.resetTransform;
+        this.beforeAttack = this.resetBeforeAttack;
+        this.afterAttack = this.resetAfterAttack;
+        this.beforeFriendAttacks = this.resetBeforeFriendAttacks;
+        this.enemyAttack = this.resetEnemyAttack;
+        this.friendAttacks = this.resetFriendAttacks;
+        this.hurt = this.resetHurt;
+        this.faint = this.resetFaint;
+        this.friendSummoned = this.resetFriendSummoned;
+        this.friendAheadAttacks = this.resetFriendAheadAttacks;
+        this.adjacentAttacked = this.resetAdjacentAttacked;
+        this.friendAheadFaints = this.resetFriendAheadFaints;
+        this.friendFaints = this.resetFriendFaints;
+        this.enemyFaints = this.resetenemyFaints;
+        this.friendAteFood = this.resetFriendAteFood;
+        this.eatsFood = this.resetEatsFood;
+        this.friendLostPerk = this.resetFriendLostPerk;
+        this.gainedPerk = this.resetGainedPerk;
+        this.friendGainedPerk = this.resetFriendGainedPerk;
+        this.friendGainedAilment = this.resetFriendGainedAilment;
+        this.friendHurt = this.resetFriendHurt;
+        this.friendTransformed = this.resetFriendTransformed;
+        this.afterFaint = this.resetAfterFaint;
+        this.beforeStartOfBattle = this.resetBeforeStartOfBattle;
+        this.anyoneLevelUp = this.resetAnyoneLevelUp;
+        this.endTurn = this.resetEndTurn;
+        this.knockOut = this.resetKnockOut;
+        this.summoned = this.resetSummoned;
+        this.friendlyToyBroke = this.resetFriendlyToyBroke;
+        this.enemySummoned = this.resetEnemySummoned;
+        this.enemyPushed = this.resetEnemyPushed;
+        this.enemyHurt = this.resetEnemyHurt;
+        this.emptyFrontSpace = this.resetEmptyFrontSpace;
+        this.gainedMana = this.resetGainedMana;
+        this.friendJumped = this.resetFriendJumped;
+        this.enemyJumped = this.resetEnemyJumped;
+        this.enemyGainedAilment = this.resetEnemyGainedAilment;
+        this.friendGainsHealth = this.resetFriendGainsHealth;
+        this.friendGainedExperience = this.resetFriendGainedExperience;
         // set faint ability to handle mana ability
         let faintCallback = this.faint?.bind(this);
         if (faintCallback != null || this.afterFaint != null) {
@@ -1947,6 +1971,9 @@ export abstract class Pet {
     dealDamage(pet: Pet, damage: number) {
         if (!pet.alive) {
             return;
+        }
+        if (damage >= pet.health && pet.equipment?.name == 'Bok Choy') {
+            pet.increaseHealth(4)
         }
         pet.health -= damage;
         
@@ -2278,7 +2305,7 @@ export abstract class Pet {
         let targetsBehind = [];
         let petBehind = this.petBehind();
         // Skip pets that already have the excluded equipment
-        if (excludeEquipment && petBehind.equipment?.name === excludeEquipment) {
+        if (excludeEquipment && petBehind && petBehind.equipment?.name === excludeEquipment) {
             petBehind = petBehind.petBehind();
         }
         while (petBehind) {
