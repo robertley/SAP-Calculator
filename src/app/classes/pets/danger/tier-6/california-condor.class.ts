@@ -35,7 +35,7 @@ export class CaliforniaCondor extends Pet {
         if (copyPet.originalFriendAheadAttacks) this.friendAheadAttacks = copyPet.originalFriendAheadAttacks;
         if (copyPet.originalFriendAheadFaints) this.friendAheadFaints = copyPet.originalFriendAheadFaints;
         if (copyPet.originalFriendFaints) this.friendFaints = copyPet.originalFriendFaints;
-        if (copyPet.originalenemyFaints) this.enemyFaints = copyPet.originalenemyFaints;
+        if (copyPet.originalEnemyFaints) this.enemyFaints = copyPet.originalEnemyFaints;
         if (copyPet.originalEnemyAttack) this.enemyAttack = copyPet.originalEnemyAttack;
         if (copyPet.originalAfterAttack) this.afterAttack = copyPet.originalAfterAttack;
         if (copyPet.originalBeforeAttack) this.beforeAttack = copyPet.originalBeforeAttack;

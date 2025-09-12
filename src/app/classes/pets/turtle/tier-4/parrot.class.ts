@@ -36,7 +36,7 @@ export class Parrot extends Pet {
         this.friendAheadAttacks = copyPet.originalFriendAheadAttacks;
         this.friendAheadFaints = copyPet.originalFriendAheadFaints;
         this.friendFaints = copyPet.originalFriendFaints;
-        this.enemyFaints = copyPet.originalenemyFaints;
+        this.enemyFaints = copyPet.originalEnemyFaints;
         this.enemyAttack = copyPet.originalEnemyAttack;
         this.afterAttack = copyPet.originalAfterAttack;
         this.beforeAttack = copyPet.originalBeforeAttack;
