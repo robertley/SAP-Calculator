@@ -562,8 +562,10 @@ export class Player {
         // Normal behavior
         let pets = [];
         excludePets = excludePets ?? [];
+        let random = true;
         for (let i = 0; i < amt; i++) {
             let petResp = this.getRandomPet(excludePets, donut, blueberry, null, callingPet, includeOpponent);
+            random = petResp.random;
             if (petResp.pet == null) {
                 break;
             }
@@ -571,7 +573,7 @@ export class Player {
             pets.push(petResp.pet);
         }
         
-        return { pets: pets, random: pets.length > amt };
+        return { pets: pets, random: random };
     }
 
     /**

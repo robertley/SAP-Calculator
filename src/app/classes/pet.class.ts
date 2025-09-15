@@ -1755,46 +1755,7 @@ export abstract class Pet {
         this.enemyJumped = this.resetEnemyJumped;
         this.enemyGainedAilment = this.resetEnemyGainedAilment;
         this.friendGainsHealth = this.resetFriendGainsHealth;
-        this.friendGainedExperience = this.resetFriendGainedExperience;
-        // set faint ability to handle mana ability
-        let faintCallback = this.faint?.bind(this);
-        if (faintCallback != null || this.afterFaint != null) {
-            this.faintPet = true;
-        }
-
-        this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
-            if (faintCallback != null) {
-                 faintCallback(gameApi, tiger, pteranodon);
-            }
-
-            if (this.kitsuneCheck()) {
-                return;
-            }
-            
-            if (this.mana > 0) {
-                
-                let manaEvent: AbilityEvent;
-
-                manaEvent = {
-                    priority: this.attack,
-                    player: this.parent,
-                    callback: () => {
-                        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true);
-                        let target = targetResp.pet;
-                        if (target == null) {
-                            return;
-                        }
-                        if (this.mana == 0) {
-                            return;
-                        }
-                        this.snipePet(target, this.mana, targetResp.random, false, false, false, true);
-                    }
-                }
-
-                this.abilityService.setManaEvent(manaEvent);
-            }
-        }
-        
+        this.friendGainedExperience = this.resetFriendGainedExperience;     
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target
