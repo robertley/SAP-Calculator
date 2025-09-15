@@ -1755,7 +1755,11 @@ export abstract class Pet {
         this.enemyJumped = this.resetEnemyJumped;
         this.enemyGainedAilment = this.resetEnemyGainedAilment;
         this.friendGainsHealth = this.resetFriendGainsHealth;
-        this.friendGainedExperience = this.resetFriendGainedExperience;     
+        this.friendGainedExperience = this.resetFriendGainedExperience;    
+        if (this.equipment) {
+            this.equipment.multiplier = 1;
+            this.equipment.multiplierMessage = '';
+        } 
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target
