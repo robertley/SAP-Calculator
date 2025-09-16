@@ -1,7 +1,6 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
@@ -17,8 +16,8 @@ export class Bat extends Pet {
         if (this.abilityUses >= this.maxAbilityUses) {
             return;
         }
-        let opponent = getOpponent(gameApi, this.parent);
-        let targetsResp = opponent.getRandomPet(null, null, true, null, this);
+        let excludePets = this.parent.opponent.getPetsWithEquipment('Weak')
+        let targetsResp = this.parent.opponent.getRandomPet(excludePets, null, true, null, this);
         let target = targetsResp.pet;
         if (target != null) {
             target.givePetEquipment(new Weak());

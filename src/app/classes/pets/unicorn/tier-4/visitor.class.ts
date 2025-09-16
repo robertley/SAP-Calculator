@@ -2,7 +2,7 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Exposed } from "../../../equipment/ailments/exposed.class";
+import { Icky } from "../../../equipment/ailments/icky.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
@@ -20,9 +20,9 @@ export class Visitor extends Pet {
         }
         //TO DO: Add Icky
         for (let target of targets) {
-            target.givePetEquipment(new Exposed());
+            target.givePetEquipment(new Icky());
             this.logService.createLog({
-                message: `${this.name} made ${target.name} Exposed.`,
+                message: `${this.name} made ${target.name} Icky.`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,

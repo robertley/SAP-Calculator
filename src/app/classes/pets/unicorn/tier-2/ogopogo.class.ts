@@ -12,7 +12,7 @@ export class Ogopogo extends Pet {
     attack = 3;
     health = 1;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        const targetResp = this.parent.getFurthestUpPets(this.level, null, this, null, [this]); 
+        const targetResp = this.parent.getFurthestUpPets(this.level, [this], this); 
         const targets = targetResp.pets;
         
         if (targets.length === 0) {

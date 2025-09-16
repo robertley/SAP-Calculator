@@ -22,7 +22,7 @@ export class Fossa extends Pet {
 
         const healthToRemove = this.level * rollAmount;
 
-        let targetResp = this.parent.getFurthestUpPets(2, null, this);
+        let targetResp = this.parent.getFurthestUpPets(2, undefined, this);
         let targets = targetResp.pets
         if (targets.length == 0){
             return;

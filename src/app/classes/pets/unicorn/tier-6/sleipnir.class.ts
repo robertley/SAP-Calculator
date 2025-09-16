@@ -13,7 +13,7 @@ export class Sleipnir extends Pet {
     health = 5;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
         let manaAmt = Math.floor(this.attack / 2);
-        let TargetsResp = this.parent.getFurthestUpPets(this.level, null, this, null, [this]);
+        let TargetsResp = this.parent.getFurthestUpPets(this.level, [this], this);
         let targets = TargetsResp.pets
         if (targets.length == 0) {
             return;

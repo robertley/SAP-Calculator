@@ -69,7 +69,7 @@ import { HealthPotion } from "../classes/equipment/unicorn/health-potion.class";
 import { MagicBeans } from "../classes/equipment/unicorn/magic-beans.class";
 import { GoldenEgg } from "../classes/equipment/unicorn/golden-egg.class";
 import { Cold } from "../classes/equipment/ailments/cold.class";
-import { Exposed } from "../classes/equipment/ailments/exposed.class";
+import { Icky } from "../classes/equipment/ailments/icky.class";
 import { Crisp } from "../classes/equipment/ailments/crisp.class";
 import { Dazed } from "../classes/equipment/ailments/dazed.class";
 import { Ink } from "../classes/equipment/ailments/ink.class";
@@ -181,7 +181,7 @@ export class EquipmentService {
         map.set('Cold', new Cold());
         map.set('Crisp', new Crisp());
         map.set('Dazed', new Dazed());
-        map.set('Exposed', new Exposed());
+        map.set('Icky', new Icky());
         map.set('Ink', new Ink());
         map.set('Spooked', new Spooked());
         map.set('Weak', new Weak());

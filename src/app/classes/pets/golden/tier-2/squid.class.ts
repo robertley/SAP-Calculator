@@ -18,7 +18,8 @@ export class Squid extends Pet {
             return;
         }
         let hasTarget = false;
-        let targetResp = this.parent.opponent.getFurthestUpPets(this.level, "Ink", this);
+        let excludePets = this.parent.opponent.getPetsWithEquipment("Ink");
+        let targetResp = this.parent.opponent.getFurthestUpPets(this.level, excludePets, this);
         let targets = targetResp.pets;
         for (let target of targets) {
             if (target == null) {

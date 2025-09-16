@@ -15,7 +15,8 @@ export class Tahr extends Pet {
     attack = 5;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, "Chili");
+        let excludePets = this.parent.getPetsWithEquipment("Chili");
+        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
         if (targetsBehindResp.pets.length === 0) {
             this.superFaint(gameApi, tiger);
             return;

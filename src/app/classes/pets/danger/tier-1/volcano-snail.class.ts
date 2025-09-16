@@ -14,8 +14,10 @@ export class VolcanoSnail extends Pet {
     health = 4;
 
     faint(gameApi?: GameAPI, tiger?: boolean): void {
-        let excludePet = [...this.parent.opponent.petArray].filter((pet) => pet.equipment != null);
-        let targetResp = this.parent.opponent.getRandomPets(3, excludePet, null, null, this );
+        let petsWithPerk = this.parent.opponent.getPetsWithEquipment('perk');
+        let petsWithToast = this.parent.opponent.getPetsWithEquipment('Toast')
+        let excludePets = [...petsWithPerk, ...petsWithToast];
+        let targetResp = this.parent.opponent.getRandomPets(3, excludePets, null, null, this );
         
         if (targetResp.pets.length === 0) {
             return;

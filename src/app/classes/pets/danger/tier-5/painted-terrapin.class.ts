@@ -15,7 +15,8 @@ export class PaintedTerrapin extends Pet {
     attack = 4;
 
     faint(gameApi, tiger, pteranodon?: boolean) {
-        let targetsResp = this.parent.nearestPetsBehind(this.level, this, "White Okra");
+        let excludePets = this.parent.getPetsWithEquipment("White Okra");
+        let targetsResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
         let targets = targetsResp.pets;
         for (let targetPet of targets) {
             this.logService.createLog({

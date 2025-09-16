@@ -24,7 +24,8 @@ export class Toucan extends Pet {
             newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name); 
         }
 
-        let targetsResp = this.parent.nearestPetsBehind(this.level, this, newEquipmentInstance.name);
+        let excludePets = this.parent.getPetsWithEquipment(newEquipmentInstance.name);
+        let targetsResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;

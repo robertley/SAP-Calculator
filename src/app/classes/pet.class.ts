@@ -14,7 +14,7 @@ import { Pepper } from "./equipment/star/pepper.class";
 import { FortuneCookie } from "./equipment/custom/fortune-cookie.class";
 import { Dazed } from "./equipment/ailments/dazed.class";
 import { Silly } from "./equipment/ailments/silly.class";
-import { Exposed } from "./equipment/ailments/exposed.class";
+import { Icky } from "./equipment/ailments/icky.class";
 import { Crisp } from "./equipment/ailments/crisp.class";
 import { Toasty } from "./equipment/ailments/toasty.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
@@ -1166,8 +1166,8 @@ export abstract class Pet {
                 //pet.useDefenseEquipment();
             }
             
-            if (pet.equipment instanceof Exposed) {
-                message += 'x2 (Exposed)';
+            if (pet.equipment instanceof Icky) {
+                message += 'x2 (Icky)';
                 if (pet.equipment.multiplier > 1) {
                     message += pet.equipment.multiplierMessage;
                 }
@@ -1202,7 +1202,7 @@ export abstract class Pet {
             let manticoreAilments = [
                 'Weak',
                 'Cold',
-                'Exposed',
+                'Icky',
                 'Spooked'
             ]
             let hasAilment = manticoreAilments.includes(pet.equipment?.name);
@@ -1462,8 +1462,8 @@ export abstract class Pet {
             message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
         }
 
-        if (pet.equipment?.name == 'Exposed') {
-            message += 'x2 (Exposed)';
+        if (pet.equipment?.name == 'Icky') {
+            message += 'x2 (Icky)';
             if (pet.equipment.multiplier > 1) {
                 message += pet.equipment.multiplierMessage;
             }
@@ -1473,7 +1473,7 @@ export abstract class Pet {
         let manticoreAilments = [
             'Weak',
             'Cold',
-            'Exposed',
+            'Icky',
             'Spooked'
         ]
         let hasAilment = manticoreAilments.includes(pet.equipment?.name);
@@ -1529,7 +1529,7 @@ export abstract class Pet {
         ];
 
         const manticoreOtherAilments = [
-            'Exposed'
+            'Icky'
         ]
 
         let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
@@ -1625,8 +1625,8 @@ export abstract class Pet {
         }
 
 
-        if (pet.equipment instanceof Exposed) {
-            let totalMultiplier = 2; // Base exposed multiplier
+        if (pet.equipment instanceof Icky) {
+            let totalMultiplier = 2; // Base icky multiplier
             for (let mult of manticoreMult) {
                 totalMultiplier += mult; // Add manticore multipliers
             }
@@ -1866,7 +1866,7 @@ export abstract class Pet {
             return;
         }
 
-        if (this.equipment.equipmentClass == 'ailment-defense' || this.equipment.name == 'Exposed') {
+        if (this.equipment.equipmentClass == 'ailment-defense' || this.equipment.name == 'Icky') {
             // skip the next if
         }
         else if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
@@ -1895,7 +1895,7 @@ export abstract class Pet {
             && this.equipment.equipmentClass != 'snipe'
             && this.equipment.equipmentClass != 'ailment-attack'
             && this.equipment.equipmentClass != 'ailment-defense'
-            && this.equipment.name != 'Exposed'
+            && this.equipment.name != 'Icky'
         ) {
             return;
         }

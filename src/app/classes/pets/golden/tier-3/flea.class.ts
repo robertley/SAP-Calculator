@@ -15,7 +15,8 @@ export class Flea extends Pet {
     attack = 3;
     health = 2;
     faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsResp = this.parent.opponent.getHighestHealthPets(this.level, 'Weak', this);
+        let excludePets = this.parent.opponent.getPetsWithEquipment('Weak');
+        let targetsResp = this.parent.opponent.getHighestHealthPets(this.level, excludePets, this);
         
         for (let target of targetsResp.pets) {
             this.logService.createLog({

@@ -15,40 +15,25 @@ export class SeaCucumber extends Pet {
     attack = 3;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        // Get random enemies
-        let opponent = this.parent == gameApi.player ? gameApi.opponet : gameApi.player;
-        let enemies = opponent.petArray.filter(enemy => enemy.alive);
-        
-        if (enemies.length == 0) {
-            this.superStartOfBattle(gameApi, tiger);
+        let excludePets = this.parent.opponent.getPetsWithEquipment('Toasty')
+        let targetResp = this.parent.opponent.getRandomPets(this.level, excludePets, false, true, this);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
             return;
         }
-        
-        let targetCount = this.level; 
-        let targetsApplied = 0;
-        
-        let availableEnemies = [...enemies];
-        
-        for (let i = 0; i < targetCount && availableEnemies.length > 0; i++) {
-            let randomIndex = Math.floor(Math.random() * availableEnemies.length);
-            let randomEnemy = availableEnemies[randomIndex];
-            
+        for (let target of targets) {
             let tasty = new Tasty(this.logService, this.abilityService);
-            
+            target.givePetEquipment(tasty);
             this.logService.createLog({
-                message: `${this.name} made ${randomEnemy.name} Tasty`,
+                message: `${this.name} made ${target.name} Tasty`,
                 type: 'ability',
                 player: this.parent,
                 tiger: tiger,
-                randomEvent: enemies.length > 1
+                randomEvent: targetResp.random
             });
-            
-            randomEnemy.givePetEquipment(tasty);
-            targetsApplied++;
-            
-            // Remove the targeted enemy from available enemies to prevent duplicates
-            availableEnemies.splice(randomIndex, 1);
+
         }
+
         
         this.superStartOfBattle(gameApi, tiger);
     }

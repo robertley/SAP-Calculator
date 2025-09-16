@@ -228,8 +228,8 @@ export class ToyService {
         if (ghostKitten) {
             message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
         }
-        if (pet.equipment?.name == 'Exposed') {
-            message += 'x2 (Exposed)';
+        if (pet.equipment?.name == 'Icky') {
+            message += 'x2 (Icky)';
             if (pet.equipment.multiplier > 1) {
                 message += pet.equipment.multiplierMessage;
             }
@@ -238,7 +238,7 @@ export class ToyService {
         let manticoreAilments = [
             'Weak',
             'Cold',
-            'Exposed',
+            'Icky',
             'Spooked'
         ]
         let hasAilment = manticoreAilments.includes(pet.equipment?.name);
@@ -289,7 +289,7 @@ export class ToyService {
         ];
 
         const manticoreOtherAilments = [
-            'Exposed'
+            'Icky'
         ]
         let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
         || pet.equipment?.equipmentClass == 'shield'
@@ -314,8 +314,8 @@ export class ToyService {
             defenseAmt += sparrowLevel * 5;
         }
 
-        if (pet.equipment?.name == "Exposed") {
-            let totalMultiplier = 2; // Base exposed multiplier
+        if (pet.equipment?.name == "Icky") {
+            let totalMultiplier = 2; // Base icky multiplier
             for (let mult of manticoreMult) {
                 totalMultiplier += mult; // Add manticore multipliers
             }

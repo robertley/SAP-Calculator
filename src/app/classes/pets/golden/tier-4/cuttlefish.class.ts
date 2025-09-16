@@ -15,7 +15,7 @@ export class Cuttlefish extends Pet {
     attack = 8;
     health = 4;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsResp = this.parent.opponent.getLastPets(this.level, null, this);
+        let targetsResp = this.parent.opponent.getLastPets(this.level, undefined, this);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;
@@ -33,7 +33,7 @@ export class Cuttlefish extends Pet {
                 randomEvent: targetsResp.random
             });
         }
-        let InkTargetsResp = this.parent.opponent.getLastPets(this.level, null, this);
+        let InkTargetsResp = this.parent.opponent.getLastPets(this.level, undefined, this);
         let InkTargets = InkTargetsResp.pets;
         if (InkTargets.length == 0) {
             return;

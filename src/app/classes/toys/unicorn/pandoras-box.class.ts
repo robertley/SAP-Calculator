@@ -5,7 +5,7 @@ import { ToyService } from "../../../services/toy.service";
 import { Cold } from "../../equipment/ailments/cold.class";
 import { Crisp } from "../../equipment/ailments/crisp.class";
 import { Dazed } from "../../equipment/ailments/dazed.class";
-import { Exposed } from "../../equipment/ailments/exposed.class";
+import { Icky } from "../../equipment/ailments/icky.class";
 import { Ink } from "../../equipment/ailments/ink.class";
 import { Spooked } from "../../equipment/ailments/spooked.class";
 import { Toasty } from "../../equipment/ailments/toasty.class";
@@ -25,7 +25,7 @@ export class PandorasBox extends Toy {
             new Cold(),
             new Crisp(),
             new Dazed(),
-            new Exposed(),
+            new Icky(),
             // new Ink(), // excluded
             new Spooked(),
             new Toasty(),

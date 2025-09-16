@@ -14,7 +14,8 @@ export class Therizinosaurus extends Pet {
     attack = 3;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.getFurthestUpPets(this.level, null, this, 'Strawberry')
+        let excludePets = this.parent.getPetsWithoutEquipment('Strawberry');
+        let targetsResp = this.parent.getFurthestUpPets(this.level, excludePets, this)
         let targets = targetsResp.pets
         for (let pet of targets) {
             pet.givePetEquipment(new Coconut());
