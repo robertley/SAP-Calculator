@@ -15,7 +15,8 @@ export class Mandrake extends Pet {
     attack = 4;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetResp = this.parent.opponent.getTierXOrLowerPet(this.level*2, "Dazed", this);
+        let excludePets = this.parent.opponent.getPetsWithEquipment("Dazed");
+        let targetResp = this.parent.opponent.getTierXOrLowerPet(this.level*2, excludePets, this);
         let target = targetResp.pet;
         if (target == null) {
             return

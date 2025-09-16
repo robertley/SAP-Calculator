@@ -13,7 +13,8 @@ export class RedDragon extends Pet {
     attack = 4;
     health = 8;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.opponent.getLastPets(this.level, 'Crisp', this);
+        let excludePets = this.parent.opponent.getPetsWithEquipment('Crisp');
+        let targetsResp = this.parent.opponent.getLastPets(this.level, excludePets, this);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;

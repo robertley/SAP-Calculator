@@ -4,7 +4,6 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Silly } from "app/classes/equipment/ailments/silly.class";
 
 export class TreeKangaroo extends Pet {
@@ -15,7 +14,10 @@ export class TreeKangaroo extends Pet {
     health = 5;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetResp = getOpponent(gameApi, this.parent).getLastPet(undefined, this);
+        let petsWithPerk = this.parent.opponent.getPetsWithEquipment('perk');
+        let petsWithSilly = this.parent.opponent.getPetsWithEquipment('Silly');
+        let excludePets = [...petsWithPerk, ...petsWithSilly];
+        let targetResp = this.parent.opponent.getLastPet(excludePets, this);
         let targetPet = targetResp.pet;
         if (targetPet) {
             targetPet.givePetEquipment(new Silly());

@@ -13,7 +13,8 @@ export class FrostWolf extends Pet {
     attack = 2;
     health = 3;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetResp = this.parent.opponent.getFurthestUpPet(this);
+        let excludePets = this.parent.opponent.getPetsWithEquipment("Cold");
+        let targetResp = this.parent.opponent.getFurthestUpPet(this, excludePets);
         let target = targetResp.pet;
         if (target == null) {
             return;

@@ -13,7 +13,8 @@ export class SnappingTurtle extends Pet {
     attack = 4;
     health = 5;
     faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, "Skewer");
+        let excludePets = this.parent.getPetsWithEquipment("Skewer");
+        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
         if (targetsBehindResp.pets.length === 0) {
             return;
         }

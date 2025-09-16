@@ -14,7 +14,8 @@ export class Hummingbird extends Pet {
     attack = 2;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.nearestPetsBehind(this.level, this, 'Strawberry');
+        let excludePets = this.parent.getPetsWithEquipment('Strawberry');
+        let targetsResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
         if (targetsResp.pets.length === 0) {
             return;
         }

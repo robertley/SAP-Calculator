@@ -14,7 +14,11 @@ export class Barghest extends Pet {
     attack = 2;
     health = 3;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.opponent.getLastPets(this.level, 'perk-less', this);
+        // Get pets that have equipment (non-ailments) to exclude them (we want perk-less pets)
+        let petsWithPerks = this.parent.opponent.getPetsWithEquipment('perk');
+        let petsWithSpooked = this.parent.opponent.getPetsWithEquipment('Spooked');
+        let excludePets = [...petsWithPerks, ...petsWithSpooked];
+        let targetsResp = this.parent.opponent.getLastPets(this.level, excludePets, this);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;

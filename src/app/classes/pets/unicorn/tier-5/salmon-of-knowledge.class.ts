@@ -18,11 +18,11 @@ export class SalmonOfKnowledge extends Pet {
         let targets = [];
         
         // Get 2 furthest up pets from friendly team
-        let friendlyTargets = this.parent.getFurthestUpPets(2, null, this, null, [this]);
+        let friendlyTargets = this.parent.getFurthestUpPets(2, [this], this);
         targets.push(...friendlyTargets.pets);
-        
+
         // Get 2 furthest up pets from enemy team
-        let enemyTargets = this.parent.opponent.getFurthestUpPets(2, null, this);
+        let enemyTargets = this.parent.opponent.getFurthestUpPets(2, undefined, this);
         targets.push(...enemyTargets.pets);
         
         for (let target of targets) {

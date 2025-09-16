@@ -15,12 +15,14 @@ export class Pelican extends Pet {
     health = 5;
 
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let swallowCount = this.level;
-        let targetsAheadResp = this.parent.nearestPetsAhead(5, this);
-        let strawberryPets = targetsAheadResp.pets.filter(pet => pet.equipment instanceof Strawberry);
-        let swallowTargets = strawberryPets.slice(0, swallowCount);
+        let excludePets = this.parent.getPetsWithoutEquipment('Strawberry');
+        let targetsAheadResp = this.parent.nearestPetsAhead(this.level, this, excludePets);
+        let targets = targetsAheadResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
         
-        for (let currentPet of swallowTargets) {
+        for (let currentPet of targets) {
             // Create Salmon copy to swallow (transform the swallowed pet into Salmon)
             let salmon = this.petService.createPet({
                 name: 'Salmon',

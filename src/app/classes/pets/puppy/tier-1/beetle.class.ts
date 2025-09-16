@@ -15,12 +15,6 @@ export class Beetle extends Pet {
     attack = 2;
     health = 2;
     startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
-        if (targetsBehindResp.pets.length === 0) {
-            super.superStartOfBattle(gameApi, tiger);
-            return;
-        }
-        let targetPet = targetsBehindResp.pets[0];
         let equipment;
         switch (this.level) {
             case 1:
@@ -33,6 +27,12 @@ export class Beetle extends Pet {
                 equipment = new Garlic();
                 break;
         }
+        let excludePets = this.parent.getPetsWithEquipment(equipment.name);
+        let targetsBehindResp = this.parent.nearestPetsBehind(1, this, excludePets);
+        if (targetsBehindResp.pets.length === 0) {
+            return;
+        }
+        let targetPet = targetsBehindResp.pets[0];
         this.logService.createLog({
             message: `${this.name} gave ${targetPet.name} ${equipment.name}.`,
             type: 'ability',

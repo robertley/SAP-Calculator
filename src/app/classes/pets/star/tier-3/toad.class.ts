@@ -24,8 +24,7 @@ export class Toad extends Pet {
         if (target == null) {
             return;
         }
-
-        if (target.equipment instanceof Weak) {
+        if (target.equipment?.name === 'Weak') {
             return;
         }
         target.givePetEquipment(new Weak());

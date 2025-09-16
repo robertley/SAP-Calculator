@@ -12,7 +12,8 @@ export class Turtle extends Pet {
     attack = 2;
     health = 5;
     faint(gameApi, tiger, pteranodon?: boolean) {
-        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, "Melon");
+        let excludePets = this.parent.getPetsWithEquipment("Melon");
+        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
         if (targetsBehindResp.pets.length == 0) {
             return;
         }
