@@ -1938,7 +1938,14 @@ export abstract class Pet {
             return;
         }
         if (damage >= pet.health && pet.equipment?.name == 'Bok Choy') {
-            pet.increaseHealth(4)
+            let healthGain = 4 * pet.equipment.multiplier;
+            this.logService.createLog({
+                message: `${pet.name} gained ${healthGain} health (Bok Choy) ${pet.equipment.multiplierMessage} `,
+                type: 'equipment',
+                player: pet.parent
+              })
+            pet.increaseHealth(healthGain)
+            pet.removePerk();
         }
         pet.health -= damage;
         
