@@ -31,6 +31,8 @@ export class StartOfBattleService {
 
     initStartOfBattleEvents() {
         this.gameApi = this.gameService.gameApi;
+
+        // Legacy system for backwards compatibility
         for (let pet of this.gameApi.player.petArray) {
             if (pet.startOfBattle != null) {
                 let events = this.toyPetEvents;

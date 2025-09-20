@@ -389,7 +389,7 @@ export class Player {
                     callback: petBehind.friendAheadFaints.bind(petBehind),
                     priority: petBehind.attack,
                     player: this,
-                    callbackPet: pet,
+                    triggerPet: pet,
                     pet: petBehind
                 })
         }
@@ -438,7 +438,7 @@ export class Player {
                         callback: slot.pet.afterFaint.bind(slot.pet),
                         priority: slot.pet.attack,
                         player: this,
-                        callbackPet: slot.pet,
+                        triggerPet: slot.pet,
                         pet: slot.pet
                     });
                 } else {

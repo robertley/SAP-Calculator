@@ -29,6 +29,7 @@ export class Parrot extends Pet {
         if (copyPet == null) {
             return;
         }
+        // Legacy system: Copy all the individual method references (kept for backwards compatibility)
         this.startOfBattle = copyPet.originalStartOfBattle;
         this.hurt = copyPet.originalHurt;
         this.faint = copyPet.originalFaint;
@@ -72,7 +73,10 @@ export class Parrot extends Pet {
         // Copy maxAbilityUses property if the copied pet has it set
         this.maxAbilityUses = copyPet.maxAbilityUses;
         this.setAbilityUses = copyPet.setAbilityUses?.bind(this);
-        
+
+        // New ability system: Copy all pet abilities with one line!
+        this.copyAbilities(copyPet, 'Pet');
+
         // Initialize ability wrappers for the copied abilities
         this.initAbilities();
         //TO DO: Copy other stuff like swallow reset, etc

@@ -834,10 +834,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.initEndTurnEvents(this.player);
       this.abilityService.initEndTurnEvents(this.opponent);
       
-      //init equipment abilities
-      this.setAbilityEquipments(this.player);
-      this.setAbilityEquipments(this.opponent);
-      
       //initialize equipment multipliers for existing equipment
       this.initializeEquipmentMultipliers();
 
@@ -854,6 +850,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       //init sob
       this.startOfBattleService.resetStartOfBattleFlags();
+
+      // New trigger system for start battle events
+      this.abilityService.triggerStartBattleEvents(this.player);
+      this.abilityService.triggerStartBattleEvents(this.opponent);
+
       this.startOfBattleService.initStartOfBattleEvents();
       //merge into pet sob(gecko)
       this.startOfBattleService.executeToyPetEvents();
@@ -1001,6 +1002,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
 
       //before attack phase
+      this.abilityService.checkAndAddNewBeforeAttackEvents();
       this.abilityService.executeBeforeAttackEvents();
       
       this.abilityService.triggerBeforeFriendAttacksEvents(this.player, this.player.pet0);
@@ -1076,17 +1078,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       pet.equipment.callback(pet);
     }
   }
-  //need to set when gave perk too
-  setAbilityEquipments(player) {
-    for (let pet of player.petArray) {
-      if (pet.equipment instanceof Eggplant) {
-        pet.equipment.callback(pet);
-        pet.eggplantTouched = true;
-      } else if (pet.equipment?.callback) {
-        pet.equipment.callback(pet);
-      }
-    }
-  }
+
 
   executeBeforeStartOfBattleEquipment(player) {
     for (let pet of player.petArray) {
