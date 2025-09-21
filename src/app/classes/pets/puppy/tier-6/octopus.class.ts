@@ -1,10 +1,10 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { OctopusAbility } from "../../../abilities/pets/puppy/tier-6/octopus-ability.class";
 
 export class Octopus extends Pet {
     name = "Octopus";
@@ -12,18 +12,8 @@ export class Octopus extends Pet {
     pack: Pack = 'Puppy';
     attack = 8;
     health = 8;
-    afterAttack(gameApi: GameAPI, tiger?: boolean): void {
-        let opponent = getOpponent(gameApi, this.parent);
-        let targetsResp = opponent.getRandomPets(this.level, null, null, true, this);
-        let targets = targetsResp.pets;
-        let power = 6;
-        for (let target of targets) {
-            if (target == null) {
-                return;
-            }
-            this.snipePet(target, power, targetsResp.random, tiger);
-        }
-        this.superAfterAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new OctopusAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

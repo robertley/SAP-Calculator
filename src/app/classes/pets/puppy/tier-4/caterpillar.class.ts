@@ -1,13 +1,10 @@
-import { cloneDeep } from "lodash";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Butterfly } from "../../hidden/butterfly.class";
+import { CaterpillarAbility } from "../../../abilities/pets/puppy/tier-4/caterpillar-ability.class";
 
 export class Caterpillar extends Pet {
     name = "Caterpillar";
@@ -15,24 +12,8 @@ export class Caterpillar extends Pet {
     pack: Pack = 'Puppy';
     attack = 1;
     health = 1;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.level < 3) {
-            return;
-        }
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        let butterfly = new Butterfly(this.logService, this.abilityService, target.parent, target.health, target.attack, target.mana, target.exp, target.equipment);
-        this.parent.transformPet(target, butterfly);
-        this.logService.createLog({
-            message: `${this.name} transformed into a Butterfly.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
+    initAbilities(): void {
+        this.addAbility(new CaterpillarAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

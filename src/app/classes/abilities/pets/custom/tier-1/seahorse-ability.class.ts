@@ -3,14 +3,14 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
-export class BassAbility extends Ability {
+export class SeahorseAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'BassAbility',
+            name: 'SeahorseAbility',
             owner: owner,
-            triggers: ['BeforeThisDies', 'ThisSold'],
+            triggers: ['StartBattle'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -24,34 +24,25 @@ export class BassAbility extends Ability {
     private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
         const owner = this.owner;
 
-        const excludePets = owner.parent.petArray.filter(pet => {
-            return pet == owner && !pet.isSellPet() && pet.level < 2;
-        });
-
-        let targetResp = owner.parent.getRandomPet(excludePets, true, null, null, owner);
-        const target = targetResp.pet;
-        if (target == null) {
+        let opponent = owner.parent.opponent
+        let targetResp = opponent.getLastPet();
+        if (targetResp.pet == null) {
             return;
         }
-
-        const expGain = this.level;
-
+        owner.parent.pushPet(targetResp.pet, this.level);
         this.logService.createLog({
-            message: `${owner.name} gave ${target.name} +${expGain} experience.`,
+            message: `${owner.name} pushes ${targetResp.pet.name} forward ${this.level} space(s).`,
             type: 'ability',
             player: owner.parent,
             tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetResp.random
+            pteranodon: pteranodon
         });
-
-        target.increaseExp(expGain);
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
     }
 
-    copy(newOwner: Pet): BassAbility {
-        return new BassAbility(newOwner, this.logService);
+    copy(newOwner: Pet): SeahorseAbility {
+        return new SeahorseAbility(newOwner, this.logService);
     }
 }

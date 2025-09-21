@@ -2359,4 +2359,25 @@ export abstract class Pet {
     hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType): boolean {
         return this.getAbilitiesWithTrigger(trigger, abilityType).length > 0;
     }
+
+    isSellPet(): boolean {
+        let sellPets = [
+            'Beaver', 'Duck', 'Pig', 'Pillbug', 'Kiwi', 'Mouse', 'Frog', 'Bass', 'Tooth Billed Pigeon', 'Marmoset', 'Capybara', 'Platypus'
+        ];
+        if (sellPets.includes(this.name) || this.originalAbilityList.filter(ability => {
+            return ability.matchesTrigger('ThisSold') && ability.abilityType == 'Pet';
+        }).length > 0) {
+            return true;
+        }
+        return false;
+    }
+    isFaintPet(): boolean {
+
+        if (this.originalAbilityList.filter(ability => {
+            return (ability.matchesTrigger('ThisDied') || ability.matchesTrigger('BeforeThisDies')) && ability.abilityType == 'Pet';
+        }).length > 0) {
+            return true;
+        }
+        return false;
+    }
 }

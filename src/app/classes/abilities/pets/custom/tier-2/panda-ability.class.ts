@@ -2,15 +2,16 @@ import { Ability } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Power } from "app/interfaces/power.interface";
 
-export class BassAbility extends Ability {
+export class PandaAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'BassAbility',
+            name: 'PandaAbility',
             owner: owner,
-            triggers: ['BeforeThisDies', 'ThisSold'],
+            triggers: ['StartBattle'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -24,34 +25,33 @@ export class BassAbility extends Ability {
     private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
         const owner = this.owner;
 
-        const excludePets = owner.parent.petArray.filter(pet => {
-            return pet == owner && !pet.isSellPet() && pet.level < 2;
-        });
-
-        let targetResp = owner.parent.getRandomPet(excludePets, true, null, null, owner);
-        const target = targetResp.pet;
-        if (target == null) {
+        let percentage = .5 * this.level;
+        let power: Power = {
+            attack: Math.floor(owner.attack * percentage),
+            health: Math.floor(owner.health * percentage)
+        }
+        let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
+        if (targetsAheadResp.pets.length === 0) {
             return;
         }
-
-        const expGain = this.level;
-
+        let target = targetsAheadResp.pets[0];
+        target.increaseAttack(power.attack);
+        target.increaseHealth(power.health);
         this.logService.createLog({
-            message: `${owner.name} gave ${target.name} +${expGain} experience.`,
+            message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
             type: 'ability',
             player: owner.parent,
             tiger: tiger,
             pteranodon: pteranodon,
-            randomEvent: targetResp.random
+            randomEvent: targetsAheadResp.random
         });
-
-        target.increaseExp(expGain);
+        owner.health = 0;
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
     }
 
-    copy(newOwner: Pet): BassAbility {
-        return new BassAbility(newOwner, this.logService);
+    copy(newOwner: Pet): PandaAbility {
+        return new PandaAbility(newOwner, this.logService);
     }
 }

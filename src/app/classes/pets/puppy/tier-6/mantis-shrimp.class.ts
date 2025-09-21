@@ -1,10 +1,10 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MantisShrimpAbility } from "../../../abilities/pets/puppy/tier-6/mantis-shrimp-ability.class";
 
 export class MantisShrimp extends Pet {
     name = "Mantis Shrimp";
@@ -12,17 +12,8 @@ export class MantisShrimp extends Pet {
     pack: Pack = 'Puppy';
     attack = 9;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let opponent = getOpponent(gameApi, this.parent);
-        for (let i = 0; i < this.level; i++) {
-            let targetResp = opponent.getFurthestUpPet(this);
-            let target = targetResp.pet;
-            if (target == null) {
-                return;
-            }
-            this.snipePet(target, 10, targetResp.random, tiger);
-        }
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MantisShrimpAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -3,14 +3,14 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
-export class BassAbility extends Ability {
+export class WombatAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'BassAbility',
+            name: 'WombatAbility',
             owner: owner,
-            triggers: ['BeforeThisDies', 'ThisSold'],
+            triggers: ['BeforeThisAttacks'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -23,35 +23,27 @@ export class BassAbility extends Ability {
 
     private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
         const owner = this.owner;
-
-        const excludePets = owner.parent.petArray.filter(pet => {
-            return pet == owner && !pet.isSellPet() && pet.level < 2;
-        });
-
-        let targetResp = owner.parent.getRandomPet(excludePets, true, null, null, owner);
-        const target = targetResp.pet;
+        let opponent = owner.parent.opponent;
+        let excludePets = opponent.petArray.filter(pet => {return !pet.isFaintPet()})
+        let targetResp = opponent.getFurthestUpPet(owner, excludePets);
+        let target = targetResp.pet
         if (target == null) {
             return;
         }
-
-        const expGain = this.level;
-
         this.logService.createLog({
-            message: `${owner.name} gave ${target.name} +${expGain} experience.`,
+            message: `${owner.name} has copied ${target.name}'s faint ability as level ${this.level}.`,
             type: 'ability',
             player: owner.parent,
             tiger: tiger,
             pteranodon: pteranodon,
             randomEvent: targetResp.random
         });
-
-        target.increaseExp(expGain);
-
+        owner.copyAbilities(target, 'Pet', this.level)
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
     }
 
-    copy(newOwner: Pet): BassAbility {
-        return new BassAbility(newOwner, this.logService);
+    copy(newOwner: Pet): WombatAbility {
+        return new WombatAbility(newOwner, this.logService);
     }
 }
