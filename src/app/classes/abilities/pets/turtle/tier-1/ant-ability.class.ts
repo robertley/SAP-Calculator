@@ -46,7 +46,6 @@ export class AntAbility extends Ability {
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
-        owner.done = true;
     }
 
     copy(newOwner: Pet): AntAbility {

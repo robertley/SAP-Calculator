@@ -2,12 +2,9 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Blackberry } from "../../../equipment/puppy/blackberry.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Strawberry } from "app/classes/equipment/star/strawberry.class";
-import { EquipmentService } from "../../../../services/equipment.service";
-import { InjectorService } from "../../../../services/injector.service";
+import { HareAbility } from "../../../abilities/pets/puppy/tier-3/hare-ability.class";
 
 export class Hare extends Pet {
     name = "Hare";
@@ -15,43 +12,8 @@ export class Hare extends Pet {
     pack: Pack = 'Puppy';
     health = 4;
     attack = 4;
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        // get all equipment from enemy pets
-        let enemyPets = this.parent.opponent.petArray;
-        let equipmentPets: Pet[] = [];
-        for (let pet of enemyPets) {
-            if (pet.equipment) {
-                if (InjectorService.getInjector().get(EquipmentService).isUsefulPerk(pet.equipment.name)) {
-                    equipmentPets.push(pet);
-                }
-            }
-        }
-        if (equipmentPets.length == 0) {
-            return;
-        }
-        // get random equipment
-        let randomEquipmentPet = equipmentPets[Math.floor(Math.random() * equipmentPets.length)];
-        let equipment = randomEquipmentPet.equipment;
-
-
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        this.givePetEquipment(equipment);
-        this.logService.createLog({
-            message: `${this.name} copied ${equipment.name} to ${target.name} from ${randomEquipmentPet.name}.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: equipmentPets.length > 0
-        })
-        this.abilityUses++;
-        this.superBeforeAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new HareAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -65,8 +27,4 @@ export class Hare extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

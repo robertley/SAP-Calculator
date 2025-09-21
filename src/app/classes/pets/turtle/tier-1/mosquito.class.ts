@@ -5,6 +5,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Equipment } from "../../../equipment.class";
 import { AbilityService } from "../../../../services/ability.service";
+import { MosquitoAbility } from "../../../abilities/pets/turtle/tier-1/mosquito-ability.class";
 
 export class Mosquito extends Pet {
     name = "Mosquito";
@@ -12,22 +13,8 @@ export class Mosquito extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    startOfBattle(gameApi: GameAPI, tiger: boolean) {
-        let opponent: Player;
-        if (gameApi.player == this.parent) {
-            opponent = gameApi.opponet;
-        } else {
-            opponent = gameApi.player;
-        }
-
-        let targetsResp = opponent.getRandomPets(this.level, null, null, true, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.snipePet(target, 1, targetsResp.random, tiger);
-            }
-        }
-
-        super.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MosquitoAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

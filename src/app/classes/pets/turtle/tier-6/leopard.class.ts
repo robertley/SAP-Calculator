@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { LeopardAbility } from "../../../abilities/pets/turtle/tier-6/leopard-ability.class";
 
 export class Leopard extends Pet {
     name = "Leopard";
@@ -12,15 +13,8 @@ export class Leopard extends Pet {
     pack: Pack = 'Turtle';
     attack = 10;
     health = 4;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let power = Math.floor(this.attack * .5);
-        let targetsResp = this.parent.opponent.getRandomPets(this.level, null, null, true, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.snipePet(target, power, targetsResp.random, tiger);
-            }
-        }
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new LeopardAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

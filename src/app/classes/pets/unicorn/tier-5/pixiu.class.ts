@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PixiuAbility } from "../../../abilities/pets/unicorn/tier-5/pixiu-ability.class";
 
 export class Pixiu extends Pet {
     name = "Pixiu";
@@ -11,22 +12,8 @@ export class Pixiu extends Pet {
     pack: Pack = 'Unicorn';
     attack = 4;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.mana < 4) {
-            return;
-        }
-
-        let power = this.level * 3;
-        this.logService.createLog({
-            message: `${this.name} spent 4 mana and gained ${power} gold for next turn.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-
-        this.mana -= 4;
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new PixiuAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

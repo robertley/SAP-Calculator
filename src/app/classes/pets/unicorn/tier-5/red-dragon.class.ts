@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Crisp } from "../../../equipment/ailments/crisp.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { RedDragonAbility } from "../../../abilities/pets/unicorn/tier-5/red-dragon-ability.class";
 
 export class RedDragon extends Pet {
     name = "Red Dragon";
@@ -12,25 +13,8 @@ export class RedDragon extends Pet {
     pack: Pack = 'Unicorn';
     attack = 4;
     health = 8;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let excludePets = this.parent.opponent.getPetsWithEquipment('Crisp');
-        let targetsResp = this.parent.opponent.getLastPets(this.level, excludePets, this);
-        let targets = targetsResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} Crisp.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetsResp.random
-            });
-            target.givePetEquipment(new Crisp());
-        }
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new RedDragonAbility(this, this.logService));
     }
     
     constructor(protected logService: LogService,

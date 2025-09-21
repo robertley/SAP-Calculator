@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BlowfishAbility } from "../../../abilities/pets/turtle/tier-4/blowfish-ability.class";
 
 export class Blowfish extends Pet {
     name = "Blowfish";
@@ -11,13 +12,8 @@ export class Blowfish extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 6;
-    hurt(gameApi, pet, tiger) {
-        let power = this.level * 3;
-        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true, false, this);
-        if (targetResp.pet)
-            this.snipePet(targetResp.pet, power, targetResp.random, tiger);
-        
-        this.superHurt(gameApi, pet, tiger)
+    initAbilities(): void {
+        this.addAbility(new BlowfishAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

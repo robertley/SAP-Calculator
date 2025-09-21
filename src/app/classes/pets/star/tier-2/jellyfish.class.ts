@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { JellyfishAbility } from "../../../abilities/pets/star/tier-2/jellyfish-ability.class";
 
 export class Jellyfish extends Pet {
     name = "Jellyfish";
@@ -11,27 +12,9 @@ export class Jellyfish extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 3;
-    anyoneLevelUp(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (pet.parent != this.parent) {
-            return;
-        }
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
 
-        let power = this.level;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} attack by ${power} and health by ${power}`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent:targetResp.random
-        })
-        this.superAnyoneLevelUp(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new JellyfishAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

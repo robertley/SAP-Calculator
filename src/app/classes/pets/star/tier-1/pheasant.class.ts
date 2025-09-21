@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Strawberry } from "../../../equipment/star/strawberry.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PheasantAbility } from "../../../abilities/pets/star/tier-1/pheasant-ability.class";
 
 
 export class Pheasant extends Pet {
@@ -13,30 +14,9 @@ export class Pheasant extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 1;
-    abilityUses = 0;
-    maxAbilityUses: number;
 
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target}.name} a Strawberry.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-
-        target.givePetEquipment(new Strawberry(this.logService, this.abilityService));
-
-        this.abilityUses++;
-        this.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new PheasantAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -50,7 +30,4 @@ export class Pheasant extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-    }
 }

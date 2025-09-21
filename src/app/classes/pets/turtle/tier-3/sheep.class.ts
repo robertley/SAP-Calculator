@@ -4,6 +4,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Ram } from "../../hidden/ram.class";
+import { SheepAbility } from "../../../abilities/pets/turtle/tier-3/sheep-ability.class";
 
 export class Sheep extends Pet {
     name = "Sheep";
@@ -11,29 +12,8 @@ export class Sheep extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    afterFaint(gameApi, tiger, pteranodon?: boolean) {
-        for (let i = 0; i < 2; i++) {
-            let ram = new Ram(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
-    
-            let summonResult = this.parent.summonPet(ram, this.savedPosition, false, this);
-            
-            if (summonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Ram (${ram.attack}/${ram.health}).`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: summonResult.randomEvent
-                    }
-                )
-
-                this.abilityService.triggerFriendSummonedEvents(ram);
-            }
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new SheepAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

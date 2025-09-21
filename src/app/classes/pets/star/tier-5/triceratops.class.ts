@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TriceratopsAbility } from "../../../abilities/pets/star/tier-5/triceratops-ability.class";
 
 export class Triceratops extends Pet {
     name = "Triceratops";
@@ -11,22 +12,9 @@ export class Triceratops extends Pet {
     pack: Pack = 'Star';
     attack = 5;
     health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetResp = this.parent.getRandomPet([this], true, false, true, this);
-        let power = this.level * 3;
-        if (targetResp.pet == null) {
-            return;
-        }
-        targetResp.pet.increaseAttack(power);
-        targetResp.pet.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${targetResp.pet.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-        this.superHurt(gameApi, pet, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new TriceratopsAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

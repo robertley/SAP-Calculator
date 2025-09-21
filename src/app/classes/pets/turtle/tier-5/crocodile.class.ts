@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { CrocodileAbility } from "../../../abilities/pets/turtle/tier-5/crocodile-ability.class";
 
 export class Crocodile extends Pet {
     name = "Crocodile";
@@ -12,15 +13,8 @@ export class Crocodile extends Pet {
     pack: Pack = 'Turtle';
     attack = 8;
     health = 4;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        for (let i = 0; i < this.level; i++) {
-            let targetResp = getOpponent(gameApi, this.parent).getLastPet(undefined, this);
-            let targetPet = targetResp.pet;
-            if (targetPet) {
-                this.snipePet(targetPet, 8, targetResp.random, tiger);
-            }
-        }
-        super.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new CrocodileAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

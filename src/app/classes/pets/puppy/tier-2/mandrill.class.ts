@@ -4,7 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { FlyingSquirrel } from "../tier-3/flying-squirrel.class";
+import { MandrillAbility } from "../../../abilities/pets/puppy/tier-2/mandrill-ability.class";
 
 export class Mandrill extends Pet {
     name = "Mandrill";
@@ -12,21 +12,8 @@ export class Mandrill extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 4;
-    //TO DO: Check silly interactions
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let toyLevelMax = this.level * 2;
-        if (this.parent.toy?.tier <= toyLevelMax) {
-            // check if parent has instance of flying squirrel
-            let hasFlyingSquirrel = false;
-            for (let pet of this.parent.petArray) {
-                if (pet instanceof FlyingSquirrel) {
-                    hasFlyingSquirrel = true;
-                    break;
-                }
-            }
-            this.parent.breakToy();
-            this.abilityService.triggerFriendlyToyBrokeEvents(this.parent);
-        }
+    initAbilities(): void {
+        this.addAbility(new MandrillAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

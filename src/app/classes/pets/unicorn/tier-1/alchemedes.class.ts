@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { AlchemedesAbility } from "../../../abilities/pets/unicorn/tier-1/alchemedes-ability.class";
 
 export class Alchemedes extends Pet {
     name = "Alchemedes";
@@ -11,25 +12,8 @@ export class Alchemedes extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
-        if (targetsAheadResp.pets.length === 0) {
-            this.superStartOfBattle(gameApi, tiger);
-            return;
-        }
-        let target = targetsAheadResp.pets[0];
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${this.level} mana.`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetsAheadResp.random,
-        })
-
-        target.increaseMana(this.level);
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new AlchemedesAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

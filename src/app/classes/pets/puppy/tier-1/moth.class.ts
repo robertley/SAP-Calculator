@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MothAbility } from "../../../abilities/pets/puppy/tier-1/moth-ability.class";
 
 export class Moth extends Pet {
     name = "Moth";
@@ -11,22 +12,8 @@ export class Moth extends Pet {
     pack: Pack = 'Puppy';
     health = 3;
     attack = 1;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetResp = this.parent.getFurthestUpPet(this);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        let power = 2 * this.level;
-        target.increaseAttack(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MothAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

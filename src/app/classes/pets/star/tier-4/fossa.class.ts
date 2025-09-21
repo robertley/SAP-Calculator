@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FossaAbility } from "../../../abilities/pets/star/tier-4/fossa-ability.class";
 
 export class Fossa extends Pet {
     name = "Fossa";
@@ -12,34 +13,8 @@ export class Fossa extends Pet {
     attack = 6;
     health = 5;
 
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        const isPlayer = this.parent === gameApi.player;
-        const rollAmount = isPlayer ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
-
-        if (rollAmount <= 0) {
-            return;
-        }
-
-        const healthToRemove = this.level * rollAmount;
-
-        let targetResp = this.parent.getFurthestUpPets(2, undefined, this);
-        let targets = targetResp.pets
-        if (targets.length == 0){
-            return;
-        }
-
-        for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} removed ${healthToRemove} health from ${target.name}.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });
-
-            target.increaseHealth(-healthToRemove);           
-        }
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new FossaAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

@@ -6,6 +6,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BoarAbility } from "../../../abilities/pets/turtle/tier-6/boar-ability.class";
 
 export class Boar extends Pet {
     name = "Boar";
@@ -13,26 +14,8 @@ export class Boar extends Pet {
     pack: Pack = 'Turtle';
     attack = 10;
     health = 6;
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        let power: Power = {
-            attack: this.level * 4,
-            health: this.level * 2
-        }
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.superBeforeAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BoarAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

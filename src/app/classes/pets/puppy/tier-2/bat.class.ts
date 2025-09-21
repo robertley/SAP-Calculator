@@ -2,9 +2,9 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BatAbility } from "../../../abilities/pets/puppy/tier-2/bat-ability.class";
 
 export class Bat extends Pet {
     name = "Bat";
@@ -12,25 +12,8 @@ export class Bat extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 4;
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let excludePets = this.parent.opponent.getPetsWithEquipment('Weak')
-        let targetsResp = this.parent.opponent.getRandomPet(excludePets, null, true, null, this);
-        let target = targetsResp.pet;
-        if (target != null) {
-            target.givePetEquipment(new Weak());
-            this.logService.createLog({
-                message: `${this.name} made ${target.name} weak.`,
-                type: 'ability',
-                player: this.parent,
-                randomEvent: targetsResp.random,
-                tiger: tiger
-            })
-        }
-        this.abilityUses++;
-        this.superBeforeAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BatAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -42,9 +25,5 @@ export class Bat extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
-    }
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
     }
 }

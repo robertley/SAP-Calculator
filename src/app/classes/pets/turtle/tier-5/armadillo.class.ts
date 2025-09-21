@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ArmadilloAbility } from "../../../abilities/pets/turtle/tier-5/armadillo-ability.class";
 
 export class Armadillo extends Pet {
     name = "Armadillo";
@@ -12,28 +13,8 @@ export class Armadillo extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 10;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.getAll(true, this);
-        let targets = targetsResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        for (let pet of targets) {
-            if (!pet.alive) {
-                continue;
-            }
-            let power = 8 * this.level;
-            pet.increaseHealth(power);
-            this.logService.createLog({
-                message: `${this.name} increased health of ${pet.name} by ${power}.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetsResp.random
-            })
-        }
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new ArmadilloAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

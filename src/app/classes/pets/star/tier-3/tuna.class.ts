@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TunaAbility } from "../../../abilities/pets/star/tier-3/tuna-ability.class";
 
 export class Tuna extends Pet {
     name = "Tuna";
@@ -12,29 +13,8 @@ export class Tuna extends Pet {
     attack = 3;
     health = 5;
 
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let totalHurt = this.timesHurt;
-        for (let i = 0; i < totalHurt; i++) {
-            const targetResp = this.parent.getRandomPet([this], true, false, true, this);
-
-            if (targetResp.pet == null) {
-                continue;
-            }
-
-            const buffAmount = this.level;
-
-            this.logService.createLog({
-                message: `${this.name} gave ${targetResp.pet.name} +${buffAmount} attack and +${buffAmount} health.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetResp.random
-            });
-
-            targetResp.pet.increaseAttack(buffAmount);
-            targetResp.pet.increaseHealth(buffAmount);
-        }
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new TunaAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

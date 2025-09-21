@@ -55,7 +55,7 @@ export class Ability {
     }
 
 
-    canUse(triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): boolean {
+    canUse(): boolean {
         // Check if ability has uses remaining
         if (this.maxUses > 0 && this.currentUses >= this.maxUses) {
             return false;
@@ -75,7 +75,9 @@ export class Ability {
         }
         try {
             this.abilityFunction(gameApi, triggerPet, tiger, pteranodon);
-            this.currentUses++;
+            if (!tiger) {
+                this.currentUses++;
+            } 
             return true;
         } catch (error) {
             console.error(`Error executing ability ${this.name || 'unnamed'}:`, error);
@@ -85,6 +87,11 @@ export class Ability {
 
     // Tiger check method - matches Pet.class.ts:676-681
     tigerCheck(tiger?: boolean): boolean {
+        // If ignoreRepeats is true, Tiger should not trigger this ability again
+        if (this.ignoreRepeats) {
+            return false;
+        }
+
         if ((this.owner as any).petBehind && (this.owner as any).petBehind(true, true)?.name === 'Tiger' && (tiger == null || tiger == false)) {
             return true;
         }
@@ -131,5 +138,9 @@ export class Ability {
             return this.abilityLevel; // Use fixed ability level
         }
         return this.owner.level; // Use owner's current level (normal behavior)
+    }
+
+    get minExpForLevel(): number {
+        return this.level == 1 ? 0 : this.level == 2 ? 2 : 5;
     }
 }

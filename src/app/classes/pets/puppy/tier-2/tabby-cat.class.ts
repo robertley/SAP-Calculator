@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TabbyCatAbility } from "../../../abilities/pets/puppy/tier-2/tabby-cat-ability.class";
 
 export class TabbyCat extends Pet {
     name = "Tabby Cat";
@@ -11,25 +12,8 @@ export class TabbyCat extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 2;
-    friendGainedPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetsResp = this.parent.getRandomPets(2, [this], true, false, this);
-        if (targetsResp.pets.length == 0) {
-            return;
-        }
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.logService.createLog({
-                    message: `${this.name} increased ${target.name}'s health by ${this.level}.`,
-                    type: 'ability',
-                    player: this.parent,
-                    randomEvent: targetsResp.random,
-                    tiger: tiger
-                });
-                target.increaseHealth(this.level);
-            }
-        }
-
-        this.superFriendGainedPerk(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new TabbyCatAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

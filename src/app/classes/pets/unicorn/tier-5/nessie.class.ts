@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { NessieQ } from "../../hidden/nessie-q.class";
+import { NessieAbility } from "../../../abilities/pets/unicorn/tier-5/nessie-ability.class";
 
 export class Nessie extends Pet {
     name = "Nessie";
@@ -12,46 +13,8 @@ export class Nessie extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 5;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let isPlayer = this.parent === gameApi.player;
-        let rolls = isPlayer ? gameApi.playerRollAmount : gameApi.opponentRollAmount;
-
-        let attack = this.level * 3;
-        let health = this.level * 3;
-        let firstBoatMessage = '';
-
-        if (!this.parent.summonedBoatThisBattle) {
-            const bonusPerRoll = this.level;
-            const bonusStats = rolls * bonusPerRoll;
-            attack += bonusStats;
-            health += bonusStats;
-            this.parent.summonedBoatThisBattle = true;
-            firstBoatMessage = ` It's the first Boat, so it gains +${bonusStats}/+${bonusStats}!`;
-        }
-
-        attack = Math.min(50, attack);
-        health = Math.min(50, health);
-
-         
-        let nessieQ = new NessieQ(this.logService, this.abilityService, this.parent, health, attack, 0);
-
-        let summonResult = this.parent.summonPet(nessieQ, this.savedPosition, false, this);
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned a Nessie? ${attack}/${health}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                }
-            )
-
-            this.abilityService.triggerFriendSummonedEvents(nessieQ);
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new NessieAbility(this, this.logService, this.abilityService));
     }
     
     constructor(protected logService: LogService,
@@ -64,10 +27,5 @@ export class Nessie extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
     }
 }

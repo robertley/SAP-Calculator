@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FlamingoAbility } from "../../../abilities/pets/turtle/tier-2/flamingo-ability.class";
 
 export class Flamingo extends Pet {
     name = "Flamingo";
@@ -12,29 +13,8 @@ export class Flamingo extends Pet {
     health = 2;
     attack = 3;
 
-    faint(gameApi, tiger, pteranodon?: boolean) {
-        let power: Power = {
-            attack: this.level,
-            health: this.level
-        }
-        let targetsResp = this.parent.nearestPetsBehind(2, this);
-        let targets = targetsResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        for (let target of targets) {
-            target.increaseAttack(this.level);
-            target.increaseHealth(this.level);
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${this.level} attack and ${this.level} health.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-        }
-
-        super.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new FlamingoAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

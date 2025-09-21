@@ -1,0 +1,67 @@
+import { Ability } from "../../../../ability.class";
+import { GameAPI } from "app/interfaces/gameAPI.interface";
+import { Pet } from "../../../../pet.class";
+import { LogService } from "app/services/log.service";
+import { AbilityService } from "app/services/ability.service";
+import { Garlic } from "../../../../equipment/turtle/garlic.class";
+import { Honey } from "../../../../equipment/turtle/honey.class";
+import { MeatBone } from "../../../../equipment/turtle/meat-bone.class";
+
+export class BeetleAbility extends Ability {
+    private logService: LogService;
+    private abilityService: AbilityService;
+
+    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+        super({
+            name: 'BeetleAbility',
+            owner: owner,
+            triggers: ['StartBattle'],
+            abilityType: 'Pet',
+            native: true,
+            abilitylevel: owner.level,
+            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
+                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            }
+        });
+        this.logService = logService;
+        this.abilityService = abilityService;
+    }
+
+    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
+        const owner = this.owner;
+
+        let equipment;
+        switch (this.level) {
+            case 1:
+                equipment = new Honey(this.logService, this.abilityService);
+                break;
+            case 2:
+                equipment = new MeatBone();
+                break;
+            case 3:
+                equipment = new Garlic();
+                break;
+        }
+        let excludePets = owner.parent.getPetsWithEquipment(equipment.name);
+        let targetsBehindResp = owner.parent.nearestPetsBehind(1, owner, excludePets);
+        if (targetsBehindResp.pets.length === 0) {
+            return;
+        }
+        let targetPet = targetsBehindResp.pets[0];
+        this.logService.createLog({
+            message: `${owner.name} gave ${targetPet.name} ${equipment.name}.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: tiger,
+            randomEvent: targetsBehindResp.random
+        });
+        targetPet.givePetEquipment(equipment);
+
+        // Tiger system: trigger Tiger execution at the end
+        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+    }
+
+    copy(newOwner: Pet): BeetleAbility {
+        return new BeetleAbility(newOwner, this.logService, this.abilityService);
+    }
+}

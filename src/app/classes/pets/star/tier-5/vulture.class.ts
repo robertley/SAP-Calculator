@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { VultureAbility } from "../../../abilities/pets/star/tier-5/vulture-ability.class";
 
 export class Vulture extends Pet {
     name = "Vulture";
@@ -11,32 +12,9 @@ export class Vulture extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 3;
-    
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        } 
-        if (!tiger) {
-            this.abilityCounter++;
-        }
-        if (this.abilityCounter % 2 == 1) {
-            return;
-        }
 
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                let opponent = this.parent.opponent;
-                let targetResp = opponent.getRandomPet([], false, true, false, this);
-                if (targetResp.pet == null) {
-                    return;
-                }
-                let power = this.level * 4;
-                this.snipePet(targetResp.pet, power, targetResp.random, tiger);        
-            },
-            priority: this.attack,
-            pet: this
-        });
-        this.superFriendFaints(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new VultureAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { CassowaryAbility } from "../../../abilities/pets/star/tier-3/cassowary-ability.class";
 
 export class Cassowary extends Pet {
     name = "Cassowary";
@@ -12,30 +13,8 @@ export class Cassowary extends Pet {
     attack = 5;
     health = 2;
 
-    friendGainedPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet.parent !== this.parent || pet.equipment?.name !== 'Strawberry') {
-            return;
-        }
-
-        const buffAmount = this.level;
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} +${buffAmount} permanent health and +${buffAmount} attack for this battle.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-
-        target.increaseHealth(buffAmount);
-        
-        target.increaseAttack(buffAmount);
-
-        this.superFriendGainedPerk(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new CassowaryAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

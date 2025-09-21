@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BunyipAbility } from "../../../abilities/pets/unicorn/tier-1/bunyip-ability.class";
 
 export class Bunyip extends Pet {
     name = "Bunyip";
@@ -11,28 +12,8 @@ export class Bunyip extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 1;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let isPlayer = this.parent == gameApi.player;
-        let rollAmount;
-        if (isPlayer) {
-            rollAmount = gameApi.playerRollAmount;
-        } else {
-            rollAmount = gameApi.opponentRollAmount;
-        }
-        rollAmount = Math.min(this.level * 2, rollAmount)
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return
-        }
-        target.increaseHealth(rollAmount)
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${rollAmount} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BunyipAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -6,6 +6,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Beaver } from "../../turtle/tier-1/beaver.class";
 import { Duck } from "../../turtle/tier-1/duck.class";
+import { PlatypusAbility } from "../../../abilities/pets/star/tier-4/platypus-ability.class";
 
 export class Platypus extends Pet {
     name = "Platypus";
@@ -13,45 +14,9 @@ export class Platypus extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 2;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let attackPower = 3 * this.level;
-        let healthPower = 2 * this.level;
-        
-        let duck = new Duck(this.logService, this.abilityService, this.parent, healthPower, attackPower, 0, this.minExpForLevel);
-        let beaver = new Beaver(this.logService, this.abilityService, this.parent, healthPower, attackPower, 0, this.minExpForLevel);
-        
-        let duckSummonResult = this.parent.summonPet(duck, this.savedPosition, false, this);
-        if (duckSummonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned ${attackPower}/${healthPower} Duck level ${this.level}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: duckSummonResult.randomEvent
-                }
-            )
 
-            this.abilityService.triggerFriendSummonedEvents(duck);
-        }
-
-        let beaverSummonResult = this.parent.summonPet(beaver, this.savedPosition, false, this);
-        if (beaverSummonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned ${attackPower}/${healthPower} Beaver level ${this.level}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: beaverSummonResult.randomEvent
-                }
-            )
-
-            this.abilityService.triggerFriendSummonedEvents(beaver);
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new PlatypusAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

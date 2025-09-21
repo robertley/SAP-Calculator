@@ -11,9 +11,7 @@ export class Bigfoot extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        return
-    }
+    //TO DO: This needs to be marked as faintPet
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

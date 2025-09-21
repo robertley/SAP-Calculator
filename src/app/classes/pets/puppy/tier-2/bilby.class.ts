@@ -1,10 +1,10 @@
-import { Garlic } from "app/classes/equipment/turtle/garlic.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BilbyAbility } from "../../../abilities/pets/puppy/tier-2/bilby-ability.class";
 
 export class Bilby extends Pet {
     name = "Bilby";
@@ -12,28 +12,8 @@ export class Bilby extends Pet {
     pack: Pack = 'Puppy';
     attack = 1;
     health = 4;
-    friendLostPerk(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        if (this == pet) {
-            return;
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} Garlic.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        target.givePetEquipment(new Garlic());
-        this.abilityUses++;
-        super.superFriendLosPerk(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new BilbyAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -45,9 +25,5 @@ export class Bilby extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
-    }
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
     }
 }

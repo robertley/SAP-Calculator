@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { DonkeyAbility } from "../../../abilities/pets/star/tier-4/donkey-ability.class";
 
 export class Donkey extends Pet {
     name = "Donkey";
@@ -11,27 +12,9 @@ export class Donkey extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 6;
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        } 
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let opponent = this.parent.opponent;
-        let targetResp = opponent.getLastPet();
-        if (targetResp.pet == null) {
-            return;
-        }
-        this.parent.pushPet(targetResp.pet, targetResp.pet.position);
-        this.logService.createLog({
-            message: `${this.name} pushed ${targetResp.pet.name} to the front.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        this.superFriendFaints(gameApi, pet, tiger);
-        this.abilityUses++;
+
+    initAbilities(): void {
+        this.addAbility(new DonkeyAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -45,8 +28,4 @@ export class Donkey extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

@@ -7,6 +7,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Dazed } from "../../../equipment/ailments/dazed.class";
 import { shuffle } from "../../../../util/helper-functions";
+import { MandrakeAbility } from "../../../abilities/pets/unicorn/tier-3/mandrake-ability.class";
 
 export class Mandrake extends Pet {
     name = "Mandrake";
@@ -14,24 +15,8 @@ export class Mandrake extends Pet {
     pack: Pack = 'Unicorn';
     attack = 4;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let excludePets = this.parent.opponent.getPetsWithEquipment("Dazed");
-        let targetResp = this.parent.opponent.getTierXOrLowerPet(this.level*2, excludePets, this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return
-        }
-        this.logService.createLog({
-            message: `${this.name} made ${target.name} Dazed.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: true
-        })
-
-        target.givePetEquipment(new Dazed());
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MandrakeAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

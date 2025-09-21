@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Rambutan } from "../../../equipment/unicorn/rambutan.class";
+import { FurBearingTroutAbility } from "../../../abilities/pets/unicorn/tier-3/fur-bearing-trout-ability.class";
 
 export class FurBearingTrout extends Pet {
     name = "Fur-Bearing Trout";
@@ -13,43 +14,8 @@ export class FurBearingTrout extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        
-        let targets = [];
-
-        let tempPet: Pet = this;
-        while (targets.length < this.level) {
-            let target: Pet = tempPet.petBehind();
-
-            if (target == null) {
-                break;
-            }
-
-            if (target.equipment instanceof Rambutan) {
-                tempPet = target;
-                continue;
-            }
-
-            targets.push(target);
-            tempPet = target;
-        }
-
-        if (targets.length === 0) {
-            return;
-        }
-
-        for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} a Rambutan.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-            })
-
-            target.givePetEquipment(new Rambutan(this.logService));
-        }
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new FurBearingTroutAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

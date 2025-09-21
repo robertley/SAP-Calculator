@@ -6,6 +6,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SharkAbility } from "../../../abilities/pets/turtle/tier-5/shark-ability.class";
 
 // TODO - fix bug with late trigger on start of battle abilities knocking out pets
 export class Shark extends Pet {
@@ -14,29 +15,8 @@ export class Shark extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet == this) {
-            return;
-        }
-        let power: Power = {
-            attack: this.level * 2,
-            health: this.level * 2
-        }
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        super.superFriendFaints(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new SharkAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

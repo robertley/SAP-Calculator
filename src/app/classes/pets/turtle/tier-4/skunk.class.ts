@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SkunkAbility } from "../../../abilities/pets/turtle/tier-4/skunk-ability.class";
 
 export class Skunk extends Pet {
     name = "Skunk";
@@ -11,26 +12,8 @@ export class Skunk extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 5;
-    startOfBattle(gameApi, tiger) {
-        let opponent = getOpponent(gameApi, this.parent);
-        let highestHealthPetResp = opponent.getHighestHealthPet(undefined, this);
-        let targetPet = highestHealthPetResp.pet;
-        if (targetPet == null) {
-            return;
-        }
-        let power = .33 * this.level;
-        let reducedTo =  Math.max(1, Math.floor(targetPet.health * (1 - power)));
-
-        targetPet.health = reducedTo;
-        this.logService.createLog({
-            message: `${this.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})`,
-            type: 'ability',
-            player: this.parent,
-            randomEvent: highestHealthPetResp.random,
-            tiger: tiger
-        });
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new SkunkAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

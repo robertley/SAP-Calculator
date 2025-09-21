@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { CalygreyhoundAbility } from "../../../abilities/pets/unicorn/tier-3/calygreyhound-ability.class";
 
 export class Calygreyhound extends Pet {
     name = "Calygreyhound";
@@ -11,31 +12,8 @@ export class Calygreyhound extends Pet {
     pack: Pack = 'Unicorn';
     attack = 4;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.mana == 0) {
-            return;
-        }
-
-        let targetsResp = this.parent.opponent.getHighestHealthPets(2, undefined, this);
-
-        let power = this.level * this.mana;
-
-        for (let target of targetsResp.pets) {
-            target.health = Math.max(1, target.health - power);
-            this.logService.createLog({
-                message: `${this.name} reduced ${target.name}'s health by ${power} (${target.health}).`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetsResp.random
-            })
-
-        }
-
-        this.mana = 0;
-
-        this.superFaint(gameApi, tiger);
-
+    initAbilities(): void {
+        this.addAbility(new CalygreyhoundAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

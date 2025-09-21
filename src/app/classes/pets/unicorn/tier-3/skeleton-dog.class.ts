@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SkeletonDogAbility } from "../../../abilities/pets/unicorn/tier-3/skeleton-dog-ability.class";
 
 export class SkeletonDog extends Pet {
     name = "Skeleton Dog";
@@ -11,25 +12,8 @@ export class SkeletonDog extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsResp = this.parent.getRandomPets(this.level, [this], true, false, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.logService.createLog({
-                    message: `${this.name} gave ${1} attack and ${1} health to ${target.name}.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    randomEvent: targetsResp.random
-                })
-
-                target.increaseAttack(1);
-                target.increaseHealth(1);
-            }
-        }
-
-        this.superFaint(gameApi, tiger);
-
+    initAbilities(): void {
+        this.addAbility(new SkeletonDogAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

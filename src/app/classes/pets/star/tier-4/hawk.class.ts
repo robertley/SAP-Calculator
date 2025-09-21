@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { HawkAbility } from "../../../abilities/pets/star/tier-4/hawk-ability.class";
 
 export class Hawk extends Pet {
     name = "Hawk";
@@ -11,14 +12,9 @@ export class Hawk extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetResp = this.parent.getOppositeEnemyPet(this);
-        let target = targetResp.pet;
-        
-        if (target) {
-            let power = this.level * 7;
-            this.snipePet(target, power, targetResp.random, tiger);
-        }
+
+    initAbilities(): void {
+        this.addAbility(new HawkAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

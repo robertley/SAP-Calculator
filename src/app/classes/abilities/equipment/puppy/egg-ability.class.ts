@@ -16,7 +16,7 @@ export class EggAbility extends Ability {
             native: true, 
             maxUses: 1, // Egg is removed after one use
             abilitylevel: 1,
-            condition: (owner: Pet) => {
+            condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
                 // Check if equipment is still equipped
                 return owner.equipment === this.equipment;
             },

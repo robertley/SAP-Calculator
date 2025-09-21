@@ -1866,7 +1866,7 @@ export abstract class Pet {
             )
         }       
          // New trigger system for ThisDied abilities
-        if (this.hasAbility('ThisDied')) {
+        if (this.hasTrigger('ThisDied')) {
             this.abilityService.setThisDiedEvent({
                 priority: this.attack,
                 callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => { this.executeAbilities(trigger, gameApi, triggerPet); },
@@ -2015,13 +2015,7 @@ export abstract class Pet {
         }
         // hurt ability
         if (pet.hurt != null && damage > 0) {
-            this.abilityService.setHurtEvent({
-                callback: pet.hurt.bind(pet),
-                priority: pet.attack,
-                player: pet.parent,
-                triggerPet: this,
-                pet: pet
-            })
+            //this.abilityService.triggerHurtEvents(pet);
         }
 
         // knockout
@@ -2036,11 +2030,7 @@ export abstract class Pet {
 
         // this hurt ability - new trigger system
         if (damage > 0) {
-            this.abilityService.setThisHurtEvent({
-                priority: pet.attack,
-                callback: () => { pet.executeAbilities('ThisHurt', this.abilityService.gameApi); },
-                pet: pet
-            });
+            this.abilityService.triggerHurtEvents(pet);
         }
 
         // friend hurt ability
@@ -2067,8 +2057,8 @@ export abstract class Pet {
                 type: 'ability',
                 player: this.parent
             });
-            this.abilityService.triggerLevelUpEvents(this.parent, this);
-            this.abilityService.triggerLevelUpEvents(this.parent.opponent, this);
+            this.abilityService.triggerLevelUpEvents(this);
+            //TO DO: THis needs change
             this.abilityService.executeFriendlyLevelUpToyEvents();
             this.setAbilityUses();
         }
@@ -2425,9 +2415,15 @@ export abstract class Pet {
             return true;
         });
     }
-
+    getAbilitiesWithTrigger(trigger?: AbilityTrigger, abilityType?: AbilityType): Ability[] {
+        return this.abilityList.filter(ability => {
+            if (trigger && !ability.matchesTrigger(trigger) || !ability.canUse()) return false;
+            if (abilityType && ability.abilityType !== abilityType) return false;
+            return true;
+        });
+    }
     executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): number {
-        const matchingAbilities = this.getAbilities(trigger);
+        const matchingAbilities = this.getAbilitiesWithTrigger(trigger);
         let executedCount = 0;
 
         // Execute abilities in order (maintains ability list order within pet)
@@ -2469,5 +2465,9 @@ export abstract class Pet {
 
     hasAbility(trigger: AbilityTrigger, abilityType?: AbilityType): boolean {
         return this.getAbilities(trigger, abilityType).length > 0;
+    }
+
+    hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType): boolean {
+        return this.getAbilitiesWithTrigger(trigger, abilityType).length > 0;
     }
 }

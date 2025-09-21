@@ -6,11 +6,6 @@ import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-
-function levelToExp(level: number) {
-    return level == 1 ? 0 : level == 2 ? 2 : 5;
-}
-
 export class SilkySifaka extends Pet {
     name = "Silky Sifaka";
     tier = 6;
@@ -34,7 +29,7 @@ export class SilkySifaka extends Pet {
                 attack: targetPet.attack,
                 health: targetPet.health,
                 mana: targetPet.mana,
-                exp: levelToExp(this.level),
+                exp: this.minExpForLevel,
                 equipment: targetPet.equipment
             }, this.parent);
             

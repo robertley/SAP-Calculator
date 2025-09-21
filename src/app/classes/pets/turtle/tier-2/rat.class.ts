@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { DirtyRat } from "../../hidden/dirty-rat.class";
+import { RatAbility } from "../../../abilities/pets/turtle/tier-2/rat-ability.class";
 
 export class Rat extends Pet {
     name = "Rat";
@@ -12,34 +13,8 @@ export class Rat extends Pet {
     pack: Pack = 'Turtle';
     health = 6;
     attack = 3;
-    afterFaint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
-        let opponent: Player;
-        if (gameApi.player == this.parent) {
-            opponent = gameApi.opponet;
-        } else {
-            opponent = gameApi.player;
-        }
-
-        for (let i = 0; i < this.level; i++) {
-            let dirtyRat = new DirtyRat(this.logService, this.abilityService, opponent, null, null, 0, 0);
-
-            let summonResult = opponent.summonPet(dirtyRat, 0, false, this);
-            
-            if (summonResult.success) {
-                this.logService.createLog({
-                    message: `${this.name} Summoned Dirty Rat on Opponent`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                })
-
-                this.abilityService.triggerFriendSummonedEvents(dirtyRat);
-            }
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new RatAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

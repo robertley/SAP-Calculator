@@ -1,13 +1,10 @@
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
-import { Egg } from "../../../equipment/puppy/egg.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Nest } from "../../hidden/nest.class";
+import { RobinAbility } from "../../../abilities/pets/puppy/tier-2/robin-ability.class";
 
 export class Robin extends Pet {
     name = "Robin";
@@ -15,30 +12,8 @@ export class Robin extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let nest = new Nest(this.logService, this.abilityService, this.parent, null, null, this.minExpForLevel, null);
-        this.logService.createLog({
-            message: `${this.name} summoned a Nest (level ${this.level}).`,
-            type: 'ability',
-            player: this.parent,
-            randomEvent: false,
-            tiger: tiger
-        });
-        let result = this.parent.summonPetInFront(this, nest);
-        if (result.success) {
-            this.logService.createLog({
-                message: `${this.name} gave Nest an Egg.`,
-                type: 'ability',
-                player: this.parent,
-                randomEvent: result.randomEvent,
-                tiger: tiger
-            })
-
-            nest.givePetEquipment(new Egg(this.logService, this.abilityService));
-            this.abilityService.triggerFriendSummonedEvents(nest);
-        }
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new RobinAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

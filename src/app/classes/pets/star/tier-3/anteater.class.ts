@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Ant } from "../../turtle/tier-1/ant.class";
+import { AnteaterAbility } from "../../../abilities/pets/star/tier-3/anteater-ability.class";
 
 export class Anteater extends Pet {
     name = "Anteater";
@@ -12,28 +13,9 @@ export class Anteater extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 2;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        for (let i = 0; i < this.level; i++) {
-            let ant = new Ant(this.logService, this.abilityService, this.parent, 1, 1, 0, 5);
-    
-            let summonResult = this.parent.summonPet(ant, this.savedPosition, false, this);
-            if (summonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned 1/1 Ant level 3`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: summonResult.randomEvent
-                    }
-                )
 
-                this.abilityService.triggerFriendSummonedEvents(ant);
-            }
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new AnteaterAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

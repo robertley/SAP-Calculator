@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PugAbility } from "../../../abilities/pets/star/tier-3/pug-ability.class";
 
 export class Pug extends Pet {
     name = "Pug";
@@ -11,25 +12,9 @@ export class Pug extends Pet {
     pack: Pack = 'Star';
     attack = 5;
     health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
-        if (targetsAheadResp.pets.length === 0) {
-            this.superStartOfBattle(gameApi, tiger);
-            return;
-        }
-        let target = targetsAheadResp.pets[0];
-        let power = this.level;
-        this.logService.createLog(
-            {
-                message: `${this.name} gave ${target.name} ${power} exp.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetsAheadResp.random
-            }
-        )
-        target.increaseExp(power);
-        this.superStartOfBattle(gameApi, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new PugAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

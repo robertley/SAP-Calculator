@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FireflyAbility } from "../../../abilities/pets/star/tier-1/firefly-ability.class";
 
 export class Firefly extends Pet {
     name = "Firefly";
@@ -11,19 +12,8 @@ export class Firefly extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 2;
-
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsResp = this.parent.getPetsWithinXSpaces(this, this.level);
-        let targets = targetsResp.pets
-
-        if (targets.length == 0) {
-            return;
-        }
-        for (const target of targets) {
-            this.snipePet(target, 1, targetsResp.random, tiger, pteranodon);
-        }
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new FireflyAbility(this, this.logService));
     }
 
 

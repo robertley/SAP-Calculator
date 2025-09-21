@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { WoodpeckerAbility } from "../../../abilities/pets/star/tier-5/woodpecker-ability.class";
 
 export class Woodpecker extends Pet {
     name = "Woodpecker";
@@ -11,19 +12,9 @@ export class Woodpecker extends Pet {
     pack: Pack = 'Star';
     attack = 6;
     health = 5;
-    
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let triggers = this.level * 2; // L1=2, L2=4, L3=6 triggers
-        
-        for (let i = 0; i < triggers; i++) {
-            // Find the nearest two pets ahead
-            let targetsResp = this.parent.nearestPetsAhead(2, this, null, true);
-            let targets = targetsResp.pets;
-            for (let target of targets) {
-                this.snipePet(target, 2, targetsResp.random, tiger);
-            }
-        }
-        this.superStartOfBattle(gameApi, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new WoodpeckerAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

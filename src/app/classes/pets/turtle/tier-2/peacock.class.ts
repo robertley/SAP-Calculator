@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PeacockAbility } from "../../../abilities/pets/turtle/tier-2/peacock-ability.class";
 
 export class Peacock extends Pet {
     name = "Peacock";
@@ -10,24 +11,8 @@ export class Peacock extends Pet {
     pack: Pack = 'Turtle';
     health = 5;
     attack = 2;
-    hurt(gameApi, pet, tiger) {
-        if (this.health < 1) {
-            return;
-        }
-        let boost = this.level * 3;
-        let selfTargetResp = this.parent.getThis(this);
-        if (selfTargetResp.pet) {
-            selfTargetResp.pet.increaseAttack(boost);
-            this.logService.createLog({
-                message: `${this.name} gave ${selfTargetResp.pet.name} ${boost} attack.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: selfTargetResp.random
-            });
-        }
-
-        super.superHurt(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new PeacockAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
