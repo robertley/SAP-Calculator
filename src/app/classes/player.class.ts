@@ -10,6 +10,7 @@ import { Puma } from "./pets/puppy/tier-6/puma.class";
 import { GameService } from "../services/game.service";
 import { GoldenRetriever } from "./pets/hidden/golden-retriever.class";
 import { Onion } from "./equipment/golden/onion.class";
+import { GameAPI } from "app/interfaces/gameAPI.interface";
 
 export class Player {
     pet0?: Pet;
@@ -1256,20 +1257,26 @@ export class Player {
         if (this.petArray.length > 1 || this.trumpets == 0) {
             return;
         }
-        let goldenRetriever = new GoldenRetriever(this.logService, this.abilityService, this, this.trumpets, this.trumpets);
+        this.abilityService.setgoldenRetrieverSummonsEvent({
+            priority: 0,
+            callback: (trigger, abilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
+                let goldenRetriever = new GoldenRetriever(this.logService, this.abilityService, this, this.trumpets, this.trumpets);
 
-        let name = this == this.gameService.gameApi.player ? 'Player' : 'Opponent';
-
-        this.logService.createLog(
-            {
-                message: `${name} spawned Golden Retriever (${goldenRetriever.attack}/${goldenRetriever.health})`,
-                type: "ability",
-                player: this
+                let name = this == gameApi.player ? 'Player' : 'Opponent';
+        
+                this.logService.createLog(
+                    {
+                        message: `${name} spawned Golden Retriever (${goldenRetriever.attack}/${goldenRetriever.health})`,
+                        type: "ability",
+                        player: this
+                    }
+                )
+        
+                this.summonPet(goldenRetriever, 0);
+                this.trumpets = 0;
             }
-        )
+        })
 
-        this.summonPet(goldenRetriever, 0);
-        this.trumpets = 0;
         this.spawnedGoldenRetiever = true;
     }
 

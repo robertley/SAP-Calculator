@@ -1,3 +1,4 @@
+import { AbilityTrigger} from "app/classes/ability.class";
 import { Pet } from "../classes/pet.class";
 import { Player } from "../classes/player.class";
 
@@ -8,6 +9,6 @@ export interface AbilityEvent {
     level?: number;
     pet?: Pet;
     triggerPet?: Pet; // Pet that triggered this ability (e.g., the pet that fainted)
-    abilityType?: string; // Track which ability type this event belongs to
+    abilityType?: AbilityTrigger; // Track which ability type this event belongs to
     tieBreaker?: number; // Random number for tie breaking
 }

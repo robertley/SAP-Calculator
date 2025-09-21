@@ -1806,7 +1806,7 @@ export abstract class Pet {
         if (this.mana > 0) {
             this.abilityService.setManaEvent({
                 priority: this.attack,
-                callback: (triggerL, abilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
+                callback: (trigger, abilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
                     if (this.mana == 0) {
                         return
                     }
@@ -2299,18 +2299,13 @@ export abstract class Pet {
             return true;
         });
     }
-    executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): number {
+    executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
         const matchingAbilities = this.getAbilitiesWithTrigger(trigger);
-        let executedCount = 0;
 
         // Execute abilities in order (maintains ability list order within pet)
         for (const ability of matchingAbilities) {
-            if (ability.execute(gameApi, triggerPet, tiger, pteranodon)) {
-                executedCount++;
-            }
+            ability.execute(gameApi, triggerPet, tiger, pteranodon);
         }
-
-        return executedCount;
     }
 
     copyAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): number {

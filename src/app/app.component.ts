@@ -7,7 +7,6 @@ import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
 import { createPack, money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
-import { StartOfBattleService } from './services/start-of-battle.service';
 import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
 
@@ -141,7 +140,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private equipmentService: EquipmentService,
     private petService: PetService,
     private toyService: ToyService,
-    private startOfBattleService: StartOfBattleService,
     private localStorageService: LocalStorageService
   ) {
     InjectorService.setInjector(this.injector);
@@ -752,6 +750,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (petRemoved) {
       this.emptyFrontSpaceCheck(); // Only queues events, doesn't execute them
     }
+    this.player.checkGoldenSpawn();
+    this.opponent.checkGoldenSpawn();
   }
 
   checkPetsAlive() {
@@ -849,15 +849,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       } while (this.abilityService.hasAbilityCycleEvents);
 
       //init sob
-      this.startOfBattleService.resetStartOfBattleFlags();
-      this.startOfBattleService.initStartOfBattleEvents();
-      //merge into pet sob(gecko)
-      this.startOfBattleService.executeToyPetEvents();
-
+      this.abilityService.triggerStartBattleEvents();
       //add churro check
       this.gameService.gameApi.isInStartOfBattleFlag = true;
-      this.toyService.executeStartOfBattleEvents(); //toy sob
-      this.startOfBattleService.executeNonToyPetEvents(); //pet sob
+      this.abilityService.executeStartBattleEvents();
       
       this.checkPetsAlive();
       do {
@@ -1032,13 +1027,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
 
-    do {
-      this.abilityCycle();
-    } while (this.abilityService.hasAbilityCycleEvents);
-    //merge to ability cyle
-    this.player.checkGoldenSpawn();
-    this.opponent.checkGoldenSpawn();
-    
     do {
       this.abilityCycle();
     } while (this.abilityService.hasAbilityCycleEvents);
