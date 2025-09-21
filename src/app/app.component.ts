@@ -838,8 +838,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.initializeEquipmentMultipliers();
 
       //before battle phase
-      this.abilityService.triggerBeforeStartOfBattleEvents(this.player);
-      this.abilityService.triggerBeforeStartOfBattleEvents(this.opponent);
+      this.abilityService.triggerBeforeStartOfBattleEvents();
       this.abilityService.executeBeforeStartOfBattleEvents();
 
       //normal abilities
@@ -969,36 +968,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.pushPetsForwards();
     this.logService.printState(this.player, this.opponent);
-
-    while (true) {  // init before attack events
+    //before attack phase 
+    while (true) { 
       let originalPlayerAttackingPet = this.player.pet0;
       let originalOppoentAttackingPet = this.opponent.pet0;
-      if (this.player.pet0.beforeAttack) {
-        this.abilityService.setBeforeAttackEvent({
-          callback: this.player.pet0.beforeAttack.bind(this.player.pet0),
-          priority: this.player.pet0.attack,
-          player: this.player,
-          pet: this.player.pet0
-        })
-      }
-
-      if (this.opponent.pet0.beforeAttack) {
-        this.abilityService.setBeforeAttackEvent({
-          callback: this.opponent.pet0.beforeAttack.bind(this.opponent.pet0),
-          priority: this.opponent.pet0.attack,
-          player: this.opponent,
-          pet: this.opponent.pet0
-        })
-      }
-
-      //before attack phase
-      this.abilityService.checkAndAddNewBeforeAttackEvents();
+      this.abilityService.triggerBeforeAttackEvent(this.player.pet0)
+      this.abilityService.triggerBeforeAttackEvent(this.opponent.pet0)
       this.abilityService.executeBeforeAttackEvents();
-      
-      this.abilityService.triggerBeforeFriendAttacksEvents(this.player, this.player.pet0);
-      this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, this.opponent.pet0);
-      this.abilityService.executeBeforeFriendAttacksEvents();
-
       //normal abilities
       this.player.checkPetsAlive();
       this.opponent.checkPetsAlive();
@@ -1131,7 +1107,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponent.checkPetsAlive();
 
     this.abilityService.executeAfterAttackEvents();
-    this.abilityService.executeAfterFriendAttackEvents();
   }
 
   endLog(winner?: Player) {

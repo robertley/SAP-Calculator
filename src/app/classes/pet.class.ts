@@ -1195,16 +1195,7 @@ export abstract class Pet {
         }
 
         // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
-        this.abilityService.triggerFriendAttacksEvents(this.parent, this);
-
-        // after attack - legacy system
-        if (this.afterAttack != null) {
-            this.abilityService.setAfterAttackEvent({
-                callback: this.afterAttack.bind(this),
-                priority: this.attack,
-                pet: this
-            })
-        }
+        this.abilityService.triggerAttacksEvents(this);
         this.applyCrisp();
 
     }
@@ -1733,29 +1724,9 @@ export abstract class Pet {
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target
-        if (this.beforeAttack && this.alive) {
-            this.abilityService.setBeforeAttackEvent({
-                callback: this.beforeAttack.bind(this),
-                priority: this.attack,
-                player: this.parent,
-                pet: this
-            });
-        }
-        
-        if (target.beforeAttack) {
-            this.abilityService.setBeforeAttackEvent({
-                callback: target.beforeAttack.bind(target),
-                priority: target.attack,
-                player: target.parent,
-                pet: target
-            });
-        }
-        
+        this.abilityService.triggerBeforeAttackEvent(this);
+        this.abilityService.triggerBeforeAttackEvent(target);
         this.abilityService.executeBeforeAttackEvents();
-        // 2. Trigger and execute before friend attacks events for BOTH players
-        this.abilityService.triggerBeforeFriendAttacksEvents(this.parent, this);
-        this.abilityService.triggerBeforeFriendAttacksEvents(target.parent, this);
-        this.abilityService.executeBeforeFriendAttacksEvents();
     }
     // Jump attack method for abilities that attack and then advance turn
     jumpAttack(target: Pet, tiger?: boolean, damage?: number, randomEvent: boolean = false) {
@@ -1788,9 +1759,7 @@ export abstract class Pet {
         attackPet.parent.checkPetsAlive();
         target.parent.checkPetsAlive();
     
-        attackPet.abilityService.executeAfterAttackEvents();
-        attackPet.abilityService.executeAfterFriendAttackEvents();
-        
+        attackPet.abilityService.executeAfterAttackEvents();        
         // 6. Trigger and execute friend/enemy jumped abilities 
         attackPet.abilityService.triggerJumpEvents(attackPet);
     }
