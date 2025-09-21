@@ -61,8 +61,6 @@ export class ShimaEnagaAbility extends Ability {
                 tiger: tiger,
                 randomEvent: true
             });
-
-            this.abilityService.triggerFriendSummonedEvents(newPet);
         }
 
         // Tiger system: trigger Tiger execution at the end

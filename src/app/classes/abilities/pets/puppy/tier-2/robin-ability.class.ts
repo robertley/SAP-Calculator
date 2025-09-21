@@ -48,7 +48,6 @@ export class RobinAbility extends Ability {
             });
 
             nest.givePetEquipment(new Egg(this.logService, this.abilityService));
-            this.abilityService.triggerFriendSummonedEvents(nest);
         }
 
         // Tiger system: trigger Tiger execution at the end

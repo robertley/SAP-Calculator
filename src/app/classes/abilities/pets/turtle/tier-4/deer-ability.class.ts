@@ -41,8 +41,6 @@ export class DeerAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(bus);
         }
 
         // Tiger system: trigger Tiger execution at the end

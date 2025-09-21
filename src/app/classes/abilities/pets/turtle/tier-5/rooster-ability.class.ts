@@ -43,8 +43,6 @@ export class RoosterAbility extends Ability {
                     pteranodon: pteranodon,
                     randomEvent: summonResult.randomEvent
                 });
-
-                this.abilityService.triggerFriendSummonedEvents(chick);
             }
         }
 

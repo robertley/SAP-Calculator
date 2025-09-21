@@ -73,7 +73,7 @@ export abstract class Pet {
     faintPet: boolean = false;
     toyPet = false;
     transformed: boolean = false;
-    disabled: boolean = false;
+    removed: boolean = false;
     startOfBattleTriggered: boolean = false;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
@@ -338,50 +338,6 @@ export abstract class Pet {
     }
 
     initAbilities() {
-        // set faint ability to handle mana ability
-        let faintCallback = this.faint?.bind(this);
-        if (faintCallback != null || this.afterFaint != null) {
-            this.faintPet = true;
-        }
-        this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
-            if (faintCallback != null) {
-                if (!this.abilityValidCheck()) {
-                    return;
-                }
-                faintCallback(gameApi, tiger, pteranodon);
-            }
-
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-
-            if (this.kitsuneCheck()) {
-                return;
-            }
-            
-            if (this.mana > 0) {
-                
-                let manaEvent: AbilityEvent;
-
-                manaEvent = {
-                    priority: this.attack,
-                    player: this.parent,
-                    callback: () => {
-                        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true, false, this);
-                        if (targetResp.pet == null) {
-                            return;
-                        }
-                        if (this.mana == 0) {
-                            return;
-                        }
-                        this.snipePet(targetResp.pet, this.mana, true, false, false, false, true);
-                    }
-                }
-
-                this.abilityService.setManaEvent(manaEvent);
-            }
-        }
-
         let startOfBattleCallback = this.startOfBattle?.bind(this);
         this.startOfBattle = startOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
             if (!this.abilityValidCheck()) {
@@ -654,9 +610,7 @@ export abstract class Pet {
         if (this.savedPosition == null) {
             return false;
         }
-        if (this.disabled) {
-            return false;
-        }
+
         if (this.equipment instanceof Dazed) {
             this.logService.createLog({
                 message: `${this.name}'s ability was not activated because of Dazed.`,
@@ -1243,13 +1197,6 @@ export abstract class Pet {
         // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
         this.abilityService.triggerFriendAttacksEvents(this.parent, this);
 
-        // after attack - new trigger system
-        this.abilityService.setThisAttackedEvent({
-            priority: this.attack,
-            callback: () => { this.executeAbilities('ThisAttacked', this.abilityService.gameApi); },
-            pet: this
-        });
-
         // after attack - legacy system
         if (this.afterAttack != null) {
             this.abilityService.setAfterAttackEvent({
@@ -1727,7 +1674,7 @@ export abstract class Pet {
         //reset flags
         this.done = false;
         this.seenDead = false;
-        this.disabled = false;
+        this.removed = false;
         try {
             this.equipment?.reset();
         } catch (error) {
@@ -1845,8 +1792,7 @@ export abstract class Pet {
         attackPet.abilityService.executeAfterFriendAttackEvents();
         
         // 6. Trigger and execute friend/enemy jumped abilities 
-        attackPet.abilityService.triggerFriendJumpedEvents(attackPet.parent, attackPet);
-        attackPet.abilityService.triggerEnemyJumpedEvents(target.parent, attackPet);
+        attackPet.abilityService.triggerJumpEvents(attackPet);
     }
 
     get alive(): boolean {
@@ -1854,25 +1800,8 @@ export abstract class Pet {
     }
     
 
-    setFaintEventIfPresent() {
-
-        if (this.faint != null) {
-            this.abilityService.setFaintEvent(
-                {
-                    priority: this.attack,
-                    callback: this.faint.bind(this),
-                    pet: this
-                }
-            )
-        }       
-         // New trigger system for ThisDied abilities
-        if (this.hasTrigger('ThisDied')) {
-            this.abilityService.setThisDiedEvent({
-                priority: this.attack,
-                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => { this.executeAbilities(trigger, gameApi, triggerPet); },
-                pet: this,
-            });
-        }
+    setFaintEventIfPresent() {      
+        this.abilityService.triggerFaintEvents(this);
         // Add manaSnipe handling with all original logic
         if (this.mana > 0) {
             this.abilityService.setManaEvent({
@@ -1896,26 +1825,10 @@ export abstract class Pet {
                     this.mana = 0;
                 },
                 pet: this,
-                triggerPet: this
+                triggerPet: this,
+                tieBreaker: Math.random()
             });
         }
-        if (this.equipment?.equipmentClass == 'faint') {
-            this.abilityService.setFaintEvent(
-                {
-                    priority: -1, // ensures equipment faint ability occurs after pet faint abilities. Might need to be revisited
-                    callback: () => { 
-                        try {
-                            this.equipment.callback(this);
-                        } catch {
-                            // this is an acceptable failure. example is microbe faint ability happening before other faint abilities, overwriting the equipment which could cause this issue.
-                            console.warn('equipment callback failed', this.equipment)
-                        }
-                    },
-                    pet: this 
-                }
-            )
-        }
-
     }
 
     useDefenseEquipment(snipe=false) {
@@ -1986,8 +1899,7 @@ export abstract class Pet {
         }
         this.health = Math.min(Math.max(this.health + amt, 1), max);
 
-        this.abilityService.triggerFriendGainsHealthEvents(this.parent, this);
-        this.abilityService.executeFriendGainsHealthEvents();
+        this.abilityService.triggerFriendGainsHealthEvents(this);
     }
 
     dealDamage(pet: Pet, damage: number) {
@@ -2013,36 +1925,15 @@ export abstract class Pet {
         if (damage>0) {
             pet.timesHurt++;
         }
-        // hurt ability
-        if (pet.hurt != null && damage > 0) {
-            //this.abilityService.triggerHurtEvents(pet);
-        }
-
         // knockout
-        if (pet.health < 1 && this.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: this.knockOut.bind(this),
-                priority: this.attack,
-                triggerPet: pet,
-                pet: this
-            })
+        if (pet.health < 1) {
+            this.abilityService.triggerKillEvents(this, pet);
         }
 
         // this hurt ability - new trigger system
         if (damage > 0) {
             this.abilityService.triggerHurtEvents(pet);
         }
-
-        // friend hurt ability
-        if (damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
-        }
-
-        // enemy hurt ability
-        if (damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
-        }
-
     }
 
     increaseExp(amt) {
@@ -2063,7 +1954,7 @@ export abstract class Pet {
             this.setAbilityUses();
         }
         for (let i = 0; i < Math.min(amt, 5); i++) {
-            this.abilityService.triggerFriendGainedExperienceEvents(this.parent, this);
+            this.abilityService.triggerFriendGainedExperienceEvents(this);
         } 
     }
 
@@ -2072,11 +1963,7 @@ export abstract class Pet {
         this.mana = Math.min(this.mana, 50);
 
         if (this.gainedMana != null) {
-            this.abilityService.setGainManaEvents({
-                callback: this.gainedMana.bind(this),
-                priority: this.attack,
-                pet: this
-            });
+            this.abilityService.triggerManaGainedEvents(this);
         }
     }
 
@@ -2115,8 +2002,7 @@ export abstract class Pet {
             }
             this.applyEquipment(equipment, pandorasBoxLevel);
 
-            this.abilityService.triggerFriendGainedAilmentEvents(this);
-            this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
+            this.abilityService.triggerAilmentGainEvents(this, equipment.name);
         } 
         // Handle standard equipment
         else {
@@ -2137,17 +2023,8 @@ export abstract class Pet {
                 this.applyEquipment(equipment, pandorasBoxLevel);
             }
             
-            this.abilityService.triggerGainedPerkEvents(this);
-            this.abilityService.triggerFriendGainedPerkEvents(this);
-            if (this.eatsFood) {
-                this.abilityService.setEatsFoodEvent({
-                    callback: this.eatsFood.bind(this),
-                    priority: this.attack,
-                    triggerPet: this,
-                    pet: this
-                })
-            }
-            this.abilityService.triggerFriendAteFoodEvents(this);    
+            this.abilityService.triggerPerkGainEvents(this, equipment.name);
+            this.abilityService.triggerFoodEvents(this, equipment.name)
         }
         
 
@@ -2183,7 +2060,7 @@ export abstract class Pet {
 
         // Only trigger friendLostPerk events for perks, not ailments
         if (!wasAilment) {
-            this.abilityService.triggerFriendLostPerkEvents(this);
+            this.abilityService.triggerPerkLossEvents(this, this.lastLostEquipment?.name);
         }
     }
 
@@ -2438,8 +2315,8 @@ export abstract class Pet {
 
     copyAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): number {
         const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
+        this.removeAbility(undefined, abilityType);
         let copiedCount = 0;
-
         for (const ability of abilitiesToCopy) {
             const copiedAbility = ability.copy(this);
             if (copiedAbility == null) {
@@ -2455,7 +2332,24 @@ export abstract class Pet {
 
         return copiedCount;
     }
+    gainAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): number {
+        const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
+        let copiedCount = 0;
+        for (const ability of abilitiesToCopy) {
+            const copiedAbility = ability.copy(this);
+            if (copiedAbility == null) {
+                continue;
+            }
+            if (level) {
+                copiedAbility.abilityLevel = level;
+                copiedAbility.alwaysIgnorePetLevel = true;
+            }
+            this.addAbility(copiedAbility);
+            copiedCount++;
+        }
 
+        return copiedCount;
+    }
     resetAbilities(): void {
         // Restore original ability list (preserves order)
         this.abilityList = [...this.originalAbilityList];

@@ -52,8 +52,6 @@ export class CockroachAbility extends Ability {
                 tiger: tiger,
                 randomEvent: targetResp.random
             });
-
-            this.abilityService.triggerFriendSummonedEvents(newCockroach);
         }
 
         // Tiger system: trigger Tiger execution at the end

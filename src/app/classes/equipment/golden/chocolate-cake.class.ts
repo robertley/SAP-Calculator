@@ -32,12 +32,7 @@ export class ChocolateCake extends Equipment {
             pet.increaseExp(expGain);
             pet.health = 0;
 
-            if (pet.knockOut != null) {
-                this.abilityService.setKnockOutEvent({
-                    callback: pet.knockOut.bind(pet),
-                    priority: pet.attack
-                })
-            }
+            this.abilityService.triggerKillEvents(pet, pet);
 
             pet.removePerk();
         }

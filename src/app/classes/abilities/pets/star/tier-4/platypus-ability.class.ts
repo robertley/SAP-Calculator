@@ -45,8 +45,6 @@ export class PlatypusAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: duckSummonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(duck);
         }
 
         let beaverSummonResult = owner.parent.summonPet(beaver, owner.savedPosition, false, owner);
@@ -59,8 +57,6 @@ export class PlatypusAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: beaverSummonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(beaver);
         }
 
         // Tiger system: trigger Tiger execution at the end

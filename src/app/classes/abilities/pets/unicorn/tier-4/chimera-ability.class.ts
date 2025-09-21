@@ -61,7 +61,6 @@ export class ChimeraAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: lionSummonResult.randomEvent
             });
-            this.abilityService.triggerFriendSummonedEvents(lion);
         }
 
         if (this.level >= 2) {
@@ -77,7 +76,6 @@ export class ChimeraAbility extends Ability {
                     pteranodon: pteranodon,
                     randomEvent: goatSummonResult.randomEvent
                 });
-                this.abilityService.triggerFriendSummonedEvents(goat);
             }
         }
 
@@ -94,7 +92,6 @@ export class ChimeraAbility extends Ability {
                     pteranodon: pteranodon,
                     randomEvent: snakeSummonResult.randomEvent
                 });
-                this.abilityService.triggerFriendSummonedEvents(snake);
             }
         }
 

@@ -24,15 +24,8 @@ export class Anubis extends Pet {
                     player: this.parent,
                     tiger: tiger
                 });
-                this.abilityService.setFaintEvent(
-                    {
-                        callback: () => {
-                            pet.faint(gameApi, false, false);
-                        },
-                        priority: 100 - pet.position,
-                        pet: pet
-                    }
-                )
+                pet.executeAbilities('BeforeThisDies', gameApi)
+                pet.executeAbilities('ThisDied', gameApi)
             }
         }
     }

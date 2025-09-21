@@ -41,8 +41,6 @@ export class PhoenixAfterfaintAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(youngPhoenix);
         }
 
         // Tiger system: trigger Tiger execution at the end

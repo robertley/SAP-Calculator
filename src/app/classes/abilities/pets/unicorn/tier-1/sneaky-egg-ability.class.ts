@@ -47,8 +47,6 @@ export class SneakyEggAbility extends Ability {
                 tiger: tiger,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(egg);
         }
 
         // Tiger system: trigger Tiger execution at the end

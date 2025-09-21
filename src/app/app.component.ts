@@ -831,8 +831,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       //   pet.equipment = new Dazed();
       // }
       
-      this.abilityService.initEndTurnEvents(this.player);
-      this.abilityService.initEndTurnEvents(this.opponent);
+      this.abilityService.initParrotAbility(this.player);
+      this.abilityService.initParrotAbility(this.opponent);
       
       //initialize equipment multipliers for existing equipment
       this.initializeEquipmentMultipliers();
@@ -850,11 +850,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       //init sob
       this.startOfBattleService.resetStartOfBattleFlags();
-
-      // New trigger system for start battle events
-      this.abilityService.triggerStartBattleEvents(this.player);
-      this.abilityService.triggerStartBattleEvents(this.opponent);
-
       this.startOfBattleService.initStartOfBattleEvents();
       //merge into pet sob(gecko)
       this.startOfBattleService.executeToyPetEvents();

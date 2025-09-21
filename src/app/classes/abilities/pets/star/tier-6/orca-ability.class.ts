@@ -45,8 +45,6 @@ export class OrcaAbility extends Ability {
                     randomEvent: true,
                     pteranodon: pteranodon
                 });
-
-                this.abilityService.triggerFriendSummonedEvents(faintPet);
             }
         }
 

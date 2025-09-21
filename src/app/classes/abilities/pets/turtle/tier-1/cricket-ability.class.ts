@@ -45,8 +45,6 @@ export class CricketAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(zombie);
         }
 
         // Tiger system: trigger Tiger execution at the end

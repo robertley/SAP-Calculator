@@ -34,9 +34,7 @@ export class CodRoe extends Equipment {
                     player: pet.parent
                 });
                 
-                if (pet.parent.summonPet(fish, pet.savedPosition)) {
-                    this.abilityService.triggerFriendSummonedEvents(fish);
-                }
+                pet.parent.summonPet(fish, pet.savedPosition);
             }
         }
     }

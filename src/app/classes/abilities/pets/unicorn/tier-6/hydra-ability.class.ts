@@ -43,8 +43,6 @@ export class HydraAbility extends Ability {
                     pteranodon: pteranodon,
                     randomEvent: summonResult.randomEvent
                 });
-
-                this.abilityService.triggerFriendSummonedEvents(head);
             }
         }
 

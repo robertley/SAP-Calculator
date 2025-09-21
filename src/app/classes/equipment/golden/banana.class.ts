@@ -36,9 +36,7 @@ export class Banana extends Equipment {
                         player: pet.parent
                     }
                 )
-                if (pet.parent.summonPet(monke, pet.savedPosition)) {
-                    this.abilityService.triggerFriendSummonedEvents(monke);
-                }
+                pet.parent.summonPet(monke, pet.savedPosition);
             }
         }
     }

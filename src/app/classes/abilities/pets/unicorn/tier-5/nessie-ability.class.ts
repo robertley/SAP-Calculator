@@ -59,8 +59,6 @@ export class NessieAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(nessieQ);
         }
 
         // Tiger system: trigger Tiger execution at the end

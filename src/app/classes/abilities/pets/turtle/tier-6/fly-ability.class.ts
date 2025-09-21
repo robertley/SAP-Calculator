@@ -47,7 +47,6 @@ export class FlyAbility extends Ability {
                 tiger: tiger,
                 randomEvent: summonResult.randomEvent
             });
-            this.abilityService.triggerFriendSummonedEvents(zombie);
         }
 
         // Tiger system: trigger Tiger execution at the end

@@ -55,8 +55,6 @@ export class SabertoothTigerAbility extends Ability {
                         pteranodon: pteranodon,
                         randomEvent: summonResult.randomEvent
                     });
-
-                    this.abilityService.triggerFriendSummonedEvents(mammoth);
                 }
             }
         }

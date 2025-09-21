@@ -364,22 +364,8 @@ export class ToyService {
         pet.health -= damage;
 
         // hurt ability
-        if (pet.hurt != null && damage > 0) {
-            this.abilityService.setHurtEvent({
-                callback: pet.hurt.bind(pet),
-                priority: pet.attack,
-                player: pet.parent,
-                pet: pet 
-            })
-        }
-        // friend hurt ability
         if (damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
-        }
-
-        // enemy hurt ability
-        if (damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(ToyParent, pet);
+            this.abilityService.triggerHurtEvents(pet);
         }
     }
     getManticoreMult(parent: Player): number[] {

@@ -346,18 +346,6 @@ export class AbilityService {
 
     }
 
-
-    // Trigger start battle events for new system
-    triggerStartBattleEvents(player: Player) {
-        for (let pet of player.petArray) {
-            this.setStartBattleEvent({
-                priority: pet.attack,
-                callback: () => { pet.executeAbilities('StartBattle', this.gameApi); },
-                pet: pet
-            });
-        }
-    }
-
     // Helper method to trigger abilities in the new system
     private triggerAbility(pet: Pet, trigger: AbilityTrigger, triggerPet?: Pet): void {
         if (pet.hasTrigger(trigger)) {
@@ -469,276 +457,68 @@ export class AbilityService {
                 return;
             }
         }
-        
         event.callback(event.abilityType, gameApi,event.triggerPet);
     }
 
     // End of Turn Events
 
-    initEndTurnEvents(player: Player) {
-        let endTurnEvents: AbilityEvent[] = [];
+    initParrotAbility(player: Player) {
         for (let pet of player.petArray) {
-            if (pet.endTurn) {
-                endTurnEvents.push({
-                    callback: pet.endTurn.bind(pet),
+            if (pet.hasTrigger('Parrot')) {
+                pet.executeAbilities('Parrot', this.gameService.gameApi)
+            }
+        }
+    }
+
+    // before start of battle
+
+    triggerBeforeStartOfBattleEvents(player: Player) {
+        // New trigger system
+        //this.triggerAbility(player.petArray, 'BeforeStartBattle');
+
+        // Legacy system for backwards compatibility
+        for (let pet of player.petArray) {
+            if (pet.beforeStartOfBattle != null) {
+                this.setBeforeStartOfBattleEvent({
+                    callback: pet.beforeStartOfBattle.bind(pet),
                     priority: pet.attack,
+                    pet: pet,
                     player: player
                 })
             }
         }
+    }
 
-        endTurnEvents = shuffle(endTurnEvents);
+    setBeforeStartOfBattleEvent(event: AbilityEvent) {
+        this.beforeStartOfBattleEvents.push(event);
+    }
 
-        endTurnEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+    resetBeforeStartOfBattleEvents() {
+        this.beforeStartOfBattleEvents = [];
+    }
 
-        for (let event of endTurnEvents) {
+    executeBeforeStartOfBattleEvents() {
+        // shuffle, so that same priority events are in random order
+        this.beforeStartOfBattleEvents = shuffle(this.beforeStartOfBattleEvents);
+
+        this.beforeStartOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.beforeStartOfBattleEvents) {
             event.callback(this.gameService.gameApi);
         }
+        
+        this.resetBeforeStartOfBattleEvents();
     }
     //counter
     setCounterEvent(event: AbilityEvent) {
         event.abilityType = 'counter';
         this.addEventToQueue(event);
     }
-
-    // Hurt
-    setHurtEvent(event: AbilityEvent) {
-        event.abilityType = 'hurt';
-        this.addEventToQueue(event);
-    }
-
-    // Faint
-    setFaintEvent(event: AbilityEvent) {
-        event.abilityType = 'faint';
-        this.addEventToQueue(event);
-    }
-
-    // New trigger system event methods
-    setThisDiedEvent(event: AbilityEvent) {
-        event.abilityType = 'ThisDied';
-        this.addEventToQueue(event);
-    }
-
-
-    setThisAttackedEvent(event: AbilityEvent) {
-        event.abilityType = 'thisAttacked';
-        this.addEventToQueue(event);
-    }
-
+    //sob events
     setStartBattleEvent(event: AbilityEvent) {
         event.abilityType = 'startBattle';
         this.addEventToQueue(event);
     }
-
-    // Consolidated summon events handler
-    triggerSummonEvents(summonedPet: Pet) {
-        // Trigger toy events for friend summons
-        this.triggerFriendSummonedToyEvents(summonedPet.parent, summonedPet);
-
-        // Check friends (if this is a friend summon)
-        for (let pet of summonedPet.parent.petArray) {
-            if (pet == summonedPet) {
-                this.triggerAbility(pet, 'ThisSummoned', summonedPet);
-            } else {
-                this.triggerAbility(pet, 'FriendSummoned', summonedPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('FriendSummoned2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned2', summonedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendSummoned3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned3', summonedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendSummoned4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned4', summonedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendSummoned5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned5', summonedPet);
-                    }
-                }
-                                // Special summon types
-                if (summonedPet.name === 'Bee') {
-                    this.triggerAbility(pet, 'BeeSummoned', summonedPet);
-                }
-            }
-        }
-
-        // Check enemies (if this is an enemy summon)
-        for (let pet of summonedPet.parent.opponent.petArray) {
-            this.triggerAbility(pet, 'EnemySummoned', summonedPet);
-        }
-    } 
-
-    // Legacy method - use triggerSummonEvents instead
-    triggerFriendSummonedEvents(summonedPet: Pet) {
-        this.triggerSummonEvents(summonedPet);
-    }
-
-    // Summoned (legacy)
-    setSummonedEvent(event: AbilityEvent) {
-        event.abilityType = 'summoned';
-        this.addEventToQueue(event);
-    }
-
-    setFriendSummonedEvent(event: AbilityEvent) {
-        event.abilityType = 'friendSummoned';
-        this.addEventToQueue(event);
-    }
-
-
-    // after attacks events
-    
-    setAfterAttackEvent(event: AbilityEvent) {
-        this.afterAttackEvents.push(event);
-    }
-
-    resetAfterAttackEvents() {
-        this.afterAttackEvents = [];
-    }
-
-    executeAfterAttackEvents() {
-        // shuffle, so that same priority events are in random order
-        this.afterAttackEvents = shuffle(this.afterAttackEvents);
-
-        this.afterAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.afterAttackEvents) {
-            event.callback(this.gameService.gameApi);
-        }
-        
-        this.resetAfterAttackEvents();
-    }
-
-    // friend ahead feints events
-    
-    setFriendAheadFaintsEvent(event: AbilityEvent) {
-        event.abilityType = 'friendAheadFaints';
-        this.addEventToQueue(event);
-    }
-
-    // knockout events
-    
-    setKnockOutEvent(event: AbilityEvent) {
-        event.abilityType = 'knockOut';
-        this.addEventToQueue(event);
-    }
-
-    triggerFaintEvents(faintedPet: Pet) {
-        // Check friends
-        for (let pet of faintedPet.parent.petArray) {
-            this.triggerAbility(pet, 'PetDied', faintedPet);
-            if (pet == faintedPet) {
-                this.triggerAbility(pet, 'BeforeThisDies', faintedPet);
-            } 
-            // Check for FriendAheadDied (pet ahead of the dying pet)
-            if (pet == faintedPet.petAhead) {
-                this.triggerAbility(pet, 'FriendAheadDied', faintedPet);
-            }
-            // Check for AdjacentFriendsDie
-            if (pet == faintedPet.petAhead || pet == faintedPet.petBehind()) {
-                this.triggerAbility(pet, 'AdjacentFriendsDie', faintedPet);
-            }
-        }
-    }
-    triggerAfterFaintEvents(faintedPet: Pet) {
-        // Trigger toy events for friend faints
-        this.triggerFriendFaintsToyEvents(faintedPet.parent, faintedPet);
-
-        // Check friends
-        for (let pet of faintedPet.parent.petArray) {
-            this.triggerAbility(pet, 'PetDied', faintedPet);
-            if (pet == faintedPet) {
-                this.triggerAbility(pet, 'ThisDied', faintedPet);
-            } else {
-                this.triggerAbility(pet, 'FriendDied', faintedPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('TwoFriendsDied')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'TwoFriendsDied', faintedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendDied3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendDied3', faintedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendDied4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'FriendDied4', faintedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendDied5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendDied5', faintedPet);
-                    }
-                }
-            }
-        }
-
-        // Check enemies
-        for (let pet of faintedPet.parent.opponent.petArray.filter(p => p.alive)) {
-            this.triggerAbility(pet, 'EnemyDied', faintedPet);
-            this.triggerAbility(pet, 'PetDied', faintedPet);
-            // Counter checks - first verify pet has the counter ability
-            if (pet.hasTrigger('EnemyFaint2')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 2 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint2', faintedPet);
-                }
-            }
-            if (pet.hasTrigger('EnemyFaint3')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 3 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint3', faintedPet);
-                }
-            }
-            if (pet.hasTrigger('EnemyFaint4')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 4 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint4', faintedPet);
-                }
-            }
-            if (pet.hasTrigger('EnemyFaint5')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 5 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint5', faintedPet);
-                }
-            }
-        }
-    }
-    // Legacy methods - use triggerDeathEvents instead
-    triggerFriendFaintsEvents(faintedPet: Pet) {
-        this.triggerAfterFaintEvents(faintedPet);
-    }
-
-    triggerEnemyFaintsEvents(faintedPet: Pet) {
-        this.triggerAfterFaintEvents(faintedPet);
-    }
-
-    setFriendFaintsEvent(event: AbilityEvent) {
-        event.abilityType = 'friendFaints';
-        this.addEventToQueue(event);
-    }
-
-    setenemyFaintsEvent(event: AbilityEvent) {
-        event.abilityType = 'enemyFaints';
-        this.addEventToQueue(event);
-    }
-
     // before attack
 
     setBeforeAttackEvent(event: AbilityEvent) {
@@ -843,36 +623,303 @@ export class AbilityService {
     get hasEquipmentBeforeAttackEvents() {
         return this.equipmentBeforeAttackEvents.length > 0;
     }
+    // before friend attacks events
 
-    // friend lost perk
-    triggerFriendLostPerkEvents(perkPet: Pet) {
-        for (let pet of perkPet.parent.petArray) {
-            // if (pet == perkPet) {
-            //      return;
-            // }
-            if (pet.friendLostPerk != null) {
-                this.setFriendLostPerkEvent({
-                    callback: pet.friendLostPerk.bind(pet),
+    triggerBeforeFriendAttacksEvents(player: Player, attackingPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet === attackingPet) {
+                continue;
+            }
+            if (pet.beforeFriendAttacks != null) {
+                this.setBeforeFriendAttacksEvent({
+                    callback: pet.beforeFriendAttacks.bind(pet),
                     priority: pet.attack,
                     pet: pet,
-                    triggerPet: perkPet
+                    triggerPet: attackingPet
+                });
+            }
+        }
+    }
+    
+    setBeforeFriendAttacksEvent(event: AbilityEvent) {
+        this.beforeFriendAttacksEvents.push(event);
+    }
+    
+    private resetBeforeFriendAttacksEvents() {
+        this.beforeFriendAttacksEvents = [];
+    }
+    
+    executeBeforeFriendAttacksEvents() {
+        // shuffle, so that same priority events are in random order
+        this.beforeFriendAttacksEvents = shuffle(this.beforeFriendAttacksEvents);
+    
+        this.beforeFriendAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+    
+        for (let event of this.beforeFriendAttacksEvents) {
+            event.callback(this.gameService.gameApi, event.triggerPet, false);
+        }
+        
+        this.resetBeforeFriendAttacksEvents();
+    }
+    // friend attacks events
+
+    triggerFriendAttacksEvents(player: Player, attacksPet: Pet) {
+        // Add friendAttacks to unified system
+        for (let pet of player.petArray) {
+            if (pet == attacksPet) {
+                continue;
+            }
+            if (pet.friendAttacks != null) {
+                this.setAfterFriendAttackEvent({
+                    callback: () => pet.friendAttacks(this.gameApi, attacksPet, false),
+                    priority: pet.attack,
+                    pet: pet,
+                    triggerPet: attacksPet,
+                    abilityType: 'friendAttacks'
                 })
+            }
+        }
+        
+        // Add friendAheadAttacks to unified system
+        if (attacksPet.petBehind(null, true)?.friendAheadAttacks != null) {
+            this.setAfterFriendAttackEvent({
+                callback: attacksPet.petBehind(null, true).friendAheadAttacks.bind(attacksPet.petBehind(null, true)),
+                priority: attacksPet.petBehind(null, true).attack,
+                pet: attacksPet.petBehind(null, true),
+                triggerPet: attacksPet,
+                abilityType: 'friendAheadAttacks'
+            });
+        }
+        
+        // Add adjacentAttacked to unified system
+        // Check pet ahead
+        if (attacksPet.petAhead?.adjacentAttacked != null) {
+            this.setAfterFriendAttackEvent({
+                callback: () => attacksPet.petAhead.adjacentAttacked(this.gameApi, attacksPet),
+                priority: attacksPet.petAhead.attack,
+                pet: attacksPet.petAhead,
+                triggerPet: attacksPet,
+                abilityType: 'adjacentFriendAttacks'
+            });
+        }
+        // Check pet behind
+        if (attacksPet.petBehind(null, true)?.adjacentAttacked != null) {
+            this.setAfterFriendAttackEvent({
+                callback: () => attacksPet.petBehind(null, true).adjacentAttacked(this.gameApi, attacksPet),
+                priority: attacksPet.petBehind(null, true).attack,
+                pet: attacksPet.petBehind(null, true),
+                triggerPet: attacksPet,
+                abilityType: 'adjacentFriendAttacks'
+            });
+        }
+        
+        // Trigger enemy attack events for the opponent
+        this.triggerEnemyAttackEvents(attacksPet.parent.opponent, attacksPet);
+    }
+    // unified after friend attack events (combines friendAttacks, friendAheadAttacks, enemyAttacks)
+        
+    setAfterFriendAttackEvent(event: AbilityEvent) {
+        this.afterFriendAttackEvents.push(event);
+    }
+
+    resetAfterFriendAttackEvents() {
+        this.afterFriendAttackEvents = [];
+    }
+
+    executeAfterFriendAttackEvents() {
+        // shuffle, so that same priority events are in random order
+        this.afterFriendAttackEvents = shuffle(this.afterFriendAttackEvents);
+
+        // Sort by pet attack priority (higher attack = higher priority)
+        this.afterFriendAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.afterFriendAttackEvents) {
+            event.callback(this.gameService.gameApi, event.triggerPet, false);
+        }
+        
+        this.resetAfterFriendAttackEvents();
+    }
+
+    // enemy attack events
+
+    triggerEnemyAttackEvents(player: Player, attackingEnemyPet: Pet) {
+        for (let pet of player.petArray) {
+            if (pet.enemyAttack != null) {
+                this.setAfterFriendAttackEvent({
+                    callback: pet.enemyAttack.bind(pet),
+                    priority: pet.attack,
+                    pet: pet,
+                    triggerPet: attackingEnemyPet,
+                    abilityType: 'enemyAttack'
+                });
+            }
+        }
+    }
+    // after attacks events
+    setAfterAttackEvent(event: AbilityEvent) {
+        this.afterAttackEvents.push(event);
+    }
+
+    resetAfterAttackEvents() {
+        this.afterAttackEvents = [];
+    }
+
+    executeAfterAttackEvents() {
+        // shuffle, so that same priority events are in random order
+        this.afterAttackEvents = shuffle(this.afterAttackEvents);
+
+        this.afterAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (let event of this.afterAttackEvents) {
+            event.callback(this.gameService.gameApi);
+        }
+        
+        this.resetAfterAttackEvents();
+    }
+
+    // Consolidated summon events handler
+    triggerSummonEvents(summonedPet: Pet) {
+        // Trigger toy events for friend summons
+        this.triggerFriendSummonedToyEvents(summonedPet.parent, summonedPet);
+
+        // Check friends (if this is a friend summon)
+        for (let pet of summonedPet.parent.petArray) {
+            if (pet == summonedPet) {
+                this.triggerAbility(pet, 'ThisSummoned', summonedPet);
+            } else {
+                this.triggerAbility(pet, 'FriendSummoned', summonedPet);
+                // Counter checks - first verify pet has the counter ability
+                if (pet.hasTrigger('FriendSummoned2')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 2 == 0) {
+                        this.triggerAbility(pet, 'FriendSummoned2', summonedPet);
+                    }
+                }
+                if (pet.hasTrigger('FriendSummoned3')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 3 == 0) {
+                        this.triggerAbility(pet, 'FriendSummoned3', summonedPet);
+                    }
+                }
+                if (pet.hasTrigger('FriendSummoned4')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 4 == 0) {
+                        this.triggerAbility(pet, 'FriendSummoned4', summonedPet);
+                    }
+                }
+                if (pet.hasTrigger('FriendSummoned5')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 5 == 0) {
+                        this.triggerAbility(pet, 'FriendSummoned5', summonedPet);
+                    }
+                }
+                                // Special summon types
+                if (summonedPet.name === 'Bee') {
+                    this.triggerAbility(pet, 'BeeSummoned', summonedPet);
+                }
+            }
+        }
+
+        // Check enemies (if this is an enemy summon)
+        for (let pet of summonedPet.parent.opponent.petArray) {
+            this.triggerAbility(pet, 'EnemySummoned', summonedPet);
+        }
+    } 
+
+    // Legacy method - use triggerSummonEvents instead
+    triggerFriendSummonedEvents(summonedPet: Pet) {
+        this.triggerSummonEvents(summonedPet);
+    }
+
+    triggerFaintEvents(faintedPet: Pet) {
+        // Check friends
+        for (let pet of faintedPet.parent.petArray) {
+            this.triggerAbility(pet, 'PetDied', faintedPet);
+            if (pet == faintedPet) {
+                this.triggerAbility(pet, 'BeforeThisDies', faintedPet);
+            } 
+            // Check for FriendAheadDied (pet ahead of the dying pet)
+            if (pet == faintedPet.petAhead) {
+                this.triggerAbility(pet, 'FriendAheadDied', faintedPet);
+            }
+            // Check for AdjacentFriendsDie
+            if (pet == faintedPet.petAhead || pet == faintedPet.petBehind()) {
+                this.triggerAbility(pet, 'AdjacentFriendsDie', faintedPet);
+            }
+        }
+    }
+    triggerAfterFaintEvents(faintedPet: Pet) {
+        // Trigger toy events for friend faints
+        this.triggerFriendFaintsToyEvents(faintedPet.parent, faintedPet);
+
+        // Check friends
+        for (let pet of faintedPet.parent.petArray) {
+            this.triggerAbility(pet, 'PetDied', faintedPet);
+            if (pet == faintedPet) {
+                this.triggerAbility(pet, 'ThisDied', faintedPet);
+            } else {
+                this.triggerAbility(pet, 'FriendDied', faintedPet);
+                // Counter checks - first verify pet has the counter ability
+                if (pet.hasTrigger('TwoFriendsDied')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 2 == 0) {
+                        this.triggerAbility(pet, 'TwoFriendsDied', faintedPet);
+                    }
+                }
+                if (pet.hasTrigger('FriendDied3')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 3 == 0) {
+                        this.triggerAbility(pet, 'FriendDied3', faintedPet);
+                    }
+                }
+                if (pet.hasTrigger('FriendDied4')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 4 == 0) {
+                        this.triggerAbility(pet, 'FriendDied4', faintedPet);
+                    }
+                }
+                if (pet.hasTrigger('FriendDied5')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 5 == 0) {
+                        this.triggerAbility(pet, 'FriendDied5', faintedPet);
+                    }
+                }
+            }
+        }
+
+        // Check enemies
+        for (let pet of faintedPet.parent.opponent.petArray.filter(p => p.alive)) {
+            this.triggerAbility(pet, 'EnemyDied', faintedPet);
+            this.triggerAbility(pet, 'PetDied', faintedPet);
+            // Counter checks - first verify pet has the counter ability
+            if (pet.hasTrigger('EnemyFaint2')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 2 == 0) {
+                    this.triggerAbility(pet, 'EnemyFaint2', faintedPet);
+                }
+            }
+            if (pet.hasTrigger('EnemyFaint3')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 3 == 0) {
+                    this.triggerAbility(pet, 'EnemyFaint3', faintedPet);
+                }
+            }
+            if (pet.hasTrigger('EnemyFaint4')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 4 == 0) {
+                    this.triggerAbility(pet, 'EnemyFaint4', faintedPet);
+                }
+            }
+            if (pet.hasTrigger('EnemyFaint5')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 5 == 0) {
+                    this.triggerAbility(pet, 'EnemyFaint5', faintedPet);
+                }
             }
         }
     }
 
-    setFriendLostPerkEvent(event: AbilityEvent) {
-        event.abilityType = 'friendLostPerk';
-        this.addEventToQueue(event);
-    }
-    //eats Food
-
-    setEatsFoodEvent(event: AbilityEvent) {
-        event.abilityType = 'eatsFood';
-        this.addEventToQueue(event);
-    }
-
-    // Consolidated food events handler
+    //food events handler
     triggerFoodEvents(eatingPet: Pet, foodType?: string) {
         // Check friends
         for (let pet of eatingPet.parent.petArray) {
@@ -932,63 +979,7 @@ export class AbilityService {
         }
     }
 
-    // Legacy method - use triggerFoodEvents instead
-    triggerFriendAteFoodEvents(foodPet: Pet) {
-        this.triggerFoodEvents(foodPet);
-    }
-
-    setFriendAteFoodEvent(event: AbilityEvent) {
-        event.abilityType = 'friendAteFood';
-        this.addEventToQueue(event);
-    }
-
-    // gained perk
-
-    triggerGainedPerkEvents(perkPet: Pet) {
-        for (let pet of perkPet.parent.petArray) {
-            if (pet != perkPet) {
-                 continue;
-            }
-            if (pet.gainedPerk != null) {
-                this.setGainedPerkEvent({
-                    callback: pet.gainedPerk.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: perkPet
-                })
-            }
-        }
-    }
-
-    setGainedPerkEvent(event: AbilityEvent) {
-        event.abilityType = 'gainPerk';
-        this.addEventToQueue(event);
-    }
-
-    // friend gained perk
-
-    triggerFriendGainedPerkEvents(perkPet: Pet) {
-        for (let pet of perkPet.parent.petArray) {
-            // if (pet == perkPet) {
-            //      return;
-            // }
-            if (pet.friendGainedPerk != null) {
-                this.setFriendGainedPerkEvent({
-                    callback: pet.friendGainedPerk.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: perkPet
-                })
-            }
-        }
-    }
-
-    setFriendGainedPerkEvent(event: AbilityEvent) {
-        event.abilityType = 'friendGainedPerk';
-        this.addEventToQueue(event);
-    }
-
-    // Consolidated perk gain events handler
+    // perk gain events handler
     triggerPerkGainEvents(perkPet: Pet, perkType?: string) {
         // Check friends
         for (let pet of perkPet.parent.petArray) {
@@ -1012,7 +1003,7 @@ export class AbilityService {
         }
     }
 
-    // Consolidated perk loss events handler
+    // perk loss events handler
     triggerPerkLossEvents(perkPet: Pet, perkType?: string) {
         // Check friends
         for (let pet of perkPet.parent.petArray) {
@@ -1036,89 +1027,8 @@ export class AbilityService {
             this.triggerAbility(pet, 'PetLostPerk', perkPet);
         }
     }
-
-    // before start of battle
-
-    triggerBeforeStartOfBattleEvents(player: Player) {
-        // New trigger system
-        //this.triggerAbility(player.petArray, 'BeforeStartBattle');
-
-        // Legacy system for backwards compatibility
-        for (let pet of player.petArray) {
-            if (pet.beforeStartOfBattle != null) {
-                this.setBeforeStartOfBattleEvent({
-                    callback: pet.beforeStartOfBattle.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    player: player
-                })
-            }
-        }
-    }
-
-    setBeforeStartOfBattleEvent(event: AbilityEvent) {
-        this.beforeStartOfBattleEvents.push(event);
-    }
-
-    resetBeforeStartOfBattleEvents() {
-        this.beforeStartOfBattleEvents = [];
-    }
-
-    executeBeforeStartOfBattleEvents() {
-        // shuffle, so that same priority events are in random order
-        this.beforeStartOfBattleEvents = shuffle(this.beforeStartOfBattleEvents);
-
-        this.beforeStartOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.beforeStartOfBattleEvents) {
-            event.callback(this.gameService.gameApi);
-        }
-        
-        this.resetBeforeStartOfBattleEvents();
-    }
-
-    // friend gained ailment
-    
-    // triggerFriendGainedAilmentEvents(perkPet: Pet) {
-    //     for (let pet of perkPet.parent.petArray) {
-    //         if (pet.friendGainedAilment != null) {
-    //             this.setFriendGainedAilmentEvent({
-    //                 callback: pet.friendGainedAilment.bind(pet),
-    //                 priority: pet.attack,
-    //                 pet: pet,
-    //                 triggerPet: perkPet
-    //             })
-    //         }
-    //     }
-    // }
-
-    setFriendGainedAilmentEvent(event: AbilityEvent) {
-        event.abilityType = 'friendGainedAilment';
-        this.addEventToQueue(event);
-    }
-
-    // enemy gained ailment
-    
-    // triggerEnemyGainedAilmentEvents(opponentPets: Pet[], perkPet: Pet) {
-    //     for (let pet of opponentPets) {
-    //         if (pet.enemyGainedAilment != null) {
-    //             this.setEnemyGainedAilmentEvent({
-    //                 callback: pet.enemyGainedAilment.bind(pet),
-    //                 priority: pet.attack,
-    //                 pet: pet,
-    //                 triggerPet: perkPet
-    //             })
-    //         }
-    //     }
-    // }
-
-    setEnemyGainedAilmentEvent(event: AbilityEvent) {
-        event.abilityType = 'enemyGainedAilment';
-        this.addEventToQueue(event);
-    }
-
-    // Consolidated ailment events handler
-    triggerAilmentEvents(ailmentPet: Pet, ailmentType?: string) {
+    // ailment events handler
+    triggerAilmentGainEvents(ailmentPet: Pet, ailmentType?: string) {
         // Check friends
         for (let pet of ailmentPet.parent.petArray) {
             //this.triggerAbility(pet, 'PetGainedAilment', ailmentPet);
@@ -1145,22 +1055,7 @@ export class AbilityService {
         }
     }
 
-    // Legacy methods - use triggerAilmentEvents instead
-    triggerFriendGainedAilmentEvents(perkPet: Pet) {
-        this.triggerAilmentEvents(perkPet);
-    }
-
-    triggerEnemyGainedAilmentEvents(opponentPets: Pet[], perkPet: Pet) {
-        this.triggerAilmentEvents(perkPet);
-    }
-
-
-    setFriendlyToyBrokeEvent(event: AbilityEvent) {
-        event.abilityType = 'friendlyToyBroke';
-        this.addEventToQueue(event);
-    }
-
-    // Consolidated transform events handler
+    // transform events handler
     triggerTransformEvents(transformedPet: Pet) {
         // Check friends
         for (let pet of transformedPet.parent.petArray) {
@@ -1184,36 +1079,6 @@ export class AbilityService {
             }
         }
     }
-
-    // Legacy methods - use triggerTransformEvents instead
-    triggerFriendTransformedEvents(player: Player, transformedPet: Pet) {
-        this.triggerTransformEvents(transformedPet);
-    }
-
-    setTransformEvent(event: AbilityEvent) {
-        event.abilityType = 'transform';
-        this.addEventToQueue(event);
-    }
-
-    setFriendTransformedEvent(event: AbilityEvent) {
-        event.abilityType = 'friendTransformed';
-        this.addEventToQueue(event);
-    }
-
-    // enemy summoned
-
-    // Legacy method - use triggerSummonEvents instead
-    triggerEnemySummonedEvents(player: Player, summonPet: Pet) {
-        this.triggerSummonEvents(summonPet);
-    }
-
-    setEnemySummonedEvent(event: AbilityEvent) {
-        event.abilityType = 'enemySummoned';
-        this.addEventToQueue(event);
-    }
-
-    // enemy pushed events
-
     // Consolidated movement events handler
     triggerFlungEvents(movedPet: Pet) {
         // Handle friend fling events
@@ -1234,11 +1099,6 @@ export class AbilityService {
         for (let pet of pushedPet.parent.opponent.petArray) {
             this.triggerAbility(pet, 'EnemyPushed', pushedPet);
         }
-    }
-
-    setEnemyPushedEvent(event: AbilityEvent) {
-        event.abilityType = 'enemyPushed';
-        this.addEventToQueue(event);
     }
 
     // Consolidated kill events handler
@@ -1302,33 +1162,7 @@ export class AbilityService {
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet);
         }
     }
-    // friend hurt events
-
-    triggerFriendHurtEvents(player: Player, hurtPet: Pet) {
-        // New trigger system
-        //this.triggerAbility(player.petArray, 'FriendHurt', hurtPet);
-
-        // Legacy system for backwards compatibility
-        for (let pet of player.petArray) {
-            if (pet.friendHurt != null) {
-                this.setFriendHurtEvent({
-                    callback: pet.friendHurt.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: hurtPet
-                })
-            }
-        }
-    }
-    
-    setFriendHurtEvent(event: AbilityEvent) {
-        event.abilityType = 'friendHurt';
-        this.addEventToQueue(event);
-    }
-
-    // levl up events
-
-    // Consolidated level up events handler
+    // level up events handler
     triggerLevelUpEvents(levelUpPet: Pet) {
         let player = levelUpPet.parent;
         // Trigger toy events for friendly level ups
@@ -1358,11 +1192,6 @@ export class AbilityService {
         }
     }
 
-    setLevelUpEvent(event: AbilityEvent) {
-        event.abilityType = 'levelUp';
-        this.addEventToQueue(event);
-    }
-    // Legacy methods - use triggerSpecialEvents instead
     triggerEmptyFrontSpaceEvents(player: Player) {
         for (let pet of player.petArray) {
             this.triggerAbility(pet, 'ClearFront');
@@ -1375,176 +1204,7 @@ export class AbilityService {
         }
     }
 
-    setEmptyFrontSpaceEvent(event: AbilityEvent) {
-        event.abilityType = 'emptyFrontSpace';
-        this.addEventToQueue(event);
-    }
-
-    // enemy hurt events
-
-    /**
-     * 
-     * @param player opposite player of the pet that was hurt
-     * @param pet pet that was hurt
-     */
-    triggerEnemyHurtEvents(player: Player, hurtPet: Pet) {
-        // New trigger system
-        //this.triggerAbility(player.petArray, 'EnemyHurt', hurtPet);
-
-        // Legacy system for backwards compatibility
-        for (let pet of player.petArray) {
-            if (pet.enemyHurt != null) {
-                this.setEnemyHurtEvent({
-                    callback: pet.enemyHurt.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: hurtPet
-                })
-            }
-        }
-    }
-    
-    setEnemyHurtEvent(event: AbilityEvent) {
-        event.abilityType = 'enemyHurt';
-        this.addEventToQueue(event);
-    }
-
-    // friend attacks events
-
-    triggerFriendAttacksEvents(player: Player, attacksPet: Pet) {
-        // Add friendAttacks to unified system
-        for (let pet of player.petArray) {
-            if (pet == attacksPet) {
-                continue;
-            }
-            if (pet.friendAttacks != null) {
-                this.setAfterFriendAttackEvent({
-                    callback: () => pet.friendAttacks(this.gameApi, attacksPet, false),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: attacksPet,
-                    abilityType: 'friendAttacks'
-                })
-            }
-        }
-        
-        // Add friendAheadAttacks to unified system
-        if (attacksPet.petBehind(null, true)?.friendAheadAttacks != null) {
-            this.setAfterFriendAttackEvent({
-                callback: attacksPet.petBehind(null, true).friendAheadAttacks.bind(attacksPet.petBehind(null, true)),
-                priority: attacksPet.petBehind(null, true).attack,
-                pet: attacksPet.petBehind(null, true),
-                triggerPet: attacksPet,
-                abilityType: 'friendAheadAttacks'
-            });
-        }
-        
-        // Add adjacentAttacked to unified system
-        // Check pet ahead
-        if (attacksPet.petAhead?.adjacentAttacked != null) {
-            this.setAfterFriendAttackEvent({
-                callback: () => attacksPet.petAhead.adjacentAttacked(this.gameApi, attacksPet),
-                priority: attacksPet.petAhead.attack,
-                pet: attacksPet.petAhead,
-                triggerPet: attacksPet,
-                abilityType: 'adjacentFriendAttacks'
-            });
-        }
-        // Check pet behind
-        if (attacksPet.petBehind(null, true)?.adjacentAttacked != null) {
-            this.setAfterFriendAttackEvent({
-                callback: () => attacksPet.petBehind(null, true).adjacentAttacked(this.gameApi, attacksPet),
-                priority: attacksPet.petBehind(null, true).attack,
-                pet: attacksPet.petBehind(null, true),
-                triggerPet: attacksPet,
-                abilityType: 'adjacentFriendAttacks'
-            });
-        }
-        
-        // Trigger enemy attack events for the opponent
-        this.triggerEnemyAttackEvents(attacksPet.parent.opponent, attacksPet);
-    }
-
-    // before friend attacks events
-
-    triggerBeforeFriendAttacksEvents(player: Player, attackingPet: Pet) {
-        for (let pet of player.petArray) {
-            if (pet === attackingPet) {
-                continue;
-            }
-            if (pet.beforeFriendAttacks != null) {
-                this.setBeforeFriendAttacksEvent({
-                    callback: pet.beforeFriendAttacks.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: attackingPet
-                });
-            }
-        }
-    }
-    
-    setBeforeFriendAttacksEvent(event: AbilityEvent) {
-        this.beforeFriendAttacksEvents.push(event);
-    }
-    
-    private resetBeforeFriendAttacksEvents() {
-        this.beforeFriendAttacksEvents = [];
-    }
-    
-    executeBeforeFriendAttacksEvents() {
-        // shuffle, so that same priority events are in random order
-        this.beforeFriendAttacksEvents = shuffle(this.beforeFriendAttacksEvents);
-    
-        this.beforeFriendAttacksEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-    
-        for (let event of this.beforeFriendAttacksEvents) {
-            event.callback(this.gameService.gameApi, event.triggerPet, false);
-        }
-        
-        this.resetBeforeFriendAttacksEvents();
-    }
-
-    // unified after friend attack events (combines friendAttacks, friendAheadAttacks, enemyAttacks)
-    
-    setAfterFriendAttackEvent(event: AbilityEvent) {
-        this.afterFriendAttackEvents.push(event);
-    }
-
-    resetAfterFriendAttackEvents() {
-        this.afterFriendAttackEvents = [];
-    }
-
-    executeAfterFriendAttackEvents() {
-        // shuffle, so that same priority events are in random order
-        this.afterFriendAttackEvents = shuffle(this.afterFriendAttackEvents);
-
-        // Sort by pet attack priority (higher attack = higher priority)
-        this.afterFriendAttackEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.afterFriendAttackEvents) {
-            event.callback(this.gameService.gameApi, event.triggerPet, false);
-        }
-        
-        this.resetAfterFriendAttackEvents();
-    }
-
-    // enemy attack events
-    
-    triggerEnemyAttackEvents(player: Player, attackingEnemyPet: Pet) {
-        for (let pet of player.petArray) {
-            if (pet.enemyAttack != null) {
-                this.setAfterFriendAttackEvent({
-                    callback: pet.enemyAttack.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: attackingEnemyPet,
-                    abilityType: 'enemyAttack'
-                });
-            }
-        }
-    }
-
-    // Consolidated jump events handler
+    // jump events handler
     triggerJumpEvents(jumpPet: Pet) {
         // Trigger toy events for friend jumps
         this.triggerFriendJumpedToyEvents(jumpPet.parent, jumpPet);
@@ -1578,106 +1238,31 @@ export class AbilityService {
         }
     }
 
-    // Legacy methods - use triggerJumpEvents instead
-    triggerFriendJumpedEvents(player: Player, jumpPet: Pet) {
-        this.triggerJumpEvents(jumpPet);
-    }
-
-    triggerEnemyJumpedEvents(player: Player, jumpPet: Pet) {
-        this.triggerJumpEvents(jumpPet);
-    }
-
-    setFriendJumpedEvent(event: AbilityEvent) {
-        event.abilityType = 'friendJumped';
-        this.addEventToQueue(event);
-    }
-
-    setEnemyJumpedEvent(event: AbilityEvent) {
-        event.abilityType = 'enemyJumped';
-        this.addEventToQueue(event);
-    }
-
-    // Consolidated mana events handler
+    // mana events handler
     triggerManaGainedEvents(manaPet: Pet) {
         // Handle ThisGainedMana for the pet gaining mana
         this.triggerAbility(manaPet, 'ThisGainedMana', manaPet);
     }
 
-    // Legacy methods
     setManaEvent(event: AbilityEvent) {
         event.abilityType = 'manaSnipe';
         this.addEventToQueue(event);
     }
+    // friend gains health events placeHolder
+    triggerFriendGainsHealthEvents(healthPet: Pet) {
 
-    setGainManaEvents(event: AbilityEvent) {
-        event.abilityType = 'gainsMana';
-        this.addEventToQueue(event);
     }
-
-    // friend gains health events
-    triggerFriendGainsHealthEvents(player: Player, healthPet: Pet) {
-        for (let pet of player.petArray) {
-            if (pet == healthPet) {
+    // Experience Events handler
+    triggerFriendGainedExperienceEvents(ExpPet: Pet) {
+        for (let pet of ExpPet.parent.petArray) {
+            this.triggerAbility(pet, 'FriendlyGainedExp', ExpPet);
+            if (pet === ExpPet) {
                 continue;
-            }
-            if (pet.friendGainsHealth != null) {
-                this.setFriendGainsHealthEvent({
-                    callback: pet.friendGainsHealth.bind(pet),
-                    priority: pet.attack,
-                    pet: pet,
-                    triggerPet: healthPet
-                })
+            } else {
+                this.triggerAbility(pet, 'FriendGainedExp', ExpPet);
             }
         }
     }
-
-    setFriendGainsHealthEvent(event: AbilityEvent) {
-        this.friendGainsHealthEvents.push(event);
-    }
-
-    resetFriendGainsHealthEvents() {
-        this.friendGainsHealthEvents = [];
-    }
-
-    executeFriendGainsHealthEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendGainsHealthEvents = shuffle(this.friendGainsHealthEvents);
-
-        this.friendGainsHealthEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendGainsHealthEvents) {
-            event.callback(this.gameApi, event.triggerPet);
-        }
-
-        
-        this.resetFriendGainsHealthEvents();
-    }
-
-    triggerFriendGainedExperienceEvents(player: Player, pet: Pet) {
-        for (let p of player.petArray) {
-            if (p === pet) {
-                continue;
-            }
-            if (p.friendGainedExperience != null) {
-                this.setFriendGainedExperienceEvent({
-                    callback: p.friendGainedExperience.bind(p),
-                    priority: p.attack,
-                    pet: p,
-                    triggerPet: pet
-                });
-            }
-        }
-    }
-
-    setFriendGainedExperienceEvent(event: AbilityEvent) {
-        this.friendGainedExperienceEvents.push(event);
-    }
-
-    setAfterFaintEvents(event: AbilityEvent) {
-        event.abilityType = 'afterFaint';
-        this.addEventToQueue(event);
-    }
-
     // toy events
 
 
@@ -1937,8 +1522,4 @@ export class AbilityService {
         
         this.resetFriendJumpedToyEvents();
     }
-
-
-
- 
 }

@@ -45,8 +45,6 @@ export class RatAbility extends Ability {
                     pteranodon: pteranodon,
                     randomEvent: summonResult.randomEvent
                 });
-
-                this.abilityService.triggerFriendSummonedEvents(dirtyRat);
             }
         }
 

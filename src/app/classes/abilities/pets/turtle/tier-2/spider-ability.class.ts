@@ -67,8 +67,6 @@ export class SpiderAbility extends Ability {
                 tiger: tiger,
                 pteranodon: pteranodon
             });
-
-            this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
 
         // Tiger system: trigger Tiger execution at the end
