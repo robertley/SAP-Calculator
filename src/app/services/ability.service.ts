@@ -74,6 +74,7 @@ export class AbilityService {
 
         // Death/Faint events
         'BeforeThisDies': 9,
+        'KitsuneFriendDies' : 9,
         //'ThisDiesForPerks': 9,
         'FriendAheadDied': 10,
         'ThisDied': 11,
@@ -102,7 +103,8 @@ export class AbilityService {
         'FriendTransformed': 14.5,
         //'FriendTransformedInBattle': 14.5,
         //'BeforeFriendTransformed': 14.5,
-
+        //Speical trigger for Giant Otter
+        'Removed': 14,
         // Experience events
         //'FriendGainedExperience': 15,
         'FriendGainedExp': 15,
@@ -894,7 +896,9 @@ export class AbilityService {
         for (let pet of faintedPet.parent.petArray) {
             if (pet == faintedPet) {
                 this.triggerAbility(pet, 'BeforeThisDies', faintedPet);
-            } 
+            } else {
+                this.triggerAbility(pet, 'KitsuneFriendDies', faintedPet);
+            }
             // Check for FriendAheadDied (pet ahead of the dying pet)
             if (pet == faintedPet.petAhead) {
                 this.triggerAbility(pet, 'FriendAheadDied', faintedPet);
@@ -914,6 +918,7 @@ export class AbilityService {
             this.triggerAbility(pet, 'PetDied', faintedPet);
             if (pet == faintedPet) {
                 this.triggerAbility(pet, 'ThisDied', faintedPet);
+                this.triggerAbility(pet, 'Removed');
             } else {
                 this.triggerAbility(pet, 'FriendDied', faintedPet);
                 // Counter checks - first verify pet has the counter ability
@@ -1113,7 +1118,9 @@ export class AbilityService {
     }
 
     // transform events handler
-    triggerTransformEvents(transformedPet: Pet) {
+    triggerTransformEvents(originalPet: Pet) {
+        const transformedPet = originalPet.transformedInto;
+        this.triggerAbility(originalPet, 'Removed')
         // Check friends
         for (let pet of transformedPet.parent.petArray) {
             if (pet == transformedPet) {

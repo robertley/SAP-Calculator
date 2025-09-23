@@ -71,6 +71,14 @@ export class Player {
         this.summonedBoatThisBattle = false;
     }
 
+    resetJumpedFlags() {
+        for (let pet of this.petArray) {
+            if (pet) {
+                pet.jumped = false;
+            }
+        }
+    }
+
     setPet(index: number, pet: Pet, init=false) {
         let oldPet = this.getPet(index);
         if (oldPet != null) {
@@ -247,7 +255,7 @@ export class Player {
         originalPet.transformed = true;
         originalPet.transformedInto = newPet;
         newPet.applyEquipment(newPet.equipment);
-        this.abilityService.triggerTransformEvents(newPet)
+        this.abilityService.triggerTransformEvents(originalPet)
     }
     /** 
      *@returns if able to make space
@@ -1213,6 +1221,7 @@ export class Player {
         }
 
         if (jump) {
+            pet.jumped = true;
             this.abilityService.triggerJumpEvents(pet);
         } else {
             this.abilityService.triggerPushedEvents(pet);

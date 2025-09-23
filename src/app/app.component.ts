@@ -997,6 +997,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         break
       }
     }
+
+    // Reset jumped flags after beforeAttack loop completes
+    this.player.resetJumpedFlags();
+    this.opponent.resetJumpedFlags();
+
       //attack
     this.fight();
 

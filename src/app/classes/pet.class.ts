@@ -75,6 +75,7 @@ export abstract class Pet {
     transformed: boolean = false;
     removed: boolean = false;
     startOfBattleTriggered: boolean = false;
+    jumped: boolean = false;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
     seenDead = false;
@@ -1666,6 +1667,7 @@ export abstract class Pet {
         this.done = false;
         this.seenDead = false;
         this.removed = false;
+        this.jumped = false;
         try {
             this.equipment?.reset();
         } catch (error) {
