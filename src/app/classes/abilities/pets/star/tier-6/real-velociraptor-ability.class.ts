@@ -9,6 +9,7 @@ export class RealVelociraptorAbility extends Ability {
     private friendAppliedThisTurn: Set<Pet> = new Set();
     reset(): void {
         this.maxUses = this.owner.level;
+        this.friendAppliedThisTurn = new Set();
         super.reset();
     }
     constructor(owner: Pet, logService: LogService) {

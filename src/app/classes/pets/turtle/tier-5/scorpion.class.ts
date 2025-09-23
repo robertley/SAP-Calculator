@@ -1,11 +1,9 @@
-import { eq } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Peanut } from "../../../equipment/turtle/peanut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ScorpionAbility } from "../../../abilities/pets/turtle/tier-5/scorpion-ability.class";
 
 export class Scorpion extends Pet {
     name = "Scorpion";
@@ -13,22 +11,9 @@ export class Scorpion extends Pet {
     pack: Pack = 'Turtle';
     attack = 1;
     health = 1;
-    summoned(gameApi: GameAPI, tiger?: boolean): void {
-        let equipment = new Peanut();
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        target.givePetEquipment(equipment);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} the Peanut perk.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.superSummoned(gameApi, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new ScorpionAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

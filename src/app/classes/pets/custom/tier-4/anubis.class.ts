@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { AnubisAbility } from "../../../abilities/pets/custom/tier-4/anubis-ability.class";
 
 export class Anubis extends Pet {
     name = "Anubis";
@@ -11,23 +11,8 @@ export class Anubis extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 4;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let faintPets = this.parent.petArray.filter(pet => pet.faintPet);
-        for (let pet of faintPets) {
-            if (!pet.alive) {
-                continue;
-            }
-            if (pet.tier <= this.level * 2) {
-                this.logService.createLog({
-                    message: `${this.name} activated ${pet.name}'s faint ability.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
-                pet.executeAbilities('BeforeThisDies', gameApi)
-                pet.executeAbilities('ThisDied', gameApi)
-            }
-        }
+    initAbilities(): void {
+        this.addAbility(new AnubisAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { EelAbility } from "../../../abilities/pets/custom/tier-4/eel-ability.class";
 
 export class Eel extends Pet {
     name = "Eel";
@@ -11,19 +11,8 @@ export class Eel extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        }
-        let power = .5 * this.level;
-        this.health = Math.min(50, Math.floor(this.health * (1 + power)));
-        this.logService.createLog({
-            message: `${this.name} has gained ${power * 100}% health. (${this.health})`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new EelAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

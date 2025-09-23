@@ -7,7 +7,6 @@ import { AbilityService } from "app/services/ability.service";
 export class VultureAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
-    private abilityCounter: number = 0;
 
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
         super({

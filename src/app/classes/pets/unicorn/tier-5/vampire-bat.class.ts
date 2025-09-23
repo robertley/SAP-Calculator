@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { VampireBatAbility } from "../../../abilities/pets/unicorn/tier-5/vampire-bat-ability.class";
 
 export class VampireBat extends Pet {
     name = "Vampire Bat";
@@ -11,38 +11,9 @@ export class VampireBat extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 5;
-    maxAbilityUses: number = 2;
-    abilityUses: number = 0;
-    enemyGainedAilment(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let power = this.level * 4;
-        let snipeTargetResp = this.parent.getSpecificPet(this, pet);
-        let snipeTarget = snipeTargetResp.pet;
-        if (snipeTarget == null) {
-            return;
-        }
-        let petHealthPreSnipe = snipeTarget.health;
-        let damage = this.snipePet(snipeTarget, power, false, tiger);
-        let healthGained = Math.min(damage, petHealthPreSnipe);
 
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${healthGained} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-        target.increaseHealth(healthGained);
-
-        this.abilityUses++;
-        this.superEnemyGainedAilment(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new VampireBatAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

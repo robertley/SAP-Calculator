@@ -1,10 +1,10 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TakhiAbility } from "../../../abilities/pets/danger/tier-2/takhi-ability.class";
 
 export class Takhi extends Pet {
     name = "Takhi";
@@ -12,38 +12,8 @@ export class Takhi extends Pet {
     pack: Pack = 'Danger';
     attack = 2;
     health = 2;
-
-    afterFaint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let attackValue = this.level * 3;
-        let healthValue = this.level * 2;
-        
-        let africanWildDog = this.petService.createPet({
-            name: 'African Wild Dog',
-            attack: attackValue,
-            health: healthValue,
-            exp: 0,
-            mana: 0,
-            equipment: null
-        }, this.parent);
-        
-        if (africanWildDog) {
-            let summonResult = this.parent.summonPet(africanWildDog, this.savedPosition, false, this);
-            if (summonResult.success) {
-                this.logService.createLog({
-                    message: `${this.name} summoned a ${africanWildDog.attack}/${africanWildDog.health} ${africanWildDog.name}`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                });
-                
-                this.abilityService.triggerFriendSummonedEvents(africanWildDog);
-                africanWildDog.startOfBattle(gameApi, tiger);               
-            }
-        }
-        
-        this.superAfterFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new TakhiAbility(this, this.logService, this.abilityService, this.petService));
     }
 
     constructor(protected logService: LogService,

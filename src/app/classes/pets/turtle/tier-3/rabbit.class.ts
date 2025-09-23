@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { RabbitAbility } from "../../../abilities/pets/turtle/tier-3/rabbit-ability.class";
 
 export class Rabbit extends Pet {
     name = "Rabbit";
@@ -11,26 +11,9 @@ export class Rabbit extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 1;
-    friendAteFood(gameApi: GameAPI, pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let power = this.level;
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-        this.abilityUses++;
-        this.superFriendGainedPerk(gameApi, pet, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new RabbitAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

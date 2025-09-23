@@ -1,11 +1,9 @@
-import { getOpponent } from "app/util/helper-functions";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Honey } from "app/classes/equipment/turtle/honey.class";
+import { BearAbility } from "../../../abilities/pets/golden/tier-3/bear-ability.class";
 
 export class Bear extends Pet {
     name = "Bear";
@@ -13,43 +11,8 @@ export class Bear extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        const range = this.level;
-        const bearPosition = this.savedPosition;
-        const targets: Pet[] = [];
-
-        // Check friend pets
-        for (const pet of this.parent.petArray) {
-            if (pet.alive) {
-                const distance = Math.abs(pet.position - bearPosition);
-                if (distance > 0 && distance <= range) {
-                    targets.push(pet);
-                }
-            }
-        }
-
-        // Check opponent pets
-        for (const pet of this.parent.opponent.petArray) {
-            if (pet.alive) {
-                const distance = bearPosition + pet.position + 1;
-                if (distance <= range) {
-                    targets.push(pet);
-                }
-            }
-        }
-
-        for (let target of targets) {
-            target.givePetEquipment(new Honey(this.logService, this.abilityService));
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} Honey.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            });
-        }
-        
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BearAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

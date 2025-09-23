@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { WhiteTigerAbility } from "../../../abilities/pets/custom/tier-6/white-tiger-ability.class";
 
 export class WhiteTiger extends Pet {
     name = "White Tiger";
@@ -11,19 +11,8 @@ export class WhiteTiger extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this);
-        for (let target of targetsBehindResp.pets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} +3 experience.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetsBehindResp.random
-            })
-            target.increaseExp(3);
-        }
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new WhiteTigerAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

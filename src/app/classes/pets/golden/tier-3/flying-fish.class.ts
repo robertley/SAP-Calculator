@@ -1,12 +1,9 @@
-import { clone, shuffle } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
+import { FlyingFishAbility } from "../../../abilities/pets/golden/tier-3/flying-fish-ability.class";
 
 export class FlyingFish extends Pet {
     name = "Flying Fish";
@@ -14,27 +11,8 @@ export class FlyingFish extends Pet {
     pack: Pack = 'Golden';
     attack = 5;
     health = 2;
-    maxAbilityUses: number = 2;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let power = this.level * 2;
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} exp.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        target.increaseExp(power);
-        this.abilityUses++;
-        this.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new FlyingFishAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

@@ -12,7 +12,7 @@ export class Horse extends Pet {
     health = 1;
     attack = 2;
     initAbilities() {
-        this.abilityList = [new HorseAbility(this, this.logService)];
+        this.addAbility(new HorseAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

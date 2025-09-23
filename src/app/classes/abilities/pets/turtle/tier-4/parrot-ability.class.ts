@@ -10,7 +10,7 @@ export class ParrotAbility extends Ability {
         super({
             name: 'ParrotAbility',
             owner: owner,
-            triggers: ['EndTurn', 'Parrot'],
+            triggers: ['EndTurn', 'SpecialEndTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,

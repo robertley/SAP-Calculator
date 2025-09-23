@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { LynxAbility } from "../../../abilities/pets/custom/tier-4/lynx-ability.class";
 
 export class Lynx extends Pet {
     name = "Lynx";
@@ -11,27 +11,8 @@ export class Lynx extends Pet {
     pack: Pack = 'Custom';
     attack = 5;
     health = 3;
-    startOfBattle(gameApi: GameAPI, tiger: boolean) {
-        let opponent: Player;
-        if (gameApi.player == this.parent) {
-            opponent = gameApi.opponet;
-        } else {
-            opponent = gameApi.player;
-        }
-
-        let power = 0;
-        for (let pet of this.parent.petArray) {
-            power += pet.level;
-        }
-
-        let targetsResp = opponent.getRandomPets(this.level, null, null, true, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.snipePet(target, power, targetsResp.random, tiger);
-            }
-        }
-
-        super.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new LynxAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BlackNeckedStiltAbility } from "../../../abilities/pets/golden/tier-2/black-necked-stilt-ability.class";
 
 export class BlackNeckedStilt extends Pet {
     name = "Black Necked Stilt";
@@ -11,10 +12,8 @@ export class BlackNeckedStilt extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let power = this.level * 2;
-        this.parent.gainTrumpets(power, this, pteranodon);
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BlackNeckedStiltAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -3,8 +3,9 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { PetService } from "../../../../services/pet.service";
+import { GoblinSharkStartAbility } from "../../../abilities/pets/custom/tier-4/goblin-shark-start-ability.class";
+import { GoblinSharkFaintAbility } from "../../../abilities/pets/custom/tier-4/goblin-shark-faint-ability.class";
 
 export class GoblinShark extends Pet {
     name = "Goblin Shark";
@@ -13,61 +14,9 @@ export class GoblinShark extends Pet {
     attack = 6;
     health = 3;
     
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let swallowThreshold = this.level * 6;
-        
-        // Loop through enemy pets from front to back to find first swallowable target
-        for (let targetPet of this.parent.opponent.petArray) {
-            if (!targetPet.alive) {
-                continue;
-            }
-            
-            if (targetPet.health <= swallowThreshold) {
-                // Create a copy of the target pet to swallow
-                let swallowPet = this.petService.createPet({
-                    name: targetPet.name,
-                    attack: targetPet.attack,
-                    health: targetPet.health,
-                    exp: targetPet.exp,
-                    equipment: null,
-                    mana: 0
-                }, this.parent);
-                
-                this.swallowedPets.push(swallowPet);
-                targetPet.health = 0;
-                
-                this.logService.createLog({
-                    message: `${this.name} swallowed ${targetPet.name}`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger
-                });
-                break; // Stop after swallowing one pet
-            }
-        }
-        
-        this.superStartOfBattle(gameApi, tiger);
-    }
-    
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        while (this.swallowedPets.length > 0) {
-            let pet = this.swallowedPets.shift();
-            pet.health = 1;
-            let summonResult = this.parent.summonPet(pet, this.savedPosition, false, this);
-            if (summonResult.success) {
-                this.logService.createLog({
-                    message: `${this.name} summoned ${pet.name} (level ${pet.level}).`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                })
-                
-                this.abilityService.triggerFriendSummonedEvents(pet);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new GoblinSharkStartAbility(this, this.logService, this.petService));
+        this.addAbility(new GoblinSharkFaintAbility(this, this.logService, this.abilityService));
     }
     
     constructor(protected logService: LogService,

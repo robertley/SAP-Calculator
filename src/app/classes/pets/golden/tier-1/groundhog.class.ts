@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GroundhogAbility } from "../../../abilities/pets/golden/tier-1/groundhog-ability.class";
 
 export class Groundhog extends Pet {
     name = "Groundhog";
@@ -11,9 +12,8 @@ export class Groundhog extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 1;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        this.parent.gainTrumpets(this.level, this, pteranodon);
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new GroundhogAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

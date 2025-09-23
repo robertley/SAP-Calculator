@@ -2005,6 +2005,7 @@ export abstract class Pet {
         }
         this.equipment = equipment;
         this.setEquipmentMultiplier(pandorasBoxLevel);
+        this.removeAbility(undefined, 'Equipment');
         if (this.equipment.callback && this.equipment.equipmentClass != 'beforeStartOfBattle') {
             this.equipment.callback(this);
         }
@@ -2023,7 +2024,7 @@ export abstract class Pet {
         this.lastLostEquipment = this.equipment;
 
         // Remove equipment-based abilities from new system
-        this.removeAbility(undefined, wasAilment ? 'Ailment' : 'Perk');
+        this.removeAbility(undefined, 'Equipment');
 
         this.equipment = null;
 
@@ -2269,18 +2270,28 @@ export abstract class Pet {
         });
     }
     executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const matchingAbilities = this.getAbilitiesWithTrigger(trigger);
+        const matchingPetAbilities = this.getAbilitiesWithTrigger(trigger, 'Pet');
+        for (const ability of matchingPetAbilities) {
+            ability.execute(gameApi, triggerPet, tiger, pteranodon);
+        }
 
-        // Execute abilities in order (maintains ability list order within pet)
-        for (const ability of matchingAbilities) {
+        const matchingEquipmentAbilities = this.getAbilitiesWithTrigger(trigger, 'Equipment');
+        for (const ability of matchingEquipmentAbilities) {
             ability.execute(gameApi, triggerPet, tiger, pteranodon);
         }
     }
+    activateAbilities(trigger: AbilityTrigger, gameApi: GameAPI, type: AbilityType): void {
+        const matchingAbilities = this.getAbilities(trigger, type);
 
-    copyAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): number {
+        // Execute abilities in order (maintains ability list order within pet)
+        for (const ability of matchingAbilities) {
+            ability.execute(gameApi);
+        }
+    }
+
+    copyAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): void {
         const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
         this.removeAbility(undefined, abilityType);
-        let copiedCount = 0;
         for (const ability of abilitiesToCopy) {
             const copiedAbility = ability.copy(this);
             if (copiedAbility == null) {
@@ -2291,14 +2302,11 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
             }
             this.addAbility(copiedAbility);
-            copiedCount++;
         }
 
-        return copiedCount;
     }
-    gainAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): number {
+    gainAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): void {
         const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
-        let copiedCount = 0;
         for (const ability of abilitiesToCopy) {
             const copiedAbility = ability.copy(this);
             if (copiedAbility == null) {
@@ -2309,10 +2317,7 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
             }
             this.addAbility(copiedAbility);
-            copiedCount++;
         }
-
-        return copiedCount;
     }
     resetAbilities(): void {
         // Restore original ability list (preserves order)
@@ -2343,7 +2348,7 @@ export abstract class Pet {
     isFaintPet(): boolean {
 
         if (this.originalAbilityList.filter(ability => {
-            return (ability.matchesTrigger('ThisDied') || ability.matchesTrigger('BeforeThisDies')) && ability.abilityType == 'Pet';
+            return (ability.matchesTrigger('ThisDied') || ability.matchesTrigger('BeforeThisDies') || ability.matchesTrigger('ThisKilled')) && ability.abilityType == 'Pet';
         }).length > 0) {
             return true;
         }

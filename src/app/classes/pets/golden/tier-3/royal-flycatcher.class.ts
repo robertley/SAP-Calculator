@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { RoyalFlycatcherAbility } from "../../../abilities/pets/golden/tier-3/royal-flycatcher-ability.class";
 
 export class RoyalFlycatcher extends Pet {
     name = "Royal Flycatcher";
@@ -11,28 +11,8 @@ export class RoyalFlycatcher extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 4;
-    enemyFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!tiger) {
-            this.abilityCounter++;
-        }
-        
-        if (this.abilityCounter % 3 != 0) {
-            return;
-        }
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                let power = this.level * 3;
-                let targetResp = this.parent.opponent.getRandomPet([], null, true, null, this);
-                let target = targetResp.pet;
-                if (target == null) {
-                    return;
-                }
-                this.snipePet(target, power, targetResp.random, tiger);
-            },
-            priority: this.attack,
-            pet: this
-        });
-        this.superEnemyFaints(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new RoyalFlycatcherAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

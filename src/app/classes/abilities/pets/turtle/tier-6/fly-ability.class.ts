@@ -19,7 +19,7 @@ export class FlyAbility extends Ability {
             abilitylevel: owner.level,
             maxUses: 3,
             condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                if (triggerPet instanceof ZombieFly || owner.parent.petArray.length >= 5) {
+                if ((triggerPet && triggerPet instanceof ZombieFly) || owner.parent.petArray.length >= 5) {
                     return false;
                 }
                 return true;

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PiedTamarinAbility } from "../../../abilities/pets/golden/tier-1/pied-tamarin-ability.class";
 
 export class PiedTamarin extends Pet {
     name = "Pied Tamarin";
@@ -11,19 +12,8 @@ export class PiedTamarin extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.parent.trumpets < 1) {
-            return;
-        }
-        let targetsResp = this.parent.opponent.getRandomPets(this.level, null, null, true, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.snipePet(target, 3, targetsResp.random, tiger, pteranodon);
-            }
-        }
-        if (targetsResp.pets.length > 0) {
-            this.parent.spendTrumpets(1, this, pteranodon);
-        }
+    initAbilities(): void {
+        this.addAbility(new PiedTamarinAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

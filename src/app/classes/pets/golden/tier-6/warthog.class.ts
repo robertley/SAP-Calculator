@@ -3,7 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { WarthogFaintAbility } from "../../../abilities/pets/golden/tier-6/warthog-faint-ability.class";
+import { WarthogAbility } from "../../../abilities/pets/golden/tier-6/warthog-ability.class";
 
 export class Warthog extends Pet {
     name = "Warthog";
@@ -12,7 +12,7 @@ export class Warthog extends Pet {
     attack = 9;
     health = 6;
     initAbilities(): void {
-        this.addAbility(new WarthogFaintAbility(this, this.logService));
+        this.addAbility(new WarthogAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { KakapoAbility } from "../../../abilities/pets/danger/tier-4/kakapo-ability.class";
 
 export class Kakapo extends Pet {
     name = "Kakapo";
@@ -11,36 +11,9 @@ export class Kakapo extends Pet {
     pack: Pack = 'Danger';
     attack = 3;
     health = 5;
-    friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        
-        if (!target) {
-            return;
-        }
-        
-        let expGain = 3;
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} +${expGain} experience.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
 
-        target.increaseExp(expGain);
-             
-        this.abilityUses++;
-        this.superFriendTransformed(gameApi, pet, tiger);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 2; 
+    initAbilities(): void {
+        this.addAbility(new KakapoAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

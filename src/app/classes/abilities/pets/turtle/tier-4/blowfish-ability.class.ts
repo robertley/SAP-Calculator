@@ -26,7 +26,7 @@ export class BlowfishAbility extends Ability {
         const owner = this.owner;
 
         let power = this.level * 3;
-        let targetResp = getOpponent(gameApi, owner.parent).getRandomPet([], false, true, false, owner);
+        let targetResp = owner.parent.opponent.getRandomPet([], false, true, false, owner);
         if (targetResp.pet) {
             owner.snipePet(targetResp.pet, power, targetResp.random, tiger);
         }

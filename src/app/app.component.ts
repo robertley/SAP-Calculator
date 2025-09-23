@@ -831,8 +831,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       //   pet.equipment = new Dazed();
       // }
       
-      this.abilityService.initParrotAbility(this.player);
-      this.abilityService.initParrotAbility(this.opponent);
+      this.abilityService.initSpecialEndTurnAbility(this.player);
+      this.abilityService.initSpecialEndTurnAbility(this.opponent);
       
       //initialize equipment multipliers for existing equipment
       this.initializeEquipmentMultipliers();

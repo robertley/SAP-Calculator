@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { MimicOctopusAbility } from "../../abilities/pets/hidden/mimic-octopus-ability.class";
 
 export class MimicOctopus extends Pet {
     name = "Mimic Octopus";
@@ -12,15 +12,8 @@ export class MimicOctopus extends Pet {
     attack = 3;
     health = 6;
 
-    afterAttack(gameApi?: GameAPI, tiger?: boolean): void {
-        let targetsResp = this.parent.opponent.getLowestHealthPets(this.level, undefined, this);
-        
-        for (let target of targetsResp.pets) {
-            let damage = 4;
-            this.snipePet(target, damage, targetsResp.random, tiger);
-        }
-
-        this.superAfterAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MimicOctopusAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

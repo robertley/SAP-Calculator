@@ -94,7 +94,7 @@ export class AbilityService {
         //'ThisBoughtOrToyBroke': 12,
 
         // Kill events
-        'ThisKilled': 13,
+        'ThisKilled': 9,
         'ThisKilledEnemy': 13,
 
         // Transform events
@@ -454,10 +454,10 @@ export class AbilityService {
 
     // End of Turn Events
 
-    initParrotAbility(player: Player) {
+    initSpecialEndTurnAbility(player: Player) {
         for (let pet of player.petArray) {
-            if (pet.hasTrigger('Parrot')) {
-                pet.executeAbilities('Parrot', this.gameService.gameApi)
+            if (pet.hasTrigger('SpecialEndTurn')) {
+                pet.executeAbilities('SpecialEndTurn', this.gameService.gameApi)
             }
         }
     }
@@ -467,7 +467,7 @@ export class AbilityService {
     triggerBeforeStartOfBattleEvents() {
         // New trigger system
         //this.triggerAbility(player.petArray, 'BeforeStartBattle');
-
+        this.gameApi = this.gameService.gameApi;
         // Legacy system for backwards compatibility
         for (let pet of this.gameApi.player.petArray) {
             if (pet.hasTrigger('BeforeStartBattle')) {
@@ -522,6 +522,7 @@ export class AbilityService {
     }
     //sob events
     triggerStartBattleEvents() {
+        this.gameApi = this.gameService.gameApi;
         for (let pet of this.gameApi.player.petArray) {
             if (pet.hasTrigger('StartBattle')) {
                 // Create an AbilityEvent for the global queue
@@ -561,7 +562,7 @@ export class AbilityService {
                 event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => {transformedPet.executeAbilities(trigger, gameApi)}
             }
 
-            event.callback(event.abilityType, this.gameApi);
+            event.callback(event.abilityType, this.gameService.gameApi);
             let changed = false;
             for (let event of this.startBattleEvents) {
                 if (event.pet.attack != event.priority) {
@@ -888,7 +889,6 @@ export class AbilityService {
     triggerFaintEvents(faintedPet: Pet) {
         // Check friends
         for (let pet of faintedPet.parent.petArray) {
-            this.triggerAbility(pet, 'PetDied', faintedPet);
             if (pet == faintedPet) {
                 this.triggerAbility(pet, 'BeforeThisDies', faintedPet);
             } 

@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { CyclopsAbility } from "../../../abilities/pets/unicorn/tier-4/cyclops-ability.class";
 
 export class Cyclops extends Pet {
     name = "Cyclops";
@@ -11,43 +11,8 @@ export class Cyclops extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 5;
-    anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-
-        if (pet.parent != this.parent || pet == this) {
-            return;
-        }
-        let manaGain = this.level * 2;
-        let manaTargetResp = this.parent.getSpecificPet(this, pet);
-        let manaTarget = manaTargetResp.pet
-        if (manaTarget == null) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} gave ${manaTarget.name} ${manaGain} mana.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: manaTargetResp.random
-        })
-        manaTarget.increaseMana(manaGain);
-
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let expTargetResp = this.parent.getSpecificPet(this, pet);
-        let expTarget = expTargetResp.pet;
-        this.logService.createLog({
-            message: `${this.name} gave ${expTarget.name} 1 exp.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: expTargetResp.random
-        })
-
-        pet.increaseExp(1);
-
-        this.abilityUses++;
-        this.superAnyoneLevelUp(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new CyclopsAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

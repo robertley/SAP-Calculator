@@ -1,12 +1,9 @@
-import { clone, shuffle } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
+import { BettaFishAbility } from "../../../abilities/pets/custom/tier-3/betta-fish-ability.class";
 
 export class BettaFish extends Pet {
     name = "Betta Fish";
@@ -14,29 +11,8 @@ export class BettaFish extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 3;
-    faint(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
-        if (targetsBehindResp.pets.length === 0) {
-            this.superFaint(gameApi, tiger);
-            return;
-        }
-        let target = targetsBehindResp.pets[0];
-        let power: Power = {
-            health: this.level * 2,
-            attack: this.level * 4
-        }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetsBehindResp.random
-        })
-        
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BettaFishAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

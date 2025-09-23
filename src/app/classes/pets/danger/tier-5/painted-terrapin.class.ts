@@ -1,11 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
-import { EquipmentService } from "../../../../services/equipment.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { WhiteOkra } from "../../../equipment/danger/white-okra.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PaintedTerrapinAbility } from "../../../abilities/pets/danger/tier-5/painted-terrapin-ability.class";
 
 export class PaintedTerrapin extends Pet {
     name = "Painted Terrapin";
@@ -14,22 +12,8 @@ export class PaintedTerrapin extends Pet {
     health = 6;
     attack = 4;
 
-    faint(gameApi, tiger, pteranodon?: boolean) {
-        let excludePets = this.parent.getPetsWithEquipment("White Okra");
-        let targetsResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
-        let targets = targetsResp.pets;
-        for (let targetPet of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${targetPet.name} White Okra perk`,
-                type: 'ability',
-                tiger: tiger,
-                player: this.parent,
-                pteranodon: pteranodon,
-                randomEvent: targetsResp.random
-            })
-            targetPet.givePetEquipment(new WhiteOkra());
-        }
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new PaintedTerrapinAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

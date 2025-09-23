@@ -14,9 +14,8 @@ export class Ant extends Pet {
     health = 2;
     attack = 2;
     initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment): void {
-        this.abilityList = [new AntAbility(this, this.logService)];
+        this.addAbility(new AntAbility(this, this.logService));
         super.initPet(exp, health, attack, mana, equipment);
-
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

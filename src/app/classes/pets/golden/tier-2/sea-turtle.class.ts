@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SeaTurtleAbility } from "../../../abilities/pets/golden/tier-2/sea-turtle-ability.class";
 
 export class SeaTurtle extends Pet {
     name = "Sea Turtle";
@@ -11,22 +11,8 @@ export class SeaTurtle extends Pet {
     pack: Pack = 'Golden';
     attack = 1;
     health = 4;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let power = this.level * 2;
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} health.`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new SeaTurtleAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -12,7 +12,7 @@ export class Cricket extends Pet {
     health = 3;
     attack = 1;
     initAbilities() {
-        this.abilityList = [new CricketAbility(this, this.logService, this.abilityService)];
+        this.addAbility(new CricketAbility(this, this.logService, this.abilityService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

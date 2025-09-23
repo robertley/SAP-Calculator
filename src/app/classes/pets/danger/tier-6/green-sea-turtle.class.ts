@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Melon } from "../../../equipment/turtle/melon.class";
+import { GreenSeaTurtleAbility } from "../../../abilities/pets/danger/tier-6/green-sea-turtle-ability.class";
 
 export class GreenSeaTurtle extends Pet {
     name = "Green Sea Turtle";
@@ -13,45 +12,8 @@ export class GreenSeaTurtle extends Pet {
     attack = 5;
     health = 6;
 
-    enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
- 
-        
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        
-        if (!tiger) {
-            this.abilityCounter++;
-        }
-        
-        // Check if counter reached (every 5 attacks)
-        if (this.abilityCounter % 5 != 0) {
-            this.superEnemyAttack(gameApi, pet, tiger);
-            return;
-        }
-        
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                // Give all friendly pets Melon
-                let targetsResp = this.parent.getAll(false, this);
-                let targets = targetsResp.pets;
-                for (let targetPet of targets) {
-                    
-                    targetPet.givePetEquipment(new Melon(), this.level);
-                    this.logService.createLog({
-                        message: `${this.name} gave ${targetPet.name} Melon.`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger
-                    });
-                }
-            },
-            priority: this.attack,
-            pet: this
-        });
-        
-        this.abilityUses++;
-        this.superEnemyAttack(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new GreenSeaTurtleAbility(this, this.logService));
     }
 
     setAbilityUses(): void {

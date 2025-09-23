@@ -1,11 +1,9 @@
-import { clone, cloneDeep, shuffle } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { NurseSharkAbility } from "../../../abilities/pets/golden/tier-5/nurse-shark-ability.class";
 
 export class NurseShark extends Pet {
     name = "Nurse Shark";
@@ -13,21 +11,8 @@ export class NurseShark extends Pet {
     pack: Pack = 'Golden';
     attack = 5;
     health = 7;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.parent.trumpets == 0) {
-            return;
-        }
-        let power = Math.min(this.parent.trumpets, 6) * 3;
-        let targetResp = this.parent.opponent.getRandomPets( 2, [], false, true, this);
-        let targets = targetResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        this.parent.spendTrumpets(Math.min(this.parent.trumpets, 6), this, pteranodon);
-        for (let target of targets) {
-            this.snipePet(target, power, targetResp.random, tiger, pteranodon);
-        }
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new NurseSharkAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

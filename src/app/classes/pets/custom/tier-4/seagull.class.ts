@@ -1,13 +1,11 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { EquipmentService } from "../../../../services/equipment.service";
 import { PetService } from "../../../../services/pet.service";
 import { GameService } from "../../../../services/game.service";
-import { InjectorService } from "../../../../services/injector.service";
+import { SeagullAbility } from "../../../abilities/pets/custom/tier-4/seagull-ability.class";
 
 export class Seagull extends Pet {
     name = "Seagull";
@@ -15,24 +13,8 @@ export class Seagull extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 3;
-    abilityUses: number;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        if (this.equipment == null) { 
-            return;
-        }
-
-        pet.givePetEquipment(InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name));
-        this.logService.createLog({
-            message: `${this.name} gave ${pet.name} a ${this.equipment.name}`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        this.abilityUses++;
-        this.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new SeagullAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -48,8 +30,4 @@ export class Seagull extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

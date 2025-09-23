@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TakinAbility } from "../../../abilities/pets/danger/tier-3/takin-ability.class";
 
 export class Takin extends Pet {
     name = "Takin";
@@ -12,33 +12,8 @@ export class Takin extends Pet {
     attack = 1;
     health = 2;
 
-    friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            this.superFriendHurt(gameApi, pet, tiger);
-            return;
-        }
-
-        // Check if hurt pet is ahead of this pet (lower position index)
-        if (!pet || pet != this.petAhead) {
-            return;
-        }
-
-        let attackGain = this.level;
-        let healthGain = this.level * 2;
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet
-        target.increaseAttack(attackGain);
-        target.increaseHealth(healthGain);
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${attackGain} attack and ${healthGain} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-
-        this.superFriendHurt(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new TakinAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

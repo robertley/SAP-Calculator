@@ -12,7 +12,7 @@ export class EggAbility extends Ability {
             name: 'EggAbility',
             owner: owner,
             triggers: ['BeforeThisAttacks'],
-            abilityType: 'Perk',
+            abilityType: 'Equipment',
             native: true, 
             maxUses: 1, // Egg is removed after one use
             abilitylevel: 1,

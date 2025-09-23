@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { DarwinsFoxAbility } from "../../../abilities/pets/danger/tier-2/darwins-fox-ability.class";
 
 export class DarwinsFox extends Pet {
     name = "Darwin's Fox";
@@ -11,46 +11,8 @@ export class DarwinsFox extends Pet {
     pack: Pack = 'Danger';
     attack = 3;
     health = 3;
-
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        
-        if (!pet) {
-            return;
-        }
-        //TO DO: Check if it should still activate before attack abilities
-        if (!this.alive) {
-            return;
-        }    
-        // Check ability uses limit
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-                
-        // Find who killed the friend
-        if (pet.killedBy && pet.killedBy.alive) {
-            let targetResp = this.parent.getSpecificPet(this, pet.killedBy);
-            let target = targetResp.pet;
-            if (!target) {
-                return;
-            }
-            this.jumpAttackPrep(target)
-            this.jumpAttack(target, tiger, undefined, targetResp.random);           
-        } else {
-            let targetResp = this.parent.opponent.getFurthestUpPet(this);
-            let target = targetResp.pet;
-            if (!target) {
-                return;
-            }
-            this.jumpAttackPrep(target)
-            this.jumpAttack(target, tiger, undefined, targetResp.random)
-        }
-        this.abilityUses++;
-        this.superFriendFaints(gameApi, pet, tiger);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level; // Works 1/2/3 times per turn based on level
+    initAbilities(): void {
+        this.addAbility(new DarwinsFoxAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

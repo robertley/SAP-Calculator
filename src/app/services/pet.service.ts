@@ -245,7 +245,7 @@ import { Cockatoo } from "../classes/pets/golden/tier-4/cockatoo.class";
 import { BlueRingedOctopus } from "../classes/pets/golden/tier-5/blue-ringed-octopus.class";
 import { Crane } from "../classes/pets/golden/tier-5/crane.class";
 import { Emu } from "../classes/pets/golden/tier-5/emu.class";
-import { Wildebeast } from "../classes/pets/golden/tier-6/wildebeast.class";
+import { Wildebeest } from "../classes/pets/golden/tier-6/wildebeest.class";
 import { HighlandCow } from "../classes/pets/golden/tier-6/highland-cow.class";
 import { Catfish } from "../classes/pets/golden/tier-6/catfish.class";
 import { Pteranodon } from "../classes/pets/golden/tier-6/pteranodon.class";
@@ -866,7 +866,7 @@ export class PetService {
         ])
 
         this.goldenPackPets.set(6, [
-            "Wildebeast",
+            "Wildebeest",
             "Highland Cow",
             "Catfish",
             "Pteranodon",
@@ -1681,8 +1681,8 @@ export class PetService {
                 return new Emu(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
 
             // Tier 6
-            case 'Wildebeast':
-                return new Wildebeast(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Wildebeest':
+                return new Wildebeest(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Highland Cow':
                 return new HighlandCow(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Catfish':
@@ -2916,8 +2916,8 @@ export class PetService {
         }
 
         // Tier 6
-        if (pet instanceof Wildebeast) {
-            newPet = new Wildebeast(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        if (pet instanceof Wildebeest) {
+            newPet = new Wildebeest(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof HighlandCow) {
             newPet = new HighlandCow(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

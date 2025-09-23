@@ -5,13 +5,13 @@ import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
 import { YoungPhoenix } from "../../../../pets/hidden/young-phoenix.class";
 
-export class PhoenixAfterfaintAbility extends Ability {
+export class PhoenixAfterFaintAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
 
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
         super({
-            name: 'PhoenixAfterfaintAbility',
+            name: 'PhoenixAfterFaintAbility',
             owner: owner,
             triggers: ['ThisDied'],
             abilityType: 'Pet',
@@ -47,7 +47,7 @@ export class PhoenixAfterfaintAbility extends Ability {
         this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
     }
 
-    copy(newOwner: Pet): PhoenixAfterfaintAbility {
-        return new PhoenixAfterfaintAbility(newOwner, this.logService, this.abilityService);
+    copy(newOwner: Pet): PhoenixAfterFaintAbility {
+        return new PhoenixAfterFaintAbility(newOwner, this.logService, this.abilityService);
     }
 }

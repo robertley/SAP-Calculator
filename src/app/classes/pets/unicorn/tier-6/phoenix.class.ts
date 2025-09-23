@@ -7,7 +7,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { YoungPhoenix } from "../../hidden/young-phoenix.class";
 import { PhoenixFaintAbility } from "../../../abilities/pets/unicorn/tier-6/phoenix-faint-ability.class";
-import { PhoenixAfterfaintAbility } from "../../../abilities/pets/unicorn/tier-6/phoenix-afterfaint-ability.class";
+import { PhoenixAfterFaintAbility } from "../../../abilities/pets/unicorn/tier-6/phoenix-afterfaint-ability.class";
 
 export class Phoenix extends Pet {
     name = "Phoenix";
@@ -17,7 +17,7 @@ export class Phoenix extends Pet {
     health = 8;
     initAbilities(): void {
         this.addAbility(new PhoenixFaintAbility(this, this.logService));
-        this.addAbility(new PhoenixAfterfaintAbility(this, this.logService, this.abilityService));
+        this.addAbility(new PhoenixAfterFaintAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

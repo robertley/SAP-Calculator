@@ -1,0 +1,70 @@
+import { Ability } from "../../../../ability.class";
+import { GameAPI } from "app/interfaces/gameAPI.interface";
+import { Pet } from "../../../../pet.class";
+import { LogService } from "app/services/log.service";
+import { AbilityService } from "app/services/ability.service";
+import { Lemur } from "../../../../pets/puppy/tier-2/lemur.class";
+
+export class AyeAyeAbility extends Ability {
+    private logService: LogService;
+    private abilityService: AbilityService;
+
+    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+        super({
+            name: 'AyeAyeAbility',
+            owner: owner,
+            triggers: ['EnemyAttacked8'],
+            abilityType: 'Pet',
+            native: true,
+            abilitylevel: owner.level,
+            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
+                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            }
+        });
+        this.logService = logService;
+        this.abilityService = abilityService;
+    }
+
+    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
+        const owner = this.owner;
+        // Summon two Lemurs
+        for (let i = 0; i < 2; i++) {
+            let lemurAttack = 3; // Base Lemur stats
+            let lemurHealth = 3; // Base Lemur stats
+            let lemur = new Lemur(this.logService, this.abilityService, owner.parent, lemurHealth, lemurAttack, 0, 0);
+
+            let summonResult = owner.parent.summonPet(lemur, owner.savedPosition, false, owner);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${owner.name} summoned a ${lemurAttack}/${lemurHealth} ${lemur.name}.`,
+                    type: 'ability',
+                    player: owner.parent,
+                    tiger: tiger,
+                    randomEvent: summonResult.randomEvent
+                });
+            }
+        }
+
+        // Give all friends +attack and +health
+        let statGain = this.level * 3; // 3/6/9 based on level
+        let friendsResp = owner.parent.getAll(false, owner, true); // excludeSelf = true
+        for (let friend of friendsResp.pets) {
+            friend.increaseAttack(statGain);
+            friend.increaseHealth(statGain);
+            this.logService.createLog({
+                message: `${owner.name} gave ${friend.name} +${statGain} attack and +${statGain} health.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                randomEvent: friendsResp.random
+            });
+        }
+
+        // Tiger system: trigger Tiger execution at the end
+        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+    }
+
+    copy(newOwner: Pet): AyeAyeAbility {
+        return new AyeAyeAbility(newOwner, this.logService, this.abilityService);
+    }
+}

@@ -1,12 +1,9 @@
-import { clone, shuffle } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weak } from "../../../equipment/ailments/weak.class";
+import { GuineafowlAbility } from "../../../abilities/pets/golden/tier-3/guineafowl-ability.class";
 
 export class Guineafowl extends Pet {
     name = "Guineafowl";
@@ -14,10 +11,8 @@ export class Guineafowl extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 3;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = this.level * 2;
-        this.parent.gainTrumpets(power, this);
-        this.superHurt(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new GuineafowlAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

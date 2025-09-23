@@ -14,7 +14,7 @@ export class Spider extends Pet {
     health = 2;
     attack = 2;
     initAbilities() {
-        this.abilityList = [new SpiderAbility(this, this.logService, this.abilityService, this.petService)];
+        this.addAbility(new SpiderAbility(this, this.logService, this.abilityService, this.petService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

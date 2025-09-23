@@ -8,12 +8,6 @@ import { Equipment } from "../../../../equipment.class";
 
 export class ToucanAbility extends Ability {
     private logService: LogService;
-
-    reset(): void {
-        this.maxUses = 1;
-        super.reset();
-    }
-
     constructor(owner: Pet, logService: LogService) {
         super({
             name: 'ToucanAbility',
@@ -22,7 +16,9 @@ export class ToucanAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: 1,
+            condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): boolean => {
+                return this.owner.timesAttacked < 1;
+            },
             abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
                 this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
             }

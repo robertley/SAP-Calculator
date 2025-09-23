@@ -38,7 +38,7 @@ export class WombatAbility extends Ability {
             pteranodon: pteranodon,
             randomEvent: targetResp.random
         });
-        owner.copyAbilities(target, 'Pet', this.level)
+        owner.copyAbilities(target, 'Pet')
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
     }

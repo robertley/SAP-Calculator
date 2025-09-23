@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { AtlanticPuffinAbility } from "../../../abilities/pets/custom/tier-2/atlantic-puffin-ability.class";
 
 export class AtlanticPuffin extends Pet {
     name = "Atlantic Puffin";
@@ -12,26 +11,8 @@ export class AtlanticPuffin extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 3;
-    friendAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet.equipment?.name != 'Strawberry') {
-            return
-        }
-        this.logService.createLog({
-            message: `${this.name} removed ${pet.name}'s ${pet.equipment.name}.`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger,
-        })
-        pet.removePerk()
-        let power = 2 * this.level;
-        let targetResp = this.parent.opponent.getLastPet()
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        } 
-        this.snipePet(target, power, targetResp.random, tiger)
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new AtlanticPuffinAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

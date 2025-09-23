@@ -1,11 +1,9 @@
-import { cloneDeep } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Ink } from "../../../equipment/ailments/ink.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SquidAbility } from "../../../abilities/pets/golden/tier-2/squid-ability.class";
 
 export class Squid extends Pet {
     name = "Squid";
@@ -13,33 +11,8 @@ export class Squid extends Pet {
     pack: Pack = 'Golden';
     attack = 5;
     health = 2;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.parent.trumpets < 1) {
-            return;
-        }
-        let hasTarget = false;
-        let excludePets = this.parent.opponent.getPetsWithEquipment("Ink");
-        let targetResp = this.parent.opponent.getFurthestUpPets(this.level, excludePets, this);
-        let targets = targetResp.pets;
-        for (let target of targets) {
-            if (target == null) {
-                break;
-            }
-            hasTarget = true;
-            target.givePetEquipment(new Ink());
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} Ink.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon,
-                randomEvent: targetResp.random
-            })
-        }
-        if (hasTarget) {
-            this.parent.spendTrumpets(1, this, pteranodon);
-        }
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new SquidAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

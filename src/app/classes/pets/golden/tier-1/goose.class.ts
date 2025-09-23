@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GooseAbility } from "../../../abilities/pets/golden/tier-1/goose-ability.class";
 
 export class Goose extends Pet {
     name = "Goose";
@@ -11,22 +12,8 @@ export class Goose extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetResp = this.parent.opponent.getFurthestUpPet(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        let power = this.level;
-        target.increaseAttack(-this.level);
-        this.logService.createLog({
-            message: `${this.name} removed ${power} attack from ${target.name}.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new GooseAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1,11 +1,9 @@
-import { cloneDeep } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Weasel } from "../../golden/tier-3/weasel.class";
+import { TaitaShrewAbility } from "../../../abilities/pets/danger/tier-2/taita-shrew-ability.class";
 
 export class TaitaShrew extends Pet {
     name = "Taita Shrew";
@@ -13,27 +11,8 @@ export class TaitaShrew extends Pet {
     pack: Pack = 'Danger';
     attack = 2;
     health = 2;
-
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        
-        if (!target) {
-            return;
-        }
-        
-        let weasel = new Weasel(this.logService, this.abilityService, this.parent, target.health, target.attack, target.mana, target.exp, target.equipment);
-        
-        this.logService.createLog({
-            message: `${this.name} transformed ${target.name} into ${weasel.name} (level ${this.level}).`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-        
-        this.parent.transformPet(target, weasel);
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new TaitaShrewAbility(this, this.logService, this.abilityService));
     }
 
     constructor(protected logService: LogService,

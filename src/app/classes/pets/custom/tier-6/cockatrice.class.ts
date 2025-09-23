@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Rock } from "../../hidden/rock.class";
+import { CockatriceAbility } from "../../../abilities/pets/custom/tier-6/cockatrice-ability.class";
 
 export class Cockatrice extends Pet {
     name = "Cockatrice";
@@ -12,27 +11,8 @@ export class Cockatrice extends Pet {
     pack: Pack = 'Custom';
     attack = 5;
     health = 7;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let targets = this.parent.opponent.petArray.reverse();
-        let target = null;
-        for (let pet of targets) {
-            if (pet.level <= this.level) {
-                target = pet;
-                break;
-            }
-        }
-        if (target == null) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} transformed ${target.name} into a Rock.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-        let rock = new Rock(this.logService, this.abilityService, target.parent, target.health, target.attack, target.mana, target.exp, target.equipment);
-        let position = target.position;
-        this.parent.opponent.setPet(position, rock, false);
+    initAbilities(): void {
+        this.addAbility(new CockatriceAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

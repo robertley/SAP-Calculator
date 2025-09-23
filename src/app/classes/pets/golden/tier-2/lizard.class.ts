@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { LizardTail } from "../../hidden/lizard-tail.class";
+import { LizardAbility } from "../../../abilities/pets/golden/tier-2/lizard-ability.class";
 
 export class Lizard extends Pet {
     name = "Lizard";
@@ -12,32 +11,8 @@ export class Lizard extends Pet {
     pack: Pack = 'Golden';
     attack = 1;
     health = 3;
-    maxAbilityUses: number = 2;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-
-        let lizardTail = new LizardTail(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
-
-        let summonResult = this.parent.summonPetInFront(this, lizardTail);
-        
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Liazrd Tail Level ${this.level}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    randomEvent: summonResult.randomEvent
-                }
-            )    
-            this.abilityService.triggerFriendSummonedEvents(lizardTail);
-        }
-
-        this.abilityUses++;
-
-        super.superHurt(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new LizardAbility(this, this.logService, this.abilityService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

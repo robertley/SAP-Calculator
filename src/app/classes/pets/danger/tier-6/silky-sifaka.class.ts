@@ -1,11 +1,10 @@
-import { cloneDeep } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SilkySifakaAbility } from "../../../abilities/pets/danger/tier-6/silky-sifaka-ability.class";
 export class SilkySifaka extends Pet {
     name = "Silky Sifaka";
     tier = 6;
@@ -13,38 +12,8 @@ export class SilkySifaka extends Pet {
     attack = 4;
     health = 6;
 
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let sifakaPool = [
-            "Mammoth", "Lionfish",  "Orca", "Sabertooth Tiger",
-            "Warthog", "Hydra", "Phoenix", "Bay Cat", "Walrus", "Ammonite"
-        ];
-        
-        let targetsResp = this.parent.nearestPetsBehind(2, this);
-        let petsBehind = targetsResp.pets
-        // Transform each friend behind
-        for (let targetPet of petsBehind) {
-            let randomPetName = sifakaPool[Math.floor(Math.random() * sifakaPool.length)];
-            let newPet = this.petService.createPet({
-                name: randomPetName,
-                attack: targetPet.attack,
-                health: targetPet.health,
-                mana: targetPet.mana,
-                exp: this.minExpForLevel,
-                equipment: targetPet.equipment
-            }, this.parent);
-            
-            this.parent.transformPet(targetPet, newPet);
-            
-            this.logService.createLog({
-                message: `${this.name} transformed ${targetPet.name} into level ${this.level} ${newPet.name}`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true
-            });
-        }
-        
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new SilkySifakaAbility(this, this.logService, this.petService));
     }
 
     constructor(protected logService: LogService,

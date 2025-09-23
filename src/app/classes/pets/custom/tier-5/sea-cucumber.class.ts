@@ -1,11 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
-import { EquipmentService } from "../../../../services/equipment.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Tasty } from "../../../equipment/ailments/tasty.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SeaCucumberAbility } from "../../../abilities/pets/custom/tier-5/sea-cucumber-ability.class";
 
 export class SeaCucumber extends Pet {
     name = "Sea Cucumber";
@@ -14,28 +12,8 @@ export class SeaCucumber extends Pet {
     health = 5;
     attack = 3;
 
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let excludePets = this.parent.opponent.getPetsWithEquipment('Toasty')
-        let targetResp = this.parent.opponent.getRandomPets(this.level, excludePets, false, true, this);
-        let targets = targetResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        for (let target of targets) {
-            let tasty = new Tasty(this.logService, this.abilityService);
-            target.givePetEquipment(tasty);
-            this.logService.createLog({
-                message: `${this.name} made ${target.name} Tasty`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetResp.random
-            });
-
-        }
-
-        
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new SeaCucumberAbility(this, this.logService, this.abilityService));
     }
 
     constructor(protected logService: LogService,

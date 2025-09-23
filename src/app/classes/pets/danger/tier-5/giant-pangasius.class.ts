@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GiantPangasiusAbility } from "../../../abilities/pets/danger/tier-5/giant-pangasius-ability.class";
 
 export class GiantPangasius extends Pet {
     name = "Giant Pangasius";
@@ -12,31 +12,8 @@ export class GiantPangasius extends Pet {
     attack = 4;
     health = 5;
 
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (!gameApi) {
-            return;
-        }
-
-        // Use the correct transformation amount based on which player this pet belongs to
-        let transformations: number;
-        if (this.parent === gameApi.player) {
-            transformations = gameApi.playerTransformationAmount;
-        } else {
-            transformations = gameApi.opponentTransformationAmount;
-        }
-        
-        let damage = this.level * 4; // 4/8/12 damage per level
-        
-        if (transformations > 0) {
-            for (let i = 0; i < transformations; i++) {
-                let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
-                if (targetResp.pet) {
-                    this.snipePet(targetResp.pet, damage, targetResp.random, tiger);
-                }
-            }
-        }
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new GiantPangasiusAbility(this, this.logService));
     }
 
     constructor(protected logService: LogService,

@@ -1,11 +1,9 @@
-import { cloneDeep, shuffle } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Coconut } from "../../../equipment/turtle/coconut.class";
+import { HighlandCowAbility } from "../../../abilities/pets/golden/tier-6/highland-cow-ability.class";
 
 export class HighlandCow extends Pet {
     name = "Highland Cow";
@@ -13,9 +11,8 @@ export class HighlandCow extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 12;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let trumpetAmt = Math.floor(this.health / 3 * this.level);
-        this.parent.gainTrumpets(trumpetAmt, this);
+    initAbilities(): void {
+        this.addAbility(new HighlandCowAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { EgyptianVultureAbility } from "app/classes/abilities/pets/golden/tier-4/egyptian-vulture-ability.class";
 
 export class EgyptianVulture extends Pet {
     name = "Egyptian Vulture";
@@ -12,31 +11,8 @@ export class EgyptianVulture extends Pet {
     pack: Pack = 'Golden';
     attack = 7;
     health = 4;
-    knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        // Find all pets behind and filter for ones with faint abilities
-        let targetsBehindResp = this.parent.nearestPetsBehind(5, this);
-        let friendBehind = null;
-        for (let petBehind of targetsBehindResp.pets) {
-            if (petBehind.faint != null) {
-                friendBehind = petBehind;
-                break;
-            }
-        }
-        if (friendBehind == null) {
-            return;
-        }
-        this.logService.createLog({
-            message: `${this.name} activated ${friendBehind.name}'s ability.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetsBehindResp.random
-        })
-        friendBehind.faint(gameApi, false);
-        this.abilityUses++;
+    initAbilities(): void {
+        this.addAbility(new EgyptianVultureAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -50,8 +26,4 @@ export class EgyptianVulture extends Pet {
         this.initPet(exp, health, attack, mana, equipment);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

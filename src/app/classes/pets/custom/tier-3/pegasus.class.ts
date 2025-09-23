@@ -1,10 +1,9 @@
-import { getOpponent } from "app/util/helper-functions";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PegasusAbility } from "../../../abilities/pets/custom/tier-3/pegasus-ability.class";
 
 export class Pegasus extends Pet {
     name = "Pegasus";
@@ -12,20 +11,8 @@ export class Pegasus extends Pet {
     pack: Pack = 'Custom';
     attack = 1;
     health = 3;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let targetsResp = this.parent.getRandomPets(3, [this], true, false, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                target.increaseAttack(this.level);
-                this.logService.createLog({
-                    message: `${this.name} gave ${target.name} ${this.level} attack.`,
-                    type: 'ability',
-                    player: this.parent,
-                    randomEvent: targetsResp.random,
-                    tiger: tiger
-                });
-            }
-        }
+    initAbilities(): void {
+        this.addAbility(new PegasusAbility(this, this.logService));
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
