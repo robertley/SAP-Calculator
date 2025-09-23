@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -14,20 +14,24 @@ export class AtlanticPuffinAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): boolean => {
+            condition: (context: AbilityContext): boolean => {
+                const { triggerPet, tiger, pteranodon } = context;
+                const owner = this.owner;
                 if (!triggerPet || triggerPet.equipment?.name != 'Strawberry') {
-                    return;
+                    return false;
                 }
+                return true;
             },
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
         this.logService.createLog({
             message: `${owner.name} removed ${triggerPet.name}'s ${triggerPet.equipment.name}.`,
             type: "ability",
@@ -45,7 +49,7 @@ export class AtlanticPuffinAbility extends Ability {
         owner.snipePet(target, power, targetResp.random, tiger);
 
         // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): AtlanticPuffinAbility {

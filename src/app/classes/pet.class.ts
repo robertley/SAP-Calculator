@@ -1901,7 +1901,7 @@ export abstract class Pet {
 
         // this hurt ability - new trigger system
         if (damage > 0) {
-            this.abilityService.triggerHurtEvents(pet);
+            this.abilityService.triggerHurtEvents(pet, damage);
         }
     }
 
@@ -2269,23 +2269,23 @@ export abstract class Pet {
             return true;
         });
     }
-    executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
+    executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean, customParams?: any): void {
         const matchingPetAbilities = this.getAbilitiesWithTrigger(trigger, 'Pet');
         for (const ability of matchingPetAbilities) {
-            ability.execute(gameApi, triggerPet, tiger, pteranodon);
+            ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
         }
 
         const matchingEquipmentAbilities = this.getAbilitiesWithTrigger(trigger, 'Equipment');
         for (const ability of matchingEquipmentAbilities) {
-            ability.execute(gameApi, triggerPet, tiger, pteranodon);
+            ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
         }
     }
-    activateAbilities(trigger: AbilityTrigger, gameApi: GameAPI, type: AbilityType): void {
+    activateAbilities(trigger: AbilityTrigger, gameApi: GameAPI, type: AbilityType, triggerPet?: Pet, customParams?: any): void {
         const matchingAbilities = this.getAbilities(trigger, type);
 
         // Execute abilities in order (maintains ability list order within pet)
         for (const ability of matchingAbilities) {
-            ability.execute(gameApi);
+            ability.execute(gameApi, triggerPet, undefined, undefined, customParams);
         }
     }
 

@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -21,18 +21,21 @@ export class BilbyAbility extends Ability {
             native: true,
             abilitylevel: owner.level,
             maxUses: owner.level,
-            condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
+            condition: (context: AbilityContext) => {
+                const { triggerPet, tiger, pteranodon } = context;
+                const owner = this.owner;
                 return triggerPet && triggerPet !== owner;
             },
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
         let target = targetResp.pet;
@@ -49,7 +52,7 @@ export class BilbyAbility extends Ability {
         target.givePetEquipment(new Garlic());
 
         // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): BilbyAbility {

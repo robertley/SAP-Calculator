@@ -3,15 +3,24 @@ import { Pet } from "./pet.class";
 
 export type AbilityType = 'Pet' | 'Equipment';
 
-export type AbilityTrigger = 'None' | 'Composite' | 'StartTurn' | 'EndTurn' | 'StartBattle' | 'ShopUpgrade' | 'ThisBought' | 'ThisSold' | 'FoodBought' | 'FoodEatenByAny' | 'ThisSummoned' | 'OtherSummoned' | 'EnemySummoned' | 'FriendSummoned' | 'ThisTransformed' | 'EnemyPushed' | 'BeforeThisAttacks' | 'BeforeFriendAttacks' | 'ThisDied' | 'BeforeThisDies' | 'ThisDiesForPerks' | 'FriendDied' | 'ThisKilled' | 'ThisHurt' | 'EnemyHurt' | 'ThisLeveledUp' | 'FriendLeveledUp' | 'AnyLeveledUp' | 'ShopRolled' | 'FriendAheadDied' | 'Tier1FriendBought' | 'FoodEatenByThis' | 'FriendSold' | 'FriendAheadAttacked' | 'FriendBought' | 'FriendHurt' | 'FriendlyLeveledUp' | 'CompositeEnemySummonedOrPushed' | 'AppleEatenByThis' | 'AdjacentFriendsDie' | 'EnemyDied' | 'FriendAheadHurt' | 'SpendGold12' | 'FriendDied3' | 'TwoFriendsDied' | 'FriendSummoned2' | 'FriendSummoned3' | 'SpendGold7' | 'ThisGainedPerk' | 'ThisLostPerk' | 'ThisAttacked' | 'ClearFront' | 'AllEnemiesDied' | 'FriendAttacked' | 'FriendlyAttacked3' | 'FriendlyAttacked2' | 'FriendAttacked4' | 'FriendAttacked5' | 'BuyFromShop' | 'SpendGold8' | 'SpendGold' | 'SpendGold2' | 'SpendGold3' | 'SpendGold4' | 'SpendGold5' | 'SpendGold6' | 'SpendGold9' | 'SpendGold10' | 'SpendGold11' | 'Roll2' | 'Roll3' | 'Roll4' | 'Roll5' | 'Roll6' | 'Roll7' | 'Roll8' | 'Roll9' | 'Roll10' | 'FriendBought2' | 'FriendBought3' | 'FriendBought4' | 'FriendGainsAilment' | 'ToyBroke' | 'ToySummoned' | 'ThisBroke' | 'AfterTurns2' | 'AfterTurns3' | 'AfterTurns4' | 'ThisGainedPerkOrAilment' | 'FriendGainsPerk' | 'ThisHurtOrFaint' | 'FriendSold2' | 'FriendSold3' | 'FriendSold4' | 'FriendSold5' | 'ThisBoughtOrToyBroke' | 'StartBattleOrTurn' | 'AllFriendsFainted' | 'BeforeStartBattle' | 'FriendlyToyBroke' | 'FriendlyToySummoned' | 'EndTurn2' | 'EndTurn3' | 'EndTurn4' | 'EndTurn5' | 'FriendlyGainsPerk' | 'FoodBought2' | 'FoodBought3' | 'FoodBought4' | 'FoodBought5' | 'FriendJumped' | 'FriendJumped2' | 'FriendJumped3' | 'FriendGainedAttack' | 'FriendGainedHealth' | 'ThisGainedAttack' | 'ThisGainedHealth' | 'FriendSummoned4' | 'FriendSummoned5' | 'ShopRewardStocked' | 'ThisGainedMana' | 'EnemyGainedAilment' | 'FriendlyLeveledUp2' | 'ThisGainedAilment' | 'ThisGainedStrawberry' | 'EnemyHurtOrPushed' | 'AnyoneAttack' | 'ThisKilledEnemy' | 'BeforeSell' | 'SellFriend' | 'FriendSoldOrFaint' | 'FriendHurt2' | 'FriendHurt3' | 'FriendHurt4' | 'FriendHurt5' | 'Level3FriendSold' | 'FriendTransformed' | 'Disabled137' | 'Disabled138' | 'Disabled139' | 'Disabled140' | 'Disabled141' | 'Disabled142' | 'Disabled143' | 'Disabled144' | 'SpendAttack' | 'SpendHealth' | 'FriendSpendAttack' | 'FriendSpendHealth' | 'FriendSpendsAttackOrHealth' | 'FriendTransformed3' | 'EnemyHurt10' | 'EnemyHurt20' | 'FriendTransformed5' | 'ThisHurt5' | 'CompositeStartOfBattleOrTransformed' | 'CompositeBuyOrStartTurn' | 'FriendHurtOrFaint' | 'EnemyHurt5' | 'FriendFainted5' | 'FriendTransformedInBattle' | 'FriendLostPerk' | 'LostStrawberry' | 'FriendLostStrawberry' | 'FriendGainedStrawberry' | 'ThisHurt2' | 'ThisHurt3' | 'ThisHurt4' | 'BeeSummoned' | 'FriendFlung' | 'ThisSummonedLate' | 'AnythingBought' | 'AnyoneGainedAilment' | 'Eat2' | 'Eat3' | 'Eat4' | 'Eat5' | 'CornEatenByThis' | 'CornEatenByFriend' | 'AnyoneFlung' | 'GainExp' | 'FriendGainedExp' | 'AppleEatenByThis2' | 'BeforeRoll' | 'PleaseDontShowUpInLocalizationFiles' | 'FriendDied4' | 'FriendDied5' | 'FriendlyGainedStrawberry' | 'FoodEatenByFriend' | 'FoodEatenByFriendly' | 'AnyoneHurt' | 'FriendlyAttacked' | 'ShopFoodEatenByThis' | 'FriendlyGainedExp' | 'PetDied' | 'FriendlyAbilityActivated' | 'FriendlyAbilityActivated5' | 'EnemyAttacked8' | 'EnemyAbilityActivated' | 'FriendHurt6' | 'FriendAheadGainedHealth' | 'AdjacentFriendAttacked' | 'BeforeAdjacentFriendAttacked' | 'LostAttack' | 'EnemyAttacked2' | 'AdjacentFriendsHurt' | 'EnemyAttacked10' | 'AnyoneBehindHurt' | 'AnyoneJumped' | 'BeforeFriendTransformed' | 'EnemyAttacked' | 'FriendJumpedOrTransformed' | 'EnemyAttacked5' | 'AnyoneGainedWeak' | 'ThisFirstAttack' | 'PetSold' | 'PetGainedAilment' | 'PetLostPerk' | 'BeforeFirstAttack' | 'BeforeFriendlyAttack' | 'EnemyFaint' | 'EnemyFaint2' | 'EnemyFaint3' | 'EnemyFaint4' | 'EnemyFaint5' 
+export type AbilityTrigger = 'None' | 'Composite' | 'StartTurn' | 'EndTurn' | 'StartBattle' | 'ShopUpgrade' | 'ThisBought' | 'ThisSold' | 'FoodBought' | 'FoodEatenByAny' | 'ThisSummoned' | 'OtherSummoned' | 'EnemySummoned' | 'FriendSummoned' | 'ThisTransformed' | 'EnemyPushed' | 'BeforeThisAttacks' | 'BeforeFriendAttacks' | 'ThisDied' | 'BeforeThisDies' | 'ThisDiesForPerks' | 'FriendDied' | 'ThisKilled' | 'ThisHurt' | 'EnemyHurt' | 'ThisLeveledUp' | 'FriendLeveledUp' | 'AnyLeveledUp' | 'ShopRolled' | 'FriendAheadDied' | 'Tier1FriendBought' | 'FoodEatenByThis' | 'FriendSold' | 'FriendAheadAttacked' | 'FriendBought' | 'FriendHurt' | 'FriendlyLeveledUp' | 'CompositeEnemySummonedOrPushed' | 'AppleEatenByThis' | 'AdjacentFriendsDie' | 'EnemyDied' | 'FriendAheadHurt' | 'SpendGold12' | 'FriendDied3' | 'TwoFriendsDied' | 'FriendSummoned2' | 'FriendSummoned3' | 'SpendGold7' | 'ThisGainedPerk' | 'ThisLostPerk' | 'ThisAttacked' | 'ClearFront' | 'AllEnemiesDied' | 'FriendAttacked' | 'FriendlyAttacked3' | 'FriendlyAttacked2' | 'FriendAttacked4' | 'FriendAttacked5' | 'BuyFromShop' | 'SpendGold8' | 'SpendGold' | 'SpendGold2' | 'SpendGold3' | 'SpendGold4' | 'SpendGold5' | 'SpendGold6' | 'SpendGold9' | 'SpendGold10' | 'SpendGold11' | 'Roll2' | 'Roll3' | 'Roll4' | 'Roll5' | 'Roll6' | 'Roll7' | 'Roll8' | 'Roll9' | 'Roll10' | 'FriendBought2' | 'FriendBought3' | 'FriendBought4' | 'FriendGainsAilment' | 'ToyBroke' | 'ToySummoned' | 'ThisBroke' | 'AfterTurns2' | 'AfterTurns3' | 'AfterTurns4' | 'ThisGainedPerkOrAilment' | 'FriendGainsPerk' | 'ThisHurtOrFaint' | 'FriendSold2' | 'FriendSold3' | 'FriendSold4' | 'FriendSold5' | 'ThisBoughtOrToyBroke' | 'StartBattleOrTurn' | 'AllFriendsFainted' | 'BeforeStartBattle' | 'FriendlyToyBroke' | 'FriendlyToySummoned' | 'EndTurn2' | 'EndTurn3' | 'EndTurn4' | 'EndTurn5' | 'FriendlyGainsPerk' | 'FoodBought2' | 'FoodBought3' | 'FoodBought4' | 'FoodBought5' | 'FriendJumped' | 'FriendJumped2' | 'FriendJumped3' | 'FriendGainedAttack' | 'FriendGainedHealth' | 'ThisGainedAttack' | 'ThisGainedHealth' | 'FriendSummoned4' | 'FriendSummoned5' | 'ShopRewardStocked' | 'ThisGainedMana' | 'EnemyGainedAilment' | 'FriendlyLeveledUp2' | 'ThisGainedAilment' | 'ThisGainedStrawberry' | 'EnemyHurtOrPushed' | 'AnyoneAttack' | 'ThisKilledEnemy' | 'BeforeSell' | 'SellFriend' | 'FriendSoldOrFaint' | 'FriendHurt2' | 'FriendHurt3' | 'FriendHurt4' | 'FriendHurt5' | 'Level3FriendSold' | 'FriendTransformed' | 'Disabled137' | 'Disabled138' | 'Disabled139' | 'Disabled140' | 'Disabled141' | 'Disabled142' | 'Disabled143' | 'Disabled144' | 'SpendAttack' | 'SpendHealth' | 'FriendSpendAttack' | 'FriendSpendHealth' | 'FriendSpendsAttackOrHealth' | 'FriendTransformed3' | 'EnemyHurt10' | 'EnemyHurt20' | 'FriendTransformed5' | 'ThisHurt5' | 'CompositeStartOfBattleOrTransformed' | 'CompositeBuyOrStartTurn' | 'FriendHurtOrFaint' | 'EnemyHurt5' | 'FriendFainted5' | 'FriendTransformedInBattle' | 'FriendLostPerk' | 'LostStrawberry' | 'FriendLostStrawberry' | 'FriendGainedStrawberry' | 'ThisHurt2' | 'ThisHurt3' | 'ThisHurt4' | 'BeeSummoned' | 'FriendFlung' | 'ThisSummonedLate' | 'AnythingBought' | 'AnyoneGainedAilment' | 'Eat2' | 'Eat3' | 'Eat4' | 'Eat5' | 'CornEatenByThis' | 'CornEatenByFriend' | 'AnyoneFlung' | 'GainExp' | 'FriendGainedExp' | 'AppleEatenByThis2' | 'BeforeRoll' | 'PleaseDontShowUpInLocalizationFiles' | 'FriendDied4' | 'FriendDied5' | 'FriendlyGainedStrawberry' | 'FoodEatenByFriend' | 'FoodEatenByFriendly' | 'AnyoneHurt' | 'FriendlyAttacked' | 'ShopFoodEatenByThis' | 'FriendlyGainedExp' | 'PetDied' | 'FriendlyAbilityActivated' | 'FriendlyAbilityActivated5' | 'EnemyAttacked8' | 'EnemyAbilityActivated' | 'FriendHurt6' | 'FriendAheadGainedHealth' | 'AdjacentFriendAttacked' | 'BeforeAdjacentFriendAttacked' | 'LostAttack' | 'EnemyAttacked2' | 'AdjacentFriendsHurt' | 'EnemyAttacked10' | 'AnyoneBehindHurt' | 'AnyoneJumped' | 'BeforeFriendTransformed' | 'EnemyAttacked' | 'FriendJumpedOrTransformed' | 'EnemyAttacked5' | 'AnyoneGainedWeak' | 'ThisFirstAttack' | 'PetSold' | 'PetGainedAilment' | 'PetLostPerk' | 'BeforeFirstAttack' | 'BeforeFriendlyAttack' | 'EnemyFaint' | 'EnemyFaint2' | 'EnemyFaint3' | 'EnemyFaint4' | 'EnemyFaint5'
 | 'SpecialEndTurn' | 'manaSnipe' | 'goldenRetrieverSummons';
 
+export interface AbilityContext {
+    gameApi: GameAPI;
+    triggerPet?: Pet;
+    tiger?: boolean;
+    pteranodon?: boolean;
+    damageAmount?: number;
+    [key: string]: any; // Allow for additional custom parameters
+}
+
 export interface AbilityCondition {
-    (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): boolean;
+    (context: AbilityContext): boolean;
 }
 
 export interface AbilityFunction {
-    (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void;
+    (context: AbilityContext): void;
 }
 
 export class Ability {
@@ -64,25 +73,35 @@ export class Ability {
         return true;
     }
 
-    execute(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): boolean {
+    execute(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean, customParams?: any): boolean {
         //Check if pet is removed
         if (this.owner.removed && !this.matchesTrigger('ThisDied')) {
-            return;
+            return false;
         }
         // Check if pet is disabled (Dazed)
         if (!this.owner.abilityValidCheck()) {
             //TO DO1: Add logservice
             return false;
         }
-        // Check custom condition if provided
-        if (this.condition && !this.condition(this.owner, triggerPet, tiger, pteranodon)) {
-            return false;
-        }
         try {
-            this.abilityFunction(gameApi, triggerPet, tiger, pteranodon);
+            // Build context object with all parameters
+            const context: AbilityContext = {
+                gameApi,
+                triggerPet,
+                tiger,
+                pteranodon,
+                ...customParams // Spread any additional custom parameters
+            };
+
+            // Check custom condition if provided
+            if (this.condition && !this.condition(context)) {
+                return false;
+            }
+
+            this.abilityFunction(context);
             if (!tiger) {
                 this.currentUses++;
-            } 
+            }
             return true;
         } catch (error) {
             console.error(`Error executing ability ${this.name || 'unnamed'}:`, error);
@@ -105,8 +124,8 @@ export class Ability {
 
     // Tiger execution method for new framework
     // Subclasses should call this at the end of their ability logic
-    protected triggerTigerExecution(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        if (!this.tigerCheck(tiger)) {
+    protected triggerTigerExecution(context: AbilityContext): void {
+        if (!this.tigerCheck(context.tiger)) {
             return;
         }
 
@@ -118,8 +137,12 @@ export class Ability {
         this.abilityLevel = (this.owner as any).petBehind(null, true).level;
         this.alwaysIgnorePetLevel = true;
 
-        // Execute ability again with Tiger's level
-        this.abilityFunction(gameApi, triggerPet, true, pteranodon);
+        // Execute ability again with Tiger's level using updated context
+        const tigerContext: AbilityContext = {
+            ...context,
+            tiger: true
+        };
+        this.abilityFunction(tigerContext);
 
         // Restore original settings
         this.abilityLevel = originalAbilityLevel;

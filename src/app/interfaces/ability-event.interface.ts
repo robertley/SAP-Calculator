@@ -11,4 +11,5 @@ export interface AbilityEvent {
     triggerPet?: Pet; // Pet that triggered this ability (e.g., the pet that fainted)
     abilityType?: AbilityTrigger; // Track which ability type this event belongs to
     tieBreaker?: number; // Random number for tie breaking
+    customParams?: any; // Custom parameters to pass through context
 }

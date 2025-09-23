@@ -346,20 +346,21 @@ export class AbilityService {
     }
 
     // Helper method to trigger abilities in the new system
-    private triggerAbility(pet: Pet, trigger: AbilityTrigger, triggerPet?: Pet): void {
+    private triggerAbility(pet: Pet, trigger: AbilityTrigger, triggerPet?: Pet, customParams?: any): void {
         if (pet.hasTrigger(trigger)) {
             // Create an AbilityEvent for the global queue
             const abilityEvent: AbilityEvent = {
-                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {pet.executeAbilities(trigger, gameApi, triggerPet)},
+                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {pet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, customParams)},
                 priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                 pet: pet,
                 triggerPet: triggerPet,
                 abilityType: trigger,
-                tieBreaker: Math.random()
+                tieBreaker: Math.random(),
+                customParams: customParams // Store custom parameters in the event
             };
 
             this.addEventToQueue(abilityEvent);
-        }      
+        }
     }    
     get hasAbilityCycleEvents() {
         // With the new priority queue system, only check the global queue
@@ -440,16 +441,18 @@ export class AbilityService {
     // Execute event callback with proper parameters based on ability type
     executeEventCallback(event: AbilityEvent) {
         const gameApi = this.gameService.gameApi;
-        
+
         // Check for pet transformation and redirect ability execution if needed
         const executingPet = event.pet;
-        
+
         if (executingPet && executingPet.transformed && executingPet.transformedInto && event.abilityType) {
             const transformedPet = executingPet.transformedInto;
-            // Replace the callback with the transformed pet's method
-            event.callback = (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {transformedPet.executeAbilities(trigger, gameApi, triggerPet)}
+            // Replace the callback with the transformed pet's method - pass custom params through
+            event.callback = (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {
+                transformedPet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, event.customParams)
+            }
         }
-        event.callback(event.abilityType, gameApi,event.triggerPet);
+        event.callback(event.abilityType, gameApi, event.triggerPet);
     }
 
     // End of Turn Events
@@ -1166,54 +1169,57 @@ export class AbilityService {
         }
     }
 
-    triggerHurtEvents(hurtedPet: Pet): void {
+    triggerHurtEvents(hurtedPet: Pet, damageAmount?: number): void {
+        // Create custom params with damage amount for hurt abilities
+        const customParams = damageAmount !== undefined ? { damageAmount } : undefined;
+
         //check friends
         for (let pet of hurtedPet.parent.petArray){
-            this.triggerAbility(pet, 'AnyoneHurt', hurtedPet);
+            this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
             if (pet == hurtedPet) {
-                this.triggerAbility(pet, 'ThisHurt', hurtedPet);
+                this.triggerAbility(pet, 'ThisHurt', hurtedPet, customParams);
                 // Counter checks - first verify pet has the counter ability
                 if (pet.hasTrigger('ThisHurt2')) {
                     pet.abilityCounter++;
                     if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt2', hurtedPet);
+                        this.triggerAbility(pet, 'ThisHurt2', hurtedPet, customParams);
                     }
                 }
                 if (pet.hasTrigger('ThisHurt3')) {
                     pet.abilityCounter++;
                     if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt3', hurtedPet);
+                        this.triggerAbility(pet, 'ThisHurt3', hurtedPet, customParams);
                     }
                 }
                 if (pet.hasTrigger('ThisHurt4')) {
                     pet.abilityCounter++;
                     if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt4', hurtedPet);
+                        this.triggerAbility(pet, 'ThisHurt4', hurtedPet, customParams);
                     }
                 }
                 if (pet.hasTrigger('ThisHurt5')) {
                     pet.abilityCounter++;
                     if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt5', hurtedPet);
+                        this.triggerAbility(pet, 'ThisHurt5', hurtedPet, customParams);
                     }
                 }
             } else {
-                this.triggerAbility(pet, 'FriendHurt', hurtedPet);
+                this.triggerAbility(pet, 'FriendHurt', hurtedPet, customParams);
             }
             if (pet == hurtedPet.petBehind(null, true)) {
-                this.triggerAbility(pet, 'FriendAheadHurt', hurtedPet);
+                this.triggerAbility(pet, 'FriendAheadHurt', hurtedPet, customParams);
             }
             if (pet == pet.petBehind() || pet.petAhead) {
-                this.triggerAbility(pet, 'AdjacentFriendsHurt', hurtedPet);
+                this.triggerAbility(pet, 'AdjacentFriendsHurt', hurtedPet, customParams);
             }
             if (pet.position > hurtedPet.position) {
-                this.triggerAbility(pet, 'AnyoneBehindHurt', hurtedPet)
+                this.triggerAbility(pet, 'AnyoneBehindHurt', hurtedPet, customParams)
             }
         }
         //check Enemies
         for (let pet of hurtedPet.parent.opponent.petArray) {
-            this.triggerAbility(pet, 'EnemyHurt', hurtedPet)
-            this.triggerAbility(pet, 'AnyoneHurt', hurtedPet);
+            this.triggerAbility(pet, 'EnemyHurt', hurtedPet, customParams)
+            this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
         }
     }
     // level up events handler

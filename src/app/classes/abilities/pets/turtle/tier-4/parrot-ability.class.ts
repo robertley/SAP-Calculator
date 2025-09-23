@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -14,15 +14,16 @@ export class ParrotAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        let owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;let owner = this.owner;
         let copyPet = owner.petAhead;
         if (copyPet == null) {
             return;

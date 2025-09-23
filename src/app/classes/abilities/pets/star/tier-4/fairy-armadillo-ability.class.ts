@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -17,16 +17,17 @@ export class FairyArmadilloAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
         this.abilityService = abilityService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         const healthGain = this.level * 2;
         const targetResp = owner.parent.getThis(owner);
@@ -59,7 +60,7 @@ export class FairyArmadilloAbility extends Ability {
         transformTarget.parent.transformPet(transformTarget, fairyBall);
 
         // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): FairyArmadilloAbility {

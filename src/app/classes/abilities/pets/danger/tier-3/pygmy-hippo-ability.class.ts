@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -16,16 +16,17 @@ export class PygmyHippoAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
         this.abilityService = abilityService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let damage = Math.floor(owner.health * 0.33); // 33% of current health
         let targetsResp = owner.parent.opponent.getLowestHealthPets(this.level, undefined, owner);
@@ -35,7 +36,7 @@ export class PygmyHippoAbility extends Ability {
         }
 
         // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): PygmyHippoAbility {

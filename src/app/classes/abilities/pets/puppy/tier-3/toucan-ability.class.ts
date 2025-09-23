@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -16,18 +16,21 @@ export class ToucanAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): boolean => {
+            condition: (context: AbilityContext): boolean => {
+                const { triggerPet, tiger, pteranodon } = context;
+                const owner = this.owner;
                 return this.owner.timesAttacked < 1;
             },
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let newEquipmentInstance: Equipment;
         if (owner.equipment == null || owner.equipment.tier > 5) {
@@ -56,7 +59,7 @@ export class ToucanAbility extends Ability {
         }
 
         // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): ToucanAbility {

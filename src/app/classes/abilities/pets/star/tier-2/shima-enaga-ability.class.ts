@@ -1,4 +1,4 @@
-import { Ability } from "../../../../ability.class";
+import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
@@ -19,11 +19,13 @@ export class ShimaEnagaAbility extends Ability {
             native: true,
             abilitylevel: owner.level,
             maxUses: 2,
-            condition: (owner: Pet, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
+            condition: (context: AbilityContext) => {
+                const { triggerPet, tiger, pteranodon } = context;
+                const owner = this.owner;
                 return triggerPet && triggerPet.equipment?.name == 'Strawberry';
             },
-            abilityFunction: (gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean) => {
-                this.executeAbility(gameApi, triggerPet, tiger, pteranodon);
+            abilityFunction: (context) => {
+                this.executeAbility(context);
             }
         });
         this.logService = logService;
@@ -31,8 +33,9 @@ export class ShimaEnagaAbility extends Ability {
         this.petService = petService;
     }
 
-    private executeAbility(gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean): void {
-        const owner = this.owner;
+    private executeAbility(context: AbilityContext): void {
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let power = this.level * 2;
 
@@ -64,7 +67,7 @@ export class ShimaEnagaAbility extends Ability {
         }
 
         // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(gameApi, triggerPet, tiger, pteranodon);
+        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): ShimaEnagaAbility {
