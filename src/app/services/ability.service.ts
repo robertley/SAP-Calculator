@@ -1212,6 +1212,37 @@ export class AbilityService {
                 }
             } else {
                 this.triggerAbility(pet, 'FriendHurt', hurtedPet, customParams);
+                // Counter checks - first verify pet has the counter ability
+                if (pet.hasTrigger('FriendHurt2')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 2 == 0) {
+                        this.triggerAbility(pet, 'FriendHurt2', hurtedPet, customParams);
+                    }
+                }
+                if (pet.hasTrigger('FriendHurt3')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 3 == 0) {
+                        this.triggerAbility(pet, 'FriendHurt3', hurtedPet, customParams);
+                    }
+                }
+                if (pet.hasTrigger('FriendHurt4')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 4 == 0) {
+                        this.triggerAbility(pet, 'FriendHurt4', hurtedPet, customParams);
+                    }
+                }
+                if (pet.hasTrigger('FriendHurt5')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 5 == 0) {
+                        this.triggerAbility(pet, 'FriendHurt5', hurtedPet, customParams);
+                    }
+                }
+                if (pet.hasTrigger('FriendHurt6')) {
+                    pet.abilityCounter++;
+                    if (pet.abilityCounter % 6 == 0) {
+                        this.triggerAbility(pet, 'FriendHurt6', hurtedPet, customParams);
+                    }
+                }
             }
             if (pet == hurtedPet.petBehind(null, true)) {
                 this.triggerAbility(pet, 'FriendAheadHurt', hurtedPet, customParams);
@@ -1227,6 +1258,25 @@ export class AbilityService {
         for (let pet of hurtedPet.parent.opponent.petArray) {
             this.triggerAbility(pet, 'EnemyHurt', hurtedPet, customParams)
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
+            // Counter checks - first verify pet has the counter ability
+            if (pet.hasTrigger('EnemyHurt5')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 5 == 0) {
+                    this.triggerAbility(pet, 'EnemyHurt5', hurtedPet, customParams);
+                }
+            }
+            if (pet.hasTrigger('EnemyHurt10')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 10 == 0) {
+                    this.triggerAbility(pet, 'EnemyHurt10', hurtedPet, customParams);
+                }
+            }
+            if (pet.hasTrigger('EnemyHurt20')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 20 == 0) {
+                    this.triggerAbility(pet, 'EnemyHurt20', hurtedPet, customParams);
+                }
+            }
         }
     }
     // level up events handler

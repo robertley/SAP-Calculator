@@ -112,7 +112,7 @@ export class Ability {
     // Tiger check method - matches Pet.class.ts:676-681
     tigerCheck(tiger?: boolean): boolean {
         // If ignoreRepeats is true, Tiger should not trigger this ability again
-        if (this.ignoreRepeats) {
+        if (this.ignoreRepeats || this.abilityType != 'Pet') {
             return false;
         }
 
