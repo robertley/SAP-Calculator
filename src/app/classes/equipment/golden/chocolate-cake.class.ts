@@ -3,42 +3,16 @@ import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { ChocolateCakeAbility } from "../../abilities/equipment/golden/chocolate-cake-ability.class";
 
 export class ChocolateCake extends Equipment {
     name = 'Chocolate Cake';
     equipmentClass = 'beforeAttack' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalBeforeAttack =pet.beforeAttack?.bind(pet);
-        pet.beforeAttack = (gameApi, tiger) => {
-            if (originalBeforeAttack != null) {
-                originalBeforeAttack(gameApi, tiger);
-            }
-            
-            if (tiger) {
-                return;
-            }
-
-            // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Chocolate Cake') {
-                return;
-            }
-            
-            let expGain = 3 * this.multiplier;
-            this.logService.createLog({
-                message: `${pet.name} gained ${expGain} exp. (Chocolate Cake)${this.multiplierMessage}`,
-                type: 'equipment',
-                player: pet.parent
-            })
-            pet.increaseExp(expGain);
-            pet.health = 0;
-
-            this.abilityService.triggerKillEvents(pet, pet);
-
-            pet.removePerk();
-        }
+        pet.addAbility(new ChocolateCakeAbility(pet, this, this.logService, this.abilityService));
     }
 
-    constructor(private logService: LogService, private abilityService: AbilityService) {
+    constructor(protected logService: LogService, protected abilityService: AbilityService) {
         super();
     }
 

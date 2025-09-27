@@ -105,7 +105,7 @@ export class EquipmentService {
         map.set('Melon', new Melon())
         map.set('Honey', new Honey(this.logService, this.abilityService))
         map.set('Chili', new Chili(this.logService, this.abilityService))
-        map.set('Mushroom', new Mushroom(this.logService, this.abilityService, petService));
+        map.set('Mushroom', new Mushroom(this.logService, petService));
         map.set('Coconut', new Coconut());
         map.set('Peanut', new Peanut());
         map.set('Peanut Butter', new PeanutButter());
@@ -115,21 +115,21 @@ export class EquipmentService {
         map.set('Rice', new Rice());
         map.set('Eucalyptus', new Eucalyptus());
         map.set('Lime', new Lime());    
-        map.set('Egg', new Egg(this.logService, this.abilityService));
-        map.set('Squash', new Squash(this.logService, this.abilityService));
+        map.set('Egg', new Egg(this.logService));
+        map.set('Squash', new Squash(this.logService));
         map.set('Salt', new Salt());
         map.set('Pie', new Pie(this.logService));
         map.set('Skewer', new Skewer(this.logService));
         map.set('Lemon', new Lemon());
         map.set('Pancakes', new Pancakes(this.logService));
-        map.set('Strawberry', new Strawberry(this.logService, this.abilityService));
-        map.set('Baguette', new Baguette(this.logService, this.abilityService));
+        map.set('Strawberry', new Strawberry(this.logService));
+        map.set('Baguette', new Baguette(this.logService));
         map.set('Cucumber', new Cucumber());
         map.set('Cheese', new Cheese());
         map.set('Grapes', new Grapes());
         map.set('Carrot', new Carrot());
         map.set('Pepper', new Pepper());
-        map.set('Popcorn', new Popcorn(this.logService, this.abilityService, petService, this.gameService));
+        map.set('Popcorn', new Popcorn(this.logService, petService, this.gameService));
         map.set('Cherry', new Cherry());
         map.set('Bok Choy', new BokChoy());
         map.set('Chocolate Cake', new ChocolateCake(this.logService, this.abilityService));
@@ -139,22 +139,22 @@ export class EquipmentService {
         map.set('Banana', new Banana(this.logService, this.abilityService));
         map.set('Onion', new Onion(this.logService));
         map.set('Pita Bread', new PitaBread(this.logService));
-        map.set('Tomato', new Tomato(this.logService, this.abilityService));
+        map.set('Tomato', new Tomato(this.logService));
         map.set('Sudduth Tomato', new SudduthTomato(this.logService));
-        map.set('Unagi', new Unagi(this.logService));
-        map.set('Durian', new Durian(this.logService, this.abilityService));
-        map.set('Gros Michel Banana', new GrosMichelBanana(this.logService, this.abilityService, petService));
+        map.set('Unagi', new Unagi());
+        map.set('Durian', new Durian(this.logService));
+        map.set('Gros Michel Banana', new GrosMichelBanana(this.logService, this.abilityService));
         map.set('Seaweed', new Seaweed(this.logService, this.abilityService, petService));
         map.set('Fortune Cookie', new FortuneCookie());
         map.set('Blueberry', new Blueberry());
         map.set('Donut', new Donut());
-        map.set('Cashew Nut', new CashewNut(this.logService, this.abilityService));
-        map.set('Nachos', new Nachos(this.logService, this.abilityService));
+        map.set('Cashew Nut', new CashewNut(this.logService));
+        map.set('Nachos', new Nachos(this.logService));
         map.set('Pumpkin', new Pumpkin());
         map.set('Kiwifruit', new Kiwifruit());
         map.set('Pineapple', new Pineapple());
-        map.set('Fig', new Fig(this.logService, this.abilityService));
-        map.set('Caramel', new Caramel(this.logService, this.abilityService));
+        map.set('Fig', new Fig(this.logService));
+        map.set('Caramel', new Caramel(this.logService));
 
         map.set('Rambutan', new Rambutan(this.logService));
         map.set('Love Potion', new LovePotion(this.logService));
@@ -163,15 +163,15 @@ export class EquipmentService {
         map.set('Easter Egg', new EasterEgg(this.logService, this.abilityService));
         map.set('Health Potion', new HealthPotion(this.logService));
         map.set('Magic Beans', new MagicBeans());
-        map.set('Golden Egg', new GoldenEgg(this.logService, this.abilityService));
+        map.set('Golden Egg', new GoldenEgg(this.logService));
         map.set('Yggdrasil Fruit', new YggdrasilFruit(this.logService, this.abilityService));
         map.set('Honeydew Melon', new HoneydewMelon());
         map.set('Maple Syrup', new MapleSyrup());
-        map.set('Cocoa Bean', new CocoaBean(this.logService, this.abilityService, petService));
+        map.set('Cocoa Bean', new CocoaBean(this.logService, petService));
         map.set('White Okra', new WhiteOkra());
-        map.set('White Truffle', new WhiteTruffle(this.logService, this.abilityService));
+        map.set('White Truffle', new WhiteTruffle(this.logService));
         map.set('Ambrosia', new Ambrosia());
-        map.set('Faint Bread', new FaintBread(this.logService, this.abilityService, petService, this.gameService));
+        map.set('Faint Bread', new FaintBread(this.logService, petService));
 
         return map;
     }
@@ -185,7 +185,7 @@ export class EquipmentService {
         map.set('Ink', new Ink());
         map.set('Spooked', new Spooked());
         map.set('Weak', new Weak());
-        map.set('Tasty', new Tasty(this.logService, this.abilityService));
+        map.set('Tasty', new Tasty(this.logService));
 
         return map;
     }

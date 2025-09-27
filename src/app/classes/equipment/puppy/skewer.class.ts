@@ -12,7 +12,7 @@ export class Skewer extends Equipment {
         this.skewer(pet, attackedPet, 2);
     }
 
-    constructor(private logService: LogService) {
+    constructor(protected logService: LogService) {
         super()
     }
 

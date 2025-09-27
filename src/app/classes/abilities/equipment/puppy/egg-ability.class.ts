@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { Nest } from "../../../pets/hidden/nest.class";
@@ -16,12 +15,6 @@ export class EggAbility extends Ability {
             native: true, 
             maxUses: 1, // Egg is removed after one use
             abilitylevel: 1,
-            condition: (context: AbilityContext) => {
-                const { triggerPet, tiger, pteranodon } = context;
-                const owner = this.owner;
-                // Check if equipment is still equipped
-                return owner.equipment === this.equipment;
-            },
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -30,12 +23,8 @@ export class EggAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
-
-        if (tiger) {
-            return;
-        }
+        const { triggerPet } = context;
+        const owner = this.owner;
 
         let multiplier = this.equipment.multiplier;
         // Special case: Nest with Egg triggers multiple times based on level
@@ -46,8 +35,7 @@ export class EggAbility extends Ability {
         }
 
         for (let i = 0; i < multiplier; i++) {
-            let opponent = owner.parent == gameApi.player ? gameApi.opponet : gameApi.player;
-            let opponentPets = opponent.petArray;
+            let opponentPets = owner.parent.opponent.petArray;
             let attackPet: Pet = null;
             for (let opponentPet of opponentPets) {
                 if (opponentPet.alive) {
@@ -57,7 +45,6 @@ export class EggAbility extends Ability {
             }
 
             if (attackPet == null) {
-                console.warn("egg didn't find target");
                 continue;
             }
 

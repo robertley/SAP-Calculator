@@ -29,14 +29,14 @@ export class SeaCucumberAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let excludePets = owner.parent.opponent.getPetsWithEquipment('Toasty');
+        let excludePets = owner.parent.opponent.getPetsWithEquipment('Tasty');
         let targetResp = owner.parent.opponent.getRandomPets(this.level, excludePets, false, true, owner);
         let targets = targetResp.pets;
         if (targets.length == 0) {
             return;
         }
         for (let target of targets) {
-            let tasty = new Tasty(this.logService, this.abilityService);
+            let tasty = new Tasty(this.logService);
             target.givePetEquipment(tasty);
             this.logService.createLog({
                 message: `${owner.name} made ${target.name} Tasty`,

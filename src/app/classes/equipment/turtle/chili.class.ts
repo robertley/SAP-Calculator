@@ -17,7 +17,7 @@ export class Chili extends Equipment {
         pet.snipePet(attackPet, 5, false, null, null, true);
     }
 
-    constructor(private logService: LogService, private abilityService: AbilityService) {
+    constructor(protected logService: LogService, protected abilityService: AbilityService) {
         super()
     }
 }

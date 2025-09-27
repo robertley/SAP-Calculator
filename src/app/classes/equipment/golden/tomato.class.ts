@@ -1,47 +1,18 @@
-import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { TomatoAbility } from "../../abilities/equipment/golden/tomato-ability.class";
 
 export class Tomato extends Equipment {
     name = 'Tomato';
     tier = 6;
     equipmentClass: EquipmentClass = 'beforeAttack';
     callback = (pet: Pet) => {
-        let originalBeforeAttack =pet.beforeAttack?.bind(pet);
-        pet.beforeAttack = (gameApi, tiger) => {
-            if (originalBeforeAttack != null) {
-                originalBeforeAttack(gameApi, tiger);
-            }
-            
-            if (tiger) {
-                return;
-            }
-            
-            // Check if equipment is still equipped
-            if (pet.equipment !== this) {
-                return;
-            }
-            
-            for (let i = 0; i < this.multiplier; i++) {
-                let opponent = pet.parent == gameApi.player ? gameApi.opponet : gameApi.player;
-                let targetResp = opponent.getLastPet();
-                if (targetResp.pet == null) {
-                    break;
-                }
-                
-                // Use proper snipePet method which handles all the damage logic correctly
-                pet.snipePet(targetResp.pet, 10, targetResp.random, false, false, true, false);
-            }
-            
-            // Remove equipment after use
-            pet.removePerk();
-        }
+        pet.addAbility(new TomatoAbility(pet, this));
     }
 
     constructor(
         protected logService: LogService,
-        protected abilityService: AbilityService 
     ) {
         super()
     }

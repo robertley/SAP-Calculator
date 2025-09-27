@@ -1,8 +1,6 @@
-import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
-import { Nest } from "../../pets/hidden/nest.class";
 import { EggAbility } from "../../abilities/equipment/puppy/egg-ability.class";
 
 export class Egg extends Equipment {
@@ -16,7 +14,6 @@ export class Egg extends Equipment {
 
     constructor(
         protected logService: LogService,
-        protected abilityService: AbilityService 
     ) {
         super()
     }

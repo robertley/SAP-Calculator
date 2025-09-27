@@ -1,36 +1,16 @@
-import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { UnagiAbility } from "../../abilities/equipment/custom/unagi-ability.class";
 
 export class Unagi extends Equipment {
     name = 'Unagi';
     equipmentClass = 'startOfBattle' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalStartOfBattle =pet.startOfBattle?.bind(pet);
-        pet.startOfBattle = (gameApi, tiger) => {
-            if (originalStartOfBattle != null) {
-                originalStartOfBattle(gameApi, tiger);
-            }
-            
-            if (tiger) {
-                return;
-            }
-            
-            // Check if equipment is still equipped
-            if (pet.equipment?.name != 'Unagi') {
-                return;
-            }
-            
-            // Get random enemy target
-            let targetResp = pet.parent.opponent.getRandomPet([], false, true, false, pet);
-            if (targetResp.pet) {
-                let damage = 2 * this.multiplier;
-                pet.snipePet(targetResp.pet, damage, true, false, false, true, false);
-            }
-        }
+        // Add Unagi ability using dedicated ability class
+        pet.addAbility(new UnagiAbility(pet, this));
     }
 
-    constructor(protected logService: LogService) {
+    constructor() {
         super();
     }
 }
