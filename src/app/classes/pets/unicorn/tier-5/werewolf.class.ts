@@ -14,6 +14,7 @@ export class Werewolf extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new WerewolfAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

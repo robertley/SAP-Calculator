@@ -13,6 +13,7 @@ export class Peacock extends Pet {
     attack = 2;
     initAbilities(): void {
         this.addAbility(new PeacockAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

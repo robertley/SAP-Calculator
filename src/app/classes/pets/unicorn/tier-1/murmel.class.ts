@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MurmelAbility } from "../../../abilities/pets/unicorn/tier-1/murmel-ability.class";
 
 export class Murmel extends Pet {
     name = "Murmel";
@@ -12,32 +11,9 @@ export class Murmel extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 4;
-    friendGainedExperience(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet.parent != this.parent) {
-            return;
-        }
-
-        let power: Power = {
-            attack: this.level,
-            health: 0
-        }
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-
-        target.increaseAttack(power.attack);
-
-        this.superFriendGainedExperience(gameApi, pet, tiger);
-
+    initAbilities(): void {
+        this.addAbility(new MurmelAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

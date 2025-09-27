@@ -16,6 +16,7 @@ export class ShimaEnaga extends Pet {
 
     initAbilities(): void {
         this.addAbility(new ShimaEnagaAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

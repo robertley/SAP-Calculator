@@ -1,10 +1,9 @@
-import { getOpponent } from "app/util/helper-functions";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { AardvarkAbility } from "../../../abilities/pets/custom/tier-3/aardvark-ability.class";
 
 export class Aardvark extends Pet {
     name = "Aardvark";
@@ -12,16 +11,9 @@ export class Aardvark extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 3;
-    enemySummoned(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = 2 * this.level;
-        this.increaseAttack(power);
-        this.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gained ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
+    initAbilities(): void {
+        this.addAbility(new AardvarkAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class HighlandCow extends Pet {
     health = 12;
     initAbilities(): void {
         this.addAbility(new HighlandCowAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

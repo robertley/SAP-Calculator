@@ -15,6 +15,7 @@ export class SeaSerpent extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new SeaSerpentAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

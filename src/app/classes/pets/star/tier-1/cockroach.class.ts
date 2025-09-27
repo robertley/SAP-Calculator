@@ -16,6 +16,7 @@ export class Cockroach extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new CockroachAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

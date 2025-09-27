@@ -13,6 +13,7 @@ export class SakerFalcon extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new SakerFalconAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

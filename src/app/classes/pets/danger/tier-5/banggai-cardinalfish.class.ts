@@ -14,6 +14,7 @@ export class BanggaiCardinalfish extends Pet {
 
     initAbilities(): void {
         this.addAbility(new BanggaiCardinalfishAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

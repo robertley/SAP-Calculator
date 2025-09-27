@@ -13,6 +13,7 @@ export class DarwinsFox extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new DarwinsFoxAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

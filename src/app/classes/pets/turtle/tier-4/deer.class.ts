@@ -16,6 +16,7 @@ export class Deer extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new DeerAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

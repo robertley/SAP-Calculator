@@ -13,6 +13,7 @@ export class Wombat extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new WombatAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

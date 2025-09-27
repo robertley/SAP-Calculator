@@ -16,6 +16,7 @@ export class GoodDog extends Pet {
     hidden: boolean = true;
     initAbilities(): void {
         this.addAbility(new GoodDogAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -18,6 +18,7 @@ export class Chimera extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new ChimeraAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

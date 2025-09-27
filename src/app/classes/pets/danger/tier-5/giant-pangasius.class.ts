@@ -14,6 +14,7 @@ export class GiantPangasius extends Pet {
 
     initAbilities(): void {
         this.addAbility(new GiantPangasiusAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

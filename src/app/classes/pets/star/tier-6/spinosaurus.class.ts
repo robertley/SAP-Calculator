@@ -13,6 +13,7 @@ export class Spinosaurus extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new SpinosaurusAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

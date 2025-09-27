@@ -14,6 +14,7 @@ export class HarpyEagle extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new HarpyEagleAbility(this, this.logService, this.petService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class Pegasus extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new PegasusAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

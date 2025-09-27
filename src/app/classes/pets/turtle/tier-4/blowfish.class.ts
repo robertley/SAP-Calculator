@@ -14,6 +14,7 @@ export class Blowfish extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new BlowfishAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

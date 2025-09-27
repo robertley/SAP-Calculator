@@ -13,6 +13,7 @@ export class AraripeManakin extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new AraripeManakinAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

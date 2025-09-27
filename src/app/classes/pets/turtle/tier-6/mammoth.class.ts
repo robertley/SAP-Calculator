@@ -14,6 +14,7 @@ export class Mammoth extends Pet {
     health = 12;
     initAbilities(): void {
         this.addAbility(new MammothAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -16,6 +16,7 @@ export class SneakyEgg extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new SneakyEggAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

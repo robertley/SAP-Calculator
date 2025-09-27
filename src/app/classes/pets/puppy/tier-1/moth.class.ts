@@ -14,6 +14,7 @@ export class Moth extends Pet {
     attack = 1;
     initAbilities(): void {
         this.addAbility(new MothAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

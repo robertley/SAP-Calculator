@@ -13,6 +13,7 @@ export class Amalgamation extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new AmalgamationAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

@@ -14,6 +14,7 @@ export class Firefly extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new FireflyAbility(this, this.logService));
+        super.initAbilities();
     }
 
 

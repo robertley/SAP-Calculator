@@ -14,6 +14,7 @@ export class Ox extends Pet {
 
     initAbilities(): void {
         this.addAbility(new OxAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

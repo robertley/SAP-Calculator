@@ -14,6 +14,7 @@ export class Chihuahua extends Pet {
 
     initAbilities(): void {
         this.addAbility(new ChihuahuaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class Minotaur extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new MinotaurAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class AfricanWildDog extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new AfricanWildDogAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

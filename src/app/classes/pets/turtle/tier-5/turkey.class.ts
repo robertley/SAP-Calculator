@@ -16,6 +16,7 @@ export class Turkey extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new TurkeyAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

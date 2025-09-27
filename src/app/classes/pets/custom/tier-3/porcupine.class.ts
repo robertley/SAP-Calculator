@@ -13,6 +13,7 @@ export class Porcupine extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new PorcupineAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

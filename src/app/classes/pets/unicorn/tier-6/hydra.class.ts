@@ -15,6 +15,7 @@ export class Hydra extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new HydraAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

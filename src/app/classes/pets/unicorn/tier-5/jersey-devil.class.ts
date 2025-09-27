@@ -13,6 +13,7 @@ export class JerseyDevil extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new JerseyDevilAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

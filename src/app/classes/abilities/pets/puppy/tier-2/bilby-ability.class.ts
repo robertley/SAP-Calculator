@@ -8,7 +8,7 @@ export class BilbyAbility extends Ability {
     private logService: LogService;
 
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         super.reset();
     }
 

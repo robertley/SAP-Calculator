@@ -13,6 +13,7 @@ export class Vaquita extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new VaquitaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ChupacabraAbility } from "../../../abilities/pets/custom/tier-2/chupacabra-ability.class";
 
 export class Chupacabra extends Pet {
     name = "Chupacabra";
@@ -11,22 +11,9 @@ export class Chupacabra extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 2;
-    knockOut(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        for (let i = 0; i < this.level * 3; i++) {
-            let targetResp = this.parent.getRandomPet([this], true, false, true, this);
-            if (targetResp.pet == null) {
-                return;
-            }
-            this.logService.createLog({
-                message: `${this.name} gave ${targetResp.pet.name} 1 health.`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetResp.random
-            })
-            targetResp.pet.increaseHealth(1);
-        }
-        this.superKnockOut(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new ChupacabraAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

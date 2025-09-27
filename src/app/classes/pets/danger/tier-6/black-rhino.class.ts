@@ -14,6 +14,7 @@ export class BlackRhino extends Pet {
 
     initAbilities(): void {
         this.addAbility(new BlackRhinoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

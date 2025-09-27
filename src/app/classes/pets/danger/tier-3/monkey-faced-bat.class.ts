@@ -13,6 +13,7 @@ export class MonkeyFacedBat extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new MonkeyFacedBatAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

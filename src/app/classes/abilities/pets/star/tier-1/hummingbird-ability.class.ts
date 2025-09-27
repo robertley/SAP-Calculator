@@ -36,7 +36,7 @@ export class HummingbirdAbility extends Ability {
         }
 
         for (let target of targetsResp.pets) {
-            target.givePetEquipment(new Strawberry(this.logService, this.abilityService));
+            target.givePetEquipment(new Strawberry(this.logService));
             this.logService.createLog({
                 message: `${owner.name} gave ${target.name} strawberry.`,
                 type: 'ability',

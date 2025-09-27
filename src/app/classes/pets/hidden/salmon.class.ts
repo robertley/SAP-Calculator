@@ -15,6 +15,7 @@ export class Salmon extends Pet {
 
     initAbilities(): void {
         this.addAbility(new SalmonAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

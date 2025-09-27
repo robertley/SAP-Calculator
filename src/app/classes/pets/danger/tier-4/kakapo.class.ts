@@ -14,6 +14,7 @@ export class Kakapo extends Pet {
 
     initAbilities(): void {
         this.addAbility(new KakapoAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

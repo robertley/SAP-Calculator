@@ -13,6 +13,7 @@ export class Lion extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new LionAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

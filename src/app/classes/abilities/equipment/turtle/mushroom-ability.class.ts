@@ -33,16 +33,18 @@ export class MushroomAbility extends Ability {
         for (let i = 0; i < this.equipment.multiplier; i++) {
             let newPet = this.petService.createDefaultVersionOfPet(owner, 1, 1);
 
-            let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
+            let summonResult = owner.parent.summonPet(newPet, owner.savedPosition);
+            if (summonResult.success) {
+                let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog(
-                {
-                    message: `${owner.name} Spawned ${newPet.name} (level ${newPet.level}) (Mushroom)${multiplierMessage}`,
-                    type: "ability",
-                    player: owner.parent
-                }
-            )
-            owner.parent.summonPet(newPet, owner.savedPosition);
+                this.logService.createLog(
+                    {
+                        message: `${owner.name} Spawned ${newPet.name} (level ${newPet.level}) (Mushroom)${multiplierMessage}`,
+                        type: "ability",
+                        player: owner.parent
+                    }
+                )
+            }
         }
     }
 }

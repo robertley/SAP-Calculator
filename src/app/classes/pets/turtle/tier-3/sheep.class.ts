@@ -14,6 +14,7 @@ export class Sheep extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new SheepAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

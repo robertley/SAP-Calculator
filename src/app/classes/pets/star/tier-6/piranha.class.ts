@@ -13,6 +13,7 @@ export class Piranha extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new PiranhaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

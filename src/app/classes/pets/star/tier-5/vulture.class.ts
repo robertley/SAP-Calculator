@@ -15,6 +15,7 @@ export class Vulture extends Pet {
 
     initAbilities(): void {
         this.addAbility(new VultureAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -15,6 +15,7 @@ export class Blobfish extends Pet {
 
     initAbilities(): void {
         this.addAbility(new BlobfishAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

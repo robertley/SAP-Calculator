@@ -14,6 +14,7 @@ export class MarineIguana extends Pet {
 
     initAbilities(): void {
         this.addAbility(new MarineIguanaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

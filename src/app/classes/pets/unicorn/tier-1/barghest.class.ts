@@ -16,6 +16,7 @@ export class Barghest extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new BarghestAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

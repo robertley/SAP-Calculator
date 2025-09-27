@@ -16,6 +16,7 @@ export class Rhino extends Pet {
     health = 9;
     initAbilities(): void {
         this.addAbility(new RhinoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

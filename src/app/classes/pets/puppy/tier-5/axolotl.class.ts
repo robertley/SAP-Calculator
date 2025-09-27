@@ -14,6 +14,7 @@ export class Axolotl extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new AxolotlAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

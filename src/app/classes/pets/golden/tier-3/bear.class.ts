@@ -13,6 +13,7 @@ export class Bear extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new BearAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

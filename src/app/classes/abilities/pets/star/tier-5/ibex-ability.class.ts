@@ -7,7 +7,7 @@ export class IbexAbility extends Ability {
     private logService: LogService;
     private affectedEnemies: Set<Pet> = new Set();
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         this.affectedEnemies = new Set();
         super.reset();
     }

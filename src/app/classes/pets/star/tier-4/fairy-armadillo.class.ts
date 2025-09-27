@@ -17,6 +17,7 @@ export class FairyArmadillo extends Pet {
 
     initAbilities(): void {
         this.addAbility(new FairyArmadilloAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

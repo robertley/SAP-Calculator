@@ -14,6 +14,7 @@ export class Jackalope extends Pet {
 
     initAbilities(): void {
         this.addAbility(new JackalopeAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

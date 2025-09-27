@@ -14,6 +14,7 @@ export class Mothman extends Pet {
 
     initAbilities(): void {
         this.addAbility(new MothmanAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

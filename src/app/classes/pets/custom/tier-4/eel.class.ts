@@ -13,6 +13,7 @@ export class Eel extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new EelAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

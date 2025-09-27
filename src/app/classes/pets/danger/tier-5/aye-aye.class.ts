@@ -14,6 +14,7 @@ export class AyeAye extends Pet {
 
     initAbilities(): void {
         this.addAbility(new AyeAyeAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

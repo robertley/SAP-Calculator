@@ -35,14 +35,15 @@ export class FaintBreadAbility extends Ability {
 
             let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog({
-                message: `${owner.name} Spawned ${faintPet.name} (Faint Bread)${multiplierMessage}`,
-                type: "ability",
-                player: owner.parent,
-                randomEvent: true
-            });
-
-            owner.parent.summonPet(faintPet, owner.savedPosition);
+            let summonResult = owner.parent.summonPet(faintPet, owner.savedPosition);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${owner.name} Spawned ${faintPet.name} (Faint Bread)${multiplierMessage}`,
+                    type: "ability",
+                    player: owner.parent,
+                    randomEvent: true
+                });
+            }
         }
     }
 }

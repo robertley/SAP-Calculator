@@ -50,18 +50,19 @@ export class PopcornAbility extends Ability {
                 name: petName,
                 mana: 0
             }, owner.parent);
+            let summonResult = owner.parent.summonPet(popcornPet, owner.savedPosition);
+            if (summonResult.success) {
+                let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
-
-            this.logService.createLog(
-                {
-                    message: `${owner.name} Spawned ${popcornPet.name} (Popcorn)${multiplierMessage}`,
-                    type: "ability",
-                    player: owner.parent,
-                    randomEvent: true
-                }
-            )
-            owner.parent.summonPet(popcornPet, owner.savedPosition);
+                this.logService.createLog(
+                    {
+                        message: `${owner.name} Spawned ${popcornPet.name} (Popcorn)${multiplierMessage}`,
+                        type: "ability",
+                        player: owner.parent,
+                        randomEvent: true
+                    }
+                )
+            }
         }
     }
 }

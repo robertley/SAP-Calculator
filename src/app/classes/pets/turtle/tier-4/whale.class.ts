@@ -19,6 +19,7 @@ export class Whale extends Pet {
     initAbilities(): void {
         this.addAbility(new WhaleSwallowAbility(this, this.logService, this.petService));
         this.addAbility(new WhaleSummonAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

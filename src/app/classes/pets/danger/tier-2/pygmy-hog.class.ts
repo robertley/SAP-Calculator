@@ -13,6 +13,7 @@ export class PygmyHog extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new PygmyHogAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
 

@@ -14,6 +14,7 @@ export class BlackNeckedStilt extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new BlackNeckedStiltAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

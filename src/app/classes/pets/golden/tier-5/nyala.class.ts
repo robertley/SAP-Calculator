@@ -13,6 +13,7 @@ export class Nyala extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new NyalaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

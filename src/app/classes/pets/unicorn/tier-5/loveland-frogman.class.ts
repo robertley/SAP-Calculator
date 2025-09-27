@@ -14,6 +14,7 @@ export class LovelandFrogman extends Pet {
 
     initAbilities(): void {
         this.addAbility(new LovelandFrogmanAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

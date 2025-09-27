@@ -17,6 +17,7 @@ export class Platypus extends Pet {
 
     initAbilities(): void {
         this.addAbility(new PlatypusAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

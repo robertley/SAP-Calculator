@@ -95,7 +95,6 @@ export abstract class Pet {
     originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
 
     // Battle context tracking for complex abilities
-    startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
     transform?(gameApi: GameAPI, tiger?: boolean): void;
     // startOfTurn?: () => void;
     hurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
@@ -248,7 +247,6 @@ export abstract class Pet {
         this.originalExp = this.exp;
 
         // Store original abilities before wrapping
-        this.originalStartOfBattle = this.startOfBattle;
         this.originalTransform = this.transform;
         // this.originalStartOfTurn = this.startOfTurn;
         this.originalHurt = this.hurt;
@@ -296,7 +294,6 @@ export abstract class Pet {
         this.originalAbilityList = [...this.abilityList];
         //
         // Store wrapped abilities for reset functionality
-        this.resetStartOfBattle = this.startOfBattle;
         this.resetTransform = this.transform;
         this.resetHurt = this.hurt;
         this.resetFaint = this.faint;
@@ -339,268 +336,6 @@ export abstract class Pet {
     }
 
     initAbilities() {
-        let startOfBattleCallback = this.startOfBattle?.bind(this);
-        this.startOfBattle = startOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            return startOfBattleCallback(gameApi, tiger);
-        }
-
-        let transformCallback = this.transform?.bind(this);
-        this.transform = transformCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            transformCallback(gameApi, tiger);
-        }
-
-        let endTurnCallback = this.endTurn?.bind(this);
-        this.endTurn = endTurnCallback == null ? null : (gameApi: GameAPI) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            endTurnCallback(gameApi);
-        }
-
-        let beforeAttackCallback = this.beforeAttack?.bind(this);
-        this.beforeAttack = beforeAttackCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            beforeAttackCallback(gameApi, tiger);
-        }
-
-        let afterAttackCallback = this.afterAttack?.bind(this);
-        this.afterAttack = afterAttackCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            afterAttackCallback(gameApi, tiger);
-        }
-
-        let friendAttacksCallback = this.friendAttacks?.bind(this);
-        this.friendAttacks = friendAttacksCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendAttacksCallback(gameApi, pet, tiger);
-        }
-
-        let beforeFriendAttacksCallback = this.beforeFriendAttacks?.bind(this);
-        this.beforeFriendAttacks = beforeFriendAttacksCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            beforeFriendAttacksCallback(gameApi, pet, tiger);
-        }
-
-        let friendFaintsCallback = this.friendFaints?.bind(this);
-        this.friendFaints = friendFaintsCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendFaintsCallback(gameApi, pet, tiger);
-        }
-
-        let enemyFaintsCallback = this.enemyFaints?.bind(this);
-        this.enemyFaints = enemyFaintsCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyFaintsCallback(gameApi, pet, tiger);
-        }
-
-        
-        let friendLostPerkCallback = this.friendLostPerk?.bind(this);
-        this.friendLostPerk = friendLostPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendLostPerkCallback(gameApi, pet, tiger);
-        }
-
-        let GainedPerkCallback = this.gainedPerk?.bind(this);
-        this.gainedPerk = GainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            GainedPerkCallback(gameApi, pet, tiger);
-        }
-
-        let friendGainedPerkCallback = this.friendGainedPerk?.bind(this);
-        this.friendGainedPerk = friendGainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendGainedPerkCallback(gameApi, pet, tiger);
-        }
-
-        let eatsFoodCallback = this.eatsFood?.bind(this);
-        this.eatsFood = eatsFoodCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            eatsFoodCallback(gameApi, pet, tiger);
-        }
-
-        let friendAteFoodCallback = this.friendAteFood?.bind(this);
-        this.friendAteFood = friendAteFoodCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendAteFoodCallback(gameApi, pet, tiger);
-        }
-
-        let beforeStartOfBattleCallback = this.beforeStartOfBattle?.bind(this);
-        this.beforeStartOfBattle = beforeStartOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            beforeStartOfBattleCallback(gameApi, tiger);
-        }
-
-        let friendHurtCallback = this.friendHurt?.bind(this);
-        this.friendHurt = friendHurtCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendHurtCallback(gameApi, pet, tiger);
-        }
-
-        let friendTransformedCallback = this.friendTransformed?.bind(this);
-        this.friendTransformed = friendTransformedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendTransformedCallback(gameApi, pet, tiger);
-        }
-
-        let friendSummonedCallback = this.friendSummoned?.bind(this);
-        this.friendSummoned = friendSummonedCallback == null ? null : (gameApi: GameAPI, pet: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendSummonedCallback(gameApi, pet, tiger);
-        }
-
-        let anyoneLevelUpCallback = this.anyoneLevelUp?.bind(this);
-        this.anyoneLevelUp = anyoneLevelUpCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            anyoneLevelUpCallback(gameApi, pet, tiger);
-        }
-
-        let enemyHurtCallback = this.enemyHurt?.bind(this);
-        this.enemyHurt = enemyHurtCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyHurtCallback(gameApi, pet, tiger);
-        }
-
-        let enemySummonedCallback = this.enemySummoned?.bind(this);
-        this.enemySummoned = enemySummonedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemySummonedCallback(gameApi, pet, tiger);
-        }
-
-        let emptyFrontSpaceCallback = this.emptyFrontSpace?.bind(this);
-        this.emptyFrontSpace = emptyFrontSpaceCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            emptyFrontSpaceCallback(gameApi, tiger);
-        }
-
-        let gainedManaCallback = this.gainedMana?.bind(this);
-        this.gainedMana = gainedManaCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            gainedManaCallback(gameApi, tiger);
-        }
-
-        let friendJumpedCallback = this.friendJumped?.bind(this);
-        this.friendJumped = friendJumpedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendJumpedCallback(gameApi, pet, tiger);
-        }
-
-        let enemyJumpedCallback = this.enemyJumped?.bind(this);
-        this.enemyJumped = enemyJumpedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyJumpedCallback(gameApi, pet, tiger);
-        }
-
-        let friendlyToyBrokeCallback = this.friendlyToyBroke?.bind(this);
-        this.friendlyToyBroke = friendlyToyBrokeCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendlyToyBrokeCallback(gameApi, tiger);
-        }
-
-        let enemyPushedCallback = this.enemyPushed?.bind(this);
-        this.enemyPushed = enemyPushedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyPushedCallback(gameApi, pet, tiger);
-        }
-
-        let summonedCallback = this.summoned?.bind(this);
-        this.summoned = summonedCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-
-            summonedCallback(gameApi, tiger);
-        }
-
-        let knockOutCallback = this.knockOut?.bind(this);
-        this.knockOut = knockOutCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            knockOutCallback(gameApi, pet, tiger);
-        }
-
-        let enemyGainedAilmentCallback = this.enemyGainedAilment?.bind(this);
-        this.enemyGainedAilment = enemyGainedAilmentCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyGainedAilmentCallback(gameApi, pet, tiger);
-        }
-
-        let friendGainsHealthCallback = this.friendGainsHealth?.bind(this);
-        this.friendGainsHealth = friendGainsHealthCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendGainsHealthCallback(gameApi, pet, tiger);
-        }
-
-        let friendGainedExperienceCallback = this.friendGainedExperience?.bind(this);
-        this.friendGainedExperience = friendGainedExperienceCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendGainedExperienceCallback(gameApi, pet, tiger);
-        }
-
-        let afterFaintCallback = this.afterFaint?.bind(this);
-        this.afterFaint = afterFaintCallback == null ? null : (gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            afterFaintCallback(gameApi, tiger, pteranodon);
-        }
         this.setAbilityUses();
         //TO DO1 Change this to be adding to ability list
               //init equipment abilities
@@ -635,17 +370,6 @@ export abstract class Pet {
             return true;
         }
         return false;
-    }
-
-    protected superStartOfBattle(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(true, true).minExpForLevel;
-        this.startOfBattle(gameApi,true)
-        this.exp = exp;
-    
     }
 
     protected superHurt(gameApi, pet, tiger=false) {
@@ -1677,7 +1401,6 @@ export abstract class Pet {
         }
         
         // Restore reset ability methods to fix equipment copying persistence issues
-        this.startOfBattle = this.resetStartOfBattle;
         this.transform = this.resetTransform;
         this.beforeAttack = this.resetBeforeAttack;
         this.afterAttack = this.resetAfterAttack;
@@ -2008,7 +1731,7 @@ export abstract class Pet {
         this.equipment = equipment;
         this.setEquipmentMultiplier(pandorasBoxLevel);
         this.removeAbility(undefined, 'Equipment');
-        if (this.equipment.callback && this.equipment.equipmentClass != 'beforeStartOfBattle') {
+        if (this.equipment.callback) {
             this.equipment.callback(this);
         }
     }
@@ -2302,6 +2025,7 @@ export abstract class Pet {
             if (level) {
                 copiedAbility.abilityLevel = level;
                 copiedAbility.alwaysIgnorePetLevel = true;
+                copiedAbility.reset();
             }
             this.addAbility(copiedAbility);
         }
@@ -2317,6 +2041,7 @@ export abstract class Pet {
             if (level) {
                 copiedAbility.abilityLevel = level;
                 copiedAbility.alwaysIgnorePetLevel = true;
+                copiedAbility.reset();
             }
             this.addAbility(copiedAbility);
         }

@@ -13,6 +13,7 @@ export class Koala extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new KoalaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

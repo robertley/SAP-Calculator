@@ -16,6 +16,7 @@ export class Dove extends Pet {
 
     initAbilities(): void {
         this.addAbility(new DoveAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

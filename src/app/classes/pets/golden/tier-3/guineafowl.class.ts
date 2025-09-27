@@ -13,6 +13,7 @@ export class Guineafowl extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new GuineafowlAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -33,15 +33,16 @@ export class EasterEggAbility extends Ability {
         for (let i = 0; i < this.equipment.multiplier; i++) {
             let monty = new Monty(this.logService, this.abilityService, owner.parent, null, null, 0, 0);
 
-            let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
+            let summonResult = owner.parent.summonPet(monty, owner.savedPosition);
+            if (summonResult.success) {
+                let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog({
-                message: `${owner.name} Spawned Monty (Easter Egg)${multiplierMessage}`,
-                type: "ability",
-                player: owner.parent
-            });
-
-            owner.parent.summonPet(monty, owner.savedPosition);
+                this.logService.createLog({
+                    message: `${owner.name} Spawned Monty (Easter Egg)${multiplierMessage}`,
+                    type: "ability",
+                    player: owner.parent
+                });
+            }
         }
     }
 }

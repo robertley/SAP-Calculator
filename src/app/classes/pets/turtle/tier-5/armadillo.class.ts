@@ -15,6 +15,7 @@ export class Armadillo extends Pet {
     health = 10;
     initAbilities(): void {
         this.addAbility(new ArmadilloAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

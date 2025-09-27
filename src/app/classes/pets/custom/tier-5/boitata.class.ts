@@ -13,6 +13,7 @@ export class Boitata extends Pet {
     health = 9;
     initAbilities(): void {
         this.addAbility(new BoitataAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

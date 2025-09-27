@@ -15,6 +15,7 @@ export class GiantOtter extends Pet {
     private buffedFriends: Map<Pet, {attack: number, health: number}> = new Map();
     initAbilities(): void {
         this.addAbility(new GiantOtterStartOfBattleAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

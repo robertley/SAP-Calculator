@@ -14,6 +14,7 @@ export class TreeKangaroo extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TreeKangarooAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

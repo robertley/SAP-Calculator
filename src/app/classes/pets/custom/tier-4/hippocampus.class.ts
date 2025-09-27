@@ -11,17 +11,7 @@ export class Hippocampus extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 4;
-    friendGainsHealth(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = this.level * 2;
-        this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${power} attack.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-        pet.increaseAttack(power);
-        this.superFriendGainsHealth(gameApi, pet, tiger);
-    }
+    //TO DO: Needs update abilty
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

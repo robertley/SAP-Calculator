@@ -14,6 +14,7 @@ export class SumatranTiger extends Pet {
 
     initAbilities(): void {
         this.addAbility(new SumatranTigerAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

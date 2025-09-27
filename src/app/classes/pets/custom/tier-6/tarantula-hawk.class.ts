@@ -14,6 +14,7 @@ export class TarantulaHawk extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TarantulaHawkAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

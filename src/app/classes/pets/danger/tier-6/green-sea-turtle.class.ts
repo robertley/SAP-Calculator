@@ -14,6 +14,7 @@ export class GreenSeaTurtle extends Pet {
 
     initAbilities(): void {
         this.addAbility(new GreenSeaTurtleAbility(this, this.logService));
+        super.initAbilities();
     }
 
     setAbilityUses(): void {

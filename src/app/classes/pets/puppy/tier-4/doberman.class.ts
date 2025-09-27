@@ -14,6 +14,7 @@ export class Doberman extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new DobermanAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

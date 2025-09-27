@@ -17,6 +17,7 @@ export class Rooster extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new RoosterAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

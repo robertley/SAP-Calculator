@@ -14,6 +14,7 @@ export class SeaCucumber extends Pet {
 
     initAbilities(): void {
         this.addAbility(new SeaCucumberAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

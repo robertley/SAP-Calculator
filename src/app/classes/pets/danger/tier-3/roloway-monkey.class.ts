@@ -14,6 +14,7 @@ export class RolowayMonkey extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new RolowayMonkeyAbility(this, this.logService, this.petService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

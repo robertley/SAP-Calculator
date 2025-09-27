@@ -13,6 +13,7 @@ export class Cuttlefish extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new CuttlefishAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class Flea extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new FleaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

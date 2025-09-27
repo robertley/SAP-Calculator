@@ -35,15 +35,13 @@ export class BananaAbility extends Ability {
 
             let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog({
-                message: `${owner.name} Spawned Monkey (Banana)${multiplierMessage}`,
-                type: "ability",
-                player: owner.parent
-            });
-
-            if (owner.parent.summonPet(monke, owner.savedPosition)) {
-                this.abilityService.triggerFriendSummonedEvents(monke);
-            }
+            let summonResult = owner.parent.summonPet(monke, owner.savedPosition);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${owner.name} Spawned Monkey (Banana)${multiplierMessage}`,
+                    type: "ability",
+                    player: owner.parent
+                });            }
         }
     }
 }

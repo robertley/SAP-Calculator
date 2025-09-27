@@ -15,6 +15,7 @@ export class BayCat extends Pet {
 
     initAbilities(): void {
         this.addAbility(new BayCatAbility(this, this.logService, this.petService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

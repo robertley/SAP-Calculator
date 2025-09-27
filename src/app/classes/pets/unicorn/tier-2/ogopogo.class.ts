@@ -14,6 +14,7 @@ export class Ogopogo extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new OgopogoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -19,6 +19,7 @@ export class Pelican extends Pet {
     initAbilities(): void {
         this.addAbility(new PelicanStartAbility(this, this.logService, this.petService));
         this.addAbility(new PelicanFaintAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

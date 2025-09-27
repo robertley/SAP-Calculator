@@ -14,6 +14,7 @@ export class Wolverine extends Pet {
     health = 7;
     initAbilities(): void {
         this.addAbility(new WolverineAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

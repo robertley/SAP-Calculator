@@ -61,7 +61,7 @@ export class OxAbility extends Ability {
         this.triggerTigerExecution(context);
     }
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         super.reset();
     }
     copy(newOwner: Pet): OxAbility {

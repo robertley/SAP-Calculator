@@ -14,6 +14,7 @@ export class Pteranodon extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new PteranodonAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -15,6 +15,7 @@ export class Leopard extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new LeopardAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

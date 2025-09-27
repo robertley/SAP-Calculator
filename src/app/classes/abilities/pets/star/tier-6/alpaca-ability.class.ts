@@ -7,7 +7,7 @@ import { Alpaca } from "../../../../pets/star/tier-6/alpaca.class";
 export class AlpacaAbility extends Ability {
     private logService: LogService;
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         super.reset();
     }
     constructor(owner: Pet, logService: LogService) {

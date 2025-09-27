@@ -14,6 +14,7 @@ export class SaigaAntelope extends Pet {
     
     initAbilities(): void {
         this.addAbility(new SaigaAntelopeAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

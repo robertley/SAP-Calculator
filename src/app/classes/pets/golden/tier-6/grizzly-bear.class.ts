@@ -14,6 +14,7 @@ export class GrizzlyBear extends Pet {
     
     initAbilities(): void {
         this.addAbility(new GrizzlyBearAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

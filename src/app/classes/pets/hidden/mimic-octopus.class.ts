@@ -14,6 +14,7 @@ export class MimicOctopus extends Pet {
 
     initAbilities(): void {
         this.addAbility(new MimicOctopusAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

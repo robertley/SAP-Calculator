@@ -16,6 +16,7 @@ export class FurBearingTrout extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new FurBearingTroutAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

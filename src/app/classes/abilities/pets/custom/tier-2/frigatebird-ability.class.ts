@@ -39,7 +39,8 @@ export class FrigatebirdAbility extends Ability {
         this.triggerTigerExecution(context);
     }
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
+        super.reset();
     }
     copy(newOwner: Pet): FrigatebirdAbility {
         return new FrigatebirdAbility(newOwner, this.logService);

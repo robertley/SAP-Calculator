@@ -11,6 +11,7 @@ import { GameService } from "../services/game.service";
 import { GoldenRetriever } from "./pets/hidden/golden-retriever.class";
 import { Onion } from "./equipment/golden/onion.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
+import { AbilityTrigger } from "./ability.class";
 
 export class Player {
     pet0?: Pet;
@@ -167,6 +168,7 @@ export class Player {
         }        
     }
 
+    //TO DO: This needs fix, might be useless
     onionCheck() {
         if (this.pet0?.equipment == null) {
             return;
@@ -620,8 +622,14 @@ export class Player {
             if (!pet.alive) {
                 continue;
             }
-            if (!pet.equipment || pet.equipment.name != equipmentName) {
-                pets.push(pet);
+            if (equipmentName == 'Perk') {
+                if (!pet.equipment || pet.equipment.name.startsWith("ailment")) {
+                    pets.push(pet);
+                }
+            } else {
+                if (!pet.equipment || pet.equipment.name != equipmentName) {
+                    pets.push(pet);
+                }
             }
         }
         return pets;
@@ -1268,7 +1276,7 @@ export class Player {
         }
         this.abilityService.setgoldenRetrieverSummonsEvent({
             priority: 0,
-            callback: (trigger, abilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
+            callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
                 let goldenRetriever = new GoldenRetriever(this.logService, this.abilityService, this, this.trumpets, this.trumpets);
 
                 let name = this == gameApi.player ? 'Player' : 'Opponent';

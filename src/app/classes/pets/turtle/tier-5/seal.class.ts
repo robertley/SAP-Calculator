@@ -15,6 +15,7 @@ export class Seal extends Pet {
     health = 8;
     initAbilities(): void {
         this.addAbility(new SealAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

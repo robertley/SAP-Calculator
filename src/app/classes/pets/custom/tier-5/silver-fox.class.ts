@@ -13,6 +13,7 @@ export class SilverFox extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new SilverFoxAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

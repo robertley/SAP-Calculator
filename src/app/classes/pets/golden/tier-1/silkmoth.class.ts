@@ -14,6 +14,7 @@ export class Silkmoth extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new SilkmothAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

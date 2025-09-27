@@ -15,6 +15,7 @@ export class Fossa extends Pet {
 
     initAbilities(): void {
         this.addAbility(new FossaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

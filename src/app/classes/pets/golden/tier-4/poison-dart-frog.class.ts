@@ -14,6 +14,7 @@ export class PoisonDartFrog extends Pet {
 
     initAbilities(): void {
         this.addAbility(new PoisonDartFrogAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

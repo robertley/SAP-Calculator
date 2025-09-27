@@ -15,6 +15,7 @@ export class Donkey extends Pet {
 
     initAbilities(): void {
         this.addAbility(new DonkeyAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

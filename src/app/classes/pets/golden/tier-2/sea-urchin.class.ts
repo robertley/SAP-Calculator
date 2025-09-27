@@ -13,6 +13,7 @@ export class SeaUrchin extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new SeaUrchinAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

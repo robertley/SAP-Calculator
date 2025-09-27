@@ -13,6 +13,7 @@ export class Kangaroo extends Pet {
     attack = 2;
     initAbilities(): void {
         this.addAbility(new KangarooAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

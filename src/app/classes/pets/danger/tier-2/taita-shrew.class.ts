@@ -13,6 +13,7 @@ export class TaitaShrew extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new TaitaShrewAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

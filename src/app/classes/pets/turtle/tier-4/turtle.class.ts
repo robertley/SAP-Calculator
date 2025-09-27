@@ -14,6 +14,7 @@ export class Turtle extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new TurtleAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

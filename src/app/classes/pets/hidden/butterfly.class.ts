@@ -14,6 +14,7 @@ export class Butterfly extends Pet {
     attack = 1;
     initAbilities(): void {
         this.addAbility(new ButterflyAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

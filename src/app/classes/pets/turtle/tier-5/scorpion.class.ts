@@ -14,6 +14,7 @@ export class Scorpion extends Pet {
 
     initAbilities(): void {
         this.addAbility(new ScorpionAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

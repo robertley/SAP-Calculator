@@ -14,6 +14,7 @@ export class SmallerSlug extends Pet {
     attack = 2;
     initAbilities(): void {
         this.addAbility(new SmallerSlugAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

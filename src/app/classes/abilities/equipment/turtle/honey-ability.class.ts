@@ -33,16 +33,18 @@ export class HoneyAbility extends Ability {
         for (let i = 0; i < this.equipment.multiplier; i++) {
             let bee = new Bee(this.logService, this.abilityService, owner.parent, null, null, 0);
 
-            let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
+            let summonResult = owner.parent.summonPet(bee, owner.savedPosition);
+            if (summonResult.success) {
+                let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog(
-                {
-                    message: `${owner.name} Spawned Bee (Honey)${multiplierMessage}`,
-                    type: "ability",
-                    player: owner.parent
-                }
-            )
-            owner.parent.summonPet(bee, owner.savedPosition);
+                this.logService.createLog(
+                    {
+                        message: `${owner.name} Spawned Bee (Honey)${multiplierMessage}`,
+                        type: "ability",
+                        player: owner.parent
+                    }
+                )
+            }
         }
     }
 }

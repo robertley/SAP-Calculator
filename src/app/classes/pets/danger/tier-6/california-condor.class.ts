@@ -14,6 +14,7 @@ export class CaliforniaCondor extends Pet {
     
     initAbilities(): void {
         this.addAbility(new CaliforniaCondorAbility(this, this.logService));
+        super.initAbilities();
     }
 
 

@@ -14,6 +14,7 @@ export class PhilippineEagle extends Pet {
 
     initAbilities(): void {
         this.addAbility(new PhilippineEagleAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

@@ -13,6 +13,7 @@ export class TogianBabirusa extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new TogianBabirusaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

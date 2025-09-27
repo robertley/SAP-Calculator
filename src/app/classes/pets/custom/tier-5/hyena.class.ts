@@ -13,6 +13,7 @@ export class Hyena extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new HyenaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

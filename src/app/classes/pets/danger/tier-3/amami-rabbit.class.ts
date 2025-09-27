@@ -13,6 +13,7 @@ export class AmamiRabbit extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new AmamiRabbitAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

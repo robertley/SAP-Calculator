@@ -15,6 +15,7 @@ export class Flamingo extends Pet {
 
     initAbilities(): void {
         this.addAbility(new FlamingoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

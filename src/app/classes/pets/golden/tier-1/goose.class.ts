@@ -14,6 +14,7 @@ export class Goose extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new GooseAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

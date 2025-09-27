@@ -13,6 +13,7 @@ export class EgyptianVulture extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new EgyptianVultureAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

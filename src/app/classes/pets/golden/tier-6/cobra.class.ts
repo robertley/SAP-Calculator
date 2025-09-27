@@ -13,6 +13,7 @@ export class Cobra extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new CobraAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

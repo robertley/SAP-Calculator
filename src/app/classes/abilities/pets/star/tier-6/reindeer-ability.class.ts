@@ -7,7 +7,7 @@ import { Melon } from "../../../../equipment/turtle/melon.class";
 export class ReindeerAbility extends Ability {
     private logService: LogService;
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         super.reset();
     }
     constructor(owner: Pet, logService: LogService) {

@@ -13,6 +13,7 @@ export class TeamSpirit extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new TeamSpiritAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

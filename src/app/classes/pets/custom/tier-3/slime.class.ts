@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { SmallerSlime } from "../../hidden/smaller-slime.class";
+import { SlimeAbility } from "../../../abilities/pets/custom/tier-3/slime-ability.class";
 
 export class Slime extends Pet {
     name = "Slime";
@@ -13,31 +14,9 @@ export class Slime extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 3;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let summons = Math.floor(this.battlesFought / 2);
-        let power = this.level * 2;
-
-        for (let i = 0; i < summons; i++) {
-            let slime = new SmallerSlime(this.logService, this.abilityService, this.parent, null, null, 0);
-    
-            let summonResult = this.parent.summonPet(slime, this.savedPosition, false, this);
-            
-            if (summonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned Smaller Slime (${power}/${power}).`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: summonResult.randomEvent
-                    }
-                )
-
-                this.abilityService.triggerFriendSummonedEvents(slime);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new SlimeAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

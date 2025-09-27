@@ -16,6 +16,7 @@ export class Fly extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new FlyAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

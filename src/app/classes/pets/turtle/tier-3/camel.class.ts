@@ -13,6 +13,7 @@ export class Camel extends Pet {
     attack = 3;
     initAbilities(): void {
         this.addAbility(new CamelAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

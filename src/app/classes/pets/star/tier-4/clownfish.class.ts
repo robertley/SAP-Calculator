@@ -15,6 +15,7 @@ export class Clownfish extends Pet {
 
     initAbilities(): void {
         this.addAbility(new ClownfishAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

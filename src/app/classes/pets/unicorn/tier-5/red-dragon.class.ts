@@ -15,6 +15,7 @@ export class RedDragon extends Pet {
     health = 8;
     initAbilities(): void {
         this.addAbility(new RedDragonAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

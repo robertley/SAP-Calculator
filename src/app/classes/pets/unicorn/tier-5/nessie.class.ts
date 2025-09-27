@@ -15,6 +15,7 @@ export class Nessie extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new NessieAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

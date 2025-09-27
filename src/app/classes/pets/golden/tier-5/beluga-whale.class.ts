@@ -7,6 +7,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { PetService } from "../../../../services/pet.service";
+import { BelugaWhaleAbility } from "../../../abilities/pets/golden/tier-5/beluga-whale-ability.class";
 
 export class BelugaWhale extends Pet {
     name = "Beluga Whale";
@@ -14,37 +15,9 @@ export class BelugaWhale extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 8;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.belugaSwallowedPet == null) {
-            return;
-        }
-
-        let spawnPet = this.petService.createPet({
-            attack: null,
-            equipment: null,
-            exp: this.minExpForLevel,
-            health: null,
-            name: this.belugaSwallowedPet,
-            mana: 0
-        }, this.parent);
-
-        let summonResult = this.parent.summonPet(spawnPet, this.savedPosition, false, this);
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned ${spawnPet.name} Level ${this.level}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                }
-            )
-    
-            this.abilityService.triggerFriendSummonedEvents(spawnPet);
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new BelugaWhaleAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

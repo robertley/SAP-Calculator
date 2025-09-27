@@ -15,6 +15,7 @@ export class Iguana extends Pet {
 
     initAbilities(): void {
         this.addAbility(new IguanaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

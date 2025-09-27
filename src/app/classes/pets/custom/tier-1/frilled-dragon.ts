@@ -13,6 +13,7 @@ export class FrilledDragon extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new FrilledDragonAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

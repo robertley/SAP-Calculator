@@ -14,6 +14,7 @@ export class Gargoyle extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new GargoyleAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

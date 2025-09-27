@@ -5,6 +5,7 @@ import { Tandgnost } from "../../../pets/custom/tier-5/tandgnost.class";
 import { Tandgrisner } from "../../../pets/custom/tier-5/tandgrisner.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
+import { sum } from "lodash";
 
 export class YggdrasilFruitAbility extends Ability {
     private equipment: Equipment;
@@ -37,21 +38,23 @@ export class YggdrasilFruitAbility extends Ability {
 
             let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog({
-                message: `${owner.name} Spawned Tandgnost (Yggdrasil Fruit)${multiplierMessage}`,
-                type: "ability",
-                player: owner.parent
-            });
+            let summonResult = owner.parent.summonPet(tandgnost, owner.savedPosition);
+            if (summonResult.success) {
+                this.logService.createLog({
+                    message: `${owner.name} Spawned Tandgnost (Yggdrasil Fruit)${multiplierMessage}`,
+                    type: "ability",
+                    player: owner.parent
+                });
+            }
 
-            owner.parent.summonPet(tandgnost, owner.savedPosition);
-
-            this.logService.createLog({
-                message: `${owner.name} Spawned Tandgrisner (Yggdrasil Fruit)${multiplierMessage}`,
-                type: "ability",
-                player: owner.parent
-            });
-
-            owner.parent.summonPet(tandgrisner, owner.savedPosition);
+            let summonResult2 = owner.parent.summonPet(tandgrisner, owner.savedPosition);
+            if (summonResult2.success) {
+                this.logService.createLog({
+                    message: `${owner.name} Spawned Tandgrisner (Yggdrasil Fruit)${multiplierMessage}`,
+                    type: "ability",
+                    player: owner.parent
+                });
+            }
         }
     }
 }

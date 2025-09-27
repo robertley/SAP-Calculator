@@ -15,6 +15,7 @@ export class Woodpecker extends Pet {
 
     initAbilities(): void {
         this.addAbility(new WoodpeckerAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

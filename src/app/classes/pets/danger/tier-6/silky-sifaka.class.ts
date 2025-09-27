@@ -14,6 +14,7 @@ export class SilkySifaka extends Pet {
 
     initAbilities(): void {
         this.addAbility(new SilkySifakaAbility(this, this.logService, this.petService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

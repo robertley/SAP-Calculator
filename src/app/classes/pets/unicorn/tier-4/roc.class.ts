@@ -14,6 +14,7 @@ export class Roc extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new RocAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

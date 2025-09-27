@@ -13,6 +13,7 @@ export class IliPika extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new IliPikaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

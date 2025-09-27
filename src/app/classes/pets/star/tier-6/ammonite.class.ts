@@ -15,6 +15,7 @@ export class Ammonite extends Pet {
 
     initAbilities(): void {
         this.addAbility(new AmmoniteAbility(this, this.logService, this.petService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

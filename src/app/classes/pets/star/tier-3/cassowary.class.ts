@@ -15,6 +15,7 @@ export class Cassowary extends Pet {
 
     initAbilities(): void {
         this.addAbility(new CassowaryAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

@@ -1038,12 +1038,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     chocoCakePets.sort((a, b) => {
       return a.attack < b.attack ? 1 : b.attack < a.attack ? -1 : 0;
     });
+    //TO DO: This Logic needs fix, the function might be useless
     for (let pet of chocoCakePets) {
       pet.equipment.callback(pet);
     }
   }
 
-
+  //TO DO: this probably should be deleted
   executeBeforeStartOfBattleEquipment(player) {
     for (let pet of player.petArray) {
       let multiplier = pet.equipment.multiplier;

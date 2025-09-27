@@ -13,6 +13,7 @@ export class Basilisk extends Pet {
     attack = 1;
     initAbilities(): void {
         this.addAbility(new BasiliskAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

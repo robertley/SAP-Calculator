@@ -15,6 +15,7 @@ export class Triceratops extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TriceratopsAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

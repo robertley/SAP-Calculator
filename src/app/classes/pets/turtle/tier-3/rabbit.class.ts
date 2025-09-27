@@ -14,6 +14,7 @@ export class Rabbit extends Pet {
 
     initAbilities(): void {
         this.addAbility(new RabbitAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

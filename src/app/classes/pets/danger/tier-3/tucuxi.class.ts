@@ -14,6 +14,7 @@ export class Tucuxi extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TucuxiAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

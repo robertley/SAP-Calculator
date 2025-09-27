@@ -14,6 +14,7 @@ export class Takhi extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new TakhiAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

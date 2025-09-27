@@ -6,7 +6,7 @@ import { LogService } from "app/services/log.service";
 export class DonkeyAbility extends Ability {
     private logService: LogService;
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         super.reset();
     }
     constructor(owner: Pet, logService: LogService) {

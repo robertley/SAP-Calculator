@@ -14,6 +14,7 @@ export class Groundhog extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new GroundhogAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

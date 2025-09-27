@@ -13,6 +13,7 @@ export class BombusDahlbomii extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new BombusDahlbomiiAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

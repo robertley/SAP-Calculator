@@ -17,6 +17,7 @@ export class Hummingbird extends Pet {
 
     initAbilities(): void {
         this.addAbility(new HummingbirdAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

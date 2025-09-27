@@ -14,6 +14,7 @@ export class OrchidMantis extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new OrchidMantisAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

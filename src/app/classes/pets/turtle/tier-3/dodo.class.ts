@@ -14,6 +14,7 @@ export class Dodo extends Pet {
     attack = 4;
     initAbilities(): void {
         this.addAbility(new DodoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class BlueThroatedMacaw extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new BlueThroatedMacawAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

@@ -15,6 +15,7 @@ export class Gecko extends Pet {
     toyPet: boolean = true;
     initAbilities(): void {
         this.addAbility(new GeckoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

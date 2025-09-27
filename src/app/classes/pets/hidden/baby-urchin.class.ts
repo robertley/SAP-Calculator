@@ -14,6 +14,7 @@ export class BabyUrchin extends Pet {
     
     initAbilities(): void {
         this.addAbility(new BabyUrchinAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

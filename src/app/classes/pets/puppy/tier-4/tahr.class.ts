@@ -14,6 +14,7 @@ export class Tahr extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new TahrAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

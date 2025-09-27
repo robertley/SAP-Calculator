@@ -14,6 +14,7 @@ export class Platybelodon extends Pet {
     
     initAbilities(): void {
         this.addAbility(new PlatybelodonAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

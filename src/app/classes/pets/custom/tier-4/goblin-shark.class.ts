@@ -17,6 +17,7 @@ export class GoblinShark extends Pet {
     initAbilities(): void {
         this.addAbility(new GoblinSharkStartAbility(this, this.logService, this.petService));
         this.addAbility(new GoblinSharkFaintAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

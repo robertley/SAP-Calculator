@@ -14,6 +14,7 @@ export class AmsterdamAlbatross extends Pet {
 
     initAbilities(): void {
         this.addAbility(new AmsterdamAlbatrossAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

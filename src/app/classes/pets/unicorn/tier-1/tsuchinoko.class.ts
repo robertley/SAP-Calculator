@@ -14,6 +14,7 @@ export class Tsuchinoko extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new TsuchinokoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

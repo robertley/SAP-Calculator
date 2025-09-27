@@ -14,6 +14,7 @@ export class Toucan extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new ToucanAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

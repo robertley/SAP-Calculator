@@ -17,6 +17,7 @@ export class Parrot extends Pet {
     copyPet: Pet;
     initAbilities(): void {
         this.addAbility(new ParrotAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

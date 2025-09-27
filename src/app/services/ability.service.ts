@@ -761,7 +761,7 @@ export class AbilityService {
                         callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
-                        abilityType: 'AdjacentFriendAttacked',
+                        abilityType: 'FriendAheadAttacked',
                         tieBreaker: Math.random()
                     };
                     this.afterFriendAttackEvents.push(abilityEvent);

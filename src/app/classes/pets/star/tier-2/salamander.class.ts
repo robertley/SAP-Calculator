@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SalamanderAbility } from "../../../abilities/pets/star/tier-2/salamander-ability.class";
 
 export class Salamander extends Pet {
     name = "Salamander";
@@ -20,5 +21,9 @@ export class Salamander extends Pet {
         equipment?: Equipment) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
+    }
+    initAbilities(): void {
+        this.addAbility(new SalamanderAbility(this, this.logService));
+        super.initAbilities();
     }
 }

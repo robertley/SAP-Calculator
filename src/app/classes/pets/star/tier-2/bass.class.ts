@@ -15,6 +15,7 @@ export class Bass extends Pet {
 
     initAbilities(): void {
         this.addAbility(new BassAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

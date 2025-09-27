@@ -14,6 +14,7 @@ export class Unicorn extends Pet {
 
     initAbilities(): void {
         this.addAbility(new UnicornAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

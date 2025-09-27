@@ -15,6 +15,7 @@ export class Tuna extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TunaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

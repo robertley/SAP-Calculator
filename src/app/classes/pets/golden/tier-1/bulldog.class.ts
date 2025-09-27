@@ -14,6 +14,7 @@ export class Bulldog extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new BulldogAbility(this, this.logService));
+        super.initAbilities();
     }
 
 

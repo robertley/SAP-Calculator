@@ -13,6 +13,7 @@ export class Walrus extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new WalrusAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

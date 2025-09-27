@@ -6,6 +6,7 @@ import { shuffle } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { KappaAbility } from "../../../abilities/pets/custom/tier-5/kappa-ability.class";
 
 export class Kappa extends Pet {
     name = "Kappa";
@@ -13,67 +14,9 @@ export class Kappa extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 5;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let petPool = this.parent == gameApi.player ? gameApi.playerPetPool : gameApi.opponentPetPool;
-        let tier3Pets = petPool.get(3);
-        for (let i = 0; i < this.level; i++) {
-            let playerSpawn = tier3Pets[Math.floor(Math.random()*tier3Pets.length)];
-            let opponentSpawn = tier3Pets[Math.floor(Math.random()*tier3Pets.length)];
-            let spawn = this.petService.createPet(
-                {
-                    attack: 14,
-                    equipment: null,
-                    exp: 0,
-                    health: 16,
-                    mana: 0,
-                    name: playerSpawn
-                }, this.parent
-            );
-    
-            let summonResult = this.parent.summonPet(spawn, this.savedPosition, false, this);
-            if (summonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a ${spawn.name} (14/16).`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: true
-                    }
-                )
-
-                this.abilityService.triggerFriendSummonedEvents(spawn);
-            }
-
-            let opponentSpawnPet = this.petService.createPet(
-                {
-                    attack: 14,
-                    equipment: null,
-                    exp: 0,
-                    health: 16,
-                    mana: 0,
-                    name: opponentSpawn
-                }, this.parent.opponent
-            );
-    
-            let opponentSummonResult = this.parent.opponent.summonPet(opponentSpawnPet, this.savedPosition, false, this);
-            if (opponentSummonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a ${opponentSpawnPet.name} (14/16) for the opponent.`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: true
-                    }
-                )
-
-                this.abilityService.triggerFriendSummonedEvents(opponentSpawnPet);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new KappaAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

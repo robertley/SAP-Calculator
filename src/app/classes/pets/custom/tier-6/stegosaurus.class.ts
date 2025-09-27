@@ -13,6 +13,7 @@ export class Stegosaurus extends Pet {
     health = 8;
     initAbilities(): void {
         this.addAbility(new StegosaurusAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

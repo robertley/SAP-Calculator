@@ -13,6 +13,7 @@ export class NurseShark extends Pet {
     health = 7;
     initAbilities(): void {
         this.addAbility(new NurseSharkAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -13,6 +13,7 @@ export class Kitsune extends Pet {
     health = 7;
     initAbilities(): void {
         this.addAbility(new KitsuneAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

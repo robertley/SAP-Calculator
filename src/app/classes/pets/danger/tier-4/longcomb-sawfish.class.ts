@@ -14,6 +14,7 @@ export class LongcombSawfish extends Pet {
 
     initAbilities(): void {
         this.addAbility(new LongcombSawfishAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

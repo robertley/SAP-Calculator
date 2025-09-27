@@ -17,6 +17,7 @@ export class Pheasant extends Pet {
 
     initAbilities(): void {
         this.addAbility(new PheasantAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

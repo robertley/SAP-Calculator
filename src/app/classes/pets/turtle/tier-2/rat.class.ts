@@ -15,6 +15,7 @@ export class Rat extends Pet {
     attack = 3;
     initAbilities(): void {
         this.addAbility(new RatAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

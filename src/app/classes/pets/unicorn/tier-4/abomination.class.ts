@@ -14,6 +14,7 @@ export class Abomination extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new AbominationAbility(this, this.logService, this.petService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

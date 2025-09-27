@@ -14,6 +14,7 @@ export class Velociraptor extends Pet {
 
     initAbilities(): void {
         this.addAbility(new VelociraptorAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

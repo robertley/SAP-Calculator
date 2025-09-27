@@ -16,6 +16,7 @@ export class SalmonOfKnowledge extends Pet {
     health = 5;
     initAbilities(): void {
         this.addAbility(new SalmonOfKnowledgeAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

@@ -13,6 +13,7 @@ export class Anubis extends Pet {
     health = 4;
     initAbilities(): void {
         this.addAbility(new AnubisAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

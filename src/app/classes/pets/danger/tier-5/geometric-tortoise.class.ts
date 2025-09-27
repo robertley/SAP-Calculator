@@ -15,6 +15,7 @@ export class GeometricTortoise extends Pet {
 
     initAbilities(): void {
         this.addAbility(new GeometricTortoiseAbility(this, this.logService));
+        super.initAbilities();
     }
 
     dealDamage(target: Pet, amt: number): void {

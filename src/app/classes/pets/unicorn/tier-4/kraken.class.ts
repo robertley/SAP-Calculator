@@ -14,6 +14,7 @@ export class Kraken extends Pet {
     health = 7;
     initAbilities(): void {
         this.addAbility(new KrakenAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

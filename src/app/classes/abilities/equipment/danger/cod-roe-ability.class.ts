@@ -34,16 +34,15 @@ export class CodRoeAbility extends Ability {
         for (let i = 0; i < this.equipment.multiplier; i++) {
             let fish = new Fish(this.logService, this.abilityService, owner.parent, 3, 2, 0, 0);
 
-            let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
+            let summonResult = owner.parent.summonPet(fish, owner.savedPosition);
+            if (summonResult.success) {
+                let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 
-            this.logService.createLog({
-                message: `${owner.name} spawned ${fish.name} (Cod Roe)${multiplierMessage}`,
-                type: 'equipment',
-                player: owner.parent
-            });
-
-            if (owner.parent.summonPet(fish, owner.savedPosition)) {
-                this.abilityService.triggerFriendSummonedEvents(fish);
+                this.logService.createLog({
+                    message: `${owner.name} spawned ${fish.name} (Cod Roe)${multiplierMessage}`,
+                    type: 'equipment',
+                    player: owner.parent
+                });
             }
         }
     }

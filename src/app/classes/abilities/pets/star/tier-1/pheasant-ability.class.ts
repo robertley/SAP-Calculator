@@ -9,7 +9,7 @@ export class PheasantAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
     reset(): void {
-        this.maxUses = this.owner.level;
+        this.maxUses = this.level;
         super.reset();
     }
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
@@ -46,7 +46,7 @@ export class PheasantAbility extends Ability {
             tiger: tiger
         });
 
-        target.givePetEquipment(new Strawberry(this.logService, this.abilityService));
+        target.givePetEquipment(new Strawberry(this.logService));
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

@@ -13,6 +13,7 @@ export class GermanShepherd extends Pet {
     health = 6;
     initAbilities(): void {
         this.addAbility(new GermanShepherdAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -15,6 +15,7 @@ export class RedLippedBatfish extends Pet {
     
     initAbilities(): void {
         this.addAbility(new RedLippedBatfishAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,

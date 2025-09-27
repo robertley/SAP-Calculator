@@ -13,6 +13,7 @@ export class Amargasaurus extends Pet {
     health = 7;
     initAbilities(): void {
         this.addAbility(new AmargasaurusAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

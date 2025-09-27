@@ -13,6 +13,7 @@ export class Hirola extends Pet {
     health = 2;
     initAbilities(): void {
         this.addAbility(new HirolaAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

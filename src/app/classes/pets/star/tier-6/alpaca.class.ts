@@ -15,6 +15,7 @@ export class Alpaca extends Pet {
 
     initAbilities(): void {
         this.addAbility(new AlpacaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

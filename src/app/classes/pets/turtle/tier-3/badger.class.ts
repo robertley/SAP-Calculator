@@ -14,6 +14,7 @@ export class Badger extends Pet {
     attack = 6;
     initAbilities(): void {
         this.addAbility(new BadgerAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

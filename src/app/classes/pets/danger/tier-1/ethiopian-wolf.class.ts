@@ -13,6 +13,7 @@ export class EthiopianWolf extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new EthiopianWolfAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

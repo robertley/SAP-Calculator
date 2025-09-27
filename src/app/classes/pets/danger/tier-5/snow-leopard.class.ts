@@ -14,6 +14,7 @@ export class SnowLeopard extends Pet {
 
     initAbilities(): void {
         this.addAbility(new SnowLeopardAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

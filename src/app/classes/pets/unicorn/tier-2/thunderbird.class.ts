@@ -14,6 +14,7 @@ export class Thunderbird extends Pet {
     health = 3;
     initAbilities(): void {
         this.addAbility(new ThunderbirdAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

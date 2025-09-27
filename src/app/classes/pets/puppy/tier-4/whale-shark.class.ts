@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { WhaleSharkAbility } from "../../../abilities/pets/puppy/tier-4/whale-shark-ability.class";
 
 export class WhaleShark extends Pet {
     name = "Whale Shark";
@@ -24,30 +25,8 @@ export class WhaleShark extends Pet {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment);
     }
-    //overwrites gave pet equipment
-    //TO DO: need more accurate way to implement the ability
-    givePetEquipment(equipment: Equipment): void {
-        super.givePetEquipment(equipment);
-        this.removePerk();
-        this.logService.createLog({
-            message: `${this.name} removed ${equipment.name}`,
-            type: 'ability',
-            player: this.parent
-        });
-
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        let power = this.level * 3;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            randomEvent: targetResp.random
-        });
+    initAbilities(): void {
+        this.addAbility(new WhaleSharkAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 }

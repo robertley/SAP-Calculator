@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { SmallerSlug } from "../../hidden/smaller-slug.class";
+import { SlugAbility } from "../../../abilities/pets/golden/tier-4/slug-ability.class";
 
 export class Slug extends Pet {
     name = "Slug";
@@ -13,26 +14,9 @@ export class Slug extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let slug = new SmallerSlug(this.logService, this.abilityService, this.parent, null, null, 0, this.minExpForLevel);
-
-        let summonResult = this.parent.summonPet(slug, this.savedPosition, false, this)
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Smaller Slug Level ${this.level}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                }
-            )
-    
-            this.abilityService.triggerFriendSummonedEvents(slug);
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new SlugAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

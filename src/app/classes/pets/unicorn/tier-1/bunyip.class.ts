@@ -14,6 +14,7 @@ export class Bunyip extends Pet {
     health = 1;
     initAbilities(): void {
         this.addAbility(new BunyipAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

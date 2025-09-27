@@ -14,6 +14,7 @@ export class Tatzelwurm extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TatzelwurmAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

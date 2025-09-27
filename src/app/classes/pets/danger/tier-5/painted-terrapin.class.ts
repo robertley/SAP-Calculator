@@ -14,6 +14,7 @@ export class PaintedTerrapin extends Pet {
 
     initAbilities(): void {
         this.addAbility(new PaintedTerrapinAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

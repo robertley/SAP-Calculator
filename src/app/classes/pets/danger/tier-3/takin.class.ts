@@ -14,6 +14,7 @@ export class Takin extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TakinAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

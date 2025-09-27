@@ -15,6 +15,7 @@ export class Ibex extends Pet {
 
     initAbilities(): void {
         this.addAbility(new IbexAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

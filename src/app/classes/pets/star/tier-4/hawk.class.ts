@@ -15,6 +15,7 @@ export class Hawk extends Pet {
 
     initAbilities(): void {
         this.addAbility(new HawkAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

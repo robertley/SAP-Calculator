@@ -16,6 +16,7 @@ export class Anteater extends Pet {
 
     initAbilities(): void {
         this.addAbility(new AnteaterAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

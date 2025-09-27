@@ -5,6 +5,7 @@ import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { OrcaAbility } from "../../../abilities/pets/star/tier-6/orca-ability.class";
 // TO DO: Update faint pool, and add all faint pets
 export class Orca extends Pet {
     name = "Orca";
@@ -12,29 +13,9 @@ export class Orca extends Pet {
     pack: Pack = 'Star';
     attack = 5;
     health = 7;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        for (let i = 0; i < this.level; i++) {
-            let faintPet = this.petService.getRandomFaintPet(this.parent);
-            faintPet.attack = 6;
-            faintPet.health= 6;
-            
-            let summonResult = this.parent.summonPet(faintPet, this.savedPosition, false, this);
-            if (summonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned a 6/6 ${faintPet.name}.`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        randomEvent: true,
-                        pteranodon: pteranodon
-                    }
-                )
-
-                this.abilityService.triggerFriendSummonedEvents(faintPet);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new OrcaAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

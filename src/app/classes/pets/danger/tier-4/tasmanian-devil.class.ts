@@ -14,6 +14,7 @@ export class TasmanianDevil extends Pet {
 
     initAbilities(): void {
         this.addAbility(new TasmanianDevilAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

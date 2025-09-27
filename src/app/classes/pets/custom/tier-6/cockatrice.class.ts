@@ -13,6 +13,7 @@ export class Cockatrice extends Pet {
     health = 7;
     initAbilities(): void {
         this.addAbility(new CockatriceAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -14,6 +14,7 @@ export class HumphreadWrasse extends Pet {
 
     initAbilities(): void {
         this.addAbility(new HumphreadWrasseAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
