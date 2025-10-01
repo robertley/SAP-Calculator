@@ -147,13 +147,6 @@ export abstract class Pet {
         this.abilityList.forEach(ability => ability.reset());
     }
 
-    tigerCheck(tiger) {
-        if (this.petBehind(true, true)?.name == 'Tiger' && (tiger == null || tiger == false)) {
-            return true;
-        }
-        return false;
-    }
-
     attackPet(pet: Pet,  jumpAttack: boolean = false, power?: number, random: boolean = false) {
         this.timesAttacked++;
         pet.timesAttacked++;
@@ -322,7 +315,6 @@ export abstract class Pet {
                 player: this.parent,
                 randomEvent: random
             });
-            //TO DO: Maybe all other ability equipment should follow this pattern
             let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
             if (skewerEquipment != null) {
                 skewerEquipment.attackCallback(this, pet);
@@ -346,12 +338,12 @@ export abstract class Pet {
                 }
                 damage *= totalMultiplier;
                 let fairyBallReduction = 0;
-                if (pet.name === 'Fairy Ball' && damage > 0) {
+                if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
                     fairyBallReduction = pet.level * 2;
                     damage = Math.max(1, damage - fairyBallReduction);
                 }
                 let nurikabe = 0;
-                if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
+                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && pet.abilityUses < 3) {
                     nurikabe = pet.level * 4;
                     damage = Math.max(1, damage - nurikabe);
                     pet.abilityUses++;
@@ -407,7 +399,7 @@ export abstract class Pet {
                 }
                 damage *= totalMultiplier;
                 let fairyBallReduction = 0;
-                if (pet.name === 'Fairy Ball' && damage > 0) {
+                if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
                     fairyBallReduction = pet.level * 2;
                     damage = Math.max(1, damage - fairyBallReduction);
                 }
@@ -744,14 +736,15 @@ export abstract class Pet {
             damage = Math.min(damage, pet.health - 1);
         }
         //TO DO: Might need to move all pet's less damage ability down here, or into Deal Damage
+        //T) DO: Change from name check/trigger check to how many ability check
         let fairyBallReduction = 0;
-        if (pet.name === 'Fairy Ball' && damage > 0) {
+        if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
             fairyBallReduction = pet.level * 2;
             damage = Math.max(1, damage - fairyBallReduction);
         }
 
         let nurikabe = 0;
-        if (pet.name == 'Nurikabe' && pet.abilityUses < 3 && damage > 0) {
+        if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && pet.abilityUses < 3 && damage > 0) {
             nurikabe = pet.level * 4;
             damage = Math.max(1, damage - fairyBallReduction);
             pet.abilityUses++;
@@ -1353,10 +1346,11 @@ export abstract class Pet {
             return true;
         });
     }
-    getAbilitiesWithTrigger(trigger?: AbilityTrigger, abilityType?: AbilityType): Ability[] {
+    getAbilitiesWithTrigger(trigger?: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): Ability[] {
         return this.abilityList.filter(ability => {
             if (trigger && !ability.matchesTrigger(trigger) || !ability.canUse()) return false;
             if (abilityType && ability.abilityType !== abilityType) return false;
+            if (abilityName && ability.name !== abilityName) return false;
             return true;
         });
     }
@@ -1423,8 +1417,8 @@ export abstract class Pet {
         return this.getAbilities(trigger, abilityType).length > 0;
     }
 
-    hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType): boolean {
-        return this.getAbilitiesWithTrigger(trigger, abilityType).length > 0;
+    hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): boolean {
+        return this.getAbilitiesWithTrigger(trigger, abilityType, abilityName).length > 0;
     }
 
     isSellPet(): boolean {

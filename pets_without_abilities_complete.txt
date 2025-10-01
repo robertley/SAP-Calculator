@@ -1,0 +1,712 @@
+=== PETS WITHOUT ABILITIES ===
+Total pet files: 469
+Pets with abilities: 303
+Pets without abilities: 166
+
+=== PACK: custom | TIER: tier-1 ===
+  File: duckling.class.ts
+  Class: Duckling
+  Path: src/app/classes/pets/custom/tier-1/duckling.class.ts
+
+  File: gibbon.class.ts
+  Class: Gibbon
+  Path: src/app/classes/pets/custom/tier-1/gibbon.class.ts
+
+  File: mouse.class.ts
+  Class: Mouse
+  Path: src/app/classes/pets/custom/tier-1/mouse.class.ts
+
+  File: termite.class.ts
+  Class: Termite
+  Path: src/app/classes/pets/custom/tier-1/termite.class.ts
+
+=== PACK: custom | TIER: tier-2 ===
+  File: golden-beetle.class.ts
+  Class: GoldenBeetle
+  Path: src/app/classes/pets/custom/tier-2/golden-beetle.class.ts
+
+  File: sphinx.class.ts
+  Class: Sphinx
+  Path: src/app/classes/pets/custom/tier-2/sphinx.class.ts
+
+  File: yak.class.ts
+  Class: Yak
+  Path: src/app/classes/pets/custom/tier-2/yak.class.ts
+
+=== PACK: custom | TIER: tier-3 ===
+  File: deer-lord.class.ts
+  Class: DeerLord
+  Path: src/app/classes/pets/custom/tier-3/deer-lord.class.ts
+
+  File: emperor-tamarin.ts
+  Class: EmperorTamarin
+  Path: src/app/classes/pets/custom/tier-3/emperor-tamarin.ts
+
+  File: foo-dog.class.ts
+  Class: FooDog
+  Path: src/app/classes/pets/custom/tier-3/foo-dog.class.ts
+
+  File: wasp.class.ts
+  Class: Wasp
+  Path: src/app/classes/pets/custom/tier-3/wasp.class.ts
+
+=== PACK: custom | TIER: tier-4 ===
+  File: crow.class.ts
+  Class: Crow
+  Path: src/app/classes/pets/custom/tier-4/crow.class.ts
+
+  File: dragonfly.class.ts
+  Class: Dragonfly
+  Path: src/app/classes/pets/custom/tier-4/dragonfly.class.ts
+
+  File: fairy.class.ts
+  Class: Fairy
+  Path: src/app/classes/pets/custom/tier-4/fairy.class.ts
+
+  File: hippocampus.class.ts
+  Class: Hippocampus
+  Path: src/app/classes/pets/custom/tier-4/hippocampus.class.ts
+
+  File: jerboa.class.ts
+  Class: Jerboa
+  Path: src/app/classes/pets/custom/tier-4/jerboa.class.ts
+
+  File: old-mouse.class.ts
+  Class: OldMouse
+  Path: src/app/classes/pets/custom/tier-4/old-mouse.class.ts
+
+  File: rootling.class.ts
+  Class: Rootling
+  Path: src/app/classes/pets/custom/tier-4/rootling.class.ts
+
+  File: sea-anemone.class.ts
+  Class: SeaAnemone
+  Path: src/app/classes/pets/custom/tier-4/sea-anemone.class.ts
+
+=== PACK: custom | TIER: tier-5 ===
+  File: fox.class.ts
+  Class: Fox
+  Path: src/app/classes/pets/custom/tier-5/fox.class.ts
+
+  File: mimic.class.ts
+  Class: Mimic
+  Path: src/app/classes/pets/custom/tier-5/mimic.class.ts
+
+  File: moose.class.ts
+  Class: Moose
+  Path: src/app/classes/pets/custom/tier-5/moose.class.ts
+
+  File: nurikabe.class.ts
+  Class: Nurikabe
+  Path: src/app/classes/pets/custom/tier-5/nurikabe.class.ts
+
+  File: polar-bear.class.ts
+  Class: PolarBear
+  Path: src/app/classes/pets/custom/tier-5/polar-bear.class.ts
+
+  File: poodle.class.ts
+  Class: Poodle
+  Path: src/app/classes/pets/custom/tier-5/poodle.class.ts
+
+  File: siberian-huskey.class.ts
+  Class: SiberianHuskey
+  Path: src/app/classes/pets/custom/tier-5/siberian-huskey.class.ts
+
+  File: tandgnost.class.ts
+  Class: Tandgnost
+  Path: src/app/classes/pets/custom/tier-5/tandgnost.class.ts
+
+  File: tandgrisner.class.ts
+  Class: Tandgrisner
+  Path: src/app/classes/pets/custom/tier-5/tandgrisner.class.ts
+
+  File: zebra.class.ts
+  Class: Zebra
+  Path: src/app/classes/pets/custom/tier-5/zebra.class.ts
+
+=== PACK: custom | TIER: tier-6 ===
+  File: albatross.class.ts
+  Class: Albatross
+  Path: src/app/classes/pets/custom/tier-6/albatross.class.ts
+
+  File: farmer-dog.ts
+  Class: Fish
+  Path: src/app/classes/pets/custom/tier-6/farmer-dog.ts
+
+  File: hammerhead-shark.class.ts
+  Class: HammerheadShark
+  Path: src/app/classes/pets/custom/tier-6/hammerhead-shark.class.ts
+
+  File: komodo.class.ts
+  Class: Komodo
+  Path: src/app/classes/pets/custom/tier-6/komodo.class.ts
+
+  File: leviathan.class.ts
+  Class: Leviathan
+  Path: src/app/classes/pets/custom/tier-6/leviathan.class.ts
+
+  File: lioness.class.ts
+  Class: Lioness
+  Path: src/app/classes/pets/custom/tier-6/lioness.class.ts
+
+  File: questing-beast.class.ts
+  Class: QuestingBeast
+  Path: src/app/classes/pets/custom/tier-6/questing-beast.class.ts
+
+=== PACK: danger | TIER: tier-1 ===
+  File: fan-mussel.class.ts
+  Class: FanMussel
+  Path: src/app/classes/pets/danger/tier-1/fan-mussel.class.ts
+
+  File: tooth-billed-pigeon.class.ts
+  Class: ToothBilledPigeon
+  Path: src/app/classes/pets/danger/tier-1/tooth-billed-pigeon.class.ts
+
+=== PACK: danger | TIER: tier-2 ===
+  File: proboscis-monkey.class.ts
+  Class: ProboscisMonkey
+  Path: src/app/classes/pets/danger/tier-2/proboscis-monkey.class.ts
+
+  File: saola.class.ts
+  Class: Saola
+  Path: src/app/classes/pets/danger/tier-2/saola.class.ts
+
+=== PACK: danger | TIER: tier-3 ===
+  File: spoon-billed-sandpiper.class.ts
+  Class: SpoonBilledSandpiper
+  Path: src/app/classes/pets/danger/tier-3/spoon-billed-sandpiper.class.ts
+
+=== PACK: danger | TIER: tier-4 ===
+  File: angelshark.class.ts
+  Class: Angelshark
+  Path: src/app/classes/pets/danger/tier-4/angelshark.class.ts
+
+  File: bonobo.class.ts
+  Class: Bonobo
+  Path: src/app/classes/pets/danger/tier-4/bonobo.class.ts
+
+  File: giant-tortoise.class.ts
+  Class: GiantTortoise
+  Path: src/app/classes/pets/danger/tier-4/giant-tortoise.class.ts
+
+=== PACK: danger | TIER: tier-5 ===
+  File: red-panda.class.ts
+  Class: RedPanda
+  Path: src/app/classes/pets/danger/tier-5/red-panda.class.ts
+
+=== PACK: danger | TIER: tier-6 ===
+  File: blue-whale.class.ts
+  Class: BlueWhale
+  Path: src/app/classes/pets/danger/tier-6/blue-whale.class.ts
+
+  File: helmeted-hornbill.class.ts
+  Class: HelmetedHornbill
+  Path: src/app/classes/pets/danger/tier-6/helmeted-hornbill.class.ts
+
+=== PACK: golden | TIER: tier-1 ===
+  File: lemming.class.ts
+  Class: Lemming
+  Path: src/app/classes/pets/golden/tier-1/lemming.class.ts
+
+  File: magpie.class.ts
+  Class: Magpie
+  Path: src/app/classes/pets/golden/tier-1/magpie.class.ts
+
+  File: oposum.class.ts
+  Class: Opossum
+  Path: src/app/classes/pets/golden/tier-1/oposum.class.ts
+
+=== PACK: golden | TIER: tier-2 ===
+  File: african-penguin.class.ts
+  Class: AfricanPenguin
+  Path: src/app/classes/pets/golden/tier-2/african-penguin.class.ts
+
+  File: hercules-beetle.class.ts
+  Class: HerculesBeetle
+  Path: src/app/classes/pets/golden/tier-2/hercules-beetle.class.ts
+
+  File: stoat.class.ts
+  Class: Stoat
+  Path: src/app/classes/pets/golden/tier-2/stoat.class.ts
+
+=== PACK: golden | TIER: tier-3 ===
+  File: baboon.class.ts
+  Class: Baboon
+  Path: src/app/classes/pets/golden/tier-3/baboon.class.ts
+
+=== PACK: golden | TIER: tier-4 ===
+  File: cockatoo.class.ts
+  Class: Cockatoo
+  Path: src/app/classes/pets/golden/tier-4/cockatoo.class.ts
+
+  File: manatee.class.ts
+  Class: Manatee
+  Path: src/app/classes/pets/golden/tier-4/manatee.class.ts
+
+  File: manta-ray.class.ts
+  Class: MantaRay
+  Path: src/app/classes/pets/golden/tier-4/manta-ray.class.ts
+
+  File: sealion.class.ts
+  Class: Sealion
+  Path: src/app/classes/pets/golden/tier-4/sealion.class.ts
+
+=== PACK: golden | TIER: tier-5 ===
+  File: blue-ringed-octopus.class.ts
+  Class: BlueRingedOctopus
+  Path: src/app/classes/pets/golden/tier-5/blue-ringed-octopus.class.ts
+
+=== PACK: golden | TIER: tier-6 ===
+  File: bird-of-paradise.class.ts
+  Class: BirdOfParadise
+  Path: src/app/classes/pets/golden/tier-6/bird-of-paradise.class.ts
+
+  File: catfish.class.ts
+  Class: Catfish
+  Path: src/app/classes/pets/golden/tier-6/catfish.class.ts
+
+  File: oyster.class.ts
+  Class: Oyster
+  Path: src/app/classes/pets/golden/tier-6/oyster.class.ts
+
+=== PACK: hidden | TIER: no-tier ===
+  File: angry-pygmy-hog.class.ts
+  Class: AngryPygmyHog
+  Path: src/app/classes/pets/hidden/angry-pygmy-hog.class.ts
+
+  File: bee.class.ts
+  Class: Bee
+  Path: src/app/classes/pets/hidden/bee.class.ts
+
+  File: bus.class.ts
+  Class: Bus
+  Path: src/app/classes/pets/hidden/bus.class.ts
+
+  File: chick.class.ts
+  Class: Chick
+  Path: src/app/classes/pets/hidden/chick.class.ts
+
+  File: chim-goat.class.ts
+  Class: ChimGoat
+  Path: src/app/classes/pets/hidden/chim-goat.class.ts
+
+  File: chim-lion.class.ts
+  Class: ChimLion
+  Path: src/app/classes/pets/hidden/chim-lion.class.ts
+
+  File: chim-snake.class.ts
+  Class: ChimSnake
+  Path: src/app/classes/pets/hidden/chim-snake.class.ts
+
+  File: cracked-egg.class.ts
+  Class: CrackedEgg
+  Path: src/app/classes/pets/hidden/cracked-egg.class.ts
+
+  File: daycrawler.class.ts
+  Class: Daycrawler
+  Path: src/app/classes/pets/hidden/daycrawler.class.ts
+
+  File: dirty-rat.class.ts
+  Class: DirtyRat
+  Path: src/app/classes/pets/hidden/dirty-rat.class.ts
+
+  File: fairy-ball.class.ts
+  Class: FairyBall
+  Path: src/app/classes/pets/hidden/fairy-ball.class.ts
+
+  File: fire-pup.class.ts
+  Class: FirePup
+  Path: src/app/classes/pets/hidden/fire-pup.class.ts
+
+  File: giant-eyes-dog.class.ts
+  Class: GiantEyesDog
+  Path: src/app/classes/pets/hidden/giant-eyes-dog.class.ts
+
+  File: golden-retriever.class.ts
+  Class: GoldenRetriever
+  Path: src/app/classes/pets/hidden/golden-retriever.class.ts
+
+  File: head.class.ts
+  Class: Head
+  Path: src/app/classes/pets/hidden/head.class.ts
+
+  File: lizard-tail.class.ts
+  Class: LizardTail
+  Path: src/app/classes/pets/hidden/lizard-tail.class.ts
+
+  File: mantis.class.ts
+  Class: Mantis
+  Path: src/app/classes/pets/hidden/mantis.class.ts
+
+  File: monty.class.ts
+  Class: Monty
+  Path: src/app/classes/pets/hidden/monty.class.ts
+
+  File: nessie-q.class.ts
+  Class: NessieQ
+  Path: src/app/classes/pets/hidden/nessie-q.class.ts
+
+  File: nest.class.ts
+  Class: Nest
+  Path: src/app/classes/pets/hidden/nest.class.ts
+
+  File: ram.class.ts
+  Class: Ram
+  Path: src/app/classes/pets/hidden/ram.class.ts
+
+  File: rock.class.ts
+  Class: Rock
+  Path: src/app/classes/pets/hidden/rock.class.ts
+
+  File: smaller-slime.class.ts
+  Class: SmallerSlime
+  Path: src/app/classes/pets/hidden/smaller-slime.class.ts
+
+  File: smallest-slug.class.ts
+  Class: SmallestSlug
+  Path: src/app/classes/pets/hidden/smallest-slug.class.ts
+
+  File: summoned-cockroach.class.ts
+  Class: SummonedCockroach
+  Path: src/app/classes/pets/hidden/summoned-cockroach.class.ts
+
+  File: young-phoenix.class.ts
+  Class: YoungPhoenix
+  Path: src/app/classes/pets/hidden/young-phoenix.class.ts
+
+  File: zombie-cricket.class.ts
+  Class: ZombieCricket
+  Path: src/app/classes/pets/hidden/zombie-cricket.class.ts
+
+  File: zombie-fly.class.ts
+  Class: ZombieFly
+  Path: src/app/classes/pets/hidden/zombie-fly.class.ts
+
+=== PACK: puppy | TIER: tier-1 ===
+  File: bluebird.class.ts
+  Class: Bluebird
+  Path: src/app/classes/pets/puppy/tier-1/bluebird.class.ts
+
+  File: chinchilla.class.ts
+  Class: Chinchilla
+  Path: src/app/classes/pets/puppy/tier-1/chinchilla.class.ts
+
+  File: chipmunk.class.ts
+  Class: Chipmunk
+  Path: src/app/classes/pets/puppy/tier-1/chipmunk.class.ts
+
+  File: ferret.class.ts
+  Class: Ferret
+  Path: src/app/classes/pets/puppy/tier-1/ferret.class.ts
+
+=== PACK: puppy | TIER: tier-2 ===
+  File: dromedary.class.ts
+  Class: Dromedary
+  Path: src/app/classes/pets/puppy/tier-2/dromedary.class.ts
+
+  File: goldfish.class.ts
+  Class: Goldfish
+  Path: src/app/classes/pets/puppy/tier-2/goldfish.class.ts
+
+  File: lemur.class.ts
+  Class: Lemur
+  Path: src/app/classes/pets/puppy/tier-2/lemur.class.ts
+
+  File: shrimp.class.ts
+  Class: Shrimp
+  Path: src/app/classes/pets/puppy/tier-2/shrimp.class.ts
+
+=== PACK: puppy | TIER: tier-3 ===
+  File: hatching-chick.class.ts
+  Class: HatchingChick
+  Path: src/app/classes/pets/puppy/tier-3/hatching-chick.class.ts
+
+  File: owl.class.ts
+  Class: Owl
+  Path: src/app/classes/pets/puppy/tier-3/owl.class.ts
+
+  File: puppy.class.ts
+  Class: Puppy
+  Path: src/app/classes/pets/puppy/tier-3/puppy.class.ts
+
+  File: tropical-fish.class.ts
+  Class: TropicalFish
+  Path: src/app/classes/pets/puppy/tier-3/tropical-fish.class.ts
+
+=== PACK: puppy | TIER: tier-4 ===
+  File: buffalo.class.ts
+  Class: Buffalo
+  Path: src/app/classes/pets/puppy/tier-4/buffalo.class.ts
+
+  File: gharial.class.ts
+  Class: Gharial
+  Path: src/app/classes/pets/puppy/tier-4/gharial.class.ts
+
+  File: llama.class.ts
+  Class: Llama
+  Path: src/app/classes/pets/puppy/tier-4/llama.class.ts
+
+  File: lobster.class.ts
+  Class: Lobster
+  Path: src/app/classes/pets/puppy/tier-4/lobster.class.ts
+
+=== PACK: puppy | TIER: tier-5 ===
+  File: chicken.class.ts
+  Class: Chicken
+  Path: src/app/classes/pets/puppy/tier-5/chicken.class.ts
+
+  File: goat.class.ts
+  Class: Goat
+  Path: src/app/classes/pets/puppy/tier-5/goat.class.ts
+
+  File: mosasaurus.class.ts
+  Class: Mosasaurus
+  Path: src/app/classes/pets/puppy/tier-5/mosasaurus.class.ts
+
+  File: panther.class.ts
+  Class: Panther
+  Path: src/app/classes/pets/puppy/tier-5/panther.class.ts
+
+  File: string-ray.class.ts
+  Class: StingRay
+  Path: src/app/classes/pets/puppy/tier-5/string-ray.class.ts
+
+=== PACK: puppy | TIER: tier-6 ===
+  File: anglerfish.class.ts
+  Class: Anglerfish
+  Path: src/app/classes/pets/puppy/tier-6/anglerfish.class.ts
+
+  File: mongoose.class.ts
+  Class: Mongoose
+  Path: src/app/classes/pets/puppy/tier-6/mongoose.class.ts
+
+  File: puma.class.ts
+  Class: Puma
+  Path: src/app/classes/pets/puppy/tier-6/puma.class.ts
+
+  File: sauropod.class.ts
+  Class: Sauropod
+  Path: src/app/classes/pets/puppy/tier-6/sauropod.class.ts
+
+  File: tyrannosaurus.class.ts
+  Class: Tyrannosaurus
+  Path: src/app/classes/pets/puppy/tier-6/tyrannosaurus.class.ts
+
+=== PACK: star | TIER: tier-1 ===
+  File: marmoset.class.ts
+  Class: Marmoset
+  Path: src/app/classes/pets/star/tier-1/marmoset.class.ts
+
+  File: pillbug.class.ts
+  Class: Pillbug
+  Path: src/app/classes/pets/star/tier-1/pillbug.class.ts
+
+=== PACK: star | TIER: tier-2 ===
+  File: dumbo-octopus.class.ts
+  Class: DumboOctopus
+  Path: src/app/classes/pets/star/tier-2/dumbo-octopus.class.ts
+
+  File: guinea-pig.class.ts
+  Class: GuineaPig
+  Path: src/app/classes/pets/star/tier-2/guinea-pig.class.ts
+
+=== PACK: star | TIER: tier-3 ===
+  File: capybara.class.ts
+  Class: Cabybara
+  Path: src/app/classes/pets/star/tier-3/capybara.class.ts
+
+  File: cardinal.class.ts
+  Class: Cardinal
+  Path: src/app/classes/pets/star/tier-3/cardinal.class.ts
+
+  File: leech.class.ts
+  Class: Leech
+  Path: src/app/classes/pets/star/tier-3/leech.class.ts
+
+  File: okapi.class.ts
+  Class: Okapi
+  Path: src/app/classes/pets/star/tier-3/okapi.class.ts
+
+  File: orangutang.class.ts
+  Class: Orangutang
+  Path: src/app/classes/pets/star/tier-3/orangutang.class.ts
+
+=== PACK: star | TIER: tier-4 ===
+  File: elk.class.ts
+  Class: Elk
+  Path: src/app/classes/pets/star/tier-4/elk.class.ts
+
+  File: praying-mantis.class.ts
+  Class: PrayingMantis
+  Path: src/app/classes/pets/star/tier-4/praying-mantis.class.ts
+
+  File: siamese.class.ts
+  Class: Siamese
+  Path: src/app/classes/pets/star/tier-4/siamese.class.ts
+
+  File: sparrow.class.ts
+  Class: Sparrow
+  Path: src/app/classes/pets/star/tier-4/sparrow.class.ts
+
+=== PACK: star | TIER: tier-5 ===
+  File: hamster.class.ts
+  Class: Hamster
+  Path: src/app/classes/pets/star/tier-5/hamster.class.ts
+
+  File: shoebill.class.ts
+  Class: Shoebill
+  Path: src/app/classes/pets/star/tier-5/shoebill.class.ts
+
+  File: starfish.class.ts
+  Class: Starfish
+  Path: src/app/classes/pets/star/tier-5/starfish.class.ts
+
+=== PACK: star | TIER: tier-6 ===
+  File: ostrich.class.ts
+  Class: Ostrich
+  Path: src/app/classes/pets/star/tier-6/ostrich.class.ts
+
+=== PACK: turtle | TIER: tier-1 ===
+  File: ant.class.ts
+  Class: Ant
+  Path: src/app/classes/pets/turtle/tier-1/ant.class.ts
+
+  File: beaver.class.ts
+  Class: Beaver
+  Path: src/app/classes/pets/turtle/tier-1/beaver.class.ts
+
+  File: duck.class.ts
+  Class: Duck
+  Path: src/app/classes/pets/turtle/tier-1/duck.class.ts
+
+  File: fish.class.ts
+  Class: Fish
+  Path: src/app/classes/pets/turtle/tier-1/fish.class.ts
+
+  File: otter.class.ts
+  Class: Otter
+  Path: src/app/classes/pets/turtle/tier-1/otter.class.ts
+
+  File: pig.class.ts
+  Class: Pig
+  Path: src/app/classes/pets/turtle/tier-1/pig.class.ts
+
+  File: pigeon.class.ts
+  Class: Pigeon
+  Path: src/app/classes/pets/turtle/tier-1/pigeon.class.ts
+
+=== PACK: turtle | TIER: tier-2 ===
+  File: snail.class.ts
+  Class: Snail
+  Path: src/app/classes/pets/turtle/tier-2/snail.class.ts
+
+  File: swan.class.ts
+  Class: Swan
+  Path: src/app/classes/pets/turtle/tier-2/swan.class.ts
+
+  File: worm.class.ts
+  Class: Worm
+  Path: src/app/classes/pets/turtle/tier-2/worm.class.ts
+
+=== PACK: turtle | TIER: tier-3 ===
+  File: giraffe.class.ts
+  Class: Giraffe
+  Path: src/app/classes/pets/turtle/tier-3/giraffe.class.ts
+
+=== PACK: turtle | TIER: tier-4 ===
+  File: bison.class.ts
+  Class: Bison
+  Path: src/app/classes/pets/turtle/tier-4/bison.class.ts
+
+  File: penguin.class.ts
+  Class: Penguin
+  Path: src/app/classes/pets/turtle/tier-4/penguin.class.ts
+
+  File: squirrel.class.ts
+  Class: Squirrel
+  Path: src/app/classes/pets/turtle/tier-4/squirrel.class.ts
+
+=== PACK: turtle | TIER: tier-5 ===
+  File: cow.class.ts
+  Class: Cow
+  Path: src/app/classes/pets/turtle/tier-5/cow.class.ts
+
+  File: monkey.class.ts
+  Class: Monkey
+  Path: src/app/classes/pets/turtle/tier-5/monkey.class.ts
+
+=== PACK: turtle | TIER: tier-6 ===
+  File: cat.class.ts
+  Class: Cat
+  Path: src/app/classes/pets/turtle/tier-6/cat.class.ts
+
+  File: dragon.class.ts
+  Class: Dragon
+  Path: src/app/classes/pets/turtle/tier-6/dragon.class.ts
+
+  File: tiger.class.ts
+  Class: Tiger
+  Path: src/app/classes/pets/turtle/tier-6/tiger.class.ts
+
+=== PACK: unicorn | TIER: tier-1 ===
+  File: baku.class.ts
+  Class: Baku
+  Path: src/app/classes/pets/unicorn/tier-1/baku.class.ts
+
+  File: cuddle-toad.class.ts
+  Class: CuddleToad
+  Path: src/app/classes/pets/unicorn/tier-1/cuddle-toad.class.ts
+
+  File: question-marks.class.ts
+  Class: QuestionMarks
+  Path: src/app/classes/pets/unicorn/tier-1/question-marks.class.ts
+
+=== PACK: unicorn | TIER: tier-2 ===
+  File: bigfoot.class.ts
+  Class: Bigfoot
+  Path: src/app/classes/pets/unicorn/tier-2/bigfoot.class.ts
+
+  File: ghost-kitten.class.ts
+  Class: GhostKitten
+  Path: src/app/classes/pets/unicorn/tier-2/ghost-kitten.class.ts
+
+  File: wyvern.class.ts
+  Class: Wyvern
+  Path: src/app/classes/pets/unicorn/tier-2/wyvern.class.ts
+
+=== PACK: unicorn | TIER: tier-3 ===
+  File: griffin.class.ts
+  Class: Griffin
+  Path: src/app/classes/pets/unicorn/tier-3/griffin.class.ts
+
+  File: ouroboros.class.ts
+  Class: Ouroboros
+  Path: src/app/classes/pets/unicorn/tier-3/ouroboros.class.ts
+
+=== PACK: unicorn | TIER: tier-4 ===
+  File: worm-of-sand.class.ts
+  Class: WormOfSand
+  Path: src/app/classes/pets/unicorn/tier-4/worm-of-sand.class.ts
+
+=== PACK: unicorn | TIER: tier-5 ===
+  File: bad-dog.class.ts
+  Class: BadDog
+  Path: src/app/classes/pets/unicorn/tier-5/bad-dog.class.ts
+
+=== PACK: unicorn | TIER: tier-6 ===
+  File: behemoth.class.ts
+  Class: Behemoth
+  Path: src/app/classes/pets/unicorn/tier-6/behemoth.class.ts
+
+  File: manticore.class.ts
+  Class: Manticore
+  Path: src/app/classes/pets/unicorn/tier-6/manticore.class.ts
+
+  File: quetzalcoatl.class.ts
+  Class: Quetzalcoatl
+  Path: src/app/classes/pets/unicorn/tier-6/quetzalcoatl.class.ts
+
+  File: yeti.class.ts
+  Class: Yeti
+  Path: src/app/classes/pets/unicorn/tier-6/yeti.class.ts
+

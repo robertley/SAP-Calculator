@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MarmosetAbility } from "../../../abilities/pets/star/tier-1/marmoset-ability.class";
 
 export class Marmoset extends Pet {
     name = "Marmoset";
@@ -11,6 +12,10 @@ export class Marmoset extends Pet {
     pack: Pack = 'Star';
     attack = 2;
     health = 3;
+    initAbilities(): void {
+        this.addAbility(new MarmosetAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

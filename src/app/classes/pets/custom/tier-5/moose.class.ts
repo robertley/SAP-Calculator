@@ -5,6 +5,7 @@ import { shuffle } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MooseAbility } from "../../../abilities/pets/custom/tier-5/moose-ability.class";
 
 export class Moose extends Pet {
     name = "Moose";
@@ -12,6 +13,10 @@ export class Moose extends Pet {
     pack: Pack = 'Custom';
     attack = 5;
     health = 6;
+    initAbilities(): void {
+        this.addAbility(new MooseAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

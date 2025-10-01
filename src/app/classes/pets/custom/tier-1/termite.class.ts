@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Player } from "../../../player.class";
 import { Pet, Pack } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
+import { TermiteAbility } from "../../../abilities/pets/custom/tier-1/termite-ability.class";
 
 export class Termite extends Pet {
     name = "Termite";
@@ -10,7 +11,10 @@ export class Termite extends Pet {
     pack: Pack = "Custom";
     health = 4;
     attack = 1;
-
+    initAbilities(): void {
+        this.addAbility(new TermiteAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { LemmingAbility } from "../../../abilities/pets/golden/tier-1/lemming-ability.class";
 
 export class Lemming extends Pet {
     name = "Lemming";
@@ -10,6 +11,10 @@ export class Lemming extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 2;
+    initAbilities(): void {
+        this.addAbility(new LemmingAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

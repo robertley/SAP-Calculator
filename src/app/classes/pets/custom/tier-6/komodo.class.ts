@@ -5,6 +5,7 @@ import { shuffle } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { KomodoAbility } from "../../../abilities/pets/custom/tier-6/komodo-ability.class";
 
 export class Komodo extends Pet {
     name = "Komodo";
@@ -12,6 +13,10 @@ export class Komodo extends Pet {
     pack: Pack = 'Custom';
     attack = 6;
     health = 6;
+    initAbilities(): void {
+        this.addAbility(new KomodoAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     endTurn(gameApi: GameAPI): void {
         if (!gameApi.komodoShuffle) {
             return;

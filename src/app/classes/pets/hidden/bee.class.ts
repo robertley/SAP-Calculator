@@ -3,6 +3,7 @@ import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { BeeAbility } from "../../abilities/pets/hidden/bee-ability.class";
 
 export class Bee extends Pet {
     name = "Bee";
@@ -11,6 +12,10 @@ export class Bee extends Pet {
     hidden: boolean = true;
     health = 1;
     attack = 1;
+    initAbilities(): void {
+        this.addAbility(new BeeAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

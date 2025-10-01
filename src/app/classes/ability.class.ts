@@ -116,7 +116,7 @@ export class Ability {
             return false;
         }
 
-        if ((this.owner as any).petBehind && (this.owner as any).petBehind(true, true)?.name === 'Tiger' && (tiger == null || tiger == false)) {
+        if ((this.owner as any).petBehind && (this.owner as any).petBehind(true, true)?.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
             return true;
         }
         return false;

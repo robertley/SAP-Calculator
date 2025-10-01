@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { CatfishAbility } from "../../../abilities/pets/golden/tier-6/catfish-ability.class";
 
 export class Catfish extends Pet {
     name = "Catfish";
@@ -10,6 +11,10 @@ export class Catfish extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 6;
+    initAbilities(): void {
+        this.addAbility(new CatfishAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { OysterAbility } from "../../../abilities/pets/golden/tier-6/oyster-ability.class";
 
 export class Oyster extends Pet {
     name = "Oyster";
@@ -10,6 +11,10 @@ export class Oyster extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 10;
+    initAbilities(): void {
+        this.addAbility(new OysterAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

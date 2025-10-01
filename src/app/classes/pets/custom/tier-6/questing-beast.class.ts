@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { QuestingBeastAbility } from "../../../abilities/pets/custom/tier-6/questing-beast-ability.class";
 
 export class QuestingBeast extends Pet {
     name = "Questing Beast";
@@ -11,6 +12,10 @@ export class QuestingBeast extends Pet {
     pack: Pack = 'Custom';
     attack = 7;
     health = 9;
+    initAbilities(): void {
+        this.addAbility(new QuestingBeastAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

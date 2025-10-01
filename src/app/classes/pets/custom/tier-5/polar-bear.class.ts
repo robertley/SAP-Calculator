@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PolarBearAbility } from "../../../abilities/pets/custom/tier-5/polar-bear-ability.class";
 
 export class PolarBear extends Pet {
     name = "Polar Bear";
@@ -11,6 +12,10 @@ export class PolarBear extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 8;
+    initAbilities(): void {
+        this.addAbility(new PolarBearAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

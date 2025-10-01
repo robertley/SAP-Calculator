@@ -3,6 +3,7 @@ import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { RamAbility } from "../../abilities/pets/hidden/ram-ability.class";
 
 export class Ram extends Pet {
     name = "Ram";
@@ -11,6 +12,10 @@ export class Ram extends Pet {
     hidden: boolean = true;
     health = 2;
     attack = 2;
+    initAbilities(): void {
+        this.addAbility(new RamAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

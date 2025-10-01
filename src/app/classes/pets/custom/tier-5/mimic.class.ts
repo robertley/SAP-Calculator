@@ -5,6 +5,7 @@ import { shuffle } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MimicAbility } from "../../../abilities/pets/custom/tier-5/mimic-ability.class";
 
 export class Mimic extends Pet {
     name = "Mimic";
@@ -12,6 +13,10 @@ export class Mimic extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 6;
+    initAbilities(): void {
+        this.addAbility(new MimicAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

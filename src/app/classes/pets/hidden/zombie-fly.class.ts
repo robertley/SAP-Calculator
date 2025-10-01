@@ -3,6 +3,7 @@ import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { ZombieFlyAbility } from "../../abilities/pets/hidden/zombie-fly-ability.class";
 
 export class ZombieFly extends Pet {
     name = "Zombie Fly";
@@ -11,6 +12,10 @@ export class ZombieFly extends Pet {
     hidden: boolean = true;
     health = 4;
     attack = 4;
+    initAbilities(): void {
+        this.addAbility(new ZombieFlyAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

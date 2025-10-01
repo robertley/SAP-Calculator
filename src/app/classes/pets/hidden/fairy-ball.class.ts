@@ -1,3 +1,4 @@
+import { FairyAbility } from "app/classes/abilities/pets/custom/tier-4/fairy-ability.class";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
@@ -11,7 +12,10 @@ export class FairyBall extends Pet {
     attack = 2;
     health = 6;
     hidden = true;
-
+    initAbilities(): void {
+        this.addAbility(new FairyAbility(this));
+        super.initAbilities();
+    }
 
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

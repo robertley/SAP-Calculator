@@ -5,6 +5,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MantaRayAbility } from "../../../abilities/pets/golden/tier-4/manta-ray-ability.class";
 
 export class MantaRay extends Pet {
     name = "Manta Ray";
@@ -12,6 +13,10 @@ export class MantaRay extends Pet {
     pack: Pack = 'Golden';
     attack = 5;
     health = 7;
+    initAbilities(): void {
+        this.addAbility(new MantaRayAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

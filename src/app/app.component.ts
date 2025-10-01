@@ -847,6 +847,8 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.abilityCycle();
       } while (this.abilityService.hasAbilityCycleEvents);
 
+      //execute toy sob
+      this.toyService.executeStartOfBattleEvents();
       //init sob
       this.abilityService.triggerStartBattleEvents();
       //add churro check

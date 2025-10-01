@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { LemurAbility } from "../../../abilities/pets/puppy/tier-2/lemur-ability.class";
 
 export class Lemur extends Pet {
     name = "Lemur";
@@ -11,6 +12,10 @@ export class Lemur extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 3;
+    initAbilities(): void {
+        this.addAbility(new LemurAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GoldenBeetleAbility } from "../../../abilities/pets/custom/tier-2/golden-beetle-ability.class";
 
 export class GoldenBeetle extends Pet {
     name = "Golden Beetle";
@@ -10,6 +11,10 @@ export class GoldenBeetle extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 3;
+    initAbilities(): void {
+        this.addAbility(new GoldenBeetleAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
