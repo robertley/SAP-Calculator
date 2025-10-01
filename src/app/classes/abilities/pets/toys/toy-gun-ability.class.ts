@@ -1,13 +1,13 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { Pet } from "../../../../pet.class";
+import { Ability, AbilityContext } from "../../../ability.class";
+import { Pet } from "../../../pet.class";
 import { LogService } from "app/services/log.service";
 
-export class DolphinAbility extends Ability {
+export class ToyGunAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'DolphinAbility',
+            name: 'ToyGunAbility',
             owner: owner,
             triggers: ['StartBattle'],
             abilityType: 'Pet',
@@ -24,21 +24,20 @@ export class DolphinAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
 
+        // Mirror Toy Gun toy behavior
         let opponent = owner.parent.opponent;
-
         for (let i = 0; i < this.level; i++) {
-            let lowestHealthResp = opponent.getLowestHealthPet(null, owner);
-            if (!lowestHealthResp.pet) {
-                break;
+            let targetResp = opponent.getLastPet();
+            if (targetResp.pet == null) {
+                return;
             }
-            owner.snipePet(lowestHealthResp.pet, 4, lowestHealthResp.random, tiger);
+            owner.snipePet(targetResp.pet, 6, targetResp.random, tiger);
         }
 
-        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): DolphinAbility {
-        return new DolphinAbility(newOwner, this.logService);
+    copy(newOwner: Pet): ToyGunAbility {
+        return new ToyGunAbility(newOwner, this.logService);
     }
 }

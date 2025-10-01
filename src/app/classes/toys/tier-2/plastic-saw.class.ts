@@ -7,20 +7,20 @@ export class PlasticSaw extends Toy {
     name = "Plastic Saw";
     tier = 2;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
-        for (let i = 0; i < this.level; i++) {
-            for (let pet of this.parent.petArray) {
-                if (pet?.equipment instanceof Eucalyptus) {
-                    continue;
-                }
-                this.logService.createLog({
-                    message: `${this.name} gave ${pet.name} Eucalyptus.`,
-                    type: 'ability',
-                    player: this.parent,
-                    puma: puma
-                })
-                pet.givePetEquipment(new Eucalyptus());
-                break;
-            }
+        let excludePets = this.parent.getPetsWithEquipment('Eucalyptus');
+        let targetResp = this.parent.getFurthestUpPets(this.level, excludePets);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
+        for (let pet of targets) {
+            this.logService.createLog({
+                message: `${this.name} gave ${pet.name} Eucalyptus.`,
+                type: 'ability',
+                player: this.parent,
+                puma: puma
+            })
+            pet.givePetEquipment(new Eucalyptus());
         }
     }
 }
