@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { LeviathanAbility } from "../../../abilities/pets/custom/tier-6/leviathan-ability.class";
 
 export class Leviathan extends Pet {
     name = "Leviathan";
@@ -11,6 +12,10 @@ export class Leviathan extends Pet {
     pack: Pack = 'Custom';
     attack = 6;
     health = 10;
+    initAbilities(): void {
+        this.addAbility(new LeviathanAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -18,8 +23,8 @@ export class Leviathan extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ToadAbility } from "../../../abilities/pets/star/tier-3/toad-ability.class";
 
 export class Toad extends Pet {
     name = "Toad";
@@ -12,31 +13,10 @@ export class Toad extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 3;
-    enemyHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!pet.alive) {
-            return;
-        }
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        if (target.equipment?.name === 'Weak') {
-            return;
-        }
-        target.givePetEquipment(new Weak());
-        this.abilityUses++;
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} Weak.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.enemyHurt(gameApi, pet, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new ToadAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -45,13 +25,9 @@ export class Toad extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level * 2;
-    }
 }

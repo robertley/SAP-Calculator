@@ -12,10 +12,6 @@ export class Elk extends Pet {
     attack = 2;
     health = 6;
 
-    endTurn(gameApi: GameAPI): void {
-        // Placeholder for shop-phase logic.
-    }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -23,8 +19,8 @@ export class Elk extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

@@ -1,3 +1,4 @@
+import { FanMusselAbility } from "app/classes/abilities/pets/danger/tier-1/fan-mussel-ability.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -12,9 +13,8 @@ export class FanMussel extends Pet {
     attack = 2;
     health = 2;
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 2;
+    initAbilities(): void {
+        this.addAbility(new FanMusselAbility(this))
     }
 
     constructor(protected logService: LogService,
@@ -24,8 +24,8 @@ export class FanMussel extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

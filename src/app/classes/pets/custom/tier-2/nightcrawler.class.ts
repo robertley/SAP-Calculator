@@ -1,11 +1,9 @@
-import { getOpponent } from "app/util/helper-functions";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Daycrawler } from "../../hidden/daycrawler.class";
+import { NightcrawlerAbility } from "../../../abilities/pets/custom/tier-2/nightcrawler-ability.class";
 
 export class Nightcrawler extends Pet {
     name = "Nightcrawler";
@@ -13,36 +11,9 @@ export class Nightcrawler extends Pet {
     pack: Pack = 'Custom';
     attack = 1;
     health = 1;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let isPlayer = this.parent == gameApi.player;
-        let summonedAmount = isPlayer ? gameApi.playerSummonedAmount : gameApi.opponentSummonedAmount;
-
-        if (summonedAmount == 0) {
-            return;
-        }
-
-        let health = Math.min(50, this.level * summonedAmount);
-        let attack = 6;
-
-        let dayCrawler = new Daycrawler(this.logService, this.abilityService, this.parent, health, attack, 0, 0);
-
-        let summonResult = this.parent.summonPet(dayCrawler, this.savedPosition, false, this);
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Daycrawler (${attack}/${health})`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                }
-            )
-
-            this.abilityService.triggerFriendSummonedEvents(dayCrawler);
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new NightcrawlerAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -51,8 +22,8 @@ export class Nightcrawler extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

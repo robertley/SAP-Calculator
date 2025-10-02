@@ -3,6 +3,7 @@ import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { RockAbility } from "../../abilities/pets/hidden/rock-ability.class";
 
 export class Rock extends Pet {
     name = "Rock";
@@ -11,6 +12,10 @@ export class Rock extends Pet {
     hidden: boolean = true;
     health = 1;
     attack = 1;
+    initAbilities(): void {
+        this.addAbility(new RockAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -18,8 +23,8 @@ export class Rock extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

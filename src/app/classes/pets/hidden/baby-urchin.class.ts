@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { BabyUrchinAbility } from "../../abilities/pets/hidden/baby-urchin-ability.class";
 
 export class BabyUrchin extends Pet {
     name = "Baby Urchin";
@@ -12,49 +12,9 @@ export class BabyUrchin extends Pet {
     attack = 2;
     health = 1;
     
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let firstTargetResp = this.parent.opponent.getFurthestUpPet(this);
-        let targets = [firstTargetResp.pet];
-        let isRandom = firstTargetResp.random;
-        if (targets[0] == null) {
-            this.superFaint(gameApi, tiger);
-            return;
-        }
-        
-        for (let i = 0; i < this.level - 1; i++) {
-            let target: Pet;
-            if (isRandom) {
-                // If Silly, get new random target for each additional hit
-                let nextTargetResp = this.parent.opponent.getFurthestUpPet(this);
-                target = nextTargetResp.pet;
-                // Keep using isRandom = true for all targets when Silly
-            } else {
-                // Normal behavior - target behind current target
-                let currTarget = targets[i];
-                target = currTarget.petBehind();
-            }
-            
-            if (target == null) {
-                break;
-            }
-            targets.push(target);
-        }
-        
-        for (let target of targets) {
-            if (target != null) {
-                target.increaseHealth(-4);
-                this.logService.createLog({
-                    message: `${this.name} removed 4 health from ${target.name}.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: isRandom
-                })
-            }
-        }
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BabyUrchinAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,
@@ -64,8 +24,8 @@ export class BabyUrchin extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

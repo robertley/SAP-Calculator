@@ -1,11 +1,9 @@
-import { PeanutButter } from "app/classes/equipment/hidden/peanut-butter";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Peanut } from "../../../equipment/turtle/peanut.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { WalrusAbility } from "../../../abilities/pets/custom/tier-6/walrus-ability.class";
 
 export class Walrus extends Pet {
     name = "Walrus";
@@ -13,21 +11,9 @@ export class Walrus extends Pet {
     pack: Pack = 'Custom';
     attack = 7;
     health = 5;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetsResp = this.parent.getRandomPets(this.level, null, true, false, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                target.givePetEquipment(new PeanutButter());
-                this.logService.createLog({
-                    message: `${this.name} gave ${target.name} a Peanut Butter.`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: targetsResp.random
-                })
-            }
-        }
+    initAbilities(): void {
+        this.addAbility(new WalrusAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -36,8 +22,8 @@ export class Walrus extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

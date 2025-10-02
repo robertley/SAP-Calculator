@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TatzelwurmAbility } from "../../../abilities/pets/unicorn/tier-3/tatzelwurm-ability.class";
 
 export class Tatzelwurm extends Pet {
     name = "Tatzelwurm";
@@ -11,17 +11,10 @@ export class Tatzelwurm extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 3;
-    friendAheadFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = this.level * 2;
-        if(pet.level == 3) {
-            power = power * 2;
-        }
-        let targetResp = this.parent.opponent.getFurthestUpPet(this);
-        if (targetResp.pet == null) {
-            return;
-        }
-        this.snipePet(targetResp.pet, power, targetResp.random, tiger);
-        this.superFriendAheadFaints(gameApi, pet, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new TatzelwurmAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -30,8 +23,8 @@ export class Tatzelwurm extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

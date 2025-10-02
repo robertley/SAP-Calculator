@@ -1,10 +1,9 @@
-import { clone, shuffle } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BlackRhinoAbility } from "../../../abilities/pets/danger/tier-6/black-rhino-ability.class";
 
 export class BlackRhino extends Pet {
     name = "Black Rhino";
@@ -13,37 +12,10 @@ export class BlackRhino extends Pet {
     attack = 5;
     health = 9;
 
-    enemyAttack(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
- 
-        
-        if (!tiger) {
-            this.abilityCounter++;
-        }
-        
-        // Check if counter reached (every 8 attacks)
-        if (this.abilityCounter % 8 != 0) {
-            this.superEnemyAttack(gameApi, pet, tiger);
-            return;
-        }
-        
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                let damage = 30; // Fixed 30 damage
-                
-                // Get all alive enemies and shuffle for random selection
-                let targetsResp = this.parent.opponent.getRandomPets(this.level, [], false, true, this)
-                let targets = targetsResp.pets
-                for (let target of targets) {
-                    this.snipePet(target, damage, targetsResp.random, tiger);
-                }
-            },
-            priority: this.attack,
-            pet: this
-        });
-        
-        this.superEnemyAttack(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new BlackRhinoAbility(this, this.logService));
+        super.initAbilities();
     }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -51,8 +23,8 @@ export class BlackRhino extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

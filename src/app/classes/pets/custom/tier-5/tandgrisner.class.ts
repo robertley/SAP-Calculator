@@ -5,6 +5,7 @@ import { shuffle } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TandgrisnerAbility } from "../../../abilities/pets/custom/tier-5/tandgrisner-ability.class";
 
 export class Tandgrisner extends Pet {
     name = "Tandgrisner";
@@ -12,6 +13,10 @@ export class Tandgrisner extends Pet {
     pack: Pack = 'Custom';
     attack = 5;
     health = 5;
+    initAbilities(): void {
+        this.addAbility(new TandgrisnerAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -19,9 +24,9 @@ export class Tandgrisner extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
 }

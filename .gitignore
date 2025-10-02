@@ -44,7 +44,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# C# and C++ files
+# Others
 *.cs
 c++/
 src/app/c++/
+*.md

@@ -3,44 +3,14 @@ import { LogService } from "../../../services/log.service";
 import { PetService } from "../../../services/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { SeaweedAbility } from "../../abilities/equipment/star/seaweed-ability.class";
 
 export class Seaweed extends Equipment {
     name = 'Seaweed';
     equipmentClass = 'beforeAttack' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalBeforeAttack =pet.beforeAttack?.bind(pet);
-        pet.beforeAttack = (gameApi, tiger) => {
-            if (originalBeforeAttack != null) {
-                originalBeforeAttack(gameApi, tiger);
-            }
-            
-            if (tiger) {
-                return;
-            }
-            
-            // Check if equipment is still equipped
-            if (pet.equipment !== this) {
-                return;
-            }
-            
-            // Create Baby Urchin with current pet's stats
-            let babyUrchinPet = this.petService.createPet({
-                name: "Baby Urchin",
-                attack: pet.attack,
-                health: pet.health,
-                mana: pet.mana,
-                exp: pet.exp,
-                equipment: null
-            }, pet.parent);
-            
-            this.logService.createLog({
-                message: `${pet.name} transformed into ${babyUrchinPet.name} (Seaweed)`,
-                type: 'equipment',
-                player: pet.parent
-            });
-            
-            pet.parent.transformPet(pet, babyUrchinPet);
-        }
+        // Add Seaweed ability using dedicated ability class
+        pet.addAbility(new SeaweedAbility(pet, this, this.logService, this.petService));
     }
 
     constructor(

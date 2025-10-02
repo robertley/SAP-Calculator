@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { PetService } from "../../../../services/pet.service";
+import { WolfAbility } from "../../../abilities/pets/golden/tier-5/wolf-ability.class";
 
 export class Wolf extends Pet {
     name = "Wolf";
@@ -13,40 +14,6 @@ export class Wolf extends Pet {
     pack: Pack = 'Golden';
     attack = 4;
     health = 4;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let power: Power = {
-            attack: this.level * 3,
-            health: this.level * 2
-        }
-        for (let i = 0; i < 3; i++) {
-            let pig = this.petService.createPet({
-                attack: power.attack,
-                equipment: null,
-                exp: this.minExpForLevel,
-                health: power.health,
-                name: 'Pig',
-                mana: 0
-            }, this.parent);
-    
-            let summonResult = this.parent.summonPet(pig, this.savedPosition, false, this);
-            
-            if (summonResult.success) {
-                this.logService.createLog(
-                    {
-                        message: `${this.name} spawned ${pig.name} ${power.attack}/${power.health}`,
-                        type: "ability",
-                        player: this.parent,
-                        tiger: tiger,
-                        pteranodon: pteranodon,
-                        randomEvent: summonResult.randomEvent
-                    }
-                )
-
-                this.abilityService.triggerFriendSummonedEvents(pig);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
-    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         protected petService: PetService,
@@ -55,8 +22,12 @@ export class Wolf extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+    }
+    initAbilities(): void {
+        this.addAbility(new WolfAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
 }

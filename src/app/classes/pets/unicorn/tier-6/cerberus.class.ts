@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { FirePup } from "../../hidden/fire-pup.class";
+import { CerberusAbility } from "../../../abilities/pets/unicorn/tier-6/cerberus-ability.class";
 
 // TODO fix bug where cerberus spawns 2 fire pups at start of battle when there is an empty slot
 export class Cerberus extends Pet {
@@ -13,37 +12,9 @@ export class Cerberus extends Pet {
     pack: Pack = 'Unicorn';
     attack = 9;
     health = 9;
-    emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.pet0 != null) {
-            return;
-        }
-
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-
-        let exp = 5;
-        let firePup = new FirePup(this.logService, this.abilityService, this.parent, null, null, exp);
-        
-        let summonResult = this.parent.summonPet(firePup, 0, false, this);
-        
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Fire Pup (8/8).`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    randomEvent: summonResult.randomEvent
-                }
-            )
-
-            this.abilityService.triggerFriendSummonedEvents(firePup);
-        }
-
-        this.abilityUses++;
-
-        super.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new CerberusAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -52,13 +23,9 @@ export class Cerberus extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

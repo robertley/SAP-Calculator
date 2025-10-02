@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Bus } from "../../hidden/bus.class";
+import { DeerAbility } from "../../../abilities/pets/turtle/tier-4/deer-ability.class";
 
 export class Deer extends Pet {
     name = "Deer";
@@ -13,26 +14,9 @@ export class Deer extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 2;
-    afterFaint(gameApi, tiger, pteranodon?: boolean) {
-        let bus = new Bus(this.logService, this.abilityService, this.parent, null, null, null, this.minExpForLevel, new Chili(this.logService, this.abilityService));
-        
-        let summonResult = this.parent.summonPet(bus, this.savedPosition, false, this);
-        if (summonResult.success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Bus level ${this.level}`,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                }
-            )
-
-            this.abilityService.triggerFriendSummonedEvents(bus);
-        }
-
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new DeerAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -42,9 +26,9 @@ export class Deer extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }
 //Faint: Summon one 5/3 *level Bus with Chili.

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ShrimpAbility } from "../../../abilities/pets/puppy/tier-2/shrimp-ability.class";
 
 export class Shrimp extends Pet {
     name = "Shrimp";
@@ -11,6 +12,10 @@ export class Shrimp extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 2;
+    initAbilities(): void {
+        this.addAbility(new ShrimpAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -18,8 +23,8 @@ export class Shrimp extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

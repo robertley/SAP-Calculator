@@ -53,13 +53,23 @@ export class ExportCalculatorComponent implements OnInit {
 
   copyToClipboard() {
     this.localStorageService.setFormStorage(this.formGroup);
-    
-    let calc = JSON.stringify(this.formGroup.value);
+
+    // Use the cleaned data instead of raw form value to avoid circular references
+    const calc = this.formGroupValueString();
+
+    // Check if the data generation failed
+    if (calc.startsWith('Error:')) {
+      alert('Failed to export');
+      return;
+    }
+
     // copy to clipboard
     navigator.clipboard.writeText(calc).then(() => {
       alert('Copied to clipboard');
-    })
-    
+    }).catch((error) => {
+      console.error('Clipboard error:', error);
+      alert('Failed to copy to clipboard.');
+    });
   }
 
 }

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ClownfishAbility } from "../../../abilities/pets/star/tier-4/clownfish-ability.class";
 
 export class Clownfish extends Pet {
     name = "Clownfish";
@@ -11,27 +12,10 @@ export class Clownfish extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 4;
-    anyoneLevelUp(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (pet.parent !== this.parent) {
-            return;
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
 
-        let power = this.level * 2;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.superAnyoneLevelUp(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new ClownfishAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -40,8 +24,8 @@ export class Clownfish extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

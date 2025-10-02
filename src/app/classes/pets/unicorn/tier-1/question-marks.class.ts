@@ -13,25 +13,6 @@ export class QuestionMarks extends Pet {
     attack = 3;
     health = 2;
 
-    endTurn(gameApi: GameAPI): void {
-        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
-        if (targetsAheadResp.pets.length === 0) {
-            return;
-        }
-        const target = targetsAheadResp.pets[0];
-        const power = this.level;
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} +${power} attack and Spooked.`,
-            type: 'ability',
-            player: this.parent,
-            randomEvent: targetsAheadResp.random
-        });
-
-        target.increaseAttack(power);
-        target.givePetEquipment(new Spooked());
-    }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -39,8 +20,8 @@ export class QuestionMarks extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

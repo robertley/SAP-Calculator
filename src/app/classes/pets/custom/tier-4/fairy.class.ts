@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FairyAbility } from "../../../abilities/pets/custom/tier-4/fairy-ability.class";
 
 export class Fairy extends Pet {
     name = "Fairy";
@@ -11,6 +12,10 @@ export class Fairy extends Pet {
     pack: Pack = 'Custom';
     attack = 1;
     health = 1;
+    initAbilities(): void {
+        this.addAbility(new FairyAbility(this));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -18,8 +23,8 @@ export class Fairy extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { DolphinAbility } from "../../../abilities/pets/turtle/tier-3/dolphin-ability.class";
 
 export class Dolphin extends Pet {
     name = "Dolphin";
@@ -11,23 +12,9 @@ export class Dolphin extends Pet {
     pack: Pack = 'Turtle';
     health = 3;
     attack = 4;
-    startOfBattle(gameApi, tiger) {
-        let opponent: Player;
-        if (gameApi.player == this.parent) {
-            opponent = gameApi.opponet;
-        } else {
-            opponent = gameApi.player;
-        }
-
-        for (let i = 0; i < this.level; i++) {
-            let lowestHealthResp = opponent.getLowestHealthPet(null, this);
-            if (!lowestHealthResp.pet) {
-                break;
-            }
-            this.snipePet(lowestHealthResp.pet, 4, lowestHealthResp.random, tiger);
-        }
-        
-        super.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new DolphinAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -36,8 +23,8 @@ export class Dolphin extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

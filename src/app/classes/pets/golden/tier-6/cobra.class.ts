@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { CobraAbility } from "../../../abilities/pets/golden/tier-6/cobra-ability.class";
 
 export class Cobra extends Pet {
     name = "Cobra";
@@ -11,13 +11,9 @@ export class Cobra extends Pet {
     pack: Pack = 'Golden';
     attack = 12;
     health = 6;
-    friendAheadAttacks(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
-        if (targetResp.pet == null) {
-            return;
-        }
-        let power = Math.floor(this.attack * .2 * this.level);
-        this.snipePet(targetResp.pet, power, targetResp.random, tiger);
+    initAbilities(): void {
+        this.addAbility(new CobraAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -26,8 +22,8 @@ export class Cobra extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

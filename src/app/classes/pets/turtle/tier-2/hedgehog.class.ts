@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { HedgehogAbility } from "../../../abilities/pets/turtle/tier-2/hedgehog-ability.class";
 
 export class Hedgehog extends Pet {
     name = "Hedgehog";
@@ -11,19 +12,9 @@ export class Hedgehog extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 2;
-    faint(gameApi: GameAPI, tiger, pteranodon?: boolean) {
-        let targetsResp = this.parent.getAll(true, this);
-        let targts = targetsResp.pets
-        if (targts.length == 0) {
-            return;
-        }
-        let damage = this.level * 2;
-        for (let pet of targts) {
-            this.snipePet(pet, damage, targetsResp.random, tiger, pteranodon);
-        }
-
-        super.superFaint(gameApi, tiger);
-        this.done = true;
+    initAbilities(): void {
+        this.addAbility(new HedgehogAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -32,8 +23,8 @@ export class Hedgehog extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

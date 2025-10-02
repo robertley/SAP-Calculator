@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { JerseyDevilAbility } from "../../../abilities/pets/unicorn/tier-5/jersey-devil-ability.class";
 
 export class JerseyDevil extends Pet {
     name = "Jersey Devil";
@@ -12,30 +11,9 @@ export class JerseyDevil extends Pet {
     pack: Pack = 'Unicorn';
     attack = 5;
     health = 4;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let isPlayer = this.parent === gameApi.player;
-        let mult = isPlayer ? gameApi.playerLevel3Sold : gameApi.opponentLevel3Sold;
-        mult = Math.min(mult, 5);
-        let power = this.level * mult;
-
-        let targetResp = this.parent.getThis(pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-        
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-
-        this.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new JerseyDevilAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,
@@ -45,13 +23,9 @@ export class JerseyDevil extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

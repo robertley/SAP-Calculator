@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SpinosaurusAbility } from "../../../abilities/pets/star/tier-6/spinosaurus-ability.class";
 
 export class Spinosaurus extends Pet {
     name = "Spinosaurus";
@@ -12,29 +11,9 @@ export class Spinosaurus extends Pet {
     pack: Pack = 'Star';
     attack = 4;
     health = 4;
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (!this.alive) {
-            return;
-        } 
-        let power: Power = {
-            attack: this.level * 2,
-            health: this.level * 3
-        }
-        let targetResp = this.parent.getRandomPet([this], true, false, true, this);
-        if (targetResp.pet == null) {
-            return;
-        }
-        targetResp.pet.increaseAttack(power.attack);
-        targetResp.pet.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${this.name} gave ${targetResp.pet.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        
-        super.superFriendFaints(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new SpinosaurusAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -43,8 +22,8 @@ export class Spinosaurus extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

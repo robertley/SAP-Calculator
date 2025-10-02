@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PorcupineAbility } from "../../../abilities/pets/custom/tier-3/porcupine-ability.class";
 
 export class Porcupine extends Pet {
     name = "Porcupine";
@@ -11,12 +11,9 @@ export class Porcupine extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 6;
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let power = 3 * this.level;
-        if (pet == null || !pet.alive){
-            return;
-        }
-        this.snipePet(pet, power);
+    initAbilities(): void {
+        this.addAbility(new PorcupineAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -25,8 +22,8 @@ export class Porcupine extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

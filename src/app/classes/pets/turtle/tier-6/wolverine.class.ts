@@ -4,6 +4,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
+import { WolverineAbility } from "../../../abilities/pets/turtle/tier-6/wolverine-ability.class";
 
 export class Wolverine extends Pet {
     name = "Wolverine";
@@ -11,47 +12,9 @@ export class Wolverine extends Pet {
     pack: Pack = 'Turtle';
     attack = 5;
     health = 7;
-    
-    friendHurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet == this) {
-            return;
-        }
-        if (!tiger) {
-            this.abilityCounter++
-            this.logService.createLog({
-                message: `${this.name} increased counter: (${this.abilityCounter % 4}/4)}`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });  
-
-        }
-        if (this.abilityCounter % 4 != 0) {
-            return
-        }
-        this.abilityService.setCounterEvent({
-            callback: () => {
-                let targetResp = this.parent.opponent.getAll(false, this);
-                let targets = targetResp.pets
-                if (targets.length == 0) {
-                    return;
-                }      
-                for (let targetPet of targets) {
-                    let power = -3 * this.level;
-                    targetPet.increaseHealth(power);
-                    this.logService.createLog({
-                        message: `${this.name} reduced ${targetPet.name} health by ${Math.abs(power)}`,
-                        type: 'ability',
-                        player: this.parent,
-                        tiger: tiger,
-                        randomEvent: targetResp.random
-                    });  
-                }         
-            },
-            priority: this.attack,
-            pet: this
-        });
-        this.superFriendHurt(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new WolverineAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -60,8 +23,8 @@ export class Wolverine extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { AxolotlAbility } from "../../../abilities/pets/puppy/tier-5/axolotl-ability.class";
 
 export class Axolotl extends Pet {
     name = "Axolotl";
@@ -11,27 +12,9 @@ export class Axolotl extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 5;
-    friendGainedPerk(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        let power = this.level;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-        this.abilityUses++;
-        this.superFriendGainedPerk(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new AxolotlAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -40,12 +23,8 @@ export class Axolotl extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
-    }
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 3;
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

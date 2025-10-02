@@ -5,6 +5,7 @@ import { shuffle } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { NurikabeAbility } from "../../../abilities/pets/custom/tier-5/nurikabe-ability.class";
 
 export class Nurikabe extends Pet {
     name = "Nurikabe";
@@ -13,6 +14,10 @@ export class Nurikabe extends Pet {
     attack = 5;
     health = 6;
     maxAbilityUses: number = 3;
+    initAbilities(): void {
+        this.addAbility(new NurikabeAbility(this));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -20,9 +25,9 @@ export class Nurikabe extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
 }

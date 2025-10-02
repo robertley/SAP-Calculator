@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SwordFishAbility } from "../../../abilities/pets/star/tier-5/sword-fish-ability.class";
 
 export class SwordFish extends Pet {
     name = "Sword Fish";
@@ -11,16 +12,10 @@ export class SwordFish extends Pet {
     pack: Pack = 'Star';
     attack = 5;
     health = 5;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let opponent = this.parent.opponent;
-        let highestHealthPetResp = opponent.getHighestHealthPet(undefined, this);
-        let target = highestHealthPetResp.pet;
-        let power = this.attack * this.level;
-        if (target != null) {
-            this.snipePet(target, power, highestHealthPetResp.random, tiger);
-        }
-        this.snipePet(this, power, false, tiger);
-        this.superStartOfBattle(gameApi, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new SwordFishAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -29,8 +24,8 @@ export class SwordFish extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

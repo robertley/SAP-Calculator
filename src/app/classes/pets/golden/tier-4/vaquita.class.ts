@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { VaquitaAbility } from "../../../abilities/pets/golden/tier-4/vaquita-ability.class";
 
 export class Vaquita extends Pet {
     name = "Vaquita";
@@ -12,9 +11,9 @@ export class Vaquita extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let trumpetAmt = Math.max(Math.floor((this.level * .5) * this.parent.trumpets), this.level * 4);
-        this.parent.gainTrumpets(trumpetAmt, this, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new VaquitaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -23,8 +22,8 @@ export class Vaquita extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

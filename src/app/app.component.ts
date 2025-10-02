@@ -7,7 +7,6 @@ import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
 import { createPack, money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
-import { StartOfBattleService } from './services/start-of-battle.service';
 import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
 
@@ -101,9 +100,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.7.2';
+  version = '0.7.3';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '9/15/2025';
+  lastUpdated = '10/2/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -141,7 +140,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     private equipmentService: EquipmentService,
     private petService: PetService,
     private toyService: ToyService,
-    private startOfBattleService: StartOfBattleService,
     private localStorageService: LocalStorageService
   ) {
     InjectorService.setInjector(this.injector);
@@ -459,6 +457,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
       mana: new FormControl(false),
+      triggersConsumed: new FormControl(false),
       playerRollAmount: new FormControl(4),
       opponentRollAmount: new FormControl(4),
       playerLevel3Sold: new FormControl(0),
@@ -580,6 +579,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
           mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
+          triggersConsumed: new FormControl(this.player[`pet${foo}`]?.triggersConsumed ?? 0),
           abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
           abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
@@ -602,6 +602,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
           belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
           mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
+          triggersConsumed: new FormControl(this.opponent[`pet${foo}`]?.triggersConsumed ?? 0),
           abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
           abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
           abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
@@ -752,6 +753,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (petRemoved) {
       this.emptyFrontSpaceCheck(); // Only queues events, doesn't execute them
     }
+    this.player.checkGoldenSpawn();
+    this.opponent.checkGoldenSpawn();
   }
 
   checkPetsAlive() {
@@ -831,19 +834,14 @@ export class AppComponent implements OnInit, AfterViewInit {
       //   pet.equipment = new Dazed();
       // }
       
-      this.abilityService.initEndTurnEvents(this.player);
-      this.abilityService.initEndTurnEvents(this.opponent);
-      
-      //init equipment abilities
-      this.setAbilityEquipments(this.player);
-      this.setAbilityEquipments(this.opponent);
+      this.abilityService.initSpecialEndTurnAbility(this.player);
+      this.abilityService.initSpecialEndTurnAbility(this.opponent);
       
       //initialize equipment multipliers for existing equipment
       this.initializeEquipmentMultipliers();
 
       //before battle phase
-      this.abilityService.triggerBeforeStartOfBattleEvents(this.player);
-      this.abilityService.triggerBeforeStartOfBattleEvents(this.opponent);
+      this.abilityService.triggerBeforeStartOfBattleEvents();
       this.abilityService.executeBeforeStartOfBattleEvents();
 
       //normal abilities
@@ -852,16 +850,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.abilityCycle();
       } while (this.abilityService.hasAbilityCycleEvents);
 
+      //execute toy sob
+      this.toyService.executeStartOfBattleEvents();
       //init sob
-      this.startOfBattleService.resetStartOfBattleFlags();
-      this.startOfBattleService.initStartOfBattleEvents();
-      //merge into pet sob(gecko)
-      this.startOfBattleService.executeToyPetEvents();
-
+      this.abilityService.triggerStartBattleEvents();
       //add churro check
       this.gameService.gameApi.isInStartOfBattleFlag = true;
-      this.toyService.executeStartOfBattleEvents(); //toy sob
-      this.startOfBattleService.executeNonToyPetEvents(); //pet sob
+      this.abilityService.executeStartBattleEvents();
       
       this.checkPetsAlive();
       do {
@@ -978,35 +973,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.pushPetsForwards();
     this.logService.printState(this.player, this.opponent);
-
-    while (true) {  // init before attack events
+    //before attack phase 
+    while (true) { 
       let originalPlayerAttackingPet = this.player.pet0;
       let originalOppoentAttackingPet = this.opponent.pet0;
-      if (this.player.pet0.beforeAttack) {
-        this.abilityService.setBeforeAttackEvent({
-          callback: this.player.pet0.beforeAttack.bind(this.player.pet0),
-          priority: this.player.pet0.attack,
-          player: this.player,
-          pet: this.player.pet0
-        })
-      }
-
-      if (this.opponent.pet0.beforeAttack) {
-        this.abilityService.setBeforeAttackEvent({
-          callback: this.opponent.pet0.beforeAttack.bind(this.opponent.pet0),
-          priority: this.opponent.pet0.attack,
-          player: this.opponent,
-          pet: this.opponent.pet0
-        })
-      }
-
-      //before attack phase
+      this.abilityService.triggerBeforeAttackEvent(this.player.pet0)
+      this.abilityService.triggerBeforeAttackEvent(this.opponent.pet0)
       this.abilityService.executeBeforeAttackEvents();
-      
-      this.abilityService.triggerBeforeFriendAttacksEvents(this.player, this.player.pet0);
-      this.abilityService.triggerBeforeFriendAttacksEvents(this.opponent, this.opponent.pet0);
-      this.abilityService.executeBeforeFriendAttacksEvents();
-
       //normal abilities
       this.player.checkPetsAlive();
       this.opponent.checkPetsAlive();
@@ -1029,19 +1002,17 @@ export class AppComponent implements OnInit, AfterViewInit {
         break
       }
     }
+
+    // Reset jumped flags after beforeAttack loop completes
+    this.player.resetJumpedFlags();
+    this.opponent.resetJumpedFlags();
+
       //attack
     this.fight();
 
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
 
-    do {
-      this.abilityCycle();
-    } while (this.abilityService.hasAbilityCycleEvents);
-    //merge to ability cyle
-    this.player.checkGoldenSpawn();
-    this.opponent.checkGoldenSpawn();
-    
     do {
       this.abilityCycle();
     } while (this.abilityService.hasAbilityCycleEvents);
@@ -1072,22 +1043,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     chocoCakePets.sort((a, b) => {
       return a.attack < b.attack ? 1 : b.attack < a.attack ? -1 : 0;
     });
+    //TO DO: This Logic needs fix, the function might be useless
     for (let pet of chocoCakePets) {
       pet.equipment.callback(pet);
     }
   }
-  //need to set when gave perk too
-  setAbilityEquipments(player) {
-    for (let pet of player.petArray) {
-      if (pet.equipment instanceof Eggplant) {
-        pet.equipment.callback(pet);
-        pet.eggplantTouched = true;
-      } else if (pet.equipment?.callback) {
-        pet.equipment.callback(pet);
-      }
-    }
-  }
 
+  //TO DO: this probably should be deleted
   executeBeforeStartOfBattleEquipment(player) {
     for (let pet of player.petArray) {
       let multiplier = pet.equipment.multiplier;
@@ -1156,7 +1118,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponent.checkPetsAlive();
 
     this.abilityService.executeAfterAttackEvents();
-    this.abilityService.executeAfterFriendAttackEvents();
   }
 
   endLog(winner?: Player) {

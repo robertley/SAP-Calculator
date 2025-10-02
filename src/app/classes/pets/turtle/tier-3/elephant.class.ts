@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ElephantAbility } from "../../../abilities/pets/turtle/tier-3/elephant-ability.class";
 
 export class Elephant extends Pet {
     name = "Elephant";
@@ -10,15 +11,9 @@ export class Elephant extends Pet {
     pack: Pack = 'Turtle';
     health = 7;
     attack = 3;
-    afterAttack(gameApi, tiger) {
-        for (let i = 0; i < this.level; i++) {
-            let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
-            if (targetsBehindResp.pets.length > 0) {
-                let target = targetsBehindResp.pets[0];
-                this.snipePet(target, 1, targetsBehindResp.random, tiger);
-            }
-        }
-        super.superAfterAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new ElephantAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -27,8 +22,8 @@ export class Elephant extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

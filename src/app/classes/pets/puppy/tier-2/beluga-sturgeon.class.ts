@@ -6,6 +6,7 @@ import { Rice } from "../../../equipment/puppy/rice.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Dolphin } from "../../turtle/tier-3/dolphin.class";
+import { BelugaSturgeonAbility } from "../../../abilities/pets/puppy/tier-2/beluga-sturgeon-ability.class";
 
 // TODO - bring into lab to determine behavior with spawn and other pet abilities
 export class BelugaSturgeon extends Pet {
@@ -14,26 +15,6 @@ export class BelugaSturgeon extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 3;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        for (let i = 0; i < this.level; i++) {
-            let dolphin = new Dolphin(this.logService, this.abilityService, this.parent, 3, 2, 0, 0, new Rice());
-            
-            let summonResult = this.parent.summonPet(dolphin, 4, false, this);
-            if (summonResult.success) {
-                this.logService.createLog({
-                    message: `${this.name} summoned a 2/3 Dolphin with Rice in the back.`,
-                    type: 'ability',
-                    player: this.parent,
-                    randomEvent: summonResult.randomEvent,
-                    tiger: tiger,
-                    pteranodon: pteranodon
-                })
-                
-                this.abilityService.triggerFriendSummonedEvents(dolphin);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
-    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -41,8 +22,12 @@ export class BelugaSturgeon extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+    }
+    initAbilities(): void {
+        this.addAbility(new BelugaSturgeonAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 }

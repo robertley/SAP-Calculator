@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Cold } from "../../../equipment/ailments/cold.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FrostWolfAbility } from "../../../abilities/pets/unicorn/tier-2/frost-wolf-ability.class";
 
 export class FrostWolf extends Pet {
     name = "Frost Wolf";
@@ -12,35 +13,9 @@ export class FrostWolf extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let excludePets = this.parent.opponent.getPetsWithEquipment("Cold");
-        let targetResp = this.parent.opponent.getFurthestUpPet(this, excludePets);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        const coldAilment = new Cold();
-        coldAilment.multiplier += this.level - 1;
-
-        let effectMessage = ".";
-        if (this.level === 2) {
-            effectMessage = " twice for double effect.";
-        } else if (this.level === 3) {
-            effectMessage = " thrice for triple effect.";
-        }
-
-        this.logService.createLog({
-            message: `${this.name} made ${target.name} Cold ${effectMessage}`,
-            type: "ability",
-            player: this.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetResp.random
-        });
-
-        target.givePetEquipment(coldAilment);
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new FrostWolfAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -49,8 +24,8 @@ export class FrostWolf extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

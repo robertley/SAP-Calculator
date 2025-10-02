@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { DodoAbility } from "../../../abilities/pets/turtle/tier-3/dodo-ability.class";
 
 export class Dodo extends Pet {
     name = "Dodo";
@@ -11,23 +12,9 @@ export class Dodo extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 4;
-    startOfBattle(gameApi, tiger) {
-        let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
-        if (targetsAheadResp.pets.length === 0) {
-            return;
-        }
-        let boostPet = targetsAheadResp.pets[0];
-        let boostAmt = Math.floor(this.attack * (this.level * .5));
-        boostPet.increaseAttack(boostAmt);
-        this.logService.createLog({
-            message: `${this.name} gave ${boostPet.name} ${boostAmt} attack.`,
-            player: this.parent,
-            type: 'ability',
-            tiger: tiger,
-            randomEvent: targetsAheadResp.random
-        })
-        
-        super.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new DodoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -36,8 +23,8 @@ export class Dodo extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

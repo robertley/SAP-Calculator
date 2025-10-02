@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { DropBearAbility } from "../../../abilities/pets/unicorn/tier-2/drop-bear-ability.class";
 
 export class DropBear extends Pet {
     name = "Drop Bear";
@@ -11,27 +12,9 @@ export class DropBear extends Pet {
     pack: Pack = 'Unicorn';
     attack = 2;
     health = 2;
-    // TODO check tiger interaction
-    emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.pet0 != null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} pushed itself to the front.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-
-        this.parent.pushPetToFront(this, true);
-        let power = this.level * 3;
-        let targetResp = this.parent.opponent.getLastPet();
-        if (targetResp.pet == null) {
-            return;
-        }
-        this.snipePet(targetResp.pet, power, targetResp.random, tiger);
-
+    initAbilities(): void {
+        this.addAbility(new DropBearAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -40,8 +23,8 @@ export class DropBear extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

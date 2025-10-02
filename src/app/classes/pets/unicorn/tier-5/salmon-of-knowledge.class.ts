@@ -6,6 +6,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SalmonOfKnowledgeAbility } from "../../../abilities/pets/unicorn/tier-5/salmon-of-knowledge-ability.class";
 
 export class SalmonOfKnowledge extends Pet {
     name = "Salmon of Knowledge";
@@ -13,30 +14,9 @@ export class SalmonOfKnowledge extends Pet {
     pack: Pack = 'Unicorn';
     attack = 5;
     health = 5;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let power = this.level * 2;
-        let targets = [];
-        
-        // Get 2 furthest up pets from friendly team
-        let friendlyTargets = this.parent.getFurthestUpPets(2, [this], this);
-        targets.push(...friendlyTargets.pets);
-
-        // Get 2 furthest up pets from enemy team
-        let enemyTargets = this.parent.opponent.getFurthestUpPets(2, undefined, this);
-        targets.push(...enemyTargets.pets);
-        
-        for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} exp.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: friendlyTargets.random || enemyTargets.random
-            });
-            target.increaseExp(power);
-        }
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new SalmonOfKnowledgeAbility(this, this.logService));
+        super.initAbilities();
     }
     
     constructor(protected logService: LogService,
@@ -46,13 +26,8 @@ export class SalmonOfKnowledge extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

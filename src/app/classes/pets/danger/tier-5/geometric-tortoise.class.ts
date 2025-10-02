@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GeometricTortoiseAbility } from "../../../abilities/pets/danger/tier-5/geometric-tortoise-ability.class";
 
 export class GeometricTortoise extends Pet {
     name = "Geometric Tortoise";
@@ -11,31 +11,10 @@ export class GeometricTortoise extends Pet {
     pack: Pack = 'Danger';
     attack = 3;
     health = 10;
-    private damageTakenList = [];
-    hurt(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let damageTaken = this.damageTakenList.shift()
-        if (damageTaken == null) {
-            return;
-        }
-        // Deal percentage of damage taken as damage to one random enemy
-        let reflectPercentage = this.level * 0.33; // 33%/66%/100% based on level
-        if (this.level == 3) {
-            reflectPercentage = 1;
-        }
-        let reflectDamage = Math.floor(damageTaken * reflectPercentage);
-        if (reflectDamage > 0) {
-            let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
-            if (targetResp.pet) {
-                this.snipePet(targetResp.pet, reflectDamage, targetResp.random, tiger);
-            }
-        }
 
-        this.superHurt(gameApi, pet, tiger);
-    }
-
-    dealDamage(target: Pet, amt: number): void {
-        this.damageTakenList.push(amt);
-        super.dealDamage(target, amt);
+    initAbilities(): void {
+        this.addAbility(new GeometricTortoiseAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -45,8 +24,8 @@ export class GeometricTortoise extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

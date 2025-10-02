@@ -5,6 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Melon } from "../../../equipment/turtle/melon.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BrainCrampAbility } from "../../../abilities/pets/unicorn/tier-3/brain-cramp-ability.class";
 
 export class BrainCramp extends Pet {
     name = "Brain Cramp";
@@ -12,23 +13,9 @@ export class BrainCramp extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 2;
-    emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.pet0 != null) {
-            return;
-        }
-        let power = this.level * 2;
-
-        this.logService.createLog({
-            message: `${this.name} pushed itself to the front, gained ${power} attack and gained Melon.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-
-        this.parent.pushPetToFront(this, true);
-        this.increaseAttack(power);
-        this.givePetEquipment(new Melon());
-
+    initAbilities(): void {
+        this.addAbility(new BrainCrampAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -37,8 +24,8 @@ export class BrainCramp extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { LuckyCatAbility } from "../../../abilities/pets/unicorn/tier-3/lucky-cat-ability.class";
 
 export class LuckyCat extends Pet {
     name = "Lucky Cat";
@@ -11,28 +11,9 @@ export class LuckyCat extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 2;
-    anyoneLevelUp(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        if (pet != this) {
-            return;
-        }
-
-        let power = 2;
-
-        if (this.level == 3) {
-            power = 4;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} gained ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        })
-
-        this.increaseAttack(power);
-        this.increaseHealth(power);
-
-        this.superAnyoneLevelUp(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new LuckyCatAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -41,8 +22,8 @@ export class LuckyCat extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

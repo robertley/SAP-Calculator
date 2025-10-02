@@ -7,6 +7,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Bus } from "../../hidden/bus.class";
 import { Chick } from "../../hidden/chick.class";
+import { RoosterAbility } from "../../../abilities/pets/turtle/tier-5/rooster-ability.class";
 
 export class Rooster extends Pet {
     name = "Rooster";
@@ -14,27 +15,9 @@ export class Rooster extends Pet {
     pack: Pack = 'Turtle';
     attack = 6;
     health = 4;
-    afterFaint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let attack = Math.max(Math.floor(this.attack * .5), 1);
-        for (let i = 0; i < this.level; i++) {
-            let chick = new Chick(this.logService, this.abilityService, this.parent, 1, attack, 0, this.minExpForLevel);
-            
-            let summonResult = this.parent.summonPet(chick, this.savedPosition, false, this);
-            
-            if (summonResult.success) {
-                this.logService.createLog({
-                    message: `${this.name} spawned Chick (${attack}).`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: summonResult.randomEvent
-                })
-                
-                this.abilityService.triggerFriendSummonedEvents(chick);
-            }
-        }
-        super.superAfterFaint(gameApi, tiger, pteranodon);
+    initAbilities(): void {
+        this.addAbility(new RoosterAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -43,8 +26,8 @@ export class Rooster extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { HorseAbility } from "../../../abilities/pets/turtle/tier-1/horse-ability.class";
 
 export class Horse extends Pet {
     name = "Horse";
@@ -10,20 +11,9 @@ export class Horse extends Pet {
     pack: Pack = 'Turtle';
     health = 1;
     attack = 2;
-    friendSummoned(gameApi, pet, tiger) {
-        let targetResp = this.parent.getSpecificPet(this, pet)
-        if (targetResp.pet == null) {
-            return
-        }
-        targetResp.pet.increaseAttack(this.level);
-        this.logService.createLog({
-            message: `${this.name} gave ${pet.name} ${this.level} attack`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        super.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities() {
+        this.addAbility(new HorseAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -32,8 +22,8 @@ export class Horse extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-this.initPet(exp, health, attack, mana, equipment);
+this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

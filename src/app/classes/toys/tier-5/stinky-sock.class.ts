@@ -3,7 +3,7 @@ import { getOpponent } from "../../../util/helper-functions";
 import { Toy } from "../../toy.class";
 
 export class StrinkySock extends Toy {
-    name = "Strinky Sock";
+    name = "Stinky Sock";
     tier = 5;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);

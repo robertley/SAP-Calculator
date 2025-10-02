@@ -2,11 +2,9 @@ import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Garlic } from "../../../equipment/turtle/garlic.class";
-import { Honey } from "../../../equipment/turtle/honey.class";
-import { MeatBone } from "../../../equipment/turtle/meat-bone.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BeetleAbility } from "../../../abilities/pets/puppy/tier-1/beetle-ability.class";
 
 export class Beetle extends Pet {
     name = "Beetle";
@@ -14,34 +12,9 @@ export class Beetle extends Pet {
     pack: Pack = 'Puppy';
     attack = 2;
     health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let equipment;
-        switch (this.level) {
-            case 1:
-                equipment = new Honey(this.logService, this.abilityService);
-                break;
-            case 2:
-                equipment = new MeatBone();
-                break;
-            case 3:
-                equipment = new Garlic();
-                break;
-        }
-        let excludePets = this.parent.getPetsWithEquipment(equipment.name);
-        let targetsBehindResp = this.parent.nearestPetsBehind(1, this, excludePets);
-        if (targetsBehindResp.pets.length === 0) {
-            return;
-        }
-        let targetPet = targetsBehindResp.pets[0];
-        this.logService.createLog({
-            message: `${this.name} gave ${targetPet.name} ${equipment.name}.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetsBehindResp.random
-        })
-        targetPet.givePetEquipment(equipment);
-        super.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new BeetleAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -50,8 +23,8 @@ export class Beetle extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

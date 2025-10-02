@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { IliPikaAbility } from "../../../abilities/pets/danger/tier-1/ili-pika-ability.class";
 
 export class IliPika extends Pet {
     name = "Ili Pika";
@@ -11,39 +11,9 @@ export class IliPika extends Pet {
     pack: Pack = 'Danger';
     attack = 2;
     health = 3;
-
-    friendTransformed(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        
-        if (!target) {
-            return;
-        }
-        
-        let power = this.level * 1;
-        
-        // Determine highest stat
-        if (target.attack > target.health) {
-            target.increaseAttack(power);
-            this.logService.createLog({
-                message: `${this.name} give ${power} attack to ${target.name}.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetResp.random
-            });
-        } else {
-            target.increaseHealth(power);
-            this.logService.createLog({
-                message: `${this.name} give ${power} health to ${target.name}.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetResp.random
-            });
-        }
-        
-        this.superFriendTransformed(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new IliPikaAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -53,8 +23,8 @@ export class IliPika extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

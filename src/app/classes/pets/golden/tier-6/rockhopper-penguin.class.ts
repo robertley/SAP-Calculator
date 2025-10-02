@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { RockhopperPenguinAbility } from "../../../abilities/pets/golden/tier-6/rockhopper-penguin-ability.class";
 
 export class RockhopperPenguin extends Pet {
     name = "Rockhopper Penguin";
@@ -11,37 +12,9 @@ export class RockhopperPenguin extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 5;
-    emptyFrontSpace(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        if (this.parent.pet0 != null) {
-            return;
-        }
-
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-
-        this.logService.createLog({
-            message: `${this.name} jumps to the front!`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-
-        // The 'true' argument triggers the 'friendJumped' event.
-        this.parent.pushPetToFront(target, true);
-
-        const trumpetsGained = this.level * 12;
-        this.parent.gainTrumpets(trumpetsGained, this);
-
-        this.abilityUses++;
-        
-        this.superEmptyFrontSpace(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new RockhopperPenguinAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -51,13 +24,9 @@ export class RockhopperPenguin extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 1;
-    }
 }

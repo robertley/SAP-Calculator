@@ -9,12 +9,21 @@
 .select-mana {
     background-color: #7388f8;
     color: white;
-    width: 45%;
 }
 
-.select-attack, .select-health, .select-mana {
+.select-triggers-consumed {
+    background-color: #28a745;
+    color: white;
+}
+
+.select-attack, .select-health, .select-mana, .select-triggers-consumed {
     font-size: 1.5em;
     padding-right: 0;
+}
+
+.single-stat-input {
+    width: calc(50% - 7.5px);
+    margin: 0 auto;
 }
 
 .level-bar, .level-bar-numbers {

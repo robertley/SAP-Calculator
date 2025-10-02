@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GeckoAbility } from "../../../abilities/pets/puppy/tier-1/gecko-ability.class";
 
 export class Gecko extends Pet {
     name = "Gecko";
@@ -12,26 +13,9 @@ export class Gecko extends Pet {
     attack = 3;
     health = 1;
     toyPet: boolean = true;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.parent.toy == null) {
-            return;
-        }
-
-        let power = this.level * 2;
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        if (target == null) {
-            return
-        }
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger
-        });
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new GeckoAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -40,8 +24,8 @@ export class Gecko extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

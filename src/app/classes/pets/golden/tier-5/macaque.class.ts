@@ -1,12 +1,9 @@
-import { cloneDeep } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { Orangutang } from "../../star/tier-3/orangutang.class";
+import { MacaqueAbility } from "../../../abilities/pets/golden/tier-5/macaque-ability.class";
 
 export class Macaque extends Pet {
     name = "Macaque";
@@ -14,31 +11,9 @@ export class Macaque extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 2;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        let power = this.level * 12;
-        let monke = new Orangutang(this.logService, this.abilityService, this.parent, power, power, 0, this.minExpForLevel, this.equipment);
-
-        let result = this.parent.summonPetInFront(this, monke);
-        if (result.success) {
-            this.abilityService.triggerFriendSummonedEvents(monke);
-            let message = `${this.name} spawned Orangutang ${monke.attack}/${monke.health}`;
-            if (this.equipment != null) {
-                message += ` with ${this.equipment.name}`;
-            }
-            message += `.`;
-    
-            this.logService.createLog(
-                {
-                    message: message,
-                    type: "ability",
-                    player: this.parent,
-                    tiger: tiger,
-                    randomEvent: result.randomEvent
-                }
-            )
-        }
-
-        this.superStartOfBattle(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MacaqueAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -47,8 +22,8 @@ export class Macaque extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

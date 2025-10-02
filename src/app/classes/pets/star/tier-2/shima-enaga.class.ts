@@ -5,6 +5,7 @@ import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { ShimaEnagaAbility } from "../../../abilities/pets/star/tier-2/shima-enaga-ability.class";
 
 export class ShimaEnaga extends Pet {
     name = "Shima Enaga";
@@ -13,57 +14,9 @@ export class ShimaEnaga extends Pet {
     attack = 2;
     health = 3;
 
-    friendFaints(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {   
-        if (!this.alive) {
-            return;
-        }     
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        
-        if (!pet || pet.equipment?.name != 'Strawberry') {
-            this.superFriendFaints(gameApi, pet, tiger);
-            return;
-        }
-        
-        let power = this.level * 2;
-        
-        // Get random friend from current team
-        let aliveFriends = this.parent.petArray.filter(p => p.alive);
-        this.abilityUses++;
-        if (aliveFriends.length === 0) {
-            return;
-        }
-        
-        let randomFriend = aliveFriends[Math.floor(Math.random() * aliveFriends.length)];
-        let newPet = this.petService.createPet({
-            name: randomFriend.name,
-            attack: power,
-            health: power,
-            equipment: null,
-            exp: randomFriend.exp,
-            mana: 0
-        }, this.parent);
-
-        let summonResult = this.parent.summonPet(newPet, pet.position, false, this);
-        if (summonResult.success) {
-            this.logService.createLog({
-                message: `${this.name} summoned a (${power}/${power}) ${newPet.name} }`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: true
-            });
-            
-            this.abilityService.triggerFriendSummonedEvents(newPet);
-        }
-        
-        this.superFriendFaints(gameApi, pet, tiger);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 2;
+    initAbilities(): void {
+        this.addAbility(new ShimaEnagaAbility(this, this.logService, this.abilityService, this.petService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -74,8 +27,8 @@ export class ShimaEnaga extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

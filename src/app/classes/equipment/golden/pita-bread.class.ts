@@ -1,6 +1,7 @@
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { PitaBreadAbility } from "../../abilities/equipment/golden/pita-bread-ability.class";
 
 export class PitaBread extends Equipment {
     name = 'Pita Bread';
@@ -8,32 +9,7 @@ export class PitaBread extends Equipment {
     power = 0;
     equipmentClass = 'hurt' as EquipmentClass;
     callback = (pet: Pet) => {
-        let originalHurt = pet.hurt?.bind(pet);
-        pet.hurt = (gameApi, attacker, tiger) => {
-            if (originalHurt != null) {
-                originalHurt(gameApi, attacker, tiger);
-            }
-            
-            if (tiger) {
-                return;
-            }
-            if (pet.equipment?.name != 'Pita Bread') {
-                return;
-            }
-            if (!pet.alive) {
-                return;
-            }
-            let power = 15 * this.multiplier;
-            pet.increaseHealth(power);
-            let message = `${pet.name} gained ${power} health. (Pita Bread)${this.multiplierMessage}`;
-            message += '.';
-            this.logService.createLog({
-                message: message,
-                type: 'equipment',
-                player: pet.parent
-            })
-            pet.removePerk();
-        }
+        pet.addAbility(new PitaBreadAbility(pet, this, this.logService));
     }
     constructor(
         protected logService: LogService

@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Honey } from "app/classes/equipment/turtle/honey.class";
+import { EmperorTamarinAbility } from "../../../abilities/pets/custom/tier-3/emperor-tamarin-ability.class";
 
 export class EmperorTamarin extends Pet {
     name = "Emperor Tamarin";
@@ -13,6 +14,10 @@ export class EmperorTamarin extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 3;
+    initAbilities(): void {
+        this.addAbility(new EmperorTamarinAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -20,8 +25,8 @@ export class EmperorTamarin extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

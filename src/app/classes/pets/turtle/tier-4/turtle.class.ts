@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TurtleAbility } from "../../../abilities/pets/turtle/tier-4/turtle-ability.class";
 
 export class Turtle extends Pet {
     name = "Turtle";
@@ -11,25 +12,9 @@ export class Turtle extends Pet {
     pack: Pack = 'Turtle';
     attack = 2;
     health = 5;
-    faint(gameApi, tiger, pteranodon?: boolean) {
-        let excludePets = this.parent.getPetsWithEquipment("Melon");
-        let targetsBehindResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
-        if (targetsBehindResp.pets.length == 0) {
-            return;
-        }
-        for (let targetPet of targetsBehindResp.pets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${targetPet.name} Melon.`,
-                type: 'ability',
-                tiger: tiger,
-                player: this.parent,
-                pteranodon: pteranodon,
-                randomEvent: targetsBehindResp.random
-            })
-            targetPet.givePetEquipment(new Melon());
-        }
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new TurtleAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -38,8 +23,8 @@ export class Turtle extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

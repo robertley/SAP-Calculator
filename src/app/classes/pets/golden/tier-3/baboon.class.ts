@@ -5,6 +5,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { BaboonAbility } from "../../../abilities/pets/golden/tier-3/baboon-ability.class";
 
 export class Baboon extends Pet {
     name = "Baboon";
@@ -12,6 +13,10 @@ export class Baboon extends Pet {
     pack: Pack = 'Golden';
     attack = 1;
     health = 2;
+    initAbilities(): void {
+        this.addAbility(new BaboonAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -19,8 +24,8 @@ export class Baboon extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

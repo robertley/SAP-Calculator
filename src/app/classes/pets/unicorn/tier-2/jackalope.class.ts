@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { JackalopeAbility } from "../../../abilities/pets/unicorn/tier-2/jackalope-ability.class";
 
 export class Jackalope extends Pet {
     name = "Jackalope";
@@ -11,15 +11,10 @@ export class Jackalope extends Pet {
     pack: Pack = 'Unicorn';
     attack = 1;
     health = 3;
-    // TODO check if sniping before drop bear is correct
-    friendJumped(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void {
-        let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
-        if (targetResp.pet == null) {
-            return;
-        }
 
-        this.snipePet(targetResp.pet, this.level * 2, targetResp.random, tiger);
-        this.superFriendJumped(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new JackalopeAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -28,8 +23,8 @@ export class Jackalope extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

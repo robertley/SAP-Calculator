@@ -4,8 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { EquipmentService } from "../../../../services/equipment.service";
-import { InjectorService } from "../../../../services/injector.service";
+import { ToucanAbility } from "../../../abilities/pets/puppy/tier-3/toucan-ability.class";
 
 export class Toucan extends Pet {
     name = "Toucan";
@@ -13,36 +12,9 @@ export class Toucan extends Pet {
     pack: Pack = 'Puppy';
     attack = 4;
     health = 3;
-    beforeAttack(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        if (this.timesAttacked >= 1) {
-            return;
-        }
-        let newEquipmentInstance: Equipment;
-        if (this.equipment == null || this.equipment.tier > 5) {
-            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get('Egg');
-        } else {
-            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(this.equipment.name); 
-        }
-
-        let excludePets = this.parent.getPetsWithEquipment(newEquipmentInstance.name);
-        let targetsResp = this.parent.nearestPetsBehind(this.level, this, excludePets);
-        let targets = targetsResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        for (let target of targets) {
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${newEquipmentInstance.name}`,
-                type: 'ability',
-                player: this.parent,
-                randomEvent: false,
-                tiger: tiger,
-                pteranodon: pteranodon
-            })
-
-            target.givePetEquipment(newEquipmentInstance);
-        }
-        this.superBeforeAttack(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new ToucanAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -51,8 +23,8 @@ export class Toucan extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

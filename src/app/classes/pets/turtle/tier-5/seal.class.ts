@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SealAbility } from "../../../abilities/pets/turtle/tier-5/seal-ability.class";
 
 export class Seal extends Pet {
     name = "Seal";
@@ -12,25 +13,9 @@ export class Seal extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 8;
-    eatsFood(gameApi: GameAPI, pet, tiger?: boolean): void {
-        if (pet != this) {
-            return;
-        }
-        let power = this.level;
-        let targetsResp = this.parent.getRandomPets(3, [this], true, false, this);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                target.increaseAttack(power);
-                this.logService.createLog({
-                    message: `${this.name} gave ${target.name} ${power} attack.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    randomEvent: targetsResp.random
-                });
-            }
-        }
-        this.superGainedPerk(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new SealAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -39,8 +24,8 @@ export class Seal extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

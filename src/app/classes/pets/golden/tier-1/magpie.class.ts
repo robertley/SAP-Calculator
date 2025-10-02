@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MagpieAbility } from "../../../abilities/pets/golden/tier-1/magpie-ability.class";
 
 export class Magpie extends Pet {
     name = "Magpie";
@@ -11,6 +12,10 @@ export class Magpie extends Pet {
     pack: Pack = 'Golden';
     attack = 1;
     health = 4;
+    initAbilities(): void {
+        this.addAbility(new MagpieAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -18,8 +23,8 @@ export class Magpie extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

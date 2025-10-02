@@ -1,35 +1,20 @@
-import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
+import { PieAbility } from "../../abilities/equipment/puppy/pie-ability.class";
 
 export class Pie extends Equipment {
     name = 'Pie';
     tier = 4;
     equipmentClass: EquipmentClass = 'beforeStartOfBattle';
     callback = (pet: Pet) => {
-        let originalBeforeStartOfBattle =pet.beforeStartOfBattle?.bind(pet);
-        pet.beforeStartOfBattle = (gameApi, tiger) => {
-            if (originalBeforeStartOfBattle != null) {
-                originalBeforeStartOfBattle(gameApi, tiger);
-            }
-            
-            if (tiger) {
-                return;
-            }
-            let attackGain = 4 * this.multiplier;
-            let healthGain = 4 * this.multiplier;
-            pet.increaseAttack(attackGain);
-            pet.increaseHealth(healthGain);
-            this.logService.createLog({
-                message: `${pet.name} gained ${attackGain} attack and ${healthGain} health (Pie)${this.multiplierMessage}`,
-                type: 'equipment',
-                player: pet.parent
-            })
-        }
+        // Add Pie ability using dedicated ability class
+        pet.addAbility(new PieAbility(pet, this, this.logService));
     }
-    
-    constructor(protected logService: LogService) {
+
+    constructor(
+        protected logService: LogService
+    ) {
         super();
     }
 }

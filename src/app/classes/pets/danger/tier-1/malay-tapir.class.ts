@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MalayTapirAbility } from "../../../abilities/pets/danger/tier-1/malay-tapir-ability.class";
 
 export class MalayTapir extends Pet {
     name = "Malay Tapir";
@@ -11,27 +11,9 @@ export class MalayTapir extends Pet {
     pack: Pack = 'Danger';
     attack = 2;
     health = 2;
-
-    adjacentAttacked(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let targetResp = this.parent.getThis(this);
-        let target = targetResp.pet;
-        
-        if (!target) {
-            return;
-        }
-
-        let healthGain = this.level * 1;
-        target.increaseHealth(healthGain);
-        
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${healthGain} health`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-
-        this.superAdjacentAttacked(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new MalayTapirAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -41,8 +23,8 @@ export class MalayTapir extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

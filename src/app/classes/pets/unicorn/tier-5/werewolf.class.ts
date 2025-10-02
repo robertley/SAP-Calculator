@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { WerewolfAbility } from "../../../abilities/pets/unicorn/tier-5/werewolf-ability.class";
 
 export class Werewolf extends Pet {
     name = "Werewolf";
@@ -11,44 +12,9 @@ export class Werewolf extends Pet {
     pack: Pack = 'Unicorn';
     attack = 6;
     health = 6;
-    startOfBattle(gameApi: GameAPI, tiger?: boolean): void {
-        if (gameApi.day) {
-            const manaGain = this.level * 6;
-            let targetResp = this.parent.getThis(this);
-            let target = targetResp.pet;
-            if (target == null) {
-                return;
-            }
-    
-            target.increaseMana(manaGain);
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${manaGain} mana.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger
-            });
-        }
-        else {
-            let targetResp = this.parent.getThis(this);
-            let target = targetResp.pet;
-            if (target == null) {
-                return;
-            }    
-            let power = this.level * 0.5;
-            const attackGain = Math.floor(this.attack * power);
-            const healthGain = Math.floor(this.health * power);
-            let attack = Math.min(50, this.attack + attackGain);
-            let health = Math.min(50, this.health + healthGain);
-            this.logService.createLog({
-                message: `${this.name} increased ${target.name}'s stats by ${power * 100}% (${attack}/${health}).`,
-                type: "ability",
-                player: this.parent,
-                tiger: tiger
-            });
-            target.increaseAttack(this.attack * power);
-            target.increaseHealth(this.health * power);
-        }
-
+    initAbilities(): void {
+        this.addAbility(new WerewolfAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -57,8 +23,8 @@ export class Werewolf extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

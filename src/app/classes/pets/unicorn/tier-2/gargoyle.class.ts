@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GargoyleAbility } from "../../../abilities/pets/unicorn/tier-2/gargoyle-ability.class";
 
 export class Gargoyle extends Pet {
     name = "Gargoyle";
@@ -11,31 +12,9 @@ export class Gargoyle extends Pet {
     pack: Pack = 'Unicorn';
     attack = 3;
     health = 3;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let power = this.mana * this.level;
-        power = power + 2 * this.level;
-
-        let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
-        if (targetsBehindResp.pets.length === 0) {
-            this.superFaint(gameApi, tiger);
-            return;
-        }
-        let target = targetsBehindResp.pets[0];
-        
-        this.logService.createLog({
-            message: `${this.name} spent ${this.mana} mana and gave ${power} health to ${target.name}.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetsBehindResp.random
-        })
-
-        target.increaseHealth(power);
-
-        this.mana = 0;
-
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new GargoyleAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -44,8 +23,8 @@ export class Gargoyle extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

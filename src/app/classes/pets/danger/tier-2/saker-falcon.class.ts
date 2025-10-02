@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { SakerFalconAbility } from "../../../abilities/pets/danger/tier-2/saker-falcon-ability.class";
 
 export class SakerFalcon extends Pet {
     name = "Saker Falcon";
@@ -11,46 +11,9 @@ export class SakerFalcon extends Pet {
     pack: Pack = 'Danger';
     attack = 2;
     health = 3;
-
-    beforeAttack(gameApi: GameAPI, tiger?: boolean): void {
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-
-        // Check if outnumbered by comparing team sizes (petArray already excludes dead pets)
-        let myAlivePets = this.parent.petArray.length;
-        let enemyAlivePets = this.parent.opponent.petArray.length;
-
-        if (myAlivePets < enemyAlivePets) {
-            let targetResp = this.parent.getThis(this);
-            let target = targetResp.pet;
-            
-            if (!target) {
-                this.superBeforeAttack(gameApi, tiger);
-                return;
-            }
-
-            let power = this.level * 2;
-            target.increaseAttack(power);
-            target.increaseHealth(power);
-
-            this.logService.createLog({
-                message: `${this.name} gave ${target.name} ${power} attack and ${power} health (outnumbered)`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                randomEvent: targetResp.random
-            });
-
-            this.abilityUses++;
-        }
-
-        this.superBeforeAttack(gameApi, tiger);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 3;
+    initAbilities(): void {
+        this.addAbility(new SakerFalconAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -60,8 +23,8 @@ export class SakerFalcon extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

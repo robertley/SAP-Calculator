@@ -1,10 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Rice } from "../../../equipment/puppy/rice.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FrigatebirdAbility } from "../../../abilities/pets/custom/tier-2/frigatebird-ability.class";
 
 // TODO research order of ailment removal
 export class Frigatebird extends Pet {
@@ -13,21 +12,10 @@ export class Frigatebird extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 1;
-    friendGainedAilment(gameApi: GameAPI, pet?: Pet): void {
-        if (this.abilityUses >= this.level) {
-            return;
-        }
-        if (pet == this) {
-            return;
-        }
-        let equipment = pet.equipment;
-        pet.givePetEquipment(new Rice());
-        this.abilityUses++;
-        this.logService.createLog({
-            message: `${this.name} removed ${equipment.name} from ${pet.name} and gave ${pet.name} Rice.`,
-            type: 'ability',
-            player: this.parent
-        })
+
+    initAbilities(): void {
+        this.addAbility(new FrigatebirdAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -36,17 +24,13 @@ export class Frigatebird extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 
     resetPet(): void {
         super.resetPet();
     }
 
-    setAbilityUses() {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
-    }
 }

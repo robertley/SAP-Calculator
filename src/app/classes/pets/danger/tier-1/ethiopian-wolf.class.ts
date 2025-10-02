@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { EthiopianWolfAbility } from "../../../abilities/pets/danger/tier-1/ethiopian-wolf-ability.class";
 
 export class EthiopianWolf extends Pet {
     name = "Ethiopian Wolf";
@@ -11,25 +11,9 @@ export class EthiopianWolf extends Pet {
     pack: Pack = 'Danger';
     attack = 2;
     health = 3;
-
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let targetResp = this.parent.opponent.getFurthestUpPets(this.level, undefined, this);
-        
-        for (const target of targetResp.pets) {
-            if (target?.alive) {
-                target.increaseAttack(-1);
-                this.logService.createLog({
-                    message: `${this.name} removed 1 attack from ${target.name}.`,
-                    type: 'ability',
-                    player: this.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: targetResp.random
-                });
-            }
-        }
-        
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new EthiopianWolfAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -39,8 +23,8 @@ export class EthiopianWolf extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

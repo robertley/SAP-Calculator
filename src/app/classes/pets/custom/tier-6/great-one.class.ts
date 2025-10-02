@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GreatOneAbility } from "../../../abilities/pets/custom/tier-6/great-one-ability.class";
 
 export class GreatOne extends Pet {
     name = "Great One";
@@ -11,13 +11,10 @@ export class GreatOne extends Pet {
     pack: Pack = 'Custom';
     attack = 7;
     health = 13;
-    summoned(gameApi: GameAPI, tiger?: boolean): void {
-        let targets = [...this.parent.petArray, ...this.parent.opponent.petArray];
-        targets = targets.filter(pet => pet !== this);
-        for (let target of targets) {
-            this.snipePet(target, this.level * 6);
-        }
-        this.superSummoned(gameApi, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new GreatOneAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -26,8 +23,8 @@ export class GreatOne extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

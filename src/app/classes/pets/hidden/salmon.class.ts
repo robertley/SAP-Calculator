@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../services/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../equipment.class";
 import { Pack, Pet } from "../../pet.class";
 import { Player } from "../../player.class";
+import { SalmonAbility } from "../../abilities/pets/hidden/salmon-ability.class";
 
 export class Salmon extends Pet {
     name = "Salmon";
@@ -13,20 +13,9 @@ export class Salmon extends Pet {
     health = 1;
     hidden = true;
 
-    summoned(gameApi: GameAPI, tiger?: boolean): void {
-        // Calculate number of attacks based on health (every 25 health)
-        let attacks = 1 + Math.floor(this.health / 25);
-        
-        let damage = this.level * 5;
-        
-        for (let i = 0; i < attacks; i++) {
-            let targetResp = this.parent.opponent.getRandomPet([], false, true, false, this);
-            if (targetResp.pet) {
-                this.snipePet(targetResp.pet, damage, targetResp.random, tiger);
-            }
-        }
-        
-        this.superSummoned(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new SalmonAbility(this, this.logService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,
@@ -36,8 +25,8 @@ export class Salmon extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

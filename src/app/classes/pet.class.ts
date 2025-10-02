@@ -29,6 +29,7 @@ import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
 import { Toad } from "./pets/star/tier-3/toad.class";
 import { WhiteTruffle } from "./equipment/danger/white-truffle.class";
+import { Ability, AbilityTrigger, AbilityType } from "./ability.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom' | 'Danger';
 
@@ -44,6 +45,7 @@ export abstract class Pet {
     exp?: number = 0;
     equipment?: Equipment;
     mana: number = 0;
+    triggersConsumed: number = 0;
     //memories
     swallowedPets?: Pet[] = [];
     abominationSwallowedPet1?: string;
@@ -64,6 +66,7 @@ export abstract class Pet {
     originalHealth: number;
     originalAttack: number;
     originalMana: number;
+    originalTriggersConsumed: number;
     originalEquipment?: Equipment;
     originalExp?: number = 0;
     originalTimesHurt: number = 0;
@@ -72,8 +75,9 @@ export abstract class Pet {
     faintPet: boolean = false;
     toyPet = false;
     transformed: boolean = false;
-    disabled: boolean = false;
+    removed: boolean = false;
     startOfBattleTriggered: boolean = false;
+    jumped: boolean = false;
     // flags to make sure events/logs are not triggered multiple times
     done = false;
     seenDead = false;
@@ -83,144 +87,13 @@ export abstract class Pet {
     cherryTouched = false;
     //ability memory
     maxAbilityUses: number = null;
-    abilityUses: number = 0;
+
+    // New ability system
+    abilityList: Ability[] = [];
+    originalAbilityList: Ability[] = [];
 
     savedPosition: 0 | 1 | 2 | 3 | 4;
     originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
-
-    // Battle context tracking for complex abilities
-    startOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
-    transform?(gameApi: GameAPI, tiger?: boolean): void;
-    // startOfTurn?: () => void;
-    hurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    faint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
-    friendSummoned?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
-    friendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    adjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
-    friendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    enemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    gainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    eatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
-    friendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendTransformed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    beforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    enemyAttack?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    afterAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    beforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    beforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
-    anyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
-    // example of pet that SHOULD be defined: Parrot.
-    endTurn?(gameApi: GameAPI): void;
-    knockOut?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    summoned?(gameApi: GameAPI, tiger?: boolean): void;
-    friendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
-    enemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    enemyPushed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    enemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    emptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
-    afterFaint?(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
-
-    // gameApi is not available currenly but can be added if needed.
-    gainedMana?(gameApi: GameAPI, tiger?: boolean): void;
-    friendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    enemyJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    enemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    friendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-
-    // orignal methods -- used when overrwriting methods
-    originalStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
-    originalTransform?(gameApi: GameAPI, tiger?: boolean): void;
-    // originalStartOfTurn?: () => void;
-    originalHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFaint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
-    originalFriendSummoned?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
-    originalFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
-    originalFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEnemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
-    originalFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendTransformed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalBeforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEnemyAttack?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalAfterAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    originalBeforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    originalBeforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
-    originalAnyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    // NOTE: not all End Turn ability pets should have their ability defined. e.g Giraffe
-    // example of pet that SHOULD be defined: Parrot.
-    originalEndTurn?(gameApi: GameAPI): void;
-    originalKnockOut?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalSummoned?(gameApi: GameAPI, tiger?: boolean): void;
-    originalFriendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
-    originalEnemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEnemyPushed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEnemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEmptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
-    originalAfterFaint?(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
-    originalGainedMana?(gameApi: GameAPI, tiger?: boolean): void;
-    originalFriendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEnemyJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalEnemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    originalFriendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void; 
-
-    // Reset abilities (wrapped versions for reset functionality)
-    resetStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
-    resetTransform?(gameApi: GameAPI, tiger?: boolean): void;
-    resetHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFaint?(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
-    resetFriendSummoned?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
-    resetFriendAheadAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetAdjacentAttacked?(gameApi: GameAPI, pet: Pet, tiger?: boolean): void;
-    resetFriendAheadFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEnemyFaints?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendAteFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEatsFood?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendLostPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendGainedPerk?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendGainedAilment?(gameApi: GameAPI, pet?: Pet): void;
-    resetFriendHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendTransformed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetBeforeFriendAttacks?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEnemyAttack?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetAfterAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    resetBeforeAttack?(gameApi: GameAPI, tiger?: boolean): void;
-    resetBeforeStartOfBattle?(gameApi: GameAPI, tiger?: boolean): void;
-    resetAnyoneLevelUp?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEndTurn?(gameApi: GameAPI): void;
-    resetKnockOut?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetSummoned?(gameApi: GameAPI, tiger?: boolean): void;
-    resetFriendlyToyBroke?(gameApi: GameAPI, tiger?: boolean): void;
-    resetEnemySummoned?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEnemyPushed?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEnemyHurt?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEmptyFrontSpace?(gameApi: GameAPI, tiger?: boolean): void;
-    resetAfterFaint?(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void;
-    resetGainedMana?(gameApi: GameAPI, tiger?: boolean): void;
-    resetFriendJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEnemyJumped?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetEnemyGainedAilment?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendGainsHealth?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
-    resetFriendGainedExperience?(gameApi: GameAPI, pet?: Pet, tiger?: boolean): void;
 
     constructor(
         protected logService: LogService,
@@ -229,422 +102,36 @@ export abstract class Pet {
         this.parent = parent;
     }
 
-    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment) {
+    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment, triggersConsumed?: number) {
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
         this.mana = mana ?? this.mana;
+        this.triggersConsumed = triggersConsumed ?? this.triggersConsumed;
         this.originalHealth = this.health;
         this.originalAttack = this.attack;
         this.originalMana = this.mana;
+        this.originalTriggersConsumed = this.triggersConsumed;
         this.equipment = equipment;
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
 
-        // Store original abilities before wrapping
-        this.originalStartOfBattle = this.startOfBattle;
-        this.originalTransform = this.transform;
-        // this.originalStartOfTurn = this.startOfTurn;
-        this.originalHurt = this.hurt;
-        this.originalFaint = this.faint;
-        this.originalFriendSummoned = this.friendSummoned;
-        this.originalFriendAheadAttacks = this.friendAheadAttacks;
-        this.originalAdjacentAttacked = this.adjacentAttacked;
-        this.originalFriendAheadFaints = this.friendAheadFaints;
-        this.originalFriendFaints = this.friendFaints;
-        this.originalEnemyFaints = this.enemyFaints;
-        this.originalFriendAteFood = this.friendAteFood;
-        this.originalEatsFood = this.eatsFood;
-        this.originalFriendLostPerk = this.friendLostPerk;
-        this.originalGainedPerk = this.gainedPerk;
-        this.originalFriendGainedPerk = this.friendGainedPerk;
-        this.originalFriendGainedAilment = this.friendGainedAilment;
-        this.originalFriendHurt = this.friendHurt;
-        this.originalFriendTransformed = this.friendTransformed;
-        this.originalFriendAttacks = this.friendAttacks;
-        this.originalBeforeFriendAttacks = this.beforeFriendAttacks;
-        this.originalEnemyAttack = this.enemyAttack;
-        this.originalAfterAttack = this.afterAttack;
-        this.originalAfterFaint = this.afterFaint;
-        this.originalBeforeAttack = this.beforeAttack;
-        this.originalBeforeStartOfBattle = this.beforeStartOfBattle;
-        this.originalAnyoneLevelUp = this.anyoneLevelUp;
-        this.originalEndTurn = this.endTurn;
-        this.originalKnockOut = this.knockOut;
-        this.originalSummoned = this.summoned;
-        this.originalFriendlyToyBroke = this.friendlyToyBroke;
-        this.originalEnemySummoned = this.enemySummoned;
-        this.originalEnemyPushed = this.enemyPushed;
-        this.originalEnemyHurt = this.enemyHurt;
-        this.originalEmptyFrontSpace = this.emptyFrontSpace;
-        this.originalGainedMana = this.gainedMana;
-        this.originalFriendJumped = this.friendJumped;
-        this.originalEnemyJumped = this.enemyJumped;
-        this.originalEnemyGainedAilment = this.enemyGainedAilment;
-        this.originalFriendGainsHealth = this.friendGainsHealth;
-        this.originalFriendGainedExperience = this.friendGainedExperience;
-
         this.initAbilities();
-        // Store wrapped abilities for reset functionality
-        this.resetStartOfBattle = this.startOfBattle;
-        this.resetTransform = this.transform;
-        this.resetHurt = this.hurt;
-        this.resetFaint = this.faint;
-        this.resetFriendSummoned = this.friendSummoned;
-        this.resetFriendAheadAttacks = this.friendAheadAttacks;
-        this.resetAdjacentAttacked = this.adjacentAttacked;
-        this.resetFriendAheadFaints = this.friendAheadFaints;
-        this.resetFriendFaints = this.friendFaints;
-        this.resetEnemyFaints = this.enemyFaints;
-        this.resetFriendAteFood = this.friendAteFood;
-        this.resetEatsFood = this.eatsFood;
-        this.resetFriendLostPerk = this.friendLostPerk;
-        this.resetGainedPerk = this.gainedPerk;
-        this.resetFriendGainedPerk = this.friendGainedPerk;
-        this.resetFriendGainedAilment = this.friendGainedAilment;
-        this.resetFriendHurt = this.friendHurt;
-        this.resetFriendTransformed = this.friendTransformed;
-        this.resetFriendAttacks = this.friendAttacks;
-        this.resetBeforeFriendAttacks = this.beforeFriendAttacks;
-        this.resetEnemyAttack = this.enemyAttack;
-        this.resetAfterAttack = this.afterAttack;
-        this.resetAfterFaint = this.afterFaint;
-        this.resetBeforeAttack = this.beforeAttack;
-        this.resetBeforeStartOfBattle = this.beforeStartOfBattle;
-        this.resetAnyoneLevelUp = this.anyoneLevelUp;
-        this.resetEndTurn = this.endTurn;
-        this.resetKnockOut = this.knockOut;
-        this.resetSummoned = this.summoned;
-        this.resetFriendlyToyBroke = this.friendlyToyBroke;
-        this.resetEnemySummoned = this.enemySummoned;
-        this.resetEnemyPushed = this.enemyPushed;
-        this.resetEnemyHurt = this.enemyHurt;
-        this.resetEmptyFrontSpace = this.emptyFrontSpace;
-        this.resetGainedMana = this.gainedMana;
-        this.resetFriendJumped = this.friendJumped;
-        this.resetEnemyJumped = this.enemyJumped;
-        this.resetEnemyGainedAilment = this.enemyGainedAilment;
-        this.resetFriendGainsHealth = this.friendGainsHealth;
-        this.resetFriendGainedExperience = this.friendGainedExperience;
+
+        // Save complete ability list after full initialization (pet + equipment abilities)
+        this.originalAbilityList = [...this.abilityList];
     }
 
     initAbilities() {
-        // set faint ability to handle mana ability
-        let faintCallback = this.faint?.bind(this);
-        if (faintCallback != null || this.afterFaint != null) {
-            this.faintPet = true;
-        }
-        this.faint = (gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
-            if (faintCallback != null) {
-                if (!this.abilityValidCheck()) {
-                    return;
-                }
-                faintCallback(gameApi, tiger, pteranodon);
-            }
-
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-
-            if (this.kitsuneCheck()) {
-                return;
-            }
-            
-            if (this.mana > 0) {
-                
-                let manaEvent: AbilityEvent;
-
-                manaEvent = {
-                    priority: this.attack,
-                    player: this.parent,
-                    callback: () => {
-                        let targetResp = getOpponent(gameApi, this.parent).getRandomPet([], false, true, false, this);
-                        if (targetResp.pet == null) {
-                            return;
-                        }
-                        if (this.mana == 0) {
-                            return;
-                        }
-                        this.snipePet(targetResp.pet, this.mana, true, false, false, false, true);
-                    }
-                }
-
-                this.abilityService.setManaEvent(manaEvent);
-            }
-        }
-
-        let startOfBattleCallback = this.startOfBattle?.bind(this);
-        this.startOfBattle = startOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            return startOfBattleCallback(gameApi, tiger);
-        }
-
-        let transformCallback = this.transform?.bind(this);
-        this.transform = transformCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            transformCallback(gameApi, tiger);
-        }
-
-        let endTurnCallback = this.endTurn?.bind(this);
-        this.endTurn = endTurnCallback == null ? null : (gameApi: GameAPI) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            endTurnCallback(gameApi);
-        }
-
-        let beforeAttackCallback = this.beforeAttack?.bind(this);
-        this.beforeAttack = beforeAttackCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            beforeAttackCallback(gameApi, tiger);
-        }
-
-        let afterAttackCallback = this.afterAttack?.bind(this);
-        this.afterAttack = afterAttackCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            afterAttackCallback(gameApi, tiger);
-        }
-
-        let friendAttacksCallback = this.friendAttacks?.bind(this);
-        this.friendAttacks = friendAttacksCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendAttacksCallback(gameApi, pet, tiger);
-        }
-
-        let beforeFriendAttacksCallback = this.beforeFriendAttacks?.bind(this);
-        this.beforeFriendAttacks = beforeFriendAttacksCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            beforeFriendAttacksCallback(gameApi, pet, tiger);
-        }
-
-        let friendFaintsCallback = this.friendFaints?.bind(this);
-        this.friendFaints = friendFaintsCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendFaintsCallback(gameApi, pet, tiger);
-        }
-
-        let enemyFaintsCallback = this.enemyFaints?.bind(this);
-        this.enemyFaints = enemyFaintsCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyFaintsCallback(gameApi, pet, tiger);
-        }
-
-        
-        let friendLostPerkCallback = this.friendLostPerk?.bind(this);
-        this.friendLostPerk = friendLostPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendLostPerkCallback(gameApi, pet, tiger);
-        }
-
-        let GainedPerkCallback = this.gainedPerk?.bind(this);
-        this.gainedPerk = GainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            GainedPerkCallback(gameApi, pet, tiger);
-        }
-
-        let friendGainedPerkCallback = this.friendGainedPerk?.bind(this);
-        this.friendGainedPerk = friendGainedPerkCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendGainedPerkCallback(gameApi, pet, tiger);
-        }
-
-        let eatsFoodCallback = this.eatsFood?.bind(this);
-        this.eatsFood = eatsFoodCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            eatsFoodCallback(gameApi, pet, tiger);
-        }
-
-        let friendAteFoodCallback = this.friendAteFood?.bind(this);
-        this.friendAteFood = friendAteFoodCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendAteFoodCallback(gameApi, pet, tiger);
-        }
-
-        let beforeStartOfBattleCallback = this.beforeStartOfBattle?.bind(this);
-        this.beforeStartOfBattle = beforeStartOfBattleCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            beforeStartOfBattleCallback(gameApi, tiger);
-        }
-
-        let friendHurtCallback = this.friendHurt?.bind(this);
-        this.friendHurt = friendHurtCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendHurtCallback(gameApi, pet, tiger);
-        }
-
-        let friendTransformedCallback = this.friendTransformed?.bind(this);
-        this.friendTransformed = friendTransformedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendTransformedCallback(gameApi, pet, tiger);
-        }
-
-        let friendSummonedCallback = this.friendSummoned?.bind(this);
-        this.friendSummoned = friendSummonedCallback == null ? null : (gameApi: GameAPI, pet: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendSummonedCallback(gameApi, pet, tiger);
-        }
-
-        let anyoneLevelUpCallback = this.anyoneLevelUp?.bind(this);
-        this.anyoneLevelUp = anyoneLevelUpCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            anyoneLevelUpCallback(gameApi, pet, tiger);
-        }
-
-        let enemyHurtCallback = this.enemyHurt?.bind(this);
-        this.enemyHurt = enemyHurtCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyHurtCallback(gameApi, pet, tiger);
-        }
-
-        let enemySummonedCallback = this.enemySummoned?.bind(this);
-        this.enemySummoned = enemySummonedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemySummonedCallback(gameApi, pet, tiger);
-        }
-
-        let emptyFrontSpaceCallback = this.emptyFrontSpace?.bind(this);
-        this.emptyFrontSpace = emptyFrontSpaceCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            emptyFrontSpaceCallback(gameApi, tiger);
-        }
-
-        let gainedManaCallback = this.gainedMana?.bind(this);
-        this.gainedMana = gainedManaCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            gainedManaCallback(gameApi, tiger);
-        }
-
-        let friendJumpedCallback = this.friendJumped?.bind(this);
-        this.friendJumped = friendJumpedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendJumpedCallback(gameApi, pet, tiger);
-        }
-
-        let enemyJumpedCallback = this.enemyJumped?.bind(this);
-        this.enemyJumped = enemyJumpedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyJumpedCallback(gameApi, pet, tiger);
-        }
-
-        let friendlyToyBrokeCallback = this.friendlyToyBroke?.bind(this);
-        this.friendlyToyBroke = friendlyToyBrokeCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendlyToyBrokeCallback(gameApi, tiger);
-        }
-
-        let enemyPushedCallback = this.enemyPushed?.bind(this);
-        this.enemyPushed = enemyPushedCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyPushedCallback(gameApi, pet, tiger);
-        }
-
-        let summonedCallback = this.summoned?.bind(this);
-        this.summoned = summonedCallback == null ? null : (gameApi: GameAPI, tiger?: boolean) => {
-
-            summonedCallback(gameApi, tiger);
-        }
-
-        let knockOutCallback = this.knockOut?.bind(this);
-        this.knockOut = knockOutCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            knockOutCallback(gameApi, pet, tiger);
-        }
-
-        let enemyGainedAilmentCallback = this.enemyGainedAilment?.bind(this);
-        this.enemyGainedAilment = enemyGainedAilmentCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            enemyGainedAilmentCallback(gameApi, pet, tiger);
-        }
-
-        let friendGainsHealthCallback = this.friendGainsHealth?.bind(this);
-        this.friendGainsHealth = friendGainsHealthCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendGainsHealthCallback(gameApi, pet, tiger);
-        }
-
-        let friendGainedExperienceCallback = this.friendGainedExperience?.bind(this);
-        this.friendGainedExperience = friendGainedExperienceCallback == null ? null : (gameApi: GameAPI, pet?: Pet, tiger?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            friendGainedExperienceCallback(gameApi, pet, tiger);
-        }
-
-        let afterFaintCallback = this.afterFaint?.bind(this);
-        this.afterFaint = afterFaintCallback == null ? null : (gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean) => {
-            if (!this.abilityValidCheck()) {
-                return;
-            }
-            afterFaintCallback(gameApi, tiger, pteranodon);
-        }
-        this.setAbilityUses();
+        this.initAbilityUses();
+        this.setAbilityEquipments();
     }
 
     abilityValidCheck() {
         if (this.savedPosition == null) {
             return false;
         }
-        if (this.disabled) {
-            return false;
-        }
+
         if (this.equipment instanceof Dazed) {
             this.logService.createLog({
                 message: `${this.name}'s ability was not activated because of Dazed.`,
@@ -656,404 +143,23 @@ export abstract class Pet {
         return true;
     }
 
-    // overrwrite this method if maxAbilityUses is determined by level
-    setAbilityUses() {
-        this.abilityUses = 0;
+    resetAbilityUses() {
+        // Set initialCurrentUses to 0 for level-up refresh, then reset
+        this.abilityList.forEach(ability => {
+            ability.reset();
+        });
     }
-
-    tigerCheck(tiger) {
-        if (this.petBehind(true, true)?.name == 'Tiger' && (tiger == null || tiger == false)) {
-            return true;
-        }
-        return false;
-    }
-
-    protected superStartOfBattle(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(true, true).minExpForLevel;
-        this.startOfBattle(gameApi,true)
-        this.exp = exp;
-    
-    }
-
-    protected superHurt(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.hurt(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFaint(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.faint(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superFriendSummoned(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendSummoned(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendAheadAttacks(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAheadAttacks(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendAheadFaints(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAheadFaints(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superAdjacentAttacked(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.adjacentAttacked(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superAfterAttack(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.afterAttack(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superSummoned(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.summoned(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superKnockOut(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.knockOut(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendFaints(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendFaints(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEnemyFaints(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemyFaints(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superBeforeAttack(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.beforeAttack(gameApi, true)
-        this.exp = exp;
-
-    }
-
-    protected superBeforeFriendAttacks(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.beforeFriendAttacks(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendLosPerk(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendLostPerk(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superGainedPerk(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.gainedPerk(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendGainedPerk(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendGainedPerk(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEatsFood(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.eatsFood(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendAteFood(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAteFood(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superBeforeStartOfBattle(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.beforeStartOfBattle(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superFriendlyToyBroke(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendlyToyBroke(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superTransform(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.transform(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superEnemySummoned(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemySummoned(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEnemyPushed(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemyPushed(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendHurt(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendHurt(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendTransformed(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendTransformed(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superAnyoneLevelUp(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.anyoneLevelUp(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEnemyHurt(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemyHurt(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendAttacks(gameApi, pet=null, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendAttacks(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEnemyAttack(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemyAttack(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEmptyFrontSpace(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.emptyFrontSpace(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superGainedMana(gameApi, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.gainedMana(gameApi, true)
-        this.exp = exp;
-    }
-
-    protected superFriendJumped(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendJumped(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEnemyJumped(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemyJumped(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superEnemyGainedAilment(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.enemyGainedAilment(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendGainsHealth(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendGainsHealth(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superFriendGainedExperience(gameApi, pet, tiger=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.friendGainedExperience(gameApi, pet, true)
-        this.exp = exp;
-    }
-
-    protected superAfterFaint(gameApi, tiger=false, pteranodon=false) {
-        if (!this.tigerCheck(tiger)) {
-            return;
-        }
-        let exp = this.exp;
-        this.exp = this.petBehind(null, true).minExpForLevel;
-        this.afterFaint(gameApi, true, pteranodon);
-        this.exp = exp;
+    initAbilityUses() {
+        // Reset usage counters for new ability system
+        // Set initialCurrentUses to 0 for level-up refresh, then reset
+        this.abilityList.forEach(ability => {
+            ability.initUses();
+        });
     }
 
 
     attackPet(pet: Pet,  jumpAttack: boolean = false, power?: number, random: boolean = false) {
         this.timesAttacked++;
-        pet.timesAttacked++;
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(), power);
         let attackEquipment = damageResp.attackEquipment;
         let defenseEquipment = damageResp.defenseEquipment;
@@ -1176,11 +282,14 @@ export abstract class Pet {
             if (damageResp.nurikabe > 0) {
                 message += ` -${damageResp.nurikabe} (Nurikabe)`;
             }
-            if (damageResp.fairyBallReduction > 0) { 
+            if (damageResp.fairyBallReduction > 0) {
                 message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
             }
             if (damageResp.fanMusselReduction > 0) {
                 message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
+            }
+            if (damageResp.ghostKittenReduction > 0) {
+                message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
             }
             if (damageResp.mapleSyrupReduction > 0) {
                 message += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`;
@@ -1219,7 +328,6 @@ export abstract class Pet {
                 player: this.parent,
                 randomEvent: random
             });
-            //TO DO: Maybe all other ability equipment should follow this pattern
             let skewerEquipment: Equipment = this.equipment?.equipmentClass == 'skewer' ? this.equipment : null;
             if (skewerEquipment != null) {
                 skewerEquipment.attackCallback(this, pet);
@@ -1227,16 +335,7 @@ export abstract class Pet {
         }
 
         // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
-        this.abilityService.triggerFriendAttacksEvents(this.parent, this);
-
-        // after attack
-        if (this.afterAttack != null) {
-            this.abilityService.setAfterAttackEvent({
-                callback: this.afterAttack.bind(this),
-                priority: this.attack,
-                pet: this
-            })
-        }
+        this.abilityService.triggerAttacksEvents(this);
         this.applyCrisp();
 
     }
@@ -1252,27 +351,42 @@ export abstract class Pet {
                 }
                 damage *= totalMultiplier;
                 let fairyBallReduction = 0;
-                if (pet.name === 'Fairy Ball' && damage > 0) {
-                    fairyBallReduction = pet.level * 2;
-                    damage = Math.max(1, damage - fairyBallReduction);
+                if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FairyAbility') {
+                            fairyBallReduction += ability.level * 2;
+                            damage = Math.max(0, damage - ability.level * 2);
+                        }
+                    }
                 }
                 let nurikabe = 0;
-                if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
-                    nurikabe = pet.level * 4;
-                    damage = Math.max(1, damage - nurikabe);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'NurikabeAbility') {
+                            nurikabe += ability.level * 4;
+                            damage = Math.max(0, damage - ability.level * 4);
+                            ability.currentUses++;
+                        }
+                    }
                 }
                 let fanMusselReduction = 0;
-                if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
-                    fanMusselReduction = pet.level * 1;
-                    damage = Math.max(1, damage - fanMusselReduction);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FanMusselAbility') {
+                            fanMusselReduction += ability.level * 1;
+                            damage = Math.max(0, damage - fanMusselReduction);
+                            ability.currentUses++;
+                        }
+                    }
                 }
-                let ghostKitten = pet.name == 'Ghost Kitten';
-                let ghostKittenMitigation = 1;
-                if (ghostKitten) {
-                    ghostKittenMitigation = pet.level * 3;
-                    damage = Math.max(1, damage - ghostKittenMitigation);
+                let ghostKittenReduction = 0;
+                if (pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'GhostKittenAbility') {
+                            ghostKittenReduction += ability.level * 3;
+                            damage = Math.max(0, damage - ghostKittenReduction);
+                        }
+                    }
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1292,8 +406,8 @@ export abstract class Pet {
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
                 }
-                if (ghostKitten) {
-                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
+                if (ghostKittenReduction > 0) {
+                    message += ` -${ghostKittenReduction} (Ghost Kitten)`;
                 }
                 message += ` (Crisp).`;
 
@@ -1313,27 +427,42 @@ export abstract class Pet {
                 }
                 damage *= totalMultiplier;
                 let fairyBallReduction = 0;
-                if (pet.name === 'Fairy Ball' && damage > 0) {
-                    fairyBallReduction = pet.level * 2;
-                    damage = Math.max(1, damage - fairyBallReduction);
+                if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FairyAbility') {
+                            fairyBallReduction += ability.level * 2;
+                            damage = Math.max(0, damage - ability.level * 2);
+                        }
+                    }
                 }
                 let nurikabe = 0;
-                if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
-                    nurikabe = pet.level * 4;
-                    damage = Math.max(1, damage - nurikabe);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'NurikabeAbility') {
+                            nurikabe += ability.level * 4;
+                            damage = Math.max(0, damage - ability.level * 4);
+                            ability.currentUses++;
+                        }
+                    }
                 }
                 let fanMusselReduction = 0;
-                if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
-                    fanMusselReduction = pet.level * 1;
-                    damage = Math.max(1, damage - fanMusselReduction);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FanMusselAbility') {
+                            fanMusselReduction += ability.level * 1;
+                            damage = Math.max(0, damage - fanMusselReduction);
+                            ability.currentUses++;
+                        }
+                    }
                 }
-                let ghostKitten = pet.name == 'Ghost Kitten';
-                let ghostKittenMitigation = 1;
-                if (ghostKitten) {
-                    ghostKittenMitigation = pet.level * 3;
-                    damage = Math.max(1, damage - ghostKittenMitigation);
+                let ghostKittenReduction = 0;
+                if (pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'GhostKittenAbility') {
+                            ghostKittenReduction += ability.level * 3;
+                            damage = Math.max(0, damage - ghostKittenReduction);
+                        }
+                    }
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -1353,8 +482,8 @@ export abstract class Pet {
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
                 }
-                if (ghostKitten) {
-                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
+                if (ghostKittenReduction > 0) {
+                    message += ` -${ghostKittenReduction} (Ghost Kitten)`;
                 }
                 message += ` (Toasty).`;
 
@@ -1401,12 +530,6 @@ export abstract class Pet {
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
-        let ghostKitten = pet.name == 'Ghost Kitten';
-        let ghostKittenMitigation = 0;
-        if (ghostKitten) {
-            ghostKittenMitigation = pet.level * 3;
-            damage = Math.max(1, damage - ghostKittenMitigation);
-        }
         this.dealDamage(pet, damage);
 
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
@@ -1458,10 +581,6 @@ export abstract class Pet {
             message += ' (Mana)'
         }
 
-        if (ghostKitten) {
-            message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
-        }
-
         if (pet.equipment?.name == 'Icky') {
             message += 'x2 (Icky)';
             if (pet.equipment.multiplier > 1) {
@@ -1486,11 +605,14 @@ export abstract class Pet {
         if (damageResp.nurikabe > 0) {
             message += ` -${damageResp.nurikabe} (Nurikabe)`
         }
-        if (damageResp.fairyBallReduction > 0) { 
+        if (damageResp.fairyBallReduction > 0) {
             message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
         }
         if (damageResp.fanMusselReduction > 0) {
             message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`
+        }
+        if (damageResp.ghostKittenReduction > 0) {
+            message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`
         }
 
         this.logService.createLog({
@@ -1514,6 +636,7 @@ export abstract class Pet {
             fairyBallReduction?: number,
             fanMusselReduction?: number,
             mapleSyrupReduction?: number,
+            ghostKittenReduction?: number,
         } {
         let attackMultiplier = this.equipment?.multiplier;
         let defenseMultiplier = pet.equipment?.multiplier;
@@ -1650,27 +773,50 @@ export abstract class Pet {
             damage = Math.min(damage, pet.health - 1);
         }
         //TO DO: Might need to move all pet's less damage ability down here, or into Deal Damage
+        //T) DO: Change from name check/trigger check to how many ability check
         let fairyBallReduction = 0;
-        if (pet.name === 'Fairy Ball' && damage > 0) {
-            fairyBallReduction = pet.level * 2;
-            damage = Math.max(1, damage - fairyBallReduction);
+        if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'FairyAbility') {
+                    fairyBallReduction += ability.level * 2;
+                    damage = Math.max(0, damage - ability.level * 2);        
+                }
+            }
         }
 
         let nurikabe = 0;
-        if (pet.name == 'Nurikabe' && pet.abilityUses < 3 && damage > 0) {
-            nurikabe = pet.level * 4;
-            damage = Math.max(1, damage - fairyBallReduction);
-            pet.abilityUses++;
+        if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'NurikabeAbility') {
+                    nurikabe = ability.level * 4;
+                    damage = Math.max(0, damage - nurikabe);
+                    ability.currentUses++;
+                }
+            }
         }
 
         let fanMusselReduction = 0;
-        if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses && damage > 0) {
-            fanMusselReduction = pet.level * 1;
-            damage = Math.max(1, damage - fairyBallReduction);
-            pet.abilityUses++;
+        if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'FanMusselAbility') {
+                    fanMusselReduction += ability.level * 1;
+                    damage = Math.max(0, damage - fanMusselReduction);
+                    ability.currentUses++;
+                }
+            }
         }
 
-        
+        let ghostKittenReduction = 0;
+        if (snipe && pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'GhostKittenAbility') {
+                    ghostKittenReduction += ability.level * 3;
+                    damage = Math.max(0, damage - ghostKittenReduction);
+                }
+            }
+        }
+
+
         return {
             defenseEquipment: defenseEquipment,
             attackEquipment: attackEquipment,
@@ -1680,6 +826,7 @@ export abstract class Pet {
             fairyBallReduction: fairyBallReduction,
             fanMusselReduction: fanMusselReduction,
             mapleSyrupReduction: mapleSyrupReduction,
+            ghostKittenReduction: ghostKittenReduction,
         }
     } 
 
@@ -1689,6 +836,7 @@ export abstract class Pet {
         this.equipment = this.originalEquipment;
         this.lastLostEquipment = null;
         this.mana = this.originalMana;
+        this.triggersConsumed = this.originalTriggersConsumed;
         this.exp = this.originalExp;
         //clear memories
         this.timesHurt = this.originalTimesHurt;
@@ -1702,60 +850,20 @@ export abstract class Pet {
         this.swallowedPets = [];
         this.targettedFriends.clear();
         this.savedPosition = this.originalSavedPosition;
-        this.setAbilityUses();
+        this.abilityList = [...this.originalAbilityList];
+        this.initAbilityUses(); 
         //reset flags
         this.done = false;
         this.seenDead = false;
-        this.disabled = false;
+        this.removed = false;
+        this.jumped = false;
         try {
             this.equipment?.reset();
         } catch (error) {
             console.warn('equipment reset failed', this.equipment)
             console.error(error)
             // window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
-        }
-        
-        // Restore reset ability methods to fix equipment copying persistence issues
-        this.startOfBattle = this.resetStartOfBattle;
-        this.transform = this.resetTransform;
-        this.beforeAttack = this.resetBeforeAttack;
-        this.afterAttack = this.resetAfterAttack;
-        this.beforeFriendAttacks = this.resetBeforeFriendAttacks;
-        this.enemyAttack = this.resetEnemyAttack;
-        this.friendAttacks = this.resetFriendAttacks;
-        this.hurt = this.resetHurt;
-        this.faint = this.resetFaint;
-        this.friendSummoned = this.resetFriendSummoned;
-        this.friendAheadAttacks = this.resetFriendAheadAttacks;
-        this.adjacentAttacked = this.resetAdjacentAttacked;
-        this.friendAheadFaints = this.resetFriendAheadFaints;
-        this.friendFaints = this.resetFriendFaints;
-        this.enemyFaints = this.resetEnemyFaints;
-        this.friendAteFood = this.resetFriendAteFood;
-        this.eatsFood = this.resetEatsFood;
-        this.friendLostPerk = this.resetFriendLostPerk;
-        this.gainedPerk = this.resetGainedPerk;
-        this.friendGainedPerk = this.resetFriendGainedPerk;
-        this.friendGainedAilment = this.resetFriendGainedAilment;
-        this.friendHurt = this.resetFriendHurt;
-        this.friendTransformed = this.resetFriendTransformed;
-        this.afterFaint = this.resetAfterFaint;
-        this.beforeStartOfBattle = this.resetBeforeStartOfBattle;
-        this.anyoneLevelUp = this.resetAnyoneLevelUp;
-        this.endTurn = this.resetEndTurn;
-        this.knockOut = this.resetKnockOut;
-        this.summoned = this.resetSummoned;
-        this.friendlyToyBroke = this.resetFriendlyToyBroke;
-        this.enemySummoned = this.resetEnemySummoned;
-        this.enemyPushed = this.resetEnemyPushed;
-        this.enemyHurt = this.resetEnemyHurt;
-        this.emptyFrontSpace = this.resetEmptyFrontSpace;
-        this.gainedMana = this.resetGainedMana;
-        this.friendJumped = this.resetFriendJumped;
-        this.enemyJumped = this.resetEnemyJumped;
-        this.enemyGainedAilment = this.resetEnemyGainedAilment;
-        this.friendGainsHealth = this.resetFriendGainsHealth;
-        this.friendGainedExperience = this.resetFriendGainedExperience;    
+        }    
         if (this.equipment) {
             this.equipment.multiplier = 1;
             this.equipment.multiplierMessage = '';
@@ -1763,29 +871,9 @@ export abstract class Pet {
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target
-        if (this.beforeAttack && this.alive) {
-            this.abilityService.setBeforeAttackEvent({
-                callback: this.beforeAttack.bind(this),
-                priority: this.attack,
-                player: this.parent,
-                pet: this
-            });
-        }
-        
-        if (target.beforeAttack) {
-            this.abilityService.setBeforeAttackEvent({
-                callback: target.beforeAttack.bind(target),
-                priority: target.attack,
-                player: target.parent,
-                pet: target
-            });
-        }
-        
+        this.abilityService.triggerBeforeAttackEvent(this);
+        this.abilityService.triggerBeforeAttackEvent(target);
         this.abilityService.executeBeforeAttackEvents();
-        // 2. Trigger and execute before friend attacks events for BOTH players
-        this.abilityService.triggerBeforeFriendAttacksEvents(this.parent, this);
-        this.abilityService.triggerBeforeFriendAttacksEvents(target.parent, this);
-        this.abilityService.executeBeforeFriendAttacksEvents();
     }
     // Jump attack method for abilities that attack and then advance turn
     jumpAttack(target: Pet, tiger?: boolean, damage?: number, randomEvent: boolean = false) {
@@ -1818,12 +906,9 @@ export abstract class Pet {
         attackPet.parent.checkPetsAlive();
         target.parent.checkPetsAlive();
     
-        attackPet.abilityService.executeAfterAttackEvents();
-        attackPet.abilityService.executeAfterFriendAttackEvents();
-        
+        attackPet.abilityService.executeAfterAttackEvents();        
         // 6. Trigger and execute friend/enemy jumped abilities 
-        attackPet.abilityService.triggerFriendJumpedEvents(attackPet.parent, attackPet);
-        attackPet.abilityService.triggerEnemyJumpedEvents(target.parent, attackPet);
+        attackPet.abilityService.triggerJumpEvents(attackPet);
     }
 
     get alive(): boolean {
@@ -1831,34 +916,35 @@ export abstract class Pet {
     }
     
 
-    setFaintEventIfPresent() {
+    setFaintEventIfPresent() {      
+        this.abilityService.triggerFaintEvents(this);
+        // Add manaSnipe handling with all original logic
+        if (this.mana > 0) {
+            this.abilityService.setManaEvent({
+                priority: this.attack,
+                callback: (trigger, abilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
+                    if (this.mana == 0) {
+                        return
+                    }
+                    if (this.kitsuneCheck()) {
+                        return;
+                    }
+                    // Get target using proper opponent logic
+                    const opponent = this.parent.opponent;
+                    const targetResp = opponent.getRandomPet([], false, true, false, this);
 
-        if (this.faint != null) {
-            this.abilityService.setFaintEvent(
-                {
-                    priority: this.attack,
-                    callback: this.faint.bind(this),
-                    pet: this 
-                }
-            )
+                    if (targetResp.pet == null) {
+                        return;
+                    }
+                    // Execute snipe with all original parameters
+                    this.snipePet(targetResp.pet, this.mana, targetResp.random, false, false, false, true);
+                    this.mana = 0;
+                },
+                pet: this,
+                triggerPet: this,
+                tieBreaker: Math.random()
+            });
         }
-        if (this.equipment?.equipmentClass == 'faint') {
-            this.abilityService.setFaintEvent(
-                {
-                    priority: -1, // ensures equipment faint ability occurs after pet faint abilities. Might need to be revisited
-                    callback: () => { 
-                        try {
-                            this.equipment.callback(this);
-                        } catch {
-                            // this is an acceptable failure. example is microbe faint ability happening before other faint abilities, overwriting the equipment which could cause this issue.
-                            console.warn('equipment callback failed', this.equipment)
-                        }
-                    },
-                    pet: this 
-                }
-            )
-        }
-
     }
 
     useDefenseEquipment(snipe=false) {
@@ -1929,8 +1015,7 @@ export abstract class Pet {
         }
         this.health = Math.min(Math.max(this.health + amt, 1), max);
 
-        this.abilityService.triggerFriendGainsHealthEvents(this.parent, this);
-        this.abilityService.executeFriendGainsHealthEvents();
+        this.abilityService.triggerFriendGainsHealthEvents(this);
     }
 
     dealDamage(pet: Pet, damage: number) {
@@ -1947,6 +1032,7 @@ export abstract class Pet {
             pet.increaseHealth(healthGain)
             pet.removePerk();
         }
+        let originalPetHealth = pet.health;
         pet.health -= damage;
         
         // Track who killed this pet
@@ -1956,37 +1042,15 @@ export abstract class Pet {
         if (damage>0) {
             pet.timesHurt++;
         }
-        // hurt ability
-        if (pet.hurt != null && damage > 0) {
-            this.abilityService.setHurtEvent({
-                callback: pet.hurt.bind(pet),
-                priority: pet.attack,
-                player: pet.parent,
-                callbackPet: this,
-                pet: pet 
-            })
-        }
-
         // knockout
-        if (pet.health < 1 && this.knockOut != null) {
-            this.abilityService.setKnockOutEvent({
-                callback: this.knockOut.bind(this),
-                priority: this.attack,
-                callbackPet: pet,
-                pet: this
-            })
+        if (pet.health < 1) {
+            this.abilityService.triggerKillEvents(this, pet);
         }
 
-        // friend hurt ability
+        // this hurt ability - new trigger system
         if (damage > 0) {
-            this.abilityService.triggerFriendHurtEvents(pet.parent, pet);
+            this.abilityService.triggerHurtEvents(pet, Math.min(originalPetHealth, damage));
         }
-
-        // enemy hurt ability
-        if (damage > 0) {
-            this.abilityService.triggerEnemyHurtEvents(this.parent, pet);
-        }
-
     }
 
     increaseExp(amt) {
@@ -1994,34 +1058,27 @@ export abstract class Pet {
         this.increaseAttack(amt);
         this.increaseHealth(amt);
         this.exp = Math.min(this.exp + amt, 5);
-        let timesLevelled = this.level - level; 
+        let timesLevelled = this.level - level;
         for (let i = 0; i < timesLevelled; i++) {
             this.logService.createLog({
                 message: `${this.name} leveled up to level ${this.level}.`,
                 type: 'ability',
                 player: this.parent
             });
-            this.abilityService.triggerLevelUpEvents(this.parent, this);
-            this.abilityService.triggerLevelUpEvents(this.parent.opponent, this);
+            this.abilityService.triggerLevelUpEvents(this);
+            //TO DO: THis needs change
             this.abilityService.executeFriendlyLevelUpToyEvents();
-            this.setAbilityUses();
+            this.resetAbilityUses();
         }
         for (let i = 0; i < Math.min(amt, 5); i++) {
-            this.abilityService.triggerFriendGainedExperienceEvents(this.parent, this);
+            this.abilityService.triggerFriendGainedExperienceEvents(this);
         } 
     }
 
     increaseMana(amt) {
         this.mana += amt;
         this.mana = Math.min(this.mana, 50);
-
-        if (this.gainedMana != null) {
-            this.abilityService.setGainManaEvents({
-                callback: this.gainedMana.bind(this),
-                priority: this.attack,
-                pet: this
-            });
-        }
+        this.abilityService.triggerManaGainedEvents(this);
     }
 
     givePetEquipment(equipment: Equipment, pandorasBoxLevel: number = 1) {
@@ -2059,8 +1116,7 @@ export abstract class Pet {
             }
             this.applyEquipment(equipment, pandorasBoxLevel);
 
-            this.abilityService.triggerFriendGainedAilmentEvents(this);
-            this.abilityService.triggerEnemyGainedAilmentEvents(this.parent.opponent.petArray, this);
+            this.abilityService.triggerAilmentGainEvents(this, equipment.name);
         } 
         // Handle standard equipment
         else {
@@ -2081,17 +1137,8 @@ export abstract class Pet {
                 this.applyEquipment(equipment, pandorasBoxLevel);
             }
             
-            this.abilityService.triggerGainedPerkEvents(this);
-            this.abilityService.triggerFriendGainedPerkEvents(this);
-            if (this.eatsFood) {
-                this.abilityService.setEatsFoodEvent({
-                    callback: this.eatsFood.bind(this),
-                    priority: this.attack,
-                    callbackPet: this,
-                    pet: this
-                })
-            }
-            this.abilityService.triggerFriendAteFoodEvents(this);    
+            this.abilityService.triggerPerkGainEvents(this, equipment.name);
+            this.abilityService.triggerFoodEvents(this, equipment.name)
         }
         
 
@@ -2103,7 +1150,8 @@ export abstract class Pet {
         }
         this.equipment = equipment;
         this.setEquipmentMultiplier(pandorasBoxLevel);
-        if (this.equipment.callback && this.equipment.equipmentClass != 'beforeStartOfBattle') {
+        this.removeAbility(undefined, 'Equipment');
+        if (this.equipment.callback) {
             this.equipment.callback(this);
         }
     }
@@ -2112,18 +1160,22 @@ export abstract class Pet {
         if (this.equipment == null) {
             return;
         }
-        
-        let wasAilment = this.equipment.equipmentClass == 'ailment-attack' || 
-                         this.equipment.equipmentClass == 'ailment-defense' || 
+
+        let wasAilment = this.equipment.equipmentClass == 'ailment-attack' ||
+                         this.equipment.equipmentClass == 'ailment-defense' ||
                          this.equipment.equipmentClass == 'ailment-other';
-        
+
         // Store the lost equipment before removing it
         this.lastLostEquipment = this.equipment;
+
+        // Remove equipment-based abilities from new system
+        this.removeAbility(undefined, 'Equipment');
+
         this.equipment = null;
-        
+
         // Only trigger friendLostPerk events for perks, not ailments
         if (!wasAilment) {
-            this.abilityService.triggerFriendLostPerkEvents(this);
+            this.abilityService.triggerPerkLossEvents(this, this.lastLostEquipment?.name);
         }
     }
 
@@ -2318,5 +1370,132 @@ export abstract class Pet {
 
     get minExpForLevel(): number {
         return this.level == 1 ? 0 : this.level == 2 ? 2 : 5;
+    }
+        //need to set when gave perk too
+    setAbilityEquipments() {
+        if (this.equipment?.name == 'Eggplant') {
+            this.equipment.callback(this);
+            this.eggplantTouched = true;
+        } else if (this.equipment?.callback) {
+            this.equipment.callback(this);
+        }
+    }
+
+    // New Ability System Methods
+
+    addAbility(ability: Ability): void {
+        this.abilityList.push(ability);
+    }
+
+    removeAbility(abilityName?: string, abilityType?: AbilityType): boolean {
+        const initialLength = this.abilityList.length;
+
+        this.abilityList = this.abilityList.filter(ability => {
+            if (abilityName && ability.name === abilityName) return false;
+            if (abilityType && ability.abilityType === abilityType) return false;
+            if (!abilityName && !abilityType) return false; // Remove all if no criteria
+            return true;
+        });
+
+        return this.abilityList.length < initialLength;
+    }
+
+    getAbilities(trigger?: AbilityTrigger, abilityType?: AbilityType): Ability[] {
+        return this.abilityList.filter(ability => {
+            if (trigger && !ability.matchesTrigger(trigger)) return false;
+            if (abilityType && ability.abilityType !== abilityType) return false;
+            return true;
+        });
+    }
+    getAbilitiesWithTrigger(trigger?: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): Ability[] {
+        return this.abilityList.filter(ability => {
+            if (trigger && !ability.matchesTrigger(trigger) || !ability.canUse()) return false;
+            if (abilityType && ability.abilityType !== abilityType) return false;
+            if (abilityName && ability.name !== abilityName) return false;
+            return true;
+        });
+    }
+    executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean, customParams?: any): void {
+        const matchingPetAbilities = this.getAbilitiesWithTrigger(trigger, 'Pet');
+        for (const ability of matchingPetAbilities) {
+            ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
+        }
+
+        const matchingEquipmentAbilities = this.getAbilitiesWithTrigger(trigger, 'Equipment');
+        for (const ability of matchingEquipmentAbilities) {
+            ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
+        }
+    }
+    activateAbilities(trigger: AbilityTrigger, gameApi: GameAPI, type: AbilityType, triggerPet?: Pet, customParams?: any): void {
+        const matchingAbilities = this.getAbilities(trigger, type);
+
+        // Execute abilities in order (maintains ability list order within pet)
+        for (const ability of matchingAbilities) {
+            ability.execute(gameApi, triggerPet, undefined, undefined, customParams);
+        }
+    }
+
+    copyAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): void {
+        const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
+        this.removeAbility(undefined, abilityType);
+        for (const ability of abilitiesToCopy) {
+            const copiedAbility = ability.copy(this);
+            if (copiedAbility == null) {
+                continue;
+            }
+            if (level) {
+                copiedAbility.abilityLevel = level;
+                copiedAbility.alwaysIgnorePetLevel = true;
+                copiedAbility.reset();
+            }
+            ability.native = false;
+            this.addAbility(copiedAbility);
+        }
+
+    }
+    gainAbilities(sourcePet: Pet, abilityType?: AbilityType, level?: number): void {
+        const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
+        for (const ability of abilitiesToCopy) {
+            const copiedAbility = ability.copy(this);
+            if (copiedAbility == null) {
+                continue;
+            }
+            if (level) {
+                copiedAbility.abilityLevel = level;
+                copiedAbility.alwaysIgnorePetLevel = true;
+                copiedAbility.reset();
+            }
+            ability.native = false;
+            this.addAbility(copiedAbility);
+        }
+    }
+
+    hasAbility(trigger: AbilityTrigger, abilityType?: AbilityType): boolean {
+        return this.getAbilities(trigger, abilityType).length > 0;
+    }
+
+    hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): boolean {
+        return this.getAbilitiesWithTrigger(trigger, abilityType, abilityName).length > 0;
+    }
+
+    isSellPet(): boolean {
+        let sellPets = [
+            'Beaver', 'Duck', 'Pig', 'Pillbug', 'Kiwi', 'Mouse', 'Frog', 'Bass', 'Tooth Billed Pigeon', 'Marmoset', 'Capybara', 'Platypus'
+        ];
+        if (sellPets.includes(this.name) || this.originalAbilityList.filter(ability => {
+            return ability.matchesTrigger('ThisSold') && ability.abilityType == 'Pet';
+        }).length > 0) {
+            return true;
+        }
+        return false;
+    }
+    isFaintPet(): boolean {
+
+        if (this.originalAbilityList.filter(ability => {
+            return (ability.matchesTrigger('ThisDied') || ability.matchesTrigger('BeforeThisDies') || ability.matchesTrigger('ThisKilled')) && ability.abilityType == 'Pet';
+        }).length > 0) {
+            return true;
+        }
+        return false;
     }
 }

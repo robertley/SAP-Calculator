@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { MammothAbility } from "../../../abilities/pets/turtle/tier-6/mammoth-ability.class";
 
 export class Mammoth extends Pet {
     name = "Mammoth";
@@ -11,27 +12,9 @@ export class Mammoth extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 12;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        let power = this.level * 2;
-        let targetResp = this.parent.getAll(false, this);
-        let targets = targetResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-
-        for (let pet of targets) {
-            pet.increaseAttack(power);
-            pet.increaseHealth(power);
-            this.logService.createLog({
-                message: `${this.name} gave ${pet.name} ${power} attack and ${power} health.`,
-                type: 'ability',
-                player: this.parent,
-                tiger: tiger,
-                pteranodon: pteranodon,
-                randomEvent: targetResp.random
-            })
-        }
-        super.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new MammothAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -40,8 +23,8 @@ export class Mammoth extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

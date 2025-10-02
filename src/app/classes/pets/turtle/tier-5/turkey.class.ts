@@ -6,6 +6,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TurkeyAbility } from "../../../abilities/pets/turtle/tier-5/turkey-ability.class";
 
 export class Turkey extends Pet {
     name = "Turkey";
@@ -13,27 +14,9 @@ export class Turkey extends Pet {
     pack: Pack = 'Turtle';
     attack = 3;
     health = 4;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let power: Power = {
-            attack: 3 * this.level,
-            health: 1 * this.level
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet
-        if (target == null) {
-            return;
-        }
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-
-        super.superFriendSummoned(gameApi, pet, tiger);
+    initAbilities(): void {
+        this.addAbility(new TurkeyAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -42,8 +25,8 @@ export class Turkey extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

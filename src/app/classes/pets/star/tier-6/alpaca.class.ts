@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { AlpacaAbility } from "../../../abilities/pets/star/tier-6/alpaca-ability.class";
 
 export class Alpaca extends Pet {
     name = "Alpaca";
@@ -11,28 +12,10 @@ export class Alpaca extends Pet {
     pack: Pack = 'Star';
     attack = 3;
     health = 7;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        if (pet instanceof Alpaca) {
-            return;
-        }
-        if (this.abilityUses >= this.maxAbilityUses) {
-            return;
-        }
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return
-        }
-        target.increaseExp(3);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} 3 exp.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
-        this.abilityUses++;
-        this.superFriendSummoned(gameApi, pet, tiger);
+
+    initAbilities(): void {
+        this.addAbility(new AlpacaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -41,12 +24,8 @@ export class Alpaca extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
-    }
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = this.level;
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

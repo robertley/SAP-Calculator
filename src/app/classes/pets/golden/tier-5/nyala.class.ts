@@ -1,11 +1,9 @@
-import { cloneDeep } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { NyalaAbility } from "../../../abilities/pets/golden/tier-5/nyala-ability.class";
 
 export class Nyala extends Pet {
     name = "Nyala";
@@ -13,9 +11,9 @@ export class Nyala extends Pet {
     pack: Pack = 'Golden';
     attack = 3;
     health = 4;
-    faint(gameApi?: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
-        this.parent.gainTrumpets(this.level * 8, this, pteranodon);
-        this.superFaint(gameApi, tiger);
+    initAbilities(): void {
+        this.addAbility(new NyalaAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -24,8 +22,8 @@ export class Nyala extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

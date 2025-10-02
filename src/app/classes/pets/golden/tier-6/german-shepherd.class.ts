@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GermanShepherdAbility } from "../../../abilities/pets/golden/tier-6/german-shepherd-ability.class";
 
 export class GermanShepherd extends Pet {
     name = "German Shepherd";
@@ -11,21 +11,9 @@ export class GermanShepherd extends Pet {
     pack: Pack = 'Golden';
     attack = 10;
     health = 6;
-    friendSummoned(gameApi: GameAPI, pet: Pet, tiger?: boolean): void {
-        let power = Math.floor(this.attack * this.level * .25);
-        let targetResp = this.parent.getSpecificPet(this, pet);
-        let target = targetResp.pet;
-        if (target == null) {
-            return;
-        }
-        target.increaseAttack(power);
-        this.logService.createLog({
-            message: `${this.name} gave ${target.name} ${power} attack.`,
-            type: 'ability',
-            player: this.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
+    initAbilities(): void {
+        this.addAbility(new GermanShepherdAbility(this, this.logService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -34,8 +22,8 @@ export class GermanShepherd extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

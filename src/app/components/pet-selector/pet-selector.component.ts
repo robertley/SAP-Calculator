@@ -32,6 +32,8 @@ export class PetSelectorComponent implements OnInit {
   @Input()
   mana: boolean;
   @Input()
+  triggersConsumed: boolean;
+  @Input()
   formGroup: FormGroup;
   @Input()
   customPacks: AbstractControl;//FormArray;
@@ -222,6 +224,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('mana').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('triggersConsumed').valueChanges.subscribe(() => { this.substitutePet(false) });
     this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
     this.formGroup.get('timesHurt').valueChanges.subscribe((value) => { this.setTimesHurt(value) });
   }
@@ -245,6 +248,7 @@ export class PetSelectorComponent implements OnInit {
         formValue.attack = null;
         formValue.health = null;
         formValue.mana = null;
+        formValue.triggersConsumed = null;
       }
       let equipment = formValue.equipment;
       if (equipment != null) {
@@ -259,6 +263,7 @@ export class PetSelectorComponent implements OnInit {
         this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
         this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
         this.formGroup.get('mana').setValue(pet.mana, {emitEvent: false});
+        this.formGroup.get('triggersConsumed').setValue(pet.triggersConsumed, {emitEvent: false});
       }
 
       if (this.formGroup.get('name').value == 'Behemoth') {
@@ -333,6 +338,7 @@ export class PetSelectorComponent implements OnInit {
     this.formGroup.get('exp').setValue(0, {emitEvent: false});
     this.formGroup.get('equipment').setValue(null, {emitEvent: false});
     this.formGroup.get('mana').setValue(0, {emitEvent: false});
+    this.formGroup.get('triggersConsumed').setValue(0, {emitEvent: false});
   }
 
   optionHidden(option: string) {
