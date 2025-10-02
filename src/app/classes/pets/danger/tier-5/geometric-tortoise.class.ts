@@ -11,16 +11,10 @@ export class GeometricTortoise extends Pet {
     pack: Pack = 'Danger';
     attack = 3;
     health = 10;
-    damageTakenList = [];
 
     initAbilities(): void {
         this.addAbility(new GeometricTortoiseAbility(this, this.logService));
         super.initAbilities();
-    }
-
-    dealDamage(target: Pet, amt: number): void {
-        this.damageTakenList.push(amt);
-        super.dealDamage(target, amt);
     }
 
     constructor(protected logService: LogService,

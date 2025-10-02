@@ -1250,7 +1250,7 @@ export class AbilityService {
             if (pet == pet.petBehind() || pet.petAhead) {
                 this.triggerAbility(pet, 'AdjacentFriendsHurt', hurtedPet, customParams);
             }
-            if (pet.position > hurtedPet.position) {
+            if (pet.position < hurtedPet.position) {
                 this.triggerAbility(pet, 'AnyoneBehindHurt', hurtedPet, customParams)
             }
         }

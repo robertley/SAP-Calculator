@@ -850,7 +850,8 @@ export abstract class Pet {
         this.swallowedPets = [];
         this.targettedFriends.clear();
         this.savedPosition = this.originalSavedPosition;
-        this.initAbilityUses(); // Resets both legacy and new ability system uses
+        this.abilityList = [...this.originalAbilityList];
+        this.initAbilityUses(); 
         //reset flags
         this.done = false;
         this.seenDead = false;
@@ -1031,6 +1032,7 @@ export abstract class Pet {
             pet.increaseHealth(healthGain)
             pet.removePerk();
         }
+        let originalPetHealth = pet.health;
         pet.health -= damage;
         
         // Track who killed this pet
@@ -1047,7 +1049,7 @@ export abstract class Pet {
 
         // this hurt ability - new trigger system
         if (damage > 0) {
-            this.abilityService.triggerHurtEvents(pet, damage);
+            this.abilityService.triggerHurtEvents(pet, Math.min(originalPetHealth, damage));
         }
     }
 

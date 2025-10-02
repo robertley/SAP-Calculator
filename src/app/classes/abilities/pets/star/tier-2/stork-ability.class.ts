@@ -31,19 +31,14 @@ export class StorkAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
 
-        let summonPetPool;
         let tier = Math.max(1, gameApi.previousShopTier - 1);
-        if (owner.parent == gameApi.player){
-            summonPetPool = gameApi.playerPetPool.get(tier);
-        } else {
-            summonPetPool = gameApi.opponentPetPool.get(tier);
-        }
+        let summonPetPool = this.petService.allPets.get(tier);
 
         let summonPetName = summonPetPool[Math.floor(Math.random() * summonPetPool.length)];
         let oldStork = gameApi.oldStork;
         let summonPet = this.petService.createPet({
             name: summonPetName,
-            attack: oldStork ? null : 3 * this.level,
+            attack: oldStork ? null : 2 * this.level,
             equipment: null,
             exp: owner.minExpForLevel,
             health: oldStork ? null : 2 * this.level,
