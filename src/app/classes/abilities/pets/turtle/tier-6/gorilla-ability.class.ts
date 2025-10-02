@@ -50,6 +50,11 @@ export class GorillaAbility extends Ability {
         this.triggerTigerExecution(context);
     }
 
+    reset(): void {
+        this.maxUses = this.level;
+        super.reset();
+    }
+    
     copy(newOwner: Pet): GorillaAbility {
         const newAbility = new GorillaAbility(newOwner, this.logService);
         // Update maxUses based on new owner's level

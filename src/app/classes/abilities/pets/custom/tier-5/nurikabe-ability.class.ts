@@ -1,8 +1,5 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
-
 export class NurikabeAbility extends Ability {
 
     constructor(owner: Pet) {
@@ -13,6 +10,7 @@ export class NurikabeAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
+            maxUses: owner.level,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -22,6 +20,10 @@ export class NurikabeAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
     }
 
+    reset(): void {
+        this.maxUses = this.level;
+        super.reset();
+    }
     copy(newOwner: Pet): NurikabeAbility {
         return new NurikabeAbility(newOwner);
     }

@@ -450,7 +450,7 @@ export class Player {
         }
         
         // Normal behavior
-        let pets = []
+        let pets: Pet[] = [];
         if (includeOpponent) {
             pets = [
                 ...this.petArray,
@@ -477,7 +477,7 @@ export class Player {
             }
             if (notFiftyFifty) {
                 pets = pets.filter((pet) => {
-                    return pet.health != 50 || pet.attack != 50 || pet.name == 'Behemoth';
+                    return pet.health != 50 || pet.attack != 50 || pet.hasTrigger(undefined, 'Pet', 'BehemothAbility') || pet.hasTrigger(undefined, 'Pet', 'GiantTortoiseAbility');
                 });
 
                 if (pets.length == 0) {
@@ -1300,7 +1300,7 @@ export class Player {
     getManticoreMult(): number[] {
         let mult = [];
         for (let pet of this.petArray) {
-            if (pet.name == 'Manticore') {
+            if (pet.hasTrigger(undefined, 'Pet', 'ManticoreAbility')) {
                 // let petBehind = pet.petBehind();
                 // if (petBehind == null) {
                 //     mult.push(pet.level + 1);
@@ -1308,7 +1308,11 @@ export class Player {
                 // if (petBehind != null && petBehind.name == 'Tiger') {
                 //     mult.push(petBehind.level + 1);
                 // }
-                mult.push(pet.level);
+                for (let ability of pet.abilityList) {
+                    if (ability.name == 'ManticoreAbility') {
+                        mult.push(ability.level);
+                    }
+                }
             }
         }
 

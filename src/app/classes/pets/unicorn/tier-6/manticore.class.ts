@@ -1,3 +1,4 @@
+import { ManticoreAbility } from "app/classes/abilities/pets/unicorn/tier-6/manticore-ability.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -12,6 +13,10 @@ export class Manticore extends Pet {
     pack: Pack = 'Unicorn';
     attack = 7;
     health = 4;
+
+    initAbilities(): void {
+        this.addAbility(new ManticoreAbility(this, this.logService, this.abilityService));
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -19,8 +24,8 @@ export class Manticore extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

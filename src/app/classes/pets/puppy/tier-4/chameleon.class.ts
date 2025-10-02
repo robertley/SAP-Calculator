@@ -32,11 +32,12 @@ export class Chameleon extends Pet {
         mana?: number,
         exp?: number,
         equipment?: Equipment,
+        triggersConsumed?: number,
         toyService?: ToyService,
         equipmentService?: EquipmentService) {
         super(logService, abilityService, parent);
         this.toyService = toyService;
         this.equipmentService = equipmentService;
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

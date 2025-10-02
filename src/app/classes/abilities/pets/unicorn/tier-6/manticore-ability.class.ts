@@ -24,8 +24,6 @@ export class ManticoreAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
-        this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): ManticoreAbility {

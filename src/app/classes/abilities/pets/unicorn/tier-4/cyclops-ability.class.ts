@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
@@ -41,22 +40,20 @@ export class CyclopsAbility extends Ability {
         });
         manaTarget.increaseMana(manaGain);
 
-        if (this.currentUses > this.level) {
-            this.triggerTigerExecution(context);
-            return;
+        if (this.currentUses < this.level) {
+            let expTargetResp = owner.parent.getSpecificPet(owner, triggerPet);
+            let expTarget = expTargetResp.pet;
+            this.logService.createLog({
+                message: `${owner.name} gave ${expTarget.name} 1 exp.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                randomEvent: expTargetResp.random
+            });
+    
+            expTarget.increaseExp(1);
         }
 
-        let expTargetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let expTarget = expTargetResp.pet;
-        this.logService.createLog({
-            message: `${owner.name} gave ${expTarget.name} 1 exp.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: expTargetResp.random
-        });
-
-        expTarget.increaseExp(1);
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }

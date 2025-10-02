@@ -30,9 +30,10 @@ export class SabertoothTiger extends Pet {
         mana?: number,
         exp?: number,
         equipment?: Equipment,
+        triggersConsumed?: number,
         timesHurt?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
         this.timesHurt = timesHurt ?? 0;
         this.originalTimesHurt = this.timesHurt;
     }

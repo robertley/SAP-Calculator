@@ -1,13 +1,9 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
 
 export class FanMusselAbility extends Ability {
-    private logService: LogService;
-    private abilityService: AbilityService;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+    constructor(owner: Pet) {
         super({
             name: 'FanMusselAbility',
             owner: owner,
@@ -15,12 +11,11 @@ export class FanMusselAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
+            maxUses: 2,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
         });
-        this.logService = logService;
-        this.abilityService = abilityService;
     }
 
     private executeAbility(context: AbilityContext): void {
@@ -29,6 +24,6 @@ export class FanMusselAbility extends Ability {
     }
 
     copy(newOwner: Pet): FanMusselAbility {
-        return new FanMusselAbility(newOwner, this.logService, this.abilityService);
+        return new FanMusselAbility(newOwner);
     }
 }

@@ -23,13 +23,8 @@ export class Rabbit extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
-    }
-
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 3;
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

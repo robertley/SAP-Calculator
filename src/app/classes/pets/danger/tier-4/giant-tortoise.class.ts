@@ -1,3 +1,4 @@
+import { GiantTortoiseAbility } from "app/classes/abilities/pets/danger/tier-4/giant-tortoise-ability.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
@@ -12,6 +13,9 @@ export class GiantTortoise extends Pet {
     attack = 4;
     health = 8;
 
+    initAbilities(): void {
+        this.addAbility(new GiantTortoiseAbility(this, this.logService, this.abilityService))
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -19,8 +23,8 @@ export class GiantTortoise extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

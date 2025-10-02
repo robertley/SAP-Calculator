@@ -45,6 +45,7 @@ export abstract class Pet {
     exp?: number = 0;
     equipment?: Equipment;
     mana: number = 0;
+    triggersConsumed: number = 0;
     //memories
     swallowedPets?: Pet[] = [];
     abominationSwallowedPet1?: string;
@@ -65,6 +66,7 @@ export abstract class Pet {
     originalHealth: number;
     originalAttack: number;
     originalMana: number;
+    originalTriggersConsumed: number;
     originalEquipment?: Equipment;
     originalExp?: number = 0;
     originalTimesHurt: number = 0;
@@ -85,7 +87,6 @@ export abstract class Pet {
     cherryTouched = false;
     //ability memory
     maxAbilityUses: number = null;
-    abilityUses: number = 0;
 
     // New ability system
     abilityList: Ability[] = [];
@@ -101,14 +102,16 @@ export abstract class Pet {
         this.parent = parent;
     }
 
-    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment) {
+    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment, triggersConsumed?: number) {
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
         this.mana = mana ?? this.mana;
+        this.triggersConsumed = triggersConsumed ?? this.triggersConsumed;
         this.originalHealth = this.health;
         this.originalAttack = this.attack;
         this.originalMana = this.mana;
+        this.originalTriggersConsumed = this.triggersConsumed;
         this.equipment = equipment;
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
@@ -120,7 +123,7 @@ export abstract class Pet {
     }
 
     initAbilities() {
-        this.setAbilityUses();
+        this.initAbilityUses();
         this.setAbilityEquipments();
     }
 
@@ -140,16 +143,23 @@ export abstract class Pet {
         return true;
     }
 
-    // overrwrite this method if maxAbilityUses is determined by level
-    setAbilityUses() {
-        this.abilityUses = 0;
-        // Reset usage counters for new ability system
-        this.abilityList.forEach(ability => ability.reset());
+    resetAbilityUses() {
+        // Set initialCurrentUses to 0 for level-up refresh, then reset
+        this.abilityList.forEach(ability => {
+            ability.reset();
+        });
     }
+    initAbilityUses() {
+        // Reset usage counters for new ability system
+        // Set initialCurrentUses to 0 for level-up refresh, then reset
+        this.abilityList.forEach(ability => {
+            ability.initUses();
+        });
+    }
+
 
     attackPet(pet: Pet,  jumpAttack: boolean = false, power?: number, random: boolean = false) {
         this.timesAttacked++;
-        pet.timesAttacked++;
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(), power);
         let attackEquipment = damageResp.attackEquipment;
         let defenseEquipment = damageResp.defenseEquipment;
@@ -272,11 +282,14 @@ export abstract class Pet {
             if (damageResp.nurikabe > 0) {
                 message += ` -${damageResp.nurikabe} (Nurikabe)`;
             }
-            if (damageResp.fairyBallReduction > 0) { 
+            if (damageResp.fairyBallReduction > 0) {
                 message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
             }
             if (damageResp.fanMusselReduction > 0) {
                 message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
+            }
+            if (damageResp.ghostKittenReduction > 0) {
+                message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
             }
             if (damageResp.mapleSyrupReduction > 0) {
                 message += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`;
@@ -339,26 +352,41 @@ export abstract class Pet {
                 damage *= totalMultiplier;
                 let fairyBallReduction = 0;
                 if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
-                    fairyBallReduction = pet.level * 2;
-                    damage = Math.max(1, damage - fairyBallReduction);
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FairyAbility') {
+                            fairyBallReduction += ability.level * 2;
+                            damage = Math.max(0, damage - ability.level * 2);
+                        }
+                    }
                 }
                 let nurikabe = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && pet.abilityUses < 3) {
-                    nurikabe = pet.level * 4;
-                    damage = Math.max(1, damage - nurikabe);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'NurikabeAbility') {
+                            nurikabe += ability.level * 4;
+                            damage = Math.max(0, damage - ability.level * 4);
+                            ability.currentUses++;
+                        }
+                    }
                 }
                 let fanMusselReduction = 0;
-                if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
-                    fanMusselReduction = pet.level * 1;
-                    damage = Math.max(1, damage - fanMusselReduction);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FanMusselAbility') {
+                            fanMusselReduction += ability.level * 1;
+                            damage = Math.max(0, damage - fanMusselReduction);
+                            ability.currentUses++;
+                        }
+                    }
                 }
-                let ghostKitten = pet.name == 'Ghost Kitten';
-                let ghostKittenMitigation = 1;
-                if (ghostKitten) {
-                    ghostKittenMitigation = pet.level * 3;
-                    damage = Math.max(1, damage - ghostKittenMitigation);
+                let ghostKittenReduction = 0;
+                if (pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'GhostKittenAbility') {
+                            ghostKittenReduction += ability.level * 3;
+                            damage = Math.max(0, damage - ghostKittenReduction);
+                        }
+                    }
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -378,8 +406,8 @@ export abstract class Pet {
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
                 }
-                if (ghostKitten) {
-                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
+                if (ghostKittenReduction > 0) {
+                    message += ` -${ghostKittenReduction} (Ghost Kitten)`;
                 }
                 message += ` (Crisp).`;
 
@@ -400,26 +428,41 @@ export abstract class Pet {
                 damage *= totalMultiplier;
                 let fairyBallReduction = 0;
                 if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
-                    fairyBallReduction = pet.level * 2;
-                    damage = Math.max(1, damage - fairyBallReduction);
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FairyAbility') {
+                            fairyBallReduction += ability.level * 2;
+                            damage = Math.max(0, damage - ability.level * 2);
+                        }
+                    }
                 }
                 let nurikabe = 0;
-                if (pet.name == 'Nurikabe' && pet.abilityUses < 3) {
-                    nurikabe = pet.level * 4;
-                    damage = Math.max(1, damage - nurikabe);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'NurikabeAbility') {
+                            nurikabe += ability.level * 4;
+                            damage = Math.max(0, damage - ability.level * 4);
+                            ability.currentUses++;
+                        }
+                    }
                 }
                 let fanMusselReduction = 0;
-                if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses) {
-                    fanMusselReduction = pet.level * 1;
-                    damage = Math.max(1, damage - fanMusselReduction);
-                    pet.abilityUses++;
+                if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'FanMusselAbility') {
+                            fanMusselReduction += ability.level * 1;
+                            damage = Math.max(0, damage - fanMusselReduction);
+                            ability.currentUses++;
+                        }
+                    }
                 }
-                let ghostKitten = pet.name == 'Ghost Kitten';
-                let ghostKittenMitigation = 1;
-                if (ghostKitten) {
-                    ghostKittenMitigation = pet.level * 3;
-                    damage = Math.max(1, damage - ghostKittenMitigation);
+                let ghostKittenReduction = 0;
+                if (pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
+                    for (let ability of pet.abilityList) {
+                        if (ability.name == 'GhostKittenAbility') {
+                            ghostKittenReduction += ability.level * 3;
+                            damage = Math.max(0, damage - ghostKittenReduction);
+                        }
+                    }
                 }
                 let message = `${pet.name} took ${damage} damage`;
                 if (manticoreMult.length > 0) {
@@ -439,8 +482,8 @@ export abstract class Pet {
                 if (fanMusselReduction > 0) {
                     message += ` -${fanMusselReduction} (Fan Mussel)`;
                 }
-                if (ghostKitten) {
-                    message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
+                if (ghostKittenReduction > 0) {
+                    message += ` -${ghostKittenReduction} (Ghost Kitten)`;
                 }
                 message += ` (Toasty).`;
 
@@ -487,12 +530,6 @@ export abstract class Pet {
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
-        let ghostKitten = pet.name == 'Ghost Kitten';
-        let ghostKittenMitigation = 0;
-        if (ghostKitten) {
-            ghostKittenMitigation = pet.level * 3;
-            damage = Math.max(1, damage - ghostKittenMitigation);
-        }
         this.dealDamage(pet, damage);
 
         let message = `${this.name} sniped ${pet.name} for ${damage}.`;
@@ -544,10 +581,6 @@ export abstract class Pet {
             message += ' (Mana)'
         }
 
-        if (ghostKitten) {
-            message += ` -${ghostKittenMitigation} (Ghost Kitten)`;
-        }
-
         if (pet.equipment?.name == 'Icky') {
             message += 'x2 (Icky)';
             if (pet.equipment.multiplier > 1) {
@@ -572,11 +605,14 @@ export abstract class Pet {
         if (damageResp.nurikabe > 0) {
             message += ` -${damageResp.nurikabe} (Nurikabe)`
         }
-        if (damageResp.fairyBallReduction > 0) { 
+        if (damageResp.fairyBallReduction > 0) {
             message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
         }
         if (damageResp.fanMusselReduction > 0) {
             message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`
+        }
+        if (damageResp.ghostKittenReduction > 0) {
+            message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`
         }
 
         this.logService.createLog({
@@ -600,6 +636,7 @@ export abstract class Pet {
             fairyBallReduction?: number,
             fanMusselReduction?: number,
             mapleSyrupReduction?: number,
+            ghostKittenReduction?: number,
         } {
         let attackMultiplier = this.equipment?.multiplier;
         let defenseMultiplier = pet.equipment?.multiplier;
@@ -739,25 +776,47 @@ export abstract class Pet {
         //T) DO: Change from name check/trigger check to how many ability check
         let fairyBallReduction = 0;
         if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
-            fairyBallReduction = pet.level * 2;
-            damage = Math.max(1, damage - fairyBallReduction);
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'FairyAbility') {
+                    fairyBallReduction += ability.level * 2;
+                    damage = Math.max(0, damage - ability.level * 2);        
+                }
+            }
         }
 
         let nurikabe = 0;
-        if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && pet.abilityUses < 3 && damage > 0) {
-            nurikabe = pet.level * 4;
-            damage = Math.max(1, damage - fairyBallReduction);
-            pet.abilityUses++;
+        if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'NurikabeAbility') {
+                    nurikabe = ability.level * 4;
+                    damage = Math.max(0, damage - nurikabe);
+                    ability.currentUses++;
+                }
+            }
         }
 
         let fanMusselReduction = 0;
-        if (pet.name == 'Fan Mussel' && pet.abilityUses < pet.maxAbilityUses && damage > 0) {
-            fanMusselReduction = pet.level * 1;
-            damage = Math.max(1, damage - fairyBallReduction);
-            pet.abilityUses++;
+        if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'FanMusselAbility') {
+                    fanMusselReduction += ability.level * 1;
+                    damage = Math.max(0, damage - fanMusselReduction);
+                    ability.currentUses++;
+                }
+            }
         }
 
-        
+        let ghostKittenReduction = 0;
+        if (snipe && pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'GhostKittenAbility') {
+                    ghostKittenReduction += ability.level * 3;
+                    damage = Math.max(0, damage - ghostKittenReduction);
+                }
+            }
+        }
+
+
         return {
             defenseEquipment: defenseEquipment,
             attackEquipment: attackEquipment,
@@ -767,6 +826,7 @@ export abstract class Pet {
             fairyBallReduction: fairyBallReduction,
             fanMusselReduction: fanMusselReduction,
             mapleSyrupReduction: mapleSyrupReduction,
+            ghostKittenReduction: ghostKittenReduction,
         }
     } 
 
@@ -776,6 +836,7 @@ export abstract class Pet {
         this.equipment = this.originalEquipment;
         this.lastLostEquipment = null;
         this.mana = this.originalMana;
+        this.triggersConsumed = this.originalTriggersConsumed;
         this.exp = this.originalExp;
         //clear memories
         this.timesHurt = this.originalTimesHurt;
@@ -789,7 +850,7 @@ export abstract class Pet {
         this.swallowedPets = [];
         this.targettedFriends.clear();
         this.savedPosition = this.originalSavedPosition;
-        this.setAbilityUses(); // Resets both legacy and new ability system uses
+        this.initAbilityUses(); // Resets both legacy and new ability system uses
         //reset flags
         this.done = false;
         this.seenDead = false;
@@ -806,8 +867,6 @@ export abstract class Pet {
             this.equipment.multiplier = 1;
             this.equipment.multiplierMessage = '';
         } 
-        // Reset abilities in new system
-        this.resetAbilities();      
     }
     jumpAttackPrep(target: Pet) {
         // Trigger and execute before attack abilities on jumping pet and target
@@ -1007,7 +1066,7 @@ export abstract class Pet {
             this.abilityService.triggerLevelUpEvents(this);
             //TO DO: THis needs change
             this.abilityService.executeFriendlyLevelUpToyEvents();
-            this.setAbilityUses();
+            this.resetAbilityUses();
         }
         for (let i = 0; i < Math.min(amt, 5); i++) {
             this.abilityService.triggerFriendGainedExperienceEvents(this);
@@ -1387,6 +1446,7 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
+            ability.native = false;
             this.addAbility(copiedAbility);
         }
 
@@ -1403,14 +1463,9 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
+            ability.native = false;
             this.addAbility(copiedAbility);
         }
-    }
-    resetAbilities(): void {
-        // Restore original ability list (preserves order)
-        this.abilityList = [...this.originalAbilityList];
-        // Reset usage counters for all abilities
-        this.abilityList.forEach(ability => ability.reset());
     }
 
     hasAbility(trigger: AbilityTrigger, abilityType?: AbilityType): boolean {

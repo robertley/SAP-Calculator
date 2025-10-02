@@ -26,9 +26,10 @@ export class Slime extends Pet {
         mana?: number,
         exp?: number,
         equipment?: Equipment,
+        triggersConsumed?: number,
         battlesFought?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
         this.battlesFought = battlesFought;
     }
 }

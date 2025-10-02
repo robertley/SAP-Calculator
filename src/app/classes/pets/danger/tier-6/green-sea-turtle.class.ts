@@ -17,11 +17,6 @@ export class GreenSeaTurtle extends Pet {
         super.initAbilities();
     }
 
-    setAbilityUses(): void {
-        super.setAbilityUses();
-        this.maxAbilityUses = 1; // 1 time per turn
-    }
-
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
@@ -29,8 +24,8 @@ export class GreenSeaTurtle extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }

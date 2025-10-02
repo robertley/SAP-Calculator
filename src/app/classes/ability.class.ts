@@ -30,13 +30,14 @@ export class Ability {
     public abilityType: AbilityType;
     public maxUses: number;
     public currentUses: number;
+    public initialCurrentUses: number;
     public abilityLevel: number;
     public condition?: AbilityCondition;
     public abilityFunction: AbilityFunction;
     public native: boolean;
     public ignoreRepeats: boolean;
     public alwaysIgnorePetLevel: boolean;
-    
+
     constructor(config: {
         name?: string;
         owner: Pet;
@@ -44,6 +45,7 @@ export class Ability {
         abilityType: AbilityType;
         maxUses?: number;
         abilitylevel?: number;
+        initialCurrentUses?: number;
         condition?: AbilityCondition;
         abilityFunction: AbilityFunction;
         native?: boolean;
@@ -55,7 +57,8 @@ export class Ability {
         this.triggers = config.triggers;
         this.abilityType = config.abilityType;
         this.maxUses = config.maxUses ?? -1; // -1 means unlimited
-        this.currentUses = 0;
+        this.initialCurrentUses = config.owner.triggersConsumed;
+        this.currentUses = this.initialCurrentUses;
         this.abilityLevel = config.abilitylevel ?? 1;
         this.condition = config.condition;
         this.abilityFunction = config.abilityFunction;
@@ -116,7 +119,7 @@ export class Ability {
             return false;
         }
 
-        if ((this.owner as any).petBehind && (this.owner as any).petBehind(true, true)?.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
+        if ((this.owner).petBehind(true, true) && (this.owner).petBehind(true, true)?.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
             return true;
         }
         return false;
@@ -134,7 +137,7 @@ export class Ability {
         let originalIgnorePetLevel = this.alwaysIgnorePetLevel;
 
         // Set ability to use Tiger's level
-        this.abilityLevel = (this.owner as any).petBehind(null, true).level;
+        this.abilityLevel = this.owner.petBehind(null, true).level;
         this.alwaysIgnorePetLevel = true;
 
         // Execute ability again with Tiger's level using updated context
@@ -151,6 +154,9 @@ export class Ability {
 
     reset(): void {
         this.currentUses = 0;
+    }
+    initUses(): void {
+        this.currentUses = this.initialCurrentUses;
     }
 
     copy(newOwner: Pet): Ability {

@@ -13,6 +13,7 @@ export class DarwinsFoxAbility extends Ability {
             triggers: ['FriendDied'],
             abilityType: 'Pet',
             native: true,
+            abilitylevel: owner.level,
             maxUses: owner.level,
             abilityFunction: (context) => {
                 this.executeAbility(context);

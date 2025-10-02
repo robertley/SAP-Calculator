@@ -14,6 +14,7 @@ export class TaitaThrushAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
+            maxUses: 3,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -24,10 +25,6 @@ export class TaitaThrushAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
 
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
-
-        if (owner.abilityUses >= owner.maxAbilityUses) {
-            return;
-        }
 
         let power = this.level; // 1/2/3 based on level
 
@@ -44,11 +41,7 @@ export class TaitaThrushAbility extends Ability {
                 tiger: tiger,
                 randomEvent: friendsResp.random
             });
-        }
-
-        owner.abilityUses++;
-
-        // Tiger system: trigger Tiger execution at the end
+        }        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 

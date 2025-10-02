@@ -67,19 +67,12 @@ export class CocoaBeanAbility extends Ability {
                 }
             }
 
-            // Copy private counters if they exist (for counter-based abilities)
-            if ((randomEnemy as any).attackCounter !== undefined) {
-                (transformedPet as any).attackCounter = (randomEnemy as any).attackCounter;
-            }
+            transformedPet.abilityCounter = randomEnemy.abilityCounter;
 
-            // Copy ability usage tracking
-            transformedPet.abilityUses = 0;
-            transformedPet.maxAbilityUses = randomEnemy.maxAbilityUses;
+            transformedPet.abilityCounter = 0;
 
-            if ((randomEnemy as any).hurtThisBattle !== undefined) {
-                (transformedPet as any).hurtThisBattle = (randomEnemy as any).hurtThisBattle;
-            }
-
+            transformedPet.timesHurt = (randomEnemy).timesHurt;
+            transformedPet.copyAbilities(randomEnemy, 'Pet');
             let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
             this.logService.createLog({
                 message: `${owner.name} transformed into ${transformedPet.name} (Cocoa Bean)${multiplierMessage}`,

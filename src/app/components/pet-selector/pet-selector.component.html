@@ -78,9 +78,22 @@
                 </optgroup>
             </select>
         </div>
-        <div class="col-12 d-flex justify-content-center" *ngIf="mana">
-            <input class="form-control select-mana" formControlName="mana" type="number" min="0" max="100">
-        </div>
+        <ng-container *ngIf="mana || triggersConsumed">
+            <div class="col-12" *ngIf="mana && !triggersConsumed">
+                <input class="form-control select-mana single-stat-input" formControlName="mana" type="number" min="0" max="100" placeholder="Mana">
+            </div>
+            <div class="col-12" *ngIf="!mana && triggersConsumed">
+                <input class="form-control select-triggers-consumed single-stat-input" formControlName="triggersConsumed" type="number" min="0" max="100" placeholder="Triggers Consumed">
+            </div>
+            <ng-container *ngIf="mana && triggersConsumed">
+                <div class="col-6">
+                    <input class="form-control select-mana" formControlName="mana" type="number" min="0" max="100" placeholder="Mana">
+                </div>
+                <div class="col-6">
+                    <input class="form-control select-triggers-consumed" formControlName="triggersConsumed" type="number" min="0" max="100" placeholder="Triggers Consumed">
+                </div>
+            </ng-container>
+        </ng-container>
         <div class="col-6">
             <input class="form-control select-attack" formControlName="attack" type="number" min="1" [max]="attackHealthMax">
         </div>

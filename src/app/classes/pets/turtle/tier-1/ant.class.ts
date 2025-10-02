@@ -13,9 +13,9 @@ export class Ant extends Pet {
     pack: Pack = 'Turtle';
     health = 2;
     attack = 2;
-    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment): void {
+    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment, triggersConsumed?: number): void {
         this.addAbility(new AntAbility(this, this.logService));
-        super.initPet(exp, health, attack, mana, equipment);
+        super.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
@@ -24,8 +24,8 @@ export class Ant extends Pet {
         attack?: number,
         mana?: number,
         exp?: number,
-        equipment?: Equipment) {
+        equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment);
+        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     }
 }
