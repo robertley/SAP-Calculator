@@ -332,9 +332,9 @@ export class Player {
             for (let i = slotWithSpace; i > slot; i--) {
                 this[`pet${i}`] = this[`pet${i-1}`];
             }
-            return;
+            return true;
         }
-
+        return false;
     }
     makeRoomForSlot(slot: number) {
         if (this.petArray.length == 5) {
@@ -1215,15 +1215,18 @@ export class Player {
         if (spaces > 0) {
             destination = Math.max(position - spaces, 0);
             if (this.getPet(destination) != null) {
-                this.pushForwardFromSlot(destination);
-            }          
+                if(!this.pushForwardFromSlot(destination)) {
+                    this.pushBackwardFromSlot(destination);
+                }          
+            }
             this.setPet(destination, pet);
-            
         }
         if (spaces < 0) {
             destination = Math.min(position - spaces, 4);
             if (this.getPet(destination) != null) {
-                this.pushBackwardFromSlot(destination);
+                if(!this.pushBackwardFromSlot(destination)) {
+                    this.pushForwardFromSlot(destination);
+                }
             }          
             this.setPet(destination, pet);
         }
@@ -1344,7 +1347,12 @@ export class Player {
         } else {
             // No space in front, move summoner backward and summon in old spot
             let oldPosition = summoner.position;
-            this.pushPet(summoner, -1);
+            let destination = Math.min(oldPosition + 1, 4);
+            summoner.parent[`pet${oldPosition}`] = null;
+            if (this.getPet(destination) != null) {
+                this.pushBackwardFromSlot(destination);
+            }   
+            this.setPet(destination, summoner);
             return this.summonPet(summonedPet, oldPosition, false, summoner);
         }
     }
@@ -1371,7 +1379,14 @@ export class Player {
         
         if (hasSpaceInFront) {
             // Move summoner forward and summon behind
-            this.pushPet(summoner, 1);
+            let player = summoner.parent;
+            let position = summoner.position;
+            player[`pet${position}`] = null;
+            let destination = Math.max(position - 1, 0);
+            if (this.getPet(destination) != null) {
+                this.pushForwardFromSlot(destination);
+            }
+            this.setPet(destination, summoner);
             return this.summonPet(summonedPet, summoner.position + 1, false, summoner);
         } else {
             // No space in front, summon directly behind (let makeRoomForSlot handle it)

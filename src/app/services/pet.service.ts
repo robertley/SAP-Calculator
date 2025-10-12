@@ -770,7 +770,8 @@ export class PetService {
             "Fairy Armadillo",
             "Fossa",
             "Elk",
-            "Sparrow"
+            "Sparrow",
+            'Siamese'
         ])
 
         this.starPackPets.set(5, [

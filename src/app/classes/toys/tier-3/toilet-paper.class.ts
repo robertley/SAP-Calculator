@@ -8,7 +8,7 @@ export class ToiletPaper extends Toy {
     tier = 3;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
-        let weakTargets = opponent.petArray.slice(0, this.level);
+        let weakTargets = opponent.petArray.filter(pet => pet.equipment?.name != 'Weak').slice(0, this.level);
         for (let pet of weakTargets) {
             pet.givePetEquipment(new Weak());
             this.logService.createLog({
