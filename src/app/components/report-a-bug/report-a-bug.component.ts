@@ -31,8 +31,8 @@ export class ReportABugComponent implements OnInit {
       return;
     }
 
-    // Clean the form data to remove circular references
-    let cleanedCode: string;
+    // Clean the form data to remove circular references and generate shareable link
+    let shareableLink: string;
     try {
       const rawValue = this.calcFormGroup.value;
       const cleanValue = cloneDeep(rawValue);
@@ -54,15 +54,19 @@ export class ReportABugComponent implements OnInit {
         }
       }
 
-      cleanedCode = JSON.stringify(cleanValue);
+      const calculatorStateString = JSON.stringify(cleanValue);
+      const encodedData = encodeURIComponent(calculatorStateString);
+
+      const baseUrl = window.location.origin + window.location.pathname;
+      shareableLink = `${baseUrl}?c=${encodedData}`;
     } catch (e) {
       console.error('Error creating bug report data:', e);
-      cleanedCode = 'Error: Could not serialize calculator state';
+      shareableLink = 'Error: Could not generate shareable link';
     }
 
     let message = {
       ...this.formGroup.value,
-      code: cleanedCode
+      link: shareableLink
     }
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     this.http.post('https://formspree.io/f/mgvzngzp',
