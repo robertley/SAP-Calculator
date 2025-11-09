@@ -34,7 +34,7 @@ export class FossaAbility extends Ability {
 
         const healthToRemove = this.level * rollAmount;
 
-        let targetResp = owner.parent.getFurthestUpPets(2, undefined, owner);
+        let targetResp = owner.parent.opponent.getFurthestUpPets(2, undefined, owner);
         let targets = targetResp.pets;
         if (targets.length == 0) {
             return;

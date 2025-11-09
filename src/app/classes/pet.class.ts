@@ -1049,7 +1049,7 @@ export abstract class Pet {
 
         // this hurt ability - new trigger system
         if (damage > 0) {
-            this.abilityService.triggerHurtEvents(pet, Math.min(originalPetHealth, damage));
+            this.abilityService.triggerHurtEvents(pet, damage);
         }
     }
 
