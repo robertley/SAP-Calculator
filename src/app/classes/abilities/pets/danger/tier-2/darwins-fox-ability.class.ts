@@ -10,7 +10,7 @@ export class DarwinsFoxAbility extends Ability {
         super({
             name: 'DarwinsFoxAbility',
             owner: owner,
-            triggers: ['FriendDied'],
+            triggers: ['EnemyHurt'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -24,10 +24,11 @@ export class DarwinsFoxAbility extends Ability {
 
     private executeAbility(context: AbilityContext): void {
         
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { gameApi, triggerPet, tiger, pteranodon } = context;
+        const owner = this.owner;
         // Find who killed the friend
-        if (triggerPet?.killedBy && triggerPet?.killedBy.alive) {
-            let targetResp = owner.parent.getSpecificPet(owner, triggerPet.killedBy);
+        if (triggerPet && triggerPet.alive) {
+            let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
             let target = targetResp.pet;
             if (!target) {
                 return;

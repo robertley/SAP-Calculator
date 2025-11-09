@@ -9,8 +9,8 @@ export class Salamander extends Pet {
     name = "Salamander";
     tier = 2;
     pack: Pack = 'Star';
-    attack = 2;
-    health = 4;
+    attack = 1;
+    health = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

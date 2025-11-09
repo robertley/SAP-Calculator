@@ -9,7 +9,7 @@ export class TasmanianDevil extends Pet {
     name = "Tasmanian Devil";
     tier = 4;
     pack: Pack = 'Danger';
-    attack = 5;
+    attack = 1;
     health = 5;
 
     initAbilities(): void {

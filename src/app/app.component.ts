@@ -824,7 +824,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.startBattle();
       //queque toy sob event
       this.initToys();
-
+      this.gameService.gameApi.FirstNonJumpAttackHappened = false;
       // // give all pets dazed equipment
       // for (let pet of this.player.petArray) {
       //   pet.equipment = new Dazed();
@@ -855,14 +855,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       //init sob
       this.abilityService.triggerStartBattleEvents();
       //add churro check
-      this.gameService.gameApi.isInStartOfBattleFlag = true;
       this.abilityService.executeStartBattleEvents();
       
       this.checkPetsAlive();
       do {
         this.abilityCycle();
       } while (this.abilityService.hasAbilityCycleEvents);
-      this.gameService.gameApi.isInStartOfBattleFlag = false;
       //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();
@@ -973,6 +971,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.pushPetsForwards();
     this.logService.printState(this.player, this.opponent);
+    this.gameService.gameApi.FirstNonJumpAttackHappened = true;
     //before attack phase 
     while (true) { 
       let originalPlayerAttackingPet = this.player.pet0;

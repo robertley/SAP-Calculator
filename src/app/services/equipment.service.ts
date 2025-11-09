@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Equipment } from "../classes/equipment.class";
 import { Garlic } from "../classes/equipment/turtle/garlic.class";
-import { Cake } from "../classes/equipment/turtle/cake.class";
+import { Cake } from "../classes/equipment/custom/cake.class";
 import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
 import { Steak } from "../classes/equipment/turtle/steak.class";
 import { Melon } from "../classes/equipment/turtle/melon.class";

@@ -10,7 +10,7 @@ export class Velociraptor extends Pet {
     tier = 6;
     pack: Pack = 'Star';
     attack = 3;
-    health = 2;
+    health = 6;
 
     initAbilities(): void {
         this.addAbility(new VelociraptorAbility(this, this.logService));

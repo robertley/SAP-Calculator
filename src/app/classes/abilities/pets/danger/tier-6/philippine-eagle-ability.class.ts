@@ -25,7 +25,7 @@ export class PhilippineEagleAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let targetResp = owner.parent.getRandomPet([owner], false, false, false, owner);
+        let targetResp = owner.parent.getRandomPet([], false, false, false, owner);
         let target = targetResp.pet;
         if (!target) {
             return;

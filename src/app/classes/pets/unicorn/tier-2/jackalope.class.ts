@@ -10,7 +10,7 @@ export class Jackalope extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 1;
-    health = 3;
+    health = 4;
 
     initAbilities(): void {
         this.addAbility(new JackalopeAbility(this, this.logService));

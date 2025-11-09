@@ -28,7 +28,7 @@ export class BanggaiCardinalfishAbility extends Ability {
         let attackReduction = this.level * 6; // 6/12/18 based on level
         let minimumAttack = 4;
 
-        let targetResp = owner.parent.getAll(true, owner); // includeOpponent = true
+        let targetResp = owner.parent.getAll(true, owner, true); 
         for (let targetPet of targetResp.pets) {
             let newAttack = Math.max(targetPet.attack - attackReduction, minimumAttack);
 

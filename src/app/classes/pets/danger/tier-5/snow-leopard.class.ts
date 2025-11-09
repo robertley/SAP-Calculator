@@ -10,7 +10,7 @@ export class SnowLeopard extends Pet {
     tier = 5;
     pack: Pack = 'Danger';
     attack = 3;
-    health = 2;
+    health = 5;
 
     initAbilities(): void {
         this.addAbility(new SnowLeopardAbility(this, this.logService));
