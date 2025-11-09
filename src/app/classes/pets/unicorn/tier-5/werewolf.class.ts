@@ -10,8 +10,8 @@ export class Werewolf extends Pet {
     name = "Werewolf";
     tier = 5;
     pack: Pack = 'Unicorn';
-    attack = 6;
-    health = 6;
+    attack = 7;
+    health = 7;
     initAbilities(): void {
         this.addAbility(new WerewolfAbility(this, this.logService));
         super.initAbilities();

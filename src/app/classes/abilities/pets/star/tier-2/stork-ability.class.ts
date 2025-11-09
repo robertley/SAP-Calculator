@@ -56,8 +56,6 @@ export class StorkAbility extends Ability {
                 randomEvent: true,
                 pteranodon: pteranodon
             });
-
-            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
 
         // Tiger system: trigger Tiger execution at the end

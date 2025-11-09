@@ -8,8 +8,8 @@ export class Worm extends Pet {
     name = "Worm";
     tier = 2;
     pack: Pack = 'Turtle';
-    health = 1;
-    attack = 3;
+    health = 4;
+    attack = 1;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

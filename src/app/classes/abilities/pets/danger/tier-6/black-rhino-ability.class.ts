@@ -10,7 +10,7 @@ export class BlackRhinoAbility extends Ability {
         super({
             name: 'BlackRhinoAbility',
             owner: owner,
-            triggers: ['EnemyAttacked8'],
+            triggers: ['EnemyAttacked7'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -28,7 +28,7 @@ export class BlackRhinoAbility extends Ability {
         let damage = 30; // Fixed 30 damage
 
         // Get all alive enemies and shuffle for random selection
-        let targetsResp = owner.parent.opponent.getRandomPets(owner.level, [], false, true, owner);
+        let targetsResp = owner.parent.opponent.getHighestHealthPets(owner.level, [], owner);
         let targets = targetsResp.pets;
         for (let target of targets) {
             owner.snipePet(target, damage, targetsResp.random, tiger);

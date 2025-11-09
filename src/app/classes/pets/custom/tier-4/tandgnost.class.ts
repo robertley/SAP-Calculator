@@ -9,7 +9,7 @@ import { TandgnostAbility } from "../../../abilities/pets/custom/tier-5/tandgnos
 
 export class Tandgnost extends Pet {
     name = "Tandgnost";
-    tier = 5;
+    tier = 4;
     pack: Pack = 'Custom';
     attack = 5;
     health = 5;

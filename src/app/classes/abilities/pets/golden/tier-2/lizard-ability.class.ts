@@ -42,7 +42,6 @@ export class LizardAbility extends Ability {
                 tiger: tiger,
                 randomEvent: summonResult.randomEvent
             });
-            this.abilityService.triggerFriendSummonedEvents(lizardTail);
         }
 
         // Tiger system: trigger Tiger execution at the end

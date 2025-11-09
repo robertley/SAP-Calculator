@@ -27,7 +27,7 @@ export class PieAbility extends Ability {
         const owner = this.owner;
 
         const attackGain = 4 * this.equipment.multiplier;
-        const healthGain = 4 * this.equipment.multiplier;
+        const healthGain = 3 * this.equipment.multiplier;
         owner.increaseAttack(attackGain);
         owner.increaseHealth(healthGain);
 

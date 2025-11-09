@@ -10,7 +10,7 @@ export class DarwinsFox extends Pet {
     tier = 2;
     pack: Pack = 'Danger';
     attack = 3;
-    health = 3;
+    health = 4;
     initAbilities(): void {
         this.addAbility(new DarwinsFoxAbility(this, this.logService));
         super.initAbilities();

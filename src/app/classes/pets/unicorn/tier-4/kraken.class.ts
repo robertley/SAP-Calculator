@@ -10,7 +10,7 @@ export class Kraken extends Pet {
     name = "Kraken";
     tier = 4;
     pack: Pack = 'Unicorn';
-    attack = 4;
+    attack = 5;
     health = 7;
     initAbilities(): void {
         this.addAbility(new KrakenAbility(this, this.logService));

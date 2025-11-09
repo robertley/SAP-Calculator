@@ -3,7 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { GiantOtterStartOfBattleAbility } from "../../../abilities/pets/danger/tier-4/giant-otter-start-of-battle-ability.class";
+import { GiantOtterAbility } from "../../../abilities/pets/danger/tier-4/giant-otter-ability.class";
 export class GiantOtter extends Pet {
     name = "Giant Otter";
     tier = 4;
@@ -14,7 +14,7 @@ export class GiantOtter extends Pet {
     // Track which friends received buffs and how much
     private buffedFriends: Map<Pet, {attack: number, health: number}> = new Map();
     initAbilities(): void {
-        this.addAbility(new GiantOtterStartOfBattleAbility(this, this.logService));
+        this.addAbility(new GiantOtterAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

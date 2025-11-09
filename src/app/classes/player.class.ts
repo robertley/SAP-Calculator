@@ -772,6 +772,35 @@ export class Player {
         };
     }
 
+    getHighestAttackPets(count: number, excludePets?: Pet[], callingPet?: Pet): {pets: Pet[], random: boolean} {
+        // Check for Silly ailment - return random living pets
+        if (callingPet && this.hasSilly(callingPet)) {
+            let petsResp = this.getRandomLivingPets(count);
+            return { pets: petsResp.pets, random: petsResp.random };
+        }
+        
+        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
+
+        if (availablePets.length === 0) {
+            return { pets: [], random: false };
+        }
+
+        // Shuffle first, then sort by attack (highest first)
+        let shuffledPets = shuffle(availablePets);
+        shuffledPets.sort((a, b) => b.attack - a.attack);
+        let targets = shuffledPets.slice(0, count);
+        // Check if the (count+1)th pet has the same attack as the count-th pet
+        let isRandom = false;
+        if (targets.length === count && shuffledPets.length > count) {
+            let lastSelectedAttack = targets[count - 1].attack;
+            let nextPetAttack = shuffledPets[count].attack;
+            if (lastSelectedAttack === nextPetAttack) {
+                isRandom = true;
+            }
+        }
+        return { pets: targets, random: isRandom };
+    }
+
     /**
      * Returns lowest attack pet. Returns a random pet of lowest attack if there are multiple.
      * @param excludePet

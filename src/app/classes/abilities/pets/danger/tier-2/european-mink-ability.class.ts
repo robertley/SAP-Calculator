@@ -14,7 +14,7 @@ export class EuropeanMinkAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: 3,
+            maxUses: 5,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }

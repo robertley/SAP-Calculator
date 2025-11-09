@@ -33,7 +33,6 @@ export class MacaqueAbility extends Ability {
 
         let result = owner.parent.summonPetInFront(owner, monke);
         if (result.success) {
-            this.abilityService.triggerFriendSummonedEvents(monke);
             let message = `${owner.name} spawned Orangutang ${monke.attack}/${monke.health}`;
             if (owner.equipment != null) {
                 message += ` with ${owner.equipment.name}`;

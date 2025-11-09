@@ -100,9 +100,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.7.4';
+  version = '0.8.0';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '10/12/2025';
+  lastUpdated = '11/09/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -719,8 +719,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   abilityCycle() {
     // First, add all existing events from type-specific arrays to global queue
     //this.abilityService.migrateExistingEventsToQueue();
-    
     // Process all events in priority order until queue is empty
+    this.emptyFrontSpaceCheck(); // This might add more events too
     while (this.abilityService.hasGlobalEvents) {
       const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
       
@@ -824,7 +824,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.startBattle();
       //queque toy sob event
       this.initToys();
-
+      this.gameService.gameApi.FirstNonJumpAttackHappened = false;
       // // give all pets dazed equipment
       // for (let pet of this.player.petArray) {
       //   pet.equipment = new Dazed();
@@ -855,14 +855,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       //init sob
       this.abilityService.triggerStartBattleEvents();
       //add churro check
-      this.gameService.gameApi.isInStartOfBattleFlag = true;
       this.abilityService.executeStartBattleEvents();
       
       this.checkPetsAlive();
       do {
         this.abilityCycle();
       } while (this.abilityService.hasAbilityCycleEvents);
-      this.gameService.gameApi.isInStartOfBattleFlag = false;
       //loop until battle ends
       while (this.battleStarted) {
         this.nextTurn();
@@ -973,6 +971,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     this.pushPetsForwards();
     this.logService.printState(this.player, this.opponent);
+    this.gameService.gameApi.FirstNonJumpAttackHappened = true;
     //before attack phase 
     while (true) { 
       let originalPlayerAttackingPet = this.player.pet0;

@@ -9,7 +9,7 @@ export class WhiteTruffle extends Equipment {
 
     callback = (pet: Pet) => {
         // Add White Truffle ability using dedicated ability class
-        pet.addAbility(new WhiteTruffleAbility(pet, this));
+        pet.addAbility(new WhiteTruffleAbility(pet, this, this.logService));
     }
 
     constructor(

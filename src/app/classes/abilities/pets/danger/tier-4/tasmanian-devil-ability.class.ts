@@ -2,6 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Spooked } from "app/classes/equipment/ailments/spooked.class";
 
 export class TasmanianDevilAbility extends Ability {
     private logService: LogService;
@@ -25,16 +26,21 @@ export class TasmanianDevilAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let percentage = this.level * 0.5; // 50%/100%/150%
         let targetResp = owner.parent.opponent.getLowestAttackPet(undefined, owner);
 
         if (targetResp.pet && targetResp.pet.alive) {
-            let damage = Math.floor(owner.attack * percentage);
+            let spookedAilment = new Spooked();
+            spookedAilment.multiplier += this.level*5 - 1;
+            this.logService.createLog({
+                message: `${owner.name} gave ${targetResp.pet.name} ${spookedAilment.multiplier}x Spooked.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                randomEvent: targetResp.random
+            });
+            targetResp.pet.givePetEquipment(spookedAilment);
             owner.jumpAttackPrep(targetResp.pet)
-            if (owner.transformed && owner.transformedInto) {
-                damage = Math.floor(owner.transformedInto.attack * percentage);
-            }
-            owner.jumpAttack(targetResp.pet, tiger, damage, targetResp.random);
+            owner.jumpAttack(targetResp.pet, tiger, null, targetResp.random);
         }
 
         // Tiger system: trigger Tiger execution at the end

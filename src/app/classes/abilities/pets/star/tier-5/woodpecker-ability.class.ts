@@ -32,7 +32,11 @@ export class WoodpeckerAbility extends Ability {
             let targetsResp = owner.parent.nearestPetsAhead(2, owner, null, true);
             let targets = targetsResp.pets;
             for (let target of targets) {
-                owner.snipePet(target, 2, targetsResp.random, tiger);
+                let power = 1;
+                if (target.parent != this.owner.parent) {
+                    power *= 2;
+                }
+                owner.snipePet(target, power, targetsResp.random, tiger);
             }
         }
 

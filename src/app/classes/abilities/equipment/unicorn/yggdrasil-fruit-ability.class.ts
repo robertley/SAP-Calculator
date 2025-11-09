@@ -1,7 +1,7 @@
 import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
-import { Tandgnost } from "../../../pets/custom/tier-5/tandgnost.class";
+import { Tandgnost } from "../../../pets/custom/tier-4/tandgnost.class";
 import { Tandgrisner } from "../../../pets/custom/tier-5/tandgrisner.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";

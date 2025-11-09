@@ -11,7 +11,7 @@ export class Vulture extends Pet {
     tier = 5;
     pack: Pack = 'Star';
     attack = 4;
-    health = 3;
+    health = 5;
 
     initAbilities(): void {
         this.addAbility(new VultureAbility(this, this.logService, this.abilityService));

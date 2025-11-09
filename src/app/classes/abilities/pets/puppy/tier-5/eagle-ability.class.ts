@@ -59,8 +59,6 @@ export class EagleAbility extends Ability {
                 randomEvent: true,
                 pteranodon: pteranodon
             });
-
-            this.abilityService.triggerFriendSummonedEvents(pet);
         }
 
         // Tiger system: trigger Tiger execution at the end

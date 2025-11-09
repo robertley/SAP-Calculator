@@ -71,8 +71,6 @@ export class MoleAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(mole);
         }
 
         // Tiger system: trigger Tiger execution at the end

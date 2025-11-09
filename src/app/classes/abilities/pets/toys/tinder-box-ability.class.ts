@@ -38,18 +38,17 @@ export class TinderBoxAbility extends Ability {
 
         let giantEyesDog = new GiantEyesDog(this.logService, this.abilityService, owner.parent, power.health, power.attack, 0, exp);
         let message = `Tinder Box Ability spawned Giant Eyes Dog (${power.attack}/${power.health}).`;
-        this.logService.createLog(
-            {
-                message: message,
-                type: "ability",
-                player: owner.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
 
-        if (owner.parent.summonPet(giantEyesDog, 0)) {
-            this.abilityService.triggerFriendSummonedEvents(giantEyesDog);
+        if (owner.parent.summonPet(giantEyesDog, 0).success) {
+            this.logService.createLog(
+                {
+                    message: message,
+                    type: "ability",
+                    player: owner.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )        
         }
 
         this.used = true;

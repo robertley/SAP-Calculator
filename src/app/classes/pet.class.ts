@@ -1023,7 +1023,7 @@ export abstract class Pet {
             return;
         }
         if (damage >= pet.health && pet.equipment?.name == 'Bok Choy') {
-            let healthGain = 4 * pet.equipment.multiplier;
+            let healthGain = 3 * pet.equipment.multiplier;
             this.logService.createLog({
                 message: `${pet.name} gained ${healthGain} health (Bok Choy) ${pet.equipment.multiplierMessage} `,
                 type: 'equipment',
@@ -1049,7 +1049,7 @@ export abstract class Pet {
 
         // this hurt ability - new trigger system
         if (damage > 0) {
-            this.abilityService.triggerHurtEvents(pet, Math.min(originalPetHealth, damage));
+            this.abilityService.triggerHurtEvents(pet, damage);
         }
     }
 
@@ -1156,7 +1156,7 @@ export abstract class Pet {
         }
     }
 
-    removePerk() {
+    removePerk(perkOnly: boolean = false) {
         if (this.equipment == null) {
             return;
         }
@@ -1165,6 +1165,9 @@ export abstract class Pet {
                          this.equipment.equipmentClass == 'ailment-defense' ||
                          this.equipment.equipmentClass == 'ailment-other';
 
+        if (perkOnly && wasAilment) {
+            return;
+        }
         // Store the lost equipment before removing it
         this.lastLostEquipment = this.equipment;
 

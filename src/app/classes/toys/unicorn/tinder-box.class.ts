@@ -20,17 +20,16 @@ export class TinderBox extends Toy {
 
         let giantEyesDog = new GiantEyesDog(this.logService, this.abilityService, this.parent, power.health, power.attack, 0, exp);
         let message = `${this.name} spawned Giant Eyes Dog (${power.attack}/${power.health}).`;
-        this.logService.createLog(
-            {
-                message: message,
-                type: "ability",
-                player: this.parent,
-                puma: puma
-            }
-        )
 
-        if (this.parent.summonPet(giantEyesDog, 0)) {
-            this.abilityService.triggerFriendSummonedEvents(giantEyesDog);
+        if (this.parent.summonPet(giantEyesDog, 0).success) {
+            this.logService.createLog(
+                {
+                    message: message,
+                    type: "ability",
+                    player: this.parent,
+                    puma: puma
+                }
+            )        
         }
 
         this.used = true;
