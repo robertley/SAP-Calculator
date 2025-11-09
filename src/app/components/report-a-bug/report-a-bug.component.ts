@@ -57,7 +57,7 @@ export class ReportABugComponent implements OnInit {
       const calculatorStateString = JSON.stringify(cleanValue);
       const encodedData = encodeURIComponent(calculatorStateString);
 
-      const baseUrl = window.location.origin + window.location.pathname;
+      const baseUrl = 'http://localhost:4200/';
       shareableLink = `${baseUrl}?c=${encodedData}`;
     } catch (e) {
       console.error('Error creating bug report data:', e);

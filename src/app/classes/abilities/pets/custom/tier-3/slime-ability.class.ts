@@ -48,8 +48,6 @@ export class SlimeAbility extends Ability {
                         randomEvent: summonResult.randomEvent
                     }
                 )
-
-                this.abilityService.triggerFriendSummonedEvents(slime);
             }
         }
 

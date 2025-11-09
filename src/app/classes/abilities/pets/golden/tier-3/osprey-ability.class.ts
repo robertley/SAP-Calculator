@@ -44,7 +44,6 @@ export class OspreyAbility extends Ability {
                         randomEvent: summonResult.randomEvent
                     }
                 )
-                this.abilityService.triggerFriendSummonedEvents(groundhog);
             }
         }
 

@@ -42,8 +42,6 @@ export class HirolaAbility extends Ability {
                     pteranodon: pteranodon,
                     randomEvent: summonResult.randomEvent
                 });
-
-                this.abilityService.triggerFriendSummonedEvents(wolf);
             }
         }
 

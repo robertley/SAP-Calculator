@@ -43,8 +43,6 @@ export class SlugAbility extends Ability {
                     randomEvent: summonResult.randomEvent
                 }
             )
-
-            this.abilityService.triggerFriendSummonedEvents(slug);
         }
 
         // Tiger system: trigger Tiger execution at the end

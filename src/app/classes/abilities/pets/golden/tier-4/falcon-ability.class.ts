@@ -54,8 +54,6 @@ export class FalconAbility extends Ability {
                     randomEvent: summonResult.randomEvent
                 }
             )
-
-            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
 
         // Tiger system: trigger Tiger execution at the end

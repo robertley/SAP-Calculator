@@ -42,7 +42,6 @@ export class OrchidMantisAbility extends Ability {
                 tiger: tiger,
                 randomEvent: result.randomEvent
             });
-            this.abilityService.triggerFriendSummonedEvents(mantis);
         }
 
         // Tiger system: trigger Tiger execution at the end

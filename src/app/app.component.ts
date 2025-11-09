@@ -100,9 +100,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.7.4';
+  version = '0.8.0';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '10/12/2025';
+  lastUpdated = '11/09/2025';
 
   title = 'sap-calculator';
   player: Player;
@@ -719,8 +719,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   abilityCycle() {
     // First, add all existing events from type-specific arrays to global queue
     //this.abilityService.migrateExistingEventsToQueue();
-    
     // Process all events in priority order until queue is empty
+    this.emptyFrontSpaceCheck(); // This might add more events too
     while (this.abilityService.hasGlobalEvents) {
       const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
       

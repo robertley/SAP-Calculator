@@ -903,11 +903,6 @@ export class AbilityService {
         }
     } 
 
-    // Legacy method - use triggerSummonEvents instead
-    triggerFriendSummonedEvents(summonedPet: Pet) {
-        this.triggerSummonEvents(summonedPet);
-    }
-
     triggerFaintEvents(faintedPet: Pet) {
         // Check friends
         for (let pet of faintedPet.parent.petArray) {

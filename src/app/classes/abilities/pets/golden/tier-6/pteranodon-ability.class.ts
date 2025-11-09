@@ -58,7 +58,6 @@ export class PteranodonAbility extends Ability {
                 tiger: tiger,
                 pteranodon: pteranodon
             });
-            this.abilityService.triggerFriendSummonedEvents(summonPet);
         }
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

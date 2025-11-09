@@ -43,8 +43,6 @@ export class BelugaSturgeonAbility extends Ability {
                     tiger: tiger,
                     pteranodon: pteranodon
                 });
-
-                this.abilityService.triggerFriendSummonedEvents(dolphin);
             }
         }
 
