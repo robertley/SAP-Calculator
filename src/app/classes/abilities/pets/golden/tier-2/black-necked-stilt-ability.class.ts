@@ -22,11 +22,12 @@ export class BlackNeckedStiltAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
+
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let power = this.level * 2;
-        owner.parent.gainTrumpets(power, owner, pteranodon);
+        const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+        trumpetTargetResp.player.gainTrumpets(power, owner, pteranodon, undefined, undefined, trumpetTargetResp.random);
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

@@ -1274,9 +1274,21 @@ export class Player {
 
     }
 
-    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number, cherry?: boolean) {
+    resolveTrumpetGainTarget(callingPet?: Pet): { player: Player, random: boolean } {
+        if (callingPet && this.hasSilly(callingPet)) {
+            // Silly randomly chooses which team gains trumpets
+            let targetPlayer = Math.random() < 0.5 ? this : this.opponent;
+            return { player: targetPlayer, random: true };
+        }
+        return { player: this, random: false };
+    }
+
+    gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number, cherry?: boolean, randomEvent?: boolean) {
         this.trumpets = Math.min(50, this.trumpets += amt);
-        let message = `${pet.name} gained ${amt} trumpets. (${this.trumpets})`;
+        const opponentGain = pet instanceof Pet && pet.parent != null && pet.parent !== this;
+        let message = opponentGain
+            ? `${pet.name} gave opponent ${amt} trumpets. (${this.trumpets})`
+            : `${pet.name} gained ${amt} trumpets. (${this.trumpets})`;
         if (cherry) {
             message += ` (Cherry)`;
         }
@@ -1285,7 +1297,8 @@ export class Player {
             type: 'trumpets',
             player: this,
             pteranodon: pteranodon,
-            pantherMultiplier: pantherMultiplier
+            pantherMultiplier: pantherMultiplier,
+            randomEvent: randomEvent
         })
     }
 

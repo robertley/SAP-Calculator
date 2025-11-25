@@ -25,9 +25,10 @@ export class SaigaAntelopeAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
+
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
-        owner.parent.gainTrumpets(this.level * 3, owner);
+        const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+        trumpetTargetResp.player.gainTrumpets(this.level * 3, owner, pteranodon, undefined, undefined, trumpetTargetResp.random);
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

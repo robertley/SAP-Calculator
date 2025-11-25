@@ -38,7 +38,8 @@ export class PlatybelodonAbility extends Ability {
         let trumpetsGained = this.level * Math.min(rollAmount, 8);
 
         if (trumpetsGained > 0) {
-            owner.parent.gainTrumpets(trumpetsGained, owner, tiger);
+            const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+            trumpetTargetResp.player.gainTrumpets(trumpetsGained, owner, tiger, undefined, undefined, trumpetTargetResp.random);
         }
 
         // Tiger system: trigger Tiger execution at the end
