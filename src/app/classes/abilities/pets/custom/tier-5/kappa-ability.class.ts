@@ -61,8 +61,6 @@ export class KappaAbility extends Ability {
                         randomEvent: true
                     }
                 )
-
-                this.abilityService.triggerFriendSummonedEvents(spawn);
             }
 
             let opponentSpawnPet = this.petService.createPet(
@@ -88,8 +86,6 @@ export class KappaAbility extends Ability {
                         randomEvent: true
                     }
                 )
-
-                this.abilityService.triggerFriendSummonedEvents(opponentSpawnPet);
             }
         }
 

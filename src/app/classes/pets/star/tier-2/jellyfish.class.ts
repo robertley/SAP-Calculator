@@ -10,7 +10,7 @@ export class Jellyfish extends Pet {
     name = "Jellyfish";
     tier = 2;
     pack: Pack = 'Star';
-    attack = 2;
+    attack = 3;
     health = 3;
 
     initAbilities(): void {

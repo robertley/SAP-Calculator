@@ -97,7 +97,7 @@ export class AbilityService {
         //'FriendTransformedInBattle': 14.5,
         //'BeforeFriendTransformed': 14.5,
         //Speical trigger for Giant Otter
-        'Removed': 14,
+        'BeforeFirstNonJumpAttack': 14,
         // Experience events
         //'FriendGainedExperience': 15,
         'FriendGainedExp': 15,
@@ -220,6 +220,7 @@ export class AbilityService {
         'FriendAttacked5': 17,
         'EnemyAttacked2': 17,
         'EnemyAttacked5': 17,
+        'EnemyAttacked7': 17,
         'EnemyAttacked8': 17,
         'EnemyAttacked10': 17,
 
@@ -603,6 +604,16 @@ export class AbilityService {
                 };
                 this.beforeFriendAttacksEvents.push(abilityEvent);
             }
+            if (pet.hasTrigger('BeforeFirstNonJumpAttack')) {
+                const abilityEvent: AbilityEvent = {
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
+                    priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
+                    pet: pet,
+                    abilityType: 'BeforeFirstNonJumpAttack',
+                    tieBreaker: Math.random()
+                };
+                this.beforeFriendAttacksEvents.push(abilityEvent);
+            }
             if (pet == AttackingPet) {
                 if (pet.hasTrigger('BeforeThisAttacks')) {
                     const abilityEvent: AbilityEvent = {
@@ -811,6 +822,12 @@ export class AbilityService {
                     this.triggerAbility(pet, 'EnemyAttacked5');
                 }
             }
+            if (pet.hasTrigger('EnemyAttacked7')) {
+                pet.abilityCounter++;
+                if (pet.abilityCounter % 7 == 0) {
+                    this.triggerAbility(pet, 'EnemyAttacked7');
+                }
+            }
             if (pet.hasTrigger('EnemyAttacked8')) {
                 pet.abilityCounter++;
                 if (pet.abilityCounter % 8 == 0) {
@@ -896,11 +913,6 @@ export class AbilityService {
         }
     } 
 
-    // Legacy method - use triggerSummonEvents instead
-    triggerFriendSummonedEvents(summonedPet: Pet) {
-        this.triggerSummonEvents(summonedPet);
-    }
-
     triggerFaintEvents(faintedPet: Pet) {
         // Check friends
         for (let pet of faintedPet.parent.petArray) {
@@ -928,7 +940,6 @@ export class AbilityService {
             this.triggerAbility(pet, 'PetDied', faintedPet);
             if (pet == faintedPet) {
                 this.triggerAbility(pet, 'ThisDied', faintedPet);
-                this.triggerAbility(pet, 'Removed');
             } else {
                 this.triggerAbility(pet, 'FriendDied', faintedPet);
                 // Counter checks - first verify pet has the counter ability
@@ -1130,7 +1141,6 @@ export class AbilityService {
     // transform events handler
     triggerTransformEvents(originalPet: Pet) {
         const transformedPet = originalPet.transformedInto;
-        this.triggerAbility(originalPet, 'Removed')
         // Check friends
         for (let pet of transformedPet.parent.petArray) {
             if (pet == transformedPet) {

@@ -56,8 +56,6 @@ export class TapirAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: true
             });
-
-            this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
 
         // Tiger system: trigger Tiger execution at the end

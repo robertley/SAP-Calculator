@@ -2,6 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Power } from "app/interfaces/power.interface";
 
 export class MonkeyFacedBatAbility extends Ability {
     private logService: LogService;
@@ -14,7 +15,7 @@ export class MonkeyFacedBatAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: 3,
+            maxUses: 2,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -30,12 +31,12 @@ export class MonkeyFacedBatAbility extends Ability {
 
         for (let target of targetsResp.pets) {
             if (target != null) {
-                let power = this.level; // 1/2/3 based on level
-                target.increaseAttack(power);
-                target.increaseHealth(power);
+                let power: Power = {attack: this.level, health: this.level * 2};
+                target.increaseAttack(power.attack);
+                target.increaseHealth(power.health);
 
                 this.logService.createLog({
-                    message: `${owner.name} gave ${target.name} ${power} attack and ${power} health`,
+                    message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health`,
                     type: 'ability',
                     player: owner.parent,
                     randomEvent: targetsResp.random,

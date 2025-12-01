@@ -117,6 +117,8 @@ export class ChameleonAbility extends Ability {
         if (abilityFactory) {
             try {
                 const toyAbility = abilityFactory();
+                toyAbility.abilityLevel = Math.min(owner.parent.toy.level, this.level);
+                toyAbility.alwaysIgnorePetLevel = true;
                 owner.addAbility(toyAbility);
                 this.logService.createLog({
                     message: `${this.name} gained ${toyName} ability!`,

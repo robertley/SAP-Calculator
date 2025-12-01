@@ -10,7 +10,7 @@ export class KakapoAbility extends Ability {
         super({
             name: 'KakapoAbility',
             owner: owner,
-            triggers: ['FriendTransformed'],
+            triggers: ['BeforeThisDies'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -26,23 +26,22 @@ export class KakapoAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let target = targetResp.pet;
-
-        if (!target) {
+        let targetResp = owner.parent.opponent.getHighestAttackPets(this.level, undefined, owner);
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
             return;
         }
-
-        let expGain = 3;
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} +${expGain} experience.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
-
-        target.increaseExp(expGain);
+        for (let target of targets) {
+            target.parent.pushPetToBack(target);
+            target.removePerk(true);
+            this.logService.createLog({
+                message: `${owner.name} pushed ${target.name} to the back, and removed its Perk.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                randomEvent: targetResp.random
+            });
+        }
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

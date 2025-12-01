@@ -10,7 +10,7 @@ export class ManaHound extends Pet {
     name = "Mana Hound";
     tier = 3;
     pack: Pack = 'Unicorn';
-    attack = 5;
+    attack = 4;
     health = 3;
     initAbilities(): void {
         this.addAbility(new ManaHoundAbility(this, this.logService));

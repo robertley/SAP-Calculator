@@ -55,8 +55,6 @@ export class BelugaWhaleAbility extends Ability {
                 pteranodon: pteranodon,
                 randomEvent: summonResult.randomEvent
             });
-
-            this.abilityService.triggerFriendSummonedEvents(spawnPet);
         }
 
         // Tiger system: trigger Tiger execution at the end

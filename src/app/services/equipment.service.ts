@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Equipment } from "../classes/equipment.class";
 import { Garlic } from "../classes/equipment/turtle/garlic.class";
-import { Cake } from "../classes/equipment/turtle/cake.class";
+import { Cake } from "../classes/equipment/custom/cake.class";
 import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
 import { Steak } from "../classes/equipment/turtle/steak.class";
 import { Melon } from "../classes/equipment/turtle/melon.class";
@@ -76,6 +76,7 @@ import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
 import { Tasty } from "../classes/equipment/ailments/tasty.class";
+import { Silly } from "../classes/equipment/ailments/silly.class";
 import { YggdrasilFruit } from "../classes/equipment/unicorn/yggdrasil-fruit.class";
 import { HoneydewMelon } from "../classes/equipment/golden/honeydew-melon.class";
 import { MapleSyrup, MapleSyrupAttack } from "../classes/equipment/golden/maple-syrup.class";
@@ -186,6 +187,7 @@ export class EquipmentService {
         map.set('Spooked', new Spooked());
         map.set('Weak', new Weak());
         map.set('Tasty', new Tasty(this.logService));
+        map.set('Silly', new Silly());
 
         return map;
     }

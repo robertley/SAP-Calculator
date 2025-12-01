@@ -9,7 +9,7 @@ export class Squirrel extends Pet {
     name = "Squirrel";
     tier = 4;
     pack: Pack = 'Turtle';
-    attack = 2;
+    attack = 3;
     health = 5;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

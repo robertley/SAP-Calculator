@@ -43,18 +43,16 @@ export class NutcrakerAbility extends Ability {
         let power = this.level * 6;
         let salmon = new SalmonOfKnowledge(this.logService, this.abilityService, owner.parent, power, power, null, 0);
 
-        this.logService.createLog(
-            {
-                message: `Nutcraker Ability spawned Salmon of Knowledge (${power}/${power})`,
-                type: "ability",
-                player: owner.parent,
-                tiger: tiger,
-                pteranodon: pteranodon
-            }
-        )
-
-        if (owner.parent.summonPet(salmon, 0)) {
-            this.abilityService.triggerFriendSummonedEvents(salmon);
+        if (owner.parent.summonPet(salmon, 0).success) {
+            this.logService.createLog(
+                {
+                    message: `Nutcraker Ability spawned Salmon of Knowledge (${power}/${power})`,
+                    type: "ability",
+                    player: owner.parent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                }
+            )        
         }
 
         this.used = true;

@@ -450,7 +450,7 @@ import { Boitata } from "../classes/pets/custom/tier-5/boitata.class";
 import { Kappa } from "../classes/pets/custom/tier-5/kappa.class";
 import { Mimic } from "../classes/pets/custom/tier-5/mimic.class";
 import { Nurikabe } from "../classes/pets/custom/tier-5/nurikabe.class";
-import { Tandgnost } from "../classes/pets/custom/tier-5/tandgnost.class";
+import { Tandgnost } from "../classes/pets/custom/tier-4/tandgnost.class";
 import { Tandgrisner } from "../classes/pets/custom/tier-5/tandgrisner.class";
 import { GreatOne } from "../classes/pets/custom/tier-6/great-one.class";
 import { Leviathan } from "../classes/pets/custom/tier-6/leviathan.class";
@@ -770,7 +770,8 @@ export class PetService {
             "Fairy Armadillo",
             "Fossa",
             "Elk",
-            "Sparrow"
+            "Sparrow",
+            'Siamese'
         ])
 
         this.starPackPets.set(5, [
@@ -1078,7 +1079,8 @@ export class PetService {
             "Red Lipped Batfish",
             "Platybelodon",
             "Eel",
-            "Crow"
+            "Crow",
+            "Tandgnost",
         ]);
         this.customPackPets.set(5, [
             "Poodle",
@@ -1091,7 +1093,6 @@ export class PetService {
             "Kappa",
             "Mimic",
             "Nurikabe",
-            "Tandgnost",
             "Tandgrisner",
             "Fox",
             "Lion",

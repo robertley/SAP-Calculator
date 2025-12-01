@@ -33,14 +33,14 @@ export class ManaHoundAbility extends Ability {
             rollAmount = gameApi.opponentRollAmount;
         }
 
-        rollAmount = Math.min(rollAmount, 5);
+        rollAmount = Math.min(rollAmount, 3);
 
         let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
         if (targetsAheadResp.pets.length === 0) {
             return;
         }
         let target = targetsAheadResp.pets[0];
-        let manaAmt = rollAmount * this.level;
+        let manaAmt = rollAmount * this.level * 2;
         this.logService.createLog({
             message: `${owner.name} gave ${target.name} ${manaAmt} mana.`,
             type: 'ability',

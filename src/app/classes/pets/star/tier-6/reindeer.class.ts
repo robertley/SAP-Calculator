@@ -9,8 +9,8 @@ export class Reindeer extends Pet {
     name = "Reindeer";
     tier = 6;
     pack: Pack = 'Star';
-    attack = 6;
-    health = 4;
+    attack = 9;
+    health = 6;
     initAbilities(): void {
         this.addAbility(new ReindeerAbility(this, this.logService));
         super.initAbilities();

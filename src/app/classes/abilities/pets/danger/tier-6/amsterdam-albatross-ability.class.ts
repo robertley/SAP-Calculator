@@ -14,7 +14,7 @@ export class AmsterdamAlbatrossAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: 3,
+            maxUses: 2,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -26,7 +26,7 @@ export class AmsterdamAlbatrossAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let attackGain = 1 * owner.level;
+        let attackGain = 2 * owner.level;
         let healthGain = 2 * owner.level;
         let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
         let target = targetResp.pet;

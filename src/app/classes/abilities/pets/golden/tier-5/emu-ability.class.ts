@@ -51,7 +51,7 @@ export class EmuAbility extends Ability {
             return;
         }
         let target = targetsAheadResp.pets[0];
-        owner.parent.pushPet(target, 4);
+        owner.parent.pushPetToFront(target);
         this.logService.createLog({
             message: `${owner.name} pushed ${target.name} to the front.`,
             type: "ability",

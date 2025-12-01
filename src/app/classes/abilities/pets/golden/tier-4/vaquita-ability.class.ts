@@ -22,11 +22,12 @@ export class VaquitaAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
+
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let trumpetAmt = Math.max(Math.floor((this.level * .5) * owner.parent.trumpets), this.level * 4);
-        owner.parent.gainTrumpets(trumpetAmt, owner, pteranodon);
+        const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+        trumpetTargetResp.player.gainTrumpets(trumpetAmt, owner, pteranodon, undefined, undefined, trumpetTargetResp.random);
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

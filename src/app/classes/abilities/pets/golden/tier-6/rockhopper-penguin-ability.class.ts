@@ -50,7 +50,8 @@ export class RockhopperPenguinAbility extends Ability {
         owner.parent.pushPetToFront(target, true);
 
         const trumpetsGained = this.level * 12;
-        owner.parent.gainTrumpets(trumpetsGained, owner);
+        const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+        trumpetTargetResp.player.gainTrumpets(trumpetsGained, owner, pteranodon, undefined, undefined, trumpetTargetResp.random);
 
         // Note: superEmptyFrontSpace call removed as it's protected and not accessible from ability
 

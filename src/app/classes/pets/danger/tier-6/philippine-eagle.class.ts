@@ -9,8 +9,8 @@ export class PhilippineEagle extends Pet {
     name = "Philippine Eagle";
     tier = 6;
     pack: Pack = 'Danger';
-    attack = 6;
-    health = 5;
+    attack = 7;
+    health = 6;
 
     initAbilities(): void {
         this.addAbility(new PhilippineEagleAbility(this, this.logService));

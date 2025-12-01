@@ -14,6 +14,7 @@ export class MalayTapirAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
+            maxUses: 3,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }

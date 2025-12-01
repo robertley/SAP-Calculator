@@ -37,13 +37,13 @@ export class IriomoteCatAbility extends Ability {
             name: randomPetName,
             attack: owner.attack,
             health: owner.health,
-            exp: owner.exp,
+            exp: 0,
             equipment: owner.equipment,
             mana: owner.mana
         }, owner.parent);
 
         this.logService.createLog({
-            message: `${owner.name} transformed into a ${randomPetName}.`,
+            message: `${owner.name} transformed into a ${randomPetName} (Level ${transformedPet.level}).`,
             type: 'ability',
             player: owner.parent,
             randomEvent: true

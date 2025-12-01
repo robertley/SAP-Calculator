@@ -9,7 +9,7 @@ export class SurgeonFish extends Pet {
     name = "Surgeon Fish";
     tier = 3;
     pack: Pack = 'Golden';
-    attack = 4;
+    attack = 3;
     health = 3;
     initAbilities(): void {
         this.addAbility(new SurgeonFishAbility(this, this.logService));

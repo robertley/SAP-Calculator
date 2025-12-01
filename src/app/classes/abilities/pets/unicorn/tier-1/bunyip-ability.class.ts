@@ -32,7 +32,7 @@ export class BunyipAbility extends Ability {
         } else {
             rollAmount = gameApi.opponentRollAmount;
         }
-        rollAmount = Math.min(this.level * 2, rollAmount);
+        rollAmount = Math.min(2, rollAmount) * this.level;
         let targetResp = owner.parent.getThis(owner);
         let target = targetResp.pet;
         if (target == null) {

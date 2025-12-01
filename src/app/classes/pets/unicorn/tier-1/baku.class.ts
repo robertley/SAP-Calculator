@@ -9,7 +9,7 @@ export class Baku extends Pet {
     tier = 1;
     pack: Pack = 'Unicorn';
     attack = 1;
-    health = 3;
+    health = 4;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

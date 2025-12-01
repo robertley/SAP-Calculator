@@ -9,8 +9,8 @@ export class Koala extends Pet {
     name = "Koala";
     tier = 2;
     pack: Pack = 'Star';
-    attack = 3;
-    health = 3;
+    attack = 4;
+    health = 2;
     initAbilities(): void {
         this.addAbility(new KoalaAbility(this, this.logService));
         super.initAbilities();
