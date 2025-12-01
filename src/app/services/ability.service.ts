@@ -912,11 +912,11 @@ export class AbilityService {
                 this.triggerAbility(pet, 'KitsuneFriendDies', faintedPet);
             }
             // Check for FriendAheadDied (pet ahead of the dying pet)
-            if (pet == faintedPet.petAhead) {
+            if (pet == faintedPet.petBehind(null, true)) {
                 this.triggerAbility(pet, 'FriendAheadDied', faintedPet);
             }
             // Check for AdjacentFriendsDie
-            if (pet == faintedPet.petAhead || pet == faintedPet.petBehind()) {
+            if (pet== faintedPet.petBehind(null, true) || pet.petBehind(null, true) == faintedPet) {
                 this.triggerAbility(pet, 'AdjacentFriendsDie', faintedPet);
             }
         }
