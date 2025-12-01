@@ -51,7 +51,7 @@ export class ChameleonAbility extends Ability {
             condition: (context: AbilityContext) => {
                 const { triggerPet, tiger, pteranodon } = context;
                 const owner = this.owner;
-                return owner.parent.toy != null;
+                return owner.parent.toy != null && owner.parent.toy.interactsWithPets !== false;
             },
             abilityFunction: (context) => {
                 this.executeAbility(context);
@@ -65,6 +65,9 @@ export class ChameleonAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
         const { gameApi, triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
+        if (owner.parent.toy?.interactsWithPets === false) {
+            return;
+        }
         owner.removeAbility(undefined, 'Pet');
         this.addToyAbility(owner.parent.toy.name);
 

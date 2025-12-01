@@ -12,4 +12,5 @@ export interface AbilityEvent {
     abilityType?: AbilityTrigger; // Track which ability type this event belongs to
     tieBreaker?: number; // Random number for tie breaking
     customParams?: any; // Custom parameters to pass through context
+    sourceType?: 'toy' | 'pet' | 'equipment' | 'other'; // Used for deterministic ordering when priorities tie
 }

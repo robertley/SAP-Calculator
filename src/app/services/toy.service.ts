@@ -45,6 +45,7 @@ import { Excalibur } from "../classes/toys/unicorn/excalibur.class";
 import { HolyGrail } from "../classes/toys/unicorn/holy-grail.class";
 import { Nutcracker } from "../classes/toys/unicorn/nutcraker.class";
 import { TinderBox } from "../classes/toys/unicorn/tinder-box.class";
+import { WackyToy } from "../classes/toys/wacky-toy.class";
 
 @Injectable({
     providedIn: 'root'
@@ -111,7 +112,8 @@ export class ToyService {
             'Red Cape',
             'Rose Bud',
             'Excalibur',
-            'Holy Grail'
+            'Holy Grail',
+            'Wacky Toy'
         ])
     }
 
@@ -190,6 +192,8 @@ export class ToyService {
                 return new Excalibur(this.logService, this, parent, level);
             case 'Holy Grail':
                 return new HolyGrail(this.logService, this, parent, level);
+            case 'Wacky Toy':
+                return new WackyToy(this.logService, this, parent, level);
         }
     }
 

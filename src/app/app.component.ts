@@ -898,7 +898,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.triggerEmptyFrontSpaceToyEvents(this.opponent);
     }
 
-    this.abilityService.executeEmptyFrontSpaceToyEvents();
   }
 
   startBattle() {

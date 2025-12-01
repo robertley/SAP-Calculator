@@ -18,6 +18,9 @@ export class Toy {
     tier: number;
     used: boolean = false;
     triggers = 0;
+    // When false, toy abilities do not react to pet-driven triggers (friend summon/faint/level/jump, etc.)
+    interactsWithPets: boolean = true;
+    isWacky?: boolean;
     constructor(protected logService: LogService, protected toyService: ToyService, parent: Player, level: number) {
         this.parent = parent;
         this.level = level;

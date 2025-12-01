@@ -1066,8 +1066,6 @@ export abstract class Pet {
                 player: this.parent
             });
             this.abilityService.triggerLevelUpEvents(this);
-            //TO DO: THis needs change
-            this.abilityService.executeFriendlyLevelUpToyEvents();
             this.resetAbilityUses();
         }
         for (let i = 0; i < Math.min(amt, 5); i++) {

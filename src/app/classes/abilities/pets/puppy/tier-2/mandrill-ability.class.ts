@@ -28,6 +28,11 @@ export class MandrillAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
+        if (owner.parent.toy?.interactsWithPets === false) {
+            this.triggerTigerExecution(context);
+            return;
+        }
+
         let toyLevelMax = this.level * 2;
         if (owner.parent.toy?.tier <= toyLevelMax) {
             owner.parent.breakToy();
