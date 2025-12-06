@@ -13,7 +13,8 @@ export class Behemoth extends Pet {
     health = 12;
 
     initAbilities(): void {
-        this.addAbility(new BehemothAbility(this, this.logService, this.abilityService))
+        this.addAbility(new BehemothAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

@@ -14,7 +14,8 @@ export class GiantTortoise extends Pet {
     health = 8;
 
     initAbilities(): void {
-        this.addAbility(new GiantTortoiseAbility(this, this.logService, this.abilityService))
+        this.addAbility(new GiantTortoiseAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
