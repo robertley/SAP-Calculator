@@ -16,6 +16,7 @@ export class Manticore extends Pet {
 
     initAbilities(): void {
         this.addAbility(new ManticoreAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
