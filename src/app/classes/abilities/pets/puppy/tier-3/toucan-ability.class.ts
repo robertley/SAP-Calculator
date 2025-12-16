@@ -32,20 +32,25 @@ export class ToucanAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let newEquipmentInstance: Equipment;
+        // Determine which equipment to copy
+        let equipmentName: string;
         if (owner.equipment == null || owner.equipment.tier > 5) {
-            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get('Egg');
+            equipmentName = 'Egg';
         } else {
-            newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(owner.equipment.name);
+            equipmentName = owner.equipment.name;
         }
 
-        let excludePets = owner.parent.getPetsWithEquipment(newEquipmentInstance.name);
+        let excludePets = owner.parent.getPetsWithEquipment(equipmentName);
         let targetsResp = owner.parent.nearestPetsBehind(this.level, owner, excludePets);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;
         }
         for (let target of targets) {
+            const newEquipmentInstance = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(equipmentName);
+            if (!newEquipmentInstance) {
+                continue;
+            }
             this.logService.createLog({
                 message: `${owner.name} gave ${target.name} ${newEquipmentInstance.name}`,
                 type: 'ability',

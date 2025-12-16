@@ -246,8 +246,16 @@ export class Player {
     }
 
     transformPet(originalPet: Pet, newPet: Pet): void {
-        this.setPet(originalPet.position, newPet);
-        let isPlayer = this == this.gameService.gameApi.player;
+        // Make sure transforms happen on the pet's actual team (important when Silly retargets to opponents)
+        const targetPlayer = originalPet?.parent ?? this;
+
+        // Adopt the new pet onto the target team if it was created for a different parent
+        if (newPet.parent !== targetPlayer) {
+            newPet.parent = targetPlayer;
+        }
+
+        targetPlayer.setPet(originalPet.position, newPet);
+        const isPlayer = targetPlayer === this.gameService.gameApi.player;
         if (isPlayer) {
             this.gameService.gameApi.playerTransformationAmount++;
         } else {
@@ -257,7 +265,7 @@ export class Player {
         originalPet.transformed = true;
         originalPet.transformedInto = newPet;
         newPet.applyEquipment(newPet.equipment);
-        this.abilityService.triggerTransformEvents(originalPet)
+        targetPlayer.abilityService.triggerTransformEvents(originalPet)
     }
     /** 
      *@returns if able to make space
@@ -557,6 +565,34 @@ export class Player {
     getRandomLivingPets(amt: number): {pets: Pet[], random: boolean} {
         let pets = [];
         let excludePets: Pet[] = [];
+
+        // Build the candidate pool the same way getRandomLivingPet does so we can signal randomness correctly
+        const getCandidatePool = (excludes: Pet[]) => {
+            let candidates = [...this.petArray, ...this.opponent.petArray];
+
+            let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => !excludes?.includes(pet));
+            let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => !excludes?.includes(pet));
+            let opponentDonutPets = this.opponent.getPetsWithEquipment('Donut').filter((pet) => !excludes?.includes(pet));
+            let opponentBlueberryPets = this.opponent.getPetsWithEquipment('Blueberry').filter((pet) => !excludes?.includes(pet));
+            
+            if (donutPets.length > 0 || blueberryPets.length > 0 || opponentDonutPets.length > 0 || opponentBlueberryPets.length > 0) {
+                candidates = [
+                    ...donutPets,
+                    ...blueberryPets,
+                    ...opponentDonutPets,
+                    ...opponentBlueberryPets
+                ];
+            }
+
+            return candidates.filter((pet) => {
+                let keep = true;
+                if (excludes)
+                    keep = !excludes.includes(pet);
+                return keep && pet.health > 0;
+            });
+        };
+
+        const initialCandidateCount = getCandidatePool(excludePets).length;
         
         for (let i = 0; i < amt; i++) {
             let petResp = this.getRandomLivingPet(excludePets);
@@ -567,7 +603,8 @@ export class Player {
             pets.push(petResp.pet);
         }
         
-        return { pets: pets, random: pets.length > amt };
+        // Mark random when the eligible pool had more options than what was returned
+        return { pets: pets, random: initialCandidateCount > pets.length };
     }
 
     /**

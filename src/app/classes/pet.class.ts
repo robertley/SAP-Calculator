@@ -1104,7 +1104,7 @@ export abstract class Pet {
                 }
                 return;
             }
-            if (this.equipment instanceof WhiteOkra) {
+            else if (this.equipment instanceof WhiteOkra) {
                 this.logService.createLog({
                     message: `${this.name} blocked ${equipment.name}. (White Okra)`,
                     type: 'equipment',
@@ -1113,6 +1113,9 @@ export abstract class Pet {
                 // Remove equipment immediately after blocking ailment
                 this.removePerk();
                 return;
+            } 
+            else if (this.equipment != null) {
+                this.removePerk(true);
             }
             this.applyEquipment(equipment, pandorasBoxLevel);
 
