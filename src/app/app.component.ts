@@ -100,15 +100,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.8.1';
+  version = '0.8.2';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '12/06/2025';
+  lastUpdated = '12/15/2025';
 
   title = 'sap-calculator';
   player: Player;
   opponent: Player;
-  maxTurns = 50; // TODO: Find official max turns in a battle
+  maxTurns = 71; // TODO: Find official max turns in a battle
   turns = 0;
+  attackCount = 0;
   battleStarted = false;
 
   simulationBattleAmt = 1000;
@@ -941,9 +942,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     let finished = false;
     let winner = null;
     this.turns++;
-    if (this.turns >= this.maxTurns) {
-      finished = true;
-    }
 
     if (!this.player.alive() && this.opponent.alive()) {
       winner = this.opponent;
@@ -959,6 +957,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     if (!this.opponent.alive() && !this.player.alive()) {
       // draw
+      this.draw++;
+      finished = true;
+    } else if (this.turns >= this.maxTurns) {
       this.draw++;
       finished = true;
     }
