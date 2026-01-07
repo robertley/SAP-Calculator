@@ -8,7 +8,7 @@ import { FlyingSquirrelAbility } from "../../../abilities/pets/puppy/tier-3/flyi
 export class FlyingSquirrel extends Pet {
     name = "Flying Squirrel";
     tier = 3;
-    pack: Pack = 'Puppy';
+    pack: Pack = 'Custom';
     attack = 3;
     health = 3;
     initAbilities(): void {

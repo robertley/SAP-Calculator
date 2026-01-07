@@ -12,7 +12,7 @@ export class ToyGun extends Toy {
             if (targetResp.pet == null) {
                 return;
             }
-            this.toyService.snipePet(targetResp.pet, 6, this.parent, this.name, false, puma);
+            this.toyService.snipePet(targetResp.pet, 5, this.parent, this.name, false, puma);
         }
     }
 }

@@ -8,8 +8,8 @@ export class StingRay extends Pet {
     name = "Sting Ray";
     tier = 5;
     pack: Pack = 'Puppy';
-    attack = 4;
-    health = 6;
+    attack = 5;
+    health = 7;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

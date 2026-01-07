@@ -26,9 +26,9 @@ export class PeanutJarAbility extends Ability {
 
         // Mirror Peanut Jar toy behavior
         let excludePets = owner.parent.getPetsWithEquipment('Peanut Butter')
-        let targetsResp = owner.parent.getFurthestUpPets(this.level, excludePets, owner);
+        let targetsResp = owner.parent.getLowestAttackPets(this.level, excludePets, owner);
         let targets = targetsResp.pets;
-        if ( targets.length == 0) {
+        if (targets.length == 0) {
             return;
         }
         for (let pet of targets) {

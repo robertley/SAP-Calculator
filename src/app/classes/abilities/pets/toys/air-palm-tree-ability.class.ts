@@ -27,7 +27,7 @@ export class AirPalmTreeAbility extends Ability {
 
         // Mirror Air Palm Tree toy behavior
         let excludePets = owner.parent.getPetsWithEquipment('Coconut');
-        let targetsResp = owner.parent.getFurthestUpPets(this.level, excludePets, owner);
+        let targetsResp = owner.parent.getHighestAttackPets(this.level, excludePets, owner);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;

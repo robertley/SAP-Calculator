@@ -25,13 +25,13 @@ export class TennisBallAbility extends Ability {
         const owner = this.owner;
 
         // Mirror Tennis Ball toy behavior
-        let targetResp = owner.parent.opponent.getRandomPets(2, [], false, true, owner);
+        let targetResp = owner.parent.opponent.getRandomPets(this.level, [], false, true, owner);
         let targets = targetResp.pets;
         if (targets.length == 0) {
             return;
         }
-        for (let target of targets){
-            owner.snipePet(target, 1, targetResp.random, tiger);
+        for (let target of targets) {
+            owner.snipePet(target, 3, targetResp.random, tiger);
         }
 
         this.triggerTigerExecution(context);

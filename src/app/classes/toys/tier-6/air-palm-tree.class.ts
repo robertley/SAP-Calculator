@@ -7,20 +7,20 @@ export class AirPalmTree extends Toy {
     name = "Air Palm Tree";
     tier = 6;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
-        for (let i = 0; i < this.level; i++) {
-            for (let pet of this.parent.petArray) {
-                if (pet?.equipment instanceof Coconut) {
-                    continue;
-                }
-                pet.givePetEquipment(new Coconut());
-                this.logService.createLog({
-                    message: `${this.name} gave ${pet.name} Coconut.`,
-                    type: 'ability',
-                    player: this.parent,
-                    puma: puma
-                })
-                break;
-            }
+        let targetResp = this.parent.getHighestAttackPets(this.level, this.parent.getPetsWithEquipment('Coconut'));
+        let targets = targetResp.pets;
+        if (targets.length == 0) {
+            return;
+        }
+        for (let pet of targets) {
+            pet.givePetEquipment(new Coconut());
+            this.logService.createLog({
+                message: `${this.name} gave ${pet.name} Coconut.`,
+                type: 'ability',
+                player: this.parent,
+                puma: puma,
+                randomEvent: targetResp.random
+            })
         }
     }
 }

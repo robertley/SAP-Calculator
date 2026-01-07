@@ -10,8 +10,8 @@ export class Mongoose extends Pet {
     name = "Mongoose";
     tier = 6;
     pack: Pack = 'Puppy';
-    attack = 4;
-    health = 3;
+    attack = 7;
+    health = 6;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

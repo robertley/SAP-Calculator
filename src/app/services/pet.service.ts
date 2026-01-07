@@ -95,9 +95,10 @@ import { Owl } from "../classes/pets/puppy/tier-3/owl.class";
 import { Mole } from "../classes/pets/puppy/tier-3/mole.class";
 import { Raccoon } from "../classes/pets/custom/tier-5/raccoon.class";
 import { SeaCucumber } from "../classes/pets/custom/tier-5/sea-cucumber.class";
-import { FlyingSquirrel } from "../classes/pets/puppy/tier-3/flying-squirrel.class";
+import { FlyingSquirrel } from "../classes/pets/custom/tier-3/flying-squirrel.class";
 import { Pangolin } from "../classes/pets/puppy/tier-3/pangolin.class";
 import { Puppy } from "../classes/pets/puppy/tier-3/puppy.class";
+import { PurpleFrog } from "../classes/pets/puppy/tier-3/purple-frog.class";
 import { Microbe } from "../classes/pets/puppy/tier-4/microbe.class";
 import { Lobster } from "../classes/pets/puppy/tier-4/lobster.class";
 import { Buffalo } from "../classes/pets/puppy/tier-4/buffalo.class";
@@ -266,6 +267,7 @@ import { LizardTail } from "../classes/pets/hidden/lizard-tail.class";
 import { Nest } from "../classes/pets/hidden/nest.class";
 import { Ram } from "../classes/pets/hidden/ram.class";
 import { SmallerSlug } from "../classes/pets/hidden/smaller-slug.class";
+import { LoyalChinchilla } from "../classes/pets/hidden/loyal-chinchilla.class";
 import { SmallestSlug } from "../classes/pets/hidden/smallest-slug.class";
 import { ZombieFly } from "../classes/pets/hidden/zombie-fly.class";
 import { Marmoset } from "../classes/pets/star/tier-1/marmoset.class";
@@ -293,6 +295,7 @@ import { WhiteTiger } from "../classes/pets/custom/tier-6/white-tiger.class";
 import { Amargasaurus } from '../classes/pets/custom/tier-6/amargasaurus.class';
 import { Opossum } from "../classes/pets/golden/tier-1/oposum.class";
 import { Kiwi } from "../classes/pets/star/tier-1/kiwi.class";
+import { Pheasant } from "../classes/pets/star/tier-1/pheasant.class";
 import { Firefly } from '../classes/pets/star/tier-1/firefly.class';
 import { Bass } from '../classes/pets/star/tier-2/bass.class';
 import { Pigeon } from "../classes/pets/turtle/tier-1/pigeon.class";
@@ -679,10 +682,10 @@ export class PetService {
             "Hatching Chick",
             "Owl",
             "Mole",
-            "Flying Squirrel",
             "Pangolin",
-            "Puppy",
-            "Hare"
+            "Gharial",
+            "Hare",
+            "Purple Frog"
         ])
 
         this.puppyPackPets.set(4, [
@@ -695,7 +698,7 @@ export class PetService {
             "Tahr",
             "Whale Shark",
             "Chameleon",
-            "Gharial"
+            "Puppy"
         ])
 
         this.puppyPackPets.set(5, [
@@ -731,6 +734,7 @@ export class PetService {
             "Frog",
             "Hummingbird",
             "Marmoset",
+            "Pheasant",
             "Kiwi",
             "Chihuahua",
             "Firefly"
@@ -1063,7 +1067,8 @@ export class PetService {
             "Slime",
             "Pegasus",
             "Deer Lord",
-            "Betta Fish"
+            "Betta Fish",
+            "Flying Squirrel"
         ]);
         this.customPackPets.set(4, [
             "Jerboa",
@@ -1345,6 +1350,8 @@ export class PetService {
                 return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Puppy':
                 return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
+            case 'Purple Frog':
+                return new PurpleFrog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Hare':
                 return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
 
@@ -1432,6 +1439,8 @@ export class PetService {
                 return new Hummingbird(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Marmoset':
                 return new Marmoset(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
+            case 'Pheasant':
+                return new Pheasant(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Kiwi':
                 return new Kiwi(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment);
             case 'Chihuahua':
@@ -1831,6 +1840,8 @@ export class PetService {
                 return new Ram(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Smaller Slug':
                 return new SmallerSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
+            case 'Loyal Chinchilla':
+                return new LoyalChinchilla(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Smallest Slug':
                 return new SmallestSlug(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Zombie Cricket':
@@ -2135,6 +2146,10 @@ export class PetService {
             case 'Sumatran Tiger':
                 return new SumatranTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
 
+            // Default fallback for unrecognized pets (e.g., from replay bot with new units)
+            // Use Mouse as a weak placeholder pet without abilities
+            default:
+                return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
         }
     }
 
@@ -2984,6 +2999,9 @@ export class PetService {
         }
         if (pet instanceof SmallerSlug) {
             newPet = new SmallerSlug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
+        }
+        if (pet instanceof LoyalChinchilla) {
+            newPet = new LoyalChinchilla(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));
         }
         if (pet instanceof SmallestSlug) {
             newPet = new SmallestSlug(this.logService, this.abilityService, pet.parent, attack, health, 0, levelToExp(pet.level));

@@ -25,7 +25,7 @@ export class FlashlightAbility extends Ability {
         const owner = this.owner;
 
         // Mirror Flashlight toy behavior (onBreak effect)
-        let power = this.level * 6;
+        let power = this.level * 5;
         let targetResp = owner.parent.getFurthestUpPet(owner);
         let target = targetResp.pet;
         if (target == null) {

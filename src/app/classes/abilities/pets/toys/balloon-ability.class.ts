@@ -21,25 +21,27 @@ export class BalloonAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        const { gameApi, triggerPet, tiger} = context;
+        const { gameApi, triggerPet, tiger } = context;
         const owner = this.owner;
 
         // Mirror Balloon toy behavior
-        let targetResp = owner.parent.getFurthestUpPet(owner);
-        let target = targetResp.pet;
-        if (target == null) {
+        let targetsResp = owner.parent.getFurthestUpPets(this.level, [], owner);
+        let targets = targetsResp.pets;
+        if (targets.length == 0) {
             return;
         }
-        let power = this.level;
-        target.increaseAttack(power);
-        target.increaseHealth(power);
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} ${power} attack and ${power} health.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        })
+        let power = 1;
+        for (let target of targets) {
+            target.increaseAttack(power);
+            target.increaseHealth(power);
+            this.logService.createLog({
+                message: `${owner.name} gave ${target.name} ${power} attack and ${power} health.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                randomEvent: targetsResp.random
+            })
+        }
 
         this.triggerTigerExecution(context);
     }
