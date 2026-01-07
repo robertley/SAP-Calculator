@@ -35,6 +35,10 @@ import { TinderBoxAbility } from "../../../../abilities/pets/toys/tinder-box-abi
 import { WitchBroomAbility } from "../../../../abilities/pets/toys/witch-broom-ability.class";
 import { TreasureMapAbility } from "../../../../abilities/pets/toys/treasure-map-ability.class";
 import { PandorasBoxAbility } from "../../../../abilities/pets/toys/pandoras-box-ability.class";
+import { StickAbility } from "../../../../abilities/pets/toys/stick-ability.class";
+import { CashRegisterAbility } from "../../../../abilities/pets/toys/cash-register-ability.class";
+import { MicrowaveOvenAbility } from "../../../../abilities/pets/toys/microwave-oven-ability.class";
+import { CameraAbility } from "../../../../abilities/pets/toys/camera-ability.class";
 export class ChameleonAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
@@ -104,10 +108,14 @@ export class ChameleonAbility extends Ability {
             //'Rosebud': () => new RosebudAbility(owner, this.logService, this.abilityService),
             //'Red Cape': () => new RedCapeAbility(owner, this.logService, this.abilityService),
             'Treasure Chest': () => new TreasureChestAbility(owner, this.logService),
-           // 'Tinder Box': () => new TinderBoxAbility(owner, this.logService, this.abilityService),
+            // 'Tinder Box': () => new TinderBoxAbility(owner, this.logService, this.abilityService),
             'Witch Broom': () => new WitchBroomAbility(owner, this.logService),
             'Treasure Map': () => new TreasureMapAbility(owner, this.logService),
-            'Pandoras Box': () => new PandorasBoxAbility(owner, this.logService, this.abilityService, this.equipmentService)
+            'Pandoras Box': () => new PandorasBoxAbility(owner, this.logService, this.abilityService, this.equipmentService),
+            'Stick': () => new StickAbility(owner, this.logService),
+            'Cash Register': () => new CashRegisterAbility(owner, this.logService),
+            'Microwave Oven': () => new MicrowaveOvenAbility(owner, this.logService, this.equipmentService),
+            'Camera': () => new CameraAbility(owner, this.logService)
         };
 
         const abilityFactory = toyAbilityMap[toyName];

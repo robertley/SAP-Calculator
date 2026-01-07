@@ -7,7 +7,7 @@ export class Flashlight extends Toy {
     name = "Flashlight";
     tier = 5;
     onBreak(gameApi?: GameAPI, puma?: boolean) {
-        let power = this.level * 6;
+        let power = this.level * 5;
         let target = this.parent.furthestUpPet;
         if (target == null) {
             return;

@@ -10,8 +10,8 @@ export class Doberman extends Pet {
     name = "Doberman";
     tier = 4;
     pack: Pack = 'Puppy';
-    attack = 4;
-    health = 5;
+    attack = 1;
+    health = 4;
     initAbilities(): void {
         this.addAbility(new DobermanAbility(this, this.logService));
         super.initAbilities();

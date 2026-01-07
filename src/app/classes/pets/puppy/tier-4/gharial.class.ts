@@ -9,10 +9,10 @@ import { Player } from "../../../player.class";
 
 export class Gharial extends Pet {
     name = "Gharial";
-    tier = 4;
+    tier = 3;
     pack: Pack = 'Puppy';
     attack = 5;
-    health = 3;
+    health = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -10,7 +10,7 @@ export class Lionfish extends Pet {
     name = "Lionfish";
     tier = 6;
     pack: Pack = 'Puppy';
-    attack = 8;
+    attack = 10;
     health = 4;
     initAbilities(): void {
         this.addAbility(new LionfishAbility(this, this.logService));

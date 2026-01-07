@@ -10,7 +10,7 @@ export class Bilby extends Pet {
     name = "Bilby";
     tier = 2;
     pack: Pack = 'Puppy';
-    attack = 1;
+    attack = 2;
     health = 4;
     initAbilities(): void {
         this.addAbility(new BilbyAbility(this, this.logService));

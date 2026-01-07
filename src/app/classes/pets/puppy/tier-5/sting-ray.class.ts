@@ -3,18 +3,13 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { FlyingSquirrelAbility } from "../../../abilities/pets/puppy/tier-3/flying-squirrel-ability.class";
 
-export class FlyingSquirrel extends Pet {
-    name = "Flying Squirrel";
-    tier = 3;
+export class StingRay extends Pet {
+    name = "Sting Ray";
+    tier = 5;
     pack: Pack = 'Puppy';
-    attack = 3;
-    health = 3;
-    initAbilities(): void {
-        this.addAbility(new FlyingSquirrelAbility(this, this.logService));
-        super.initAbilities();
-    }
+    attack = 5;
+    health = 7;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

@@ -28,7 +28,7 @@ export class FoamSwordAbility extends Ability {
         let opponent = owner.parent.opponent;
         for (let i = 0; i < this.level; i++) {
             let lowestHealthResp = opponent.getLowestHealthPet();
-            owner.snipePet(lowestHealthResp.pet, 6, lowestHealthResp.random, tiger);
+            owner.snipePet(lowestHealthResp.pet, 5, lowestHealthResp.random, tiger);
         }
 
         this.triggerTigerExecution(context);

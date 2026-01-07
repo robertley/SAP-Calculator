@@ -11,8 +11,8 @@ export class Armadillo extends Pet {
     name = "Armadillo";
     tier = 5;
     pack: Pack = 'Turtle';
-    attack = 2;
-    health = 10;
+    attack = 4;
+    health = 8;
     initAbilities(): void {
         this.addAbility(new ArmadilloAbility(this, this.logService));
         super.initAbilities();

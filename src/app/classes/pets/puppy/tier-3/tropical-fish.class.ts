@@ -10,7 +10,7 @@ export class TropicalFish extends Pet {
     name = "Tropical Fish";
     tier = 3;
     pack: Pack = 'Puppy';
-    attack = 1;
+    attack = 3;
     health = 3;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -11,7 +11,7 @@ export class Lemur extends Pet {
     tier = 2;
     pack: Pack = 'Puppy';
     attack = 3;
-    health = 3;
+    health = 4;
     initAbilities(): void {
         this.addAbility(new LemurAbility(this, this.logService, this.abilityService));
         super.initAbilities();

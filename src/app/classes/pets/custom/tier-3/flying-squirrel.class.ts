@@ -1,17 +1,20 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { FlyingSquirrelAbility } from "../../../abilities/pets/puppy/tier-3/flying-squirrel-ability.class";
 
-export class Puppy extends Pet {
-    name = "Puppy";
-    tier = 4;
-    pack: Pack = 'Puppy';
+export class FlyingSquirrel extends Pet {
+    name = "Flying Squirrel";
+    tier = 3;
+    pack: Pack = 'Custom';
     attack = 3;
-    health = 6;
+    health = 3;
+    initAbilities(): void {
+        this.addAbility(new FlyingSquirrelAbility(this, this.logService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

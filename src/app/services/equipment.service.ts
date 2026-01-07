@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Equipment } from "../classes/equipment.class";
 import { Garlic } from "../classes/equipment/turtle/garlic.class";
-import { Cake } from "../classes/equipment/custom/cake.class";
+import { Cake } from "../classes/equipment/turtle/cake.class";
 import { MeatBone } from "../classes/equipment/turtle/meat-bone.class";
 import { Steak } from "../classes/equipment/turtle/steak.class";
 import { Melon } from "../classes/equipment/turtle/melon.class";
@@ -87,13 +87,16 @@ import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 import { CakeSlice } from "../classes/equipment/hidden/cake-slice.class";
 import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
+import { Guava } from "../classes/equipment/custom/guava.class";
+import { MildChili } from "../classes/equipment/puppy/mild-chili.class";
+import { Walnut } from "../classes/equipment/puppy/walnut.class";
 
 @Injectable({
     providedIn: "root"
 })
 export class EquipmentService {
 
-    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {}
+    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) { }
 
     // Also update seagull !
     getInstanceOfAllEquipment() {
@@ -115,7 +118,7 @@ export class EquipmentService {
         map.set('Croissant', new Croissant());
         map.set('Rice', new Rice());
         map.set('Eucalyptus', new Eucalyptus());
-        map.set('Lime', new Lime());    
+        map.set('Lime', new Lime());
         map.set('Egg', new Egg(this.logService));
         map.set('Squash', new Squash(this.logService));
         map.set('Salt', new Salt());
@@ -156,6 +159,9 @@ export class EquipmentService {
         map.set('Pineapple', new Pineapple());
         map.set('Fig', new Fig(this.logService));
         map.set('Caramel', new Caramel(this.logService));
+        map.set('Guava', new Guava());
+        map.set('Mild Chili', new MildChili(this.logService, this.abilityService));
+        map.set('Walnut', new Walnut());
 
         map.set('Rambutan', new Rambutan(this.logService));
         map.set('Love Potion', new LovePotion(this.logService));
@@ -202,45 +208,45 @@ export class EquipmentService {
         ['Cashew Nut', 1],
         ['Nachos', 1],
         // T2
-        ['Lime', 2], 
-        ['Meat Bone', 2], 
-        ['Cherry', 2], 
+        ['Lime', 2],
+        ['Meat Bone', 2],
+        ['Cherry', 2],
         ['Bok Choy', 2],
         ['Kiwifruit', 2],
         ['Fairy Dust', 2],
         // T3  
-        ['Garlic', 3], 
-        ['Gingerbread Man', 3], 
-        ['Fig', 3], 
-        ['Cucumber', 3], 
+        ['Garlic', 3],
+        ['Gingerbread Man', 3],
+        ['Fig', 3],
+        ['Cucumber', 3],
         ['Croissant', 3],
         ['Squash', 3],
         // T4
-        ['Banana', 4], 
-        ['Love Potion', 4], 
-        ['Pie', 4], 
-        ['Grapes', 4], 
-        ['Cheese', 4], 
+        ['Banana', 4],
+        ['Love Potion', 4],
+        ['Pie', 4],
+        ['Grapes', 4],
+        ['Cheese', 4],
         ['Cod Roe', 4],
-        ['Salt', 4], 
+        ['Salt', 4],
         ['Fortune Cookie', 4],
         // T5
-        ['Easter Egg', 5], 
-        ['Magic Beans', 5], 
-        ['Chili', 5], 
-        ['Lemon', 5], 
+        ['Easter Egg', 5],
+        ['Magic Beans', 5],
+        ['Chili', 5],
+        ['Lemon', 5],
         ['Durian', 5],
         ['Honeydew Melon', 5],
         ['Maple Syrup', 5],
         ['Cocoa Bean', 5],
         ['White Okra', 5],
         // T6
-        ['Popcorn', 6], 
-        ['Steak', 6], 
-        ['Pancakes', 6], 
-        ['Yggdrasil Fruit', 6], 
-        ['Melon', 6], 
-        ['Tomato', 6], 
+        ['Popcorn', 6],
+        ['Steak', 6],
+        ['Pancakes', 6],
+        ['Yggdrasil Fruit', 6],
+        ['Melon', 6],
+        ['Tomato', 6],
         ['Sudduth Tomato', 6],
         ['Pita Bread', 6],
         // Hidden
@@ -258,26 +264,26 @@ export class EquipmentService {
     getUsefulPerksByTier(tier: number): Equipment[] {
         const allEquipment = this.getInstanceOfAllEquipment();
         const usefulPerksForTier: Equipment[] = [];
-        
+
         for (const [name, tierValue] of EquipmentService.USEFUL_PERKS.entries()) {
             if (tierValue === tier && allEquipment.has(name)) {
                 usefulPerksForTier.push(allEquipment.get(name)!);
             }
         }
-        
+
         return usefulPerksForTier;
     }
 
     getUsefulPerks(): Equipment[] {
         const allEquipment = this.getInstanceOfAllEquipment();
         const usefulPerks: Equipment[] = [];
-        
+
         for (const name of EquipmentService.USEFUL_PERKS.keys()) {
             if (allEquipment.has(name)) {
                 usefulPerks.push(allEquipment.get(name)!);
             }
         }
-        
+
         return usefulPerks;
     }
 

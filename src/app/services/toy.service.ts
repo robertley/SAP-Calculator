@@ -7,6 +7,7 @@ import { AbilityService } from "./ability.service";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { cloneDeep, shuffle } from "lodash";
 import { GameService } from "./game.service";
+import { PetService } from "./pet.service";
 import { Balloon } from "../classes/toys/tier-1/balloon.class";
 import { TennisBall } from "../classes/toys/tier-1/tennis-ball.class";
 import { Radio } from "../classes/toys/tier-2/radio.class";
@@ -22,6 +23,9 @@ import { StrinkySock } from "../classes/toys/tier-5/stinky-sock.class";
 import { Television } from "../classes/toys/tier-6/television.class";
 import { PeanutJar } from "../classes/toys/tier-6/peanut-jar.class";
 import { AirPalmTree } from "../classes/toys/tier-6/air-palm-tree.class";
+import { Stick } from "../classes/toys/tier-1/stick.class";
+import { CashRegister } from "../classes/toys/tier-4/cash-register.class";
+import { Camera } from "../classes/toys/tier-5/camera.class";
 import { PandorasBox } from "../classes/toys/unicorn/pandoras-box.class";
 import { EquipmentService } from "./equipment.service";
 import { WitchBroom } from "../classes/toys/unicorn/witch-broom.class";
@@ -45,6 +49,7 @@ import { Excalibur } from "../classes/toys/unicorn/excalibur.class";
 import { HolyGrail } from "../classes/toys/unicorn/holy-grail.class";
 import { Nutcracker } from "../classes/toys/unicorn/nutcraker.class";
 import { TinderBox } from "../classes/toys/unicorn/tinder-box.class";
+import { MicrowaveOven } from "../classes/toys/f2p/microwave-oven.class";
 
 @Injectable({
     providedIn: 'root'
@@ -57,32 +62,36 @@ export class ToyService {
     emptyFrontSpaceEvents: AbilityEvent[] = [];
     friendSummonedEvents: AbilityEvent[] = [];
 
-    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService, private equipmentService: EquipmentService) {
+    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService, private equipmentService: EquipmentService, private petService: PetService) {
         this.setToys();
     }
 
     setToys() {
         this.toys.set(1, [
             'Ballon',
-            'Tennis Ball'
+            'Stick'
         ])
         this.toys.set(2, [
             'Radio',
             'Garlic Press',
-            'Plastic Saw'
+            'Plastic Saw',
+            'Microwave Oven',
+            'Tennis Ball'
         ])
         this.toys.set(3, [
-            'Toilet Paper',
-            'Oven Mitts'
+            'Foam Sword',
+            'Melon Helmet',
+            'Toy Gun'
         ])
         this.toys.set(4, [
-            'Melon Helmet',
-            'Foam Sword',
-            'Toy Gun'
+            'Oven Mitts',
+            'Toilet Paper',
+            'Cash Register'
         ])
         this.toys.set(5, [
             'Flashlight',
-            'Stinky Sock'
+            'Stinky Sock',
+            'Camera'
         ])
         this.toys.set(6, [
             'Television',
@@ -116,7 +125,7 @@ export class ToyService {
     }
 
     createToy(toyName: string, parent: Player, level: number = 1) {
-        switch(toyName) {
+        switch (toyName) {
             case 'Ballon':
                 return new Balloon(this.logService, this, parent, level);
             case 'Tennis Ball':
@@ -137,6 +146,12 @@ export class ToyService {
                 return new FoamSword(this.logService, this, parent, level);
             case 'Toy Gun':
                 return new ToyGun(this.logService, this, parent, level);
+            case 'Stick':
+                return new Stick(this.logService, this, parent, level, this.petService);
+            case 'Cash Register':
+                return new CashRegister(this.logService, this, parent, level);
+            case 'Camera':
+                return new Camera(this.logService, this, parent, level);
             case 'Flashlight':
                 return new Flashlight(this.logService, this, parent, level);
             case 'Stinky Sock':
@@ -190,10 +205,12 @@ export class ToyService {
                 return new Excalibur(this.logService, this, parent, level);
             case 'Holy Grail':
                 return new HolyGrail(this.logService, this, parent, level);
+            case 'Microwave Oven':
+                return new MicrowaveOven(this.logService, this, parent, level, this.petService, this.gameService);
         }
     }
 
-    snipePet(pet: Pet, power: number, parent: Player, toyName: string, randomEvent=false, puma=false) {
+    snipePet(pet: Pet, power: number, parent: Player, toyName: string, randomEvent = false, puma = false) {
         let damageResp = this.calculateDamgae(pet, this.getManticoreMult(parent), power);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
@@ -242,7 +259,7 @@ export class ToyService {
         if (damageResp.nurikabe > 0) {
             message += ` -${damageResp.nurikabe} (Nurikabe)`
         }
-        if (damageResp.fairyBallReduction > 0) { 
+        if (damageResp.fairyBallReduction > 0) {
             message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
         }
         if (damageResp.fanMusselReduction > 0) {
@@ -260,18 +277,17 @@ export class ToyService {
             randomEvent: randomEvent,
             player: parent
         });
-        return damage;  
+        return damage;
     }
 
-    calculateDamgae(pet: Pet, manticoreMult: number[], power?: number):
-        {
-            defenseEquipment: Equipment,
-            damage: number
-            nurikabe: number,
-            fairyBallReduction?: number,
-            fanMusselReduction?: number,
-            ghostKittenReduction?: number,
-        } {
+    calculateDamgae(pet: Pet, manticoreMult: number[], power?: number): {
+        defenseEquipment: Equipment,
+        damage: number
+        nurikabe: number,
+        fairyBallReduction?: number,
+        fanMusselReduction?: number,
+        ghostKittenReduction?: number,
+    } {
         let defenseMultiplier = pet.equipment?.multiplier;
         const manticoreDefenseAilments = [
             'Cold',
@@ -286,10 +302,14 @@ export class ToyService {
         const manticoreOtherAilments = [
             'Icky'
         ]
-        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
-        || pet.equipment?.equipmentClass == 'shield'
-        || pet.equipment?.equipmentClass == 'ailment-defense'
-        || pet.equipment?.equipmentClass == 'shield-snipe' ? pet.equipment : null;
+        const isGuavaDefense = pet.equipment?.name === 'Guava';
+        let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense'
+            || pet.equipment?.equipmentClass == 'shield'
+            || pet.equipment?.equipmentClass == 'ailment-defense'
+            || pet.equipment?.equipmentClass == 'shield-snipe' ? pet.equipment : null;
+        if (defenseEquipment == null && isGuavaDefense) {
+            defenseEquipment = pet.equipment;
+        }
 
         if (defenseEquipment != null) {
             if (defenseEquipment.name == "Maple Syrup") {
@@ -423,12 +443,12 @@ export class ToyService {
         // shuffle, so that same priority events are in random order
         this.startOfBattleEvents = shuffle(this.startOfBattleEvents);
 
-        this.startOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+        this.startOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
 
         for (let event of this.startOfBattleEvents) {
             event.callback(this.gameService.gameApi);
         }
-        
+
         this.resetStartOfBattleEvents();
     }
 

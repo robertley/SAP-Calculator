@@ -31,7 +31,7 @@ export class ToyGunAbility extends Ability {
             if (targetResp.pet == null) {
                 return;
             }
-            owner.snipePet(targetResp.pet, 6, targetResp.random, tiger);
+            owner.snipePet(targetResp.pet, 5, targetResp.random, tiger);
         }
 
         this.triggerTigerExecution(context);
