@@ -1102,7 +1102,7 @@ export abstract class Pet {
                 }
                 return;
             }
-            if (this.equipment instanceof WhiteOkra) {
+            else if (this.equipment instanceof WhiteOkra) {
                 this.logService.createLog({
                     message: `${this.name} blocked ${equipment.name}. (White Okra)`,
                     type: 'equipment',
@@ -1111,6 +1111,9 @@ export abstract class Pet {
                 // Remove equipment immediately after blocking ailment
                 this.removePerk();
                 return;
+            } 
+            else if (this.equipment != null) {
+                this.removePerk(true);
             }
             this.applyEquipment(equipment, pandorasBoxLevel);
 
@@ -1417,14 +1420,29 @@ export abstract class Pet {
         });
     }
     executeAbilities(trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet, tiger?: boolean, pteranodon?: boolean, customParams?: any): void {
+        // If this pet has already transformed before this trigger fires, re-run the trigger on the current form
+        if (this.transformed && this.transformedInto) {
+            this.transformedInto.executeAbilities(trigger, gameApi, triggerPet, tiger, pteranodon, customParams);
+            return;
+        }
+
         const matchingPetAbilities = this.getAbilitiesWithTrigger(trigger, 'Pet');
         for (const ability of matchingPetAbilities) {
             ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
+            // If this ability caused a transform, stop executing further abilities on the old form and re-run the trigger once on the new form
+            if (this.transformed && this.transformedInto) {
+                this.transformedInto.executeAbilities(trigger, gameApi, triggerPet, tiger, pteranodon, customParams);
+                return;
+            }
         }
 
         const matchingEquipmentAbilities = this.getAbilitiesWithTrigger(trigger, 'Equipment');
         for (const ability of matchingEquipmentAbilities) {
             ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
+            if (this.transformed && this.transformedInto) {
+                this.transformedInto.executeAbilities(trigger, gameApi, triggerPet, tiger, pteranodon, customParams);
+                return;
+            }
         }
     }
     activateAbilities(trigger: AbilityTrigger, gameApi: GameAPI, type: AbilityType, triggerPet?: Pet, customParams?: any): void {

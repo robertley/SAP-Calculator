@@ -23,10 +23,10 @@ export class MicrobeAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let targetsResp = owner.parent.getAll(true, owner);
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
+
+        let targetsResp = owner.parent.getPetsWithinXSpaces(owner, this.level * 3);
         let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;

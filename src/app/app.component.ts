@@ -24,7 +24,7 @@ import { Eggplant } from './classes/equipment/golden/eggplant.class';
 import { PitaBread } from './classes/equipment/golden/pita-bread.class';
 import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
-import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { EquipmentService } from './services/equipment.service';
 import { Nest } from './classes/pets/hidden/nest.class';
 import { Egg } from './classes/equipment/puppy/egg.class';
@@ -56,15 +56,15 @@ const REVERSE_KEY_MAP = {
 
 function expandKeys(data) {
   if (Array.isArray(data)) {
-      return data.map(item => expandKeys(item));
+    return data.map(item => expandKeys(item));
   }
   if (data !== null && typeof data === 'object') {
-      const newObj = {};
-      for (const key in data) {
-          const newKey = REVERSE_KEY_MAP[key] || key;
-          newObj[newKey] = expandKeys(data[key]);
-      }
-      return newObj;
+    const newObj = {};
+    for (const key in data) {
+      const newKey = REVERSE_KEY_MAP[key] || key;
+      newObj[newKey] = expandKeys(data[key]);
+    }
+    return newObj;
   }
   return data;
 }
@@ -100,15 +100,16 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.8.1';
+  version = '0.9.0';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '11/25/2025';
+  lastUpdated = '1/7/2026';
 
   title = 'sap-calculator';
   player: Player;
   opponent: Player;
-  maxTurns = 50; // TODO: Find official max turns in a battle
+  maxTurns = 71; // TODO: Find official max turns in a battle
   turns = 0;
+  attackCount = 0;
   battleStarted = false;
 
   simulationBattleAmt = 1000;
@@ -170,18 +171,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     const apiCode = params.get('code'); // This safely gets ONLY the value of the 'code' parameter
 
     if (apiCode) {
-        this.api = true;
-        try {
-            const jsonData = JSON.parse(decodeURIComponent(apiCode));
-            this.loadCalculatorFromValue(jsonData);
-            this.simulate();
-            this.buildApiResponse();
-        } catch (e) {
-            console.error("Error parsing API data from URL:", e);
-            this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
-        }
+      this.api = true;
+      try {
+        const jsonData = JSON.parse(decodeURIComponent(apiCode));
+        this.loadCalculatorFromValue(jsonData);
+        this.simulate();
+        this.buildApiResponse();
+      } catch (e) {
+        console.error("Error parsing API data from URL:", e);
+        this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
+      }
     }
-    
+
   }
 
   buildApiResponse() {
@@ -214,7 +215,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   loadStateFromUrl(isInitialLoad: boolean = false): boolean {
     const params = new URLSearchParams(window.location.search);
-    const encodedData = params.get('c'); 
+    const encodedData = params.get('c');
 
     if (encodedData) {
       try {
@@ -238,27 +239,27 @@ export class AppComponent implements OnInit, AfterViewInit {
         }
 
         this.import(finalJsonString);
-        
+
         console.log("Calculator state loaded from URL.");
-        return true; 
+        return true;
       } catch (e) {
         console.error("Failed to parse calculator state from URL.", e);
         alert("Could not load the shared calculator link. The data may be corrupted.");
-        return false; 
+        return false;
       }
     }
-    
+
     return false; // No data found in URL
   }
 
 
   ngAfterViewInit(): void {
     if (this.isLoadedFromUrl) {
-        this.petSelectors.forEach((petSelector) => {
-            petSelector.fixLoadEquipment();
-        });
+      this.petSelectors.forEach((petSelector) => {
+        petSelector.fixLoadEquipment();
+      });
     }
-    
+
     if (!this.api) {
       this.initModals();
     }
@@ -283,36 +284,36 @@ export class AppComponent implements OnInit, AfterViewInit {
   loadCalculatorFromValue(calculator) {
     // this.formGroup.reset();
     const defaultState = {
-        playerPack: "Turtle",
-        opponentPack: "Turtle",
-        playerToy: null,
-        playerToyLevel: "1",
-        opponentToy: null,
-        opponentToyLevel: "1",
-        turn: 11,
-        playerGoldSpent: 10,
-        opponentGoldSpent: 10,
-        playerRollAmount: 4,
-        opponentRollAmount: 4,
-        playerSummonedAmount: 0,
-        opponentSummonedAmount: 0,
-        playerTransformationAmount: 0,
-        opponentTransformationAmount: 0,
-        playerLevel3Sold: 0,
-        opponentLevel3Sold: 0,
-        playerPets: Array(5).fill(null),
-        opponentPets: Array(5).fill(null),
-        angler: false,
-        allPets: false,
-        logFilter: null,
-        fontSize: 13,
-        customPacks: [],
-        oldStork: false,
-        tokenPets: false,
-        komodoShuffle: false,
-        mana: false,
-        showAdvanced: false,
-        ailmentEquipment: false
+      playerPack: "Turtle",
+      opponentPack: "Turtle",
+      playerToy: null,
+      playerToyLevel: "1",
+      opponentToy: null,
+      opponentToyLevel: "1",
+      turn: 11,
+      playerGoldSpent: 10,
+      opponentGoldSpent: 10,
+      playerRollAmount: 4,
+      opponentRollAmount: 4,
+      playerSummonedAmount: 0,
+      opponentSummonedAmount: 0,
+      playerTransformationAmount: 0,
+      opponentTransformationAmount: 0,
+      playerLevel3Sold: 0,
+      opponentLevel3Sold: 0,
+      playerPets: Array(5).fill(null),
+      opponentPets: Array(5).fill(null),
+      angler: false,
+      allPets: false,
+      logFilter: null,
+      fontSize: 13,
+      customPacks: [],
+      oldStork: false,
+      tokenPets: false,
+      komodoShuffle: false,
+      mana: false,
+      showAdvanced: false,
+      ailmentEquipment: false
     };
 
     const finalState = { ...defaultState, ...calculator };
@@ -322,7 +323,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let customPacks = calculator.customPacks;
     calculator.customPacks = [];
     this.loadCustomPacks(customPacks);
-    this.formGroup.patchValue(calculator, {emitEvent: false});
+    this.formGroup.patchValue(calculator, { emitEvent: false });
 
     // if (!this.api) {
     //   for (let selector of this.petSelectors.toArray()) {
@@ -359,8 +360,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   fixCustomPackSelect() {
-    this.formGroup.get('playerPack').setValue(this.formGroup.get('playerPack').value, {emitEvent: false});
-    this.formGroup.get('opponentPack').setValue(this.formGroup.get('opponentPack').value, {emitEvent: false});
+    this.formGroup.get('playerPack').setValue(this.formGroup.get('playerPack').value, { emitEvent: false });
+    this.formGroup.get('opponentPack').setValue(this.formGroup.get('opponentPack').value, { emitEvent: false });
   }
 
   initApp() {
@@ -428,8 +429,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     return control as FormGroup;
   }
 
-  initFormGroup() {    
-    let petsDummyArray = [0,1,2,3,4]
+  initFormGroup() {
+    let petsDummyArray = [0, 1, 2, 3, 4]
     let defaultTurn = 11;
     let defaultGoldSpent = 10;
 
@@ -478,7 +479,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      if (value == 'Add Custom Pack') { 
+      if (value == 'Add Custom Pack') {
         this.openCustomPackEditor();
         return;
       }
@@ -491,7 +492,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         return;
       }
 
-      if (value == 'Add Custom Pack') { 
+      if (value == 'Add Custom Pack') {
         this.openCustomPackEditor();
         return;
       }
@@ -569,24 +570,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   initPetForms() {
-    let petsDummyArray = [0,1,2,3,4];
+    let petsDummyArray = [0, 1, 2, 3, 4];
     let playerPetFormGroups = petsDummyArray.map(foo => {
-        return new FormGroup({
-          name: new FormControl(this.player[`pet${foo}`]?.name),
-          attack: new FormControl(this.player[`pet${foo}`]?.attack ?? 0),
-          health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
-          exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
-          equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
-          belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
-          mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
-          triggersConsumed: new FormControl(this.player[`pet${foo}`]?.triggersConsumed ?? 0),
-          abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
-          abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
-          abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
-          battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
-          timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
-        })
-      }
+      return new FormGroup({
+        name: new FormControl(this.player[`pet${foo}`]?.name),
+        attack: new FormControl(this.player[`pet${foo}`]?.attack ?? 0),
+        health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
+        exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
+        equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
+        belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
+        mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
+        triggersConsumed: new FormControl(this.player[`pet${foo}`]?.triggersConsumed ?? 0),
+        abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
+        abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
+        abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
+        battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
+        timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
+      })
+    }
     );
     let playerFormArray = this.formGroup.get('playerPets') as FormArray;
     playerFormArray.clear();
@@ -594,22 +595,22 @@ export class AppComponent implements OnInit, AfterViewInit {
       playerFormArray.push(formGroup);
     }
     let opponentFormGroups = petsDummyArray.map(foo => {
-        return new FormGroup({
-          name: new FormControl(this.opponent[`pet${foo}`]?.name),
-          attack: new FormControl(this.opponent[`pet${foo}`]?.attack ?? 0),
-          health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
-          exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
-          equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
-          belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
-          mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
-          triggersConsumed: new FormControl(this.opponent[`pet${foo}`]?.triggersConsumed ?? 0),
-          abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
-          abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
-          abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
-          battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
-          timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
-        })
-      }
+      return new FormGroup({
+        name: new FormControl(this.opponent[`pet${foo}`]?.name),
+        attack: new FormControl(this.opponent[`pet${foo}`]?.attack ?? 0),
+        health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
+        exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
+        equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
+        belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
+        mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
+        triggersConsumed: new FormControl(this.opponent[`pet${foo}`]?.triggersConsumed ?? 0),
+        abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
+        abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
+        abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+        battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
+        timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
+      })
+    }
     );
     let opponentFormArray = this.formGroup.get('opponentPets') as FormArray;
     opponentFormArray.clear();
@@ -723,19 +724,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.emptyFrontSpaceCheck(); // This might add more events too
     while (this.abilityService.hasGlobalEvents) {
       const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
-      
+
       if (nextEvent && this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 23) {
         // We're about to process priority 23+, check if pet removal is needed
         this.checkPetsAlive();
         const petsWereRemoved = this.removeDeadPets();
-        
+
         if (petsWereRemoved) {
           // Pet removal might have triggered new higher priority events
           this.emptyFrontSpaceCheck(); // This might add more events too
           continue; // Re-evaluate the queue with potentially new higher priority events
         }
       }
-      
+
       // Normal event processing
       const event = this.abilityService.getNextHighestPriorityEvent();
       if (event) {
@@ -747,7 +748,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         break; // Exit the loop to prevent infinite loop
       }
     }
-    
+
     // Final cleanup - remove any remaining dead pets and check empty spaces
     let petRemoved = this.removeDeadPets();
     if (petRemoved) {
@@ -761,11 +762,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.checkPetsAlive();
     this.opponent.checkPetsAlive();
   }
-//  1. Check if toy exists and has startOfBattle ability
-// 2. Queue toy ability in the ToyService event system
-// 3. Set priority based on toy tier (lower tier = higher priority)
-// 4. Special Puma interaction - Puma pets trigger toy abilities at their level
-// 5. Execute later in the start-of-battle phase sequence
+  //  1. Check if toy exists and has startOfBattle ability
+  // 2. Queue toy ability in the ToyService event system
+  // 3. Set priority based on toy tier (lower tier = higher priority)
+  // 4. Special Puma interaction - Puma pets trigger toy abilities at their level
+  // 5. Execute later in the start-of-battle phase sequence
   initToys() {
     if (this.player.toy?.startOfBattle) {
       this.toyService.setStartOfBattleEvent({
@@ -833,10 +834,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       // for (let pet of this.opponent.petArray) {
       //   pet.equipment = new Dazed();
       // }
-      
+
       this.abilityService.initSpecialEndTurnAbility(this.player);
       this.abilityService.initSpecialEndTurnAbility(this.opponent);
-      
+
       //initialize equipment multipliers for existing equipment
       this.initializeEquipmentMultipliers();
 
@@ -856,7 +857,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.abilityService.triggerStartBattleEvents();
       //add churro check
       this.abilityService.executeStartBattleEvents();
-      
+
       this.checkPetsAlive();
       do {
         this.abilityCycle();
@@ -879,7 +880,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   emptyFrontSpaceCheck() {
-    
+
     if (this.player.pet0 == null) {
       this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
     }
@@ -940,9 +941,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     let finished = false;
     let winner = null;
     this.turns++;
-    if (this.turns >= this.maxTurns) {
-      finished = true;
-    }
 
     if (!this.player.alive() && this.opponent.alive()) {
       winner = this.opponent;
@@ -960,6 +958,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       // draw
       this.draw++;
       finished = true;
+    } else if (this.turns >= this.maxTurns) {
+      this.draw++;
+      finished = true;
     }
 
     if (finished) {
@@ -972,7 +973,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.logService.printState(this.player, this.opponent);
     this.gameService.gameApi.FirstNonJumpAttackHappened = true;
     //before attack phase 
-    while (true) { 
+    while (true) {
       let originalPlayerAttackingPet = this.player.pet0;
       let originalOppoentAttackingPet = this.opponent.pet0;
       this.abilityService.triggerBeforeAttackEvent(this.player.pet0)
@@ -1005,7 +1006,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.player.resetJumpedFlags();
     this.opponent.resetJumpedFlags();
 
-      //attack
+    //attack
     this.fight();
 
     this.player.checkPetsAlive();
@@ -1016,7 +1017,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     } while (this.abilityService.hasAbilityCycleEvents);
   }
 
-  chocolateCakePresent(): {player: boolean, opponent: boolean, cake: boolean} {
+  chocolateCakePresent(): { player: boolean, opponent: boolean, cake: boolean } {
     let resp = {
       player: false,
       opponent: false,
@@ -1028,7 +1029,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     return resp;
   }
 
-  doChocolateCakeEvents(chocoCakeCheck: {player: boolean, opponent: boolean, cake: boolean}) {
+  doChocolateCakeEvents(chocoCakeCheck: { player: boolean, opponent: boolean, cake: boolean }) {
     let chocoCakePets = [];
     if (chocoCakeCheck.player) {
       chocoCakePets.push(this.player.pet0);
@@ -1089,7 +1090,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           pet.equipment.callback(pet);
         }
       }
-      
+
     }
   }
 
@@ -1166,7 +1167,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   getRandomEvents(battle: Battle) {
     let events = ""
-    let randomLogs = battle.logs.filter((log) => {return log.randomEvent == true});
+    let randomLogs = battle.logs.filter((log) => { return log.randomEvent == true });
     for (let log of randomLogs) {
       events += log.message;
       if (log != randomLogs[randomLogs.length - 1]) {
@@ -1235,8 +1236,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   openCustomPackEditor() {
     this.customPackEditorModal.show();
-    this.formGroup.get('playerPack').setValue(this.previousPackPlayer, {emitEvent: false});
-    this.formGroup.get('opponentPack').setValue(this.previousPackOpponent, {emitEvent: false});
+    this.formGroup.get('playerPack').setValue(this.previousPackPlayer, { emitEvent: false });
+    this.formGroup.get('opponentPack').setValue(this.previousPackOpponent, { emitEvent: false });
   }
 
   drop(event: CdkDragDrop<string[]>, playerString: string) {
@@ -1246,15 +1247,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (playerString == 'player') {
       // since the array is reversed, we need to revers the indexes
       previousIndex = 4 - previousIndex;
-      currentIndex = 4 - currentIndex; 
+      currentIndex = 4 - currentIndex;
       player = this.player;
     }
     moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
-    
+
     for (let selector of this.petSelectors.toArray()) {
       selector.substitutePet();
     }
-  
+
   }
 
   resetPlayer(player: 'player' | 'opponent') {
@@ -1274,7 +1275,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     // added this and it is fixed?
     this.localStorageService.setFormStorage(this.formGroup);
-    
+
     let calc = JSON.stringify(this.formGroup.value);
     // copy to clipboard
     navigator.clipboard.writeText(calc).then(() => {
@@ -1286,16 +1287,16 @@ export class AppComponent implements OnInit, AfterViewInit {
     let success = false;
     try {
       const calculator = JSON.parse(importVal);
-      
+
       this.loadCalculatorFromValue(calculator);
       this.initApp();
       if (!isInitialLoad) {
         setTimeout(() => {
-            if (this.petSelectors) {
-                this.petSelectors.forEach((petSelector) => {
-                    petSelector.fixLoadEquipment();
-                });
-            }
+          if (this.petSelectors) {
+            this.petSelectors.forEach((petSelector) => {
+              petSelector.fixLoadEquipment();
+            });
+          }
         }, 0);
       }
       success = true;
@@ -1316,18 +1317,18 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     for (const pet of petsToClean) {
       if (pet) {
-          // Remove all complex objects and circular references
-          delete pet.parent;
-          delete pet.logService;
-          delete pet.abilityService;
-          delete pet.gameService;
-          delete pet.petService; 
+        // Remove all complex objects and circular references
+        delete pet.parent;
+        delete pet.logService;
+        delete pet.abilityService;
+        delete pet.gameService;
+        delete pet.petService;
 
-          if (pet.equipment) {
-              pet.equipment = { name: pet.equipment.name };
-          }
+        if (pet.equipment) {
+          pet.equipment = { name: pet.equipment.name };
+        }
       }
-  }
+    }
 
     const calculatorStateString = JSON.stringify(cleanValue);
 
@@ -1380,13 +1381,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   initializeEquipmentMultipliers() {
     // Initialize multipliers for equipment that pets start the battle with
     // This ensures Panther level multipliers and Pandora's Box toy multipliers work correctly
-    
+
     for (let pet of this.player.petArray) {
       if (pet.equipment) {
         pet.setEquipmentMultiplier();
       }
     }
-    
+
     for (let pet of this.opponent.petArray) {
       if (pet.equipment) {
         pet.setEquipmentMultiplier();

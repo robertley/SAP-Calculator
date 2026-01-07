@@ -1,23 +1,16 @@
-import { ManticoreAbility } from "app/classes/abilities/pets/unicorn/tier-6/manticore-ability.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
-import { Crisp } from "../../../equipment/ailments/crisp.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Manticore extends Pet {
-    name = "Manticore";
-    tier = 6;
-    pack: Pack = 'Unicorn';
-    attack = 7;
-    health = 4;
-
-    initAbilities(): void {
-        this.addAbility(new ManticoreAbility(this, this.logService, this.abilityService));
-        super.initAbilities();
-    }
+export class PurpleFrog extends Pet {
+    name = "Purple Frog";
+    tier = 3;
+    pack: Pack = 'Puppy';
+    attack = 4;
+    health = 2;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

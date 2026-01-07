@@ -10,7 +10,7 @@ export class Microbe extends Pet {
     name = "Microbe";
     tier = 4;
     pack: Pack = 'Puppy';
-    attack = 1;
+    attack = 4;
     health = 1;
     initAbilities(): void {
         this.addAbility(new MicrobeAbility(this, this.logService));

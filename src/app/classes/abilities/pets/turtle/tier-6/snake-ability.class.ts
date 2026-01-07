@@ -4,6 +4,7 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { getOpponent } from "app/util/helper-functions";
 
+// Friend ahead attacks: Deal 5 damage to one random enemy. Works 5 times per battle.
 export class SnakeAbility extends Ability {
     private logService: LogService;
 
@@ -15,6 +16,7 @@ export class SnakeAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
+            maxUses: 5,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }

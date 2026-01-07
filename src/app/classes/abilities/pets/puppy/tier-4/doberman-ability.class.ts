@@ -15,20 +15,6 @@ export class DobermanAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            condition: (context: AbilityContext) => {
-                const { triggerPet, tiger, pteranodon } = context;
-                const owner = this.owner;
-                // determine if lowest tier pet
-                for (let pet of owner.parent.petArray) {
-                    if (pet == owner) {
-                        continue;
-                    }
-                    if (pet.tier <= owner.tier) {
-                        return false;
-                    }
-                }
-                return true;
-            },
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -37,8 +23,8 @@ export class DobermanAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let power = this.level * 8;
         let targetResp = owner.parent.getThis(owner);
@@ -54,6 +40,24 @@ export class DobermanAbility extends Ability {
             tiger: tiger,
             randomEvent: targetResp.random
         });
+
+        // check if all friends are higher tier
+        let lowestTier = true;
+        for (let pet of owner.parent.petArray) {
+            if (pet == owner) {
+                continue;
+            }
+            if (pet.tier <= owner.tier) {
+                lowestTier = false;
+                break;
+            }
+        }
+
+        if (!lowestTier) {
+            this.triggerTigerExecution(context);
+            return;
+        }
+
         let coconutTargetResp = owner.parent.getThis(owner);
         let coconutTarget = coconutTargetResp.pet;
         if (coconutTarget == null) {

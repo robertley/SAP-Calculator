@@ -14,7 +14,8 @@ export class FanMussel extends Pet {
     health = 2;
 
     initAbilities(): void {
-        this.addAbility(new FanMusselAbility(this))
+        this.addAbility(new FanMusselAbility(this));
+        super.initAbilities();
     }
 
     constructor(protected logService: LogService,

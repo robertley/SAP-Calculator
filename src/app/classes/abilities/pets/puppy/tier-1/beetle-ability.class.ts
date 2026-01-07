@@ -6,6 +6,7 @@ import { AbilityService } from "app/services/ability.service";
 import { Garlic } from "../../../../equipment/turtle/garlic.class";
 import { Honey } from "../../../../equipment/turtle/honey.class";
 import { MeatBone } from "../../../../equipment/turtle/meat-bone.class";
+import { Walnut } from "../../../../equipment/puppy/walnut.class";
 
 export class BeetleAbility extends Ability {
     private logService: LogService;
@@ -28,19 +29,23 @@ export class BeetleAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let equipment;
         switch (this.level) {
             case 1:
-                equipment = new Honey(this.logService, this.abilityService);
+                equipment = new Walnut();
                 break;
             case 2:
-                equipment = new MeatBone();
+                equipment = new Walnut();
+                equipment.power = 4;
+                equipment.originalPower = 4;
                 break;
             case 3:
-                equipment = new Garlic();
+                equipment = new Walnut();
+                equipment.power = 6;
+                equipment.originalPower = 6;
                 break;
         }
         let excludePets = owner.parent.getPetsWithEquipment(equipment.name);
