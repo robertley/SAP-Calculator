@@ -98,6 +98,7 @@ import { SeaCucumber } from "../classes/pets/custom/tier-5/sea-cucumber.class";
 import { FlyingSquirrel } from "../classes/pets/puppy/tier-3/flying-squirrel.class";
 import { Pangolin } from "../classes/pets/puppy/tier-3/pangolin.class";
 import { Puppy } from "../classes/pets/puppy/tier-3/puppy.class";
+import { PurpleFrog } from "../classes/pets/puppy/tier-3/purple-frog.class";
 import { Microbe } from "../classes/pets/puppy/tier-4/microbe.class";
 import { Lobster } from "../classes/pets/puppy/tier-4/lobster.class";
 import { Buffalo } from "../classes/pets/puppy/tier-4/buffalo.class";
@@ -682,7 +683,8 @@ export class PetService {
             "Flying Squirrel",
             "Pangolin",
             "Puppy",
-            "Hare"
+            "Hare",
+            "Purple Frog"
         ])
 
         this.puppyPackPets.set(4, [
@@ -1345,6 +1347,8 @@ export class PetService {
                 return new Pangolin(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Puppy':
                 return new Puppy(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
+            case 'Purple Frog':
+                return new PurpleFrog(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             case 'Hare':
                 return new Hare(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
             
@@ -2135,6 +2139,10 @@ export class PetService {
             case 'Sumatran Tiger':
                 return new SumatranTiger(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
 
+            // Default fallback for unrecognized pets (e.g., from replay bot with new units)
+            // Use Mouse as a weak placeholder pet without abilities
+            default:
+                return new Mouse(this.logService, this.abilityService, parent, petForm.health, petForm.attack, petForm.mana, petForm.exp, petForm.equipment, petForm.triggersConsumed);
         }
     }
 

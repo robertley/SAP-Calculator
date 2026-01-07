@@ -655,10 +655,14 @@ export abstract class Pet {
             'Icky'
         ]
 
+        const isGuavaDefense = pet.equipment?.name === 'Guava';
         let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense' 
         || pet.equipment?.equipmentClass == 'shield'
         || pet.equipment?.equipmentClass == 'ailment-defense'
         || (snipe && pet.equipment?.equipmentClass == 'shield-snipe') ? pet.equipment : null;
+        if (defenseEquipment == null && isGuavaDefense) {
+            defenseEquipment = pet.equipment;
+        }
 
         if (defenseEquipment != null) {
 
@@ -955,7 +959,7 @@ export abstract class Pet {
         if (this.equipment.equipmentClass == 'ailment-defense' || this.equipment.name == 'Icky') {
             // skip the next if
         }
-        else if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
+        else if (this.equipment.name != 'Guava' && this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
             return;
         }
         if (this.equipment.uses == null) {

@@ -87,6 +87,9 @@ import { PeanutButter } from "../classes/equipment/hidden/peanut-butter";
 import { CakeSlice } from "../classes/equipment/hidden/cake-slice.class";
 import { Ambrosia } from "../classes/equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../classes/equipment/unicorn/faint-bread.class";
+import { Guava } from "../classes/equipment/custom/guava.class";
+import { MildChili } from "../classes/equipment/custom/mild-chili.class";
+import { Walnut } from "../classes/equipment/custom/walnut.class";
 
 @Injectable({
     providedIn: "root"
@@ -156,6 +159,9 @@ export class EquipmentService {
         map.set('Pineapple', new Pineapple());
         map.set('Fig', new Fig(this.logService));
         map.set('Caramel', new Caramel(this.logService));
+        map.set('Guava', new Guava(this.logService));
+        map.set('Mild Chili', new MildChili(this.logService, this.abilityService));
+        map.set('Walnut', new Walnut());
 
         map.set('Rambutan', new Rambutan(this.logService));
         map.set('Love Potion', new LovePotion(this.logService));
