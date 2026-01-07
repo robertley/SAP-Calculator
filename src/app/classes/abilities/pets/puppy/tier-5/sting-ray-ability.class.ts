@@ -3,13 +3,13 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
 
-export class StringRayAbility extends Ability {
+export class StingRayAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
 
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
         super({
-            name: 'StringRayAbility',
+            name: 'StingRayAbility',
             owner: owner,
             triggers: [],
             abilityType: 'Pet',
@@ -28,7 +28,7 @@ export class StringRayAbility extends Ability {
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): StringRayAbility {
-        return new StringRayAbility(newOwner, this.logService, this.abilityService);
+    copy(newOwner: Pet): StingRayAbility {
+        return new StingRayAbility(newOwner, this.logService, this.abilityService);
     }
 }

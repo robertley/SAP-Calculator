@@ -31,15 +31,24 @@ export class BelugaSturgeonAbility extends Ability {
         const owner = this.owner;
 
         for (let i = 0; i < this.level; i++) {
-            let dolphin = new Dolphin(this.logService, this.abilityService, owner.parent, 3, 2, 0, 0, new Rice());
+            let dolphin = new Dolphin(this.logService, this.abilityService, owner.parent, 3, 2, 0, 0, null);
 
             let summonResult = owner.parent.summonPet(dolphin, 4, false, owner);
             if (summonResult.success) {
                 this.logService.createLog({
-                    message: `${owner.name} summoned a 2/3 Dolphin with Rice in the back.`,
+                    message: `${owner.name} summoned a 2/3 Dolphin in the back.`,
                     type: 'ability',
                     player: owner.parent,
                     randomEvent: summonResult.randomEvent,
+                    tiger: tiger,
+                    pteranodon: pteranodon
+                });
+                dolphin.givePetEquipment(new Rice());
+                this.logService.createLog({
+                    message: `${owner.name} gave ${dolphin.name} Rice.`,
+                    type: 'ability',
+                    player: owner.parent,
+                    randomEvent: false,
                     tiger: tiger,
                     pteranodon: pteranodon
                 });
