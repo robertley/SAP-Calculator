@@ -108,9 +108,9 @@ Pets without abilities: 166
   Class: Poodle
   Path: src/app/classes/pets/custom/tier-5/poodle.class.ts
 
-  File: siberian-huskey.class.ts
-  Class: SiberianHuskey
-  Path: src/app/classes/pets/custom/tier-5/siberian-huskey.class.ts
+  File: siberian-husky.class.ts
+  Class: SiberianHusky
+  Path: src/app/classes/pets/custom/tier-5/siberian-husky.class.ts
 
   File: tandgnost.class.ts
   Class: Tandgnost
@@ -212,9 +212,9 @@ Pets without abilities: 166
   Class: Magpie
   Path: src/app/classes/pets/golden/tier-1/magpie.class.ts
 
-  File: oposum.class.ts
+  File: opossum.class.ts
   Class: Opossum
-  Path: src/app/classes/pets/golden/tier-1/oposum.class.ts
+  Path: src/app/classes/pets/golden/tier-1/opossum.class.ts
 
 === PACK: golden | TIER: tier-2 ===
   File: african-penguin.class.ts
@@ -527,9 +527,9 @@ Pets without abilities: 166
   Class: Okapi
   Path: src/app/classes/pets/star/tier-3/okapi.class.ts
 
-  File: orangutang.class.ts
-  Class: Orangutang
-  Path: src/app/classes/pets/star/tier-3/orangutang.class.ts
+  File: Orangutan.class.ts
+  Class: Orangutan
+  Path: src/app/classes/pets/star/tier-3/Orangutan.class.ts
 
 === PACK: star | TIER: tier-4 ===
   File: elk.class.ts
@@ -709,4 +709,5 @@ Pets without abilities: 166
   File: yeti.class.ts
   Class: Yeti
   Path: src/app/classes/pets/unicorn/tier-6/yeti.class.ts
+
 

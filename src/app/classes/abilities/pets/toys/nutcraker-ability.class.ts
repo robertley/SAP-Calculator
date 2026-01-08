@@ -4,14 +4,14 @@ import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
 import { SalmonOfKnowledge } from "../../../pets/unicorn/tier-5/salmon-of-knowledge.class";
 
-export class NutcrakerAbility extends Ability {
+export class NutcrackerAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
     private used: boolean = false;
 
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
         super({
-            name: 'NutcrakerAbility',
+            name: 'NutcrackerAbility',
             owner: owner,
             triggers: [],
             abilityType: 'Pet',
@@ -46,7 +46,7 @@ export class NutcrakerAbility extends Ability {
         if (owner.parent.summonPet(salmon, 0).success) {
             this.logService.createLog(
                 {
-                    message: `Nutcraker Ability spawned Salmon of Knowledge (${power}/${power})`,
+                    message: `Nutcracker Ability spawned Salmon of Knowledge (${power}/${power})`,
                     type: "ability",
                     player: owner.parent,
                     tiger: tiger,
@@ -60,7 +60,7 @@ export class NutcrakerAbility extends Ability {
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): NutcrakerAbility {
-        return new NutcrakerAbility(newOwner, this.logService, this.abilityService);
+    copy(newOwner: Pet): NutcrackerAbility {
+        return new NutcrackerAbility(newOwner, this.logService, this.abilityService);
     }
 }

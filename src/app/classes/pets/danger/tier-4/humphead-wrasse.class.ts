@@ -3,9 +3,9 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { HumphreadWrasseAbility } from "../../../abilities/pets/danger/tier-4/humphead-wrasse-ability.class";
+import { HumpheadWrasseAbility } from "../../../abilities/pets/danger/tier-4/humphead-wrasse-ability.class";
 
-export class HumphreadWrasse extends Pet {
+export class HumpheadWrasse extends Pet {
     name = "Humphead Wrasse";
     tier = 4;
     pack: Pack = 'Danger';
@@ -13,7 +13,7 @@ export class HumphreadWrasse extends Pet {
     health = 4;
 
     initAbilities(): void {
-        this.addAbility(new HumphreadWrasseAbility(this, this.logService));
+        this.addAbility(new HumpheadWrasseAbility(this, this.logService));
         super.initAbilities();
     }
 

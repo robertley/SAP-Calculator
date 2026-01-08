@@ -58,7 +58,7 @@ export class PandorasBox extends Toy {
 
         let pets = [
             ...gameApi.player.petArray,
-            ...gameApi.opponet.petArray
+            ...gameApi.opponent.petArray
         ];
 
         let equipments = Array.from(equipmentMap.values());

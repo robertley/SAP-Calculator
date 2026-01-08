@@ -4,8 +4,8 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Cabybara extends Pet {
-    name = "Cabybara";
+export class Capybara extends Pet {
+    name = "Capybara";
     tier = 3;
     pack: Pack = 'Star';
     attack = 2;

@@ -3,9 +3,9 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
-import { ChimLion } from "../../../../pets/hidden/chim-lion.class";
-import { ChimGoat } from "../../../../pets/hidden/chim-goat.class";
-import { ChimSnake } from "../../../../pets/hidden/chim-snake.class";
+import { ChimeraLion } from "../../../../pets/hidden/chimera-lion.class";
+import { ChimeraGoat } from "../../../../pets/hidden/chimera-goat.class";
+import { ChimeraSnake } from "../../../../pets/hidden/chimera-snake.class";
 
 export class ChimeraAbility extends Ability {
     private logService: LogService;
@@ -51,7 +51,7 @@ export class ChimeraAbility extends Ability {
         });
 
         // Always spawn Lion
-        let lion = new ChimLion(this.logService, this.abilityService, owner.parent, finalHealth, finalAttack);
+        let lion = new ChimeraLion(this.logService, this.abilityService, owner.parent, finalHealth, finalAttack);
         let lionSummonResult = owner.parent.summonPet(lion, owner.savedPosition, false, owner);
         if (lionSummonResult.success) {
             this.logService.createLog({
@@ -66,7 +66,7 @@ export class ChimeraAbility extends Ability {
 
         if (this.level >= 2) {
             // Spawn Goat at level 2+
-            let goat = new ChimGoat(this.logService, this.abilityService, owner.parent, finalHealth, finalAttack);
+            let goat = new ChimeraGoat(this.logService, this.abilityService, owner.parent, finalHealth, finalAttack);
             let goatSummonResult = owner.parent.summonPet(goat, owner.savedPosition, false, owner);
             if (goatSummonResult.success) {
                 this.logService.createLog({
@@ -82,7 +82,7 @@ export class ChimeraAbility extends Ability {
 
         if (this.level >= 3) {
             // Spawn Snake at level 3
-            let snake = new ChimSnake(this.logService, this.abilityService, owner.parent, finalHealth, finalAttack);
+            let snake = new ChimeraSnake(this.logService, this.abilityService, owner.parent, finalHealth, finalAttack);
             let snakeSummonResult = owner.parent.summonPet(snake, owner.savedPosition, false, owner);
             if (snakeSummonResult.success) {
                 this.logService.createLog({

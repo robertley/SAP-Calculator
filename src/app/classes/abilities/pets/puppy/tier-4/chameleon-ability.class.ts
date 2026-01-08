@@ -7,7 +7,6 @@ import { EquipmentService } from "app/services/equipment.service";
 // Import all toy ability classes
 import { TennisBallAbility } from "../../../../abilities/pets/toys/tennis-ball-ability.class";
 import { BalloonAbility } from "../../../../abilities/pets/toys/balloon-ability.class";
-import { GarlicPressAbility } from "../../../../abilities/pets/toys/garlic-press-ability.class";
 import { PlasticSawAbility } from "../../../../abilities/pets/toys/plastic-saw-ability.class";
 import { RadioAbility } from "../../../../abilities/pets/toys/radio-ability.class";
 import { OvenMittsAbility } from "../../../../abilities/pets/toys/oven-mitts-ability.class";
@@ -28,7 +27,7 @@ import { MagicLampAbility } from "../../../../abilities/pets/toys/magic-lamp-abi
 import { MagicCarpetAbility } from "../../../../abilities/pets/toys/magic-carpet-ability.class";
 import { MagicWandAbility } from "../../../../abilities/pets/toys/magic-wand-ability.class";
 import { MagicMirrorAbility } from "../../../../abilities/pets/toys/magic-mirror-ability.class";
-import { NutcrakerAbility } from "../../../../abilities/pets/toys/nutcraker-ability.class";
+import { NutcrackerAbility } from "../../../../abilities/pets/toys/nutcraker-ability.class";
 import { PickaxeAbility } from "../../../../abilities/pets/toys/pickaxe-ability.class";
 import { TreasureChestAbility } from "../../../../abilities/pets/toys/treasure-chest-ability.class";
 import { TinderBoxAbility } from "../../../../abilities/pets/toys/tinder-box-ability.class";
@@ -78,7 +77,6 @@ export class ChameleonAbility extends Ability {
         const toyAbilityMap: { [key: string]: any } = {
             'Tennis Ball': () => new TennisBallAbility(owner, this.logService),
             'Balloon': () => new BalloonAbility(owner, this.logService),
-            //'Garlic Press': () => new GarlicPressAbility(owner, this.logService, this.abilityService, this.equipmentService),
             'Plastic Saw': () => new PlasticSawAbility(owner, this.logService),
             'Radio': () => new RadioAbility(owner, this.logService),
             'Oven Mitts': () => new OvenMittsAbility(owner, this.logService),
@@ -103,7 +101,7 @@ export class ChameleonAbility extends Ability {
             //'Magic Carpet': () => new MagicCarpetAbility(owner, this.logService, this.abilityService),
             //'Magic Wand': () => new MagicWandAbility(owner, this.logService, this.abilityService),
             //'Magic Mirror': () => new MagicMirrorAbility(owner, this.logService, this.abilityService),
-            //'Nutcracker': () => new NutcrakerAbility(owner, this.logService, this.abilityService),
+            //'Nutcracker': () => new NutcrackerAbility(owner, this.logService, this.abilityService),
             //'Pickaxe': () => new PickaxeAbility(owner, this.logService, this.abilityService),
             //'Rosebud': () => new RosebudAbility(owner, this.logService, this.abilityService),
             //'Red Cape': () => new RedCapeAbility(owner, this.logService, this.abilityService),
