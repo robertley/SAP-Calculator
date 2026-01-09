@@ -107,7 +107,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   title = 'sap-calculator';
   player: Player;
   opponent: Player;
-  maxTurns = 71; // TODO: Find official max turns in a battle
+  maxTurns = 71;
   turns = 0;
   attackCount = 0;
   battleStarted = false;

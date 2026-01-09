@@ -1,0 +1,14 @@
+export const EQUIPMENT_CATEGORIES: { [key: string]: string[] } = {
+    'Turtle': ['Cake', 'Chili', 'Coconut', 'Garlic', 'Honey', 'Meat Bone', 'Melon', 'Mushroom', 'Peanut', 'Steak'],
+    'Puppy': ['Blackberry', 'Croissant', 'Egg', 'Eucalyptus', 'Lemon', 'Lime', 'Mild Chili', 'Pancakes', 'Pie', 'Rice', 'Salt', 'Skewer', 'Squash', 'Walnut'],
+    'Star': ['Baguette', 'Caramel', 'Carrot', 'Cheese', 'Cucumber', 'Grapes', 'Pepper', 'Popcorn', 'Seaweed', 'Strawberry'],
+    'Golden': ['Banana', 'Bok Choy', 'Cherry', 'Chocolate Cake', 'Durian', 'Eggplant', 'Fig', 'Honeydew Melon', 'Maple Syrup', 'Onion', 'Pita Bread', 'Potato', 'Tomato'],
+    'Unicorn': ['Ambrosia', 'Easter Egg', 'Faint Bread', 'Fairy Dust', 'Gingerbread Man', 'Golden Egg', 'Health Potion', 'Love Potion', 'Magic Beans', 'Rambutan', 'Yggdrasil Fruit'],
+    'Danger': ['Cocoa Bean', 'Cod Roe', 'Gros Michel Banana', 'Sudduth Tomato', 'White Okra', 'White Truffle'],
+    'Custom': ['Blueberry', 'Brussels Sprout', 'Cashew Nut', 'Cauliflower', 'Churros', 'Corncob', 'Donut', 'Fortune Cookie', 'Guava', 'Kiwano', 'Kiwifruit', 'Macaron', 'Mana Potion', 'Melon Slice', 'Nachos', 'Oyster Mushroom', 'Pineapple', 'Pumpkin', 'Radish', 'Sardinian Currant', 'Sausage', 'Unagi'],
+    'Hidden': ['Cake Slice', 'Peanut Butter'],
+};
+
+export const AILMENT_CATEGORIES: { [key: string]: string[] } = {
+    'Ailments': ['Bloated', 'Cold', 'Confused', 'Crisp', 'Cursed', 'Dazed', 'Icky', 'Ink', 'Inked', 'Sad', 'Silly', 'Sleepy', 'Spooked', 'Tasty', 'Toasty', 'Weak', 'Webbed'],
+};

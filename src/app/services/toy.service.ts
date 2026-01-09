@@ -8,48 +8,9 @@ import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { cloneDeep, shuffle } from "lodash";
 import { GameService } from "./game.service";
 import { PetService } from "./pet.service";
-import { Balloon } from "../classes/toys/tier-1/balloon.class";
-import { TennisBall } from "../classes/toys/tier-1/tennis-ball.class";
-import { Radio } from "../classes/toys/tier-2/radio.class";
-import { GarlicPress } from "../classes/toys/tier-2/garlic-press.class";
-import { PlasticSaw } from "../classes/toys/tier-2/plastic-saw.class";
-import { ToiletPaper } from "../classes/toys/tier-3/toilet-paper.class";
-import { OvenMitts } from "../classes/toys/tier-3/oven-mitts.class";
-import { MelonHelmet } from "../classes/toys/tier-4/melon-helmet.class";
-import { FoamSword } from "../classes/toys/tier-4/foam-sword.class";
-import { ToyGun } from "../classes/toys/tier-4/toy-gun.class";
-import { Flashlight } from "../classes/toys/tier-5/flashlight.class";
-import { StrinkySock } from "../classes/toys/tier-5/stinky-sock.class";
-import { Television } from "../classes/toys/tier-6/television.class";
-import { PeanutJar } from "../classes/toys/tier-6/peanut-jar.class";
-import { AirPalmTree } from "../classes/toys/tier-6/air-palm-tree.class";
-import { Stick } from "../classes/toys/tier-1/stick.class";
-import { CashRegister } from "../classes/toys/tier-4/cash-register.class";
-import { Camera } from "../classes/toys/tier-5/camera.class";
-import { PandorasBox } from "../classes/toys/unicorn/pandoras-box.class";
 import { EquipmentService } from "./equipment.service";
-import { WitchBroom } from "../classes/toys/unicorn/witch-broom.class";
-import { MagicWand } from "../classes/toys/unicorn/magic-wand.class";
-import { CrystalBall } from "../classes/toys/unicorn/crystal-ball.class";
-import { TreasureMap } from "../classes/toys/unicorn/treasure-map.class";
-import { TreasureChest } from "../classes/toys/unicorn/treasure-chest.class";
-import { EvilBook } from "../classes/toys/unicorn/evil-book.class";
-import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
-import { MagicCarpet } from "../classes/toys/unicorn/magic-carpet.class";
-import { MagicLamp } from "../classes/toys/unicorn/magic-lamp.class";
-import { Candleabra } from "../classes/toys/unicorn/candelabra.class";
-import { GlassShoes } from "../classes/toys/unicorn/glass-shoes.class";
-import { GoldenHarp } from "../classes/toys/unicorn/golden-harp.class";
-import { LockOfHair } from "../classes/toys/unicorn/lock-of-hair.class";
-import { MagicMirror } from "../classes/toys/unicorn/magic-mirror.class";
-import { Pickaxe } from "../classes/toys/unicorn/pickaxe.class";
-import { RedCape } from "../classes/toys/unicorn/red-cape.class";
-import { Rosebud } from "../classes/toys/unicorn/rosebud.class";
-import { Excalibur } from "../classes/toys/unicorn/excalibur.class";
-import { HolyGrail } from "../classes/toys/unicorn/holy-grail.class";
-import { Nutcracker } from "../classes/toys/unicorn/nutcraker.class";
-import { TinderBox } from "../classes/toys/unicorn/tinder-box.class";
-import { MicrowaveOven } from "../classes/toys/f2p/microwave-oven.class";
+import { ToyFactoryService } from "./toy-factory.service";
+import { Toy } from "../classes/toy.class";
 
 @Injectable({
     providedIn: 'root'
@@ -62,18 +23,22 @@ export class ToyService {
     emptyFrontSpaceEvents: AbilityEvent[] = [];
     friendSummonedEvents: AbilityEvent[] = [];
 
-    constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService, private equipmentService: EquipmentService, private petService: PetService) {
+    constructor(private logService: LogService,
+        private abilityService: AbilityService,
+        private gameService: GameService,
+        private equipmentService: EquipmentService,
+        private petService: PetService,
+        private toyFactory: ToyFactoryService) {
         this.setToys();
     }
 
     setToys() {
         this.toys.set(1, [
-            'Ballon',
+            'Balloon',
             'Stick'
         ])
         this.toys.set(2, [
             'Radio',
-            'Garlic Press',
             'Plastic Saw',
             'Microwave Oven',
             'Tennis Ball'
@@ -111,7 +76,7 @@ export class ToyService {
             'Magic Lamp',
             'Nutcracker',
             'Tinder Box',
-            'Candleabra',
+            'Candelabra',
             'Glass Shoes',
             'Golden Harp',
             'Lock of Hair',
@@ -125,93 +90,11 @@ export class ToyService {
     }
 
     createToy(toyName: string, parent: Player, level: number = 1) {
-        switch (toyName) {
-            case 'Ballon':
-                return new Balloon(this.logService, this, parent, level);
-            case 'Tennis Ball':
-                return new TennisBall(this.logService, this, parent, level);
-            case 'Radio':
-                return new Radio(this.logService, this, parent, level);
-            case 'Garlic Press':
-                return new GarlicPress(this.logService, this, parent, level);
-            case 'Plastic Saw':
-                return new PlasticSaw(this.logService, this, parent, level);
-            case 'Toilet Paper':
-                return new ToiletPaper(this.logService, this, parent, level);
-            case 'Oven Mitts':
-                return new OvenMitts(this.logService, this, parent, level);
-            case 'Melon Helmet':
-                return new MelonHelmet(this.logService, this, parent, level);
-            case 'Foam Sword':
-                return new FoamSword(this.logService, this, parent, level);
-            case 'Toy Gun':
-                return new ToyGun(this.logService, this, parent, level);
-            case 'Stick':
-                return new Stick(this.logService, this, parent, level, this.petService);
-            case 'Cash Register':
-                return new CashRegister(this.logService, this, parent, level);
-            case 'Camera':
-                return new Camera(this.logService, this, parent, level);
-            case 'Flashlight':
-                return new Flashlight(this.logService, this, parent, level);
-            case 'Stinky Sock':
-                return new StrinkySock(this.logService, this, parent, level);
-            case 'Television':
-                return new Television(this.logService, this, parent, level);
-            case 'Peanut Jar':
-                return new PeanutJar(this.logService, this, parent, level);
-            case 'Air Palm Tree':
-                return new AirPalmTree(this.logService, this, parent, level);
-
-            case 'Pandoras Box':
-                return new PandorasBox(this.logService, this, parent, level, this.equipmentService);
-            case 'Witch Broom':
-                return new WitchBroom(this.logService, this, parent, level);
-            case 'Magic Wand':
-                return new MagicWand(this.logService, this, parent, level);
-            case 'Crystal Ball':
-                return new CrystalBall(this.logService, this, parent, level);
-            case 'Treasure Map':
-                return new TreasureMap(this.logService, this, parent, level);
-            case 'Treasure Chest':
-                return new TreasureChest(this.logService, this, parent, level);
-            case 'Evil Book':
-                return new EvilBook(this.logService, this, this.abilityService, parent, level);
-            case 'Magic Carpet':
-                return new MagicCarpet(this.logService, this, parent, level);
-            case 'Magic Lamp':
-                return new MagicLamp(this.logService, this, parent, level);
-            case 'Nutcracker':
-                return new Nutcracker(this.logService, this, this.abilityService, parent, level);
-            case 'Tinder Box':
-                return new TinderBox(this.logService, this, this.abilityService, parent, level);
-            case 'Candleabra':
-                return new Candleabra(this.logService, this, parent, level);
-            case 'Glass Shoes':
-                return new GlassShoes(this.logService, this, parent, level);
-            case 'Golden Harp':
-                return new GoldenHarp(this.logService, this, parent, level);
-            case 'Lock of Hair':
-                return new LockOfHair(this.logService, this, parent, level);
-            case 'Magic Mirror':
-                return new MagicMirror(this.logService, this, parent, level);
-            case 'Pickaxe':
-                return new Pickaxe(this.logService, this, parent, level);
-            case 'Red Cape':
-                return new RedCape(this.logService, this, parent, level);
-            case 'Rose Bud':
-                return new Rosebud(this.logService, this, parent, level);
-            case 'Excalibur':
-                return new Excalibur(this.logService, this, parent, level);
-            case 'Holy Grail':
-                return new HolyGrail(this.logService, this, parent, level);
-            case 'Microwave Oven':
-                return new MicrowaveOven(this.logService, this, parent, level, this.petService, this.gameService);
-        }
+        return this.toyFactory.createToy(toyName, parent, level, this, this.petService, this.equipmentService, this.gameService);
     }
 
     snipePet(pet: Pet, power: number, parent: Player, toyName: string, randomEvent = false, puma = false) {
-        let damageResp = this.calculateDamgae(pet, this.getManticoreMult(parent), power);
+        let damageResp = this.calculateDamage(pet, this.getManticoreMult(parent), power);
         let defenseEquipment = damageResp.defenseEquipment;
         let damage = damageResp.damage;
 
@@ -280,7 +163,7 @@ export class ToyService {
         return damage;
     }
 
-    calculateDamgae(pet: Pet, manticoreMult: number[], power?: number): {
+    calculateDamage(pet: Pet, manticoreMult: number[], power?: number): {
         defenseEquipment: Equipment,
         damage: number
         nurikabe: number,

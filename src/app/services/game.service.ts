@@ -18,7 +18,7 @@ export class GameService {
     init(player: Player, opponent: Player) {
         this.gameApi = {
             player: player,
-            opponet: opponent
+            opponent: opponent
         }
     }
 
