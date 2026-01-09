@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { Ink } from "app/classes/equipment/ailments/ink.class";
+import { Inked } from "app/classes/equipment/ailments/inked.class";
 
 export class CuttlefishAbility extends Ability {
     private logService: LogService;
@@ -23,8 +23,8 @@ export class CuttlefishAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let targetsResp = owner.parent.opponent.getLastPets(this.level, undefined, owner);
         let targets = targetsResp.pets;
@@ -52,9 +52,9 @@ export class CuttlefishAbility extends Ability {
         }
 
         for (let target of InkTargets) {
-            target.givePetEquipment(new Ink());
+            target.givePetEquipment(new Inked());
             this.logService.createLog({
-                message: `${owner.name} gave ${target.name} Ink.`,
+                message: `${owner.name} gave ${target.name} Inked.`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,

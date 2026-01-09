@@ -3,7 +3,7 @@ import { Player } from "../classes/player.class";
 
 export interface GameAPI {
     player: Player;
-    opponet: Player;
+    opponent: Player;
     playerPetPool?: Map<number, string[]>;
     opponentPetPool?: Map<number, string[]>;
     previousShopTier?: number;
