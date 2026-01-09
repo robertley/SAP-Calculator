@@ -100,14 +100,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild('customPackEditor')
   customPackEditor: ElementRef;
 
-  version = '0.9.0';
+  version = '0.9.1';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '1/7/2026';
+  lastUpdated = '1/8/2026';
 
   title = 'sap-calculator';
   player: Player;
   opponent: Player;
-  maxTurns = 71; // TODO: Find official max turns in a battle
+  maxTurns = 71;
   turns = 0;
   attackCount = 0;
   battleStarted = false;

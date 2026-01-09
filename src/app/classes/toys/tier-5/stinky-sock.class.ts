@@ -2,7 +2,7 @@ import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { getOpponent } from "../../../util/helper-functions";
 import { Toy } from "../../toy.class";
 
-export class StrinkySock extends Toy {
+export class StinkySock extends Toy {
     name = "Stinky Sock";
     tier = 5;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {

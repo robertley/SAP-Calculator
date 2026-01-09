@@ -63,7 +63,7 @@ export class HyenaAbility extends Ability {
     private level2Ability(gameApi: GameAPI, tiger?: boolean, pteranodon?: boolean): void {
         const owner = this.owner;
         this.shufflePets(gameApi.player);
-        this.shufflePets(gameApi.opponet);
+        this.shufflePets(gameApi.opponent);
         this.logService.createLog({
             message: `${owner.name} shuffled positions of all pets.`,
             type: 'ability',

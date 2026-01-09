@@ -31,7 +31,7 @@ export class PlatybelodonAbility extends Ability {
         // Determine if this is player's pet or opponent's pet and get appropriate roll count
         if (owner.parent === gameApi.player) {
             rollAmount = gameApi.playerRollAmount || 0;
-        } else if (owner.parent === gameApi.opponet) {
+        } else if (owner.parent === gameApi.opponent) {
             rollAmount = gameApi.opponentRollAmount || 0;
         }
 

@@ -3,12 +3,12 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
-export class HumphreadWrasseAbility extends Ability {
+export class HumpheadWrasseAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'HumphreadWrasseAbility',
+            name: 'HumpheadWrasseAbility',
             owner: owner,
             triggers: ['StartBattle'],
             abilityType: 'Pet',
@@ -22,8 +22,8 @@ export class HumphreadWrasseAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let percentage = 0.3 * this.level; // 30%/60%/90%
         let targetResp = owner.parent.opponent.getHighestAttackPet(undefined, owner);
@@ -50,7 +50,7 @@ export class HumphreadWrasseAbility extends Ability {
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): HumphreadWrasseAbility {
-        return new HumphreadWrasseAbility(newOwner, this.logService);
+    copy(newOwner: Pet): HumpheadWrasseAbility {
+        return new HumpheadWrasseAbility(newOwner, this.logService);
     }
 }

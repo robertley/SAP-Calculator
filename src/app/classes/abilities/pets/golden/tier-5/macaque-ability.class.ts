@@ -3,7 +3,7 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
-import { Orangutang } from "app/classes/pets/star/tier-3/orangutang.class";
+import { Orangutan } from "app/classes/pets/star/tier-3/orangutan.class";
 export class MacaqueAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
@@ -29,11 +29,11 @@ export class MacaqueAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let power = this.level * 12;
-        let monke = new Orangutang(this.logService, this.abilityService, owner.parent, power, power, 0, owner.minExpForLevel, owner.equipment);
+        let monke = new Orangutan(this.logService, this.abilityService, owner.parent, power, power, 0, owner.minExpForLevel, owner.equipment);
 
         let result = owner.parent.summonPetInFront(owner, monke);
         if (result.success) {
-            let message = `${owner.name} spawned Orangutang ${monke.attack}/${monke.health}`;
+            let message = `${owner.name} spawned Orangutan ${monke.attack}/${monke.health}`;
             if (owner.equipment != null) {
                 message += ` with ${owner.equipment.name}`;
             }

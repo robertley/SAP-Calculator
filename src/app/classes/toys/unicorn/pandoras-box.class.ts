@@ -6,7 +6,7 @@ import { Cold } from "../../equipment/ailments/cold.class";
 import { Crisp } from "../../equipment/ailments/crisp.class";
 import { Dazed } from "../../equipment/ailments/dazed.class";
 import { Icky } from "../../equipment/ailments/icky.class";
-import { Ink } from "../../equipment/ailments/ink.class";
+import { Inked } from "../../equipment/ailments/inked.class";
 import { Spooked } from "../../equipment/ailments/spooked.class";
 import { Toasty } from "../../equipment/ailments/toasty.class";
 import { Weak } from "../../equipment/ailments/weak.class";
@@ -31,7 +31,7 @@ export class PandorasBox extends Toy {
             new Toasty(),
             new Weak()
         ];
-        
+
         // https://superautopets.wiki.gg/wiki/Pandoras_Box
         let excludedPerks = [
             'Cake Slice',
@@ -58,7 +58,7 @@ export class PandorasBox extends Toy {
 
         let pets = [
             ...gameApi.player.petArray,
-            ...gameApi.opponet.petArray
+            ...gameApi.opponent.petArray
         ];
 
         let equipments = Array.from(equipmentMap.values());

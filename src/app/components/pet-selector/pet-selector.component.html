@@ -72,9 +72,11 @@
         <div class="col-12 mb-2">
             <select class="form-control" formControlName="equipment">
                 <option [ngValue]="null">None</option>
-                <option *ngFor="let equip of equipment | keyvalue" [ngValue]="equip.value">{{equip.key}}</option>
-                <optgroup *ngIf="ailments" label="Ailments">
-                    <option *ngFor="let ailment of ailmentEquipment | keyvalue" [ngValue]="ailment.value">{{ailment.key}}</option>
+                <optgroup *ngFor="let group of equipmentCategoryGroups" [label]="group.label">
+                    <option *ngFor="let equip of group.items" [ngValue]="equip">{{equip.name}}</option>
+                </optgroup>
+                <optgroup *ngFor="let group of ailmentCategoryGroups" [label]="group.label">
+                    <option *ngFor="let ailment of group.items" [ngValue]="ailment">{{ailment.name}}</option>
                 </optgroup>
             </select>
         </div>

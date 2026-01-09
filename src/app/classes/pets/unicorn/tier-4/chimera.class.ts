@@ -5,9 +5,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { ChimGoat } from "../../hidden/chim-goat.class";
-import { ChimLion } from "../../hidden/chim-lion.class";
-import { ChimSnake } from "../../hidden/chim-snake.class";
+import { ChimeraGoat } from "../../hidden/chimera-goat.class";
 import { ChimeraAbility } from "../../../abilities/pets/unicorn/tier-4/chimera-ability.class";
 
 export class Chimera extends Pet {

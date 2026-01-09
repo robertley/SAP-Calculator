@@ -25,7 +25,7 @@ export class LynxAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let opponent = (gameApi.player == owner.parent) ? gameApi.opponet : gameApi.player;
+        let opponent = (gameApi.player == owner.parent) ? gameApi.opponent : gameApi.player;
 
         let power = 0;
         for (let pet of owner.parent.petArray) {
