@@ -348,6 +348,62 @@ export class AbilityService {
 
     }
 
+    private handleCounterTriggers(
+        pet: Pet,
+        triggerPet: Pet | undefined,
+        customParams: any,
+        counters: Array<{ trigger: AbilityTrigger; modulo: number }>
+    ): void {
+        for (const counter of counters) {
+            if (!pet.hasTrigger(counter.trigger)) {
+                continue;
+            }
+            pet.abilityCounter++;
+            if (pet.abilityCounter % counter.modulo === 0) {
+                this.triggerAbility(pet, counter.trigger, triggerPet, customParams);
+            }
+        }
+    }
+
+    private enqueueToyEvents(
+        queue: AbilityEvent[],
+        player: Player,
+        triggerPet: Pet | undefined,
+        callback: (...args: any[]) => void
+    ): void {
+        this.addToyEvent(queue, {
+            callback,
+            priority: 100,
+            level: player.toy.level,
+            triggerPet
+        });
+
+        const pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
+        for (const puma of pumas) {
+            this.addToyEvent(queue, {
+                callback,
+                priority: +puma.attack,
+                level: puma.level,
+                triggerPet
+            });
+        }
+    }
+
+    private addToyEvent(queue: AbilityEvent[], event: AbilityEvent): void {
+        queue.push(event);
+    }
+
+    private executeToyEventQueue(queue: AbilityEvent[], executor: (event: AbilityEvent) => void): void {
+        const events = shuffle(queue);
+        events.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
+
+        for (const event of events) {
+            executor(event);
+        }
+
+        queue.length = 0;
+    }
+
     // Helper method to trigger abilities in the new system
     private triggerAbility(pet: Pet, trigger: AbilityTrigger, triggerPet?: Pet, customParams?: any): void {
         if (pet.hasTrigger(trigger)) {
@@ -489,7 +545,7 @@ export class AbilityService {
                 this.beforeStartOfBattleEvents.push(abilityEvent);
             } 
         }
-        for (let pet of this.gameApi.opponet.petArray) {
+        for (let pet of this.gameApi.opponent.petArray) {
             if (pet.hasTrigger('BeforeStartBattle')) {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
@@ -543,7 +599,7 @@ export class AbilityService {
                 this.startBattleEvents.push(abilityEvent);
             }   
         }  
-        for (let pet of this.gameApi.opponet.petArray) {
+        for (let pet of this.gameApi.opponent.petArray) {
             if (pet.hasTrigger('StartBattle')) {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
@@ -677,18 +733,10 @@ export class AbilityService {
     triggerAttacksEvents(AttackingPet: Pet) {
         // Add friendAttacks to unified system
         for (let pet of AttackingPet.parent.petArray) {
-            if (pet.hasTrigger('FriendlyAttacked2')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 2 == 0) {
-                    this.triggerAbility(pet, 'FriendlyAttacked2')
-                }
-            }
-            if (pet.hasTrigger('FriendlyAttacked3')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 3 == 0) {
-                    this.triggerAbility(pet, 'FriendlyAttacked3')
-                }
-            }
+            this.handleCounterTriggers(pet, undefined, undefined, [
+                { trigger: 'FriendlyAttacked2', modulo: 2 },
+                { trigger: 'FriendlyAttacked3', modulo: 3 }
+            ]);
             if (pet.hasTrigger('FriendlyAttacked')) {
                 const abilityEvent: AbilityEvent = {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
@@ -741,18 +789,10 @@ export class AbilityService {
                     };
                     this.afterFriendAttackEvents.push(abilityEvent);
                 }
-                if (pet.hasTrigger('FriendAttacked4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'FriendAttacked4')
-                    }
-                }
-                if (pet.hasTrigger('FriendAttacked5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendAttacked5')
-                    }
-                }
+                this.handleCounterTriggers(pet, undefined, undefined, [
+                    { trigger: 'FriendAttacked4', modulo: 4 },
+                    { trigger: 'FriendAttacked5', modulo: 5 }
+                ]);
             }
             if (pet == AttackingPet.petAhead || pet == AttackingPet.petBehind()) {
                 if (pet.hasTrigger('AdjacentFriendAttacked')) {
@@ -800,36 +840,13 @@ export class AbilityService {
                 };
                 this.afterFriendAttackEvents.push(abilityEvent);
             }
-            if (pet.hasTrigger('EnemyAttacked2')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 2 == 0) {
-                    this.triggerAbility(pet, 'EnemyAttacked2');
-                }
-            }
-            if (pet.hasTrigger('EnemyAttacked5')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 5 == 0) {
-                    this.triggerAbility(pet, 'EnemyAttacked5');
-                }
-            }
-            if (pet.hasTrigger('EnemyAttacked7')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 7 == 0) {
-                    this.triggerAbility(pet, 'EnemyAttacked7');
-                }
-            }
-            if (pet.hasTrigger('EnemyAttacked8')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 8 == 0) {
-                    this.triggerAbility(pet, 'EnemyAttacked8');
-                }
-            }
-            if (pet.hasTrigger('EnemyAttacked10')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 10 == 0) {
-                    this.triggerAbility(pet, 'EnemyAttacked10');
-                }
-            }
+            this.handleCounterTriggers(pet, undefined, undefined, [
+                { trigger: 'EnemyAttacked2', modulo: 2 },
+                { trigger: 'EnemyAttacked5', modulo: 5 },
+                { trigger: 'EnemyAttacked7', modulo: 7 },
+                { trigger: 'EnemyAttacked8', modulo: 8 },
+                { trigger: 'EnemyAttacked10', modulo: 10 }
+            ]);
         }
     }
     executeAfterAttackEvents() {
@@ -865,32 +882,13 @@ export class AbilityService {
                 this.triggerAbility(pet, 'ThisSummoned', summonedPet);
             } else {
                 this.triggerAbility(pet, 'FriendSummoned', summonedPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('FriendSummoned2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned2', summonedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendSummoned3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned3', summonedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendSummoned4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned4', summonedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendSummoned5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendSummoned5', summonedPet);
-                    }
-                }
-                                // Special summon types
+                this.handleCounterTriggers(pet, summonedPet, undefined, [
+                    { trigger: 'FriendSummoned2', modulo: 2 },
+                    { trigger: 'FriendSummoned3', modulo: 3 },
+                    { trigger: 'FriendSummoned4', modulo: 4 },
+                    { trigger: 'FriendSummoned5', modulo: 5 }
+                ]);
+                // Special summon types
                 if (summonedPet.name === 'Bee') {
                     this.triggerAbility(pet, 'BeeSummoned', summonedPet);
                 }
@@ -932,31 +930,12 @@ export class AbilityService {
                 this.triggerAbility(pet, 'ThisDied', faintedPet);
             } else {
                 this.triggerAbility(pet, 'FriendDied', faintedPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('TwoFriendsDied')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'TwoFriendsDied', faintedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendDied3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendDied3', faintedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendDied4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'FriendDied4', faintedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendDied5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendDied5', faintedPet);
-                    }
-                }
+                this.handleCounterTriggers(pet, faintedPet, undefined, [
+                    { trigger: 'TwoFriendsDied', modulo: 2 },
+                    { trigger: 'FriendDied3', modulo: 3 },
+                    { trigger: 'FriendDied4', modulo: 4 },
+                    { trigger: 'FriendDied5', modulo: 5 }
+                ]);
             }
         }
 
@@ -964,31 +943,12 @@ export class AbilityService {
         for (let pet of faintedPet.parent.opponent.petArray.filter(p => p.alive)) {
             this.triggerAbility(pet, 'EnemyDied', faintedPet);
             this.triggerAbility(pet, 'PetDied', faintedPet);
-            // Counter checks - first verify pet has the counter ability
-            if (pet.hasTrigger('EnemyFaint2')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 2 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint2', faintedPet);
-                }
-            }
-            if (pet.hasTrigger('EnemyFaint3')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 3 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint3', faintedPet);
-                }
-            }
-            if (pet.hasTrigger('EnemyFaint4')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 4 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint4', faintedPet);
-                }
-            }
-            if (pet.hasTrigger('EnemyFaint5')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 5 == 0) {
-                    this.triggerAbility(pet, 'EnemyFaint5', faintedPet);
-                }
-            }
+            this.handleCounterTriggers(pet, faintedPet, undefined, [
+                { trigger: 'EnemyFaint2', modulo: 2 },
+                { trigger: 'EnemyFaint3', modulo: 3 },
+                { trigger: 'EnemyFaint4', modulo: 4 },
+                { trigger: 'EnemyFaint5', modulo: 5 }
+            ]);
         }
     }
 
@@ -1003,40 +963,18 @@ export class AbilityService {
                 // Handle specific food types for this pet
                 if (foodType === 'apple') {
                     this.triggerAbility(pet, 'AppleEatenByThis', eatingPet);
-                    if (pet.hasTrigger('AppleEatenByThis2')) {
-                        pet.abilityCounter++;
-                        if (pet.abilityCounter % 2 == 0) {
-                            this.triggerAbility(pet, 'AppleEatenByThis2', eatingPet);
-                        }
-                    }
+                    this.handleCounterTriggers(pet, eatingPet, undefined, [
+                        { trigger: 'AppleEatenByThis2', modulo: 2 }
+                    ]);
                 } else if (foodType === 'corn') {
                     this.triggerAbility(pet, 'CornEatenByThis', eatingPet);
                 }
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('Eat2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'Eat2', eatingPet);
-                    }
-                }
-                if (pet.hasTrigger('Eat3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'Eat3', eatingPet);
-                    }
-                }
-                if (pet.hasTrigger('Eat4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'Eat4', eatingPet);
-                    }
-                }
-                if (pet.hasTrigger('Eat5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'Eat5', eatingPet);
-                    }
-                }
+                this.handleCounterTriggers(pet, eatingPet, undefined, [
+                    { trigger: 'Eat2', modulo: 2 },
+                    { trigger: 'Eat3', modulo: 3 },
+                    { trigger: 'Eat4', modulo: 4 },
+                    { trigger: 'Eat5', modulo: 5 }
+                ]);
             } else {
                 this.triggerAbility(pet, 'FoodEatenByFriend', eatingPet);
                 // Specific food types for friends
@@ -1137,19 +1075,10 @@ export class AbilityService {
                 this.triggerAbility(pet, 'ThisTransformed', transformedPet);
             } else {
                 this.triggerAbility(pet, 'FriendTransformed', transformedPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('FriendTransformed3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendTransformed3', transformedPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendTransformed5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendTransformed5', transformedPet);
-                    }
-                }
+                this.handleCounterTriggers(pet, transformedPet, undefined, [
+                    { trigger: 'FriendTransformed3', modulo: 3 },
+                    { trigger: 'FriendTransformed5', modulo: 5 }
+                ]);
             }
         }
     }
@@ -1195,64 +1124,21 @@ export class AbilityService {
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
             if (pet == hurtedPet) {
                 this.triggerAbility(pet, 'ThisHurt', hurtedPet, customParams);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('ThisHurt2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt2', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('ThisHurt3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt3', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('ThisHurt4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt4', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('ThisHurt5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'ThisHurt5', hurtedPet, customParams);
-                    }
-                }
+                this.handleCounterTriggers(pet, hurtedPet, customParams, [
+                    { trigger: 'ThisHurt2', modulo: 2 },
+                    { trigger: 'ThisHurt3', modulo: 3 },
+                    { trigger: 'ThisHurt4', modulo: 4 },
+                    { trigger: 'ThisHurt5', modulo: 5 }
+                ]);
             } else {
                 this.triggerAbility(pet, 'FriendHurt', hurtedPet, customParams);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('FriendHurt2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'FriendHurt2', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('FriendHurt3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendHurt3', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('FriendHurt4')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 4 == 0) {
-                        this.triggerAbility(pet, 'FriendHurt4', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('FriendHurt5')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 5 == 0) {
-                        this.triggerAbility(pet, 'FriendHurt5', hurtedPet, customParams);
-                    }
-                }
-                if (pet.hasTrigger('FriendHurt6')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 6 == 0) {
-                        this.triggerAbility(pet, 'FriendHurt6', hurtedPet, customParams);
-                    }
-                }
+                this.handleCounterTriggers(pet, hurtedPet, customParams, [
+                    { trigger: 'FriendHurt2', modulo: 2 },
+                    { trigger: 'FriendHurt3', modulo: 3 },
+                    { trigger: 'FriendHurt4', modulo: 4 },
+                    { trigger: 'FriendHurt5', modulo: 5 },
+                    { trigger: 'FriendHurt6', modulo: 6 }
+                ]);
             }
             if (pet == hurtedPet.petBehind(null, true)) {
                 this.triggerAbility(pet, 'FriendAheadHurt', hurtedPet, customParams);
@@ -1268,25 +1154,11 @@ export class AbilityService {
         for (let pet of hurtedPet.parent.opponent.petArray) {
             this.triggerAbility(pet, 'EnemyHurt', hurtedPet, customParams)
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
-            // Counter checks - first verify pet has the counter ability
-            if (pet.hasTrigger('EnemyHurt5')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 5 == 0) {
-                    this.triggerAbility(pet, 'EnemyHurt5', hurtedPet, customParams);
-                }
-            }
-            if (pet.hasTrigger('EnemyHurt10')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 10 == 0) {
-                    this.triggerAbility(pet, 'EnemyHurt10', hurtedPet, customParams);
-                }
-            }
-            if (pet.hasTrigger('EnemyHurt20')) {
-                pet.abilityCounter++;
-                if (pet.abilityCounter % 20 == 0) {
-                    this.triggerAbility(pet, 'EnemyHurt20', hurtedPet, customParams);
-                }
-            }
+            this.handleCounterTriggers(pet, hurtedPet, customParams, [
+                { trigger: 'EnemyHurt5', modulo: 5 },
+                { trigger: 'EnemyHurt10', modulo: 10 },
+                { trigger: 'EnemyHurt20', modulo: 20 }
+            ]);
         }
     }
     // level up events handler
@@ -1303,13 +1175,9 @@ export class AbilityService {
                 this.triggerAbility(pet, 'ThisLeveledUp', levelUpPet);
             } else {
                 this.triggerAbility(pet, 'FriendLeveledUp', levelUpPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('FriendlyLeveledUp2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'FriendlyLeveledUp2', levelUpPet);
-                    }
-                }
+                this.handleCounterTriggers(pet, levelUpPet, undefined, [
+                    { trigger: 'FriendlyLeveledUp2', modulo: 2 }
+                ]);
             }
         }
 
@@ -1343,19 +1211,10 @@ export class AbilityService {
                 // No specific triggers for the jumping pet itself
             } else {
                 this.triggerAbility(pet, 'FriendJumped', jumpPet);
-                // Counter checks - first verify pet has the counter ability
-                if (pet.hasTrigger('FriendJumped2')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 2 == 0) {
-                        this.triggerAbility(pet, 'FriendJumped2', jumpPet);
-                    }
-                }
-                if (pet.hasTrigger('FriendJumped3')) {
-                    pet.abilityCounter++;
-                    if (pet.abilityCounter % 3 == 0) {
-                        this.triggerAbility(pet, 'FriendJumped3', jumpPet);
-                    }
-                }
+                this.handleCounterTriggers(pet, jumpPet, undefined, [
+                    { trigger: 'FriendJumped2', modulo: 2 },
+                    { trigger: 'FriendJumped3', modulo: 3 }
+                ]);
             }
         }
 
@@ -1404,49 +1263,21 @@ export class AbilityService {
             if (player.toy.used) {
                 return;
             }
-            this.setEmptyFrontSpaceToyEvent(
-                {
-                    callback: player.toy.emptyFromSpace.bind(player.toy),
-                    priority: 100,
-                    level: player.toy.level
-                }
+            this.enqueueToyEvents(
+                this.emptyFrontSpaceToyEvents,
+                player,
+                undefined,
+                player.toy.emptyFromSpace.bind(player.toy)
             );
-
-            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
-            for (let puma of pumas) {
-                this.setEmptyFrontSpaceToyEvent(
-                    {
-                        callback: player.toy.emptyFromSpace.bind(player.toy),
-                        priority: +puma.attack,
-                        level: puma.level
-                    }
-                );
-            }
         }
 
 
     }
     
-
-    setEmptyFrontSpaceToyEvent(event: AbilityEvent) {
-        this.emptyFrontSpaceToyEvents.push(event);
-    }
-
-    private resetEmptyFrontSpaceToyEvents() {
-        this.emptyFrontSpaceToyEvents = [];
-    }
-
     executeEmptyFrontSpaceToyEvents() {
-        // shuffle, so that same priority events are in random order
-        this.emptyFrontSpaceToyEvents = shuffle(this.emptyFrontSpaceToyEvents);
-
-        this.emptyFrontSpaceToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.emptyFrontSpaceToyEvents) {
+        this.executeToyEventQueue(this.emptyFrontSpaceToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.priority < 100, event.level, event.priority);
-        }
-        
-        this.resetEmptyFrontSpaceToyEvents();
+        });
     }
 
     // Toy events
@@ -1456,48 +1287,19 @@ export class AbilityService {
 
     triggerFriendSummonedToyEvents(player: Player, pet: Pet) {
         if (player.toy?.friendSummoned != null) {
-            this.setFriendSummonedToyEvent(
-                {
-                    callback: player.toy.friendSummoned.bind(player.toy),
-                    priority: 100,
-                    level: player.toy.level,
-                    triggerPet: pet
-                }
+            this.enqueueToyEvents(
+                this.friendSummonedToyEvents,
+                player,
+                pet,
+                player.toy.friendSummoned.bind(player.toy)
             );
-
-            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
-            for (let puma of pumas) {
-                this.setFriendSummonedToyEvent(
-                    {
-                        callback: player.toy.friendSummoned.bind(player.toy),
-                        priority: +puma.attack,
-                        level: puma.level,
-                        triggerPet: pet
-                    }
-                );
-            }
         }
-    }
-
-    setFriendSummonedToyEvent(event: AbilityEvent) {
-        this.friendSummonedToyEvents.push(event);
-    }
-
-    private resetFriendSummonedToyEvents() {
-        this.friendSummonedToyEvents = [];
     }
 
     executeFriendSummonedToyEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendSummonedToyEvents = shuffle(this.friendSummonedToyEvents);
-
-        this.friendSummonedToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendSummonedToyEvents) {
+        this.executeToyEventQueue(this.friendSummonedToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        }
-        
-        this.resetFriendSummonedToyEvents();
+        });
     }
 
     // friendly level up toy events
@@ -1507,48 +1309,19 @@ export class AbilityService {
             return;
         }
         if (player.toy?.friendlyLevelUp != null) {
-            this.setFriendlyLevelUpToyEvent(
-                {
-                    callback: player.toy.friendlyLevelUp.bind(player.toy),
-                    priority: 100,
-                    level: player.toy.level,
-                    triggerPet: pet
-                }
+            this.enqueueToyEvents(
+                this.friendlyLevelUpToyEvents,
+                player,
+                pet,
+                player.toy.friendlyLevelUp.bind(player.toy)
             );
-
-            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
-            for (let puma of pumas) {
-                this.setFriendlyLevelUpToyEvent(
-                    {
-                        callback: player.toy.friendlyLevelUp.bind(player.toy),
-                        priority: +puma.attack,
-                        level: puma.level,
-                        triggerPet: pet
-                    }
-                );
-            }
         }
-    }
-
-    setFriendlyLevelUpToyEvent(event: AbilityEvent) {
-        this.friendlyLevelUpToyEvents.push(event);
-    }
-
-    private resetFriendlyLevelUpToyEvents() {
-        this.friendlyLevelUpToyEvents = [];
     }
 
     executeFriendlyLevelUpToyEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendlyLevelUpToyEvents = shuffle(this.friendlyLevelUpToyEvents);
-
-        this.friendlyLevelUpToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendlyLevelUpToyEvents) {
+        this.executeToyEventQueue(this.friendlyLevelUpToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        }
-        
-        this.resetFriendlyLevelUpToyEvents();
+        });
     }
 
     // friend faints toy events
@@ -1558,48 +1331,19 @@ export class AbilityService {
             return;
         }
         if (player.toy?.friendFaints != null) {
-            this.setFriendFaintsToyEvent(
-                {
-                    callback: player.toy.friendFaints.bind(player.toy),
-                    priority: 100,
-                    level: player.toy.level,
-                    triggerPet: pet
-                }
+            this.enqueueToyEvents(
+                this.friendFaintsToyEvents,
+                player,
+                pet,
+                player.toy.friendFaints.bind(player.toy)
             );
-
-            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
-            for (let puma of pumas) {
-                this.setFriendFaintsToyEvent(
-                    {
-                        callback: player.toy.friendFaints.bind(player.toy),
-                        priority: +puma.attack,
-                        level: +puma.level,
-                        triggerPet: pet
-                    }
-                );
-            }
         }
-    }
-
-    setFriendFaintsToyEvent(event: AbilityEvent) {
-        this.friendFaintsToyEvents.push(event);
-    }
-
-    private resetFriendFaintsToyEvents() {
-        this.friendFaintsToyEvents = [];
     }
 
     executeFriendFaintsToyEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendFaintsToyEvents = shuffle(this.friendFaintsToyEvents);
-
-        this.friendFaintsToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendFaintsToyEvents) {
+        this.executeToyEventQueue(this.friendFaintsToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        }
-        
-        this.resetFriendFaintsToyEvents();
+        });
     }
 
     // friend jumped toy events
@@ -1609,48 +1353,19 @@ export class AbilityService {
             return;
         }
         if (player.toy?.friendJumped != null) {
-            this.setFriendJumpedToyEvent(
-                {
-                    callback: player.toy.friendJumped.bind(player.toy),
-                    priority: 100,
-                    level: player.toy.level,
-                    triggerPet: pet
-                }
+            this.enqueueToyEvents(
+                this.friendJumpedToyEvents,
+                player,
+                pet,
+                player.toy.friendJumped.bind(player.toy)
             );
-
-            let pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
-            for (let puma of pumas) {
-                this.setFriendJumpedToyEvent(
-                    {
-                        callback: player.toy.friendJumped.bind(player.toy),
-                        priority: +puma.attack,
-                        level: puma.level,
-                        triggerPet: pet
-                    }
-                );
-            }
         }
         
-    }
-
-    setFriendJumpedToyEvent(event: AbilityEvent) {
-        this.friendJumpedToyEvents.push(event);
-    }
-
-    private resetFriendJumpedToyEvents() {
-        this.friendJumpedToyEvents = [];
     }
 
     executeFriendJumpedToyEvents() {
-        // shuffle, so that same priority events are in random order
-        this.friendJumpedToyEvents = shuffle(this.friendJumpedToyEvents);
-
-        this.friendJumpedToyEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
-
-        for (let event of this.friendJumpedToyEvents) {
+        this.executeToyEventQueue(this.friendJumpedToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        }
-        
-        this.resetFriendJumpedToyEvents();
+        });
     }
 }

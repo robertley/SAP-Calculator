@@ -1,5 +1,6 @@
 import { GameAPI } from "../interfaces/gameAPI.interface";
 import { Pet } from "./pet.class";
+import { minExpForLevel } from "../util/leveling";
 
 export type AbilityType = 'Pet' | 'Equipment';
 
@@ -179,6 +180,6 @@ export class Ability {
     }
 
     get minExpForLevel(): number {
-        return this.level == 1 ? 0 : this.level == 2 ? 2 : 5;
+        return minExpForLevel(this.level);
     }
 }
