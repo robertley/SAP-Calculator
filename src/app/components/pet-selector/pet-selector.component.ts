@@ -7,6 +7,7 @@ import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
 import { cloneDeep } from 'lodash';
 import { Weak } from '../../classes/equipment/ailments/weak.class';
+import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment-categories';
 
 @Component({
   selector: 'app-pet-selector',
@@ -40,6 +41,8 @@ export class PetSelectorComponent implements OnInit {
 
   equipment: Map<string, Equipment>;
   ailmentEquipment: Map<string, Equipment>;
+  equipmentCategoryGroups: Array<{ label: string; items: Equipment[] }> = [];
+  ailmentCategoryGroups: Array<{ label: string; items: Equipment[] }> = [];
   turtlePackPets: string[];
   pets: Map<number, string[]>;
   startOfBattlePets: Map<number, string[]>;
@@ -60,9 +63,9 @@ export class PetSelectorComponent implements OnInit {
     'Smallest Slug',
     'Zombie Cricket',
     'Zombie Fly',
-    'Chim-Goat',
-    'Chim-Lion',
-    'Chim-Snake',
+    'Chimera Goat',
+    'Chimera Lion',
+    'Chimera Snake',
     'Daycrawler',
     'Head',
     'Monty',
@@ -70,7 +73,18 @@ export class PetSelectorComponent implements OnInit {
     'Smaller Slime',
     'Young Phoenix',
     'Good Dog',
-  ];
+    'Adult Flounder',
+    'Burbel',
+    'Cooked Roach',
+    'Cuckoo Chick',
+    'Fake Nessie',
+    'Guinea Piglet',
+    'Hydra Head',
+    'Moby Dick',
+    'Quail',
+    'Sleeping Gelada',
+    'Tand and Tand',
+];
 
   constructor(private petService: PetService, private equipmentService: EquipmentService) {
 
@@ -187,6 +201,21 @@ export class PetSelectorComponent implements OnInit {
   initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
     this.ailmentEquipment = this.equipmentService.getInstanceOfAllAilments();
+    this.equipmentCategoryGroups = this.buildCategoryGroups(EQUIPMENT_CATEGORIES, this.equipment);
+    this.ailmentCategoryGroups = this.buildCategoryGroups(AILMENT_CATEGORIES, this.ailmentEquipment);
+  }
+
+  buildCategoryGroups(categoryMap: { [key: string]: string[] }, source: Map<string, Equipment>) {
+    return Object.entries(categoryMap).map(([label, names]) => {
+      const items: Equipment[] = [];
+      for (const name of names) {
+        const equipment = source.get(name);
+        if (equipment) {
+          items.push(equipment);
+        }
+      }
+      return { label, items };
+    }).filter(group => group.items.length > 0);
   }
 
   initForm() {
