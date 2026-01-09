@@ -1,7 +1,7 @@
 <ng-container *ngIf="api">
   <div id="apiResponse">{{apiResponse}}</div>
 </ng-container>
-<ng-container  *ngIf="!api">
+<ng-container *ngIf="!api">
   <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" #container>
     <div class="row mt-2">
       <div class="col-12 header">
@@ -12,14 +12,15 @@
         <div class="d-flex align-items-end">
           <div class="me-3">Last Updated: {{lastUpdated}}</div>
           <div class="d-flex flex-column align-items-end">
-            <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch Notes</span></span>
+            <span>Version: {{version}} <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link">Patch
+                Notes</span></span>
             <span>SAP Version: {{sapVersion}}</span>
           </div>
         </div>
-  
+
       </div>
     </div>
-  
+
     <div class="row battle-controller border">
       <div class="col-12 d-flex justify-content-between py-2">
         <div class="d-flex flex-wrap">
@@ -33,12 +34,13 @@
               <option value="Unicorn">Unicorn</option>
               <option value="Danger">Danger</option>
               <optgroup label="Custom Packs">
-                <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
+                <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">
+                  {{custom.get('name').value}}</option>
                 <option value="Add Custom Pack">Add Custom Pack</option>
               </optgroup>
             </select>
           </div>
-    
+
           <div class="form-group min-w-input pe-3 border-end">
             <label for="playerPack">Opponent Pack</label>
             <select class="form-control" id="opponentPack" formControlName="opponentPack">
@@ -49,22 +51,23 @@
               <option value="Unicorn">Unicorn</option>
               <option value="Danger">Danger</option>
               <optgroup label="Custom Packs">
-                <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">{{custom.get('name').value}}</option>
+                <option [value]="custom.get('name').value" *ngFor="let custom of validCustomPacks">
+                  {{custom.get('name').value}}</option>
                 <option value="Add Custom Pack">Add Custom Pack</option>
               </optgroup>
             </select>
           </div>
-    
+
           <div class="form-group min-w-input mx-3">
             <label for="playerPack">Player Toy</label>
             <select class="form-control" id="playerToy" formControlName="playerToy">
               <option [ngValue]="null">None</option>
               <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of toys | keyvalue">
-                  <option *ngFor="let toy of toyGroup.value" [ngValue]="toy">{{toy}}</option>
+                <option *ngFor="let toy of toyGroup.value" [ngValue]="toy">{{toy}}</option>
               </optgroup>
             </select>
           </div>
-    
+
           <div class="form-group me-3">
             <label for="playerToyLevel">Toy Level</label>
             <select class="form-control" id="playerToyLevel" formControlName="playerToyLevel">
@@ -73,17 +76,17 @@
               <option>3</option>
             </select>
           </div>
-    
+
           <div class="form-group min-w-input me-3">
             <label for="playerPack">Opponent Toy</label>
             <select class="form-control" id="opponentToy" formControlName="opponentToy">
               <option [ngValue]="null">None</option>
               <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of toys | keyvalue">
-                  <option *ngFor="let toy of toyGroup.value" [ngValue]="toy">{{toy}}</option>
+                <option *ngFor="let toy of toyGroup.value" [ngValue]="toy">{{toy}}</option>
               </optgroup>
             </select>
           </div>
-    
+
           <div class="form-group me-3">
             <label for="opponentToyLevel">Toy Level</label>
             <select class="form-control" id="opponentToyLevel" formControlName="opponentToyLevel">
@@ -92,64 +95,67 @@
               <option>3</option>
             </select>
           </div>
-  
+
           <div class="form-group pe-3 d-flex align-items-end border-end">
-            <span class="btn-link" (click)="toggleAdvanced()">{{formGroup.get('showAdvanced').value ? 'Hide' : 'Show'}} Advanced Settings</span>
+            <span class="btn-link" (click)="toggleAdvanced()">{{formGroup.get('showAdvanced').value ? 'Hide' : 'Show'}}
+              Advanced Settings</span>
           </div>
-  
+
           <div class="flex-column">
             <div class="form-check ms-3" title="Opponent's pack pets are included in the pet pool.">
               <input class="form-check-input" type="checkbox" value="" id="angler" formControlName="angler">
-              <label class="form-check-label" for="angler" >
+              <label class="form-check-label" for="angler">
                 Angler
               </label>
             </div>
-    
+
             <div class="form-check ms-3" title="All pets are included in the pet pool.">
               <input class="form-check-input" type="checkbox" value="" id="allPets" formControlName="allPets">
-              <label class="form-check-label" for="allPets" >
+              <label class="form-check-label" for="allPets">
                 All Pets
               </label>
             </div>
           </div>
-  
+
           <div class="flex-column">
-            
+
             <div class="form-check ms-3" title="Stork spawns with base stats.">
               <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="oldStork">
-              <label class="form-check-label" for="oldStork" >
+              <label class="form-check-label" for="oldStork">
                 Old Stork
               </label>
             </div>
-  
+
             <div class="form-check ms-3" title="Include Token Pets in pet pool.">
               <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="tokenPets">
-              <label class="form-check-label" for="tokenPets" >
+              <label class="form-check-label" for="tokenPets">
                 Token Pets
               </label>
             </div>
           </div>
-  
+
           <div class="flex-column">
-            
+
             <div class="form-check ms-3" title="Shuffle pets in front of Komodo if present.">
-              <input class="form-check-input" type="checkbox" value="" id="komodoShuffle" formControlName="komodoShuffle">
-              <label class="form-check-label" for="komodoShuffle" >
+              <input class="form-check-input" type="checkbox" value="" id="komodoShuffle"
+                formControlName="komodoShuffle">
+              <label class="form-check-label" for="komodoShuffle">
                 Komodo Shuffle
               </label>
             </div>
-  
+
             <div class="d-flex">
               <div class="form-check ms-3" title="Include Mana.">
                 <input class="form-check-input" type="checkbox" value="" id="mana" formControlName="mana">
-                <label class="form-check-label" for="mana" >
+                <label class="form-check-label" for="mana">
                   Mana
                 </label>
               </div>
 
               <div class="form-check ms-3" title="Include Triggers Consumed.">
-                <input class="form-check-input" type="checkbox" value="" id="triggersConsumed" formControlName="triggersConsumed">
-                <label class="form-check-label" for="triggersConsumed" >
+                <input class="form-check-input" type="checkbox" value="" id="triggersConsumed"
+                  formControlName="triggersConsumed">
+                <label class="form-check-label" for="triggersConsumed">
                   Triggers Consumed
                 </label>
               </div>
@@ -157,17 +163,18 @@
           </div>
 
           <div class="flex-column">
-            
+
             <div class="form-check ms-3" title="Include Ailments for Equipment Options.">
-              <input class="form-check-input" type="checkbox" value="" id="ailmentEquipment" formControlName="ailmentEquipment">
-              <label class="form-check-label" for="ailmentEquipment" >
+              <input class="form-check-input" type="checkbox" value="" id="ailmentEquipment"
+                formControlName="ailmentEquipment">
+              <label class="form-check-label" for="ailmentEquipment">
                 Ailment Equipment
               </label>
             </div>
           </div>
-  
+
         </div>
-        
+
         <div class="flex-col zoom-container">
           <label for="zoom">Zoom</label>
           <div>
@@ -177,73 +184,76 @@
         </div>
       </div>
     </div>
-  
+
     <div class="row battle-controller border" *ngIf="formGroup.get('showAdvanced').value">
       <div class="col-12 d-flex justify-content-between py-2">
         <div class="border-end d-flex flex-wrap pe-3">
-          
+
           <div class="form-group small-w-input me-s-3">
             <label for="turn">Turn</label>
-            <input class="form-control" id="turn" type="number" formControlName="turn" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
           </div>
-  
+
           <div class="form-group advanced-input ms-3">
             <label for="playerGoldSpent" title="Player Gold Spent">Player Gold Spent</label>
-            <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99" />
           </div>
-    
+
           <div class="form-group advanced-input ms-3">
             <label for="opponentGoldSpent" title="Opponent Gold Spent">Opponent Gold Spent</label>
-            <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99" />
           </div>
-  
+
           <div class="form-group advanced-input ms-3">
             <label for="playerRollAmount" title="Player Roll Amount">Player Roll Amt</label>
-            <input class="form-control" id="turn" type="number" formControlName="playerRollAmount" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="playerRollAmount" max="99" />
           </div>
-    
+
           <div class="form-group advanced-input ms-3">
             <label for="opponentRollAmount" title="Opponent Roll Amount">Opponent Roll Amt</label>
-            <input class="form-control" id="turn" type="number" formControlName="opponentRollAmount" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="opponentRollAmount" max="99" />
           </div>
-  
+
           <div class="form-group advanced-input ms-3">
             <label for="playerLevel3Sold" title="Player Level 3 Sold">Player Lvl 3 Sold</label>
-            <input class="form-control" id="turn" type="number" formControlName="playerLevel3Sold" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="playerLevel3Sold" max="99" />
           </div>
-    
+
           <div class="form-group advanced-input ms-3">
             <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">Opponent Lvl 3 Sold</label>
-            <input class="form-control" id="turn" type="number" formControlName="opponentLevel3Sold" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="opponentLevel3Sold" max="99" />
           </div>
-    
+
           <div class="form-group advanced-input ms-3">
             <label for="playerSummonedAmount" title="Player Summoned Amount">Player Summoned Amt</label>
-            <input class="form-control" id="turn" type="number" formControlName="playerSummonedAmount" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="playerSummonedAmount" max="99" />
           </div>
-    
+
           <div class="form-group advanced-input ms-3">
             <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amt</label>
-            <input class="form-control" id="turn" type="number" formControlName="opponentSummonedAmount" max="99"/>
+            <input class="form-control" id="turn" type="number" formControlName="opponentSummonedAmount" max="99" />
           </div>
           <div class="form-group advanced-input ms-3">
-            <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation Amt</label>
-            <input class="form-control" id="turn" type="number" formControlName="playerTransformationAmount" max="99"/>
+            <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation
+              Amt</label>
+            <input class="form-control" id="turn" type="number" formControlName="playerTransformationAmount" max="99" />
           </div>
-    
+
           <div class="form-group advanced-input ms-3">
-            <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation Amt</label>
-            <input class="form-control" id="turn" type="number" formControlName="opponentTransformationAmount" max="99"/>
+            <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation
+              Amt</label>
+            <input class="form-control" id="turn" type="number" formControlName="opponentTransformationAmount"
+              max="99" />
           </div>
 
         </div>
       </div>
     </div>
-  
+
     <div class="row day-night-container">
       <div class="col-12" [@dayNight]="dayNight ? 'day' : 'night'"></div>
     </div>
-  
+
     <div class="row battle-row pb-5 pt-3">
       <div class="col-12 col-xl-6 px-4 mb-2 mb-xl-0">
         <div class="d-flex justify-content-between">
@@ -252,28 +262,24 @@
         </div>
         <div class="card p-2 player-card">
           <!-- <div class="back">BACK</div> -->
-          <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'player')">
-            <div class="col drag-container mb-2 mb-md-0" *ngFor="let pet of getPlayerPetsFormArray() ; index as i" cdkDrag>
+          <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal"
+            (cdkDropListDropped)="drop($event, 'player')">
+            <div class="col drag-container mb-2 mb-md-0" *ngFor="let pet of getPlayerPetsFormArray() ; index as i"
+              cdkDrag>
               <div class="drag-handle" cdkDragHandle>
                 <svg fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                  <path
+                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                  </path>
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-              <app-pet-selector
-                [pet]="player['pet' + (4 - i)]"
-                [player]="player"
-                [opponent]="opponent"
-                [index]="4 - i"
-                [formGroup]="makeFormGroup(pet)"
-                [angler]="formGroup.get('angler').value"
-                [ailments]="formGroup.get('ailmentEquipment').value"
-                [allPets]="formGroup.get('allPets').value"
-                [mana]="formGroup.get('mana').value"
-                [triggersConsumed]="formGroup.get('triggersConsumed').value"
+              <app-pet-selector [pet]="player['pet' + (4 - i)]" [player]="player" [opponent]="opponent" [index]="4 - i"
+                [formGroup]="makeFormGroup(pet)" [angler]="formGroup.get('angler').value"
+                [ailments]="formGroup.get('ailmentEquipment').value" [allPets]="formGroup.get('allPets').value"
+                [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [showTokenPets]="formGroup.get('tokenPets').value"
-                [customPacks]="formGroup.get('customPacks')"
-              ></app-pet-selector>
+                [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
             </div>
           </div>
           <!-- <div class="front">FRONT</div> -->
@@ -282,62 +288,62 @@
       <div class="col-12 col-xl-6 px-4">
         <div class="d-flex justify-content-between">
           <h2 class="me-4">Opponent</h2>
-          <button class="btn btn-secondary mb-1"(click)="resetPlayer('opponent')">Reset</button>
+          <button class="btn btn-secondary mb-1" (click)="resetPlayer('opponent')">Reset</button>
         </div>
-  
+
         <div class="card p-2 player-card ml-auto">
           <!-- <div class="front">FRONT</div> -->
-          <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="drop($event, 'opponent')">
-            <div class="col drag-container mb-2 mb-sm-0" *ngFor="let pet of getOpponentPetsFormArray() ; index as i" cdkDrag>
+          <div class="row row-cols-1 row-cols-md-5" cdkDropList cdkDropListOrientation="horizontal"
+            (cdkDropListDropped)="drop($event, 'opponent')">
+            <div class="col drag-container mb-2 mb-sm-0" *ngFor="let pet of getOpponentPetsFormArray() ; index as i"
+              cdkDrag>
               <div class="drag-handle" cdkDragHandle>
                 <svg fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                  <path
+                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                  </path>
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-              <app-pet-selector
-                [pet]="opponent['pet' + i]"
-                [player]="opponent"
-                [opponent]="player"
-                [index]="i"
-                [formGroup]="makeFormGroup(pet)"
-                [angler]="formGroup.get('angler').value"
-                [ailments]="formGroup.get('ailmentEquipment').value"
-                [allPets]="formGroup.get('allPets').value"
-                [mana]="formGroup.get('mana').value"
-                [triggersConsumed]="formGroup.get('triggersConsumed').value"
+              <app-pet-selector [pet]="opponent['pet' + i]" [player]="opponent" [opponent]="player" [index]="i"
+                [formGroup]="makeFormGroup(pet)" [angler]="formGroup.get('angler').value"
+                [ailments]="formGroup.get('ailmentEquipment').value" [allPets]="formGroup.get('allPets').value"
+                [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [showTokenPets]="formGroup.get('tokenPets').value"
-                [customPacks]="formGroup.get('customPacks')"
-              ></app-pet-selector>
+                [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
             </div>
           </div>
           <!-- <div class="back">BACK</div> -->
         </div>
-      </div> 
+      </div>
     </div>
-  
+
     <div class="row button-bar pt-3 pb-1 border">
       <div class="col-12 d-flex justify-content-between">
         <div>
-          <button class="btn btn-primary me-2 mb-2" (click)="simulate()">Simulate</button>
+          <button class="btn btn-primary me-2 mb-2" (click)="simulate(1000)">Simulate 1000 Times</button>
+          <button class="btn btn-primary me-2 mb-2" (click)="simulate(100)">Simulate 100 Times</button>
           <button class="btn btn-primary me-2 mb-2" (click)="randomize()">Randomize</button>
         </div>
         <div>
-          <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#reportABug">Report A Bug</button>
-          <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#export">Export Calculator</button>
-          <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import Calculator</button>
+          <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#reportABug">Report A
+            Bug</button>
+          <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#export">Export
+            Calculator</button>
+          <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import
+            Calculator</button>
           <button class="btn btn-primary me-2 mb-2" (click)="generateShareLink()">Generate Link</button>
         </div>
       </div>
     </div>
-  
+
     <div class="row" *ngIf="simulated">
       <div class="col-12 stats">
         <label>Player Wins:</label><span>{{playerWinner}} - {{winPercent}}%</span>
         <label>Opponent Wins:</label><span>{{opponentWinner}} - {{losePercent}}%</span>
         <label>Draws:</label><span>{{draw}} - {{drawPercent}}%</span>
       </div>
-  
+
       <div class="col-12 py-2">
         <span class="results-bar">
           <span class="draw-bar" [style.width]="getDrawWidth()"></span>
@@ -345,7 +351,7 @@
         </span>
       </div>
     </div>
-  
+
     <div class="row flex-1 bottom-container">
       <div class="col-12 col-md-6 border h-100 flex-col pe-0">
         <h3>Battles</h3>
@@ -355,24 +361,28 @@
           </div>
           <div class="col-12">
             <div class="form-check form-check-inline">
-              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio1" [value]="null">
+              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter"
+                id="inlineRadio1" [value]="null">
               <label class="form-check-label" for="inlineRadio1">None</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio2" value="player">
+              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter"
+                id="inlineRadio2" value="player">
               <label class="form-check-label" for="inlineRadio2">Player</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio3" value="opponent">
+              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter"
+                id="inlineRadio3" value="opponent">
               <label class="form-check-label" for="inlineRadio3">Opponent</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter" id="inlineRadio4" value="draw">
+              <input class="form-check-input" formControlName="logFilter" type="radio" name="logFilter"
+                id="inlineRadio4" value="draw">
               <label class="form-check-label" for="inlineRadio4">Draw</label>
             </div>
           </div>
         </div>
-  
+
         <div class="battle-container flex-1 scroll">
           <table class="table">
             <thead>
@@ -383,7 +393,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let battle of filteredBattles; index as i" (click)="setViewBattle(battle)" class="table-battle-row">
+              <tr *ngFor="let battle of filteredBattles; index as i" (click)="setViewBattle(battle)"
+                class="table-battle-row">
                 <td>{{i}}</td>
                 <td>{{battle.winner}}</td>
                 <td class="pre">{{getRandomEvents(battle)}}</td>
@@ -392,7 +403,7 @@
           </table>
         </div>
       </div>
-  
+
       <div class="col-12 col-md-6 border h-100 flex-col">
         <h3>Logs</h3>
         <div class="row log-container flex-1 scroll">
@@ -402,11 +413,11 @@
         </div>
       </div>
     </div>
-  
+
   </div>
-  
-  
-  
+
+
+
   <!-- Modal -->
   <div class="modal fade" id="patchNotes" tabindex="-1" aria-labelledby="patchNotesLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -424,9 +435,10 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Custom Pack -->
-  <div class="modal fade" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true" #customPackEditor>
+  <div class="modal fade" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true"
+    #customPackEditor>
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -434,14 +446,12 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <app-custom-pack-editor
-            [formGroup]="formGroup"
-          ></app-custom-pack-editor>
+          <app-custom-pack-editor [formGroup]="formGroup"></app-custom-pack-editor>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -455,7 +465,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="modal fade" id="import" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -464,14 +474,12 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <app-import-calculator
-            [importFunc]="import.bind(this)"
-          ></app-import-calculator>
+          <app-import-calculator [importFunc]="import.bind(this)"></app-import-calculator>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -480,14 +488,12 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <app-export-calculator
-            [formGroup]="formGroup"
-          ></app-export-calculator>
+          <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABug" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">

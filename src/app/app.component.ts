@@ -802,21 +802,22 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  simulate() {
+  simulate(count: number = 1000) {
     try {
-      this.runSimulation();
+      this.runSimulation(count);
     } catch (error) {
       console.error(error)
       window.alert('Something went wrong, please send a bug report.');
     }
   }
 
-  runSimulation() {
+  runSimulation(count: number = 1000) {
     //save info to local
     this.localStorageService.setFormStorage(this.formGroup);
     //clear previous simulation results
     this.resetSimulation();
 
+    this.simulationBattleAmt = count;
 
     for (let i = 0; i < this.simulationBattleAmt; i++) {
       //get some input like summon amount
