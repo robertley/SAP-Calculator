@@ -10,7 +10,7 @@ export class Saola extends Pet {
     tier = 2;
     pack: Pack = 'Danger';
     attack = 2;
-    health = 3;
+    health = 2;
 
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

@@ -376,7 +376,7 @@ export class PetService {
         this.goldenPackPets.set(3, [
             "Musk Ox",
             "Flea",
-            "Bear",
+            "Betta Fish",
             "Royal Flycatcher",
             "Surgeon Fish",
             "Weasel",
@@ -638,7 +638,7 @@ export class PetService {
             "Slime",
             "Pegasus",
             "Deer Lord",
-            "Betta Fish",
+            "Bear",
             "Flying Squirrel",
             "Barnacle",
             "Blue Dragon",

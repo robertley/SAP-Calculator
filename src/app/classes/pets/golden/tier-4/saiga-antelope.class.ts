@@ -9,9 +9,9 @@ export class SaigaAntelope extends Pet {
     name = "Saiga Antelope";
     tier = 4;
     pack: Pack = 'Golden';
-    attack = 4;
+    attack = 3;
     health = 3;
-    
+
     initAbilities(): void {
         this.addAbility(new SaigaAntelopeAbility(this, this.logService, this.abilityService));
         super.initAbilities();

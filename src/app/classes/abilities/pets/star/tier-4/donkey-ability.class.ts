@@ -3,6 +3,8 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
+// Friend faints: Push the last enemy to the front and remove 3 attack.
+
 export class DonkeyAbility extends Ability {
     private logService: LogService;
     reset(): void {
@@ -26,8 +28,8 @@ export class DonkeyAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let opponent = owner.parent.opponent;
         let targetResp = opponent.getLastPet();
@@ -35,8 +37,11 @@ export class DonkeyAbility extends Ability {
             return;
         }
         owner.parent.pushPet(targetResp.pet, targetResp.pet.position);
+
+        targetResp.pet.increaseAttack(-3);
+
         this.logService.createLog({
-            message: `${owner.name} pushed ${targetResp.pet.name} to the front.`,
+            message: `${owner.name} pushed ${targetResp.pet.name} to the front and removed 3 attack.`,
             type: 'ability',
             player: owner.parent,
             tiger: tiger
