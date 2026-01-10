@@ -14,29 +14,14 @@ import { PetService } from './services/pet.service';
 import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
 import { ToyService } from './services/toy.service';
-import { Pie } from './classes/equipment/puppy/pie.class';
-import { cloneDeep, pickBy, shuffle } from 'lodash';
-import { Panther } from './classes/pets/puppy/tier-5/panther.class';
-import { Puma } from './classes/pets/puppy/tier-6/puma.class';
-import { Pancakes } from './classes/equipment/puppy/pancakes.class';
-import { ChocolateCake } from './classes/equipment/golden/chocolate-cake.class';
-import { Eggplant } from './classes/equipment/golden/eggplant.class';
-import { PitaBread } from './classes/equipment/golden/pita-bread.class';
+import { cloneDeep } from 'lodash';
 import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { EquipmentService } from './services/equipment.service';
-import { Nest } from './classes/pets/hidden/nest.class';
-import { Egg } from './classes/equipment/puppy/egg.class';
-import { Fig } from './classes/equipment/golden/fig.class';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Dazed } from './classes/equipment/ailments/dazed.class';
-import { Rambutan } from './classes/equipment/unicorn/rambutan.class';
-import { LovePotion } from './classes/equipment/unicorn/love-potion.class';
-import { FairyDust } from './classes/equipment/unicorn/fairy-dust.class';
-import { GingerbreadMan } from './classes/equipment/unicorn/gingerbread-man.class';
-import { HealthPotion } from './classes/equipment/unicorn/health-potion.class';
-import { Cherry } from './classes/equipment/golden/cherry.class';
+import { SimulationRunner } from './engine/simulation-runner';
+import { SimulationConfig } from './interfaces/simulation-config.interface';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
@@ -717,90 +702,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  abilityCycle() {
-    // First, add all existing events from type-specific arrays to global queue
-    //this.abilityService.migrateExistingEventsToQueue();
-    // Process all events in priority order until queue is empty
-    this.emptyFrontSpaceCheck(); // This might add more events too
-    while (this.abilityService.hasGlobalEvents) {
-      const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
 
-      if (nextEvent && this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 23) {
-        // We're about to process priority 23+, check if pet removal is needed
-        this.checkPetsAlive();
-        const petsWereRemoved = this.removeDeadPets();
-
-        if (petsWereRemoved) {
-          // Pet removal might have triggered new higher priority events
-          this.emptyFrontSpaceCheck(); // This might add more events too
-          continue; // Re-evaluate the queue with potentially new higher priority events
-        }
-      }
-
-      // Normal event processing
-      const event = this.abilityService.getNextHighestPriorityEvent();
-      if (event) {
-        this.abilityService.executeEventCallback(event);
-        this.checkPetsAlive();
-      } else {
-        // This should never happen - hasGlobalEvents was true but queue returned null
-        console.error('AbilityCycle: Expected event from queue but got null. Queue state inconsistent.');
-        break; // Exit the loop to prevent infinite loop
-      }
-    }
-
-    // Final cleanup - remove any remaining dead pets and check empty spaces
-    let petRemoved = this.removeDeadPets();
-    if (petRemoved) {
-      this.emptyFrontSpaceCheck(); // Only queues events, doesn't execute them
-    }
-    this.player.checkGoldenSpawn();
-    this.opponent.checkGoldenSpawn();
-  }
-
-  checkPetsAlive() {
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
-  }
-  //  1. Check if toy exists and has startOfBattle ability
-  // 2. Queue toy ability in the ToyService event system
-  // 3. Set priority based on toy tier (lower tier = higher priority)
-  // 4. Special Puma interaction - Puma pets trigger toy abilities at their level
-  // 5. Execute later in the start-of-battle phase sequence
-  initToys() {
-    if (this.player.toy?.startOfBattle) {
-      this.toyService.setStartOfBattleEvent({
-        callback: () => {
-          this.player.toy.startOfBattle(this.gameService.gameApi);
-          let toyLevel = this.player.toy.level;
-          for (let pet of this.player.petArray) {
-            if (pet instanceof Puma) {
-              this.player.toy.level = pet.level;
-              this.player.toy.startOfBattle(this.gameService.gameApi, true);
-              this.player.toy.level = toyLevel;
-            }
-          }
-        },
-        priority: this.player.toy.tier
-      })
-    }
-    if (this.opponent.toy?.startOfBattle) {
-      this.toyService.setStartOfBattleEvent({
-        callback: () => {
-          this.opponent.toy.startOfBattle(this.gameService.gameApi);
-          let toyLevel = this.opponent.toy.level;
-          for (let pet of this.opponent.petArray) {
-            if (pet instanceof Puma) {
-              this.opponent.toy.level = pet.level;
-              this.opponent.toy.startOfBattle(this.gameService.gameApi, true);
-              this.opponent.toy.level = toyLevel;
-            }
-          }
-        },
-        priority: this.opponent.toy.tier
-      })
-    }
-  }
 
   simulate(count: number = 1000) {
     try {
@@ -812,329 +714,61 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   runSimulation(count: number = 1000) {
-    //save info to local
-    this.localStorageService.setFormStorage(this.formGroup);
-    //clear previous simulation results
-    this.resetSimulation();
-
     this.simulationBattleAmt = count;
+    this.localStorageService.setFormStorage(this.formGroup);
 
-    for (let i = 0; i < this.simulationBattleAmt; i++) {
-      //get some input like summon amount
-      this.initBattle();
-      //reset pet to original state, reset turn counter
-      this.startBattle();
-      //queque toy sob event
-      this.initToys();
-      this.gameService.gameApi.FirstNonJumpAttackHappened = false;
-      // // give all pets dazed equipment
-      // for (let pet of this.player.petArray) {
-      //   pet.equipment = new Dazed();
-      // }
+    // Build config
+    const config: SimulationConfig = {
+      playerPack: this.formGroup.get('playerPack').value,
+      opponentPack: this.formGroup.get('opponentPack').value,
+      playerToy: this.formGroup.get('playerToy').value,
+      playerToyLevel: this.formGroup.get('playerToyLevel').value,
+      opponentToy: this.formGroup.get('opponentToy').value,
+      opponentToyLevel: this.formGroup.get('opponentToyLevel').value,
+      turn: this.formGroup.get('turn').value,
+      playerGoldSpent: this.formGroup.get('playerGoldSpent').value,
+      opponentGoldSpent: this.formGroup.get('opponentGoldSpent').value,
+      playerRollAmount: this.gameService.gameApi.playerRollAmount,
+      opponentRollAmount: this.gameService.gameApi.opponentRollAmount,
+      playerSummonedAmount: this.gameService.gameApi.playerSummonedAmount,
+      opponentSummonedAmount: this.gameService.gameApi.opponentSummonedAmount,
+      playerLevel3Sold: this.gameService.gameApi.playerLevel3Sold,
+      opponentLevel3Sold: this.gameService.gameApi.opponentLevel3Sold,
+      playerTransformationAmount: this.gameService.gameApi.playerTransformationAmount,
+      opponentTransformationAmount: this.gameService.gameApi.opponentTransformationAmount,
+      playerPets: this.formGroup.get('playerPets').value,
+      opponentPets: this.formGroup.get('opponentPets').value,
+      angler: this.formGroup.get('angler').value,
+      allPets: this.formGroup.get('allPets').value,
+      oldStork: this.formGroup.get('oldStork').value,
+      tokenPets: this.formGroup.get('tokenPets').value,
+      komodoShuffle: this.formGroup.get('komodoShuffle').value,
+      mana: this.formGroup.get('mana').value,
+      simulationCount: count
+    };
 
-      // for (let pet of this.opponent.petArray) {
-      //   pet.equipment = new Dazed();
-      // }
+    const runner = new SimulationRunner(
+      this.logService,
+      this.gameService,
+      this.abilityService,
+      this.petService,
+      this.equipmentService,
+      this.toyService
+    );
 
-      this.abilityService.initSpecialEndTurnAbility(this.player);
-      this.abilityService.initSpecialEndTurnAbility(this.opponent);
+    const result = runner.run(config);
 
-      //initialize equipment multipliers for existing equipment
-      this.initializeEquipmentMultipliers();
+    // Restore GameService to UI players
+    this.gameService.init(this.player, this.opponent);
 
-      //before battle phase
-      this.abilityService.triggerBeforeStartOfBattleEvents();
-      this.abilityService.executeBeforeStartOfBattleEvents();
-
-      //normal abilities
-      this.checkPetsAlive();
-      do {
-        this.abilityCycle();
-      } while (this.abilityService.hasAbilityCycleEvents);
-
-      //execute toy sob
-      this.toyService.executeStartOfBattleEvents();
-      //init sob
-      this.abilityService.triggerStartBattleEvents();
-      //add churro check
-      this.abilityService.executeStartBattleEvents();
-
-      this.checkPetsAlive();
-      do {
-        this.abilityCycle();
-      } while (this.abilityService.hasAbilityCycleEvents);
-      //loop until battle ends
-      while (this.battleStarted) {
-        this.nextTurn();
-      }
-      this.reset();
-    }
+    this.playerWinner = result.playerWins;
+    this.opponentWinner = result.opponentWins;
+    this.draw = result.draws;
+    this.battles = result.battles || [];
     this.simulated = true;
   }
 
-  removeDeadPets() {
-    let petRemoved = false;
-    petRemoved = this.player.removeDeadPets();
-    petRemoved = this.opponent.removeDeadPets() || petRemoved;
 
-    return petRemoved;
-  }
-
-  emptyFrontSpaceCheck() {
-
-    if (this.player.pet0 == null) {
-      this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
-    }
-
-    if (this.opponent.pet0 == null) {
-      this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
-    }
-
-    if (this.player.pet0 == null) {
-      this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);
-    }
-
-    if (this.opponent.pet0 == null) {
-      this.abilityService.triggerEmptyFrontSpaceToyEvents(this.opponent);
-    }
-
-    this.abilityService.executeEmptyFrontSpaceToyEvents();
-  }
-
-  startBattle() {
-    this.reset();
-
-    this.battleStarted = true;
-
-    this.turns = 0;
-    // do start of turn abilities
-  }
-
-  resetSimulation() {
-    this.playerWinner = 0;
-    this.opponentWinner = 0;
-    this.viewBattle = null;
-    this.draw = 0;
-    this.battles = [];
-    this.currBattle = null;
-  }
-
-  initBattle() {
-    this.logService.reset();
-    this.currBattle = {
-      winner: 'draw',
-      logs: this.logs
-    }
-    this.battles.push(this.currBattle);
-    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
-    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
-    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
-    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
-
-  }
-
-  reset() {
-    this.player.resetPets();
-    this.opponent.resetPets();
-  }
-
-  nextTurn() {
-
-    let finished = false;
-    let winner = null;
-    this.turns++;
-
-    if (!this.player.alive() && this.opponent.alive()) {
-      winner = this.opponent;
-      this.currBattle.winner = 'opponent';
-      this.opponentWinner++;
-      finished = true;
-    }
-    if (!this.opponent.alive() && this.player.alive()) {
-      winner = this.player;
-      this.currBattle.winner = 'player';
-      this.playerWinner++;
-      finished = true;
-    }
-    if (!this.opponent.alive() && !this.player.alive()) {
-      // draw
-      this.draw++;
-      finished = true;
-    } else if (this.turns >= this.maxTurns) {
-      this.draw++;
-      finished = true;
-    }
-
-    if (finished) {
-      this.logService.printState(this.player, this.opponent);
-      this.endLog(winner);
-      this.battleStarted = false;
-      return;
-    }
-    this.pushPetsForwards();
-    this.logService.printState(this.player, this.opponent);
-    this.gameService.gameApi.FirstNonJumpAttackHappened = true;
-    //before attack phase 
-    while (true) {
-      let originalPlayerAttackingPet = this.player.pet0;
-      let originalOppoentAttackingPet = this.opponent.pet0;
-      this.abilityService.triggerBeforeAttackEvent(this.player.pet0)
-      this.abilityService.triggerBeforeAttackEvent(this.opponent.pet0)
-      this.abilityService.executeBeforeAttackEvents();
-      //normal abilities
-      this.player.checkPetsAlive();
-      this.opponent.checkPetsAlive();
-      do {
-        this.abilityCycle();
-      } while (this.abilityService.hasAbilityCycleEvents);
-
-      if (!this.player.alive() || !this.opponent.alive()) {
-        return;
-      }
-
-      this.pushPetsForwards();
-      if (originalPlayerAttackingPet.transformed) {
-        originalPlayerAttackingPet = originalPlayerAttackingPet.transformedInto;
-      }
-      if (originalOppoentAttackingPet.transformed) {
-        originalOppoentAttackingPet = originalOppoentAttackingPet.transformedInto;
-      }
-      if (this.player.pet0 == originalPlayerAttackingPet && this.opponent.pet0 == originalOppoentAttackingPet) {
-        break
-      }
-    }
-
-    // Reset jumped flags after beforeAttack loop completes
-    this.player.resetJumpedFlags();
-    this.opponent.resetJumpedFlags();
-
-    //attack
-    this.fight();
-
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
-
-    do {
-      this.abilityCycle();
-    } while (this.abilityService.hasAbilityCycleEvents);
-  }
-
-  chocolateCakePresent(): { player: boolean, opponent: boolean, cake: boolean } {
-    let resp = {
-      player: false,
-      opponent: false,
-      cake: false
-    }
-    resp.player = this.player.pet0?.equipment instanceof ChocolateCake;
-    resp.opponent = this.opponent.pet0?.equipment instanceof ChocolateCake;
-    resp.cake = resp.player || resp.opponent;
-    return resp;
-  }
-
-  doChocolateCakeEvents(chocoCakeCheck: { player: boolean, opponent: boolean, cake: boolean }) {
-    let chocoCakePets = [];
-    if (chocoCakeCheck.player) {
-      chocoCakePets.push(this.player.pet0);
-    }
-    if (chocoCakeCheck.opponent) {
-      chocoCakePets.push(this.opponent.pet0);
-    }
-    // shuffle incase they have same priority
-    chocoCakePets = shuffle(chocoCakePets);
-    chocoCakePets.sort((a, b) => {
-      return a.attack < b.attack ? 1 : b.attack < a.attack ? -1 : 0;
-    });
-    //TO DO: This Logic needs fix, the function might be useless
-    for (let pet of chocoCakePets) {
-      pet.equipment.callback(pet);
-    }
-  }
-
-  //TO DO: this probably should be deleted
-  executeBeforeStartOfBattleEquipment(player) {
-    for (let pet of player.petArray) {
-      let multiplier = pet.equipment.multiplier;
-      let muliplierMessage = pet.equipment.multiplierMessage;
-      for (let i = 0; i < multiplier; i++) {
-        if (pet.equipment instanceof Pie) {
-          pet.increaseAttack(4);
-          pet.increaseHealth(4);
-          this.logService.createLog({
-            message: `${pet.name} gained ${4} attack and ${4} health (Pie)${muliplierMessage}`,
-            type: 'equipment',
-            player: player
-          })
-        }
-        if (pet.equipment instanceof Cherry) {
-          pet.parent.gainTrumpets(2 * multiplier, pet, false, multiplier, true);
-        }
-        if (pet.equipment instanceof Pancakes) {
-          for (let pett of player.petArray) {
-            if (pet == pett) {
-              continue;
-            }
-            pett.increaseAttack(2);
-            pett.increaseHealth(2);
-            this.logService.createLog({
-              message: `${pett.name} gained ${2} attack and ${2} health (Pancake)${muliplierMessage}`,
-              type: 'equipment',
-              player: player
-            })
-          }
-        }
-        if (pet.equipment instanceof LovePotion) {
-          pet.equipment.callback(pet);
-        }
-        if (pet.equipment instanceof GingerbreadMan) {
-          pet.equipment.callback(pet);
-        }
-        if (pet.equipment instanceof HealthPotion) {
-          pet.equipment.callback(pet);
-        }
-      }
-
-    }
-  }
-
-  pushPetsForwards() {
-
-    this.player.pushPetsForward();
-    this.opponent.pushPetsForward();
-  }
-
-
-  fight() {
-    let playerPet = this.player.pet0;
-    let opponentPet = this.opponent.pet0;
-
-    // console.log(playerPet, 'vs', opponentPet)
-
-    playerPet.attackPet(opponentPet);
-    opponentPet.attackPet(playerPet);
-
-    playerPet.useAttackDefenseEquipment();
-    opponentPet.useAttackDefenseEquipment();
-
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
-
-    this.abilityService.executeAfterAttackEvents();
-  }
-
-  endLog(winner?: Player) {
-    let message;
-    if (winner == null) {
-      message = 'Draw';
-    } else if (winner == this.player) {
-      message = 'Player is the winner';
-    } else {
-      message = 'Opponent is the winner'
-    }
-    this.logService.createLog({
-      message: message,
-      type: 'board'
-    })
-  }
 
   get logs() {
     return this.logService.getLogs();
@@ -1380,21 +1014,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     return validFormGroups;
   }
 
-  initializeEquipmentMultipliers() {
-    // Initialize multipliers for equipment that pets start the battle with
-    // This ensures Panther level multipliers and Pandora's Box toy multipliers work correctly
 
-    for (let pet of this.player.petArray) {
-      if (pet.equipment) {
-        pet.setEquipmentMultiplier();
-      }
-    }
-
-    for (let pet of this.opponent.petArray) {
-      if (pet.equipment) {
-        pet.setEquipmentMultiplier();
-      }
-    }
-  }
 
 }
