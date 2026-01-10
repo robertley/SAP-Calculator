@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "lib": [
+            "ES2020",
+            "dom"
+        ],
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "strict": false,
+        "baseUrl": "../",
+        "paths": {
+            "@angular/core": [
+                "simulation/shims.ts"
+            ],
+            "@angular/forms": [
+                "simulation/shims.ts"
+            ],
+            "app/*": [
+                "src/app/*"
+            ]
+        },
+        "resolveJsonModule": true
+    },
+    "include": [
+        "src/app/services/*.ts",
+        "src/app/classes/**/*.ts",
+        "src/app/engine/*.ts",
+        "src/app/interfaces/*.ts",
+        "src/app/util/*.ts",
+        "simulation/**/*.ts"
+    ]
+}
