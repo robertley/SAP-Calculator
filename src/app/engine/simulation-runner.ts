@@ -278,7 +278,6 @@ export class SimulationRunner {
 
         this.pushPetsForwards();
         this.logService.printState(this.player, this.opponent);
-        this.gameService.gameApi.FirstNonJumpAttackHappened = true;
 
         while (true) {
             let originalPlayerAttackingPet = this.player.pet0;
@@ -332,6 +331,7 @@ export class SimulationRunner {
         playerPet.useAttackDefenseEquipment();
         opponentPet.useAttackDefenseEquipment();
 
+        this.gameService.gameApi.FirstNonJumpAttackHappened = true;
         this.checkPetsAlive();
         this.abilityService.executeAfterAttackEvents();
     }

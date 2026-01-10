@@ -3,6 +3,8 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
 
+// Friendly Strawberries block 5/10/15 damage twice, or ailments once.
+
 export class SparrowAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;

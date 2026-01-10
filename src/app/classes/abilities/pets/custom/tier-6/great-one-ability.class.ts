@@ -22,12 +22,12 @@ export class GreatOneAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
         let targets = [...owner.parent.petArray, ...owner.parent.opponent.petArray];
         targets = targets.filter(pet => pet !== owner);
         for (let target of targets) {
-            owner.snipePet(target, owner.level * 6);
+            owner.snipePet(target, owner.level * 5);
         }
 
         // Tiger system: trigger Tiger execution at the end

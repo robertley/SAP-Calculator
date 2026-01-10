@@ -3,12 +3,12 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { BearAbility } from "../../../abilities/pets/golden/tier-3/bear-ability.class";
+import { BearAbility } from "../../../abilities/pets/custom/tier-3/bear-ability.class";
 
 export class Bear extends Pet {
     name = "Bear";
     tier = 3;
-    pack: Pack = 'Golden';
+    pack: Pack = 'Custom';
     attack = 3;
     health = 5;
     initAbilities(): void {

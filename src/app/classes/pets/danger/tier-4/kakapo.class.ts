@@ -10,7 +10,7 @@ export class Kakapo extends Pet {
     tier = 4;
     pack: Pack = 'Danger';
     attack = 3;
-    health = 5;
+    health = 4;
 
     initAbilities(): void {
         this.addAbility(new KakapoAbility(this, this.logService));

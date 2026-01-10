@@ -2,7 +2,9 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Spooked } from "../../../../equipment/ailments/spooked.class";
 
+// After first attack: Make the highest attack enemy Spooked and push it to the back.
 export class KakapoAbility extends Ability {
     private logService: LogService;
 
@@ -10,11 +12,16 @@ export class KakapoAbility extends Ability {
         super({
             name: 'KakapoAbility',
             owner: owner,
-            triggers: ['BeforeThisDies'],
+            triggers: ['ThisFirstAttack'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
             maxUses: 2,
+            condition: (context: AbilityContext) => {
+                const { triggerPet, tiger, pteranodon } = context;
+                const owner = this.owner;
+                return owner.timesAttacked <= 1;
+            },
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -23,23 +30,30 @@ export class KakapoAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let targetResp = owner.parent.opponent.getHighestAttackPets(this.level, undefined, owner);
-        let targets = targetResp.pets;
-        if (targets.length == 0) {
-            return;
-        }
-        for (let target of targets) {
-            target.parent.pushPetToBack(target);
-            target.removePerk(true);
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
+        // Effect 1: Spooked
+        let spookTargetsResp = owner.parent.opponent.getHighestAttackPets(this.level, undefined, owner);
+        for (let target of spookTargetsResp.pets) {
+            target.givePetEquipment(new Spooked());
             this.logService.createLog({
-                message: `${owner.name} pushed ${target.name} to the back, and removed its Perk.`,
+                message: `${owner.name} gave ${target.name} Spooked.`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,
-                randomEvent: targetResp.random
+                randomEvent: spookTargetsResp.random
+            });
+        }
+        // Effect 2: Push
+        let pushTargetsResp = owner.parent.opponent.getHighestAttackPets(this.level, undefined, owner);
+        for (let target of pushTargetsResp.pets) {
+            target.parent.pushPetToBack(target);
+            this.logService.createLog({
+                message: `${owner.name} pushed ${target.name} to the back.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                randomEvent: pushTargetsResp.random
             });
         }
 

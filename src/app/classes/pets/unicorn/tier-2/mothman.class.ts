@@ -10,13 +10,13 @@ export class Mothman extends Pet {
     tier = 2;
     pack: Pack = 'Unicorn';
     attack = 3;
-    health = 2;
+    health = 3;
 
     initAbilities(): void {
         this.addAbility(new MothmanAbility(this, this.logService));
         super.initAbilities();
     }
-    
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,
