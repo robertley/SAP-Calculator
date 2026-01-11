@@ -24,7 +24,27 @@ export class GibbonAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        let power = this.level;
+        let targetsBehindResp = owner.parent.nearestPetsBehind(2, owner);
+        if (targetsBehindResp.pets.length === 0) {
+            return;
+        }
+
+        for (let targetPet of targetsBehindResp.pets) {
+            targetPet.increaseHealth(power);
+            this.logService.createLog({
+                message: `${owner.name} gave ${targetPet.name} ${power} health.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                pteranodon: pteranodon,
+                randomEvent: targetsBehindResp.random
+            });
+        }
+
         this.triggerTigerExecution(context);
     }
 

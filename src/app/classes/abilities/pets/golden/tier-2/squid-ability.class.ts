@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { Inked } from "../../../../equipment/ailments/inked.class";
+import { Ink } from "../../../../equipment/ailments/ink.class";
 
 export class SquidAbility extends Ability {
     private logService: LogService;
@@ -31,8 +31,8 @@ export class SquidAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-
-        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let hasTarget = false;
         let excludePets = owner.parent.opponent.getPetsWithEquipment("Ink");
@@ -44,9 +44,9 @@ export class SquidAbility extends Ability {
                 break;
             }
             hasTarget = true;
-            target.givePetEquipment(new Inked());
+            target.givePetEquipment(new Ink());
             this.logService.createLog({
-                message: `${owner.name} gave ${target.name} Inked.`,
+                message: `${owner.name} gave ${target.name} Ink.`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,

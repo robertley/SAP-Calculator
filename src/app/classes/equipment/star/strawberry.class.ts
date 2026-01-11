@@ -5,7 +5,7 @@ import { StrawberryAbility } from "../../abilities/equipment/star/strawberry-abi
 
 export class Strawberry extends Equipment {
     name = 'Strawberry';
-    equipmentClass = 'shield' as EquipmentClass;
+    equipmentClass = 'defense' as EquipmentClass;
     tier = 1;
     uses = 2;
     originalUses = 2;

@@ -1,0 +1,452 @@
+{
+    "GenesisModeModel":  null,
+    "GenesisBuildModel":  {
+                              "Id":  "b39ef9f6-19c4-4282-8b00-657bff073ff9",
+                              "Bor":  {
+                                          "SPow":  null,
+                                          "Id":  "0414ef42-8178-4632-b3fe-69179670d3e9",
+                                          "UNC":  4,
+                                          "Sta":  1,
+                                          "IsBa":  null,
+                                          "LiMa":  5,
+                                          "Los":  0,
+                                          "LPM":  4,
+                                          "LCa":  null,
+                                          "LoPs":  0,
+                                          "Vic":  0,
+                                          "ViMa":  10,
+                                          "Rec":  null,
+                                          "Tur":  0,
+                                          "Go":  10,
+                                          "GoGa":  0,
+                                          "FuGo":  null,
+                                          "GoSp":  0,
+                                          "FrRo":  0,
+                                          "FuRo":  null,
+                                          "Rold":  0,
+                                          "TrTT":  0,
+                                          "TiMi":  null,
+                                          "Ti":  1,
+                                          "BoCa":  99,
+                                          "Mins":  {
+                                                       "Size":  {
+                                                                    "x":  5,
+                                                                    "y":  1
+                                                                },
+                                                       "Items":  [
+                                                                     null,
+                                                                     null,
+                                                                     null,
+                                                                     null,
+                                                                     null
+                                                                 ]
+                                                   },
+                                          "MiSC":  3,
+                                          "MSBo":  [
+
+                                                   ],
+                                          "MiSh":  [
+                                                       {
+                                                           "Own":  1,
+                                                           "Enu":  0,
+                                                           "Loc":  0,
+                                                           "Poi":  {
+                                                                       "x":  0,
+                                                                       "y":  0
+                                                                   },
+                                                           "Exp":  0,
+                                                           "Lvl":  1,
+                                                           "Hp":  {
+                                                                      "Perm":  2,
+                                                                      "Temp":  0,
+                                                                      "Max":  null
+                                                                  },
+                                                           "At":  {
+                                                                      "Perm":  2,
+                                                                      "Temp":  0,
+                                                                      "Max":  null
+                                                                  },
+                                                           "Mana":  0,
+                                                           "Cou":  null,
+                                                           "CoBr":  null,
+                                                           "LaPP":  null,
+                                                           "Perk":  null,
+                                                           "PeBo":  false,
+                                                           "PeDu":  null,
+                                                           "PeDM":  null,
+                                                           "PeMu":  null,
+                                                           "PeDr":  0,
+                                                           "Abil":  [
+                                                                        {
+                                                                            "Enu":  75,
+                                                                            "Lvl":  1,
+                                                                            "Nat":  true,
+                                                                            "Dur":  0,
+                                                                            "TrCo":  0,
+                                                                            "Char":  null,
+                                                                            "Dis":  false,
+                                                                            "DisT":  false,
+                                                                            "AIML":  false,
+                                                                            "IgRe":  false,
+                                                                            "Grop":  0
+                                                                        }
+                                                                    ],
+                                                           "AbDi":  false,
+                                                           "Cosm":  0,
+                                                           "Dead":  false,
+                                                           "Dest":  false,
+                                                           "DeBy":  null,
+                                                           "Link":  null,
+                                                           "Pow":  null,
+                                                           "SeV":  null,
+                                                           "Rwds":  0,
+                                                           "Rwrd":  false,
+                                                           "MiMs":  null,
+                                                           "SpMe":  null,
+                                                           "Tri":  null,
+                                                           "AtkC":  0,
+                                                           "HrtC":  0,
+                                                           "SpCT":  0,
+                                                           "OlTs":  null,
+                                                           "LastTargetsThisTurn":  null,
+                                                           "Id":  {
+                                                                      "BoId":  "0414ef42-8178-4632-b3fe-69179670d3e9",
+                                                                      "Uni":  1
+                                                                  },
+                                                           "Pri":  3,
+                                                           "Fro":  false,
+                                                           "WFro":  false,
+                                                           "AFro":  false
+                                                       },
+                                                       {
+                                                           "Own":  1,
+                                                           "Enu":  713,
+                                                           "Loc":  0,
+                                                           "Poi":  {
+                                                                       "x":  0,
+                                                                       "y":  0
+                                                                   },
+                                                           "Exp":  0,
+                                                           "Lvl":  1,
+                                                           "Hp":  {
+                                                                      "Perm":  3,
+                                                                      "Temp":  0,
+                                                                      "Max":  null
+                                                                  },
+                                                           "At":  {
+                                                                      "Perm":  3,
+                                                                      "Temp":  0,
+                                                                      "Max":  null
+                                                                  },
+                                                           "Mana":  0,
+                                                           "Cou":  null,
+                                                           "CoBr":  null,
+                                                           "LaPP":  null,
+                                                           "Perk":  null,
+                                                           "PeBo":  false,
+                                                           "PeDu":  null,
+                                                           "PeDM":  null,
+                                                           "PeMu":  null,
+                                                           "PeDr":  0,
+                                                           "Abil":  [
+                                                                        {
+                                                                            "Enu":  795,
+                                                                            "Lvl":  1,
+                                                                            "Nat":  true,
+                                                                            "Dur":  0,
+                                                                            "TrCo":  0,
+                                                                            "Char":  null,
+                                                                            "Dis":  false,
+                                                                            "DisT":  false,
+                                                                            "AIML":  false,
+                                                                            "IgRe":  false,
+                                                                            "Grop":  0
+                                                                        }
+                                                                    ],
+                                                           "AbDi":  false,
+                                                           "Cosm":  0,
+                                                           "Dead":  false,
+                                                           "Dest":  false,
+                                                           "DeBy":  null,
+                                                           "Link":  null,
+                                                           "Pow":  null,
+                                                           "SeV":  null,
+                                                           "Rwds":  0,
+                                                           "Rwrd":  false,
+                                                           "MiMs":  null,
+                                                           "SpMe":  null,
+                                                           "Tri":  null,
+                                                           "AtkC":  0,
+                                                           "HrtC":  0,
+                                                           "SpCT":  0,
+                                                           "OlTs":  null,
+                                                           "LastTargetsThisTurn":  null,
+                                                           "Id":  {
+                                                                      "BoId":  "0414ef42-8178-4632-b3fe-69179670d3e9",
+                                                                      "Uni":  2
+                                                                  },
+                                                           "Pri":  3,
+                                                           "Fro":  false,
+                                                           "WFro":  false,
+                                                           "AFro":  false
+                                                       },
+                                                       {
+                                                           "Own":  1,
+                                                           "Enu":  775,
+                                                           "Loc":  0,
+                                                           "Poi":  {
+                                                                       "x":  0,
+                                                                       "y":  0
+                                                                   },
+                                                           "Exp":  0,
+                                                           "Lvl":  1,
+                                                           "Hp":  {
+                                                                      "Perm":  1,
+                                                                      "Temp":  0,
+                                                                      "Max":  null
+                                                                  },
+                                                           "At":  {
+                                                                      "Perm":  1,
+                                                                      "Temp":  0,
+                                                                      "Max":  null
+                                                                  },
+                                                           "Mana":  0,
+                                                           "Cou":  null,
+                                                           "CoBr":  null,
+                                                           "LaPP":  null,
+                                                           "Perk":  null,
+                                                           "PeBo":  false,
+                                                           "PeDu":  null,
+                                                           "PeDM":  null,
+                                                           "PeMu":  null,
+                                                           "PeDr":  0,
+                                                           "Abil":  [
+                                                                        {
+                                                                            "Enu":  867,
+                                                                            "Lvl":  1,
+                                                                            "Nat":  true,
+                                                                            "Dur":  0,
+                                                                            "TrCo":  0,
+                                                                            "Char":  null,
+                                                                            "Dis":  false,
+                                                                            "DisT":  false,
+                                                                            "AIML":  false,
+                                                                            "IgRe":  false,
+                                                                            "Grop":  0
+                                                                        }
+                                                                    ],
+                                                           "AbDi":  false,
+                                                           "Cosm":  0,
+                                                           "Dead":  false,
+                                                           "Dest":  false,
+                                                           "DeBy":  null,
+                                                           "Link":  null,
+                                                           "Pow":  null,
+                                                           "SeV":  null,
+                                                           "Rwds":  0,
+                                                           "Rwrd":  false,
+                                                           "MiMs":  null,
+                                                           "SpMe":  null,
+                                                           "Tri":  null,
+                                                           "AtkC":  0,
+                                                           "HrtC":  0,
+                                                           "SpCT":  0,
+                                                           "OlTs":  null,
+                                                           "LastTargetsThisTurn":  null,
+                                                           "Id":  {
+                                                                      "BoId":  "0414ef42-8178-4632-b3fe-69179670d3e9",
+                                                                      "Uni":  3
+                                                                  },
+                                                           "Pri":  3,
+                                                           "Fro":  false,
+                                                           "WFro":  false,
+                                                           "AFro":  false
+                                                       }
+                                                   ],
+                                          "SpSC":  1,
+                                          "SpSh":  [
+                                                       {
+                                                           "Pow":  null,
+                                                           "Sto":  null,
+                                                           "Con":  null,
+                                                           "Reli":  null,
+                                                           "Buff":  false,
+                                                           "Link":  null,
+                                                           "Enu":  191,
+                                                           "Id":  {
+                                                                      "BoId":  "0414ef42-8178-4632-b3fe-69179670d3e9",
+                                                                      "Uni":  4
+                                                                  },
+                                                           "Pri":  3,
+                                                           "Fro":  false,
+                                                           "WFro":  false,
+                                                           "AFro":  false
+                                                       }
+                                                   ],
+                                          "Adj":  null,
+                                          "Nou":  null,
+                                          "Trum":  0,
+                                          "PrOu":  0,
+                                          "PrEn":  null,
+                                          "PrES":  null,
+                                          "PrES2":  null,
+                                          "MiPl":  0,
+                                          "MiSu":  0,
+                                          "MSFL":  0,
+                                          "SpPl":  [
+
+                                                   ],
+                                          "SpCo":  null,
+                                          "Mode":  1,
+                                          "Cosm":  0,
+                                          "CoMa":  null,
+                                          "Back":  26,
+                                          "Masc":  6,
+                                          "Entr":  6,
+                                          "Awar":  {
+                                                       "Type":  10,
+                                                       "Position":  null,
+                                                       "PercentPosition":  0.0069,
+                                                       "Season":  null,
+                                                       "Year":  2025,
+                                                       "Month":  10,
+                                                       "Color":  null,
+                                                       "Text":  null
+                                                   },
+                                          "Pack":  3,
+                                          "Pcks":  false,
+                                          "Taut":  null,
+                                          "Deck":  {
+                                                       "Id":  "18da9bc5-420d-4b30-a013-e9d7b1181fbf",
+                                                       "Title":  "spino",
+                                                       "Minion":  143,
+                                                       "Minions":  [
+                                                                       621,
+                                                                       215,
+                                                                       376,
+                                                                       80,
+                                                                       127,
+                                                                       246,
+                                                                       20,
+                                                                       29,
+                                                                       393,
+                                                                       45,
+                                                                       693,
+                                                                       0,
+                                                                       775,
+                                                                       81,
+                                                                       226,
+                                                                       626,
+                                                                       423,
+                                                                       776,
+                                                                       713,
+                                                                       653,
+                                                                       406,
+                                                                       74,
+                                                                       143,
+                                                                       142,
+                                                                       439,
+                                                                       235,
+                                                                       191,
+                                                                       18,
+                                                                       228,
+                                                                       79,
+                                                                       407,
+                                                                       425,
+                                                                       169,
+                                                                       10,
+                                                                       205,
+                                                                       155,
+                                                                       207,
+                                                                       201,
+                                                                       704,
+                                                                       187,
+                                                                       148,
+                                                                       265,
+                                                                       55,
+                                                                       733,
+                                                                       78,
+                                                                       50,
+                                                                       655,
+                                                                       117,
+                                                                       342,
+                                                                       7,
+                                                                       374,
+                                                                       210,
+                                                                       715,
+                                                                       103,
+                                                                       633,
+                                                                       118,
+                                                                       613,
+                                                                       383,
+                                                                       218,
+                                                                       560
+                                                                   ],
+                                                       "Spells":  [
+                                                                      92,
+                                                                      1,
+                                                                      23,
+                                                                      96,
+                                                                      64,
+                                                                      191,
+                                                                      147,
+                                                                      189,
+                                                                      24,
+                                                                      207,
+                                                                      119,
+                                                                      197,
+                                                                      199,
+                                                                      160,
+                                                                      155,
+                                                                      34,
+                                                                      60,
+                                                                      161
+                                                                  ],
+                                                       "Free":  false,
+                                                       "MaxMinions":  null,
+                                                       "MaxSpells":  null,
+                                                       "WackyMinion":  null
+                                                   },
+                                          "Rel":  {
+                                                      "Size":  {
+                                                                   "x":  2,
+                                                                   "y":  1
+                                                               },
+                                                      "Items":  [
+                                                                    null,
+                                                                    null
+                                                                ]
+                                                  },
+                                          "Bul":  {
+                                                      "Size":  {
+                                                                   "x":  0,
+                                                                   "y":  0
+                                                               },
+                                                      "Items":  null
+                                                  },
+                                          "Choi":  null,
+                                          "FuCh":  null,
+                                          "Hash":  0,
+                                          "Diff":  2,
+                                          "ShRe":  null,
+                                          "Clon":  false,
+                                          "Wacky":  null,
+                                          "WMPs":  null,
+                                          "WMPb":  false
+                                      },
+                              "AvAd":  [
+                                           "Half",
+                                           "Fishy",
+                                           "Hopeful"
+                                       ],
+                              "AvNo":  [
+                                           "Tugboats",
+                                           "Fusspots",
+                                           "Sacks"
+                                       ],
+                              "ChCo":  0
+                          },
+    "ModeActions":  [
+
+                    ]
+}

@@ -15,25 +15,25 @@ import { AbilityTrigger, AbilityType } from "../classes/ability.class";
 export class AbilityService {
 
     public gameApi: GameAPI;
-    private startBattleEvents: AbilityEvent[] = [];
-    private afterAttackEvents: AbilityEvent[] = [];
-    private beforeAttackEvents: AbilityEvent[] = [];
+    private startBattleEvents: AbilityEvent[]= [];
+    private afterAttackEvents: AbilityEvent[]= [];
+    private beforeAttackEvents: AbilityEvent[]= [];
     private processedBeforeAttackPets: Set<Pet> = new Set();
-    private beforeStartOfBattleEvents: AbilityEvent[] = [];
-    private equipmentBeforeAttackEvents: AbilityEvent[] = []; // egg
-    private afterFriendAttackEvents: AbilityEvent[] = []; // unified friend + enemy attack events
+    private beforeStartOfBattleEvents: AbilityEvent[]= [];
+    private equipmentBeforeAttackEvents: AbilityEvent[]= []; // egg
+    private afterFriendAttackEvents: AbilityEvent[]= []; // unified friend + enemy attack events
     private beforeFriendAttacksEvents: AbilityEvent[] = [];
 
     // toy events
-    private emptyFrontSpaceToyEvents: AbilityEvent[] = [];
-    private friendSummonedToyEvents: AbilityEvent[] = [];
-    private friendlyLevelUpToyEvents: AbilityEvent[] = [];
-    private friendFaintsToyEvents: AbilityEvent[] = [];
-    private friendJumpedToyEvents: AbilityEvent[] = [];
+    private emptyFrontSpaceToyEvents: AbilityEvent[]= [];
+    private friendSummonedToyEvents: AbilityEvent[]= [];
+    private friendlyLevelUpToyEvents: AbilityEvent[]= [];
+    private friendFaintsToyEvents: AbilityEvent[]= [];
+    private friendJumpedToyEvents: AbilityEvent[]= [];
 
     // Global priority queue system
     private globalEventQueue: AbilityEvent[] = [];
-
+    
     // Priority mapping (lower number = higher priority), commmented out ones are ones currently not used
     private readonly ABILITY_PRIORITIES = {
         // Level up events
@@ -74,7 +74,7 @@ export class AbilityService {
 
         // Death/Faint events
         'BeforeThisDies': 9,
-        'KitsuneFriendDies': 9,
+        'KitsuneFriendDies' : 9,
         //'ThisDiesForPerks': 9,
         'FriendAheadDied': 10,
         'ThisDied': 11,
@@ -103,6 +103,8 @@ export class AbilityService {
         'FriendTransformed': 14.5,
         //'FriendTransformedInBattle': 14.5,
         //'BeforeFriendTransformed': 14.5,
+        //Speical trigger for Giant Otter
+        'BeforeFirstNonJumpAttack': 14,
         // Experience events
         //'FriendGainedExperience': 15,
         'FriendGainedExp': 15,
@@ -393,7 +395,7 @@ export class AbilityService {
 
     private executeToyEventQueue(queue: AbilityEvent[], executor: (event: AbilityEvent) => void): void {
         const events = shuffle(queue);
-        events.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
+        events.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (const event of events) {
             executor(event);
@@ -407,7 +409,7 @@ export class AbilityService {
         if (pet.hasTrigger(trigger)) {
             // Create an AbilityEvent for the global queue
             const abilityEvent: AbilityEvent = {
-                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => { pet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, customParams) },
+                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {pet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, customParams)},
                 priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                 pet: pet,
                 triggerPet: triggerPet,
@@ -418,7 +420,7 @@ export class AbilityService {
 
             this.addEventToQueue(abilityEvent);
         }
-    }
+    }    
     get hasAbilityCycleEvents() {
         // With the new priority queue system, only check the global queue
         // All events are migrated to globalEventQueue at the start of abilityCycle()
@@ -429,21 +431,21 @@ export class AbilityService {
     private addEventToQueue(event: AbilityEvent) {
         // Set priority based on ability type
         const abilityPriority = this.ABILITY_PRIORITIES[event.abilityType] || 999;
-
+        
         // Assign random tie breaker if not already set
         if (event.tieBreaker === undefined) {
             event.tieBreaker = Math.random();
         }
-
+        
         // Binary search to find insertion point
         let left = 0;
         let right = this.globalEventQueue.length;
-
+        
         while (left < right) {
             const mid = Math.floor((left + right) / 2);
             const midEvent = this.globalEventQueue[mid];
             const midAbilityPriority = this.ABILITY_PRIORITIES[midEvent.abilityType] || 999;
-
+            
             // Compare ability type priority first
             if (abilityPriority < midAbilityPriority) {
                 right = mid;
@@ -465,7 +467,7 @@ export class AbilityService {
                 }
             }
         }
-
+        
         // Insert at found position
         this.globalEventQueue.splice(left, 0, event);
     }
@@ -533,7 +535,7 @@ export class AbilityService {
             if (pet.hasTrigger('BeforeStartBattle')) {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'BeforeStartBattle',
@@ -541,13 +543,13 @@ export class AbilityService {
                 };
 
                 this.beforeStartOfBattleEvents.push(abilityEvent);
-            }
+            } 
         }
         for (let pet of this.gameApi.opponent.petArray) {
             if (pet.hasTrigger('BeforeStartBattle')) {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'BeforeStartBattle',
@@ -555,7 +557,7 @@ export class AbilityService {
                 };
 
                 this.beforeStartOfBattleEvents.push(abilityEvent);
-            }
+            } 
         }
     }
 
@@ -567,12 +569,12 @@ export class AbilityService {
         // shuffle, so that same priority events are in random order
         this.beforeStartOfBattleEvents = shuffle(this.beforeStartOfBattleEvents);
 
-        this.beforeStartOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
+        this.beforeStartOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0});
 
         for (let event of this.beforeStartOfBattleEvents) {
             event.callback(event.abilityType, this.gameService.gameApi);
         }
-
+        
         this.resetBeforeStartOfBattleEvents();
     }
     //counter
@@ -587,7 +589,7 @@ export class AbilityService {
             if (pet.hasTrigger('StartBattle')) {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'StartBattle',
@@ -595,13 +597,13 @@ export class AbilityService {
                 };
 
                 this.startBattleEvents.push(abilityEvent);
-            }
-        }
+            }   
+        }  
         for (let pet of this.gameApi.opponent.petArray) {
             if (pet.hasTrigger('StartBattle')) {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'StartBattle',
@@ -609,8 +611,8 @@ export class AbilityService {
                 };
 
                 this.startBattleEvents.push(abilityEvent);
-            }
-        }
+            }   
+        } 
     }
     executeStartBattleEvents() {
         this.startBattleEvents.sort((a, b) => (b.priority - a.priority) || (b.tieBreaker - a.tieBreaker));
@@ -619,7 +621,7 @@ export class AbilityService {
             let event = this.startBattleEvents.shift();
             if (event.pet && event.pet.transformed && event.pet.transformedInto) {
                 const transformedPet = event.pet.transformedInto;
-                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => { transformedPet.executeAbilities(trigger, gameApi) }
+                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => {transformedPet.executeAbilities(trigger, gameApi)}
             }
 
             event.callback(event.abilityType, this.gameService.gameApi);
@@ -631,7 +633,7 @@ export class AbilityService {
                 }
             }
             if (changed) {
-                this.startBattleEvents.sort((a, b) => (b.priority - a.priority) || (b.tieBreaker - a.tieBreaker));
+                this.startBattleEvents.sort((a, b) => (b.priority - a.priority) || (b.tieBreaker - a.tieBreaker)); 
             }
         }
     }
@@ -640,7 +642,7 @@ export class AbilityService {
         for (let pet of AttackingPet.parent.petArray) {
             if (pet.hasTrigger('BeforeFriendlyAttack')) {
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'BeforeFriendlyAttack',
@@ -648,10 +650,20 @@ export class AbilityService {
                 };
                 this.beforeFriendAttacksEvents.push(abilityEvent);
             }
+            if (pet.hasTrigger('BeforeFirstNonJumpAttack')) {
+                const abilityEvent: AbilityEvent = {
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
+                    priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
+                    pet: pet,
+                    abilityType: 'BeforeFirstNonJumpAttack',
+                    tieBreaker: Math.random()
+                };
+                this.beforeFriendAttacksEvents.push(abilityEvent);
+            }
             if (pet == AttackingPet) {
                 if (pet.hasTrigger('BeforeThisAttacks')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'BeforeThisAttacks',
@@ -661,7 +673,7 @@ export class AbilityService {
                 }
                 if (pet.hasTrigger('BeforeFirstAttack')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'BeforeFirstAttack',
@@ -672,7 +684,7 @@ export class AbilityService {
             } else {
                 if (pet.hasTrigger('BeforeFriendAttacks')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'BeforeFriendAttacks',
@@ -684,7 +696,7 @@ export class AbilityService {
             if (pet == AttackingPet.petAhead || pet == AttackingPet.petBehind()) {
                 if (pet.hasTrigger('BeforeAdjacentFriendAttacked')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'BeforeAdjacentFriendAttacked',
@@ -702,7 +714,7 @@ export class AbilityService {
             let event = this.beforeAttackEvents.shift();
             if (event.pet && event.pet.transformed && event.pet.transformedInto) {
                 const transformedPet = event.pet.transformedInto;
-                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => { transformedPet.executeAbilities(trigger, gameApi) }
+                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => {transformedPet.executeAbilities(trigger, gameApi)}
             }
             event.callback(event.abilityType, this.gameService.gameApi);
         }
@@ -712,7 +724,7 @@ export class AbilityService {
             let event = this.beforeFriendAttacksEvents.shift();
             if (event.pet && event.pet.transformed && event.pet.transformedInto) {
                 const transformedPet = event.pet.transformedInto;
-                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => { transformedPet.executeAbilities(trigger, gameApi) }
+                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => {transformedPet.executeAbilities(trigger, gameApi)}
             }
             event.callback(event.abilityType, this.gameService.gameApi);
         }
@@ -727,7 +739,7 @@ export class AbilityService {
             ]);
             if (pet.hasTrigger('FriendlyAttacked')) {
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'FriendlyAttacked',
@@ -737,10 +749,9 @@ export class AbilityService {
             }
             if (pet.hasTrigger('AnyoneAttack')) {
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi, AttackingPet) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
-                    triggerPet: AttackingPet,
                     abilityType: 'AnyoneAttack',
                     tieBreaker: Math.random()
                 };
@@ -749,7 +760,7 @@ export class AbilityService {
             if (pet == AttackingPet) {
                 if (pet.hasTrigger('ThisAttacked')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'ThisAttacked',
@@ -759,7 +770,7 @@ export class AbilityService {
                 }
                 if (pet.hasTrigger('ThisFirstAttack')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'ThisFirstAttack',
@@ -770,7 +781,7 @@ export class AbilityService {
             } else {
                 if (pet.hasTrigger('FriendAttacked')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'FriendAttacked',
@@ -786,7 +797,7 @@ export class AbilityService {
             if (pet == AttackingPet.petAhead || pet == AttackingPet.petBehind()) {
                 if (pet.hasTrigger('AdjacentFriendAttacked')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'AdjacentFriendAttacked',
@@ -798,7 +809,7 @@ export class AbilityService {
             if (pet == AttackingPet.petBehind(null, true)) {
                 if (pet.hasTrigger('FriendAheadAttacked')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'FriendAheadAttacked',
@@ -811,10 +822,9 @@ export class AbilityService {
         for (let pet of AttackingPet.parent.opponent.petArray) {
             if (pet.hasTrigger('AnyoneAttack')) {
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi, AttackingPet) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
-                    triggerPet: AttackingPet,
                     abilityType: 'AnyoneAttack',
                     tieBreaker: Math.random()
                 };
@@ -822,7 +832,7 @@ export class AbilityService {
             }
             if (pet.hasTrigger('EnemyAttacked')) {
                 const abilityEvent: AbilityEvent = {
-                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                    callback: (trigger: AbilityTrigger, gameApi: GameAPI) => {pet.executeAbilities(trigger, gameApi)},
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'EnemyAttacked',
@@ -845,7 +855,7 @@ export class AbilityService {
             let event = this.afterAttackEvents.shift();
             if (event.pet && event.pet.transformed && event.pet.transformedInto) {
                 const transformedPet = event.pet.transformedInto;
-                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => { transformedPet.executeAbilities(trigger, gameApi) }
+                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => {transformedPet.executeAbilities(trigger, gameApi)}
             }
             event.callback(event.abilityType, this.gameService.gameApi);
         }
@@ -855,7 +865,7 @@ export class AbilityService {
             let event = this.afterFriendAttackEvents.shift();
             if (event.pet && event.pet.transformed && event.pet.transformedInto) {
                 const transformedPet = event.pet.transformedInto;
-                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => { transformedPet.executeAbilities(trigger, gameApi) }
+                event.callback = (trigger: AbilityTrigger, gameApi: GameAPI) => {transformedPet.executeAbilities(trigger, gameApi)}
             }
             event.callback(event.abilityType, this.gameService.gameApi);
         }
@@ -889,7 +899,7 @@ export class AbilityService {
         for (let pet of summonedPet.parent.opponent.petArray) {
             this.triggerAbility(pet, 'EnemySummoned', summonedPet);
         }
-    }
+    } 
 
     triggerFaintEvents(faintedPet: Pet) {
         // Check friends
@@ -904,7 +914,7 @@ export class AbilityService {
                 this.triggerAbility(pet, 'FriendAheadDied', faintedPet);
             }
             // Check for AdjacentFriendsDie
-            if (pet == faintedPet.petBehind(null, true) || pet.petBehind(null, true) == faintedPet) {
+            if (pet== faintedPet.petBehind(null, true) || pet.petBehind(null, true) == faintedPet) {
                 this.triggerAbility(pet, 'AdjacentFriendsDie', faintedPet);
             }
         }
@@ -1110,7 +1120,7 @@ export class AbilityService {
         const customParams = damageAmount !== undefined ? { damageAmount } : undefined;
 
         //check friends
-        for (let pet of hurtedPet.parent.petArray) {
+        for (let pet of hurtedPet.parent.petArray){
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
             if (pet == hurtedPet) {
                 this.triggerAbility(pet, 'ThisHurt', hurtedPet, customParams);
@@ -1263,7 +1273,7 @@ export class AbilityService {
 
 
     }
-
+    
     executeEmptyFrontSpaceToyEvents() {
         this.executeToyEventQueue(this.emptyFrontSpaceToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.priority < 100, event.level, event.priority);
@@ -1350,7 +1360,7 @@ export class AbilityService {
                 player.toy.friendJumped.bind(player.toy)
             );
         }
-
+        
     }
 
     executeFriendJumpedToyEvents() {

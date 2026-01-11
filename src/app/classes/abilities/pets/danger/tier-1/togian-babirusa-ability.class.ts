@@ -3,7 +3,6 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
-// Faint: Give one random enemy +1 health.
 export class TogianBabirusaAbility extends Ability {
     private logService: LogService;
 
@@ -23,15 +22,17 @@ export class TogianBabirusaAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-
-        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let targetResp = owner.parent.opponent.getRandomPet([], false, false, false, owner);
 
         if (targetResp.pet) {  // getRandomPet returns null if no living pets
-            targetResp.pet.increaseHealth(1);
+            targetResp.pet.increaseAttack(1);  // Fixed +1, not this.level * 1
+            targetResp.pet.increaseHealth(1);  // Fixed +1, not this.level * 1
+
             this.logService.createLog({
-                message: `${owner.name} gave ${targetResp.pet.name} +1 health.`,
+                message: `${owner.name} gave ${targetResp.pet.name} +1 attack and +1 health.`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,

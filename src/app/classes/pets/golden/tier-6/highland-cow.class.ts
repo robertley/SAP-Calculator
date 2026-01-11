@@ -10,7 +10,7 @@ export class HighlandCow extends Pet {
     tier = 6;
     pack: Pack = 'Golden';
     attack = 4;
-    health = 6;
+    health = 12;
     initAbilities(): void {
         this.addAbility(new HighlandCowAbility(this, this.logService));
         super.initAbilities();

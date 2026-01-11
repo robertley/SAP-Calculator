@@ -22,9 +22,9 @@ export class RoyalFlycatcherAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-
-        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
-        let power = this.level * 4;
+        
+        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        let power = this.level * 3;
         let targetResp = owner.parent.opponent.getRandomPet([], null, true, null, owner);
         let target = targetResp.pet;
         if (target == null) {

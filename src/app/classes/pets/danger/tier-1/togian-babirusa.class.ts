@@ -9,7 +9,7 @@ export class TogianBabirusa extends Pet {
     name = "Togian Babirusa";
     tier = 1;
     pack: Pack = 'Danger';
-    attack = 3;
+    attack = 4;
     health = 3;
     initAbilities(): void {
         this.addAbility(new TogianBabirusaAbility(this, this.logService));

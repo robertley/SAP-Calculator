@@ -8,7 +8,7 @@ export class Quetzalcoatl extends Pet {
     name = "Quetzalcoatl";
     tier = 6;
     pack: Pack = 'Unicorn';
-    attack = 4;
+    attack = 2;
     health = 8;
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

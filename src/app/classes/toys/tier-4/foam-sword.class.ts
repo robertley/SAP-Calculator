@@ -9,9 +9,6 @@ export class FoamSword extends Toy {
         let opponent = getOpponent(gameApi, this.parent);
         for (let i = 0; i < this.level; i++) {
             let lowestHealthResp = opponent.getLowestHealthPet();
-            if (lowestHealthResp.pet == null) {
-                return;
-            }
             this.toyService.snipePet(lowestHealthResp.pet, 5, this.parent, this.name, lowestHealthResp.random, puma);
         }
     }

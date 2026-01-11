@@ -11,6 +11,7 @@ import { FormArray } from "@angular/forms";
 import { EquipmentService } from "./equipment.service";
 import { Mouse } from "../classes/pets/custom/tier-1/mouse.class";
 import { PET_REGISTRY } from "./pet-registry";
+import { BASE_PACK_NAMES, PackName } from "../util/pack-names";
 @Injectable({
     providedIn: 'root'
 })
@@ -25,6 +26,7 @@ export class PetService {
     dangerPackPets: Map<number, string[]> = new Map();
     playerCustomPackPets: Map<string, Map<number, string[]>> = new Map();
     allPets: Map<number, string[]> = new Map();
+    readonly basePackPetsByName: Record<PackName, Map<number, string[]>>;
     startOfBattlePets: string[] = [
         "Beetle",
         "Cone Snail",
@@ -96,6 +98,15 @@ export class PetService {
         private gameService: GameService,
         private petFactory: PetFactoryService
     ) {
+        this.basePackPetsByName = {
+            Turtle: this.turtlePackPets,
+            Puppy: this.puppyPackPets,
+            Star: this.starPackPets,
+            Golden: this.goldenPackPets,
+            Unicorn: this.unicornPackPets,
+            Danger: this.dangerPackPets,
+            Custom: this.customPackPets,
+        };
 
     }
 
@@ -376,7 +387,7 @@ export class PetService {
         this.goldenPackPets.set(3, [
             "Musk Ox",
             "Flea",
-            "Betta Fish",
+            "Bear",
             "Royal Flycatcher",
             "Surgeon Fish",
             "Weasel",
@@ -584,7 +595,6 @@ export class PetService {
         this.customPackPets.set(1, [
             "Frilled Dragon",
             "Mouse",
-            "Basilisk",
             "Duckling",
             "Seahorse",
             "Budgie",
@@ -634,11 +644,12 @@ export class PetService {
             "Porcupine",
             "Wasp",
             "Foo Dog",
+            "Basilisk",
             "Tree",
             "Slime",
             "Pegasus",
             "Deer Lord",
-            "Bear",
+            "Betta Fish",
             "Flying Squirrel",
             "Barnacle",
             "Blue Dragon",
@@ -778,23 +789,11 @@ export class PetService {
         for (let i = 1; i <= 6; i++) {
             this.allPets.set(i, []);
         }
-        for (let [tier, pets] of this.turtlePackPets) {
-            this.allPets.get(tier).push(...pets);
-        }
-        for (let [tier, pets] of this.puppyPackPets) {
-            this.allPets.get(tier).push(...pets);
-        }
-        for (let [tier, pets] of this.starPackPets) {
-            this.allPets.get(tier).push(...pets);
-        }
-        for (let [tier, pets] of this.goldenPackPets) {
-            this.allPets.get(tier).push(...pets);
-        }
-        for (let [tier, pets] of this.unicornPackPets) {
-            this.allPets.get(tier).push(...pets);
-        }
-        for (let [tier, pets] of this.dangerPackPets) {
-            this.allPets.get(tier).push(...pets);
+        for (const packName of BASE_PACK_NAMES) {
+            const packPets = this.basePackPetsByName[packName];
+            for (let [tier, pets] of packPets) {
+                this.allPets.get(tier).push(...pets);
+            }
         }
         // remove duplicates from each tier
         for (let [tier, pets] of this.allPets) {

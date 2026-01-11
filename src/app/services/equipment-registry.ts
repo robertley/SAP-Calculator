@@ -91,6 +91,7 @@ import { Cold } from "../classes/equipment/ailments/cold.class";
 import { Icky } from "../classes/equipment/ailments/icky.class";
 import { Crisp } from "../classes/equipment/ailments/crisp.class";
 import { Dazed } from "../classes/equipment/ailments/dazed.class";
+import { Ink } from "../classes/equipment/ailments/ink.class";
 import { Spooked } from "../classes/equipment/ailments/spooked.class";
 import { Weak } from "../classes/equipment/ailments/weak.class";
 import { Tasty } from "../classes/equipment/ailments/tasty.class";
@@ -215,6 +216,7 @@ export const NO_ARG_AILMENTS: { [key: string]: any } = {
     'Crisp': Crisp,
     'Dazed': Dazed,
     'Icky': Icky,
+    'Ink': Ink,
     'Inked': Inked,
     'Spooked': Spooked,
     'Weak': Weak,

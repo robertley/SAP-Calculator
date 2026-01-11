@@ -27,7 +27,7 @@ export class FrilledDragonAbility extends Ability {
 
         let power = 0;
         for (let pet of owner.parent.petArray) {
-            if (pet.isSellPet()) {
+            if (pet !== owner && pet.isFaintPet()) {
                 power++;
             }
         }

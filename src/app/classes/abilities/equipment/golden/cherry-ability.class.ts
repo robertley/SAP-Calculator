@@ -25,6 +25,5 @@ export class CherryAbility extends Ability {
 
         let multiplier = this.equipment.multiplier;
         owner.parent.gainTrumpets(2 * multiplier, owner, false, multiplier, true);
-        owner.removePerk(true);
     }
 }

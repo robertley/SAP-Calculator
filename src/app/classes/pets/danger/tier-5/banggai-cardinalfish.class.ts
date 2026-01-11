@@ -10,7 +10,7 @@ export class BanggaiCardinalfish extends Pet {
     tier = 5;
     pack: Pack = 'Danger';
     attack = 4;
-    health = 7;
+    health = 5;
 
     initAbilities(): void {
         this.addAbility(new BanggaiCardinalfishAbility(this, this.logService));

@@ -41,7 +41,6 @@ import {
 } from "./pet/pet-combat";
 import { resetPetState } from "./pet/pet-state";
 import { Log } from "../interfaces/log.interface";
-import { Strawberry } from "./equipment/star/strawberry.class";
 
 export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom' | 'Danger';
 
@@ -582,14 +581,6 @@ export abstract class Pet {
                     player: this.parent
                 });
                 // Remove equipment immediately after blocking ailment
-                this.removePerk();
-                return;
-            } else if (this.equipment instanceof Strawberry && this.getSparrowLevel() > 0 && this.equipment.uses > 0) {
-                this.logService.createLog({
-                    message: `${this.name} blocked ${equipment.name}. (Strawberry)`,
-                    type: 'equipment',
-                    player: this.parent
-                });
                 this.removePerk();
                 return;
             }

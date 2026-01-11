@@ -25,7 +25,7 @@ export class ChupacabraAbility extends Ability {
 
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        for (let i = 0; i < this.level * 3; i++) {
+        for (let i = 0; i < this.level * 2; i++) {
             let targetResp = owner.parent.getRandomPet([owner], true, false, true, owner);
             if (targetResp.pet == null) {
                 return;
