@@ -87,7 +87,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   version = '0.9.2';
   sapVersion = '0.33.3-156 BETA'
-  lastUpdated = '1/10/2026';
+  lastUpdated = '1/11/2026';
 
   title = 'sap-calculator';
   player: Player;
@@ -131,6 +131,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     InjectorService.setInjector(this.injector);
     this.player = new Player(logService, abilityService, gameService);
     this.opponent = new Player(logService, abilityService, gameService);
+    this.opponent.isOpponent = true;
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
@@ -765,6 +766,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.opponentWinner = result.opponentWins;
     this.draw = result.draws;
     this.battles = result.battles || [];
+    this.viewBattle = result.battles[0] || null;
     this.simulated = true;
   }
 
@@ -794,7 +796,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (log.player == null) {
       return 'log';
     }
-    if (log.player == this.player) {
+    if (!log.player.isOpponent) {
       return 'log-player';
     } else {
       return 'log-opponent'
@@ -879,18 +881,21 @@ export class AppComponent implements OnInit, AfterViewInit {
   drop(event: CdkDragDrop<string[]>, playerString: string) {
     let previousIndex = event.previousIndex;
     let currentIndex = event.currentIndex;
-    let player = this.opponent;
     if (playerString == 'player') {
       // since the array is reversed, we need to revers the indexes
       previousIndex = 4 - previousIndex;
       currentIndex = 4 - currentIndex;
-      player = this.player;
     }
-    moveItemInArray((this.formGroup.get(`${playerString}Pets`) as FormArray).controls, previousIndex, currentIndex);
+    let formArray = this.formGroup.get(`${playerString}Pets`) as FormArray;
+    moveItemInArray(formArray.controls, previousIndex, currentIndex);
+    formArray.updateValueAndValidity();
 
-    for (let selector of this.petSelectors.toArray()) {
-      selector.substitutePet();
-    }
+    setTimeout(() => {
+      // Allow Angular to update view indices before substituting
+      for (let selector of this.petSelectors.toArray()) {
+        selector.substitutePet();
+      }
+    });
 
   }
 

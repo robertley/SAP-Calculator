@@ -19,28 +19,29 @@ import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
 import { shuffle } from "lodash";
 
 export class SimulationRunner {
-    private player: Player;
-    private opponent: Player;
-    private battleStarted = false;
-    private turns = 0;
-    private maxTurns = 71;
-    private currBattle: Battle;
-    private battles: Battle[] = [];
-    private playerWinner = 0;
-    private opponentWinner = 0;
-    private draw = 0;
+    protected player: Player;
+    protected opponent: Player;
+    protected battleStarted = false;
+    protected turns = 0;
+    protected maxTurns = 71;
+    protected currBattle: Battle;
+    protected battles: Battle[] = [];
+    protected playerWinner = 0;
+    protected opponentWinner = 0;
+    protected draw = 0;
 
     // Services needed for simulation
     constructor(
-        private logService: LogService,
-        private gameService: GameService,
-        private abilityService: AbilityService,
-        private petService: PetService,
-        private equipmentService: EquipmentService,
-        private toyService: ToyService
+        protected logService: LogService,
+        protected gameService: GameService,
+        protected abilityService: AbilityService,
+        protected petService: PetService,
+        protected equipmentService: EquipmentService,
+        protected toyService: ToyService
     ) {
         this.player = new Player(logService, abilityService, gameService);
         this.opponent = new Player(logService, abilityService, gameService);
+        this.opponent.isOpponent = true;
         this.gameService.init(this.player, this.opponent);
     }
 
@@ -66,7 +67,7 @@ export class SimulationRunner {
         };
     }
 
-    private resetSimulation() {
+    protected resetSimulation() {
         this.playerWinner = 0;
         this.opponentWinner = 0;
         this.draw = 0;
@@ -74,7 +75,7 @@ export class SimulationRunner {
         this.currBattle = null;
     }
 
-    private setupGameEnvironment(config: SimulationConfig) {
+    protected setupGameEnvironment(config: SimulationConfig) {
         // Set turn and tier
         let tier = 1;
         if (config.turn > 2) tier = 2;
@@ -118,7 +119,7 @@ export class SimulationRunner {
         this.gameService.setTierGroupPets(playerPool, opponentPool);
     }
 
-    private initBattle(config: SimulationConfig) {
+    protected initBattle(config: SimulationConfig) {
         this.logService.reset();
         this.currBattle = {
             winner: 'draw',
@@ -132,7 +133,7 @@ export class SimulationRunner {
         this.gameService.gameApi.playerTransformationAmount = config.playerTransformationAmount ?? 0;
     }
 
-    private prepareBattle(config: SimulationConfig) {
+    protected prepareBattle(config: SimulationConfig) {
         this.reset();
 
         // Create pets
@@ -188,7 +189,7 @@ export class SimulationRunner {
         } while (this.abilityService.hasAbilityCycleEvents);
     }
 
-    private createPets(player: Player, petsConfig: (PetConfig | null)[]) {
+    protected createPets(player: Player, petsConfig: (PetConfig | null)[]) {
         const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
 
         for (let i = 0; i < 5; i++) {
@@ -225,7 +226,7 @@ export class SimulationRunner {
     }
 
 
-    private executeBattleLoop() {
+    protected executeBattleLoop() {
         while (this.battleStarted) {
             this.nextTurn();
         }
@@ -233,18 +234,18 @@ export class SimulationRunner {
 
     // --- Logic moved from AppComponent ---
 
-    private startBattle() {
+    protected startBattle() {
         this.reset();
         this.battleStarted = true;
         this.turns = 0;
     }
 
-    private reset() {
+    protected reset() {
         this.player.resetPets();
         this.opponent.resetPets();
     }
 
-    private nextTurn() {
+    protected nextTurn() {
         let finished = false;
         let winner = null;
         this.turns++;
@@ -321,7 +322,7 @@ export class SimulationRunner {
         } while (this.abilityService.hasAbilityCycleEvents);
     }
 
-    private fight() {
+    protected fight() {
         let playerPet = this.player.pet0;
         let opponentPet = this.opponent.pet0;
 
@@ -336,7 +337,7 @@ export class SimulationRunner {
         this.abilityService.executeAfterAttackEvents();
     }
 
-    private abilityCycle() {
+    protected abilityCycle() {
         this.emptyFrontSpaceCheck();
         while (this.abilityService.hasGlobalEvents) {
             const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
@@ -369,19 +370,19 @@ export class SimulationRunner {
         this.opponent.checkGoldenSpawn();
     }
 
-    private checkPetsAlive() {
+    protected checkPetsAlive() {
         this.player.checkPetsAlive();
         this.opponent.checkPetsAlive();
     }
 
-    private removeDeadPets() {
+    protected removeDeadPets() {
         let petRemoved = false;
         petRemoved = this.player.removeDeadPets();
         petRemoved = this.opponent.removeDeadPets() || petRemoved;
         return petRemoved;
     }
 
-    private emptyFrontSpaceCheck() {
+    protected emptyFrontSpaceCheck() {
         if (this.player.pet0 == null) {
             this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
         }
@@ -397,7 +398,7 @@ export class SimulationRunner {
         this.abilityService.executeEmptyFrontSpaceToyEvents();
     }
 
-    private initToys() {
+    protected initToys() {
         if (this.player.toy?.startOfBattle) {
             this.toyService.setStartOfBattleEvent({
                 callback: () => {
@@ -432,12 +433,12 @@ export class SimulationRunner {
         }
     }
 
-    private pushPetsForwards() {
+    protected pushPetsForwards() {
         this.player.pushPetsForward();
         this.opponent.pushPetsForward();
     }
 
-    private endLog(winner?: Player) {
+    protected endLog(winner?: Player) {
         let message;
         if (winner == null) {
             message = 'Draw';
@@ -456,7 +457,7 @@ export class SimulationRunner {
     // Ported updateGoldSpent logic... already integrated
     // Ported initPlayerPets... integrated into createPets
 
-    private initializeEquipmentMultipliers() {
+    protected initializeEquipmentMultipliers() {
         // Initialize multipliers for equipment that pets start the battle with
         // This ensures Panther level multipliers and Pandora's Box toy multipliers work correctly
 
