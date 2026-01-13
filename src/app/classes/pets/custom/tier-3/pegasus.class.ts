@@ -7,10 +7,10 @@ import { PegasusAbility } from "../../../abilities/pets/custom/tier-3/pegasus-ab
 
 export class Pegasus extends Pet {
     name = "Pegasus";
-    tier = 3;
+    tier = 4;
     pack: Pack = 'Custom';
-    attack = 1;
-    health = 3;
+    attack = 2;
+    health = 4;
     initAbilities(): void {
         this.addAbility(new PegasusAbility(this, this.logService));
         super.initAbilities();
