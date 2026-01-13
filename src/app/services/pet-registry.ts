@@ -13,6 +13,8 @@ import { Beaver } from "../classes/pets/turtle/tier-1/beaver.class";
 import { Otter } from "../classes/pets/turtle/tier-1/otter.class";
 import { Pig } from "../classes/pets/turtle/tier-1/pig.class";
 import { Mouse } from "../classes/pets/custom/tier-1/mouse.class";
+import { Gibbon } from "../classes/pets/custom/tier-1/gibbon.class";
+import { Termite } from "../classes/pets/custom/tier-1/termite.class";
 import { Snail } from "../classes/pets/turtle/tier-2/snail.class";
 import { Crab } from "../classes/pets/turtle/tier-2/crab.class";
 import { Swan } from "../classes/pets/turtle/tier-2/swan.class";
@@ -143,6 +145,7 @@ import { Salamander } from "../classes/pets/star/tier-2/salamander.class";
 import { Panda } from "../classes/pets/custom/tier-2/panda.class";
 import { GuineaPig } from "../classes/pets/star/tier-2/guinea-pig.class";
 import { Pug } from "../classes/pets/star/tier-3/pug.class";
+import { Cardinal } from "../classes/pets/star/tier-3/cardinal.class";
 import { Jellyfish } from "../classes/pets/star/tier-2/jellyfish.class";
 import { AtlanticPuffin } from "../classes/pets/custom/tier-2/atlantic-puffin.class";
 import { Dove } from "../classes/pets/star/tier-2/dove.class";
@@ -164,6 +167,7 @@ import { Elk } from '../classes/pets/star/tier-4/elk.class';
 import { FairyArmadillo } from '../classes/pets/star/tier-4/fairy-armadillo.class';
 import { Fossa } from '../classes/pets/star/tier-4/fossa.class';
 import { Eel } from "../classes/pets/custom/tier-4/eel.class";
+import { SeaAnemone } from "../classes/pets/custom/tier-4/sea-anemone.class";
 import { Hawk } from "../classes/pets/star/tier-4/hawk.class";
 import { Platypus } from "../classes/pets/star/tier-4/platypus.class";
 import { PrayingMantis } from "../classes/pets/star/tier-4/praying-mantis.class";
@@ -191,6 +195,7 @@ import { Piranha } from "../classes/pets/star/tier-6/piranha.class";
 import { HammerheadShark } from "../classes/pets/custom/tier-6/hammerhead-shark.class";
 import { Therizinosaurus } from "../classes/pets/custom/tier-6/therizinosaurus.class";
 import { HarpyEagle } from "../classes/pets/custom/tier-6/harpy-eagle.class";
+import { FarmerDog } from "../classes/pets/custom/tier-6/farmer-dog";
 import { RealVelociraptor } from "../classes/pets/star/tier-6/real-velociraptor.class";
 import { SabertoothTiger } from "../classes/pets/star/tier-6/sabertooth-tiger.class";
 import { Orca } from "../classes/pets/star/tier-6/orca.class";
@@ -262,6 +267,7 @@ import { FairyBall } from '../classes/pets/hidden/fairy-ball.class';
 import { Chick } from "../classes/pets/hidden/chick.class";
 import { DirtyRat } from "../classes/pets/hidden/dirty-rat.class";
 import { GoldenRetriever } from "../classes/pets/hidden/golden-retriever.class";
+import { GiantEyesDog } from "../classes/pets/hidden/giant-eyes-dog.class";
 import { LizardTail } from "../classes/pets/hidden/lizard-tail.class";
 import { Nest } from "../classes/pets/hidden/nest.class";
 import { Ram } from "../classes/pets/hidden/ram.class";
@@ -426,7 +432,7 @@ import { SilkySifaka } from "../classes/pets/danger/tier-6/silky-sifaka.class";
 import { SumatranTiger } from "../classes/pets/danger/tier-6/sumatran-tiger.class";
 import { Monty } from "../classes/pets/hidden/monty.class";
 import { Rock } from "../classes/pets/hidden/rock.class";
-import { Basilisk } from "../classes/pets/custom/tier-1/basilisk.class";
+import { Basilisk } from "../classes/pets/custom/tier-3/basilisk.class";
 import { Daycrawler } from "../classes/pets/hidden/daycrawler.class";
 import { Nightcrawler } from "../classes/pets/custom/tier-2/nightcrawler.class";
 import { Sphinx } from "../classes/pets/custom/tier-2/sphinx.class";
@@ -1123,5 +1129,50 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Terror Bird': TerrorBird,
     'Vampire Squid': VampireSquid,
     'Winter Spirit': WinterSpirit,
-    'Yellow Boxfish': YellowBoxfish
+    'Yellow Boxfish': YellowBoxfish,
+    'Abomination': Abomination,
+    'Albatross': Albatross,
+    'Ammonite': Ammonite,
+    'Bay Cat': BayCat,
+    'Beluga Whale': BelugaWhale,
+    'Bonobo': Bonobo,
+    'California Condor': CaliforniaCondor,
+    'Cardinal': Cardinal,
+    'Darwins Fox': DarwinsFox,
+    'Eagle': Eagle,
+    'Falcon': Falcon,
+    'Farmer Cat': FarmerCat,
+    'Farmer Dog': FarmerDog,
+    'Giant Eyes Dog': GiantEyesDog,
+    'Gibbon': Gibbon,
+    'Goblin Shark': GoblinShark,
+    'Gold Fish': Goldfish,
+    'Golden Tamarin': GoldenTamarin,
+    'Good Dog': GoodDog,
+    'Harpy Eagle': HarpyEagle,
+    'Iriomote Cat': IriomoteCat,
+    'Kappa': Kappa,
+    'Mouse': Mouse,
+    'Orca': Orca,
+    'Parrot': Parrot,
+    'Pelican': Pelican,
+    'Pigeon': Pigeon,
+    'Pteranodon': Pteranodon,
+    'Question Marks': QuestionMarks,
+    'Red Lipped Batfish': RedLippedBatfish,
+    'Roloway Monkey': RolowayMonkey,
+    'Sabertooth Tiger': SabertoothTiger,
+    'Sea Anemone': SeaAnemone,
+    'Seagull': Seagull,
+    'Shima Enaga': ShimaEnaga,
+    'Silky Sifaka': SilkySifaka,
+    'Slime': Slime,
+    'Spider': Spider,
+    'Stork': Stork,
+    'Takhi': Takhi,
+    'Tapir': Tapir,
+    'Termite': Termite,
+    'Tuna': Tuna,
+    'Whale': Whale,
+    'Wolf': Wolf
 };
