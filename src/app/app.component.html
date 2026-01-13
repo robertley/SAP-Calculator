@@ -332,6 +332,8 @@
             Calculator</button>
           <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import
             Calculator</button>
+          <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#replayCalc">Replay
+            !calc</button>
           <button class="btn btn-primary me-2 mb-2" (click)="generateShareLink()">Generate Link</button>
         </div>
       </div>
@@ -503,6 +505,20 @@
         </div>
         <div class="modal-body">
           <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="replayCalc" tabindex="-1" aria-labelledby="replayCalcLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="replayCalcLabel">Replay !calc</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <app-replay-calc></app-replay-calc>
         </div>
       </div>
     </div>
