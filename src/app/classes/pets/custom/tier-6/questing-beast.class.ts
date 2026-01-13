@@ -13,7 +13,7 @@ export class QuestingBeast extends Pet {
     attack = 7;
     health = 9;
     initAbilities(): void {
-        this.addAbility(new QuestingBeastAbility(this, this.logService, this.abilityService));
+        this.addAbility(new QuestingBeastAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

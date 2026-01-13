@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { Coconut } from "../../../../equipment/turtle/coconut.class";
@@ -9,43 +8,38 @@ export class TreeAbility extends Ability {
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'TreeAbility',
+            name: 'Tree Ability',
             owner: owner,
             triggers: ['StartBattle'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            condition: (context: AbilityContext): boolean => {
-                const { triggerPet, tiger, pteranodon } = context;
-                const owner = this.owner;
-                let maxAttack = 6 * this.level;
-                return owner.attack <= maxAttack;
-            },
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            abilityFunction: (context) => this.executeAbility(context)
         });
         this.logService = logService;
     }
+
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
+        const thresholds = [6, 12, 18];
+        const threshold = thresholds[Math.min(this.level - 1, thresholds.length - 1)];
 
-        this.logService.createLog({
-            message: `${owner.name} gained Coconut.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon
-        });
+        if (owner.attack <= threshold) {
+            owner.givePetEquipment(new Coconut());
+            this.logService.createLog({
+                message: `${owner.name} gained Coconut perk for meeting the ${threshold} attack threshold.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            });
+        }
 
-        owner.givePetEquipment(new Coconut());
-
-        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): TreeAbility {
+    override copy(newOwner: Pet): TreeAbility {
         return new TreeAbility(newOwner, this.logService);
     }
 }

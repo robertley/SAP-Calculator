@@ -13,8 +13,8 @@ export class DeerLord extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 3;
-    initAbilities(): void {
-        this.addAbility(new DeerLordAbility(this, this.logService, this.abilityService));
+    override initAbilities(): void {
+        this.addAbility(new DeerLordAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

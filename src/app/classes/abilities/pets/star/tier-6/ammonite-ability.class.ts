@@ -1,30 +1,26 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
+import { AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { PetService } from "app/services/pet.service";
+import { PetAbility } from "../../pet-ability.class";
+import { awardExperienceWithLog, transformPetWithLog } from "../../../ability-effects";
 
-export class AmmoniteAbility extends Ability {
+export class AmmoniteAbility extends PetAbility {
     private logService: LogService;
     private petService: PetService;
 
     constructor(owner: Pet, logService: LogService, petService: PetService) {
         super({
+            owner,
             name: 'AmmoniteAbility',
-            owner: owner,
-            triggers: ['BeforeThisDies'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            triggers: ['BeforeThisDies']
         });
         this.logService = logService;
         this.petService = petService;
     }
 
-    private executeAbility(context: AbilityContext): void {
+    protected executeAbility(context: AbilityContext): void {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
@@ -42,34 +38,32 @@ export class AmmoniteAbility extends Ability {
             health: friendBehind.health,
             equipment: friendBehind.equipment,
             mana: friendBehind.mana,
-            exp: friendBehind.exp
+            exp: null
         }, owner.parent);
 
-        this.logService.createLog({
+        transformPetWithLog({
+            logService: this.logService,
+            owner,
+            context,
+            fromPet: friendBehind,
+            toPet: mimicOctopus,
             message: `${owner.name} transformed ${friendBehind.name} into ${mimicOctopus.name}`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetsBehindResp.random
+            extras: { randomEvent: targetsBehindResp.random }
         });
-        owner.parent.transformPet(friendBehind, mimicOctopus);
 
         let expTargetResp = owner.parent.getThis(mimicOctopus);
         let target = expTargetResp.pet;
         if (target == null) {
             return;
         }
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} +${expToGive} experience.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: expTargetResp.random
+        awardExperienceWithLog({
+            logService: this.logService,
+            owner,
+            context,
+            target,
+            amount: expToGive,
+            extras: { randomEvent: expTargetResp.random }
         });
-
-        target.increaseExp(expToGive);
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

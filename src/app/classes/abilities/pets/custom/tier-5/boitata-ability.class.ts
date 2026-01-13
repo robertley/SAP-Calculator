@@ -10,8 +10,13 @@ export class BoitataAbility extends Ability {
     private abilityService: AbilityService;
 
     reset(): void {
-        this.maxUses = this.level;
+        this.maxUses = this.level * 2;
         super.reset();
+    }
+
+    initUses(): void {
+        this.maxUses = this.level * 2;
+        super.initUses();
     }
 
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
@@ -22,7 +27,7 @@ export class BoitataAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: owner.level,
+            maxUses: owner.level * 2,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }

@@ -16,7 +16,7 @@ export class AmargasaurusAbility extends Ability {
         super({
             name: 'AmargasaurusAbility',
             owner: owner,
-            triggers: ['FriendHurt'],
+            triggers: ['FriendHurt', 'StartTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -28,8 +28,14 @@ export class AmargasaurusAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const owner = this.owner;
+
+        if (context.trigger === 'StartTurn') {
+            this.healthRestoredThisTurn = 0;
+            return;
+        }
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context;
 
         let currentTargetPet: Pet;
         if (!triggerPet) {

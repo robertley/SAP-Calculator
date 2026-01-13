@@ -1,17 +1,16 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
 
 export class AlbatrossAbility extends Ability {
     private logService: LogService;
-    private abilityService: AbilityService;
+    private handlingExtraDamage = false;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+    constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'AlbatrossAbility',
+            name: 'Albatross Ability',
             owner: owner,
-            triggers: [],
+            triggers: ['EnemyHurt'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -20,15 +19,46 @@ export class AlbatrossAbility extends Ability {
             }
         });
         this.logService = logService;
-        this.abilityService = abilityService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        if (this.handlingExtraDamage) {
+            this.handlingExtraDamage = false;
+            return;
+        }
+
+        if (context.trigger !== 'EnemyHurt') {
+            return;
+        }
+
+        const owner = this.owner;
+        const target = context.triggerPet;
+        if (!target || !target.alive) {
+            return;
+        }
+
+        const adjacentPets = [owner.petAhead, owner.petBehind()].filter(pet => pet && pet.alive && pet.parent === owner.parent && pet.level <= 4);
+        if (adjacentPets.length === 0) {
+            return;
+        }
+
+        const extraDamage = this.level * 3;
+        this.handlingExtraDamage = true;
+        owner.dealDamage(target, extraDamage);
+        this.handlingExtraDamage = false;
+
+        this.logService.createLog({
+            message: `${owner.name} boosted adjacent friends for an extra ${extraDamage} damage on ${target.name}.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: context.tiger,
+            pteranodon: context.pteranodon
+        });
+
         this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): AlbatrossAbility {
-        return new AlbatrossAbility(newOwner, this.logService, this.abilityService);
+        return new AlbatrossAbility(newOwner, this.logService);
     }
 }

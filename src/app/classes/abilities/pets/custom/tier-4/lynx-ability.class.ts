@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
@@ -8,42 +7,51 @@ export class LynxAbility extends Ability {
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'LynxAbility',
+            name: 'Lynx Ability',
             owner: owner,
             triggers: ['StartBattle'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            abilityFunction: (context) => this.executeAbility(context)
         });
         this.logService = logService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
+        const friendlyLevelSum = owner.parent.petArray.reduce((sum, pet) => sum + (pet?.level ?? 0), 0);
 
-        let opponent = (gameApi.player == owner.parent) ? gameApi.opponent : gameApi.player;
-
-        let power = 0;
-        for (let pet of owner.parent.petArray) {
-            power += pet.level;
+        if (friendlyLevelSum <= 0) {
+            this.triggerTigerExecution(context);
+            return;
         }
 
-        let targetsResp = opponent.getRandomPets(this.level, null, null, true, owner);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                owner.snipePet(target, power, targetsResp.random, tiger);
+        const targetCount = this.level;
+        const selectedTargets: Pet[] = [];
+
+        for (let i = 0; i < targetCount; i++) {
+            const targetResp = owner.parent.opponent.getRandomPet(selectedTargets, false, false, false, owner);
+            if (!targetResp.pet) {
+                break;
             }
+            selectedTargets.push(targetResp.pet);
+            owner.snipePet(targetResp.pet, friendlyLevelSum, targetResp.random);
         }
 
-        // Tiger system: trigger Tiger execution at the end
+        this.logService.createLog({
+            message: `${owner.name} dealt ${friendlyLevelSum} damage to ${selectedTargets.length} enemy${selectedTargets.length === 1 ? '' : 'ies'}.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: tiger,
+            pteranodon: pteranodon
+        });
+
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): LynxAbility {
+    override copy(newOwner: Pet): LynxAbility {
         return new LynxAbility(newOwner, this.logService);
     }
 }

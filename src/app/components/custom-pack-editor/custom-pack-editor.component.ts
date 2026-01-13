@@ -1,18 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { PetService } from '../../services/pet.service';
-import { remove } from 'lodash';
-import { LocalStorageService } from '../../services/local-storage.service';
-import * as petJson from '../../files/pets.json';
-import { PACK_NAMES } from '../../util/pack-names';
+import { Component, Input, OnInit } from "@angular/core";
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
+import { PetService } from "../../services/pet.service";
+import { remove } from "lodash";
+import { LocalStorageService } from "../../services/local-storage.service";
+import * as petJson from "../../files/pets.json";
+import { PACK_NAMES } from "../../util/pack-names";
 
 @Component({
-  selector: 'app-custom-pack-editor',
-  templateUrl: './custom-pack-editor.component.html',
-  styleUrls: ['./custom-pack-editor.component.scss']
+  selector: "app-custom-pack-editor",
+  templateUrl: "./custom-pack-editor.component.html",
+  styleUrls: ["./custom-pack-editor.component.scss"],
 })
 export class CustomPackEditorComponent implements OnInit {
-
   @Input()
   formGroup: FormGroup;
   customPacks: FormArray;
@@ -23,14 +30,16 @@ export class CustomPackEditorComponent implements OnInit {
   focusedGroup: FormGroup = null;
 
   importFormGroup = new FormGroup({
-    code: new FormControl(null)
+    code: new FormControl(null),
   });
 
-  constructor(private petService: PetService, private localStorageService: LocalStorageService) {
-  }
+  constructor(
+    private petService: PetService,
+    private localStorageService: LocalStorageService,
+  ) {}
 
   ngOnInit(): void {
-    this.customPacks = this.formGroup.get('customPacks') as FormArray;
+    this.customPacks = this.formGroup.get("customPacks") as FormArray;
     this.buildPetPackMap();
     this.buildPetNameToTierMap();
     this.buildPetIdLookup();
@@ -48,7 +57,10 @@ export class CustomPackEditorComponent implements OnInit {
     for (const packName of PACK_NAMES) {
       const packPets = this.petService.basePackPetsByName[packName];
       for (let [tier, pets] of packPets) {
-        this.petPackMap.get(tier).get(packName).push(...pets);
+        this.petPackMap
+          .get(tier)
+          .get(packName)
+          .push(...pets);
       }
     }
   }
@@ -60,7 +72,10 @@ export class CustomPackEditorComponent implements OnInit {
 
   createPack() {
     let formGroup = new FormGroup({
-      name: new FormControl(null, [Validators.required, this.forbiddenNameValidator()]),
+      name: new FormControl(null, [
+        Validators.required,
+        this.forbiddenNameValidator(),
+      ]),
       tier1Pets: new FormControl([], this.controlArrayLengthOf10()),
       // tier1Food: new FormControl([]),
       tier2Pets: new FormControl([], this.controlArrayLengthOf10()),
@@ -84,12 +99,12 @@ export class CustomPackEditorComponent implements OnInit {
 
   // custom angular validator
   controlArrayLengthOf10(): ValidatorFn {
-    return (control:AbstractControl) : ValidationErrors | null => {
+    return (control: AbstractControl): ValidationErrors | null => {
       if (control.value.length !== 10) {
-        return {length: true};
+        return { length: true };
       }
       return null;
-    }
+    };
   }
 
   submitEvent(event) {
@@ -112,34 +127,32 @@ export class CustomPackEditorComponent implements OnInit {
   }
 
   deletePack(group: AbstractControl) {
-    if (confirm('Are you sure you want to delete this pack?')) {
+    if (confirm("Are you sure you want to delete this pack?")) {
       let index = this.customPacks.controls.indexOf(group);
       this.customPacks.removeAt(index);
       this.localStorageService.setStorage(this.formGroup.value);
     }
   }
 
-
   forbiddenNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      let forbiddenNames = ['custom'];
+      let forbiddenNames = ["custom"];
       for (let formGroup of this.customPacks.controls) {
-        let con = formGroup.get('name');
+        let con = formGroup.get("name");
         if (control == con) {
           continue;
         }
-        forbiddenNames.push(formGroup.get('name').value?.toLowerCase());
+        forbiddenNames.push(formGroup.get("name").value?.toLowerCase());
       }
       if (forbiddenNames.includes(control.value?.toLowerCase())) {
         return { forbiddenName: true };
       }
       return null;
-    }
+    };
   }
 
   importCustomPack() {
-
-    let code = this.importFormGroup.get('code').value;
+    let code = this.importFormGroup.get("code").value;
     try {
       code = JSON.parse(code);
       let parsed = this.parseMinions(code.Minions, code.MinionMap);
@@ -155,28 +168,34 @@ export class CustomPackEditorComponent implements OnInit {
       this.createNewPack();
       this.focusedGroup.patchValue(formValue);
       if (parsed.missingMinions.length > 0) {
-        alert(`Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(', ')}`);
+        alert(
+          `Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(", ")}`,
+        );
       }
     } catch (e) {
-      alert('Invalid code');
+      alert("Invalid code");
       console.error(e);
     }
   }
 
   buildPetIdLookup() {
     this.petIdLookup = new Map();
-    const petsByTier: Record<string, any[]> = (petJson as any).default ?? (petJson as any);
-    for (let [tierKey, pets] of Object.entries(petsByTier)) {
-      if (!Array.isArray(pets)) {
-        continue;
-      }
-      let tierFromKey = Number(tierKey.replace('tier', ''));
-      for (let pet of pets) {
-        let tier = Number(pet.tier) || tierFromKey;
-        let id = String(pet.id);
-        if (!this.petIdLookup.has(id)) {
-          this.petIdLookup.set(id, { name: pet.name, tier: tier });
+    const petList =
+      (
+        petJson as unknown as {
+          default?: Array<{ Id: string; Name: string; Tier: string | number }>;
         }
+      ).default ??
+      (petJson as unknown as Array<{
+        Id: string;
+        Name: string;
+        Tier: string | number;
+      }>);
+    for (let pet of petList) {
+      let tier = Number(pet.Tier);
+      let id = String(pet.Id);
+      if (!this.petIdLookup.has(id)) {
+        this.petIdLookup.set(id, { name: pet.Name, tier: tier });
       }
     }
   }
@@ -194,7 +213,10 @@ export class CustomPackEditorComponent implements OnInit {
     }
   }
 
-  parseMinions(minions: Array<number | string>, minionMap: { [id: string]: string } = {}) {
+  parseMinions(
+    minions: Array<number | string>,
+    minionMap: { [id: string]: string } = {},
+  ) {
     let tierMinions = new Map<number, string[]>();
     for (let i = 1; i <= 6; i++) {
       tierMinions.set(i, []);
@@ -207,9 +229,9 @@ export class CustomPackEditorComponent implements OnInit {
     for (let minion of minions) {
       let name: string | null = null;
       let idKey: string | null = null;
-      if (typeof minion === 'number') {
+      if (typeof minion === "number") {
         idKey = String(minion);
-      } else if (typeof minion === 'string') {
+      } else if (typeof minion === "string") {
         let trimmed = minion.trim();
         if (trimmed && trimmed.match(/^\d+$/)) {
           idKey = trimmed;

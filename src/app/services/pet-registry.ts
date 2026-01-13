@@ -39,14 +39,14 @@ import { Sheep } from "../classes/pets/turtle/tier-3/sheep.class";
 import { GameService } from "./game.service";
 import { Tiger } from "../classes/pets/turtle/tier-6/tiger.class";
 import { Parrot } from "../classes/pets/turtle/tier-4/parrot.class";
-import { Skunk } from "app/classes/pets/turtle/tier-4/skunk.class";
-import { Hippo } from "app/classes/pets/turtle/tier-4/hippo.class";
-import { Bison } from "app/classes/pets/turtle/tier-4/bison.class";
-import { Blowfish } from "app/classes/pets/turtle/tier-4/blowfish.class";
-import { Turtle } from "app/classes/pets/turtle/tier-4/turtle.class";
-import { Squirrel } from "app/classes/pets/turtle/tier-4/squirrel.class";
-import { Penguin } from "app/classes/pets/turtle/tier-4/penguin.class";
-import { Deer } from "app/classes/pets/turtle/tier-4/deer.class";
+import { Skunk } from "../classes/pets/turtle/tier-4/skunk.class";
+import { Hippo } from "../classes/pets/turtle/tier-4/hippo.class";
+import { Bison } from "../classes/pets/turtle/tier-4/bison.class";
+import { Blowfish } from "../classes/pets/turtle/tier-4/blowfish.class";
+import { Turtle } from "../classes/pets/turtle/tier-4/turtle.class";
+import { Squirrel } from "../classes/pets/turtle/tier-4/squirrel.class";
+import { Penguin } from "../classes/pets/turtle/tier-4/penguin.class";
+import { Deer } from "../classes/pets/turtle/tier-4/deer.class";
 import { Whale } from "../classes/pets/turtle/tier-4/whale.class";
 import { Bee } from "../classes/pets/hidden/bee.class";
 import { AngryPygmyHog } from "../classes/pets/hidden/angry-pygmy-hog.class";
@@ -62,14 +62,14 @@ import { Rooster } from "../classes/pets/turtle/tier-5/rooster.class";
 import { Shark } from "../classes/pets/turtle/tier-5/shark.class";
 import { Turkey } from "../classes/pets/turtle/tier-5/turkey.class";
 import { Leopard } from "../classes/pets/turtle/tier-6/leopard.class";
-import { Boar } from "app/classes/pets/turtle/tier-6/boar.class";
-import { Wolverine } from "app/classes/pets/turtle/tier-6/wolverine.class";
-import { Gorilla } from "app/classes/pets/turtle/tier-6/gorilla.class";
-import { Dragon } from "app/classes/pets/turtle/tier-6/dragon.class";
-import { Mammoth } from "app/classes/pets/turtle/tier-6/mammoth.class";
-import { Cat } from "app/classes/pets/turtle/tier-6/cat.class";
-import { Snake } from "app/classes/pets/turtle/tier-6/snake.class";
-import { Fly } from "app/classes/pets/turtle/tier-6/fly.class";
+import { Boar } from "../classes/pets/turtle/tier-6/boar.class";
+import { Wolverine } from "../classes/pets/turtle/tier-6/wolverine.class";
+import { Gorilla } from "../classes/pets/turtle/tier-6/gorilla.class";
+import { Dragon } from "../classes/pets/turtle/tier-6/dragon.class";
+import { Mammoth } from "../classes/pets/turtle/tier-6/mammoth.class";
+import { Cat } from "../classes/pets/turtle/tier-6/cat.class";
+import { Snake } from "../classes/pets/turtle/tier-6/snake.class";
+import { Fly } from "../classes/pets/turtle/tier-6/fly.class";
 import { Moth } from "../classes/pets/puppy/tier-1/moth.class";
 import { Bluebird } from "../classes/pets/puppy/tier-1/bluebird.class";
 import { Chinchilla } from "../classes/pets/puppy/tier-1/chinchilla.class";
@@ -96,6 +96,10 @@ import { Owl } from "../classes/pets/puppy/tier-3/owl.class";
 import { Mole } from "../classes/pets/puppy/tier-3/mole.class";
 import { Raccoon } from "../classes/pets/custom/tier-5/raccoon.class";
 import { SeaCucumber } from "../classes/pets/custom/tier-5/sea-cucumber.class";
+import { Aardvark } from "../classes/pets/custom/tier-3/aardvark.class";
+import { Barnacle } from "../classes/pets/custom/tier-3/barnacle.class";
+import { BlueDragon } from "../classes/pets/custom/tier-3/blue-dragon.class";
+import { BrazillianTreehopper } from "../classes/pets/custom/tier-3/brazillian-treehopper.class";
 import { FlyingSquirrel } from "../classes/pets/custom/tier-3/flying-squirrel.class";
 import { Pangolin } from "../classes/pets/puppy/tier-3/pangolin.class";
 import { Puppy } from "../classes/pets/puppy/tier-3/puppy.class";
@@ -111,7 +115,7 @@ import { WhaleShark } from "../classes/pets/puppy/tier-4/whale-shark.class";
 import { Chameleon } from "../classes/pets/puppy/tier-4/chameleon.class";
 import { Gharial } from "../classes/pets/puppy/tier-4/gharial.class";
 import { Stonefish } from "../classes/pets/puppy/tier-5/stonefish.class";
-import { Poodle } from "../classes/pets/custom/tier-5/poodle.class";
+import { Poodle } from "../classes/pets/custom/tier-6/poodle.class";
 import { Chicken } from "../classes/pets/puppy/tier-5/chicken.class";
 import { Eagle } from "../classes/pets/puppy/tier-5/eagles.class";
 import { OrchidMantis } from "../classes/pets/puppy/tier-5/orchid-mantis.class";
@@ -135,7 +139,7 @@ import { Duckling } from "../classes/pets/custom/tier-1/duckling.class";
 import { Cockroach } from "../classes/pets/star/tier-1/cockroach.class";
 import { Frog } from "../classes/pets/star/tier-1/frog.class";
 import { Chihuahua } from '../classes/pets/star/tier-1/chihuahua.class';
-import { Seahorse } from "../classes/pets/custom/tier-1/seahorse.class";
+import { Seahorse } from "../classes/pets/custom/tier-2/seahorse.class";
 import { Iguana } from "../classes/pets/star/tier-2/iguana.class";
 import { Hummingbird } from "../classes/pets/star/tier-1/hummingbird.class";
 import { Koala } from "../classes/pets/star/tier-2/koala.class";
@@ -166,7 +170,7 @@ import { Siamese } from '../classes/pets/star/tier-4/siamese.class';
 import { Elk } from '../classes/pets/star/tier-4/elk.class';
 import { FairyArmadillo } from '../classes/pets/star/tier-4/fairy-armadillo.class';
 import { Fossa } from '../classes/pets/star/tier-4/fossa.class';
-import { Eel } from "../classes/pets/custom/tier-4/eel.class";
+import { Eel } from "../classes/pets/custom/tier-3/eel.class";
 import { SeaAnemone } from "../classes/pets/custom/tier-4/sea-anemone.class";
 import { Hawk } from "../classes/pets/star/tier-4/hawk.class";
 import { Platypus } from "../classes/pets/star/tier-4/platypus.class";
@@ -222,7 +226,7 @@ import { Flea } from "../classes/pets/golden/tier-3/flea.class";
 import { SurgeonFish } from "../classes/pets/golden/tier-3/surgeon-fish.class";
 import { Weasel } from "../classes/pets/golden/tier-3/weasel.class";
 import { Guineafowl } from "../classes/pets/golden/tier-3/guineafowl.class";
-import { BettaFish } from "../classes/pets/custom/tier-3/betta-fish.class";
+import { BettaFish } from "../classes/pets/golden/tier-3/betta-fish.class";
 import { Meerkat } from "../classes/pets/golden/tier-2/meerkat.class";
 import { FlyingFish } from "../classes/pets/golden/tier-3/flying-fish.class";
 import { Baboon } from "../classes/pets/golden/tier-3/baboon.class";
@@ -260,7 +264,7 @@ import { GrizzlyBear } from "../classes/pets/golden/tier-6/grizzly-bear.class";
 import { GermanShepherd } from "../classes/pets/golden/tier-6/german-shepherd.class";
 import { BirdOfParadise } from "../classes/pets/golden/tier-6/bird-of-paradise.class";
 import { Oyster } from "../classes/pets/golden/tier-6/oyster.class";
-import { RockhopperPenguin } from '../classes/pets/golden/tier-6/rockhopper-penguin.class';
+import { RockhopperPenguin } from '../classes/pets/custom/tier-6/rockhopper-penguin.class';
 import { Bus } from "../classes/pets/hidden/bus.class";
 import { Butterfly } from "../classes/pets/hidden/butterfly.class";
 import { FairyBall } from '../classes/pets/hidden/fairy-ball.class';
@@ -277,14 +281,13 @@ import { SmallestSlug } from "../classes/pets/hidden/smallest-slug.class";
 import { ZombieFly } from "../classes/pets/hidden/zombie-fly.class";
 import { Marmoset } from "../classes/pets/star/tier-1/marmoset.class";
 import { Jerboa } from "../classes/pets/custom/tier-4/jerboa.class";
-import { FrilledDragon } from "app/classes/pets/custom/tier-1/frilled-dragon";
-import { Wombat } from "app/classes/pets/custom/tier-2/wombat.class";
+import { FrilledDragon } from "../classes/pets/custom/tier-1/frilled-dragon";
+import { Wombat } from "../classes/pets/custom/tier-2/wombat.class";
 import { Frigatebird } from "../classes/pets/custom/tier-2/frigatebird.class";
-import { Aardvark } from "app/classes/pets/custom/tier-3/aardvark.class";
-import { Bear } from "app/classes/pets/golden/tier-3/bear.class";
-import { EmperorTamarin } from "app/classes/pets/custom/tier-3/emperor-tamarin";
-import { Porcupine } from "app/classes/pets/custom/tier-3/porcupine.class";
-import { Wasp } from "app/classes/pets/custom/tier-3/wasp.class";
+import { Bear } from "../classes/pets/golden/tier-3/bear.class";
+import { EmperorTamarin } from "../classes/pets/custom/tier-3/emperor-tamarin.class";
+import { Porcupine } from "../classes/pets/custom/tier-3/porcupine.class";
+import { Wasp } from "../classes/pets/custom/tier-3/wasp.class";
 import { Dragonfly } from "../classes/pets/custom/tier-4/dragonfly.class";
 import { Lynx } from "../classes/pets/custom/tier-4/lynx.class";
 import { Seagull } from "../classes/pets/custom/tier-4/seagull.class";
@@ -305,13 +308,13 @@ import { Pigeon } from "../classes/pets/turtle/tier-1/pigeon.class";
 import { Hare } from "../classes/pets/puppy/tier-3/hare.class";
 import { Baku } from "../classes/pets/unicorn/tier-1/baku.class";
 import { QuestionMarks } from '../classes/pets/unicorn/tier-1/question-marks.class';
-import { AxehandleHound } from "../classes/pets/unicorn/tier-1/axehandle-hound.class";
+import { AxehandleHound } from "../classes/pets/custom/tier-3/axehandle-hound.class";
 import { Barghest } from "../classes/pets/unicorn/tier-1/barghest.class";
 import { Tsuchinoko } from "../classes/pets/unicorn/tier-1/tsuchinoko.class";
 import { Murmel } from "../classes/pets/unicorn/tier-1/murmel.class";
 import { Alchemedes } from "../classes/pets/unicorn/tier-1/alchemedes.class";
 import { Pengobble } from '../classes/pets/unicorn/tier-1/pengobble.class';
-import { Warf } from "../classes/pets/unicorn/tier-1/warf.class";
+import { Warf } from "../classes/pets/custom/tier-2/warf.class";
 import { Bunyip } from "../classes/pets/unicorn/tier-1/bunyip.class";
 import { SneakyEgg } from "../classes/pets/unicorn/tier-1/sneaky-egg.class";
 import { CrackedEgg } from "../classes/pets/hidden/cracked-egg.class";
@@ -432,7 +435,6 @@ import { SilkySifaka } from "../classes/pets/danger/tier-6/silky-sifaka.class";
 import { SumatranTiger } from "../classes/pets/danger/tier-6/sumatran-tiger.class";
 import { Monty } from "../classes/pets/hidden/monty.class";
 import { Rock } from "../classes/pets/hidden/rock.class";
-import { Basilisk } from "../classes/pets/custom/tier-3/basilisk.class";
 import { Daycrawler } from "../classes/pets/hidden/daycrawler.class";
 import { Nightcrawler } from "../classes/pets/custom/tier-2/nightcrawler.class";
 import { Sphinx } from "../classes/pets/custom/tier-2/sphinx.class";
@@ -442,8 +444,8 @@ import { FooDog } from "../classes/pets/custom/tier-3/foo-dog.class";
 import { Tree } from "../classes/pets/custom/tier-3/tree.class";
 import { SmallerSlime } from "../classes/pets/hidden/smaller-slime.class";
 import { Slime } from "../classes/pets/custom/tier-3/slime.class";
-import { Pegasus } from "../classes/pets/custom/tier-3/pegasus.class";
 import { DeerLord } from "../classes/pets/custom/tier-3/deer-lord.class";
+import { Basilisk } from "../classes/pets/custom/tier-1/basilisk.class";
 import { Fairy } from "../classes/pets/custom/tier-4/fairy.class";
 import { Rootling } from "../classes/pets/custom/tier-4/rootling.class";
 import { Anubis } from "../classes/pets/custom/tier-4/anubis.class";
@@ -510,13 +512,10 @@ import { PinkRobin } from "../classes/pets/custom/tier-2/pink-robin.class";
 import { Roadrunner } from "../classes/pets/custom/tier-2/roadrunner.class";
 import { SpottedHandfish } from "../classes/pets/custom/tier-2/spotted-handfish.class";
 import { Tadpole } from "../classes/pets/custom/tier-2/tadpole.class";
+import { Pegasus } from "../classes/pets/custom/tier-4/pegasus.class";
 import { ThornyDragon } from "../classes/pets/custom/tier-2/thorny-dragon.class";
 import { Vervet } from "../classes/pets/custom/tier-2/vervet.class";
-import { Barnacle } from "../classes/pets/custom/tier-3/barnacle.class";
-import { BlueDragon } from "../classes/pets/custom/tier-3/blue-dragon.class";
-import { BrazillianTreehopper } from "../classes/pets/custom/tier-3/brazillian-treehopper.class";
 import { Caladrius } from "../classes/pets/custom/tier-3/caladrius.class";
-import { Centipede } from "../classes/pets/custom/tier-3/centipede.class";
 import { Dimetrodon } from "../classes/pets/custom/tier-3/dimetrodon.class";
 import { Dugong } from "../classes/pets/custom/tier-3/dugong.class";
 import { FarmerPig } from "../classes/pets/custom/tier-3/farmer-pig.class";
@@ -666,10 +665,14 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Hoopoe Bird': HoopoeBird,
     'Tropical Fish': TropicalFish,
     'Hatching Chick': HatchingChick,
-    'Goldfish': Goldfish,
     'Owl': Owl,
     'Mole': Mole,
     'Raccoon': Raccoon,
+    'Aardvark': Aardvark,
+    'Pegasus': Pegasus,
+    'Barnacle': Barnacle,
+    'Blue Dragon': BlueDragon,
+    'Brazillian Treehopper': BrazillianTreehopper,
     'Flying Squirrel': FlyingSquirrel,
     'Pangolin': Pangolin,
     'Puppy': Puppy,
@@ -829,9 +832,9 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Rockhopper Penguin': RockhopperPenguin,
     'Jerboa': Jerboa,
     'Frilled Dragon': FrilledDragon,
-    'Wombat': Wombat,
+    'Basilisk': Basilisk,
     'Frigatebird': Frigatebird,
-    'Aardvark': Aardvark,
+    'Axehandle Hound': AxehandleHound,
     'Bear': Bear,
     'Emperor Tamarin': EmperorTamarin,
     'Porcupine': Porcupine,
@@ -845,14 +848,12 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Lioness': Lioness,
     'Walrus': Walrus,
     'White Tiger': WhiteTiger,
-    'Basilisk': Basilisk,
     'Nightcrawler': Nightcrawler,
     'Sphinx': Sphinx,
     'Chupacabra': Chupacabra,
     'Golden Beetle': GoldenBeetle,
     'Foo Dog': FooDog,
     'Tree': Tree,
-    'Pegasus': Pegasus,
     'Deer Lord': DeerLord,
     'Fairy': Fairy,
     'Rootling': Rootling,
@@ -902,7 +903,6 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Baby Urchin': BabyUrchin,
     'Fairy Ball': FairyBall,
     'Baku': Baku,
-    'Axehandle Hound': AxehandleHound,
     'Barghest': Barghest,
     'Tsuchinoko': Tsuchinoko,
     'Murmel': Murmel,
@@ -1055,11 +1055,7 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Tadpole': Tadpole,
     'Thorny Dragon': ThornyDragon,
     'Vervet': Vervet,
-    'Barnacle': Barnacle,
-    'Blue Dragon': BlueDragon,
-    'Brazillian Treehopper': BrazillianTreehopper,
     'Caladrius': Caladrius,
-    'Centipede': Centipede,
     'Dimetrodon': Dimetrodon,
     'Dugong': Dugong,
     'Farmer Pig': FarmerPig,
@@ -1141,12 +1137,11 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Darwins Fox': DarwinsFox,
     'Eagle': Eagle,
     'Falcon': Falcon,
-    'Farmer Cat': FarmerCat,
     'Farmer Dog': FarmerDog,
     'Giant Eyes Dog': GiantEyesDog,
     'Gibbon': Gibbon,
     'Goblin Shark': GoblinShark,
-    'Gold Fish': Goldfish,
+    'Goldfish': Goldfish,
     'Golden Tamarin': GoldenTamarin,
     'Good Dog': GoodDog,
     'Harpy Eagle': HarpyEagle,

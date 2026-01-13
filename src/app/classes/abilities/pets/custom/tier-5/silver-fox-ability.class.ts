@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
@@ -8,12 +7,13 @@ export class SilverFoxAbility extends Ability {
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'SilverFoxAbility',
+            name: 'Silver Fox Ability',
             owner: owner,
             triggers: ['BeforeThisAttacks'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
+            maxUses: 3,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -22,18 +22,19 @@ export class SilverFoxAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const owner = this.owner;
+        const goldGain = this.level;
+        const player = owner.parent as any;
+        player.gold = (player.gold ?? 0) + goldGain;
 
         this.logService.createLog({
-            message: `${owner.name} gained ${this.level} Gold.`,
-            type: "ability",
+            message: `${owner.name} gave ${goldGain} gold to the owner.`,
+            type: 'ability',
             player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon
+            tiger: context.tiger,
+            pteranodon: context.pteranodon
         });
 
-        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 

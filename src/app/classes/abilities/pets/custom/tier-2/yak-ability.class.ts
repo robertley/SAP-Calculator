@@ -1,34 +1,47 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
 
 export class YakAbility extends Ability {
     private logService: LogService;
-    private abilityService: AbilityService;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+    constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'YakAbility',
+            name: 'Yak Ability',
             owner: owner,
-            triggers: [],
+            triggers: ['EndTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            abilityFunction: (context) => this.executeAbility(context)
         });
         this.logService = logService;
-        this.abilityService = abilityService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
+        const damage = this.level;
+        const attackGain = 2 * this.level;
+
+        // Take damage
+        owner.dealDamage(owner, damage);
+
+        // Gain attack
+        owner.increaseAttack(attackGain);
+
+        this.logService.createLog({
+            message: `${owner.name} took ${damage} damage and gained +${attackGain} attack.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: tiger,
+            pteranodon: pteranodon
+        });
+
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): YakAbility {
-        return new YakAbility(newOwner, this.logService, this.abilityService);
+    override copy(newOwner: Pet): YakAbility {
+        return new YakAbility(newOwner, this.logService);
     }
 }

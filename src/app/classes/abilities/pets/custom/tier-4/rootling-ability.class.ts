@@ -1,34 +1,53 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
 
 export class RootlingAbility extends Ability {
     private logService: LogService;
-    private abilityService: AbilityService;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+    constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'RootlingAbility',
+            name: 'Rootling Ability',
             owner: owner,
-            triggers: [],
+            triggers: ['EndTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            abilityFunction: (context) => this.executeAbility(context)
         });
         this.logService = logService;
-        this.abilityService = abilityService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
+        const amount = this.level;
+
+        const candidates = owner.parent.petArray
+            .filter((friend) => friend && friend.alive && friend !== owner && friend.health < owner.health)
+            .sort((a, b) => (a.health - b.health));
+
+        const targets = candidates.slice(0, 2);
+
+        for (const target of targets) {
+            target.increaseAttack(amount);
+            target.increaseHealth(amount);
+        }
+
+        if (targets.length > 0) {
+            this.logService.createLog({
+                message: `${owner.name} gave ${targets.map((pet) => pet.name).join(', ')} +${amount}/+${amount}.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                pteranodon: pteranodon
+            });
+        }
+
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): RootlingAbility {
-        return new RootlingAbility(newOwner, this.logService, this.abilityService);
+    override copy(newOwner: Pet): RootlingAbility {
+        return new RootlingAbility(newOwner, this.logService);
     }
 }

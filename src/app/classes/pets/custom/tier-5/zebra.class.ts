@@ -13,7 +13,7 @@ export class Zebra extends Pet {
     attack = 3;
     health = 5;
     initAbilities(): void {
-        this.addAbility(new ZebraAbility(this, this.logService, this.abilityService));
+        this.addAbility(new ZebraAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

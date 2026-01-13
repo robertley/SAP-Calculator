@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { RacketTailAbility } from "../../../abilities/pets/custom/tier-4/racket-tail-ability.class";
 
 export class RacketTail extends Pet {
     name = "Racket Tail";
@@ -11,6 +12,11 @@ export class RacketTail extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 5;
+    
+    override initAbilities(): void {
+        this.addAbility(new RacketTailAbility(this, this.logService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

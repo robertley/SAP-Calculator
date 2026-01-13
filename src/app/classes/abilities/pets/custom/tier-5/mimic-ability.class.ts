@@ -9,9 +9,9 @@ export class MimicAbility extends Ability {
 
     constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
         super({
-            name: 'MimicAbility',
+            name: 'Mimic Ability',
             owner: owner,
-            triggers: [],
+            triggers: ['StartBattle', 'FriendDied'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -24,7 +24,41 @@ export class MimicAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        const owner = this.owner;
+        const ownerData = owner as {
+            mimicFaintCount?: number;
+            mimicTriggeredThreshold?: number;
+        };
+
+        if (context.trigger === 'StartBattle') {
+            ownerData.mimicFaintCount = 0;
+            ownerData.mimicTriggeredThreshold = 0;
+            (owner.parent as any)['pendingGoldFromMimic'] = 0;
+            this.triggerTigerExecution(context);
+            return;
+        }
+
+        if (context.trigger === 'FriendDied') {
+            ownerData.mimicFaintCount = (ownerData.mimicFaintCount ?? 0) + 1;
+            const triggeredThreshold = Math.floor((ownerData.mimicFaintCount ?? 0) / 3);
+            const priorThreshold = ownerData.mimicTriggeredThreshold ?? 0;
+
+            if (triggeredThreshold > priorThreshold) {
+                const activations = triggeredThreshold - priorThreshold;
+                ownerData.mimicTriggeredThreshold = triggeredThreshold;
+                const goldPerActivation = this.level;
+                const totalGold = goldPerActivation * activations;
+                const key = 'pendingGoldFromMimic';
+                (owner.parent as any)[key] = ((owner.parent as any)[key] ?? 0) + totalGold;
+
+                this.logService.createLog({
+                    message: `${owner.name} will grant +${totalGold} gold next turn after ${ownerData.mimicFaintCount} friendly faints.`,
+                    type: 'ability',
+                    player: owner.parent,
+                });
+            }
+        }
+
         this.triggerTigerExecution(context);
     }
 

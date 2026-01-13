@@ -1,8 +1,8 @@
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../equipment.class";
-import { Pack, Pet } from "../../../pet.class";
-import { Player } from "../../../player.class";
+import { Equipment } from "../../../../classes/equipment.class";
+import { Pack, Pet } from "../../../../classes/pet.class";
+import { Player } from "../../../../classes/player.class";
 import { PorcupineAbility } from "../../../abilities/pets/custom/tier-3/porcupine-ability.class";
 
 export class Porcupine extends Pet {
@@ -11,10 +11,12 @@ export class Porcupine extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 6;
-    initAbilities(): void {
+
+    override initAbilities(): void {
         this.addAbility(new PorcupineAbility(this, this.logService));
         super.initAbilities();
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

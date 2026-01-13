@@ -1,17 +1,15 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
 
 export class DragonflyAbility extends Ability {
     private logService: LogService;
-    private abilityService: AbilityService;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
+    constructor(owner: Pet, logService: LogService) {
         super({
             name: 'DragonflyAbility',
             owner: owner,
-            triggers: [],
+            triggers: ['EndTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -20,15 +18,42 @@ export class DragonflyAbility extends Ability {
             }
         });
         this.logService = logService;
-        this.abilityService = abilityService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        const owner = this.owner;
+        const statGain = this.level;
+        const eligible = owner.parent.petArray.filter((pet) => pet && pet.alive && pet !== owner);
+        const uniqueLevels = new Map<number, Pet>();
+
+        for (const friend of eligible) {
+            if (!uniqueLevels.has(friend.level)) {
+                uniqueLevels.set(friend.level, friend);
+            }
+        }
+
+        if (uniqueLevels.size === 0) {
+            this.triggerTigerExecution(context);
+            return;
+        }
+
+        for (const friend of uniqueLevels.values()) {
+            friend.increaseAttack(statGain);
+            friend.increaseHealth(statGain);
+        }
+
+        this.logService.createLog({
+            message: `${owner.name} gave friends +${statGain}/+${statGain} based on unique levels.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: context.tiger,
+            pteranodon: context.pteranodon
+        });
+
         this.triggerTigerExecution(context);
     }
 
     copy(newOwner: Pet): DragonflyAbility {
-        return new DragonflyAbility(newOwner, this.logService, this.abilityService);
+        return new DragonflyAbility(newOwner, this.logService);
     }
 }
