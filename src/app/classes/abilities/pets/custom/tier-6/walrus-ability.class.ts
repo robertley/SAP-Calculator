@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { PeanutButter } from "../../../../equipment/hidden/peanut-butter";
@@ -11,37 +10,41 @@ export class WalrusAbility extends Ability {
         super({
             name: 'WalrusAbility',
             owner: owner,
-            triggers: ['BeforeThisDies'],
+            triggers: ['ThisDied'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            abilityFunction: (context) => this.executeAbility(context)
         });
         this.logService = logService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
+        const targetsResp = owner.parent.getRandomPets(this.level, [owner], false, false, owner);
+        const targets = targetsResp.pets;
 
-        let targetsResp = owner.parent.getRandomPets(this.level, null, true, false, owner);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                target.givePetEquipment(new PeanutButter());
-                this.logService.createLog({
-                    message: `${owner.name} gave ${target.name} a Peanut Butter.`,
-                    type: "ability",
-                    player: owner.parent,
-                    tiger: tiger,
-                    pteranodon: pteranodon,
-                    randomEvent: targetsResp.random
-                });
-            }
+        if (targets.length === 0) {
+            this.triggerTigerExecution(context);
+            return;
         }
 
-        // Tiger system: trigger Tiger execution at the end
+        const names = [];
+        for (const target of targets) {
+            target.givePetEquipment(new PeanutButter());
+            names.push(target.name);
+        }
+
+        this.logService.createLog({
+            message: `${owner.name} gave Peanut Butter to ${names.join(', ')} on faint.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger,
+            pteranodon,
+            randomEvent: targetsResp.random
+        });
+
         this.triggerTigerExecution(context);
     }
 

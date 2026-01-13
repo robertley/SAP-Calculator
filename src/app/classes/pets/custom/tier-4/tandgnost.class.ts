@@ -14,7 +14,7 @@ export class Tandgnost extends Pet {
     attack = 5;
     health = 5;
     initAbilities(): void {
-        this.addAbility(new TandgnostAbility(this, this.logService, this.abilityService));
+        this.addAbility(new TandgnostAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

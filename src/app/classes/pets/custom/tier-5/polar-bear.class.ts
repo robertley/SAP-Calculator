@@ -13,7 +13,7 @@ export class PolarBear extends Pet {
     attack = 4;
     health = 8;
     initAbilities(): void {
-        this.addAbility(new PolarBearAbility(this, this.logService, this.abilityService));
+        this.addAbility(new PolarBearAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

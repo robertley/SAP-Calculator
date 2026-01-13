@@ -1,85 +1,97 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
-import * as perks from '../files/perks.json';
-import * as toys from '../files/toys.json';
-import * as petsByTier from '../files/pets.json';
+import * as perks from "../files/perks.json";
+import * as toys from "../files/toys.json";
+import * as petsByTier from "../files/pets.json";
 
 const PETS_BY_ID = new Map<string, string>();
 const PETS_META_BY_ID = new Map<string, { name: string; tier: number }>();
 
-Object.values(petsByTier as Record<string, Array<{ id: string; name: string; tier: string | number }>>)
-  .reduce((all, tierPets) => all.concat(tierPets), [] as Array<{ id: string; name: string; tier: string | number }>)
-  .forEach((pet) => {
-    const petId = String(pet.id);
-    const tierValue = Number(pet.tier);
-    PETS_BY_ID.set(petId, pet.name);
-    if (Number.isFinite(tierValue)) {
-      PETS_META_BY_ID.set(petId, { name: pet.name, tier: tierValue });
+const petList =
+  (
+    petsByTier as unknown as {
+      default?: Array<{ Id: string; Name: string; Tier: string | number }>;
     }
-  });
-const perkList = ((perks as unknown) as { default?: Array<{ Id: string; Name: string }> }).default
-  ?? (perks as unknown as Array<{ Id: string; Name: string }>);
-const toyList = ((toys as unknown) as { default?: Array<{ Id: string; Name: string }> }).default
-  ?? (toys as unknown as Array<{ Id: string; Name: string }>);
+  ).default ??
+  (petsByTier as unknown as Array<{
+    Id: string;
+    Name: string;
+    Tier: string | number;
+  }>);
+
+petList.forEach((pet) => {
+  const petId = String(pet.Id);
+  const tierValue = Number(pet.Tier);
+  PETS_BY_ID.set(petId, pet.Name);
+  if (Number.isFinite(tierValue)) {
+    PETS_META_BY_ID.set(petId, { name: pet.Name, tier: tierValue });
+  }
+});
+const perkList =
+  (perks as unknown as { default?: Array<{ Id: string; Name: string }> })
+    .default ?? (perks as unknown as Array<{ Id: string; Name: string }>);
+const toyList =
+  (toys as unknown as { default?: Array<{ Id: string; Name: string }> })
+    .default ?? (toys as unknown as Array<{ Id: string; Name: string }>);
 
 const PERKS_BY_ID = new Map<string, string>(
-  perkList.map((perk) => [String(perk.Id), perk.Name])
+  perkList.map((perk) => [String(perk.Id), perk.Name]),
 );
 const TOYS_BY_ID = new Map<string, string>(
-  toyList.map((toy) => [String(toy.Id), toy.Name])
+  toyList.map((toy) => [String(toy.Id), toy.Name]),
 );
 
 const PACK_MAP: Record<number, string> = {
-  0: 'Turtle',
-  1: 'Puppy',
-  2: 'Star',
-  5: 'Golden',
-  6: 'Unicorn',
-  7: 'Danger'
+  0: "Turtle",
+  1: "Puppy",
+  2: "Star",
+  5: "Golden",
+  6: "Unicorn",
+  7: "Danger",
 };
 
 const KEY_MAP: Record<string, string> = {
-  playerPack: 'pP',
-  opponentPack: 'oP',
-  playerToy: 'pT',
-  playerToyLevel: 'pTL',
-  opponentToy: 'oT',
-  opponentToyLevel: 'oTL',
-  turn: 't',
-  playerGoldSpent: 'pGS',
-  opponentGoldSpent: 'oGS',
-  playerRollAmount: 'pRA',
-  opponentRollAmount: 'oRA',
-  playerSummonedAmount: 'pSA',
-  opponentSummonedAmount: 'oSA',
-  playerLevel3Sold: 'pL3',
-  opponentLevel3Sold: 'oL3',
-  playerTransformationAmount: 'pTA',
-  opponentTransformationAmount: 'oTA',
-  playerPets: 'p',
-  opponentPets: 'o',
-  angler: 'an',
-  allPets: 'ap',
-  logFilter: 'lf',
-  fontSize: 'fs',
-  customPacks: 'cp',
-  oldStork: 'os',
-  tokenPets: 'tp',
-  komodoShuffle: 'ks',
-  mana: 'm',
-  showAdvanced: 'sa',
-  ailmentEquipment: 'ae',
-  name: 'n',
-  attack: 'a',
-  health: 'h',
-  exp: 'e',
-  equipment: 'eq',
-  belugaSwallowedPet: 'bSP',
-  timesHurt: 'tH'
+  playerPack: "pP",
+  opponentPack: "oP",
+  playerToy: "pT",
+  playerToyLevel: "pTL",
+  opponentToy: "oT",
+  opponentToyLevel: "oTL",
+  turn: "t",
+  playerGoldSpent: "pGS",
+  opponentGoldSpent: "oGS",
+  playerRollAmount: "pRA",
+  opponentRollAmount: "oRA",
+  playerSummonedAmount: "pSA",
+  opponentSummonedAmount: "oSA",
+  playerLevel3Sold: "pL3",
+  opponentLevel3Sold: "oL3",
+  playerTransformationAmount: "pTA",
+  opponentTransformationAmount: "oTA",
+  playerPets: "p",
+  opponentPets: "o",
+  angler: "an",
+  allPets: "ap",
+  logFilter: "lf",
+  fontSize: "fs",
+  customPacks: "cp",
+  oldStork: "os",
+  tokenPets: "tp",
+  komodoShuffle: "ks",
+  mana: "m",
+  showAdvanced: "sa",
+  ailmentEquipment: "ae",
+  name: "n",
+  attack: "a",
+  health: "h",
+  exp: "e",
+  equipment: "eq",
+  belugaSwallowedPet: "bSP",
+  timesHurt: "tH",
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ReplayCalcService {
   parseReplayForCalculator(battleJson: any, buildModel?: any) {
@@ -101,31 +113,33 @@ export class ReplayCalcService {
       const petTempHp = petJson.Hp?.Temp ?? 0;
 
       let belugaSwallowedPet = null;
-      if (petId === '182') {
+      if (petId === "182") {
         const swallowedPets = petJson?.MiMs?.Lsts?.WhiteWhaleAbility || [];
         if (swallowedPets.length > 0) {
           const swallowedPetId = swallowedPets[0]?.Enu;
-          belugaSwallowedPet = PETS_BY_ID.get(String(swallowedPetId)) || `Pet #${swallowedPetId}`;
+          belugaSwallowedPet =
+            PETS_BY_ID.get(String(swallowedPetId)) || `Pet #${swallowedPetId}`;
         }
       }
 
       const timesHurt = getTimesHurt(petJson);
 
-      const parsedPet: any = {
-        name: PETS_BY_ID.get(petId) || null,
-        attack: (petJson.At?.Perm ?? 0) + petTempAtk,
-        health: (petJson.Hp?.Perm ?? 0) + petTempHp,
-        exp: petJson.Exp || 0,
-        equipment: petJson.Perk
-          ? { name: PERKS_BY_ID.get(String(petJson.Perk)) || 'Unknown Perk' }
-          : null,
-        mana: petJson.Mana || 0,
-        belugaSwallowedPet: belugaSwallowedPet,
-        abominationSwallowedPet1: null,
-        abominationSwallowedPet2: null,
-        abominationSwallowedPet3: null,
+        const parsedPet: any = {
+            name: PETS_BY_ID.get(petId) || null,
+            attack: (petJson.At?.Perm ?? 0) + petTempAtk,
+            health: (petJson.Hp?.Perm ?? 0) + petTempHp,
+            exp: petJson.Exp || 0,
+            equipment: petJson.Perk
+                ? { name: PERKS_BY_ID.get(String(petJson.Perk)) || "Unknown Perk" }
+                : null,
+            mana: petJson.Mana || 0,
+            belugaSwallowedPet: belugaSwallowedPet,
+            sarcasticFringeheadSwallowedPet: null,
+            abominationSwallowedPet1: null,
+            abominationSwallowedPet2: null,
+            abominationSwallowedPet3: null,
         battlesFought: 0,
-        triggersConsumed: 0
+        triggersConsumed: 0,
       };
 
       if (timesHurt !== null) {
@@ -153,12 +167,14 @@ export class ReplayCalcService {
     };
 
     const getToy = (boardJson: any) => {
-      const toyItem = (boardJson?.Rel?.Items || []).find((item: any) => item && item.Enu);
+      const toyItem = (boardJson?.Rel?.Items || []).find(
+        (item: any) => item && item.Enu,
+      );
       if (toyItem) {
         const toyId = String(toyItem.Enu);
         return {
           name: TOYS_BY_ID.get(toyId) || null,
-          level: toyItem.Lvl || 1
+          level: toyItem.Lvl || 1,
         };
       }
       return { name: null, level: 1 };
@@ -167,11 +183,22 @@ export class ReplayCalcService {
     const playerToy = getToy(userBoard);
     const opponentToy = getToy(opponentBoard);
 
-    const customPacks = this.buildCustomPacksFromGenesis(buildModel, battleJson);
-    const playerCustomPack = this.findCustomPackFromDeck(customPacks, userBoard?.Deck);
-    const opponentCustomPack = this.findCustomPackFromDeck(customPacks, opponentBoard?.Deck);
-    const playerPackName = PACK_MAP[userBoard?.Pack] || playerCustomPack?.name || 'Turtle';
-    const opponentPackName = PACK_MAP[opponentBoard?.Pack] || opponentCustomPack?.name || 'Turtle';
+    const customPacks = this.buildCustomPacksFromGenesis(
+      buildModel,
+      battleJson,
+    );
+    const playerCustomPack = this.findCustomPackFromDeck(
+      customPacks,
+      userBoard?.Deck,
+    );
+    const opponentCustomPack = this.findCustomPackFromDeck(
+      customPacks,
+      opponentBoard?.Deck,
+    );
+    const playerPackName =
+      PACK_MAP[userBoard?.Pack] || playerCustomPack?.name || "Turtle";
+    const opponentPackName =
+      PACK_MAP[opponentBoard?.Pack] || opponentCustomPack?.name || "Turtle";
 
     return {
       playerPack: playerPackName,
@@ -203,7 +230,7 @@ export class ReplayCalcService {
       komodoShuffle: false,
       mana: true,
       showAdvanced: true,
-      ailmentEquipment: false
+      ailmentEquipment: false,
     };
   }
 
@@ -211,7 +238,7 @@ export class ReplayCalcService {
     const decks = [
       buildModel?.Bor?.Deck,
       battleJson?.UserBoard?.Deck,
-      battleJson?.OpponentBoard?.Deck
+      battleJson?.OpponentBoard?.Deck,
     ].filter((deck) => deck && Array.isArray(deck.Minions));
 
     const packs: Array<{
@@ -257,7 +284,7 @@ export class ReplayCalcService {
       3: [],
       4: [],
       5: [],
-      6: []
+      6: [],
     };
 
     for (const minionId of minions) {
@@ -278,7 +305,7 @@ export class ReplayCalcService {
       return normalized as (string | null)[];
     };
 
-    let deckName = deck.Title || 'Custom Pack';
+    let deckName = deck.Title || "Custom Pack";
     if (usedNames.has(deckName)) {
       let suffix = 2;
       while (usedNames.has(`${deckName} (${suffix})`)) {
@@ -295,11 +322,14 @@ export class ReplayCalcService {
       tier3Pets: normalizeTierPets(tierPets[3]),
       tier4Pets: normalizeTierPets(tierPets[4]),
       tier5Pets: normalizeTierPets(tierPets[5]),
-      tier6Pets: normalizeTierPets(tierPets[6])
+      tier6Pets: normalizeTierPets(tierPets[6]),
     };
   }
 
-  private findCustomPackFromDeck(customPacks: Array<{ name: string; deckId?: string | null }>, deck: any) {
+  private findCustomPackFromDeck(
+    customPacks: Array<{ name: string; deckId?: string | null }>,
+    deck: any,
+  ) {
     if (!deck) {
       return null;
     }
@@ -329,23 +359,39 @@ export class ReplayCalcService {
   private stripDefaultValues(state: any) {
     const strippedState: any = {};
 
-    if (state.playerPack !== 'Turtle') strippedState.playerPack = state.playerPack;
-    if (state.opponentPack !== 'Turtle') strippedState.opponentPack = state.opponentPack;
+    if (state.playerPack !== "Turtle")
+      strippedState.playerPack = state.playerPack;
+    if (state.opponentPack !== "Turtle")
+      strippedState.opponentPack = state.opponentPack;
     if (state.playerToy) strippedState.playerToy = state.playerToy;
-    if (state.playerToyLevel && state.playerToyLevel !== '1') strippedState.playerToyLevel = state.playerToyLevel;
+    if (state.playerToyLevel && state.playerToyLevel !== "1")
+      strippedState.playerToyLevel = state.playerToyLevel;
     if (state.opponentToy) strippedState.opponentToy = state.opponentToy;
-    if (state.opponentToyLevel && state.opponentToyLevel !== '1') strippedState.opponentToyLevel = state.opponentToyLevel;
+    if (state.opponentToyLevel && state.opponentToyLevel !== "1")
+      strippedState.opponentToyLevel = state.opponentToyLevel;
     if (state.turn !== 11) strippedState.turn = state.turn;
-    if (state.playerGoldSpent !== 10) strippedState.playerGoldSpent = state.playerGoldSpent;
-    if (state.opponentGoldSpent !== 10) strippedState.opponentGoldSpent = state.opponentGoldSpent;
-    if (state.playerRollAmount !== 4) strippedState.playerRollAmount = state.playerRollAmount;
-    if (state.opponentRollAmount !== 4) strippedState.opponentRollAmount = state.opponentRollAmount;
-    if (state.playerSummonedAmount !== 0) strippedState.playerSummonedAmount = state.playerSummonedAmount;
-    if (state.opponentSummonedAmount !== 0) strippedState.opponentSummonedAmount = state.opponentSummonedAmount;
-    if (state.playerLevel3Sold !== 0) strippedState.playerLevel3Sold = state.playerLevel3Sold;
-    if (state.opponentLevel3Sold !== 0) strippedState.opponentLevel3Sold = state.opponentLevel3Sold;
-    if (state.playerTransformationAmount !== 0) strippedState.playerTransformationAmount = state.playerTransformationAmount;
-    if (state.opponentTransformationAmount !== 0) strippedState.opponentTransformationAmount = state.opponentTransformationAmount;
+    if (state.playerGoldSpent !== 10)
+      strippedState.playerGoldSpent = state.playerGoldSpent;
+    if (state.opponentGoldSpent !== 10)
+      strippedState.opponentGoldSpent = state.opponentGoldSpent;
+    if (state.playerRollAmount !== 4)
+      strippedState.playerRollAmount = state.playerRollAmount;
+    if (state.opponentRollAmount !== 4)
+      strippedState.opponentRollAmount = state.opponentRollAmount;
+    if (state.playerSummonedAmount !== 0)
+      strippedState.playerSummonedAmount = state.playerSummonedAmount;
+    if (state.opponentSummonedAmount !== 0)
+      strippedState.opponentSummonedAmount = state.opponentSummonedAmount;
+    if (state.playerLevel3Sold !== 0)
+      strippedState.playerLevel3Sold = state.playerLevel3Sold;
+    if (state.opponentLevel3Sold !== 0)
+      strippedState.opponentLevel3Sold = state.opponentLevel3Sold;
+    if (state.playerTransformationAmount !== 0)
+      strippedState.playerTransformationAmount =
+        state.playerTransformationAmount;
+    if (state.opponentTransformationAmount !== 0)
+      strippedState.opponentTransformationAmount =
+        state.opponentTransformationAmount;
 
     if (state.angler) strippedState.angler = true;
     if (state.allPets) strippedState.allPets = true;
@@ -358,7 +404,8 @@ export class ReplayCalcService {
 
     if (state.logFilter) strippedState.logFilter = state.logFilter;
     if (state.fontSize !== 13) strippedState.fontSize = state.fontSize;
-    if (state.customPacks && state.customPacks.length > 0) strippedState.customPacks = state.customPacks;
+    if (state.customPacks && state.customPacks.length > 0)
+      strippedState.customPacks = state.customPacks;
 
     const stripPetDefaults = (pet: any) => {
       if (!pet || !pet.name) {
@@ -372,7 +419,8 @@ export class ReplayCalcService {
       if (pet.exp !== 0) newPet.exp = pet.exp;
       if (pet.mana !== 0) newPet.mana = pet.mana;
       if (pet.equipment) newPet.equipment = pet.equipment;
-      if (pet.belugaSwallowedPet !== null) newPet.belugaSwallowedPet = pet.belugaSwallowedPet;
+      if (pet.belugaSwallowedPet !== null)
+        newPet.belugaSwallowedPet = pet.belugaSwallowedPet;
       if (pet.timesHurt) newPet.timesHurt = pet.timesHurt;
 
       return newPet;
@@ -395,7 +443,7 @@ export class ReplayCalcService {
     if (Array.isArray(data)) {
       return data.map((item) => this.truncateKeys(item));
     }
-    if (data !== null && typeof data === 'object') {
+    if (data !== null && typeof data === "object") {
       const newObj: any = {};
       for (const key in data) {
         const newKey = KEY_MAP[key] || key;

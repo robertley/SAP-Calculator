@@ -13,7 +13,7 @@ export class Dragonfly extends Pet {
     attack = 1;
     health = 1;
     initAbilities(): void {
-        this.addAbility(new DragonflyAbility(this, this.logService, this.abilityService));
+        this.addAbility(new DragonflyAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

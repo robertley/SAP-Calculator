@@ -13,7 +13,7 @@ export class Lioness extends Pet {
     attack = 4;
     health = 5;
     initAbilities(): void {
-        this.addAbility(new LionessAbility(this, this.logService, this.abilityService));
+        this.addAbility(new LionessAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

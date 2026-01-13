@@ -1,9 +1,10 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
+import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { SarcasticFringeheadAbility } from "../../../abilities/pets/custom/tier-3/sarcastic-fringehead-ability.class";
 
 export class SarcasticFringehead extends Pet {
     name = "Sarcastic Fringehead";
@@ -11,8 +12,15 @@ export class SarcasticFringehead extends Pet {
     pack: Pack = 'Custom';
     attack = 4;
     health = 7;
+
+    override initAbilities(): void {
+        this.addAbility(new SarcasticFringeheadAbility(this, this.logService, this.petService));
+        super.initAbilities();
+    }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
+        protected petService: PetService,
         parent: Player,
         health?: number,
         attack?: number,

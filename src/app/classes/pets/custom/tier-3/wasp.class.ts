@@ -13,9 +13,9 @@ export class Wasp extends Pet {
     tier = 3;
     pack: Pack = 'Custom';
     attack = 2;
-    health = 2;
+    health = 3;
     initAbilities(): void {
-        this.addAbility(new WaspAbility(this, this.logService, this.abilityService));
+        this.addAbility(new WaspAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

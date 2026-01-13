@@ -11,10 +11,12 @@ export class BettaFish extends Pet {
     pack: Pack = 'Golden';
     attack = 2;
     health = 3;
+
     initAbilities(): void {
         this.addAbility(new BettaFishAbility(this, this.logService));
         super.initAbilities();
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

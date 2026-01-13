@@ -11,6 +11,12 @@ import { PetService } from "./pet.service";
 import { EquipmentService } from "./equipment.service";
 import { ToyFactoryService } from "./toy-factory.service";
 import { Toy } from "../classes/toy.class";
+import * as toysJson from "../files/toys.json";
+
+interface ToyJsonEntry {
+  Name: string;
+  Tier: number | string;
+}
 
 @Injectable({
     providedIn: 'root'
@@ -33,61 +39,36 @@ export class ToyService {
     }
 
     setToys() {
-        this.toys.set(1, [
-            'Balloon',
-            'Stick'
-        ])
-        this.toys.set(2, [
-            'Radio',
-            'Plastic Saw',
-            'Microwave Oven',
-            'Tennis Ball'
-        ])
-        this.toys.set(3, [
-            'Foam Sword',
-            'Melon Helmet',
-            'Toy Gun'
-        ])
-        this.toys.set(4, [
-            'Oven Mitts',
-            'Toilet Paper',
-            'Cash Register'
-        ])
-        this.toys.set(5, [
-            'Flashlight',
-            'Stinky Sock',
-            'Camera'
-        ])
-        this.toys.set(6, [
-            'Television',
-            'Peanut Jar',
-            'Air Palm Tree'
-        ])
-
-        this.toys.set(7, [
-            'Witch Broom',
-            'Pandoras Box',
-            'Magic Wand',
-            'Crystal Ball',
-            'Treasure Map',
-            'Treasure Chest',
-            'Evil Book',
-            'Magic Carpet',
-            'Magic Lamp',
-            'Nutcracker',
-            'Tinder Box',
-            'Candelabra',
-            'Glass Shoes',
-            'Golden Harp',
-            'Lock of Hair',
-            'Magic Mirror',
-            'Pickaxe',
-            'Red Cape',
-            'Rose Bud',
-            'Excalibur',
-            'Holy Grail'
-        ])
+        this.toys.clear();
+        const toyEntries = this.getToyEntriesFromJson();
+        for (const toy of toyEntries) {
+            const tier = Number(toy.Tier);
+            if (!Number.isFinite(tier) || tier < 1) {
+                continue;
+            }
+            if (!this.toys.has(tier)) {
+                this.toys.set(tier, []);
+            }
+            const tierList = this.toys.get(tier);
+            if (tierList) {
+                tierList.push(toy.Name);
+            }
+        }
+        for (const [tier, toyNames] of this.toys) {
+            this.toys.set(tier, [...new Set(toyNames)]);
+        }
     }
+
+    private getToyEntriesFromJson(): ToyJsonEntry[] {
+        const entries =
+            (
+                (toysJson as unknown as { default?: ToyJsonEntry[] }).default ??
+                (toysJson as unknown as ToyJsonEntry[])
+            ) ?? [];
+        return entries.filter((toy) => Boolean(toy?.Name));
+    }
+
+
 
     createToy(toyName: string, parent: Player, level: number = 1) {
         return this.toyFactory.createToy(toyName, parent, level, this, this.petService, this.equipmentService, this.gameService);

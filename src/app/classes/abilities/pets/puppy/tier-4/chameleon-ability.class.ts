@@ -68,7 +68,7 @@ export class ChameleonAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
         const { gameApi, triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
-        owner.removeAbility(undefined, 'Pet');
+        owner.removeAbility(this.name, 'Pet');
         this.addToyAbility(owner.parent.toy.name);
 
     }

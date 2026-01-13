@@ -7,16 +7,16 @@ import { InjectorService } from "app/services/injector.service";
 
 export class SeagullAbility extends Ability {
     private logService: LogService;
+    private usesThisTurn = 0;
 
     constructor(owner: Pet, logService: LogService) {
         super({
             name: 'SeagullAbility',
             owner: owner,
-            triggers: ['FriendSummoned'],
+            triggers: ['FriendSummoned', 'StartTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: owner.level,
             abilityFunction: (context) => {
                 this.executeAbility(context);
             }
@@ -25,22 +25,38 @@ export class SeagullAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { triggerPet, tiger, pteranodon, trigger } = context;const owner = this.owner;
 
-        if (!triggerPet || !owner.equipment) {
+        if (trigger === 'StartTurn') {
+            this.usesThisTurn = 0;
             return;
         }
 
-        triggerPet.givePetEquipment(InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment().get(owner.equipment.name));
+        if (!triggerPet || !owner.equipment || this.usesThisTurn >= this.level) {
+            this.triggerTigerExecution(context);
+            return;
+        }
+
+        const equipmentService = InjectorService.getInjector().get(EquipmentService);
+        const baseEquipment = owner.equipment;
+        const equipmentInstance = equipmentService.getInstanceOfAllEquipment().get(baseEquipment.name);
+
+        if (!equipmentInstance) {
+            this.triggerTigerExecution(context);
+            return;
+        }
+
+        triggerPet.givePetEquipment(equipmentInstance);
+        this.usesThisTurn++;
+
         this.logService.createLog({
-            message: `${owner.name} gave ${triggerPet.name} a ${owner.equipment.name}`,
+            message: `${owner.name} gave ${triggerPet.name} a ${baseEquipment.name}`,
             type: 'ability',
             player: owner.parent,
-            tiger: tiger
+            tiger: tiger,
+            pteranodon: pteranodon
         });
 
-        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 

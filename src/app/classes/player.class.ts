@@ -37,6 +37,8 @@ export class Player {
     summonedBoatThisBattle: boolean = false;
     public isOpponent: boolean = false;
 
+    cannedAilments: string[] = [];
+
     constructor(private logService: LogService, private abilityService: AbilityService, private gameService: GameService) {
     }
 
@@ -71,6 +73,7 @@ export class Player {
         this.trumpets = 0;
         this.spawnedGoldenRetiever = false;
         this.summonedBoatThisBattle = false;
+        this.cannedAilments = [];
     }
 
     resetJumpedFlags() {

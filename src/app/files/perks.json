@@ -1,386 +1,709 @@
 [
-    {
-        "Id": "0",
-        "Name": "Coconut"
-    },
-    {
-        "Id": "1",
-        "Name": "Mushroom"
-    },
-    {
-        "Id": "2",
-        "Name": "Peanut"
-    },
-    {
-        "Id": "3",
-        "Name": "Salt"
-    },
-    {
-        "Id": "5",
-        "Name": "Chili"
-    },
-    {
-        "Id": "6",
-        "Name": "Meat Bone"
-    },
-    {
-        "Id": "7",
-        "Name": "Cherry"
-    },
-    {
-        "Id": "8",
-        "Name": "Honey"
-    },
-    {
-        "Id": "9",
-        "Name": "Garlic"
-    },
-    {
-        "Id": "10",
-        "Name": "Weak"
-    },
-    {
-        "Id": "11",
-        "Name": "Fortune Cookie"
-    },
-    {
-        "Id": "12",
-        "Name": "Steak"
-    },
-    {
-        "Id": "13",
-        "Name": "Melon"
-    },
-    {
-        "Id": "14",
-        "Name": "Strawberry"
-    },
-    {
-        "Id": "15",
-        "Name": "Carrot"
-    },
-    {
-        "Id": "16",
-        "Name": "Grapes"
-    },
-    {
-        "Id": "17",
-        "Name": "Popcorn"
-    },
-    {
-        "Id": "18",
-        "Name": "Pepper"
-    },
-    {
-        "Id": "19",
-        "Name": "Cucumber"
-    },
-    {
-        "Id": "20",
-        "Name": "Croissant"
-    },
-    {
-        "Id": "21",
-        "Name": "Pineapple"
-    },
-    {
-        "Id": "22",
-        "Name": "Lemon"
-    },
-    {
-        "Id": "23",
-        "Name": "Cheese"
-    },
-    {
-        "Id": "24",
-        "Name": "Egg"
-    },
-    {
-        "Id": "25",
-        "Name": "Banana"
-    },
-    {
-        "Id": "26",
-        "Name": "Skewer"
-    },
-    {
-        "Id": "27",
-        "Name": "Webbed"
-    },
-    {
-        "Id": "28",
-        "Name": "Blueberry"
-    },
-    {
-        "Id": "29",
-        "Name": "Potato"
-    },
-    {
-        "Id": "30",
-        "Name": "Chocolate Cake"
-    },
-    {
-        "Id": "31",
-        "Name": "Onion"
-    },
-    {
-        "Id": "33",
-        "Name": "Pita Bread"
-    },
-    {
-        "Id": "34",
-        "Name": "Tomato"
-    },
-    {
-        "Id": "35",
-        "Name": "Pancakes"
-    },
-    {
-        "Id": "36",
-        "Name": "Donut"
-    },
-    {
-        "Id": "37",
-        "Name": "Inked"
-    },
-    {
-        "Id": "38",
-        "Name": "Eggplant"
-    },
-    {
-        "Id": "39",
-        "Name": "Pie"
-    },
-    {
-        "Id": "43",
-        "Name": "Rice"
-    },
-    {
-        "Id": "44",
-        "Name": "Cake"
-    },
-    {
-        "Id": "45",
-        "Name": "Durian"
-    },
-    {
-        "Id": "46",
-        "Name": "Fig"
-    },
-    {
-        "Id": "47",
-        "Name": "Golden Egg"
-    },
-    {
-        "Id": "48",
-        "Name": "Magic Beans"
-    },
-    {
-        "Id": "49",
-        "Name": "Fairy Dust"
-    },
-    {
-        "Id": "50",
-        "Name": "Yggdrasil Fruit"
-    },
-    {
-        "Id": "51",
-        "Name": "Easter Egg"
-    },
-    {
-        "Id": "52",
-        "Name": "Gingerbread Man"
-    },
-    {
-        "Id": "54",
-        "Name": "Cold"
-    },
-    {
-        "Id": "55",
-        "Name": "Dazed"
-    },
-    {
-        "Id": "56",
-        "Name": "Icky"
-    },
-    {
-        "Id": "57",
-        "Name": "Crisp"
-    },
-    {
-        "Id": "58",
-        "Name": "Health Potion"
-    },
-    {
-        "Id": "59",
-        "Name": "Love Potion"
-    },
-    {
-        "Id": "60",
-        "Name": "Ambrosia"
-    },
-    {
-        "Id": "61",
-        "Name": "Mana Potion"
-    },
-    {
-        "Id": "62",
-        "Name": "Rambutan"
-    },
-    {
-        "Id": "63",
-        "Name": "Spooked"
-    },
-    {
-        "Id": "64",
-        "Name": "Baguette"
-    },
-    {
-        "Id": "65",
-        "Name": "Radish"
-    },
-    {
-        "Id": "66",
-        "Name": "Brussels Sprout"
-    },
-    {
-        "Id": "67",
-        "Name": "Caramel"
-    },
-    {
-        "Id": "68",
-        "Name": "Eucalyptus"
-    },
-    {
-        "Id": "69",
-        "Name": "Sausage"
-    },
-    {
-        "Id": "70",
-        "Name": "Churros"
-    },
-    {
-        "Id": "71",
-        "Name": "Cauliflower"
-    },
-    {
-        "Id": "72",
-        "Name": "Seaweed"
-    },
-    {
-        "Id": "73",
-        "Name": "Toasty"
-    },
-    {
-        "Id": "75",
-        "Name": "Silly"
-    },
-    {
-        "Id": "77",
-        "Name": "Oyster Mushroom"
-    },
-    {
-        "Id": "78",
-        "Name": "Kiwano"
-    },
-    {
-        "Id": "79",
-        "Name": "Melon Slice"
-    },
-    {
-        "Id": "84",
-        "Name": "Sleepy"
-    },
-    {
-        "Id": "85",
-        "Name": "Tasty"
-    },
-    {
-        "Id": "86",
-        "Name": "Faint Bread"
-    },
-    {
-        "Id": "88",
-        "Name": "Peanut Butter"
-    },
-    {
-        "Id": "89",
-        "Name": "Blackberry"
-    },
-    {
-        "Id": "91",
-        "Name": "White Truffle"
-    },
-    {
-        "Id": "93",
-        "Name": "Maple Syrup"
-    },
-    {
-        "Id": "94",
-        "Name": "Cocoa Bean"
-    },
-    {
-        "Id": "95",
-        "Name": "Sudduth Tomato"
-    },
-    {
-        "Id": "97",
-        "Name": "Unagi"
-    },
-    {
-        "Id": "100",
-        "Name": "Sardinian Currant"
-    },
-    {
-        "Id": "101",
-        "Name": "White Okra"
-    },
-    {
-        "Id": "103",
-        "Name": "Gros Michel Banana"
-    },
-    {
-        "Id": "104",
-        "Name": "Cod Roe"
-    },
-    {
-        "Id": "108",
-        "Name": "Lime"
-    },
-    {
-        "Id": "109",
-        "Name": "Squash"
-    },
-    {
-        "Id": "110",
-        "Name": "Honeydew Melon"
-    },
-    {
-        "Id": "111",
-        "Name": "Bok Choy"
-    },
-    {
-        "Id": "115",
-        "Name": "Cashew Nut"
-    },
-    {
-        "Id": "116",
-        "Name": "Nachos"
-    },
-    {
-        "Id": "117",
-        "Name": "Macaron"
-    },
-    {
-        "Id": "118",
-        "Name": "Confused"
-    },
-    {
-        "Id": "119",
-        "Name": "Cursed"
-    },
-    {
-        "Id": "120",
-        "Name": "Bloated"
-    }
+  {
+    "Ability": "Block ailment or 8 damage, once.",
+    "Positive": true,
+    "Id": "60",
+    "Name": "Ambrosia",
+    "NameId": "Ambrosia"
+  },
+  {
+    "Ability": "Before attack: Remove the front-most enemy perk, once.",
+    "Positive": true,
+    "Id": "64",
+    "Name": "Baguette",
+    "NameId": "Baguette"
+  },
+  {
+    "Ability": "Faint: Summon one 4/4 Monkey.",
+    "Positive": true,
+    "Id": "25",
+    "Name": "Banana",
+    "NameId": "Banana"
+  },
+  {
+    "Ability": "Before battle: Gain +7 mana.",
+    "Positive": true,
+    "Id": "87",
+    "Name": "Big Mana Potion",
+    "NameId": "ManaPotion2"
+  },
+  {
+    "Ability": "Gain +1 attack and +2 health.",
+    "Positive": true,
+    "Id": "89",
+    "Name": "Blackberry",
+    "NameId": "Blackberry"
+  },
+  {
+    "Ability": "Can't gain perk, once.",
+    "Id": "120",
+    "Name": "Bloated",
+    "NameId": "Bloated"
+  },
+  {
+    "Ability": "Prioritize this for enemy random abilities.",
+    "Positive": true,
+    "Id": "28",
+    "Name": "Blueberry",
+    "NameId": "BlueBerries"
+  },
+  {
+    "Ability": "Gain +3 health when this would faint, once.",
+    "Positive": true,
+    "Id": "111",
+    "Name": "Bok Choy",
+    "NameId": "BokChoy"
+  },
+  {
+    "Ability": "Block being pushed or 5 damage, once.",
+    "Positive": true,
+    "Id": "66",
+    "Name": "Brussels Sprout",
+    "NameId": "BrusselsSprout"
+  },
+  {
+    "Ability": "End turn: Increase sell value by 1 gold.",
+    "Positive": true,
+    "Id": "44",
+    "Name": "Cake",
+    "NameId": "BirthdayCake"
+  },
+  {
+    "Ability": "Before attack: Combine friendly Caramels to deal 3 damage each to the most healthy enemy, once.",
+    "Positive": true,
+    "Id": "67",
+    "Name": "Caramel",
+    "NameId": "Caramel"
+  },
+  {
+    "Ability": "End turn: Gain +1 attack and +1 health.",
+    "Positive": true,
+    "Id": "15",
+    "Name": "Carrot",
+    "NameId": "Carrot"
+  },
+  {
+    "Ability": "Before battle: Deal 1 damage to the second nearest pet ahead. Double against enemies.",
+    "Positive": true,
+    "Id": "115",
+    "Name": "Cashew Nut",
+    "NameId": "CashewNut"
+  },
+  {
+    "Ability": "Knock out: If still standing, gain permanent +1 attack and +1 health, once.",
+    "Positive": true,
+    "Id": "71",
+    "Name": "Cauliflower",
+    "NameId": "Cauliflower"
+  },
+  {
+    "Ability": "Attack with at least 15 attack, once.",
+    "Positive": true,
+    "Id": "23",
+    "Name": "Cheese",
+    "NameId": "Cheese"
+  },
+  {
+    "Ability": "Before battle: Gain 2 trumpets and remove perk.",
+    "Positive": true,
+    "Id": "7",
+    "Name": "Cherry",
+    "NameId": "Cherries"
+  },
+  {
+    "Ability": "Attack second enemy for 5 damage.",
+    "Positive": true,
+    "Id": "5",
+    "Name": "Chili",
+    "NameId": "Chili"
+  },
+  {
+    "Ability": "Before attack: Gain +3 experience and faint.",
+    "Positive": true,
+    "Id": "30",
+    "Name": "Chocolate Cake",
+    "NameId": "ChocolateCake"
+  },
+  {
+    "Ability": "Activate ability before other pets with the same trigger.",
+    "Positive": true,
+    "Id": "70",
+    "Name": "Churros",
+    "NameId": "Churros"
+  },
+  {
+    "Ability": "Before attack: Transform into an exact copy of a random enemy, once.",
+    "Positive": true,
+    "Id": "94",
+    "Name": "Cocoa Bean",
+    "NameId": "CocoaBean"
+  },
+  {
+    "Ability": "Block damage, once.",
+    "Positive": true,
+    "Id": "0",
+    "Name": "Coconut",
+    "NameId": "Coconut"
+  },
+  {
+    "Ability": "Faint: Summon one 2/3 Fish.",
+    "Positive": true,
+    "Id": "104",
+    "Name": "Cod Roe",
+    "NameId": "CodRoe"
+  },
+  {
+    "Ability": "Take +5 damage, once.",
+    "Id": "54",
+    "Name": "Cold",
+    "NameId": "Frozen"
+  },
+  {
+    "Ability": "Before attack: Transform into a pet from one tier below, once.",
+    "Id": "118",
+    "Name": "Confused",
+    "NameId": "Confused"
+  },
+  {
+    "Ability": "Anyone attacks: Take 6 damage, once.",
+    "Id": "57",
+    "Name": "Crisp",
+    "NameId": "Burn"
+  },
+  {
+    "Ability": "End turn: Gain +1 attack.",
+    "Positive": true,
+    "Id": "20",
+    "Name": "Croissant",
+    "NameId": "Croissant"
+  },
+  {
+    "Ability": "End turn: Gain +1 health.",
+    "Positive": true,
+    "Id": "19",
+    "Name": "Cucumber",
+    "NameId": "Cucumber"
+  },
+  {
+    "Ability": "Faint: Make one random friend Cursed.",
+    "Id": "119",
+    "Name": "Cursed",
+    "NameId": "Curse"
+  },
+  {
+    "Ability": "Prevent ability from activating.",
+    "Id": "55",
+    "Name": "Dazed",
+    "NameId": "Deaf"
+  },
+  {
+    "Ability": "Prioritize this for friendly random abilities.",
+    "Positive": true,
+    "Id": "36",
+    "Name": "Donut",
+    "NameId": "Doughnut"
+  },
+  {
+    "Ability": "Before attack: Reduce the most healthy enemy by 33% health, once.",
+    "Positive": true,
+    "Id": "45",
+    "Name": "Durian",
+    "NameId": "Durian"
+  },
+  {
+    "Ability": "Faint: Summon one 3/3 Bunny that attacks for double damage.",
+    "Positive": true,
+    "Id": "51",
+    "Name": "Easter Egg",
+    "NameId": "EasterEgg"
+  },
+  {
+    "Ability": "Before attack: Deal 2 damage to target, once.",
+    "Positive": true,
+    "Id": "24",
+    "Name": "Egg",
+    "NameId": "Egg"
+  },
+  {
+    "Ability": "Before battle: Push opposite enemy 1 space forward.",
+    "Positive": true,
+    "Id": "38",
+    "Name": "Eggplant",
+    "NameId": "EggPlant"
+  },
+  {
+    "Ability": "Block 4 enemy damage, once.",
+    "Positive": true,
+    "Id": "68",
+    "Name": "Eucalyptus",
+    "NameId": "Eucalyptus"
+  },
+  {
+    "Ability": "Faint: Summon ANY one tier 1 <b>Faint</b> pet.",
+    "Positive": true,
+    "Id": "86",
+    "Name": "Faint Bread",
+    "NameId": "DeadBread"
+  },
+  {
+    "Ability": "Empty front space: Jump to the front and gain +2 mana, once.",
+    "Positive": true,
+    "Id": "49",
+    "Name": "Fairy Dust",
+    "NameId": "FairyDust"
+  },
+  {
+    "Ability": "Before attack: Deal 4 damage to the lowest health enemy, once.",
+    "Positive": true,
+    "Id": "46",
+    "Name": "Fig",
+    "NameId": "Fig"
+  },
+  {
+    "Ability": "Attack has 50% chance to deal double damage.",
+    "Positive": true,
+    "Id": "11",
+    "Name": "Fortune Cookie",
+    "NameId": "FortuneCookie"
+  },
+  {
+    "Ability": "Takes 2 less damage.",
+    "FinePrint": "Damage can't be reduced to less than 2.",
+    "Positive": true,
+    "Id": "9",
+    "Name": "Garlic",
+    "NameId": "Garlic"
+  },
+  {
+    "Ability": "Before battle: Gain +1 experience.",
+    "Positive": true,
+    "Id": "52",
+    "Name": "Gingerbread Man",
+    "NameId": "GingerbreadMan"
+  },
+  {
+    "Ability": "Before attack: Deal 6 damage to target, once.",
+    "Positive": true,
+    "Id": "47",
+    "Name": "Golden Egg",
+    "NameId": "GoldenEgg"
+  },
+  {
+    "Ability": "Start of turn: Gain +1 gold.",
+    "Positive": true,
+    "Id": "16",
+    "Name": "Grapes",
+    "NameId": "Grapes"
+  },
+  {
+    "Ability": "Before attack: Transform into an Ant.",
+    "Positive": true,
+    "Id": "103",
+    "Name": "Gros Michel Banana",
+    "NameId": "GrosMichelBanana"
+  },
+  {
+    "Ability": "Block 3 damage, and attack for +3 damage, once.",
+    "Positive": true,
+    "Id": "105",
+    "Name": "Guava",
+    "NameId": "Guava"
+  },
+  {
+    "Ability": "Before battle: Give the front-most friendly pet +2 health.",
+    "Positive": true,
+    "Id": "58",
+    "Name": "Health Potion",
+    "NameId": "HealthPotion"
+  },
+  {
+    "Ability": "Faint: Summon one 1/1 Bee.",
+    "Positive": true,
+    "Id": "8",
+    "Name": "Honey",
+    "NameId": "Honey"
+  },
+  {
+    "Ability": "Block 10 damage, and attack for +5 damage, once.",
+    "Positive": true,
+    "Id": "110",
+    "Name": "Honeydew Melon",
+    "NameId": "HoneydewMelon"
+  },
+  {
+    "Ability": "Take double damage, twice.",
+    "Id": "56",
+    "Name": "Icky",
+    "NameId": "Acid"
+  },
+  {
+    "Ability": "Attack and ability deal 3 less damage.",
+    "Id": "37",
+    "Name": "Inked",
+    "NameId": "Ink"
+  },
+  {
+    "Ability": "Ability deals exactly 10 damage, once.",
+    "Positive": true,
+    "Id": "78",
+    "Name": "Kiwano",
+    "NameId": "Kiwano"
+  },
+  {
+    "Ability": "Before battle: Gain +3 health.",
+    "Positive": true,
+    "Id": "107",
+    "Name": "Kiwifruit",
+    "NameId": "Kiwi"
+  },
+  {
+    "Ability": "Block 7 damage, twice.",
+    "Positive": true,
+    "Id": "22",
+    "Name": "Lemon",
+    "NameId": "Lemon"
+  },
+  {
+    "Ability": "Takes 1 less damage.",
+    "Positive": true,
+    "Id": "108",
+    "Name": "Lime",
+    "NameId": "Lime"
+  },
+  {
+    "Ability": "Activate ability at level 1.",
+    "Positive": true,
+    "Id": "122",
+    "Name": "Liquorice",
+    "NameId": "SweetLiquorice"
+  },
+  {
+    "Ability": "Before battle: Summon one 5/5 pet like this.",
+    "Positive": true,
+    "Id": "59",
+    "Name": "Love Potion",
+    "NameId": "LovePotion"
+  },
+  {
+    "Ability": "Before battle: Copy ability to the nearest friend ahead.",
+    "Positive": true,
+    "Id": "76",
+    "Name": "Lychee",
+    "NameId": "Lychee"
+  },
+  {
+    "Ability": "Activate ability after other pets with the same trigger.",
+    "Positive": true,
+    "Id": "117",
+    "Name": "Macaron",
+    "NameId": "Macaron"
+  },
+  {
+    "Ability": "Start of turn: Gain the Golden Egg perk and increase sell value by 4 gold.",
+    "Positive": true,
+    "Id": "48",
+    "Name": "Magic Beans",
+    "NameId": "MagicBeans"
+  },
+  {
+    "Ability": "Before battle: Gain +6 mana.",
+    "Positive": true,
+    "Id": "61",
+    "Name": "Mana Potion",
+    "NameId": "ManaPotion"
+  },
+  {
+    "Ability": "Attack for 50% damage and block 50% damage, thrice.",
+    "Positive": true,
+    "Id": "93",
+    "Name": "Maple Syrup",
+    "NameId": "MapleSyrup"
+  },
+  {
+    "Ability": "Attack with +3 damage.",
+    "Positive": true,
+    "Id": "6",
+    "Name": "Meat Bone",
+    "NameId": "MeatBone"
+  },
+  {
+    "Ability": "Block 20 damage, once.",
+    "Positive": true,
+    "Id": "13",
+    "Name": "Melon",
+    "NameId": "Melon"
+  },
+  {
+    "Ability": "Block 10 damage, once.",
+    "Positive": true,
+    "Id": "79",
+    "Name": "Melon Slice",
+    "NameId": "WaterMelon"
+  },
+  {
+    "Ability": "Attack second enemy for 4 damage.",
+    "Positive": true,
+    "Id": "123",
+    "Name": "Mild Chili",
+    "NameId": "MildChili"
+  },
+  {
+    "Ability": "Faint: Come back as a 1/1.",
+    "Positive": true,
+    "Id": "1",
+    "Name": "Mushroom",
+    "NameId": "Mushroom"
+  },
+  {
+    "Ability": "Before attack: Convert up to 3 health into attack.",
+    "Positive": true,
+    "Id": "116",
+    "Name": "Nachos",
+    "NameId": "Nachos"
+  },
+  {
+    "Ability": "Before attack: Move to the back, once.",
+    "Positive": true,
+    "Id": "31",
+    "Name": "Onion",
+    "NameId": "Onion"
+  },
+  {
+    "Ability": "Before attack: Set attack and health to at least 9, once.",
+    "Positive": true,
+    "Id": "77",
+    "Name": "Oyster Mushroom",
+    "NameId": "OysterMushroom"
+  },
+  {
+    "Ability": "Before battle: Give friends +2 attack and +2 health.",
+    "Positive": true,
+    "Id": "35",
+    "Name": "Pancakes",
+    "NameId": "Pancakes"
+  },
+  {
+    "Ability": "Knock out any pet attacked and hurt by this.",
+    "Positive": true,
+    "Id": "2",
+    "Name": "Peanut",
+    "NameId": "Peanut"
+  },
+  {
+    "Ability": "Knock out any pet attacked and hurt by this, once.",
+    "Positive": true,
+    "Id": "88",
+    "Name": "Peanut Butter",
+    "NameId": "PeanutButter"
+  },
+  {
+    "Ability": "Health does not go under 1. Removed after taking damage.",
+    "Positive": true,
+    "Id": "18",
+    "Name": "Pepper",
+    "NameId": "Pepper"
+  },
+  {
+    "Ability": "Before battle: Gain +4 attack and +3 health.",
+    "Positive": true,
+    "Id": "39",
+    "Name": "Pie",
+    "NameId": "Pie"
+  },
+  {
+    "Ability": "Ability deals +2 damage, thrice.",
+    "Positive": true,
+    "Id": "21",
+    "Name": "Pineapple",
+    "NameId": "Pineapple"
+  },
+  {
+    "Ability": "Hurt: Gain +15 health, once.",
+    "Positive": true,
+    "Id": "33",
+    "Name": "Pita Bread",
+    "NameId": "PitaBread"
+  },
+  {
+    "Ability": "Faint: Summon one random pet from the same tier.",
+    "Positive": true,
+    "Id": "17",
+    "Name": "Popcorn",
+    "NameId": "Popcorn"
+  },
+  {
+    "Ability": "Block 10 damage from abilities and perks, twice.",
+    "Positive": true,
+    "Id": "29",
+    "Name": "Potato",
+    "NameId": "Potato"
+  },
+  {
+    "Ability": "Before battle: Gain ANY useful perk from the pet's tier.",
+    "Positive": true,
+    "Id": "65",
+    "Name": "Radish",
+    "NameId": "Radish"
+  },
+  {
+    "Ability": "Before attack: Gain +3 mana.",
+    "Positive": true,
+    "Id": "62",
+    "Name": "Rambutan",
+    "NameId": "Rambutan"
+  },
+  {
+    "Ability": "Sell for +2 gold.",
+    "Positive": true,
+    "Id": "43",
+    "Name": "Rice",
+    "NameId": "RiceBall"
+  },
+  {
+    "Ability": "Attack for double damage, once.",
+    "Positive": true,
+    "Id": "3",
+    "Name": "Salt",
+    "NameId": "Salt"
+  },
+  {
+    "Ability": "Start of turn: Gain +2 gold.",
+    "Positive": true,
+    "Id": "100",
+    "Name": "Sardinian Currant",
+    "NameId": "SardinianCurrant"
+  },
+  {
+    "Ability": "Start of turn: Gain one free roll.",
+    "Positive": true,
+    "Id": "69",
+    "Name": "Sausage",
+    "NameId": "Sausage"
+  },
+  {
+    "Ability": "Before attack: Transform into a Baby Urchin.",
+    "Positive": true,
+    "Id": "72",
+    "Name": "Seaweed",
+    "NameId": "Seaweed"
+  },
+  {
+    "Ability": "Ability has random targets in battle.",
+    "Id": "75",
+    "Name": "Silly",
+    "NameId": "Silly"
+  },
+  {
+    "Ability": "Attack second and third enemy for 3 damage.",
+    "Positive": true,
+    "Id": "26",
+    "Name": "Skewer",
+    "NameId": "Skewer"
+  },
+  {
+    "Ability": "Attack with half damage, once.",
+    "Id": "84",
+    "Name": "Sleepy",
+    "NameId": "Drowsy"
+  },
+  {
+    "Ability": "Take +1 damage.",
+    "Id": "63",
+    "Name": "Spooked",
+    "NameId": "Scared"
+  },
+  {
+    "Ability": "Before attack: Remove 6 health from target, once.",
+    "Positive": true,
+    "Id": "109",
+    "Name": "Squash",
+    "NameId": "Squash"
+  },
+  {
+    "Ability": "Attack with +20 damage, once.",
+    "Positive": true,
+    "Id": "12",
+    "Name": "Steak",
+    "NameId": "Steak"
+  },
+  {
+    "Ability": "Faint: Give the back-most friend +1 attack and +1 health.",
+    "Positive": true,
+    "Id": "14",
+    "Name": "Strawberry",
+    "NameId": "Strawberry"
+  },
+  {
+    "Ability": "Hurt: If still standing, gain permanent +1 health, once.",
+    "Positive": true,
+    "Id": "95",
+    "Name": "Sudduth Tomato",
+    "NameId": "SudduthTomato"
+  },
+  {
+    "Ability": "Faint: Give one random enemy permanent +2 attack and +2 health.",
+    "Id": "85",
+    "Name": "Tasty",
+    "NameId": "Tasty"
+  },
+  {
+    "Ability": "Anyone attacks: Take 1 damage, once.",
+    "Id": "73",
+    "Name": "Toasty",
+    "NameId": "Toasty"
+  },
+  {
+    "Ability": "Before attack: Deal 10 damage to the last enemy, once.",
+    "Positive": true,
+    "Id": "34",
+    "Name": "Tomato",
+    "NameId": "Tomato"
+  },
+  {
+    "Ability": "Start of battle: Deal 2 damage to a random enemy.",
+    "Positive": true,
+    "Id": "97",
+    "Name": "Unagi",
+    "NameId": "Unagi"
+  },
+  {
+    "Ability": "Block 2 damage, once.",
+    "Positive": true,
+    "Id": "80",
+    "Name": "Walnut",
+    "NameId": "Walnut"
+  },
+  {
+    "Ability": "Take +3 damage.",
+    "Id": "10",
+    "Name": "Weak",
+    "NameId": "Weak"
+  },
+  {
+    "Ability": "Faint: Summon one 2/2 Spider up front for the opponent.",
+    "Id": "27",
+    "Name": "Webbed",
+    "NameId": "Web"
+  },
+  {
+    "Ability": "Block 10 damage twice or ailment once.",
+    "Positive": true,
+    "Id": "101",
+    "Name": "White Okra",
+    "NameId": "WhiteOkra"
+  },
+  {
+    "Ability": "Friend faints: Gain +4 attack and jump-attack the highest attack enemy, once.",
+    "Positive": true,
+    "Id": "91",
+    "Name": "White Truffle",
+    "NameId": "WhiteTruffle"
+  },
+  {
+    "Ability": "Faint: Summon two 5/5 Nordic Goats.",
+    "Positive": true,
+    "Id": "50",
+    "Name": "Yggdrasil Fruit",
+    "NameId": "YggdrasilFruit"
+  }
 ]

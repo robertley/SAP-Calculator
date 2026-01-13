@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { TroutAbility } from "../../../abilities/pets/custom/tier-4/trout-ability.class";
 
 export class Trout extends Pet {
     name = "Trout";
@@ -11,6 +12,10 @@ export class Trout extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 4;
+    initAbilities(): void {
+        this.addAbility(new TroutAbility(this, this.logService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

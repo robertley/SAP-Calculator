@@ -38,9 +38,9 @@ Pets without abilities: 166
   Class: DeerLord
   Path: src/app/classes/pets/custom/tier-3/deer-lord.class.ts
 
-  File: emperor-tamarin.ts
+  File: emperor-tamarin.class.ts
   Class: EmperorTamarin
-  Path: src/app/classes/pets/custom/tier-3/emperor-tamarin.ts
+  Path: src/app/classes/pets/custom/tier-3/emperor-tamarin.class.ts
 
   File: foo-dog.class.ts
   Class: FooDog

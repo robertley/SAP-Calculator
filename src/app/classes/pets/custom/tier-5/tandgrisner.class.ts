@@ -14,7 +14,7 @@ export class Tandgrisner extends Pet {
     attack = 5;
     health = 5;
     initAbilities(): void {
-        this.addAbility(new TandgrisnerAbility(this, this.logService, this.abilityService));
+        this.addAbility(new TandgrisnerAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

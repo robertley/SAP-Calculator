@@ -405,15 +405,19 @@ export class AbilityService {
     // Helper method to trigger abilities in the new system
     private triggerAbility(pet: Pet, trigger: AbilityTrigger, triggerPet?: Pet, customParams?: any): void {
         if (pet.hasTrigger(trigger)) {
+            const eventCustomParams = {
+                ...(customParams ?? {}),
+                trigger
+            };
             // Create an AbilityEvent for the global queue
             const abilityEvent: AbilityEvent = {
-                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => { pet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, customParams) },
+                callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {pet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, eventCustomParams)},
                 priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                 pet: pet,
                 triggerPet: triggerPet,
                 abilityType: trigger,
                 tieBreaker: Math.random(),
-                customParams: customParams // Store custom parameters in the event
+                customParams: eventCustomParams // Store custom parameters in the event
             };
 
             this.addEventToQueue(abilityEvent);

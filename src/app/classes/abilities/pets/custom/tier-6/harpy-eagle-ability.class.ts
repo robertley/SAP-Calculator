@@ -3,18 +3,17 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { PetService } from "app/services/pet.service";
-import { AbilityService } from "app/services/ability.service";
 
 export class HarpyEagleAbility extends Ability {
     private logService: LogService;
     private petService: PetService;
-    private abilityService: AbilityService;
+    private usesThisTurn = 0;
 
-    constructor(owner: Pet, logService: LogService, petService: PetService, abilityService: AbilityService) {
+    constructor(owner: Pet, logService: LogService, petService: PetService) {
         super({
             name: 'HarpyEagleAbility',
             owner: owner,
-            triggers: ['ThisHurt'],
+            triggers: ['ThisHurt', 'StartTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -24,12 +23,26 @@ export class HarpyEagleAbility extends Ability {
         });
         this.logService = logService;
         this.petService = petService;
-        this.abilityService = abilityService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        if (context.trigger === 'StartTurn') {
+            this.usesThisTurn = 0;
+            return;
+        }
+
+        if (context.trigger !== 'ThisHurt') {
+            return;
+        }
+
+        if (this.usesThisTurn >= 3) {
+            return;
+        }
+
+        this.usesThisTurn++;
+
+        const { gameApi, tiger, pteranodon } = context;
+        const owner = this.owner;
 
         let power = this.level * 5;
         let petPool: string[];
@@ -65,6 +78,6 @@ export class HarpyEagleAbility extends Ability {
     }
 
     copy(newOwner: Pet): HarpyEagleAbility {
-        return new HarpyEagleAbility(newOwner, this.logService, this.petService, this.abilityService);
+        return new HarpyEagleAbility(newOwner, this.logService, this.petService);
     }
 }

@@ -14,7 +14,7 @@ export class RedLippedBatfish extends Pet {
     health = 3;
     
     initAbilities(): void {
-        this.addAbility(new RedLippedBatfishAbility(this, this.logService, this.abilityService, this.petService));
+        this.addAbility(new RedLippedBatfishAbility(this, this.logService, this.petService));
         super.initAbilities();
     }
     

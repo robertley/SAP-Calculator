@@ -11,7 +11,7 @@ export class BettaFishAbility extends Ability {
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'BettaFishAbility',
+            name: 'Betta Fish Ability',
             owner: owner,
             triggers: ['FriendLostPerk'],
             abilityType: 'Pet',

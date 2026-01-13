@@ -1,27 +1,22 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
+import { AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { PetAbility } from "../../pet-ability.class";
 
-export class SumatranTigerAbility extends Ability {
+export class SumatranTigerAbility extends PetAbility {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
+            owner,
             name: 'SumatranTigerAbility',
-            owner: owner,
-            triggers: ['StartBattle'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            triggers: ['StartBattle']
         });
         this.logService = logService;
     }
 
-    private executeAbility(context: AbilityContext): void {
+    protected executeAbility(context: AbilityContext): void {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 

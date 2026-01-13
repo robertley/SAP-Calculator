@@ -13,7 +13,7 @@ export class HammerheadShark extends Pet {
     attack = 5;
     health = 5;
     initAbilities(): void {
-        this.addAbility(new HammerheadSharkAbility(this, this.logService, this.abilityService));
+        this.addAbility(new HammerheadSharkAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

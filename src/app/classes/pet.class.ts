@@ -3,6 +3,7 @@ import { LogService } from "../services/log.service";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
 import { Peanut } from "./equipment/turtle/peanut.class";
+import { Corncob } from "./equipment/custom/corncob.class";
 import { AbilityService } from "../services/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 import { Albatross } from "./pets/custom/tier-6/albatross.class";
@@ -32,6 +33,7 @@ import { WhiteTruffle } from "./equipment/danger/white-truffle.class";
 import { Ability, AbilityTrigger, AbilityType } from "./ability.class";
 import { Guava, GuavaAttack } from "./equipment/custom/guava.class";
 import { minExpForLevel } from "../util/leveling";
+import { EquipmentDamageHandler } from "./equipment/equipment-damage.handler";
 import {
     attackPet as attackPetImpl,
     calculateDamage as calculateDamageImpl,
@@ -58,12 +60,15 @@ export abstract class Pet {
     equipment?: Equipment;
     mana: number = 0;
     triggersConsumed: number = 0;
+    sellValue: number = 1;
+    baseSellValue: number = 1;
     //memories
     swallowedPets?: Pet[] = [];
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
     belugaSwallowedPet: string;
+    sarcasticFringeheadSwallowedPet?: string;
     timesHurt: number = 0;
     timesAttacked: number = 0;
     battlesFought: number = 0;
@@ -127,6 +132,8 @@ export abstract class Pet {
         this.equipment = equipment;
         this.originalEquipment = equipment;
         this.originalExp = this.exp;
+        this.baseSellValue = this.level;
+        this.sellValue = this.baseSellValue;
 
         this.initAbilities();
 
@@ -175,163 +182,31 @@ export abstract class Pet {
     }
 
     applyCrisp() {
-        let manticoreMult = this.parent.opponent.getManticoreMult();
+        const manticoreMult = this.parent.opponent.getManticoreMult();
         for (let pet of this.parent.petArray) {
             if (pet.equipment instanceof Crisp) {
-                let damage = 6;
-                let totalMultiplier = pet.equipment.multiplier;
-                for (let mult of manticoreMult) {
-                    totalMultiplier += mult;
-                }
-                damage *= totalMultiplier;
-                let fairyBallReduction = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'FairyAbility') {
-                            fairyBallReduction += ability.level * 2;
-                            damage = Math.max(0, damage - ability.level * 2);
-                        }
-                    }
-                }
-                let nurikabe = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'NurikabeAbility') {
-                            nurikabe += ability.level * 4;
-                            damage = Math.max(0, damage - ability.level * 4);
-                            ability.currentUses++;
-                        }
-                    }
-                }
-                let fanMusselReduction = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'FanMusselAbility') {
-                            fanMusselReduction += ability.level * 1;
-                            damage = Math.max(0, damage - fanMusselReduction);
-                            ability.currentUses++;
-                        }
-                    }
-                }
-                let ghostKittenReduction = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'GhostKittenAbility') {
-                            ghostKittenReduction += ability.level * 3;
-                            damage = Math.max(0, damage - ghostKittenReduction);
-                        }
-                    }
-                }
-                let message = `${pet.name} took ${damage} damage`;
-                if (manticoreMult.length > 0) {
-                    for (let mult of manticoreMult) {
-                        message += ` x${mult + 1} (Manticore)`;
-                    }
-                }
-                if (pet.equipment.multiplier > 1) {
-                    message += pet.equipment.multiplierMessage;
-                }
-                if (fairyBallReduction > 0) {
-                    message += `-${fairyBallReduction} (FairyBall)`
-                }
-                if (nurikabe > 0) {
-                    message += ` -${nurikabe} (Nurikabe)`;
-                }
-                if (fanMusselReduction > 0) {
-                    message += ` -${fanMusselReduction} (Fan Mussel)`;
-                }
-                if (ghostKittenReduction > 0) {
-                    message += ` -${ghostKittenReduction} (Ghost Kitten)`;
-                }
-                message += ` (Crisp).`;
-
-                this.logService.createLog({
-                    message: message,
-                    type: 'ability',
-                    player: pet.parent
+                EquipmentDamageHandler.applyDamage({
+                    pet,
+                    baseDamage: 6,
+                    perkName: 'Crisp',
+                    manticoreMultipliers: manticoreMult,
+                    logService: this.logService,
+                    afterDamage: (target) => target.removePerk()
                 });
-                this.dealDamage(pet, damage);
-                pet.removePerk();
-            }
-            else if (pet.equipment instanceof Toasty && pet.equipment.uses > 0) {
-                let damage = 1;
-                let totalMultiplier = pet.equipment.multiplier;
-                for (let mult of manticoreMult) {
-                    totalMultiplier += mult;
-                }
-                damage *= totalMultiplier;
-                let fairyBallReduction = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'FairyAbility') {
-                            fairyBallReduction += ability.level * 2;
-                            damage = Math.max(0, damage - ability.level * 2);
+            } else if (pet.equipment instanceof Toasty && pet.equipment.uses > 0) {
+                EquipmentDamageHandler.applyDamage({
+                    pet,
+                    baseDamage: 1,
+                    perkName: 'Toasty',
+                    manticoreMultipliers: manticoreMult,
+                    logService: this.logService,
+                    afterDamage: (target) => {
+                        target.equipment.uses--;
+                        if (target.equipment.uses <= 0) {
+                            target.removePerk();
                         }
                     }
-                }
-                let nurikabe = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'NurikabeAbility') {
-                            nurikabe += ability.level * 4;
-                            damage = Math.max(0, damage - ability.level * 4);
-                            ability.currentUses++;
-                        }
-                    }
-                }
-                let fanMusselReduction = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'FanMusselAbility') {
-                            fanMusselReduction += ability.level * 1;
-                            damage = Math.max(0, damage - fanMusselReduction);
-                            ability.currentUses++;
-                        }
-                    }
-                }
-                let ghostKittenReduction = 0;
-                if (pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
-                    for (let ability of pet.abilityList) {
-                        if (ability.name == 'GhostKittenAbility') {
-                            ghostKittenReduction += ability.level * 3;
-                            damage = Math.max(0, damage - ghostKittenReduction);
-                        }
-                    }
-                }
-                let message = `${pet.name} took ${damage} damage`;
-                if (manticoreMult.length > 0) {
-                    for (let mult of manticoreMult) {
-                        message += ` x${mult + 1} (Manticore)`;
-                    }
-                }
-                if (pet.equipment.multiplier > 1) {
-                    message += pet.equipment.multiplierMessage;
-                }
-                if (fairyBallReduction > 0) {
-                    message += `-${fairyBallReduction} (FairyBall)`
-                }
-                if (nurikabe > 0) {
-                    message += ` -${nurikabe} (Nurikabe)`;
-                }
-                if (fanMusselReduction > 0) {
-                    message += ` -${fanMusselReduction} (Fan Mussel)`;
-                }
-                if (ghostKittenReduction > 0) {
-                    message += ` -${ghostKittenReduction} (Ghost Kitten)`;
-                }
-                message += ` (Toasty).`;
-
-                this.logService.createLog({
-                    message: message,
-                    type: 'ability',
-                    player: pet.parent
                 });
-                this.dealDamage(pet, damage);
-                pet.equipment.uses--;
-                if (pet.equipment.uses <= 0) {
-                    pet.removePerk();
-                }
-
             }
         }
     }
@@ -486,6 +361,13 @@ export abstract class Pet {
         this.abilityService.triggerFriendGainsHealthEvents(this);
     }
 
+    increaseSellValue(amt: number) {
+        if (amt <= 0) {
+            return;
+        }
+        this.sellValue += amt;
+    }
+
     dealDamage(pet: Pet, damage: number) {
         dealDamageImpl(this, pet, damage);
     }
@@ -520,6 +402,10 @@ export abstract class Pet {
         this.increaseHealth(amt);
         this.exp = Math.min(this.exp + amt, 5);
         let timesLevelled = this.level - level;
+        if (timesLevelled > 0) {
+            this.baseSellValue += timesLevelled;
+            this.sellValue += timesLevelled;
+        }
         for (let i = 0; i < timesLevelled; i++) {
             this.logService.createLog({
                 message: `${this.name} leveled up to level ${this.level}.`,
@@ -552,10 +438,12 @@ export abstract class Pet {
         }
 
         if (equipment.name === 'Corncob') {
+            const cob = equipment as Corncob;
+            const multiplier = Math.max(1, Math.floor(cob.effectMultiplier ?? 1));
             if (this.attack <= this.health) {
-                this.increaseAttack(1);
+                this.increaseAttack(multiplier);
             } else {
-                this.increaseHealth(1);
+                this.increaseHealth(multiplier);
             }
             this.abilityService.triggerFoodEvents(this, 'corn');
             return;
