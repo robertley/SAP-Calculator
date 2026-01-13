@@ -1,16 +1,16 @@
 
-import { SimulationRunner } from 'app/engine/simulation-runner';
-import { SimulationConfig, SimulationResult } from 'app/interfaces/simulation-config.interface';
-import { LogService } from 'app/services/log.service';
-import { GameService } from 'app/services/game.service';
-import { AbilityService } from 'app/services/ability.service';
-import { PetService } from 'app/services/pet.service';
-import { EquipmentService } from 'app/services/equipment.service';
-import { ToyService } from 'app/services/toy.service';
-import { PetFactoryService } from 'app/services/pet-factory.service';
-import { EquipmentFactoryService } from 'app/services/equipment-factory.service';
-import { ToyFactoryService } from 'app/services/toy-factory.service';
-import { InjectorService } from 'app/services/injector.service';
+import { SimulationRunner } from '../src/app/engine/simulation-runner';
+import { SimulationConfig, SimulationResult } from '../src/app/interfaces/simulation-config.interface';
+import { LogService } from '../src/app/services/log.service';
+import { GameService } from '../src/app/services/game.service';
+import { AbilityService } from '../src/app/services/ability.service';
+import { PetService } from '../src/app/services/pet.service';
+import { EquipmentService } from '../src/app/services/equipment.service';
+import { ToyService } from '../src/app/services/toy.service';
+import { PetFactoryService } from '../src/app/services/pet-factory.service';
+import { EquipmentFactoryService } from '../src/app/services/equipment-factory.service';
+import { ToyFactoryService } from '../src/app/services/toy-factory.service';
+import { InjectorService } from '../src/app/services/injector.service';
 
 class NodeInjector {
     private map = new Map<any, any>();
@@ -58,3 +58,18 @@ export function runSimulation(config: SimulationConfig): SimulationResult {
 
     return runner.run(config);
 }
+
+export * from '../src/app/services/injector.service';
+export * from '../src/app/engine/simulation-runner';
+export * from '../src/app/interfaces/simulation-config.interface';
+export * from '../src/app/services/log.service';
+export * from '../src/app/services/game.service';
+export * from '../src/app/services/ability.service';
+export * from '../src/app/services/pet.service';
+export * from '../src/app/services/equipment.service';
+export * from '../src/app/services/toy.service';
+export * from '../src/app/classes/player.class';
+export * from '../src/app/services/pet-factory.service';
+export * from '../src/app/services/equipment-factory.service';
+export * from '../src/app/services/toy-factory.service';
+

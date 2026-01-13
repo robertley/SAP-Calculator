@@ -9,7 +9,7 @@ export class FoamSwordAbility extends Ability {
         super({
             name: 'FoamSwordAbility',
             owner: owner,
-            triggers: [],
+            triggers: ['StartBattle'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,

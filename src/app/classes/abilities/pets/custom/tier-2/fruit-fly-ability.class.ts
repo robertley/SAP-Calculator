@@ -1,14 +1,14 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Blueberry } from "../../../../equipment/custom/blueberry.class";
 
-export class FrilledDragonAbility extends Ability {
+export class FruitFlyAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'FrilledDragonAbility',
+            name: 'FruitFlyAbility',
             owner: owner,
             triggers: ['StartBattle'],
             abilityType: 'Pet',
@@ -23,30 +23,33 @@ export class FrilledDragonAbility extends Ability {
 
     private executeAbility(context: AbilityContext): void {
         
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
 
-        let power = 0;
-        for (let pet of owner.parent.petArray) {
-            if (pet !== owner && pet.isFaintPet()) {
-                power++;
-            }
+        let targetResp = owner.parent.getOppositeEnemyPet(owner);
+        let target = targetResp.pet;
+        if (target == null) {
+            return;
         }
-        power *= this.level;
-        owner.increaseAttack(power);
-        owner.increaseHealth(power);
+
+        target.givePetEquipment(new Blueberry());
         this.logService.createLog({
-            message: `${owner.name} gained ${power} attack and ${power} health.`,
+            message: `${owner.name} gave ${target.name} Blueberry.`,
             type: 'ability',
             player: owner.parent,
             tiger: tiger,
-            pteranodon: pteranodon
+            pteranodon: pteranodon,
+            randomEvent: targetResp.random
         });
+
+        let power = this.level * 2;
+        owner.snipePet(target, power, targetResp.random, tiger);
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): FrilledDragonAbility {
-        return new FrilledDragonAbility(newOwner, this.logService);
+    copy(newOwner: Pet): FruitFlyAbility {
+        return new FruitFlyAbility(newOwner, this.logService);
     }
 }

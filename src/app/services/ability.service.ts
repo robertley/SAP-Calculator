@@ -64,10 +64,10 @@ export class AbilityService {
         'EnemySummoned': 7,
         //'OtherSummoned': 7,
         'BeeSummoned': 7,
-        'EnemyPushed': 7,
         //'CompositeEnemySummonedOrPushed': 7,
 
         // Movement events
+        'EnemyPushed': 8,
         'FriendJumped': 8,
         'AnyoneJumped': 8,
         //'FriendJumpedOrTransformed': 8,
@@ -1087,7 +1087,6 @@ export class AbilityService {
         }
     }
 
-    // Legacy method - use triggerMovementEvents instead
     triggerPushedEvents(pushedPet: Pet) {
         for (let pet of pushedPet.parent.opponent.petArray) {
             this.triggerAbility(pet, 'EnemyPushed', pushedPet);

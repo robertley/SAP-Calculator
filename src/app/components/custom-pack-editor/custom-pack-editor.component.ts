@@ -4,6 +4,7 @@ import { PetService } from '../../services/pet.service';
 import { remove } from 'lodash';
 import { LocalStorageService } from '../../services/local-storage.service';
 import * as petJson from '../../files/pets.json';
+import { PACK_NAMES } from '../../util/pack-names';
 
 @Component({
   selector: 'app-custom-pack-editor',
@@ -17,6 +18,8 @@ export class CustomPackEditorComponent implements OnInit {
   customPacks: FormArray;
   // Map<tier, Map<pack, pets>>
   petPackMap: Map<number, Map<string, string[]>>;
+  petIdLookup: Map<string, { name: string; tier: number }> = new Map();
+  petNameToTier: Map<string, number> = new Map();
   focusedGroup: FormGroup = null;
 
   importFormGroup = new FormGroup({
@@ -24,43 +27,29 @@ export class CustomPackEditorComponent implements OnInit {
   });
 
   constructor(private petService: PetService, private localStorageService: LocalStorageService) {
-    this.buildPetPackMap();
-
   }
 
   ngOnInit(): void {
     this.customPacks = this.formGroup.get('customPacks') as FormArray;
+    this.buildPetPackMap();
+    this.buildPetNameToTierMap();
+    this.buildPetIdLookup();
   }
 
   buildPetPackMap() {
     this.petPackMap = new Map<number, Map<string, string[]>>();
     for (let i = 1; i <= 6; i++) {
       let packMap = new Map<string, string[]>();
-      packMap.set('Turtle', []);
-      packMap.set('Puppy', []);
-      packMap.set('Star', []);
-      packMap.set('Golden', []);
-      packMap.set('Unicorn', []);
-      packMap.set('Custom', []);
+      for (const packName of PACK_NAMES) {
+        packMap.set(packName, []);
+      }
       this.petPackMap.set(i, packMap);
     }
-    for (let [tier, pets] of this.petService.turtlePackPets) {
-      this.petPackMap.get(tier).get('Turtle').push(...pets);
-    }
-    for (let [tier, pets] of this.petService.puppyPackPets) {
-      this.petPackMap.get(tier).get('Puppy').push(...pets);
-    }
-    for (let [tier, pets] of this.petService.starPackPets) {
-      this.petPackMap.get(tier).get('Star').push(...pets);
-    }
-    for (let [tier, pets] of this.petService.goldenPackPets) {
-      this.petPackMap.get(tier).get('Golden').push(...pets);
-    }
-    for (let [tier, pets] of this.petService.unicornPackPets) {
-      this.petPackMap.get(tier).get('Unicorn').push(...pets);
-    }
-    for (let [tier, pets] of this.petService.customPackPets) {
-      this.petPackMap.get(tier).get('Custom').push(...pets);
+    for (const packName of PACK_NAMES) {
+      const packPets = this.petService.basePackPetsByName[packName];
+      for (let [tier, pets] of packPets) {
+        this.petPackMap.get(tier).get(packName).push(...pets);
+      }
     }
   }
 
@@ -153,35 +142,104 @@ export class CustomPackEditorComponent implements OnInit {
     let code = this.importFormGroup.get('code').value;
     try {
       code = JSON.parse(code);
+      let parsed = this.parseMinions(code.Minions, code.MinionMap);
       let formValue = {
         name: code.Title,
-        tier1Pets: this.getMinions(code.Minions, 1),
-        tier2Pets: this.getMinions(code.Minions, 2),
-        tier3Pets: this.getMinions(code.Minions, 3),
-        tier4Pets: this.getMinions(code.Minions, 4),
-        tier5Pets: this.getMinions(code.Minions, 5),
-        tier6Pets: this.getMinions(code.Minions, 6),
-      }
+        tier1Pets: parsed.tierMinions.get(1),
+        tier2Pets: parsed.tierMinions.get(2),
+        tier3Pets: parsed.tierMinions.get(3),
+        tier4Pets: parsed.tierMinions.get(4),
+        tier5Pets: parsed.tierMinions.get(5),
+        tier6Pets: parsed.tierMinions.get(6),
+      };
       this.createNewPack();
       this.focusedGroup.patchValue(formValue);
+      if (parsed.missingMinions.length > 0) {
+        alert(`Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(', ')}`);
+      }
     } catch (e) {
       alert('Invalid code');
       console.error(e);
     }
   }
 
-  getMinions(minions: number[], tier: number) {
-
-    let pets = petJson[`tier${tier}`];
-    let tierMinions = [];
-    for (let minion of minions) {
+  buildPetIdLookup() {
+    this.petIdLookup = new Map();
+    const petsByTier: Record<string, any[]> = (petJson as any).default ?? (petJson as any);
+    for (let [tierKey, pets] of Object.entries(petsByTier)) {
+      if (!Array.isArray(pets)) {
+        continue;
+      }
+      let tierFromKey = Number(tierKey.replace('tier', ''));
       for (let pet of pets) {
-        if (pet.id == minion) {
-          tierMinions.push(pet.name);
+        let tier = Number(pet.tier) || tierFromKey;
+        let id = String(pet.id);
+        if (!this.petIdLookup.has(id)) {
+          this.petIdLookup.set(id, { name: pet.name, tier: tier });
         }
-      } 
+      }
+    }
+  }
+
+  buildPetNameToTierMap() {
+    this.petNameToTier = new Map();
+    for (let [tier, packMap] of this.petPackMap) {
+      for (let pets of packMap.values()) {
+        for (let pet of pets) {
+          if (!this.petNameToTier.has(pet)) {
+            this.petNameToTier.set(pet, tier);
+          }
+        }
+      }
+    }
+  }
+
+  parseMinions(minions: Array<number | string>, minionMap: { [id: string]: string } = {}) {
+    let tierMinions = new Map<number, string[]>();
+    for (let i = 1; i <= 6; i++) {
+      tierMinions.set(i, []);
+    }
+    let missingMinions: (number | string)[] = [];
+    if (!Array.isArray(minions)) {
+      return { tierMinions, missingMinions };
     }
 
-    return tierMinions;
+    for (let minion of minions) {
+      let name: string | null = null;
+      let idKey: string | null = null;
+      if (typeof minion === 'number') {
+        idKey = String(minion);
+      } else if (typeof minion === 'string') {
+        let trimmed = minion.trim();
+        if (trimmed && trimmed.match(/^\d+$/)) {
+          idKey = trimmed;
+        } else {
+          name = minion;
+        }
+      }
+
+      if (idKey) {
+        let pet = this.petIdLookup.get(idKey);
+        if (pet) {
+          name = pet.name;
+        } else if (minionMap && minionMap[idKey]) {
+          name = minionMap[idKey];
+        }
+      }
+
+      if (!name) {
+        missingMinions.push(minion);
+        continue;
+      }
+
+      let tier = this.petNameToTier.get(name);
+      if (!tier) {
+        missingMinions.push(minion);
+        continue;
+      }
+      tierMinions.get(tier).push(name);
+    }
+
+    return { tierMinions, missingMinions };
   }
 }

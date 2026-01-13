@@ -15,6 +15,7 @@ import { ImportCalculatorComponent } from './components/import-calculator/import
 import { ReportABugComponent } from './components/report-a-bug/report-a-bug.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ExportCalculatorComponent } from './components/export-calculator/export-calculator.component';
+import { ReplayCalcComponent } from './components/replay-calc/replay-calc.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ExportCalculatorComponent } from './components/export-calculator/export
     InfoComponent,
     ImportCalculatorComponent,
     ReportABugComponent,
-    ExportCalculatorComponent
+    ExportCalculatorComponent,
+    ReplayCalcComponent
   ],
   imports: [
     BrowserModule,

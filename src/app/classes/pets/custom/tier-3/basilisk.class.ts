@@ -1,18 +1,18 @@
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../../classes/equipment.class";
-import { Pack, Pet } from "../../../../classes/pet.class";
-import { Player } from "../../../../classes/player.class";
-import { FarmerChickenAbility } from "../../../abilities/pets/custom/tier-2/farmer-chicken-ability.class";
+import { Equipment } from "../../../equipment.class";
+import { Pack, Pet } from "../../../pet.class";
+import { Player } from "../../../player.class";
+import { BasiliskAbility } from "../../../abilities/pets/custom/tier-3/basilisk-ability.class";
 
-export class FarmerChicken extends Pet {
-    name = "Farmer Chicken";
-    tier = 2;
+export class Basilisk extends Pet {
+    name = "Basilisk";
+    tier = 3;
     pack: Pack = 'Custom';
-    attack = 3;
-    health = 3;
+    health = 2;
+    attack = 1;
     initAbilities(): void {
-        this.addAbility(new FarmerChickenAbility(this, this.logService));
+        this.addAbility(new BasiliskAbility(this, this.logService, this.abilityService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

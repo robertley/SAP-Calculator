@@ -1,20 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
-import { cloneDeep } from 'lodash';
 import { Weak } from '../../classes/equipment/ailments/weak.class';
 import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment-categories';
+import { Subscription } from 'rxjs';
+import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
 
 @Component({
   selector: 'app-pet-selector',
   templateUrl: './pet-selector.component.html',
   styleUrls: ['./pet-selector.component.scss']
 })
-export class PetSelectorComponent implements OnInit {
+export class PetSelectorComponent implements OnInit, OnDestroy {
 
   @Input()
   pet: Pet;
@@ -49,6 +50,14 @@ export class PetSelectorComponent implements OnInit {
 
   showFlyOut = false;
   attackHealthMax = 50;
+
+  private basePackSets = new Map<string, Set<string>>();
+  private customPackPetsCache = new Map<string, Set<string>>();
+  private cachedPlayerPack: string | null = null;
+  private cachedOpponentPack: string | null = null;
+  private cachedPlayerPackSet: Set<string> | null = null;
+  private cachedOpponentPackSet: Set<string> | null = null;
+  private customPackSubscription: Subscription | null = null;
 
   @Input()
   showTokenPets = false;
@@ -92,6 +101,10 @@ export class PetSelectorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initSelector();
+    this.initPackSets();
+    this.customPackSubscription = (this.customPacks as FormArray)?.valueChanges?.subscribe(() => {
+      this.invalidatePackCaches();
+    }) ?? null;
 
     this.fixLoadEquipment();
 
@@ -111,26 +124,11 @@ export class PetSelectorComponent implements OnInit {
     for (let i = 1; i <= 6; i++) {
       this.pets.set(i, []);
     }
-    for (let [tier, pets] of this.petService.turtlePackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.puppyPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.starPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.goldenPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.unicornPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.dangerPackPets) {
-      this.pets.get(tier).push(...pets);
-    }
-    for (let [tier, pets] of this.petService.customPackPets) {
-      this.pets.get(tier).push(...pets);
+    for (const packName of PACK_NAMES) {
+      const packPets = this.petService.basePackPetsByName[packName];
+      for (let [tier, pets] of packPets) {
+        this.pets.get(tier).push(...pets);
+      }
     }
     // remove duplicates from each tier
     for (let [tier, pets] of this.pets) {
@@ -139,7 +137,7 @@ export class PetSelectorComponent implements OnInit {
 
     this.initStartOfBattlePets();
 
-    console.log('pets', this.pets);
+    // console.log('pets', this.pets);
   }
 
   initStartOfBattlePets() {
@@ -155,47 +153,8 @@ export class PetSelectorComponent implements OnInit {
     }
   }
 
-
-  getPack(player: Player) {
-    let pack;
-    if (player.pack == 'Turtle') {
-      pack = this.petService.turtlePackPets;
-    } else if (player.pack == 'Puppy') {
-      pack = this.petService.puppyPackPets;
-    } else if (player.pack == 'Star') {
-      pack = this.petService.starPackPets;
-    } else if (player.pack == 'Golden') {
-      pack = this.petService.goldenPackPets;
-    } else if (player.pack == 'Unicorn') {
-      pack = this.petService.unicornPackPets;
-    } else if (player.pack == 'Danger') {
-      pack = this.petService.dangerPackPets;
-    } else {
-      try {
-        pack = this.buildCustomPack(player.pack)
-      } catch {
-        pack = this.petService.turtlePackPets;
-      }
-    }
-
-    // console.log('pack', pack);
-    return cloneDeep(pack);
-  }
-
-  buildCustomPack(name: string) {
-    // find customPack with name
-    let customPack;
-    for (let pack of (this.customPacks as FormArray).controls) {
-      if (pack.get('name').value == name) {
-        customPack = pack;
-        break;
-      }
-    }
-    let pack = new Map<number, string[]>();
-    for (let i = 1; i <= 6; i++) {
-      pack.set(i, customPack.get(`tier${i}Pets`).value);
-    }
-    return pack;
+  ngOnDestroy(): void {
+    this.customPackSubscription?.unsubscribe();
   }
 
   initEquipment() {
@@ -376,18 +335,14 @@ export class PetSelectorComponent implements OnInit {
       return false;
     }
 
-    let pack = this.getPack(this.player);
-    for (let [tier, pets] of pack) {
-      if (pets.includes(option)) {
-        return false;
-      }
+    const playerPackSet = this.getPlayerPackSet();
+    if (playerPackSet.has(option)) {
+      return false;
     }
     if (this.angler) {
-      let pack = this.getPack(this.opponent);
-      for (let [tier, pets] of pack) {
-        if (pets.includes(option)) {
-          return false;
-        }
+      const opponentPackSet = this.getOpponentPackSet();
+      if (opponentPackSet.has(option)) {
+        return false;
       }
     }
 
@@ -396,6 +351,85 @@ export class PetSelectorComponent implements OnInit {
     }
 
     return true;
+  }
+
+  private initPackSets() {
+    for (const packName of BASE_PACK_NAMES) {
+      const packPets = this.petService.basePackPetsByName[packName];
+      this.basePackSets.set(packName, this.buildPackSetFromMap(packPets));
+    }
+  }
+
+  private buildPackSetFromMap(pack: Map<number, string[]>): Set<string> {
+    const set = new Set<string>();
+    for (const pets of pack.values()) {
+      for (const pet of pets) {
+        set.add(pet);
+      }
+    }
+    return set;
+  }
+
+  private invalidatePackCaches() {
+    this.customPackPetsCache.clear();
+    this.cachedPlayerPack = null;
+    this.cachedOpponentPack = null;
+    this.cachedPlayerPackSet = null;
+    this.cachedOpponentPackSet = null;
+  }
+
+  private getPlayerPackSet(): Set<string> {
+    const packName = this.player?.pack || 'Turtle';
+    if (this.cachedPlayerPack !== packName || !this.cachedPlayerPackSet) {
+      this.cachedPlayerPack = packName;
+      this.cachedPlayerPackSet = this.getPackSetForName(packName);
+    }
+    return this.cachedPlayerPackSet;
+  }
+
+  private getOpponentPackSet(): Set<string> {
+    const packName = this.opponent?.pack || 'Turtle';
+    if (this.cachedOpponentPack !== packName || !this.cachedOpponentPackSet) {
+      this.cachedOpponentPack = packName;
+      this.cachedOpponentPackSet = this.getPackSetForName(packName);
+    }
+    return this.cachedOpponentPackSet;
+  }
+
+  private getPackSetForName(packName: string): Set<string> {
+    const basePack = this.basePackSets.get(packName);
+    if (basePack) {
+      return basePack;
+    }
+    const cachedCustomPack = this.customPackPetsCache.get(packName);
+    if (cachedCustomPack) {
+      return cachedCustomPack;
+    }
+    const builtCustomPack = this.buildCustomPackSet(packName);
+    this.customPackPetsCache.set(packName, builtCustomPack);
+    return builtCustomPack;
+  }
+
+  private buildCustomPackSet(name: string): Set<string> {
+    const fallback = this.basePackSets.get('Turtle') ?? new Set<string>();
+    const customPacks = this.customPacks as FormArray;
+    if (!customPacks?.controls?.length) {
+      return fallback;
+    }
+    const customPack = customPacks.controls.find((pack) => pack.get('name').value === name);
+    if (!customPack) {
+      return fallback;
+    }
+    const packSet = new Set<string>();
+    for (let i = 1; i <= 6; i++) {
+      const pets = customPack.get(`tier${i}Pets`).value || [];
+      for (const pet of pets) {
+        if (pet) {
+          packSet.add(pet);
+        }
+      }
+    }
+    return packSet;
   }
 
 
@@ -408,7 +442,10 @@ export class PetSelectorComponent implements OnInit {
     if (newEquipment == null) {
       newEquipment = this.ailmentEquipment.get(equipment.name);
     }
-    this.formGroup.get('equipment').setValue(newEquipment);
+    setTimeout(() => {
+      this.formGroup.get('equipment').setValue(newEquipment, { emitEvent: false });
+      this.formGroup.get('equipment').updateValueAndValidity({ emitEvent: false });
+    });
   }
 
 

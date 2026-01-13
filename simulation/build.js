@@ -9,7 +9,8 @@ async function build() {
             bundle: true,
             outfile: path.resolve(__dirname, 'dist/index.js'),
             platform: 'node',
-            target: 'node16',
+            target: 'es2015',
+            format: 'esm',
             tsconfig: path.resolve(__dirname, 'tsconfig.json'),
             sourcemap: 'inline',
         });

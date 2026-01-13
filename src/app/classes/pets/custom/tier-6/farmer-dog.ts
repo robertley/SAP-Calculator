@@ -4,7 +4,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 
-export class Fish extends Pet {
+export class FarmerDog extends Pet {
     name = "Farmer Dog";
     tier = 6;
     pack: Pack = 'Custom';
