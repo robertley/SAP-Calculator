@@ -1,8 +1,5 @@
-import { clone, cloneDeep } from "lodash";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { PetService } from "../../../../services/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -15,12 +12,11 @@ export class Tapir extends Pet {
     attack = 4;
     health = 3;
     initAbilities(): void {
-        this.addAbility(new TapirAbility(this, this.logService, this.abilityService, this.petService));
+        this.addAbility(new TapirAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
-        protected petService: PetService,
         parent: Player,
         health?: number,
         attack?: number,

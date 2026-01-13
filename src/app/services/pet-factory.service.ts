@@ -25,6 +25,7 @@ export interface PetForm {
     exp: number;
     equipment: Equipment;
     belugaSwallowedPet?: string;
+    sarcasticFringeheadSwallowedPet?: string;
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
@@ -77,28 +78,35 @@ export class PetFactoryService {
             gameService: this.gameService
         };
 
+        const applySarcasticSetting = (pet: Pet) => {
+            if (pet) {
+                pet.sarcasticFringeheadSwallowedPet = petForm.sarcasticFringeheadSwallowedPet ?? null;
+            }
+            return pet;
+        };
+
         // Check if pet needs GameService (highest priority)
         if (PETS_NEEDING_GAMESERVICE[name]) {
             const PetClass = PETS_NEEDING_GAMESERVICE[name];
-            return new PetClass(this.logService, this.abilityService, petService, this.gameService, parent, health, attack, mana, exp, equipment, triggersConsumed);
+            return applySarcasticSetting(new PetClass(this.logService, this.abilityService, petService, this.gameService, parent, health, attack, mana, exp, equipment, triggersConsumed));
         }
 
         // Special handling for pets with extra parameters
         const specialBuilder = SPECIAL_FORM_PET_BUILDERS[name];
         if (specialBuilder) {
-            return specialBuilder(deps, petForm, parent, petService);
+            return applySarcasticSetting(specialBuilder(deps, petForm, parent, petService));
         }
 
         // Check if pet needs PetService
         if (PETS_NEEDING_PETSERVICE[name]) {
             const PetClass = PETS_NEEDING_PETSERVICE[name];
-            return new PetClass(this.logService, this.abilityService, petService, parent, health, attack, mana, exp, equipment, triggersConsumed);
+            return applySarcasticSetting(new PetClass(this.logService, this.abilityService, petService, parent, health, attack, mana, exp, equipment, triggersConsumed));
         }
 
         // Generic case using registry
         const PetClass = registry[name];
         if (PetClass) {
-            return new PetClass(this.logService, this.abilityService, parent, health, attack, mana, exp, equipment, triggersConsumed);
+            return applySarcasticSetting(new PetClass(this.logService, this.abilityService, parent, health, attack, mana, exp, equipment, triggersConsumed));
         }
 
         // Should not reach here if registry is complete

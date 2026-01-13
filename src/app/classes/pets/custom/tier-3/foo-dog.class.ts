@@ -1,10 +1,8 @@
-import { getOpponent } from "app/util/helper-functions";
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../equipment.class";
-import { Pack, Pet } from "../../../pet.class";
-import { Player } from "../../../player.class";
+import { Equipment } from "../../../../classes/equipment.class";
+import { Pack, Pet } from "../../../../classes/pet.class";
+import { Player } from "../../../../classes/player.class";
 import { FooDogAbility } from "../../../abilities/pets/custom/tier-3/foo-dog-ability.class";
 
 export class FooDog extends Pet {
@@ -13,10 +11,12 @@ export class FooDog extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 5;
-    initAbilities(): void {
-        this.addAbility(new FooDogAbility(this, this.logService, this.abilityService));
+
+    override initAbilities(): void {
+        this.addAbility(new FooDogAbility(this, this.logService));
         super.initAbilities();
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

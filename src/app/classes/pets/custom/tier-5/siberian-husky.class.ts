@@ -13,7 +13,7 @@ export class SiberianHusky extends Pet {
     attack = 4;
     health = 3;
     initAbilities(): void {
-        this.addAbility(new SiberianHuskyAbility(this, this.logService, this.abilityService));
+        this.addAbility(new SiberianHuskyAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

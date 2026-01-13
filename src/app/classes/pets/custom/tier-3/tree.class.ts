@@ -1,20 +1,22 @@
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../equipment.class";
-import { Pack, Pet } from "../../../pet.class";
-import { Player } from "../../../player.class";
+import { Equipment } from "../../../../classes/equipment.class";
+import { Pack, Pet } from "../../../../classes/pet.class";
+import { Player } from "../../../../classes/player.class";
 import { TreeAbility } from "../../../abilities/pets/custom/tier-3/tree-ability.class";
 
 export class Tree extends Pet {
     name = "Tree";
     tier = 3;
     pack: Pack = 'Custom';
-    attack = 2;
-    health = 5;
-    initAbilities(): void {
+    attack = 4;
+    health = 3;
+
+    override initAbilities(): void {
         this.addAbility(new TreeAbility(this, this.logService));
         super.initAbilities();
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

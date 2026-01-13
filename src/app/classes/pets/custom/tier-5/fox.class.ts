@@ -13,7 +13,7 @@ export class Fox extends Pet {
     attack = 6;
     health = 4;
     initAbilities(): void {
-        this.addAbility(new FoxAbility(this, this.logService, this.abilityService));
+        this.addAbility(new FoxAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

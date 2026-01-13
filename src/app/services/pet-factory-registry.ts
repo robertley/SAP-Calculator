@@ -22,7 +22,6 @@ import { ShimaEnaga } from "../classes/pets/star/tier-2/shima-enaga.class";
 import { Parrot } from "../classes/pets/turtle/tier-4/parrot.class";
 import { Whale } from "../classes/pets/turtle/tier-4/whale.class";
 import { Seagull } from "../classes/pets/custom/tier-4/seagull.class";
-import { Tapir } from "../classes/pets/custom/tier-6/tapir.class";
 import { Pelican } from "../classes/pets/star/tier-5/pelican.class";
 import { Falcon } from "../classes/pets/golden/tier-4/falcon.class";
 import { BelugaWhale } from "../classes/pets/golden/tier-5/beluga-whale.class";
@@ -35,6 +34,7 @@ import { GoodDog } from "../classes/pets/hidden/good-dog.class";
 import { Ammonite } from "../classes/pets/star/tier-6/ammonite.class";
 import { Tuna } from "../classes/pets/star/tier-3/tuna.class";
 import { Slime } from "../classes/pets/custom/tier-3/slime.class";
+import { SarcasticFringehead } from "../classes/pets/custom/tier-3/sarcastic-fringehead.class";
 
 export interface PetFactoryDeps {
     logService: LogService;
@@ -58,7 +58,6 @@ export const PETS_NEEDING_PETSERVICE: { [key: string]: any } = {
     'Harpy Eagle': HarpyEagle,
     'Sabertooth Tiger': SabertoothTiger,
     'Orca': Orca,
-    'Tapir': Tapir,
     'Goblin Shark': GoblinShark,
     'Red Lipped Batfish': RedLippedBatfish,
     'Kappa': Kappa,
@@ -71,7 +70,8 @@ export const PETS_NEEDING_PETSERVICE: { [key: string]: any } = {
     'Bay Cat': BayCat,
     'California Condor': CaliforniaCondor,
     'Silky Sifaka': SilkySifaka,
-    'Abomination': Abomination
+    'Abomination': Abomination,
+    'Sarcastic Fringehead': SarcasticFringehead
 };
 
 // Registry: Pet names -> Classes that need PetService AND GameService
@@ -84,9 +84,9 @@ export const PETS_NEEDING_PETSERVICE_TYPES: any[] = [
     GoblinShark, RedLippedBatfish, Kappa, Abomination,
     IriomoteCat, Takhi, RolowayMonkey, Bonobo,
     GoldenTamarin, CaliforniaCondor, SilkySifaka, BayCat,
-    Spider, Eagle, Stork, ShimaEnaga, Parrot, Whale, Tapir,
+    Spider, Eagle, Stork, ShimaEnaga, Parrot, Whale,
     Pelican, Falcon, BelugaWhale, Wolf, Pteranodon, HarpyEagle,
-    SabertoothTiger, Orca, Ammonite
+    SabertoothTiger, Orca, Ammonite, SarcasticFringehead
 ];
 
 export const PETS_NEEDING_GAMESERVICE_TYPES: any[] = [Seagull, GoodDog];
@@ -163,8 +163,7 @@ export const SPECIAL_FORM_PET_BUILDERS: { [key: string]: (deps: PetFactoryDeps, 
             petForm.mana,
             petForm.exp,
             petForm.equipment,
-            petForm.triggersConsumed,
-            petForm.battlesFought
+            petForm.triggersConsumed
         );
     }
 };

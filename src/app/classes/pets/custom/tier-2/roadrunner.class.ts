@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { RoadrunnerAbility } from "../../../abilities/pets/custom/tier-2/roadrunner-ability.class";
 
 export class Roadrunner extends Pet {
     name = "Roadrunner";
@@ -21,5 +22,10 @@ export class Roadrunner extends Pet {
         equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+    }
+
+    override initAbilities(): void {
+        this.addAbility(new RoadrunnerAbility(this));
+        super.initAbilities();
     }
 }

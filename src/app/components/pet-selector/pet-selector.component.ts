@@ -208,6 +208,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       this.substitutePet(false)
     });
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
+    this.formGroup.get('sarcasticFringeheadSwallowedPet')?.valueChanges.subscribe((value) => { this.setSarcasticFringeheadSwallowedPet(value) });
     this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
@@ -269,6 +270,14 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       return;
     }
     pet.belugaSwallowedPet = value;
+  }
+
+  setSarcasticFringeheadSwallowedPet(value: string) {
+    let pet = this.player.getPet(this.index);
+    if (pet == null) {
+      return;
+    }
+    pet.sarcasticFringeheadSwallowedPet = value;
   }
 
   setSwallowedPets(value: string) {

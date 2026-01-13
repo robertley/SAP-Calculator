@@ -1,5 +1,6 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
+
 export class NurikabeAbility extends Ability {
 
     constructor(owner: Pet) {
@@ -10,20 +11,15 @@ export class NurikabeAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            maxUses: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            maxUses: 3,
+            abilityFunction: (context: AbilityContext) => this.executeAbility(context)
         });
     }
 
     private executeAbility(context: AbilityContext): void {
+        // Damage reduction handled in player combat; no direct execution needed
     }
 
-    reset(): void {
-        this.maxUses = this.level;
-        super.reset();
-    }
     copy(newOwner: Pet): NurikabeAbility {
         return new NurikabeAbility(newOwner);
     }

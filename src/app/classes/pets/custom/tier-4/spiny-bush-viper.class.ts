@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { SpinyBushViperAbility } from "../../../abilities/pets/custom/tier-4/spiny-bush-viper-ability.class";
 
 export class SpinyBushViper extends Pet {
     name = "Spiny Bush Viper";
@@ -11,6 +12,10 @@ export class SpinyBushViper extends Pet {
     pack: Pack = 'Custom';
     attack = 5;
     health = 2;
+    initAbilities(): void {
+        this.addAbility(new SpinyBushViperAbility(this, this.logService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

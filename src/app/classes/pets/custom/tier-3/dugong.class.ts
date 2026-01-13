@@ -1,9 +1,9 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { DugongAbility } from "../../../abilities/pets/custom/tier-3/dugong-ability.class";
 
 export class Dugong extends Pet {
     name = "Dugong";
@@ -11,6 +11,12 @@ export class Dugong extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 5;
+
+    override initAbilities(): void {
+        this.addAbility(new DugongAbility(this, this.logService));
+        super.initAbilities();
+    }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

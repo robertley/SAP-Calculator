@@ -1,8 +1,8 @@
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../equipment.class";
-import { Pack, Pet } from "../../../pet.class";
-import { Player } from "../../../player.class";
+import { Equipment } from "../../../../classes/equipment.class";
+import { Pack, Pet } from "../../../../classes/pet.class";
+import { Player } from "../../../../classes/player.class";
 import { SphinxAbility } from "../../../abilities/pets/custom/tier-2/sphinx-ability.class";
 
 export class Sphinx extends Pet {
@@ -11,10 +11,12 @@ export class Sphinx extends Pet {
     pack: Pack = 'Custom';
     attack = 2;
     health = 5;
-    initAbilities(): void {
-        this.addAbility(new SphinxAbility(this, this.logService, this.abilityService));
+
+    override initAbilities(): void {
+        this.addAbility(new SphinxAbility(this));
         super.initAbilities();
     }
+
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

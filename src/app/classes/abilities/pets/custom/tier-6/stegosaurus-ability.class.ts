@@ -1,5 +1,4 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 
@@ -14,35 +13,34 @@ export class StegosaurusAbility extends Ability {
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+            abilityFunction: (context) => this.executeAbility(context)
         });
         this.logService = logService;
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const owner = this.owner;
+        const { gameApi, tiger, pteranodon } = context;
+        const turnNumber = gameApi?.turnNumber ?? 1;
+        const buffAmount = this.level * turnNumber;
+        const target = owner.parent.petArray.find(pet => pet && pet !== owner && pet.alive && !pet.equipment);
 
-        let equipmentPets = owner.parent.petArray.filter(pet => pet.equipment != null);
-        let targetResp = owner.parent.getRandomPet([...equipmentPets, owner], true, false, true, owner);
-        if (targetResp.pet == null) {
+        if (!target) {
+            this.triggerTigerExecution(context);
             return;
         }
-        let power = this.level * gameApi.turnNumber;
-        targetResp.pet.increaseAttack(power);
-        targetResp.pet.increaseHealth(power);
+
+        target.increaseAttack(buffAmount);
+        target.increaseHealth(buffAmount);
+
         this.logService.createLog({
-            message: `${owner.name} gave ${targetResp.pet.name} ${power} attack and ${power} health.`,
+            message: `${owner.name} gave ${target.name} +${buffAmount}/+${buffAmount} at start of battle.`,
             type: 'ability',
             player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetResp.random
+            tiger,
+            pteranodon
         });
 
-        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 

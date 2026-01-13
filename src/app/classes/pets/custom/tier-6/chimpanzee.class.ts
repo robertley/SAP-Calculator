@@ -4,6 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
+import { ChimpanzeeAbility } from "../../../abilities/pets/custom/tier-6/chimpanzee-ability.class";
 
 export class Chimpanzee extends Pet {
     name = "Chimpanzee";
@@ -11,6 +12,10 @@ export class Chimpanzee extends Pet {
     pack: Pack = 'Custom';
     attack = 3;
     health = 5;
+    initAbilities(): void {
+        this.addAbility(new ChimpanzeeAbility(this, this.logService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

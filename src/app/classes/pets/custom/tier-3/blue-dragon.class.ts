@@ -1,25 +1,21 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../../services/ability.service";
-import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../../classes/equipment.class";
-import { Pack, Pet } from "../../../../classes/pet.class";
-import { Player } from "../../../../classes/player.class";
+import { Pet } from "../../../pet.class";
+import { LogService } from "app/services/log.service";
+import { AbilityService } from "app/services/ability.service";
+import { Player } from "../../../player.class";
+import { BlueDragonAbility } from "../../../abilities/pets/custom/tier-3/blue-dragon-ability.class";
 
 export class BlueDragon extends Pet {
-    name = "Blue Dragon";
-    tier = 3;
-    pack: Pack = 'Custom';
-    attack = 3;
-    health = 4;
-    constructor(protected logService: LogService,
-        protected abilityService: AbilityService,
-        parent: Player,
-        health?: number,
-        attack?: number,
-        mana?: number,
-        exp?: number,
-        equipment?: Equipment, triggersConsumed?: number) {
+    constructor(logService: LogService, abilityService: AbilityService, parent: Player) {
         super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+        this.name = "Blue Dragon";
+        this.tier = 3;
+        this.pack = "Custom";
+        this.attack = 3;
+        this.health = 4;
+    }
+
+    initAbilities(): void {
+        this.abilityList = [new BlueDragonAbility(this, this.logService)];
+        super.initAbilities();
     }
 }
