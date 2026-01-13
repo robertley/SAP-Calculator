@@ -1,16 +1,16 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Corncob } from "../../../../equipment/custom/corncob.class";
 
-export class ChupacabraAbility extends Ability {
+export class FarmerChickenAbility extends Ability {
     private logService: LogService;
 
     constructor(owner: Pet, logService: LogService) {
         super({
-            name: 'ChupacabraAbility',
+            name: 'FarmerChickenAbility',
             owner: owner,
-            triggers: ['ThisKilledEnemy'],
+            triggers: ['EndTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -22,23 +22,24 @@ export class ChupacabraAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
+        
+        const { tiger, pteranodon } = context;
+        const owner = this.owner;
 
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        let targetsResp = owner.parent.nearestPetsAhead(this.level, owner);
+        if (targetsResp.pets.length === 0) {
+            return;
+        }
 
-        for (let i = 0; i < this.level * 2; i++) {
-            let targetResp = owner.parent.getRandomPet([owner], true, false, true, owner);
-            if (targetResp.pet == null) {
-                return;
-            }
-
-            targetResp.pet.increaseHealth(1);
-
+        for (let target of targetsResp.pets) {
+            target.givePetEquipment(new Corncob());
             this.logService.createLog({
-                message: `${owner.name} gave ${targetResp.pet.name} 1 health.`,
-                type: "ability",
+                message: `${owner.name} fed ${target.name} a Corncob.`,
+                type: 'ability',
                 player: owner.parent,
                 tiger: tiger,
-                randomEvent: targetResp.random
+                pteranodon: pteranodon,
+                randomEvent: targetsResp.random
             });
         }
 
@@ -46,7 +47,7 @@ export class ChupacabraAbility extends Ability {
         this.triggerTigerExecution(context);
     }
 
-    copy(newOwner: Pet): ChupacabraAbility {
-        return new ChupacabraAbility(newOwner, this.logService);
+    copy(newOwner: Pet): FarmerChickenAbility {
+        return new FarmerChickenAbility(newOwner, this.logService);
     }
 }
