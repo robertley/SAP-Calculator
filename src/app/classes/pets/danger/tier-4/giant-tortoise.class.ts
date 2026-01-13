@@ -11,7 +11,7 @@ export class GiantTortoise extends Pet {
     tier = 4;
     pack: Pack = 'Danger';
     attack = 4;
-    health = 8;
+    health = 6;
 
     initAbilities(): void {
         this.addAbility(new GiantTortoiseAbility(this, this.logService, this.abilityService));

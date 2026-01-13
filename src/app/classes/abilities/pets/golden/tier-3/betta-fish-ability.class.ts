@@ -1,6 +1,8 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
+import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { Power } from "app/interfaces/power.interface";
 import { Guava } from "../../../../equipment/custom/guava.class";
 
 export class BettaFishAbility extends Ability {
@@ -16,51 +18,44 @@ export class BettaFishAbility extends Ability {
             native: true,
             abilitylevel: owner.level,
             maxUses: owner.level,
-            condition: (context: AbilityContext) => {
-                const { triggerPet } = context;
-                return !!triggerPet && triggerPet !== owner && !this.targetedPets.has(triggerPet);
-            },
-            abilityFunction: (context) => this.executeAbility(context)
+            abilityFunction: (context) => {
+                this.executeAbility(context);
+            }
         });
         this.logService = logService;
     }
 
     reset(): void {
-        this.targetedPets.clear();
         this.maxUses = this.level;
+        this.targetedPets.clear();
         super.reset();
     }
 
-    initUses(): void {
-        this.targetedPets.clear();
-        this.maxUses = this.level;
-        super.initUses();
-    }
-
     private executeAbility(context: AbilityContext): void {
-        const { triggerPet, tiger, pteranodon } = context;
-        if (!triggerPet) {
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
+
+        if (!triggerPet || triggerPet == owner) {
             return;
         }
-        const owner = this.owner;
 
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let target = targetResp.pet;
-        if (target == null) {
+        // Check if we already targeted this pet this turn (for "different friends" logic)
+        if (this.targetedPets.has(triggerPet)) {
             return;
         }
 
         this.targetedPets.add(triggerPet);
 
-        target.givePetEquipment(new Guava());
+        triggerPet.givePetEquipment(new Guava());
+
         this.logService.createLog({
-            message: `${owner.name} gave ${target.name} Guava.`,
+            message: `${owner.name} gave ${triggerPet.name} Guava.`,
             type: 'ability',
             player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
+            tiger: tiger
         });
 
+        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 

@@ -23,9 +23,9 @@ export class HighlandCowAbility extends Ability {
 
     private executeAbility(context: AbilityContext): void {
 
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
-        let trumpetAmt = Math.floor(owner.health / 3 * this.level);
+        let trumpetAmt = (this.level * 4) + Math.floor(owner.health / 3 * this.level);
         const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
         trumpetTargetResp.player.gainTrumpets(trumpetAmt, owner, pteranodon, undefined, undefined, trumpetTargetResp.random);
 

@@ -35,6 +35,7 @@ export class Player {
     trumpets: number = 0;
     spawnedGoldenRetiever: boolean = false;
     summonedBoatThisBattle: boolean = false;
+    public isOpponent: boolean = false;
 
     cannedAilments: string[] = [];
 
