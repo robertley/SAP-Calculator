@@ -366,8 +366,10 @@ export class SimulationRunner {
         if (petRemoved) {
             this.emptyFrontSpaceCheck();
         }
-        this.player.checkGoldenSpawn();
-        this.opponent.checkGoldenSpawn();
+        if (!this.abilityService.hasGlobalEvents) {
+            this.player.checkGoldenSpawn();
+            this.opponent.checkGoldenSpawn();
+        }
     }
 
     protected checkPetsAlive() {

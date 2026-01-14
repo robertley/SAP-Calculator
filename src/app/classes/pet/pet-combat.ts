@@ -458,7 +458,7 @@ export function calculateDamage(
         damage = Math.min(damage, pet.health - 1);
     }
     //TO DO: Might need to move all pet's less damage ability down here, or into Deal Damage
-    //T) DO: Change from name check/trigger check to how many ability check
+    //TO DO: Change from name check/trigger check to how many ability check
     let fairyBallReduction = 0;
     if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
         for (let ability of pet.abilityList) {

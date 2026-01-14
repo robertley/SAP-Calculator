@@ -6,7 +6,6 @@ import { Player } from "../../player.class";
 import { PetService } from "../../../services/pet.service";
 import { GameService } from "../../../services/game.service";
 import { GoodDogAbility } from "../../abilities/pets/hidden/good-dog-ability.class";
-// TO DO: Add all perks
 export class GoodDog extends Pet {
     name = "Good Dog";
     tier = 5;
