@@ -3,6 +3,8 @@ import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { LogService } from "app/services/log.service";
 import { PetService } from "app/services/pet.service";
+import { EquipmentService } from "app/services/equipment.service";
+import { InjectorService } from "app/services/injector.service";
 
 export class CocoaBeanAbility extends Ability {
     private equipment: Equipment;
@@ -29,6 +31,7 @@ export class CocoaBeanAbility extends Ability {
 
     private executeAbility(context: AbilityContext): void {
         const owner = this.owner;
+        const equipmentService = InjectorService.getInjector().get(EquipmentService);
 
         for (let i = 0; i < this.equipment.multiplier; i++) {
             // Get random enemy
@@ -40,15 +43,25 @@ export class CocoaBeanAbility extends Ability {
 
             let randomEnemy = enemies[Math.floor(Math.random() * enemies.length)];
 
-            // Create proper Pet instance (equipment consumed)
+            let equipmentInstance: Equipment = null;
+            if (randomEnemy.equipment) {
+                if (randomEnemy.equipment.equipmentClass?.startsWith('ailment')) {
+                    equipmentInstance = equipmentService.getInstanceOfAllAilments().get(randomEnemy.equipment.name);
+                } else {
+                    equipmentInstance = equipmentService.getInstanceOfAllEquipment().get(randomEnemy.equipment.name);
+                }
+            }
+
+            // Create proper Pet instance
             let transformedPet = this.petService.createPet({
                 name: randomEnemy.name,
                 attack: randomEnemy.attack,
                 health: randomEnemy.health,
                 mana: owner.mana,
-                exp: owner.exp,
-                equipment: null
+                exp: randomEnemy.exp,
+                equipment: equipmentInstance
             }, owner.parent);
+            transformedPet.mana = owner.mana;
 
             // Copy special state that needs to be preserved
             if (randomEnemy.swallowedPets && randomEnemy.swallowedPets.length > 0) {
@@ -68,10 +81,9 @@ export class CocoaBeanAbility extends Ability {
             }
 
             transformedPet.abilityCounter = randomEnemy.abilityCounter;
-
-            transformedPet.abilityCounter = 0;
-
-            transformedPet.timesHurt = (randomEnemy).timesHurt;
+            transformedPet.timesHurt = randomEnemy.timesHurt;
+            transformedPet.timesAttacked = randomEnemy.timesAttacked;
+            transformedPet.battlesFought = randomEnemy.battlesFought;
             transformedPet.copyAbilities(randomEnemy, 'Pet');
             let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
             this.logService.createLog({
@@ -81,7 +93,6 @@ export class CocoaBeanAbility extends Ability {
                 randomEvent: enemies.length > 1
             });
 
-            // TODO: Copy Friend Summoned, friend sold, roll etc
             owner.parent.transformPet(owner, transformedPet);
         }
     }

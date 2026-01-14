@@ -32,7 +32,18 @@ export class StorkAbility extends Ability {
         const owner = this.owner;
 
         let tier = Math.max(1, gameApi.previousShopTier - 1);
-        let summonPetPool = this.petService.allPets.get(tier);
+        const normalizePool = (pool?: string[]) => (pool ?? []).filter(petName =>
+            petName && owner.name && petName.toLowerCase() !== owner.name.toLowerCase()
+        );
+        let summonPetPool = normalizePool(this.petService.allPets.get(tier));
+        if (!summonPetPool.length) {
+            summonPetPool = normalizePool(this.petService.allPets.get(1));
+        }
+        if (!summonPetPool.length) {
+            // Nothing to spawn; keep ability chain intact
+            this.triggerTigerExecution(context);
+            return;
+        }
 
         let summonPetName = summonPetPool[Math.floor(Math.random() * summonPetPool.length)];
         let oldStork = gameApi.oldStork;

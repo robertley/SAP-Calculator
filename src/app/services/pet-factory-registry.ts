@@ -35,6 +35,7 @@ import { Ammonite } from "../classes/pets/star/tier-6/ammonite.class";
 import { Tuna } from "../classes/pets/star/tier-3/tuna.class";
 import { Slime } from "../classes/pets/custom/tier-3/slime.class";
 import { SarcasticFringehead } from "../classes/pets/custom/tier-3/sarcastic-fringehead.class";
+import { Hippogriff } from "../classes/pets/custom/tier-5/hippogriff.class";
 
 export interface PetFactoryDeps {
     logService: LogService;
@@ -58,6 +59,7 @@ export const PETS_NEEDING_PETSERVICE: { [key: string]: any } = {
     'Harpy Eagle': HarpyEagle,
     'Sabertooth Tiger': SabertoothTiger,
     'Orca': Orca,
+    'Hippogriff': Hippogriff,
     'Goblin Shark': GoblinShark,
     'Red Lipped Batfish': RedLippedBatfish,
     'Kappa': Kappa,
@@ -86,7 +88,7 @@ export const PETS_NEEDING_PETSERVICE_TYPES: any[] = [
     GoldenTamarin, CaliforniaCondor, SilkySifaka, BayCat,
     Spider, Eagle, Stork, ShimaEnaga, Parrot, Whale,
     Pelican, Falcon, BelugaWhale, Wolf, Pteranodon, HarpyEagle,
-    SabertoothTiger, Orca, Ammonite, SarcasticFringehead
+    SabertoothTiger, Orca, Ammonite, SarcasticFringehead, Hippogriff
 ];
 
 export const PETS_NEEDING_GAMESERVICE_TYPES: any[] = [Seagull, GoodDog];

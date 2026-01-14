@@ -4,6 +4,7 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { PetService } from "app/services/pet.service";
 import { AbilityService } from "app/services/ability.service";
+import { DANGERS_AND_USEFUL_POOLS } from "app/data/dangers-and-useful";
 
 export class BayCatAbility extends Ability {
     private logService: LogService;
@@ -31,9 +32,7 @@ export class BayCatAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let bayPool = [
-            "Skunk", "Fossa", "Kraken", "Lynx", "Humphead Wrasse", "Goblin Shark", "Red Lipped Batfish", "Platybelodon", "Tasmanian Devil"
-        ];
+        let bayPool = DANGERS_AND_USEFUL_POOLS.bayCat;
 
         for (let i = 0; i < owner.level; i++) {
             let petName = bayPool[Math.floor(Math.random() * bayPool.length)];

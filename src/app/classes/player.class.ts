@@ -183,7 +183,6 @@ export class Player {
         }
     }
 
-    // TODO - no room logic
     summonPet(spawnPet: Pet, position: number, fly = false, summoner?: Pet): { success: boolean, randomEvent: boolean } {
         // Handle Silly ailment randomization
         if (summoner && this.hasSilly(summoner)) {
@@ -196,6 +195,16 @@ export class Player {
 
             let result = targetTeam.summonPet(spawnPet, randomPosition, fly, undefined);
             return { success: result.success, randomEvent: true };
+        }
+        if (position < 0 || position > 4) {
+            if (!fly) {
+                this.logService.createLog({
+                    message: `No room to spawn ${spawnPet.name}!`,
+                    type: 'ability',
+                    player: this
+                })
+            }
+            return { success: false, randomEvent: false };
         }
 
         if (this.petArray.length == 5) {
@@ -1318,6 +1327,16 @@ export class Player {
     }
 
     pushPet(pet: Pet, spaces = 1, jump?: boolean) {
+        if (pet?.equipment?.name === 'Brussels Sprout') {
+            this.logService.createLog({
+                message: `${pet.name} blocked being pushed. (Brussels Sprout)`,
+                type: 'equipment',
+                player: pet.parent
+            });
+            pet.removePerk();
+            return;
+        }
+
         let player = pet.parent;
         let position = pet.position;
         player[`pet${position}`] = null;

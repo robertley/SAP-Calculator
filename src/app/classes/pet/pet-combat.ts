@@ -9,6 +9,7 @@ import { Cheese } from "../equipment/star/cheese.class";
 import { FortuneCookie } from "../equipment/custom/fortune-cookie.class";
 import { Pepper } from "../equipment/star/pepper.class";
 import { Icky } from "../equipment/ailments/icky.class";
+import { Sleepy } from "../equipment/ailments/sleepy.class";
 import { HoneydewMelon, HoneydewMelonAttack } from "../equipment/golden/honeydew-melon.class";
 import { Guava, GuavaAttack } from "../equipment/custom/guava.class";
 
@@ -18,6 +19,10 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
     let attackEquipment = damageResp.attackEquipment;
     let defenseEquipment = damageResp.defenseEquipment;
     let damage = damageResp.damage;
+    const usedSleepy = self.equipment instanceof Sleepy;
+    if (usedSleepy) {
+        damage = Math.floor(damage / 2);
+    }
 
     let attackMultiplier = self.equipment?.multiplier;
     let defenseMultiplier = pet.equipment?.multiplier;
@@ -30,6 +35,9 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
         }
     } else {
         message = `${self.name} attacks ${pet.name} for ${damage}.`;
+    }
+    if (usedSleepy) {
+        message += ' (Sleepy x0.5)';
     }
     // peanut death
     if (attackEquipment instanceof Peanut && damage > 0) {
@@ -99,7 +107,9 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
             if (defenseEquipment.power < 0) {
                 sign = '+';
             }
-            if (defenseEquipment.name === 'Strawberry') {
+            if (defenseEquipment.name === 'Coconut') {
+                message += ` (${defenseEquipment.name} block)`;
+            } else if (defenseEquipment.name === 'Strawberry') {
                 let sparrowLevel = pet.getSparrowLevel();
                 if (sparrowLevel > 0) {
                     power = sparrowLevel * 5;
@@ -176,9 +186,17 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
         }
     }
 
+    if (usedSleepy) {
+        self.removePerk();
+    }
+
     // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
     self.triggerAttackEventsFor();
     self.applyCrisp();
+    const opponentPet = self.parent.opponent?.petArray?.[0];
+    if (opponentPet) {
+        opponentPet.applyCrisp();
+    }
 }
 
 export function snipePet(
@@ -205,6 +223,15 @@ export function snipePet(
     let attackEquipment = damageResp.attackEquipment;
     let defenseEquipment = damageResp.defenseEquipment;
     let damage = damageResp.damage;
+    if (self.equipment?.name === 'Kiwano' && damage > 0) {
+        damage = 10;
+        self.createLog({
+            message: `${self.name} set damage to 10. (Kiwano)`,
+            type: 'equipment',
+            player: self.parent
+        });
+        self.removePerk();
+    }
 
     dealDamage(self, pet, damage);
 
@@ -216,7 +243,9 @@ export function snipePet(
         if (defenseEquipment.power < 0) {
             sign = '+';
         }
-        if (defenseEquipment.name === 'Strawberry') {
+        if (defenseEquipment.name === 'Coconut') {
+            message += ` (${defenseEquipment.name} block)`;
+        } else if (defenseEquipment.name === 'Strawberry') {
             let sparrowLevel = pet.getSparrowLevel();
             if (sparrowLevel > 0) {
                 power = sparrowLevel * 5;
@@ -299,6 +328,13 @@ export function snipePet(
         pteranodon: pteranodon
     });
 
+    if (attackEquipment != null && attackEquipment.equipmentClass == 'attack-snipe' && self.equipment?.uses != null) {
+        self.equipment.uses -= 1;
+        if (self.equipment.uses <= 0) {
+            self.removePerk();
+        }
+    }
+
     return damage;
 }
 
@@ -354,7 +390,6 @@ export function calculateDamage(
 
     let attackEquipment: Equipment;
     let attackAmt: number;
-    // TODO snipe ability bug with ink?
     if (snipe) {
         attackEquipment = self.equipment?.equipmentClass == 'attack-snipe' ? self.equipment : null;
         attackAmt = attackEquipment != null ? power + attackEquipment.power : power;
@@ -454,6 +489,9 @@ export function calculateDamage(
         damage = Math.max(min, attackAmt - defenseAmt);
     }
 
+    if (self.equipment?.name === 'Inked' && damage > 0) {
+        damage = Math.max(0, damage - 3);
+    }
     if (defenseEquipment instanceof Pepper) {
         damage = Math.min(damage, pet.health - 1);
     }
@@ -559,7 +597,7 @@ export function dealDamage(self: Pet, pet: Pet, damage: number): void {
         return;
     }
     if (damage >= pet.health && pet.equipment?.name == 'Bok Choy') {
-        let healthGain = 3 * pet.equipment.multiplier;
+        let healthGain = 4 * pet.equipment.multiplier;
         self.createLog({
             message: `${pet.name} gained ${healthGain} health (Bok Choy) ${pet.equipment.multiplierMessage} `,
             type: 'equipment',

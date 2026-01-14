@@ -10,8 +10,8 @@ export class Bakunawa extends Pet {
     name = "Bakunawa";
     tier = 6;
     pack: Pack = 'Custom';
-    attack = 7;
-    health = 6;
+    attack = 4;
+    health = 3;
     initAbilities(): void {
         this.addAbility(new BakunawaAbility(this, this.logService));
         super.initAbilities();

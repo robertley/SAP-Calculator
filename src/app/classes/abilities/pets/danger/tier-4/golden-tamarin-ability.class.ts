@@ -3,6 +3,7 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { PetService } from "app/services/pet.service";
+import { DANGERS_AND_USEFUL_POOLS } from "app/data/dangers-and-useful";
 
 export class GoldenTamarinAbility extends Ability {
     private logService: LogService;
@@ -36,8 +37,7 @@ export class GoldenTamarinAbility extends Ability {
             return;
         }
 
-        // Golden Tamarin pool of tier 5+ Start of Battle pets
-        const petNames = ["Crocodile", "Red Dragon",  "Salmon of Knowledge", "Sea Cucumber", "Werewolf", "Tarantula Hawk", "Snow Leopard"];
+        const petNames = DANGERS_AND_USEFUL_POOLS.goldenTamarin;
         let randomIndex = Math.floor(Math.random() * petNames.length);
         let selectedPetName = petNames[randomIndex];
 

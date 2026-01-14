@@ -27,7 +27,11 @@ export class FrigatebirdAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let equipment = triggerPet.equipment;
+        const equipment = triggerPet?.equipment;
+        if (!equipment || !equipment.equipmentClass?.startsWith('ailment')) {
+            return;
+        }
+        triggerPet.removePerk();
         triggerPet.givePetEquipment(new Rice());
         this.logService.createLog({
             message: `${owner.name} removed ${equipment.name} from ${triggerPet.name} and gave ${triggerPet.name} Rice.`,

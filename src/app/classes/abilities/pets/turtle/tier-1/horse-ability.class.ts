@@ -2,6 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class HorseAbility extends Ability {
     private logService: LogService;
@@ -26,19 +27,21 @@ export class HorseAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         // Use ability level - Tiger system will override this.level during second execution
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        if (targetResp.pet == null) {
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+        if (!targetResp.pet) {
             return;
         }
 
-        targetResp.pet.increaseAttack(this.level);
-        this.logService.createLog({
-            message: `${owner.name} gave ${triggerPet.name} ${this.level} attack`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
+        const target = targetResp.pet;
+        target.increaseAttack(this.level);
+        logAbility(
+            this.logService,
+            owner,
+            `${owner.name} gave ${target.name} ${this.level} attack`,
+            tiger,
+            pteranodon,
+            { randomEvent: targetResp.random }
+        );
 
         this.triggerTigerExecution(context);
     }

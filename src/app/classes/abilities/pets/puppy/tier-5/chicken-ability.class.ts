@@ -11,7 +11,7 @@ export class ChickenAbility extends Ability {
         super({
             name: 'ChickenAbility',
             owner: owner,
-            triggers: [],
+            triggers: ['StartTurn'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -24,7 +24,14 @@ export class ChickenAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
+        const owner = this.owner;
+        const buff = this.level;
+        this.logService.createLog({
+            message: `${owner.name} gave future shop pets +${buff} attack and +${buff} health.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: context.tiger
+        });
         this.triggerTigerExecution(context);
     }
 

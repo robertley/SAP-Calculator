@@ -3,6 +3,8 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { Alpaca } from "../../../../pets/star/tier-6/alpaca.class";
+import { awardExperienceWithLog } from "../../../ability-effects";
+import { resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class AlpacaAbility extends Ability {
     private logService: LogService;
@@ -35,18 +37,18 @@ export class AlpacaAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let target = targetResp.pet;
-        if (target == null) {
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+        if (!targetResp.pet) {
             return;
         }
-        target.increaseExp(3);
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} 3 exp.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
+
+        awardExperienceWithLog({
+            logService: this.logService,
+            owner,
+            context,
+            target: targetResp.pet,
+            amount: 3,
+            extras: { randomEvent: targetResp.random }
         });
 
         // Tiger system: trigger Tiger execution at the end

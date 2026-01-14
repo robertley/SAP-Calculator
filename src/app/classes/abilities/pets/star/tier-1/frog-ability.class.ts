@@ -5,12 +5,12 @@ import { LogService } from "app/services/log.service";
 
 export class FrogAbility extends Ability {
     private logService: LogService;
-
+    // Frog Ability not SOB at lvl 1 now, changed to Sell, deleted trigger, kept original implementation
     constructor(owner: Pet, logService: LogService) {
         super({
             name: 'FrogAbility',
             owner: owner,
-            triggers: ['StartBattle'],
+            triggers: [],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
@@ -27,8 +27,8 @@ export class FrogAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         // Get pets ahead and behind with Silly-aware targeting
         let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
