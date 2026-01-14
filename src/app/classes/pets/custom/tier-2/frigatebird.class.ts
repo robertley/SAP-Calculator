@@ -5,7 +5,6 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { FrigatebirdAbility } from "../../../abilities/pets/custom/tier-2/frigatebird-ability.class";
 
-// TODO research order of ailment removal
 export class Frigatebird extends Pet {
     name = "Frigatebird";
     tier = 2;

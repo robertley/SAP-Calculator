@@ -5,7 +5,6 @@ import { Tandgnost } from "../../../pets/custom/tier-4/tandgnost.class";
 import { Tandgrisner } from "../../../pets/custom/tier-5/tandgrisner.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
-import { sum } from "lodash";
 
 export class YggdrasilFruitAbility extends Ability {
     private equipment: Equipment;
@@ -33,8 +32,8 @@ export class YggdrasilFruitAbility extends Ability {
         const owner = this.owner;
 
         for (let i = 0; i < this.equipment.multiplier; i++) {
-            let tandgnost = new Tandgnost(this.logService, this.abilityService, owner.parent, 3, 3, 0);
-            let tandgrisner = new Tandgrisner(this.logService, this.abilityService, owner.parent, 3, 3, 0);
+            let tandgnost = new Tandgnost(this.logService, this.abilityService, owner.parent, 5, 5, 0);
+            let tandgrisner = new Tandgrisner(this.logService, this.abilityService, owner.parent, 5, 5, 0);
 
             let multiplierMessage = (i > 0) ? this.equipment.multiplierMessage : '';
 

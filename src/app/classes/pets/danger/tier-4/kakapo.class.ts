@@ -9,7 +9,7 @@ export class Kakapo extends Pet {
     name = "Kakapo";
     tier = 4;
     pack: Pack = 'Danger';
-    attack = 3;
+    attack = 4;
     health = 4;
 
     initAbilities(): void {

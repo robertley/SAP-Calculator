@@ -6,7 +6,6 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { SeaSerpentAbility } from "../../../abilities/pets/unicorn/tier-6/sea-serpent-ability.class";
 
-// TODO investigate tiger interaction
 export class SeaSerpent extends Pet {
     name = "Sea Serpent";
     tier = 6;

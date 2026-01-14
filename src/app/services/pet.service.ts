@@ -265,86 +265,183 @@ export class PetService {
     );
   }
 
-  getRandomFaintPet(parent: Player, tier?: number): Pet {
+  getRandomFaintPet(parent: Player, tier?: number, excludeNames: string[] = []): Pet {
     let faintPetsByTier = {
-      1: ["Ant", "Cricket", "Groundhog", "Pied Tamarin"],
+      1: [
+        "Ant",
+        "Cockroach",
+        "Cricket",
+        "Ethiopian Wolf",
+        "Farmer Mouse",
+        "Firefly",
+        "Groundhog",
+        "Hummingbird",
+        "Peacock Spider",
+        "Pied Tamarin",
+        "Sneaky Egg",
+        "Togian Babirusa",
+        "Volcano Snail",
+      ],
       2: [
-        "Rat",
-        "Hedgehog",
-        "Flamingo",
-        "Spider",
-        "Stork",
         "Beluga Sturgeon",
-        "Squid",
-        "Black Necked Stilt",
-        "Frost Wolf",
-        "Mothman",
-        "Gargoyle",
         "Bigfoot",
+        "Black Necked Stilt",
+        "Dove",
+        "Dung Beetle",
+        "Flamingo",
+        "Frost Wolf",
+        "Gargoyle",
+        "Hedgehog",
+        "Mandrill",
         "Nightcrawler",
+        "Olm",
+        "Pink Robin",
+        "Rat",
+        "Sea Urchin",
+        "Spider",
+        "Squid",
+        "Stork",
+        "Takhi",
+        "Thorny Dragon",
       ],
       3: [
-        "Badger",
-        "Sheep",
         "Anteater",
-        "Hoopoe Bird",
-        "Mole",
-        "Pangolin",
-        "Blobfish",
-        "Flea",
-        "Weasel",
-        "Osprey",
+        "Baby Urchin",
+        "Badger",
         "Bear",
         "Betta Fish",
-        "Skeleton Dog",
-        "Fur-Bearing Trout",
         "Calygreyhound",
+        "Dugong",
+        "Flea",
+        "Fur-Bearing Trout",
+        "Hirola",
+        "Hoopoe Bird",
+        "Jewel Caterpillar",
+        "Mandrake",
+        "Mole",
+        "Musk Ox",
+        "Osprey",
+        "Ox",
+        "Pangolin",
+        "Patagonian Mara",
+        "Quetzalcoatlus",
+        "Royal Flycatcher",
+        "Sarcastic Fringehead",
+        "Sheep",
+        "Skeleton Dog",
         "Slime",
+        "Surgeon Fish",
+        "Tatzelwurm",
+        "Tucuxi",
+        "Tuna",
+        "Weasel",
       ],
       4: [
-        "Turtle",
-        "Deer",
-        "Microbe",
-        "Tahr",
-        "Chameleon",
-        "Cuttlefish",
-        "Vaquita",
-        "Slug",
+        "Blue-Footed Booby",
         "Chimera",
+        "Cuttlefish",
+        "Deer",
+        "Donkey",
+        "Goblin Shark",
+        "Kakapo",
+        "Leaf Gecko",
+        "Locust",
+        "Microbe",
+        "Mimic",
+        "Platypus",
+        "Poison Dart Frog",
+        "Red Lipped Batfish",
+        "Saiga Antelope",
+        "Slug",
+        "Spiny Bush Viper",
+        "Tahr",
+        "Tardigrade",
+        "Turtle",
+        "Vaquita",
         "Visitor",
+        "Whale",
       ],
       5: [
-        "Rooster",
+        "Beluga Whale",
+        "Blobfish",
+        "Blue Jay",
+        "Brahma Chicken",
         "Eagle",
+        "Egyptian Vulture",
+        "Farmer Crow",
         "Fire Ant",
-        "Stonefish",
-        "Nyala",
-        "Nurse Shark",
-        "Wolf",
-        "Nessie",
-        "Pixiu",
+        "Giant Isopod",
+        "Giant Pangasius",
+        "Hawaiian Monk Seal",
+        "Hippocampus",
         "Kappa",
+        "Kitsune",
+        "Lusca",
+        "Maltese",
+        "Namazu",
+        "Nessie",
+        "Nurse Shark",
+        "Nyala",
+        "Painted Terrapin",
+        "Pelican",
+        "Pixiu",
+        "Rooster",
+        "Secretary Bird",
+        "Shark",
+        "Snapping Turtle",
+        "Stonefish",
+        "Tarasque",
+        "Vulture",
+        "Wolf",
       ],
       6: [
-        "Mammoth",
-        "Snapping Turtle",
-        "Lionfish",
-        "Warthog",
-        "Walrus",
-        "Phoenix",
-        "Sea Serpent",
+        "Akhlut",
+        "Ammonite",
+        "Bay Cat",
+        "Black Bear",
+        "Eagle Owl",
+        "Fly",
         "Hydra",
+        "Lamprey",
+        "Lionfish",
+        "Mammoth",
+        "Markhor",
+        "Orca",
+        "Phoenix",
+        "Sabertooth Tiger",
+        "Walrus",
+        "Warthog",
+        "Yellow Boxfish",
       ],
     };
 
-    let faintPets = [];
+    let faintPets: string[] = [];
     if (tier && faintPetsByTier[tier]) {
       faintPets = faintPetsByTier[tier];
     } else {
       // If no tier specified or invalid tier, use all faint pets
       faintPets = [].concat(...Object.values(faintPetsByTier));
     }
-    let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
+
+    const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
+    const filteredFaintPets = faintPets.filter((name) => !excludeSet.has(name.toLowerCase()));
+
+    // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
+    let pool = filteredFaintPets;
+    if (!pool.length && tier) {
+      const allFiltered = [].concat(...Object.values(faintPetsByTier))
+        .filter((name: string) => !excludeSet.has(name.toLowerCase()));
+      if (allFiltered.length) {
+        pool = allFiltered;
+      }
+    }
+
+    // Final fallback to original list to avoid crashes if everything was excluded
+    if (!pool.length) {
+      pool = faintPets;
+    }
+
+    let petName = pool[getRandomInt(0, pool.length - 1)];
     return this.createPet(
       {
         name: petName,

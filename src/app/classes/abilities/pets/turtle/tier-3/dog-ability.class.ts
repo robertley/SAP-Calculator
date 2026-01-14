@@ -24,6 +24,9 @@ export class DogAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        if (!triggerPet || triggerPet === owner) {
+            return;
+        }
         let boostAtkAmt = this.level * 2;
         let boostHealthAmt = this.level;
         let selfTargetResp = owner.parent.getThis(owner);

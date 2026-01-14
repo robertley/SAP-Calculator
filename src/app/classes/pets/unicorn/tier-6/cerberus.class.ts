@@ -5,7 +5,6 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { CerberusAbility } from "../../../abilities/pets/unicorn/tier-6/cerberus-ability.class";
 
-// TODO fix bug where cerberus spawns 2 fire pups at start of battle when there is an empty slot
 export class Cerberus extends Pet {
     name = "Cerberus";
     tier = 6;

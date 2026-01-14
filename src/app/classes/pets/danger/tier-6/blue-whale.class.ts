@@ -3,6 +3,7 @@ import { LogService } from "../../../../services/log.service";
 import { Player } from "../../../player.class";
 import { Pet, Pack } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
+import { BlueWhaleAbility } from "../../../abilities/pets/danger/tier-6/blue-whale-ability.class";
 
 export class BlueWhale extends Pet {
     name = "Blue Whale";
@@ -10,6 +11,10 @@ export class BlueWhale extends Pet {
     pack: Pack = "Danger";
     health = 12;
     attack = 12;
+    initAbilities(): void {
+        this.addAbility(new BlueWhaleAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
 
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,

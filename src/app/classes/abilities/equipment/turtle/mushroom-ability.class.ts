@@ -32,6 +32,9 @@ export class MushroomAbility extends Ability {
 
         for (let i = 0; i < this.equipment.multiplier; i++) {
             let newPet = this.petService.createDefaultVersionOfPet(owner, 1, 1);
+            newPet.exp = owner.exp;
+            newPet.triggersConsumed = owner.triggersConsumed;
+            newPet.originalTriggersConsumed = owner.triggersConsumed;
 
             let summonResult = owner.parent.summonPet(newPet, owner.savedPosition);
             if (summonResult.success) {

@@ -26,7 +26,7 @@ export class SharkAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        if (triggerPet == owner) {
+        if (!owner.alive || triggerPet == owner) {
             return;
         }
         let power: Power = {

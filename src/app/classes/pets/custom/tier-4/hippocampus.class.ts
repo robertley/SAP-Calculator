@@ -13,7 +13,7 @@ export class Hippocampus extends Pet {
     attack = 2;
     health = 4;
     initAbilities(): void {
-        this.addAbility(new HippocampusAbility(this, this.logService, this.abilityService));
+        this.addAbility(new HippocampusAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

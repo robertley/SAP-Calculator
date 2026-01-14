@@ -29,6 +29,7 @@ export class ParrotAbility extends Ability {
             return;
         }
         owner.copyAbilities(copyPet, 'Pet');
+        owner.initAbilityUses();
         this.logService.createLog({
             message: `${owner.name} copied ${copyPet.name}`,
             type: 'ability',

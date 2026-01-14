@@ -13,6 +13,7 @@ export interface PetConfig {
     abominationSwallowedPet3?: string | null;
     battlesFought?: number;
     timesHurt?: number;
+    sarcasticFringeheadSwallowedPet?: string | null;
 }
 
 export interface SimulationConfig {

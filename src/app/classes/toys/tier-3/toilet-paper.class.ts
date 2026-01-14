@@ -5,7 +5,7 @@ import { Toy } from "../../toy.class";
 
 export class ToiletPaper extends Toy {
     name = "Toilet Paper";
-    tier = 3;
+    tier = 4;
     startOfBattle(gameApi?: GameAPI, puma?: boolean) {
         let opponent = getOpponent(gameApi, this.parent);
         let weakTargets = opponent.petArray.filter(pet => pet.equipment?.name != 'Weak').slice(0, this.level);

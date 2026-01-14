@@ -4,6 +4,7 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { AbilityService } from "app/services/ability.service";
 import { Strawberry } from "../../../../equipment/star/strawberry.class";
+import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class PheasantAbility extends Ability {
     private logService: LogService;
@@ -33,18 +34,20 @@ export class PheasantAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let target = targetResp.pet;
-        if (target == null) {
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+        if (!targetResp.pet) {
             return;
         }
 
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} a Strawberry.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger
-        });
+        const target = targetResp.pet;
+        logAbility(
+            this.logService,
+            owner,
+            `${owner.name} gave ${target.name} a Strawberry.`,
+            tiger,
+            pteranodon,
+            { randomEvent: targetResp.random }
+        );
 
         target.givePetEquipment(new Strawberry(this.logService));
 

@@ -32,7 +32,7 @@ export class OrcaAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         for (let i = 0; i < this.level; i++) {
-            let faintPet = this.petService.getRandomFaintPet(owner.parent);
+            let faintPet = this.petService.getRandomFaintPet(owner.parent, undefined, [owner.name]);
             faintPet.attack = 6;
             faintPet.health = 6;
 

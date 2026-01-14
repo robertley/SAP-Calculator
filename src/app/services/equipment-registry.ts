@@ -118,7 +118,6 @@ export interface EquipmentRegistryDeps {
 // No-arg equipment
 export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
     'Garlic': Garlic,
-    'Cake': Cake,
     'Meat Bone': MeatBone,
     'Steak': Steak,
     'Melon': Melon,
@@ -158,7 +157,6 @@ export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
     'Mana Potion': ManaPotion,
     'Melon Slice': MelonSlice,
     'Oyster Mushroom': OysterMushroom,
-    'Radish': Radish,
     'Sardinian Currant': SardinianCurrant,
     'Sausage': Sausage,
     'Walnut': Walnut,
@@ -172,6 +170,7 @@ export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
 
 // LogService-only equipment
 export const LOG_ONLY_EQUIPMENT: { [key: string]: any } = {
+    'Cake': Cake,
     'Egg': Egg,
     'Squash': Squash,
     'Pie': Pie,
@@ -234,7 +233,8 @@ export const SPECIAL_EQUIPMENT_BUILDERS: { [key: string]: (deps: EquipmentRegist
     'Popcorn': (deps) => new Popcorn(deps.logService, deps.petService, deps.gameService),
     'Seaweed': (deps) => new Seaweed(deps.logService, deps.abilityService, deps.petService),
     'Cocoa Bean': (deps) => new CocoaBean(deps.logService, deps.petService),
-    'Faint Bread': (deps) => new FaintBread(deps.logService, deps.petService)
+    'Faint Bread': (deps) => new FaintBread(deps.logService, deps.petService),
+    'Radish': (deps) => new Radish(deps.logService)
 };
 
 export const SPECIAL_AILMENT_BUILDERS: { [key: string]: (deps: EquipmentRegistryDeps) => Equipment } = {

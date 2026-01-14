@@ -25,12 +25,19 @@ export class SeaSerpentAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        if (owner.mana == 0) {
+        const contextState = context as any;
+        const manaSpent = contextState.seaSerpentMana ?? owner.mana;
+        if (manaSpent == 0) {
             return;
         }
 
-        let power = owner.mana;
-        let mana = owner.mana;
+        if (contextState.seaSerpentMana == null) {
+            contextState.seaSerpentMana = manaSpent;
+            owner.mana = 0;
+        }
+
+        let power = manaSpent;
+        let mana = manaSpent;
         this.logService.createLog({
             message: `${owner.name} spent ${mana} mana.`,
             type: 'ability',
@@ -38,8 +45,6 @@ export class SeaSerpentAbility extends Ability {
             tiger: tiger,
             pteranodon: pteranodon
         });
-
-        owner.mana = 0;
 
         // First, snipe the most healthy enemy
         let highestHealthResult = owner.parent.opponent.getHighestHealthPet(undefined, owner);

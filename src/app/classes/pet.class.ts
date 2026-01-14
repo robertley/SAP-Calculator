@@ -102,6 +102,7 @@ export abstract class Pet {
     // if we already set eggplant ability make sure not to set it again
     eggplantTouched = false;
     cherryTouched = false;
+    clearFrontTriggered = false;
     //ability memory
     maxAbilityUses: number = null;
 
@@ -342,6 +343,9 @@ export abstract class Pet {
         if (this.name == 'Behemoth') {
             max = 100;
         }
+        if (amt > 0 && this.equipment?.name === 'Sad') {
+            return;
+        }
         if (!this.alive) {
             return;
         }
@@ -352,6 +356,9 @@ export abstract class Pet {
         let max = 50;
         if (this.name == 'Behemoth' || this.name == 'Giant Tortoise') {
             max = 100;
+        }
+        if (amt > 0 && this.equipment?.name === 'Sad') {
+            return;
         }
         if (!this.alive) {
             return;
@@ -369,6 +376,15 @@ export abstract class Pet {
     }
 
     dealDamage(pet: Pet, damage: number) {
+        if (damage > 0 && this.equipment?.name === 'Kiwano') {
+            damage = 10;
+            this.logService.createLog({
+                message: `${this.name} set damage to 10. (Kiwano)`,
+                type: 'equipment',
+                player: this.parent
+            });
+            this.removePerk();
+        }
         dealDamageImpl(this, pet, damage);
     }
 
@@ -434,6 +450,15 @@ export abstract class Pet {
             return;
         }
         if (!this.alive) {
+            return;
+        }
+        if (this.equipment?.name === 'Bloated' && !equipment.equipmentClass?.startsWith('ailment')) {
+            this.logService.createLog({
+                message: `${this.name} blocked gaining ${equipment.name}. (Bloated)`,
+                type: 'equipment',
+                player: this.parent
+            });
+            this.removePerk();
             return;
         }
 
