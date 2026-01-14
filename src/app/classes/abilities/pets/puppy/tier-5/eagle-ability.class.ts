@@ -31,13 +31,29 @@ export class EagleAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
 
-        let tier = Math.min(6, gameApi.previousShopTier + 1);
-        let pets;
-        if (owner.parent == gameApi.player) {
-            pets = gameApi.playerPetPool.get(tier);
-        } else {
-            pets = gameApi.opponentPetPool.get(tier);
+        const previousTier = Number.isFinite(gameApi.previousShopTier) ? gameApi.previousShopTier : 1;
+        const tier = Math.min(6, Math.max(1, previousTier + 1));
+
+        const normalizePool = (pool?: string[]) => (pool ?? []).filter(petName =>
+            petName && owner.name && petName.toLowerCase() !== owner.name.toLowerCase()
+        );
+
+        const petPool = owner.parent === gameApi.player ? gameApi.playerPetPool : gameApi.opponentPetPool;
+        let pets = normalizePool(petPool?.get(tier));
+        // Fallback to global pool if the per-player pool is missing/empty (e.g. custom packs or unset tier)
+        if (!pets?.length) {
+            pets = normalizePool(this.petService.allPets.get(tier));
         }
+        // Final fallback to tier 1 to avoid crashing if pools are still empty
+        if (!pets?.length) {
+            pets = normalizePool(this.petService.allPets.get(1));
+        }
+        if (!pets.length) {
+            // Nothing to spawn; still trigger tiger effects to keep ability chain intact
+            this.triggerTigerExecution(context);
+            return;
+        }
+
         let petName = pets[Math.floor(Math.random() * pets.length)];
         let power = this.level * 5;
         let pet = this.petService.createPet({

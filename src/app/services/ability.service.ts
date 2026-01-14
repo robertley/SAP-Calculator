@@ -34,6 +34,12 @@ export class AbilityService {
     // Global priority queue system
     private globalEventQueue: AbilityEvent[] = [];
 
+    private getTeam(petOrPlayer: any): Pet[] {
+        const parent = petOrPlayer?.parent ?? petOrPlayer;
+        const arr = parent?.petArray;
+        return Array.isArray(arr) ? arr : [];
+    }
+
     // Priority mapping (lower number = higher priority), commmented out ones are ones currently not used
     private readonly ABILITY_PRIORITIES = {
         // Level up events
@@ -641,7 +647,9 @@ export class AbilityService {
     }
     // before attack
     triggerBeforeAttackEvent(AttackingPet: Pet) {
-        for (let pet of AttackingPet.parent.petArray) {
+        const parent = AttackingPet?.parent as any;
+        const friends = parent && Array.isArray(parent.petArray) ? parent.petArray : [];
+        for (let pet of friends) {
             if (pet.hasTrigger('BeforeFriendlyAttack')) {
                 const abilityEvent: AbilityEvent = {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
@@ -723,8 +731,11 @@ export class AbilityService {
     }
     // friend attacks events
     triggerAttacksEvents(AttackingPet: Pet) {
+        if (!AttackingPet) {
+            return;
+        }
         // Add friendAttacks to unified system
-        for (let pet of AttackingPet.parent.petArray) {
+        for (let pet of this.getTeam(AttackingPet)) {
             this.handleCounterTriggers(pet, undefined, undefined, [
                 { trigger: 'FriendlyAttacked2', modulo: 2 },
                 { trigger: 'FriendlyAttacked3', modulo: 3 }
@@ -812,7 +823,11 @@ export class AbilityService {
                 }
             }
         }
-        for (let pet of AttackingPet.parent.opponent.petArray) {
+        const opponentTeam = this.getTeam(AttackingPet.parent?.opponent);
+        if (!opponentTeam.length) {
+            return;
+        }
+        for (let pet of opponentTeam) {
             if (pet.hasTrigger('AnyoneAttack')) {
                 const abilityEvent: AbilityEvent = {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi, AttackingPet) },
@@ -867,11 +882,16 @@ export class AbilityService {
 
     // Consolidated summon events handler
     triggerSummonEvents(summonedPet: Pet) {
+        const parent = summonedPet?.parent as any;
+        if (!parent || !Array.isArray(parent.petArray)) {
+            return;
+        }
+
         // Trigger toy events for friend summons
-        this.triggerFriendSummonedToyEvents(summonedPet.parent, summonedPet);
+        this.triggerFriendSummonedToyEvents(parent, summonedPet);
 
         // Check friends (if this is a friend summon)
-        for (let pet of summonedPet.parent.petArray) {
+        for (let pet of this.getTeam(parent)) {
             if (pet == summonedPet) {
                 this.triggerAbility(pet, 'ThisSummoned', summonedPet);
             } else {
@@ -890,14 +910,13 @@ export class AbilityService {
         }
 
         // Check enemies (if this is an enemy summon)
-        for (let pet of summonedPet.parent.opponent.petArray) {
-            this.triggerAbility(pet, 'EnemySummoned', summonedPet);
-        }
+        const enemyPets = parent.opponent && Array.isArray(parent.opponent.petArray) ? parent.opponent.petArray : [];
+        enemyPets.forEach((pet: Pet) => this.triggerAbility(pet, 'EnemySummoned', summonedPet));
     }
 
     triggerFaintEvents(faintedPet: Pet) {
         // Check friends
-        for (let pet of faintedPet.parent.petArray) {
+        for (let pet of this.getTeam(faintedPet)) {
             if (pet == faintedPet) {
                 this.triggerAbility(pet, 'BeforeThisDies', faintedPet);
             } else {
@@ -918,7 +937,7 @@ export class AbilityService {
         this.triggerFriendFaintsToyEvents(faintedPet.parent, faintedPet);
 
         // Check friends
-        for (let pet of faintedPet.parent.petArray) {
+        for (let pet of this.getTeam(faintedPet)) {
             this.triggerAbility(pet, 'PetDied', faintedPet);
             if (pet == faintedPet) {
                 this.triggerAbility(pet, 'ThisDied', faintedPet);
@@ -934,7 +953,8 @@ export class AbilityService {
         }
 
         // Check enemies
-        for (let pet of faintedPet.parent.opponent.petArray.filter(p => p.alive)) {
+        const enemyTeam = this.getTeam(faintedPet.parent?.opponent).filter(p => p.alive);
+        for (let pet of enemyTeam) {
             this.triggerAbility(pet, 'EnemyDied', faintedPet);
             this.triggerAbility(pet, 'PetDied', faintedPet);
             this.handleCounterTriggers(pet, faintedPet, undefined, [
@@ -949,7 +969,7 @@ export class AbilityService {
     //food events handler
     triggerFoodEvents(eatingPet: Pet, foodType?: string) {
         // Check friends
-        for (let pet of eatingPet.parent.petArray) {
+        for (let pet of this.getTeam(eatingPet)) {
             this.triggerAbility(pet, 'FoodEatenByAny', eatingPet);
             this.triggerAbility(pet, 'FoodEatenByFriendly', eatingPet);
             if (pet == eatingPet) {
@@ -979,7 +999,7 @@ export class AbilityService {
         }
 
         // Check enemies
-        for (let pet of eatingPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(eatingPet.parent?.opponent)) {
             this.triggerAbility(pet, 'FoodEatenByAny', eatingPet);
         }
     }
@@ -987,7 +1007,7 @@ export class AbilityService {
     // perk gain events handler
     triggerPerkGainEvents(perkPet: Pet, perkType?: string) {
         // Check friends
-        for (let pet of perkPet.parent.petArray) {
+        for (let pet of this.getTeam(perkPet)) {
             this.triggerAbility(pet, 'FriendlyGainsPerk', perkPet);
             if (perkType === 'Strawberry') {
                 this.triggerAbility(pet, 'FriendlyGainedStrawberry', perkPet);
@@ -1011,7 +1031,7 @@ export class AbilityService {
     // perk loss events handler
     triggerPerkLossEvents(perkPet: Pet, perkType?: string) {
         // Check friends
-        for (let pet of perkPet.parent.petArray) {
+        for (let pet of this.getTeam(perkPet)) {
             this.triggerAbility(pet, 'PetLostPerk', perkPet);
             if (perkType === 'strawberry') {
                 this.triggerAbility(pet, 'LostStrawberry', perkPet);
@@ -1028,14 +1048,14 @@ export class AbilityService {
         }
 
         // Check enemies
-        for (let pet of perkPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(perkPet.parent?.opponent)) {
             this.triggerAbility(pet, 'PetLostPerk', perkPet);
         }
     }
     // ailment events handler
     triggerAilmentGainEvents(ailmentPet: Pet, ailmentType?: string) {
         // Check friends
-        for (let pet of ailmentPet.parent.petArray) {
+        for (let pet of this.getTeam(ailmentPet)) {
             //this.triggerAbility(pet, 'PetGainedAilment', ailmentPet);
             this.triggerAbility(pet, 'AnyoneGainedAilment', ailmentPet);
             if (pet == ailmentPet) {
@@ -1050,7 +1070,7 @@ export class AbilityService {
         }
 
         // Check enemies
-        for (let pet of ailmentPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(ailmentPet.parent?.opponent)) {
             this.triggerAbility(pet, 'EnemyGainedAilment', ailmentPet);
             this.triggerAbility(pet, 'AnyoneGainedAilment', ailmentPet);
             // Special ailment types
@@ -1064,7 +1084,7 @@ export class AbilityService {
     triggerTransformEvents(originalPet: Pet) {
         const transformedPet = originalPet.transformedInto;
         // Check friends
-        for (let pet of transformedPet.parent.petArray) {
+        for (let pet of this.getTeam(transformedPet)) {
             if (pet == transformedPet) {
                 this.triggerAbility(pet, 'ThisTransformed', transformedPet);
             } else {
@@ -1079,20 +1099,20 @@ export class AbilityService {
     // Consolidated movement events handler
     triggerFlungEvents(movedPet: Pet) {
         // Handle friend fling events
-        for (let pet of movedPet.parent.petArray) {
+        for (let pet of this.getTeam(movedPet)) {
             this.triggerAbility(pet, 'AnyoneFlung', movedPet);
             if (pet != movedPet) {
                 this.triggerAbility(pet, 'FriendFlung', movedPet);
             }
         }
 
-        for (let pet of movedPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(movedPet.parent?.opponent)) {
             this.triggerAbility(pet, 'AnyoneFlung', movedPet);
         }
     }
 
     triggerPushedEvents(pushedPet: Pet) {
-        for (let pet of pushedPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(pushedPet.parent?.opponent)) {
             this.triggerAbility(pet, 'EnemyPushed', pushedPet);
         }
     }
@@ -1113,7 +1133,7 @@ export class AbilityService {
         const customParams = damageAmount !== undefined ? { damageAmount } : undefined;
 
         //check friends
-        for (let pet of hurtedPet.parent.petArray) {
+        for (let pet of this.getTeam(hurtedPet)) {
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
             if (pet == hurtedPet) {
                 this.triggerAbility(pet, 'ThisHurt', hurtedPet, customParams);
@@ -1144,7 +1164,7 @@ export class AbilityService {
             }
         }
         //check Enemies
-        for (let pet of hurtedPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(hurtedPet.parent?.opponent)) {
             this.triggerAbility(pet, 'EnemyHurt', hurtedPet, customParams)
             this.triggerAbility(pet, 'AnyoneHurt', hurtedPet, customParams);
             this.handleCounterTriggers(pet, hurtedPet, customParams, [
@@ -1198,7 +1218,7 @@ export class AbilityService {
         this.triggerFriendJumpedToyEvents(jumpPet.parent, jumpPet);
 
         // Check friends
-        for (let pet of jumpPet.parent.petArray) {
+        for (let pet of this.getTeam(jumpPet)) {
             this.triggerAbility(pet, 'AnyoneJumped', jumpPet);
             if (pet == jumpPet) {
                 // No specific triggers for the jumping pet itself
@@ -1212,7 +1232,7 @@ export class AbilityService {
         }
 
         // Check enemies
-        for (let pet of jumpPet.parent.opponent.petArray) {
+        for (let pet of this.getTeam(jumpPet.parent?.opponent)) {
             this.triggerAbility(pet, 'AnyoneJumped', jumpPet);
         }
     }
@@ -1237,7 +1257,7 @@ export class AbilityService {
     }
     // Experience Events handler
     triggerFriendGainedExperienceEvents(ExpPet: Pet) {
-        for (let pet of ExpPet.parent.petArray) {
+        for (let pet of this.getTeam(ExpPet)) {
             this.triggerAbility(pet, 'FriendlyGainedExp', ExpPet);
             if (pet === ExpPet) {
                 continue;

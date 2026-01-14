@@ -265,7 +265,7 @@ export class PetService {
     );
   }
 
-  getRandomFaintPet(parent: Player, tier?: number): Pet {
+  getRandomFaintPet(parent: Player, tier?: number, excludeNames: string[] = []): Pet {
     let faintPetsByTier = {
       1: ["Ant", "Cricket", "Groundhog", "Pied Tamarin"],
       2: [
@@ -337,14 +337,33 @@ export class PetService {
       ],
     };
 
-    let faintPets = [];
+    let faintPets: string[] = [];
     if (tier && faintPetsByTier[tier]) {
       faintPets = faintPetsByTier[tier];
     } else {
       // If no tier specified or invalid tier, use all faint pets
       faintPets = [].concat(...Object.values(faintPetsByTier));
     }
-    let petName = faintPets[getRandomInt(0, faintPets.length - 1)];
+
+    const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
+    const filteredFaintPets = faintPets.filter((name) => !excludeSet.has(name.toLowerCase()));
+
+    // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
+    let pool = filteredFaintPets;
+    if (!pool.length && tier) {
+      const allFiltered = [].concat(...Object.values(faintPetsByTier))
+        .filter((name: string) => !excludeSet.has(name.toLowerCase()));
+      if (allFiltered.length) {
+        pool = allFiltered;
+      }
+    }
+
+    // Final fallback to original list to avoid crashes if everything was excluded
+    if (!pool.length) {
+      pool = faintPets;
+    }
+
+    let petName = pool[getRandomInt(0, pool.length - 1)];
     return this.createPet(
       {
         name: petName,
