@@ -33,7 +33,7 @@ export class HumpheadWrasseAbility extends Ability {
         }
 
         let target = targetResp.pet;
-        let reductionAmount = Math.floor(target.attack * percentage);
+        let reductionAmount = Math.ceil(target.attack * percentage);
         let newAttack = Math.max(1, target.attack - reductionAmount);
 
         target.attack = newAttack;
