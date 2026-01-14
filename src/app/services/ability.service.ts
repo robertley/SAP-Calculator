@@ -766,7 +766,6 @@ export class AbilityService {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi, AttackingPet) },
                     priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
-                    triggerPet: AttackingPet,
                     abilityType: 'AnyoneAttack',
                     tieBreaker: Math.random()
                 };
@@ -812,7 +811,7 @@ export class AbilityService {
             if (pet == AttackingPet.petAhead || pet == AttackingPet.petBehind()) {
                 if (pet.hasTrigger('AdjacentFriendAttacked')) {
                     const abilityEvent: AbilityEvent = {
-                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
+                        callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi, AttackingPet) },
                         priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                         pet: pet,
                         abilityType: 'AdjacentFriendAttacked',

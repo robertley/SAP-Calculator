@@ -30,10 +30,10 @@ export class NurseSharkAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
         let power = Math.min(owner.parent.trumpets, 6) * 3;
-        let targetResp = owner.parent.opponent.getRandomPets(2, [], false, true, owner);
+        let targetResp = owner.parent.opponent.getRandomPets(this.level, [], false, true, owner);
         let targets = targetResp.pets;
         if (targets.length == 0) {
             return;
