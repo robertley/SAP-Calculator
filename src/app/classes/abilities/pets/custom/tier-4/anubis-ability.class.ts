@@ -22,25 +22,20 @@ export class AnubisAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
+
         const { gameApi, tiger, pteranodon } = context;
         const owner = this.owner;
         const thresholds = [2, 4, 6];
         const tierLimit = thresholds[Math.min(Math.max(this.level, 1) - 1, thresholds.length - 1)];
 
-        for (const friend of owner.parent.petArray) {
-            if (!friend || friend === owner || !friend.alive) {
-                continue;
-            }
-            if (!friend.isFaintPet()) {
-                continue;
-            }
-            if (friend.tier > tierLimit) {
-                continue;
-            }
+        const faintFriends = owner.parent.petArray
+            .filter((friend) => friend && friend !== owner && friend.alive && friend.isFaintPet() && friend.tier <= tierLimit)
+            .sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+            .slice(0, 2);
 
+        for (const friend of faintFriends) {
             this.logService.createLog({
-                message: `${owner.name} activated ${friend.name}'s faint ability (tier ${friend.tier} ≤ ${tierLimit}).`,
+                message: `${owner.name} activated ${friend.name}'s faint ability (tier ${friend.tier} <= ${tierLimit}).`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,
@@ -50,7 +45,6 @@ export class AnubisAbility extends Ability {
             friend.activateAbilities('ThisDied', gameApi, 'Pet' as AbilityType);
         }
 
-        // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }
 

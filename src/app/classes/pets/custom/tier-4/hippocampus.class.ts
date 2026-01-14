@@ -14,7 +14,7 @@ export class Hippocampus extends Pet {
     health = 4;
     //TO DO: Needs update abilty
     initAbilities(): void {
-        this.addAbility(new HippocampusAbility(this, this.logService, this.abilityService));
+        this.addAbility(new HippocampusAbility(this, this.logService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

@@ -21,8 +21,7 @@ export class StegosaurusAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
         const owner = this.owner;
         const { gameApi, tiger, pteranodon } = context;
-        const turnNumber = gameApi?.turnNumber ?? 1;
-        const buffAmount = this.level * turnNumber;
+        const buffAmount = this.level * 10;
         const target = owner.parent.petArray.find(pet => pet && pet !== owner && pet.alive && !pet.equipment);
 
         if (!target) {

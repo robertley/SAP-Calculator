@@ -3,6 +3,7 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { Power } from "app/interfaces/power.interface";
+import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class TurkeyAbility extends Ability {
     private logService: LogService;
@@ -26,24 +27,27 @@ export class TurkeyAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let power: Power = {
+        const power: Power = {
             attack: 3 * this.level,
             health: 1 * this.level
         };
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let target = targetResp.pet;
-        if (target == null) {
+
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+        if (!targetResp.pet) {
             return;
         }
+
+        const target = targetResp.pet;
         target.increaseAttack(power.attack);
         target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
+        logAbility(
+            this.logService,
+            owner,
+            `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
+            tiger,
+            pteranodon,
+            { randomEvent: targetResp.random }
+        );
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

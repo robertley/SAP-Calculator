@@ -29,16 +29,14 @@ export class BasiliskAbility extends Ability {
         const friendAhead = owner.petAhead;
 
         if (friendAhead && friendAhead.alive) {
-            // Transform friend ahead to Rock with +2/4/6 health.
-            // Rock base is 0/1. So it becomes 0/3, 0/5, 0/7.
-            const hpBonus = this.level * 2;
+            const hpBonus = this.level * 5;
             const rock = new Rock(this.logService, this.abilityService, friendAhead.parent);
             rock.initPet(0, 1 + hpBonus, 0, 0, null);
 
             owner.parent.transformPet(friendAhead, rock);
 
             this.logService.createLog({
-                message: `${owner.name} transformed ${friendAhead.name} into a Rock with +${hpBonus} HP.`,
+                message: `${owner.name} transformed ${friendAhead.name} into a Rock with +${hpBonus} health.`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,

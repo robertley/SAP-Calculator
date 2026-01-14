@@ -385,9 +385,17 @@ export class SimulationRunner {
     protected emptyFrontSpaceCheck() {
         if (this.player.pet0 == null) {
             this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
+        } else {
+            for (const pet of this.player.petArray) {
+                pet.clearFrontTriggered = false;
+            }
         }
         if (this.opponent.pet0 == null) {
             this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
+        } else {
+            for (const pet of this.opponent.petArray) {
+                pet.clearFrontTriggered = false;
+            }
         }
         if (this.player.pet0 == null) {
             this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);

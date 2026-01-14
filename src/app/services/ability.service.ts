@@ -413,12 +413,13 @@ export class AbilityService {
         if (pet.hasTrigger(trigger)) {
             const eventCustomParams = {
                 ...(customParams ?? {}),
-                trigger
+                trigger,
+                tigerSupportPet: pet.petBehind(true, true) ?? null
             };
             // Create an AbilityEvent for the global queue
             const abilityEvent: AbilityEvent = {
                 callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet: Pet) => {pet.executeAbilities(trigger, gameApi, triggerPet, undefined, undefined, eventCustomParams)},
-                priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
+                priority: this.getPetEventPriority(pet), // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                 pet: pet,
                 triggerPet: triggerPet,
                 abilityType: trigger,
@@ -428,6 +429,16 @@ export class AbilityService {
 
             this.addEventToQueue(abilityEvent);
         }
+    }
+
+    private getPetEventPriority(pet: Pet): number {
+        let priority = pet.attack;
+        if (pet.equipment?.name === 'Churros') {
+            priority += 1000;
+        } else if (pet.equipment?.name === 'Macaron') {
+            priority -= 1000;
+        }
+        return priority;
     }
     get hasAbilityCycleEvents() {
         // With the new priority queue system, only check the global queue
@@ -544,7 +555,7 @@ export class AbilityService {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
-                    priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
+                    priority: this.getPetEventPriority(pet), // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'BeforeStartBattle',
                     tieBreaker: Math.random()
@@ -558,7 +569,7 @@ export class AbilityService {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
-                    priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
+                    priority: this.getPetEventPriority(pet), // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'BeforeStartBattle',
                     tieBreaker: Math.random()
@@ -598,7 +609,7 @@ export class AbilityService {
                 // Create an AbilityEvent for the global queue
                 const abilityEvent: AbilityEvent = {
                     callback: (trigger: AbilityTrigger, gameApi: GameAPI) => { pet.executeAbilities(trigger, gameApi) },
-                    priority: pet.attack, // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
+                    priority: this.getPetEventPriority(pet), // Use pet attack for priority, rely on type-based priority from ABILITY_PRIORITIES
                     pet: pet,
                     abilityType: 'StartBattle',
                     tieBreaker: Math.random()
@@ -1202,7 +1213,11 @@ export class AbilityService {
 
     triggerEmptyFrontSpaceEvents(player: Player) {
         for (let pet of player.petArray) {
+            if (pet.clearFrontTriggered) {
+                continue;
+            }
             this.triggerAbility(pet, 'ClearFront');
+            pet.clearFrontTriggered = true;
         }
     }
 

@@ -22,7 +22,7 @@ export class FarmerCrowAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
         const owner = this.owner;
         const friendCount = Math.min(owner.level, 3);
-        const effectMultiplier = owner.level >= 3 ? 3 : 2;
+        const effectMultiplier = 3;
         const targetsResp = owner.parent.nearestPetsBehind(friendCount, owner);
         const targets = targetsResp.pets;
 

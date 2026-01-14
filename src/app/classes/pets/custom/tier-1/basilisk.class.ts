@@ -8,10 +8,10 @@ export class Basilisk extends Pet {
     constructor(logService: LogService, abilityService: AbilityService, parent: Player) {
         super(logService, abilityService, parent);
         this.name = "Basilisk";
-        this.tier = 1;
+        this.tier = 3;
         this.pack = "Custom";
-        this.attack = 2;
-        this.health = 1;
+        this.attack = 5;
+        this.health = 2;
     }
 
     override initAbilities(): void {

@@ -3,6 +3,7 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { Spooked } from "../../../../equipment/ailments/spooked.class";
+import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class AmalgamationAbility extends Ability {
     private logService: LogService;
@@ -31,22 +32,23 @@ export class AmalgamationAbility extends Ability {
             return;
         }
 
-        let targetResp = owner.parent.getThis(triggerPet);
-        let target = targetResp.pet;
-        if (!target) {
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet, (o, pet) => o.parent.getThis(pet));
+        if (!targetResp.pet) {
             return;
         }
 
-        let attackAmount = this.level * 3;
-        let manaAmount = this.level * 4;
+        const target = targetResp.pet;
+        const attackAmount = this.level * 3;
+        const manaAmount = this.level * 4;
 
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} +${attackAmount} attack, +${manaAmount} mana, and Spooked.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
+        logAbility(
+            this.logService,
+            owner,
+            `${owner.name} gave ${target.name} +${attackAmount} attack, +${manaAmount} mana, and Spooked.`,
+            tiger,
+            pteranodon,
+            { randomEvent: targetResp.random }
+        );
 
         target.increaseAttack(attackAmount);
         target.increaseMana(manaAmount);

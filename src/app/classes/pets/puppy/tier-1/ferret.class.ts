@@ -9,8 +9,8 @@ export class Ferret extends Pet {
     name = "Ferret";
     tier = 1;
     pack: Pack = 'Puppy';
-    attack = 2;
-    health = 1;
+    attack = 1;
+    health = 3;
     initAbilities(): void {
         this.addAbility(new FerretAbility(this, this.logService, this.abilityService));
         super.initAbilities();

@@ -112,13 +112,14 @@ export class Ability {
     }
 
     // Tiger check method - matches Pet.class.ts:676-681
-    tigerCheck(tiger?: boolean): boolean {
+    tigerCheck(tiger?: boolean, tigerPetOverride?: Pet): boolean {
         // If ignoreRepeats is true, Tiger should not trigger this ability again
         if (this.ignoreRepeats || this.abilityType != 'Pet') {
             return false;
         }
 
-        if ((this.owner).petBehind(true, true) && (this.owner).petBehind(true, true)?.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
+        const tigerPet = tigerPetOverride ?? (this.owner).petBehind(true, true);
+        if (tigerPet && tigerPet.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
             return true;
         }
         return false;
@@ -127,7 +128,8 @@ export class Ability {
     // Tiger execution method for new framework
     // Subclasses should call this at the end of their ability logic
     protected triggerTigerExecution(context: AbilityContext): void {
-        if (!this.tigerCheck(context.tiger)) {
+        const tigerPet = (context as any).tigerSupportPet ?? this.owner.petBehind(true, true);
+        if (!this.tigerCheck(context.tiger, tigerPet)) {
             return;
         }
 
@@ -141,7 +143,7 @@ export class Ability {
         let originalIgnorePetLevel = this.alwaysIgnorePetLevel;
 
         // Set ability to use Tiger's level
-        this.abilityLevel = this.owner.petBehind(null, true).level;
+        this.abilityLevel = tigerPet.level;
         this.alwaysIgnorePetLevel = true;
 
         // Execute ability again with Tiger's level using updated context

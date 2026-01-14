@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { PuppyAbility } from "../../../abilities/pets/puppy/tier-3/puppy-ability.class";
 
 export class Puppy extends Pet {
     name = "Puppy";
@@ -12,6 +13,10 @@ export class Puppy extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 6;
+    initAbilities(): void {
+        this.addAbility(new PuppyAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

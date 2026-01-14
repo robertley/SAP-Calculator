@@ -32,20 +32,19 @@ export class PandaAbility extends Ability {
             health: Math.floor(owner.health * percentage)
         }
         let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
-        if (targetsAheadResp.pets.length === 0) {
-            return;
+        if (targetsAheadResp.pets.length > 0) {
+            let target = targetsAheadResp.pets[0];
+            target.increaseAttack(power.attack);
+            target.increaseHealth(power.health);
+            this.logService.createLog({
+                message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
+                type: 'ability',
+                player: owner.parent,
+                tiger: tiger,
+                pteranodon: pteranodon,
+                randomEvent: targetsAheadResp.random
+            });
         }
-        let target = targetsAheadResp.pets[0];
-        target.increaseAttack(power.attack);
-        target.increaseHealth(power.health);
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon,
-            randomEvent: targetsAheadResp.random
-        });
         owner.health = 0;
 
         // Tiger system: trigger Tiger execution at the end

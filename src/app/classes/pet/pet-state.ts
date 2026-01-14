@@ -27,6 +27,7 @@ export function resetPetState(self: Pet): void {
     self.seenDead = false;
     self.removed = false;
     self.jumped = false;
+    self.clearFrontTriggered = false;
     try {
         self.equipment?.reset();
     } catch (error) {

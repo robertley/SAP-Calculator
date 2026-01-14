@@ -6,6 +6,7 @@ import { Equipment } from "../../../equipment.class";
 import { Weak } from "../../../equipment/ailments/weak.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { GharialAbility } from "../../../abilities/pets/puppy/tier-4/gharial-ability.class";
 
 export class Gharial extends Pet {
     name = "Gharial";
@@ -13,6 +14,10 @@ export class Gharial extends Pet {
     pack: Pack = 'Puppy';
     attack = 5;
     health = 2;
+    initAbilities(): void {
+        this.addAbility(new GharialAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

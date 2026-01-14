@@ -6,6 +6,7 @@ import { LovePotionAbility } from "../../abilities/equipment/unicorn/love-potion
 export class LovePotion extends Equipment {
     name = 'Love Potion';
     equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
+    tier = 5;
     callback = (pet: Pet) => {
         pet.addAbility(new LovePotionAbility(pet, this, this.logService));
     }

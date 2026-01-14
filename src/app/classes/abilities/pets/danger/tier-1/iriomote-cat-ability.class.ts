@@ -4,6 +4,7 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { PetService } from "app/services/pet.service";
 import { getRandomInt } from "app/util/helper-functions";
+import { DANGERS_AND_USEFUL_POOLS } from "app/data/dangers-and-useful";
 
 export class IriomoteCatAbility extends Ability {
     private logService: LogService;
@@ -29,9 +30,13 @@ export class IriomoteCatAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let allTierXPets = this.petService.allPets.get(this.level);
-        let randomIndex = getRandomInt(0, allTierXPets.length - 1);
-        let randomPetName = allTierXPets[randomIndex];
+        const pool = DANGERS_AND_USEFUL_POOLS.iriomoteCat[this.level] ?? this.petService.allPets.get(this.level) ?? [];
+        if (pool.length === 0) {
+            return;
+        }
+
+        let randomIndex = getRandomInt(0, pool.length - 1);
+        let randomPetName = pool[randomIndex];
 
         let transformedPet = this.petService.createPet({
             name: randomPetName,

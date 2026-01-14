@@ -5,6 +5,7 @@ import { getOpponent } from "../../../../util/helper-functions";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
+import { TropicalFishAbility } from "../../../abilities/pets/puppy/tier-3/tropical-fish-ability.class";
 
 export class TropicalFish extends Pet {
     name = "Tropical Fish";
@@ -12,6 +13,10 @@ export class TropicalFish extends Pet {
     pack: Pack = 'Puppy';
     attack = 3;
     health = 3;
+    initAbilities(): void {
+        this.addAbility(new TropicalFishAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
+    }
     constructor(protected logService: LogService,
         protected abilityService: AbilityService,
         parent: Player,

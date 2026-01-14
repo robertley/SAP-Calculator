@@ -2,6 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
+import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class GermanShepherdAbility extends Ability {
     private logService: LogService;
@@ -26,20 +27,21 @@ export class GermanShepherdAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let power = Math.floor(owner.attack * owner.level * 0.25);
-        let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-        let target = targetResp.pet;
-        if (!target) {
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+        if (!targetResp.pet) {
             return;
         }
 
+        const target = targetResp.pet;
         target.increaseAttack(power);
-        this.logService.createLog({
-            message: `${owner.name} gave ${target.name} ${power} attack.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            randomEvent: targetResp.random
-        });
+        logAbility(
+            this.logService,
+            owner,
+            `${owner.name} gave ${target.name} ${power} attack.`,
+            tiger,
+            pteranodon,
+            { randomEvent: targetResp.random }
+        );
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);

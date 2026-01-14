@@ -4,6 +4,7 @@ import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { EquipmentService } from "app/services/equipment.service";
 import { InjectorService } from "app/services/injector.service";
+import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class SeagullAbility extends Ability {
     private logService: LogService;
@@ -32,7 +33,8 @@ export class SeagullAbility extends Ability {
             return;
         }
 
-        if (!triggerPet || !owner.equipment || this.usesThisTurn >= this.level) {
+        const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+        if (!targetResp.pet || !owner.equipment || this.usesThisTurn >= this.level) {
             this.triggerTigerExecution(context);
             return;
         }
@@ -46,16 +48,18 @@ export class SeagullAbility extends Ability {
             return;
         }
 
-        triggerPet.givePetEquipment(equipmentInstance);
+        const target = targetResp.pet;
+        target.givePetEquipment(equipmentInstance);
         this.usesThisTurn++;
 
-        this.logService.createLog({
-            message: `${owner.name} gave ${triggerPet.name} a ${baseEquipment.name}`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon
-        });
+        logAbility(
+            this.logService,
+            owner,
+            `${owner.name} gave ${target.name} a ${baseEquipment.name}`,
+            tiger,
+            pteranodon,
+            { randomEvent: targetResp.random }
+        );
 
         this.triggerTigerExecution(context);
     }
