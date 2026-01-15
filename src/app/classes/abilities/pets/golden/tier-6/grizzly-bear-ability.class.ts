@@ -10,7 +10,7 @@ export class GrizzlyBearAbility extends Ability {
         super({
             name: 'GrizzlyBearAbility',
             owner: owner,
-            triggers: ['FriendlyAttacked5'],
+            triggers: ['FriendAttacked5'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,

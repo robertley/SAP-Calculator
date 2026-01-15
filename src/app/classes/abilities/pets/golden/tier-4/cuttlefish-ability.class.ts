@@ -45,8 +45,7 @@ export class CuttlefishAbility extends Ability {
             });
         }
 
-        let excludeInkTargets = owner.parent.opponent.getPetsWithEquipment("Inked");
-        let InkTargetsResp = owner.parent.opponent.getLastPets(this.level, excludeInkTargets, owner);
+        let InkTargetsResp = owner.parent.opponent.getLastPets(this.level, undefined, owner);
         let InkTargets = InkTargetsResp.pets;
         if (InkTargets.length == 0) {
             return;

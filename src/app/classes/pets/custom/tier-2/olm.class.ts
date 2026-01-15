@@ -4,7 +4,6 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
-import { OlmAbility } from "../../../abilities/pets/custom/tier-2/olm-ability.class";
 
 export class Olm extends Pet {
     name = "Olm";
@@ -22,10 +21,5 @@ export class Olm extends Pet {
         equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
-    }
-
-    override initAbilities(): void {
-        this.addAbility(new OlmAbility(this, this.logService));
-        super.initAbilities();
     }
 }

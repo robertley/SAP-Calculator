@@ -40,8 +40,7 @@ export class BoitataAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let excludePets = owner.parent.opponent.getPetsWithEquipment('Crisp');
-        let targetResp = owner.parent.opponent.getFurthestUpPet(owner, excludePets);
+        let targetResp = owner.parent.opponent.getFurthestUpPet(owner);
         let target = targetResp.pet;
         if (target == null) {
             return;

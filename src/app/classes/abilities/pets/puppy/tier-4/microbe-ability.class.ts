@@ -27,7 +27,7 @@ export class MicrobeAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let targetsResp = owner.parent.getPetsWithinXSpaces(owner, this.level * 3);
-        let targets = targetsResp.pets.filter((pet) => pet.equipment?.name !== 'Weak');
+        let targets = targetsResp.pets;
         if (targets.length == 0) {
             return;
         }
