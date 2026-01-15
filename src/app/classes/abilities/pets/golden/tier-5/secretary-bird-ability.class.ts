@@ -11,7 +11,7 @@ export class SecretaryBirdAbility extends Ability {
         super({
             name: 'SecretaryBirdAbility',
             owner: owner,
-            triggers: ['FriendDied2'],
+            triggers: ['TwoFriendsDied'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,

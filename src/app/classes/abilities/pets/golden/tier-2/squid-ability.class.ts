@@ -35,7 +35,7 @@ export class SquidAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let hasTarget = false;
-        let excludePets = owner.parent.opponent.getPetsWithEquipment("Inked");
+        let excludePets = owner.parent.opponent.getPetsWithEquipment("Ink");
         let targetResp = owner.parent.opponent.getFurthestUpPets(this.level, excludePets, owner);
         let targets = targetResp.pets;
 

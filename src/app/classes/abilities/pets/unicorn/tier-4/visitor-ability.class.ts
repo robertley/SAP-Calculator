@@ -27,7 +27,7 @@ export class VisitorAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let targetResp = owner.parent.getPetsWithinXSpaces(owner, this.level);
-        let targets = targetResp.pets.filter((pet) => pet.equipment?.name !== 'Icky');
+        let targets = targetResp.pets;
         if (targets.length == 0) {
             return;
         }

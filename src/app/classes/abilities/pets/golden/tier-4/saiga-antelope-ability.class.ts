@@ -12,7 +12,7 @@ export class SaigaAntelopeAbility extends Ability {
         super({
             name: 'SaigaAntelopeAbility',
             owner: owner,
-            triggers: ['FriendDied2'],
+            triggers: ['TwoFriendsDied'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,

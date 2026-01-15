@@ -27,8 +27,8 @@ export class VolcanoSnailAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let petsWithPerk = owner.parent.opponent.getPetsWithEquipment('perk');
-        let petsWithToasty = owner.parent.opponent.getPetsWithEquipment('Toasty')
-        let excludePets = [...petsWithPerk, ...petsWithToasty];
+        let petsWithToast = owner.parent.opponent.getPetsWithEquipment('Toast')
+        let excludePets = [...petsWithPerk, ...petsWithToast];
         let targetResp = owner.parent.opponent.getRandomPets(3, excludePets, null, null, owner);
 
         if (targetResp.pets.length === 0) {

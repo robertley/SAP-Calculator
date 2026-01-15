@@ -12,7 +12,7 @@ export class VultureAbility extends Ability {
         super({
             name: 'VultureAbility',
             owner: owner,
-            triggers: ['FriendDied2'],
+            triggers: ['TwoFriendsDied'],
             abilityType: 'Pet',
             native: true,
             abilitylevel: owner.level,
