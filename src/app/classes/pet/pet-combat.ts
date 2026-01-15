@@ -378,13 +378,21 @@ export function calculateDamage(
         || (snipe && pet.equipment?.equipmentClass == 'shield-snipe') ? pet.equipment : null;
 
     if (defenseEquipment != null) {
-
-        if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
-            for (let mult of manticoreMult) {
-                defenseMultiplier += mult;
+        if (defenseEquipment.name === 'Strawberry') {
+            const sparrowLevel = pet.getSparrowLevel();
+            if (sparrowLevel <= 0 || (defenseEquipment.uses != null && defenseEquipment.uses <= 0)) {
+                defenseEquipment = null;
+            } else {
+                defenseEquipment.power = sparrowLevel * 5;
             }
+        } else {
+            if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
+                for (let mult of manticoreMult) {
+                    defenseMultiplier += mult;
+                }
+            }
+            defenseEquipment.power = defenseEquipment.originalPower * defenseMultiplier;
         }
-        defenseEquipment.power = defenseEquipment.originalPower * defenseMultiplier;
     }
 
 
@@ -495,49 +503,73 @@ export function calculateDamage(
     if (defenseEquipment instanceof Pepper) {
         damage = Math.min(damage, pet.health - 1);
     }
-    //TO DO: Might need to move all pet's less damage ability down here, or into Deal Damage
-    //TO DO: Change from name check/trigger check to how many ability check
-    let fairyBallReduction = 0;
-    if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility') && damage > 0) {
-        for (let ability of pet.abilityList) {
-            if (ability.name == 'FairyAbility') {
-                fairyBallReduction += ability.level * 2;
-                damage = Math.max(0, damage - ability.level * 2);
-            }
-        }
-    }
+    // Centralized damage reductions to avoid ordering bugs.
+    const applyDamageModifiers = (startingDamage: number) => {
+        let workingDamage = startingDamage;
+        let fairyBallReduction = 0;
+        let nurikabe = 0;
+        let fanMusselReduction = 0;
+        let ghostKittenReduction = 0;
 
-    let nurikabe = 0;
-    if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && damage > 0) {
-        for (let ability of pet.abilityList) {
-            if (ability.name == 'NurikabeAbility') {
-                nurikabe = ability.level * 4;
-                damage = Math.max(0, damage - nurikabe);
-                ability.currentUses++;
+        if (pet.hasTrigger(undefined, 'Pet', 'FairyAbility')) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'FairyAbility') {
+                    const reduction = ability.level * 2;
+                    fairyBallReduction += reduction;
+                    workingDamage = Math.max(0, workingDamage - reduction);
+                }
+            }
+            if (workingDamage < 1) {
+                workingDamage = 1;
             }
         }
-    }
 
-    let fanMusselReduction = 0;
-    if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && damage > 0) {
-        for (let ability of pet.abilityList) {
-            if (ability.name == 'FanMusselAbility') {
-                fanMusselReduction += ability.level * 1;
-                damage = Math.max(0, damage - fanMusselReduction);
-                ability.currentUses++;
+        if (pet.hasTrigger(undefined, 'Pet', 'NurikabeAbility') && workingDamage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'NurikabeAbility') {
+                    nurikabe = ability.level * 4;
+                    workingDamage = Math.max(0, workingDamage - nurikabe);
+                    ability.currentUses++;
+                }
             }
         }
-    }
 
-    let ghostKittenReduction = 0;
-    if (snipe && pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && damage > 0) {
-        for (let ability of pet.abilityList) {
-            if (ability.name == 'GhostKittenAbility') {
-                ghostKittenReduction += ability.level * 3;
-                damage = Math.max(0, damage - ghostKittenReduction);
+        if (pet.hasTrigger(undefined, 'Pet', 'FanMusselAbility') && workingDamage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'FanMusselAbility') {
+                    const reduction = ability.level * 1;
+                    fanMusselReduction += reduction;
+                    workingDamage = Math.max(0, workingDamage - reduction);
+                    ability.currentUses++;
+                }
             }
         }
-    }
+
+        if (snipe && pet.hasTrigger(undefined, 'Pet', 'GhostKittenAbility') && workingDamage > 0) {
+            for (let ability of pet.abilityList) {
+                if (ability.name == 'GhostKittenAbility') {
+                    const reduction = ability.level * 3;
+                    ghostKittenReduction += reduction;
+                    workingDamage = Math.max(0, workingDamage - reduction);
+                }
+            }
+        }
+
+        return {
+            damage: workingDamage,
+            fairyBallReduction,
+            nurikabe,
+            fanMusselReduction,
+            ghostKittenReduction
+        };
+    };
+
+    const reductionResult = applyDamageModifiers(damage);
+    damage = reductionResult.damage;
+    const fairyBallReduction = reductionResult.fairyBallReduction;
+    const nurikabe = reductionResult.nurikabe;
+    const fanMusselReduction = reductionResult.fanMusselReduction;
+    const ghostKittenReduction = reductionResult.ghostKittenReduction;
 
     return {
         defenseEquipment: defenseEquipment,

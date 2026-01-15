@@ -5,7 +5,7 @@ import { Pet } from './classes/pet.class';
 import { InjectorService } from './services/injector.service';
 import { LogService } from './services/log.service';
 import { Battle } from './interfaces/battle.interface';
-import { createPack, money_round } from './util/helper-functions';
+import { money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
 import { Log } from './interfaces/log.interface';
 import { AbilityService } from './services/ability.service';
@@ -18,41 +18,13 @@ import { cloneDeep } from 'lodash';
 import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { EquipmentService } from './services/equipment.service';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { SimulationRunner } from './engine/simulation-runner';
-import { SimulationConfig } from './interfaces/simulation-config.interface';
+import { UrlStateService } from './services/url-state.service';
+import { CalculatorStateService } from './services/calculator-state.service';
+import { SimulationService } from './services/simulation.service';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
-
-const REVERSE_KEY_MAP = {
-  "pP": "playerPack", "oP": "opponentPack", "pT": "playerToy", "pTL": "playerToyLevel",
-  "oT": "opponentToy", "oTL": "opponentToyLevel", "t": "turn", "pGS": "playerGoldSpent",
-  "oGS": "opponentGoldSpent", "pRA": "playerRollAmount", "oRA": "opponentRollAmount",
-  "pSA": "playerSummonedAmount", "oSA": "opponentSummonedAmount", "pL3": "playerLevel3Sold",
-  "oL3": "opponentLevel3Sold", "p": "playerPets", "o": "opponentPets", "an": "angler",
-  "ap": "allPets", "lf": "logFilter", "fs": "fontSize", "cp": "customPacks",
-  "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana",
-  "sa": "showAdvanced", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
-  // Pet Object Keys
-  "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment", "bSP": "belugaSwallowedPet", "tH": "timesHurt"
-};
-
-function expandKeys(data) {
-  if (Array.isArray(data)) {
-    return data.map(item => expandKeys(item));
-  }
-  if (data !== null && typeof data === 'object') {
-    const newObj = {};
-    for (const key in data) {
-      const newKey = REVERSE_KEY_MAP[key] || key;
-      newObj[newKey] = expandKeys(data[key]);
-    }
-    return newObj;
-  }
-  return data;
-}
 
 
 // TODO
@@ -123,10 +95,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     private injector: Injector,
     private abilityService: AbilityService,
     private gameService: GameService,
-    private equipmentService: EquipmentService,
     private petService: PetService,
     private toyService: ToyService,
-    private localStorageService: LocalStorageService
+    private localStorageService: LocalStorageService,
+    private urlStateService: UrlStateService,
+    private calculatorStateService: CalculatorStateService,
+    private simulationService: SimulationService
   ) {
     InjectorService.setInjector(this.injector);
     this.player = new Player(logService, abilityService, gameService);
@@ -153,20 +127,15 @@ export class AppComponent implements OnInit, AfterViewInit {
     //   this.simulate();
     //   this.buildApiResponse();
     // }
-    const params = new URLSearchParams(window.location.search);
-    const apiCode = params.get('code'); // This safely gets ONLY the value of the 'code' parameter
-
-    if (apiCode) {
+    const apiState = this.urlStateService.parseApiStateFromUrl();
+    if (apiState.state) {
       this.api = true;
-      try {
-        const jsonData = JSON.parse(decodeURIComponent(apiCode));
-        this.loadCalculatorFromValue(jsonData);
-        this.simulate();
-        this.buildApiResponse();
-      } catch (e) {
-        console.error("Error parsing API data from URL:", e);
-        this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
-      }
+      this.applyCalculatorState(apiState.state);
+      this.simulate();
+      this.buildApiResponse();
+    } else if (apiState.error) {
+      console.error(apiState.error);
+      this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
     }
 
   }
@@ -200,42 +169,20 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   loadStateFromUrl(isInitialLoad: boolean = false): boolean {
-    const params = new URLSearchParams(window.location.search);
-    const encodedData = params.get('c');
-
-    if (encodedData) {
-      try {
-        let finalJsonString;
-        const decodedData = decodeURIComponent(encodedData);
-        if (decodedData.trim().startsWith('{')) {
-
-          const truncatedJson = JSON.parse(decodedData);
-
-          const fullKeyJson = expandKeys(truncatedJson);
-
-          finalJsonString = JSON.stringify(fullKeyJson);
-        } else {
-          const compressedData = atob(encodedData);
-          const decodedData = decodeURIComponent(compressedData);
-          const truncatedJson = JSON.parse(decodedData);
-
-          const fullKeyJson = expandKeys(truncatedJson);
-
-          finalJsonString = JSON.stringify(fullKeyJson);
-        }
-
-        this.import(finalJsonString);
-
-        console.log("Calculator state loaded from URL.");
-        return true;
-      } catch (e) {
-        console.error("Failed to parse calculator state from URL.", e);
+    const parsedState = this.urlStateService.parseCalculatorStateFromUrl();
+    if (!parsedState.state) {
+      if (parsedState.error) {
+        console.error(parsedState.error);
         alert("Could not load the shared calculator link. The data may be corrupted.");
-        return false;
       }
+      return false;
     }
 
-    return false; // No data found in URL
+    const success = this.import(JSON.stringify(parsedState.state), isInitialLoad);
+    if (success) {
+      console.log("Calculator state loaded from URL.");
+    }
+    return success;
   }
 
 
@@ -258,7 +205,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       try {
         // all fields except for customPacks
         let localStorage = JSON.parse(this.localStorageService.getStorage());
-        this.loadCalculatorFromValue(localStorage);
+        this.applyCalculatorState(localStorage);
       } catch (e) {
         console.log('error loading local storage', e)
         this.localStorageService.clearStorage();
@@ -267,74 +214,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  loadCalculatorFromValue(calculator) {
-    // this.formGroup.reset();
-    const defaultState = {
-      playerPack: "Turtle",
-      opponentPack: "Turtle",
-      playerToy: null,
-      playerToyLevel: "1",
-      opponentToy: null,
-      opponentToyLevel: "1",
-      turn: 11,
-      playerGoldSpent: 10,
-      opponentGoldSpent: 10,
-      playerRollAmount: 4,
-      opponentRollAmount: 4,
-      playerSummonedAmount: 0,
-      opponentSummonedAmount: 0,
-      playerTransformationAmount: 0,
-      opponentTransformationAmount: 0,
-      playerLevel3Sold: 0,
-      opponentLevel3Sold: 0,
-      playerPets: Array(5).fill(null),
-      opponentPets: Array(5).fill(null),
-      angler: false,
-      allPets: false,
-      logFilter: null,
-      fontSize: 13,
-      customPacks: [],
-      oldStork: false,
-      tokenPets: false,
-      komodoShuffle: false,
-      mana: false,
-      showAdvanced: false,
-      ailmentEquipment: false
-    };
-
-    const finalState = { ...defaultState, ...calculator };
-
-    this.formGroup.patchValue(finalState, { emitEvent: false });
-
-    let customPacks = calculator.customPacks;
-    calculator.customPacks = [];
-    this.loadCustomPacks(customPacks);
-    this.formGroup.patchValue(calculator, { emitEvent: false });
-
-    // if (!this.api) {
-    //   for (let selector of this.petSelectors.toArray()) {
-    //     selector.substitutePet();
-    //   }
-    // }
-
-
-    // band aid for weird bug where the select switches to turtle when pack already exists
-    setTimeout(() => {
-      this.fixCustomPackSelect();
-    })
-    this.gameService.gameApi.oldStork = this.formGroup.get('oldStork').value;
-    this.gameService.gameApi.komodoShuffle = this.formGroup.get('komodoShuffle').value;
-    this.gameService.gameApi.mana = this.formGroup.get('mana').value;
-    this.gameService.gameApi.playerRollAmount = this.formGroup.get('playerRollAmount').value;
-    this.gameService.gameApi.opponentRollAmount = this.formGroup.get('opponentRollAmount').value;
-    this.gameService.gameApi.playerLevel3Sold = this.formGroup.get('playerLevel3Sold').value;
-    this.gameService.gameApi.opponentLevel3Sold = this.formGroup.get('opponentLevel3Sold').value;
-    this.gameService.gameApi.playerSummonedAmount = this.formGroup.get('playerSummonedAmount').value;
-    this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
-    this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
-    this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
-    this.gameService.gameApi.day = this.dayNight;
-    this.gameService.gameApi.turnNumber = this.formGroup.get('turn').value;
+  applyCalculatorState(calculator) {
+    this.calculatorStateService.applyCalculatorState(
+      this.formGroup,
+      calculator,
+      this.dayNight,
+      () => this.fixCustomPackSelect()
+    );
   }
 
   setDayNight() {
@@ -375,15 +261,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.gameService.gameApi.opponentSummonedAmount = this.formGroup.get('opponentSummonedAmount').value;
     this.gameService.gameApi.playerTransformationAmount = this.formGroup.get('playerTransformationAmount').value;
     this.gameService.gameApi.opponentTransformationAmount = this.formGroup.get('opponentTransformationAmount').value;
-  }
-
-  loadCustomPacks(customPacks) {
-    let formArray = this.formGroup.get('customPacks') as FormArray;
-    formArray.clear();
-    for (let customPack of customPacks) {
-      let formGroup = createPack(customPack);
-      formArray.push(formGroup);
-    }
   }
 
   initPlayerPets() {
@@ -444,7 +321,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
       mana: new FormControl(false),
-      triggersConsumed: new FormControl(false),
+      triggersConsumed: new FormControl(true),
       playerRollAmount: new FormControl(4),
       opponentRollAmount: new FormControl(4),
       playerLevel3Sold: new FormControl(0),
@@ -720,49 +597,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.simulationBattleAmt = count;
     this.localStorageService.setFormStorage(this.formGroup);
 
-    // Build config
-    const config: SimulationConfig = {
-      playerPack: this.formGroup.get('playerPack').value,
-      opponentPack: this.formGroup.get('opponentPack').value,
-      playerToy: this.formGroup.get('playerToy').value,
-      playerToyLevel: this.formGroup.get('playerToyLevel').value,
-      opponentToy: this.formGroup.get('opponentToy').value,
-      opponentToyLevel: this.formGroup.get('opponentToyLevel').value,
-      turn: this.formGroup.get('turn').value,
-      playerGoldSpent: this.formGroup.get('playerGoldSpent').value,
-      opponentGoldSpent: this.formGroup.get('opponentGoldSpent').value,
-      playerRollAmount: this.gameService.gameApi.playerRollAmount,
-      opponentRollAmount: this.gameService.gameApi.opponentRollAmount,
-      playerSummonedAmount: this.gameService.gameApi.playerSummonedAmount,
-      opponentSummonedAmount: this.gameService.gameApi.opponentSummonedAmount,
-      playerLevel3Sold: this.gameService.gameApi.playerLevel3Sold,
-      opponentLevel3Sold: this.gameService.gameApi.opponentLevel3Sold,
-      playerTransformationAmount: this.gameService.gameApi.playerTransformationAmount,
-      opponentTransformationAmount: this.gameService.gameApi.opponentTransformationAmount,
-      playerPets: this.formGroup.get('playerPets').value,
-      opponentPets: this.formGroup.get('opponentPets').value,
-      angler: this.formGroup.get('angler').value,
-      allPets: this.formGroup.get('allPets').value,
-      oldStork: this.formGroup.get('oldStork').value,
-      tokenPets: this.formGroup.get('tokenPets').value,
-      komodoShuffle: this.formGroup.get('komodoShuffle').value,
-      mana: this.formGroup.get('mana').value,
-      simulationCount: count
-    };
-
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService
+    const result = this.simulationService.runSimulation(
+      this.formGroup,
+      count,
+      this.player,
+      this.opponent
     );
-
-    const result = runner.run(config);
-
-    // Restore GameService to UI players
-    this.gameService.init(this.player, this.opponent);
 
     this.playerWinner = result.playerWins;
     this.opponentWinner = result.opponentWins;
@@ -931,7 +771,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     try {
       const calculator = JSON.parse(importVal);
 
-      this.loadCalculatorFromValue(calculator);
+      this.applyCalculatorState(calculator);
       this.initApp();
       if (!isInitialLoad) {
         setTimeout(() => {
