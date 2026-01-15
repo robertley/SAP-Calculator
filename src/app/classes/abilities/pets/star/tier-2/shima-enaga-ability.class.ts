@@ -39,26 +39,19 @@ export class ShimaEnagaAbility extends Ability {
 
         let power = this.level * 2;
 
-        // Get random friend from current team
-        let aliveFriends = owner.parent.petArray.filter(p => p.alive);
-        if (aliveFriends.length === 0) {
-            return;
-        }
-
-        let randomFriend = aliveFriends[Math.floor(Math.random() * aliveFriends.length)];
         let newPet = this.petService.createPet({
-            name: randomFriend.name,
+            name: owner.name,
             attack: power,
             health: power,
             equipment: null,
-            exp: randomFriend.exp,
+            exp: 0,
             mana: 0
         }, owner.parent);
 
         let summonResult = owner.parent.summonPet(newPet, triggerPet.position, false, owner);
         if (summonResult.success) {
             this.logService.createLog({
-                message: `${owner.name} summoned a (${power}/${power}) ${newPet.name}`,
+                message: `${owner.name} summoned a (${power}/${power}) Shima Enaga`,
                 type: 'ability',
                 player: owner.parent,
                 tiger: tiger,
