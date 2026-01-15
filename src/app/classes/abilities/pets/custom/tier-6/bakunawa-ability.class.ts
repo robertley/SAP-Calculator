@@ -22,7 +22,7 @@ export class BakunawaAbility extends Ability {
     private executeAbility(context: AbilityContext): void {
         const owner = this.owner;
         const opponentPets = owner.parent.opponent.petArray
-            .filter((pet) => pet && pet.alive)
+            .filter((pet) => pet && pet.alive && pet.equipment?.name !== 'Sleepy')
             .sort((a, b) => {
                 if (b.attack !== a.attack) {
                     return b.attack - a.attack;

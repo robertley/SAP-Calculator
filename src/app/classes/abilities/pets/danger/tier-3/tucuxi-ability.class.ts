@@ -46,27 +46,18 @@ export class TucuxiAbility extends Ability {
             randomEvent: pushTargetResp.random
         });
 
-        // Get target for buff effect (could be different if Silly)
-        let buffTargetResp = owner.parent.getLastPet([owner], owner);
-        let buffTarget = buffTargetResp.pet;
-
-        // Safety check for buff target
-        if (!buffTarget) {
-            return;
-        }
-
-        // Give level-based buffs (3/6/9 attack and health)
+        // Give level-based buffs (3/6/9 attack and health) to the pushed pet
         let power = this.level * 3;
-        buffTarget.increaseAttack(power);
-        buffTarget.increaseHealth(power);
+        pushTarget.increaseAttack(power);
+        pushTarget.increaseHealth(power);
 
         this.logService.createLog({
-            message: `${owner.name} gave ${buffTarget.name} +${power} attack and +${power} health`,
+            message: `${owner.name} gave ${pushTarget.name} +${power} attack and +${power} health`,
             type: 'ability',
             player: owner.parent,
             tiger: tiger,
             pteranodon: pteranodon,
-            randomEvent: buffTargetResp.random
+            randomEvent: pushTargetResp.random
         });
 
         // Tiger system: trigger Tiger execution at the end
