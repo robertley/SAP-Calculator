@@ -292,17 +292,7 @@ export abstract class Pet {
     }
 
     useDefenseEquipment(snipe = false) {
-        if (this.equipment == null) {
-            return;
-        }
-
-        if (this.equipment.equipmentClass == 'ailment-defense' || this.equipment.name == 'Icky') {
-            // skip the next if
-        }
-        else if (this.equipment.equipmentClass != 'defense' && this.equipment.equipmentClass != 'shield' && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
-            return;
-        }
-        if (this.equipment.uses == null) {
+        if (!this.canConsumeDefenseEquipment(snipe)) {
             return;
         }
         this.equipment.uses -= 1;
@@ -312,13 +302,49 @@ export abstract class Pet {
     }
 
     useAttackDefenseEquipment() {
-        if (this.equipment == null) {
+        if (!this.canConsumeAttackDefenseEquipment()) {
             return;
+        }
+        this.equipment.uses -= 1;
+        if (this.equipment.uses == 0) {
+            this.removePerk();
+        }
+    }
+
+    private canConsumeDefenseEquipment(snipe: boolean): boolean {
+        if (!this.equipment) {
+            return false;
+        }
+        if (this.equipment.equipmentClass == 'ailment-defense' || this.equipment.name == 'Icky') {
+            // allowed
+        } else if (this.equipment.equipmentClass != 'defense'
+            && this.equipment.equipmentClass != 'shield'
+            && (snipe && this.equipment.equipmentClass != 'shield-snipe')) {
+            return false;
         }
         if (this.equipment.uses == null) {
-            return;
+            return false;
         }
+        if (this.equipment.name === 'Strawberry') {
+            if (this.getSparrowLevel() <= 0 || this.equipment.uses <= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    private canConsumeAttackDefenseEquipment(): boolean {
+        if (!this.equipment) {
+            return false;
+        }
+        if (this.equipment.uses == null) {
+            return false;
+        }
+        if (this.equipment.name === 'Strawberry') {
+            if (this.getSparrowLevel() <= 0 || this.equipment.uses <= 0) {
+                return false;
+            }
+        }
         if (this.equipment.equipmentClass != 'attack'
             && this.equipment.equipmentClass != 'defense'
             && this.equipment.equipmentClass != 'shield'
@@ -327,15 +353,12 @@ export abstract class Pet {
             && this.equipment.equipmentClass != 'ailment-defense'
             && this.equipment.name != 'Icky'
         ) {
-            return;
+            return false;
         }
         if (isNaN(this.equipment.uses)) {
             console.warn('uses is NaN', this.equipment)
         }
-        this.equipment.uses -= 1;
-        if (this.equipment.uses == 0) {
-            this.removePerk();
-        }
+        return true;
     }
 
     increaseAttack(amt) {
@@ -462,81 +485,102 @@ export abstract class Pet {
             return;
         }
 
-        if (equipment.name === 'Corncob') {
-            const cob = equipment as Corncob;
-            const multiplier = Math.max(1, Math.floor(cob.effectMultiplier ?? 1));
-            if (this.attack <= this.health) {
-                this.increaseAttack(multiplier);
-            } else {
-                this.increaseHealth(multiplier);
-            }
-            this.abilityService.triggerFoodEvents(this, 'corn');
+        if (this.handleCorncobEquipment(equipment)) {
             return;
         }
 
         // Handle ailments with Ambrosia or White Okra blocking
         if (equipment.equipmentClass == 'ailment-attack' || equipment.equipmentClass == 'ailment-defense' || equipment.equipmentClass == 'ailment-other') {
-            if (this.equipment instanceof Ambrosia) {
-                this.equipment.uses--;
-                this.logService.createLog({
-                    message: `${this.name} blocked ${equipment.name}. (Ambrosia)`,
-                    type: 'equipment',
-                    player: this.parent
-                });
-                if (this.equipment.uses == 0) {
-                    this.removePerk();
-                }
+            if (this.applyAilmentEquipment(equipment, pandorasBoxLevel)) {
                 return;
             }
-            else if (this.equipment instanceof WhiteOkra) {
-                this.logService.createLog({
-                    message: `${this.name} blocked ${equipment.name}. (White Okra)`,
-                    type: 'equipment',
-                    player: this.parent
-                });
-                // Remove equipment immediately after blocking ailment
-                this.removePerk();
-                return;
-            } else if (this.equipment instanceof Strawberry && this.getSparrowLevel() > 0 && this.equipment.uses > 0) {
-                this.logService.createLog({
-                    message: `${this.name} blocked ${equipment.name}. (Strawberry)`,
-                    type: 'equipment',
-                    player: this.parent
-                });
-                this.removePerk();
-                return;
-            }
-            else if (this.equipment != null) {
-                this.removePerk(true);
-            }
-            this.applyEquipment(equipment, pandorasBoxLevel);
-
-            this.abilityService.triggerAilmentGainEvents(this, equipment.name);
         }
         // Handle standard equipment
         else {
-            if (equipment instanceof Blackberry) {
-                // Apply equipment first to get multiplier
-                this.applyEquipment(equipment, pandorasBoxLevel);
-
-                let attackGain = 1 * equipment.multiplier;
-                let healthGain = 2 * equipment.multiplier;
-                this.increaseAttack(attackGain);
-                this.increaseHealth(healthGain);
-                this.logService.createLog({
-                    message: `${this.name} gained ${attackGain} attack and ${healthGain} health (Blackberry)${equipment.multiplierMessage}`,
-                    type: 'equipment',
-                    player: this.parent,
-                })
-            } else {
-                this.applyEquipment(equipment, pandorasBoxLevel);
-            }
-
-            this.abilityService.triggerPerkGainEvents(this, equipment.name);
-            this.abilityService.triggerFoodEvents(this, equipment.name)
+            this.applyStandardEquipment(equipment, pandorasBoxLevel);
         }
 
 
+    }
+
+    private handleCorncobEquipment(equipment: Equipment): boolean {
+        if (equipment.name !== 'Corncob') {
+            return false;
+        }
+        const cob = equipment as Corncob;
+        const multiplier = Math.max(1, Math.floor(cob.effectMultiplier ?? 1));
+        if (this.attack <= this.health) {
+            this.increaseAttack(multiplier);
+        } else {
+            this.increaseHealth(multiplier);
+        }
+        this.abilityService.triggerFoodEvents(this, 'corn');
+        return true;
+    }
+
+    private applyAilmentEquipment(equipment: Equipment, pandorasBoxLevel: number): boolean {
+        if (this.equipment?.name === equipment.name) {
+            return true;
+        }
+        if (this.equipment instanceof Ambrosia) {
+            this.equipment.uses--;
+            this.logService.createLog({
+                message: `${this.name} blocked ${equipment.name}. (Ambrosia)`,
+                type: 'equipment',
+                player: this.parent
+            });
+            if (this.equipment.uses == 0) {
+                this.removePerk();
+            }
+            return true;
+        }
+        if (this.equipment instanceof WhiteOkra) {
+            this.logService.createLog({
+                message: `${this.name} blocked ${equipment.name}. (White Okra)`,
+                type: 'equipment',
+                player: this.parent
+            });
+            // Remove equipment immediately after blocking ailment
+            this.removePerk();
+            return true;
+        }
+        if (this.equipment instanceof Strawberry && this.getSparrowLevel() > 0 && this.equipment.uses > 0) {
+            this.logService.createLog({
+                message: `${this.name} blocked ${equipment.name}. (Strawberry)`,
+                type: 'equipment',
+                player: this.parent
+            });
+            this.removePerk();
+            return true;
+        }
+        if (this.equipment != null) {
+            this.removePerk(true);
+        }
+        this.applyEquipment(equipment, pandorasBoxLevel);
+        this.abilityService.triggerAilmentGainEvents(this, equipment.name);
+        return true;
+    }
+
+    private applyStandardEquipment(equipment: Equipment, pandorasBoxLevel: number): void {
+        if (equipment instanceof Blackberry) {
+            // Apply equipment first to get multiplier
+            this.applyEquipment(equipment, pandorasBoxLevel);
+
+            const attackGain = 1 * equipment.multiplier;
+            const healthGain = 2 * equipment.multiplier;
+            this.increaseAttack(attackGain);
+            this.increaseHealth(healthGain);
+            this.logService.createLog({
+                message: `${this.name} gained ${attackGain} attack and ${healthGain} health (Blackberry)${equipment.multiplierMessage}`,
+                type: 'equipment',
+                player: this.parent,
+            })
+        } else {
+            this.applyEquipment(equipment, pandorasBoxLevel);
+        }
+
+        this.abilityService.triggerPerkGainEvents(this, equipment.name);
+        this.abilityService.triggerFoodEvents(this, equipment.name)
     }
 
     applyEquipment(equipment: Equipment, pandorasBoxLevel: number = 1) {

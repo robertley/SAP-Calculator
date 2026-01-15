@@ -20,9 +20,8 @@ export class ToadAbility extends Ability {
             abilitylevel: owner.level,
             maxUses: owner.level * 2,
             condition: (context: AbilityContext) => {
-                const { triggerPet, tiger, pteranodon } = context;
-                const owner = this.owner;
-                return triggerPet && triggerPet.alive && triggerPet.equipment?.name !== 'Weak';
+                const { triggerPet } = context;
+                return triggerPet && triggerPet.alive;
             },
             abilityFunction: (context) => {
                 this.executeAbility(context);
@@ -37,6 +36,11 @@ export class ToadAbility extends Ability {
 
         let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
         let target = targetResp.pet;
+        if (target?.equipment?.name === 'Weak') {
+            let excludePets = owner.parent.opponent.getPetsWithEquipment('Weak');
+            targetResp = owner.parent.opponent.getRandomPet(excludePets, null, true, null, owner);
+            target = targetResp.pet;
+        }
         if (target == null) {
             return;
         }
