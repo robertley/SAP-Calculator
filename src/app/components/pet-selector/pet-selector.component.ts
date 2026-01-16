@@ -5,6 +5,7 @@ import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
+import { cloneEquipment } from '../../util/equipment-utils';
 import { Weak } from '../../classes/equipment/ailments/weak.class';
 import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment-categories';
 import { Subscription } from 'rxjs';
@@ -41,6 +42,8 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   customPacks: AbstractControl;//FormArray;
   @Input()
   flipImage = false;
+  @Input()
+  allowEquipmentUseOverrides: boolean;
 
   equipment: Map<string, Equipment>;
   ailmentEquipment: Map<string, Equipment>;
@@ -50,7 +53,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   pets: Map<number, string[]>;
   startOfBattlePets: Map<number, string[]>;
 
-  showFlyOut = false;
   attackHealthMax = 100;
   petImageBroken = false;
   equipmentImageBroken = false;
@@ -59,6 +61,12 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   };
 
   private basePackSets = new Map<string, Set<string>>();
+  private friendsDiedCaps = new Map<string, number>([
+    ['Vulture', 1],
+    ['Saiga Antelope', 1],
+    ['Secretary Bird', 1],
+    ['Mimic', 2]
+  ]);
   private customPackPetsCache = new Map<string, Set<string>>();
   private cachedPlayerPack: string | null = null;
   private cachedOpponentPack: string | null = null;
@@ -208,6 +216,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       this.substitutePet(false);
     });
     this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
+    const equipmentUsesControl = this.formGroup.get('equipmentUses');
     this.formGroup.get('equipment').valueChanges.subscribe((value) => {
       this.equipmentImageBroken = false;
       if (value != null && value.reset == null) {
@@ -219,6 +228,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       }
       this.substitutePet(false)
     });
+    this.formGroup.get('equipmentUses')?.valueChanges.subscribe(() => this.substitutePet(false));
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
     this.formGroup.get('sarcasticFringeheadSwallowedPet')?.valueChanges.subscribe((value) => { this.setSarcasticFringeheadSwallowedPet(value) });
     this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
@@ -230,6 +240,10 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     });
     this.formGroup.get('triggersConsumed').valueChanges.subscribe(() => {
       this.clampControl('triggersConsumed', 0, 10);
+      this.substitutePet(false);
+    });
+    this.formGroup.get('friendsDiedBeforeBattle')?.valueChanges.subscribe(() => {
+      this.clampFriendsDiedBeforeBattle();
       this.substitutePet(false);
     });
     this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
@@ -260,7 +274,21 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       this.applyStatCaps(formValue);
       let equipment = formValue.equipment;
       if (equipment != null) {
-        formValue.equipment = this.equipment.get(equipment.name) ?? this.ailmentEquipment.get(equipment.name);
+        const baseEquipment = this.equipment.get(equipment.name) ?? this.ailmentEquipment.get(equipment.name);
+        if (baseEquipment != null) {
+          const cloned = cloneEquipment(baseEquipment);
+          if (this.allowEquipmentUseOverrides) {
+            const parsedUses = Number(formValue.equipmentUses);
+            const uses = Number.isFinite(parsedUses) ? parsedUses : cloned.uses;
+            if (uses != null) {
+              cloned.uses = uses;
+              cloned.originalUses = uses;
+            }
+          }
+          formValue.equipment = cloned;
+        } else {
+          formValue.equipment = baseEquipment;
+        }
       }
 
       let pet = this.petService.createPet(formValue, this.player);
@@ -283,11 +311,37 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (!name) {
       return null;
     }
-    const fileName = this.normalizePetName(name);
+    const fileName = this.normalizePetName(this.mapPetNameToAsset(name));
     if (!fileName) {
       return null;
     }
     return `/assets/art/Public/Public/Pets/${fileName}.png`;
+  }
+
+  get swallowedPetImageSrc(): string | null {
+    const name = this.formGroup?.get('name')?.value;
+    if (name === 'Beluga Whale') {
+      return this.getPetImagePath(this.formGroup.get('belugaSwallowedPet')?.value);
+    }
+    if (name === 'Sarcastic Fringehead') {
+      return this.getPetImagePath(this.formGroup.get('sarcasticFringeheadSwallowedPet')?.value);
+    }
+    return null;
+  }
+
+  get abominationSwallowedPetImages(): string[] {
+    const name = this.formGroup?.get('name')?.value;
+    if (name !== 'Abomination') {
+      return [];
+    }
+    const values = [
+      this.formGroup.get('abominationSwallowedPet1')?.value,
+      this.formGroup.get('abominationSwallowedPet2')?.value,
+      this.formGroup.get('abominationSwallowedPet3')?.value,
+    ];
+    return values
+      .map((value) => this.getPetImagePath(value))
+      .filter((value) => value != null) as string[];
   }
 
   get equipmentImageSrc(): string | null {
@@ -317,8 +371,68 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     return `/assets/art/Ailments/Ailments/${fileName}.png`;
   }
 
+  get equipmentSelected(): boolean {
+    const equipment = this.formGroup?.get('equipment')?.value;
+    return !!equipment;
+  }
+
+  get equipmentHasUses(): boolean {
+    const equipment = this.formGroup?.get('equipment')?.value;
+    return equipment?.uses != null;
+  }
+
+  get equipmentUsesToggleId(): string {
+    return `equipmentUsesToggle-${this.index ?? 'none'}`;
+  }
+
+  get equipmentUsesInputId(): string {
+    return `equipmentUsesInput-${this.index ?? 'none'}`;
+  }
+
+  get equipmentUsesAvailable(): boolean {
+    return this.equipmentSelected && this.equipmentHasUses;
+  }
+
   private normalizePetName(name: string): string {
     return (name || '').replace(/[^a-zA-Z0-9]/g, '');
+  }
+
+  shouldShowFriendsDiedInput(): boolean {
+    return this.friendsDiedCaps.has(this.formGroup.get('name').value);
+  }
+
+  private clampFriendsDiedBeforeBattle() {
+    const max = this.getFriendsDiedMax();
+    this.clampControl('friendsDiedBeforeBattle', 0, max);
+  }
+
+  private getFriendsDiedMax(): number {
+    const name = this.formGroup.get('name').value;
+    return this.friendsDiedCaps.get(name) ?? 5;
+  }
+
+  private mapPetNameToAsset(name: string): string {
+    switch (name) {
+      case 'Beluga Whale':
+        return 'WhiteWhale';
+      case 'Great One':
+        return 'Cthulu';
+      case 'Small One':
+        return 'BabyCthulhu';
+      default:
+        return name;
+    }
+  }
+
+  private getPetImagePath(petName?: string | null): string | null {
+    if (!petName) {
+      return null;
+    }
+    const fileName = this.normalizePetName(this.mapPetNameToAsset(petName));
+    if (!fileName) {
+      return null;
+    }
+    return `/assets/art/Public/Public/Pets/${fileName}.png`;
   }
 
   private applyStatCaps(formValue: any) {
@@ -420,15 +534,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     }
     pet.timesHurt = value;
     this.substitutePet(false);
-  }
-
-  showFlyOutButton() {
-    let flyOutPets = ['Beluga Whale', 'Abomination', 'Slime', 'Sabertooth Tiger', 'Tuna'];
-    return flyOutPets.includes(this.formGroup.get('name').value);
-  }
-
-  toggleFlyOut() {
-    this.showFlyOut = !this.showFlyOut;
   }
 
   removePet() {

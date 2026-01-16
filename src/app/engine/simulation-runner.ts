@@ -139,6 +139,7 @@ export class SimulationRunner {
         // Create pets
         this.createPets(this.player, config.playerPets);
         this.createPets(this.opponent, config.opponentPets);
+        this.applyPreBattleFriendDeathCounts();
 
         // Create Toys
         if (config.playerToy) {
@@ -203,6 +204,14 @@ export class SimulationRunner {
             if (equipment) {
                 // Clone equipment
                 equipment = Object.assign(Object.create(Object.getPrototypeOf(equipment)), equipment);
+                if (petConfig.equipmentUses != null) {
+                    const usesValue = Number(petConfig.equipmentUses);
+                    const finalUses = Number.isFinite(usesValue) ? usesValue : equipment.uses;
+                    if (finalUses != null) {
+                        equipment.uses = finalUses;
+                        equipment.originalUses = finalUses;
+                    }
+                }
             }
 
             const pet = this.petService.createPet({
@@ -218,10 +227,22 @@ export class SimulationRunner {
                 abominationSwallowedPet2: petConfig.abominationSwallowedPet2,
                 abominationSwallowedPet3: petConfig.abominationSwallowedPet3,
                 battlesFought: petConfig.battlesFought ?? 0,
-                timesHurt: petConfig.timesHurt ?? 0
+            timesHurt: petConfig.timesHurt ?? 0
             }, player);
+            pet.friendsDiedBeforeBattle = petConfig.friendsDiedBeforeBattle ?? 0;
 
             player.setPet(i, pet, true);
+        }
+    }
+
+    protected applyPreBattleFriendDeathCounts() {
+        const teams = [this.player, this.opponent];
+        for (const team of teams) {
+            for (const pet of team.petArray) {
+                if (pet?.friendsDiedBeforeBattle) {
+                    this.abilityService.simulateFriendDiedCounters(pet, pet.friendsDiedBeforeBattle);
+                }
+            }
         }
     }
 
@@ -422,7 +443,8 @@ export class SimulationRunner {
                         }
                     }
                 },
-                priority: this.player.toy.tier
+                priority: this.player.toy.tier,
+                player: this.player
             });
         }
         if (this.opponent.toy?.startOfBattle) {
@@ -438,7 +460,8 @@ export class SimulationRunner {
                         }
                     }
                 },
-                priority: this.opponent.toy.tier
+                priority: this.opponent.toy.tier,
+                player: this.opponent
             });
         }
     }

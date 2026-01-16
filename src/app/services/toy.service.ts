@@ -309,6 +309,7 @@ export class ToyService {
     }
 
     setStartOfBattleEvent(event: AbilityEvent) {
+        event.tieBreaker = Math.random();
         this.startOfBattleEvents.push(event);
     }
 
@@ -320,13 +321,33 @@ export class ToyService {
         // shuffle, so that same priority events are in random order
         this.startOfBattleEvents = shuffle(this.startOfBattleEvents);
 
-        this.startOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
+        this.startOfBattleEvents.sort((a, b) => {
+            if (a.priority !== b.priority) {
+                return a.priority > b.priority ? -1 : 1;
+            }
+            return (a.tieBreaker ?? Math.random()) > (b.tieBreaker ?? Math.random()) ? -1 : 1;
+        });
 
         for (let event of this.startOfBattleEvents) {
+            this.logToyEvent(event, 'activated at start of battle');
             event.callback(this.gameService.gameApi);
         }
 
         this.resetStartOfBattleEvents();
+    }
+
+    private logToyEvent(event: AbilityEvent, label: string) {
+        const toyName = event.player?.toy?.name;
+        if (!toyName) {
+            return;
+        }
+        const triggerPetName = event.triggerPet?.name ? ` (${event.triggerPet.name})` : '';
+        this.logService.createLog({
+            message: `${toyName} ${label}${triggerPetName}`,
+            type: 'ability',
+            player: event.player,
+            randomEvent: true
+        });
     }
 
 

@@ -32,55 +32,51 @@
                     <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
                 </optgroup>
             </select>
-            <button *ngIf="showFlyOutButton()" class="btn btn-secondary" (click)="toggleFlyOut()">></button>
-
-            <div class="fly-out border p-3" *ngIf="showFlyOut">
-                <div *ngIf="pet.name == 'Beluga Whale'">
-                    <label for="belugaSwallowedPet">Swallowed Pet</label>
-                    <select class="form-control" formControlName="belugaSwallowedPet">
-                        <option [ngValue]="null">None</option>
-                        <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                            <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <div *ngIf="pet.name == 'Abomination'">
-                    <div *ngFor = "let a of [].constructor(pet.level); index as i">
-                        <label for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
-                        <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}">
-                            <option [ngValue]="null">None</option>
-                            <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                                <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                </div>
-
-                <div *ngIf="pet.name == 'Slime'">
-                    <label for="battlesFought">Battles Fought</label>
-                    <input class="form-control" formControlName="battlesFought" type="number" max="99">
-                </div>
-
-                <div *ngIf="pet.name == 'Sabertooth Tiger'">
-                    <label for="timesHurt">Times Hurt</label>
-                    <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
-                </div>
-
-                <div *ngIf="pet.name == 'Tuna'">
-                    <label for="timesHurt">Times Hurt</label>
-                    <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
-                </div>
-                
+        </div>
+        <div class="col-12 mb-2" *ngIf="pet.name == 'Slime'">
+            <label for="battlesFought">Battles Fought</label>
+            <input class="form-control" formControlName="battlesFought" type="number" max="99">
+        </div>
+        <div class="col-12 mb-2" *ngIf="pet.name == 'Sabertooth Tiger'">
+            <label for="timesHurt">Times Hurt</label>
+            <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
+        </div>
+        <div class="col-12 mb-2" *ngIf="pet.name == 'Tuna'">
+            <label for="timesHurt">Times Hurt</label>
+            <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
+        </div>
+        <div class="col-12 mb-2" *ngIf="pet.name == 'Beluga Whale'">
+            <label class="swallowed-label" for="belugaSwallowedPet">Swallowed Pet</label>
+            <select class="form-control" formControlName="belugaSwallowedPet">
+                <option [ngValue]="null">None</option>
+                <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
+                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="col-12 mb-2" *ngIf="pet.name == 'Abomination'">
+            <div *ngFor="let a of [].constructor(pet.level); index as i">
+                <label class="swallowed-label" for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
+                <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}">
+                    <option [ngValue]="null">None</option>
+                    <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
+                        <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
+                    </optgroup>
+                </select>
             </div>
         </div>
         <div class="col-12 mb-2" *ngIf="formGroup.get('name').value == 'Sarcastic Fringehead'">
-            <label for="sarcasticFringeheadSwallowedPet">Swallowed Pet</label>
+            <label class="swallowed-label" for="sarcasticFringeheadSwallowedPet">Swallowed Pet</label>
             <select class="form-control" formControlName="sarcasticFringeheadSwallowedPet">
                 <option [ngValue]="null">None</option>
                 <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                     <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)" [disabled]="optionHidden(pet)">{{pet}}</option>
                 </optgroup>
             </select>
+        </div>
+        <div class="col-12 mb-2" *ngIf="shouldShowFriendsDiedInput()">
+            <label class="swallowed-label" for="friendsDiedBeforeBattle">Friends Fainted in Shop</label>
+            <input class="form-control" type="number" min="0" max="5" formControlName="friendsDiedBeforeBattle">
         </div>
         <div class="col-12 mb-2">
             <select class="form-control" formControlName="equipment" [compareWith]="compareEquipment">
@@ -93,11 +89,21 @@
                 </optgroup>
             </select>
         </div>
+        <div class="col-6 mb-2" *ngIf="allowEquipmentUseOverrides && equipmentUsesAvailable">
+            <label [for]="equipmentUsesInputId">Uses</label>
+            <input class="form-control" type="number" min="1" max="99" [id]="equipmentUsesInputId" formControlName="equipmentUses">
+        </div>
         <div class="col-12 pet-art" *ngIf="petImageSrc && !petImageBroken" [class.equipment-left]="!flipImage" [class.equipment-right]="flipImage">
             <img [src]="petImageSrc" [alt]="formGroup.get('name').value || 'Pet'" [class.flipped]="flipImage" (error)="petImageBroken = true">
             <div class="equipment-art" *ngIf="(equipmentImageSrc || ailmentImageSrc) && !equipmentImageBroken">
                 <img *ngIf="equipmentImageSrc" [src]="equipmentImageSrc" [alt]="formGroup.get('equipment').value?.name || 'Equipment'" (error)="equipmentImageBroken = true">
                 <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [src]="ailmentImageSrc" [alt]="formGroup.get('equipment').value?.name || 'Ailment'" (error)="equipmentImageBroken = true">
+            </div>
+            <div class="swallowed-art" *ngIf="swallowedPetImageSrc">
+                <img [src]="swallowedPetImageSrc" alt="Swallowed Pet">
+            </div>
+            <div class="swallowed-art swallowed-stack" *ngIf="abominationSwallowedPetImages.length">
+                <img *ngFor="let image of abominationSwallowedPetImages" [src]="image" alt="Swallowed Pet">
             </div>
         </div>
         <ng-container *ngIf="mana || triggersConsumed">

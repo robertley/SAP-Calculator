@@ -27,10 +27,9 @@ export class TreeKangarooAbility extends Ability {
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
         let petsWithPerk = owner.parent.opponent.getPetsWithEquipment('perk');
-        let petsWithSilly = owner.parent.opponent.getPetsWithEquipment('Silly');
         let opponentTreeKangaroos = owner.parent.opponent.petArray.filter(pet => {return pet.name == 'Tree Kangaroo'});
         let playerTreeKangaroos = owner.parent.petArray.filter(pet => {return pet.name == 'Tree Kangaroo'})
-        let excludePets = [...petsWithPerk, ...petsWithSilly, ...opponentTreeKangaroos, ...playerTreeKangaroos];
+        let excludePets = [...petsWithPerk, ...opponentTreeKangaroos, ...playerTreeKangaroos];
         let targetResp = owner.parent.opponent.getLastPet(excludePets, owner);
         let targetPet = targetResp.pet;
 

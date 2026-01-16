@@ -7,9 +7,10 @@
       [style.background-image]="battleBackgroundUrl ? 'url(' + battleBackgroundUrl + ')' : ''">
       <div class="col-12 col-xl-6 px-4 mb-2 mb-xl-0">
         <div class="d-flex justify-content-between">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center toy-wrap">
             <h2 class="me-2">Player</h2>
             <img *ngIf="playerToyImageUrl" class="toy-art" [src]="playerToyImageUrl" alt="Player Toy">
+            <span *ngIf="playerToyImageUrl" class="toy-level">Lv{{formGroup.get('playerToyLevel').value}}</span>
           </div>
           <button class="btn btn-secondary mb-1" (click)="resetPlayer('player')">Reset</button>
         </div>
@@ -29,8 +30,9 @@
               </div>
               <app-pet-selector [pet]="player['pet' + (4 - i)]" [player]="player" [opponent]="opponent" [index]="4 - i"
                 [formGroup]="makeFormGroup(pet)" [angler]="formGroup.get('angler').value"
-                [ailments]="formGroup.get('ailmentEquipment').value" [allPets]="formGroup.get('allPets').value"
+                [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
+                [allowEquipmentUseOverrides]="formGroup.get('changeEquipmentUses').value"
                 [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="true"
                 [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
             </div>
@@ -40,9 +42,10 @@
       </div>
       <div class="col-12 col-xl-6 px-4">
         <div class="d-flex justify-content-between">
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center toy-wrap">
             <h2 class="me-2">Opponent</h2>
             <img *ngIf="opponentToyImageUrl" class="toy-art" [src]="opponentToyImageUrl" alt="Opponent Toy">
+            <span *ngIf="opponentToyImageUrl" class="toy-level">Lv{{formGroup.get('opponentToyLevel').value}}</span>
           </div>
           <button class="btn btn-secondary mb-1" (click)="resetPlayer('opponent')">Reset</button>
         </div>
@@ -63,8 +66,9 @@
               </div>
               <app-pet-selector [pet]="opponent['pet' + i]" [player]="opponent" [opponent]="player" [index]="i"
                 [formGroup]="makeFormGroup(pet)" [angler]="formGroup.get('angler').value"
-                [ailments]="formGroup.get('ailmentEquipment').value" [allPets]="formGroup.get('allPets').value"
+                [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
+                [allowEquipmentUseOverrides]="formGroup.get('changeEquipmentUses').value"
                 [showTokenPets]="formGroup.get('tokenPets').value"
                 [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
             </div>
@@ -87,6 +91,19 @@
           <button class="btn btn-primary me-2 mb-2" (click)="simulate(100)">Simulate 100 Times</button>
           <button class="btn btn-primary me-2 mb-2" (click)="randomize()">Randomize</button>
         </div>
+        <div class="results-row" *ngIf="simulated">
+          <div class="stats">
+            <label>Player Wins:</label><span>{{playerWinner}} - {{winPercent}}%</span>
+            <label>Opponent Wins:</label><span>{{opponentWinner}} - {{losePercent}}%</span>
+            <label>Draws:</label><span>{{draw}} - {{drawPercent}}%</span>
+          </div>
+          <div class="py-1">
+            <span class="results-bar">
+              <span class="draw-bar" [style.width]="getDrawWidth()"></span>
+              <span class="lose-bar" [style.width]="getLoseWidth()"></span>
+            </span>
+          </div>
+        </div>
         <div>
           <button class="btn btn-secondary me-2 mb-2" data-bs-toggle="modal" data-bs-target="#reportABug">Report A
             Bug</button>
@@ -95,6 +112,22 @@
           <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#import">Import /
             Replay</button>
           <button class="btn btn-primary me-2 mb-2" (click)="generateShareLink()">Generate Link</button>
+        </div>
+      </div>
+      <div class="col-12 team-row">
+        <div class="team-row-left">
+          <input class="form-control team-name-input" [(ngModel)]="teamName" [ngModelOptions]="{standalone: true}"
+            placeholder="Team name">
+          <button class="btn btn-secondary btn-sm" (click)="saveTeam('player')">Save Player</button>
+          <button class="btn btn-secondary btn-sm" (click)="saveTeam('opponent')">Save Opponent</button>
+        </div>
+        <div class="team-row-right">
+          <select class="form-control team-select" [(ngModel)]="selectedTeamId" [ngModelOptions]="{standalone: true}">
+            <option value="">Saved teams</option>
+            <option *ngFor="let team of savedTeams" [value]="team.id">{{team.name}}</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" (click)="loadTeam('player')" [disabled]="!selectedTeamId">Load Player</button>
+          <button class="btn btn-secondary btn-sm" (click)="loadTeam('opponent')" [disabled]="!selectedTeamId">Load Opponent</button>
         </div>
       </div>
     </div>
@@ -197,19 +230,13 @@
           <div class="control-group group-options">
             <div class="flex-column">
               <div class="form-check" title="Stork spawns with base stats.">
-                <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="oldStork">
-                <label class="form-check-label" for="oldStork">
-                  Old Stork
-                </label>
+                <div class="form-check" title="Include Token Pets in pet pool.">
+                  <input class="form-check-input" type="checkbox" value="" id="tokenPets" formControlName="tokenPets">
+                  <label class="form-check-label" for="tokenPets">
+                    Token Pets
+                  </label>
+                </div>
               </div>
-
-              <div class="form-check" title="Include Token Pets in pet pool.">
-                <input class="form-check-input" type="checkbox" value="" id="oldStork" formControlName="tokenPets">
-                <label class="form-check-label" for="tokenPets">
-                  Token Pets
-                </label>
-              </div>
-            </div>
 
             <div class="flex-column">
               <div class="form-check" title="Shuffle pets in front of Komodo if present.">
@@ -220,12 +247,14 @@
                 </label>
               </div>
 
-              <div class="form-check" title="Include Ailments for Equipment Options.">
-                <input class="form-check-input" type="checkbox" value="" id="ailmentEquipment"
-                  formControlName="ailmentEquipment">
-                <label class="form-check-label" for="ailmentEquipment">
-                  Ailment Equipment
-                </label>
+              <div class="form-group">
+                <div class="form-check mt-2" title="Enable changing equipment uses globally.">
+                  <input class="form-check-input" type="checkbox" value="" id="changeEquipmentUses"
+                    formControlName="changeEquipmentUses">
+                  <label class="form-check-label" for="changeEquipmentUses">
+                    Change number of uses of equipment
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -328,21 +357,6 @@
       </div>
     </div>
 
-    <div class="row" *ngIf="simulated">
-      <div class="col-12 stats">
-        <label>Player Wins:</label><span>{{playerWinner}} - {{winPercent}}%</span>
-        <label>Opponent Wins:</label><span>{{opponentWinner}} - {{losePercent}}%</span>
-        <label>Draws:</label><span>{{draw}} - {{drawPercent}}%</span>
-      </div>
-
-      <div class="col-12 py-2">
-        <span class="results-bar">
-          <span class="draw-bar" [style.width]="getDrawWidth()"></span>
-          <span class="lose-bar" [style.width]="getLoseWidth()"></span>
-        </span>
-      </div>
-    </div>
-
     <div class="row flex-1 bottom-container" *ngIf="simulated">
       <div class="col-12 col-md-6 border h-100 flex-col pe-0">
         <h3>Battles</h3>
@@ -406,7 +420,6 @@
     </div>
 
   </div>
-
 
 
   <!-- Modal -->
@@ -499,4 +512,5 @@
     </div>
   </div>
 
+</div>
 </ng-container>

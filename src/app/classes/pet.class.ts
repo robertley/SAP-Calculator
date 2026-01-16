@@ -69,6 +69,7 @@ export abstract class Pet {
     abominationSwallowedPet3?: string;
     belugaSwallowedPet: string;
     sarcasticFringeheadSwallowedPet?: string;
+    friendsDiedBeforeBattle: number = 0;
     timesHurt: number = 0;
     timesAttacked: number = 0;
     battlesFought: number = 0;
@@ -660,21 +661,26 @@ export abstract class Pet {
     }
 
     get position(): number {
-        if (this == this.parent.pet0) {
+        const parent = this.parent;
+        if (!parent) {
+            return this.savedPosition;
+        }
+        if (this == parent.pet0) {
             return 0;
         }
-        if (this == this.parent.pet1) {
+        if (this == parent.pet1) {
             return 1;
         }
-        if (this == this.parent.pet2) {
+        if (this == parent.pet2) {
             return 2;
         }
-        if (this == this.parent.pet3) {
+        if (this == parent.pet3) {
             return 3;
         }
-        if (this == this.parent.pet4) {
+        if (this == parent.pet4) {
             return 4;
         }
+        return this.savedPosition;
     }
 
     /**
@@ -683,6 +689,9 @@ export abstract class Pet {
      * @returns 
      */
     petBehind(seenDead = false, deadOrAlive = false): Pet {
+        if (!this.parent) {
+            return null;
+        }
         let currentPosition = this.position !== undefined ? this.position : this.savedPosition;
         for (let i = currentPosition + 1; i < 5; i++) {
             let pet = this.parent.getPetAtPosition(i);
@@ -706,11 +715,12 @@ export abstract class Pet {
     }
 
     getManticoreMult(): number[] {
+        const parent = this.parent;
+        if (!parent || !parent.petArray) {
+            return [];
+        }
         let mult = [];
-        for (let pet of this.parent.petArray) {
-            // if (!pet.alive) {
-            //     continue;
-            // }
+        for (let pet of parent.petArray) {
             if (pet.name == 'Manticore') {
                 mult.push(pet.level);
             }
@@ -720,8 +730,12 @@ export abstract class Pet {
     }
 
     getSparrowLevel(): number {
+        const parent = this.parent;
+        if (!parent || !Array.isArray(parent.petArray)) {
+            return 0;
+        }
         let highestLevel = 0;
-        for (let pet of this.parent.petArray) {
+        for (let pet of parent.petArray) {
             if (pet.name == 'Sparrow') {
                 highestLevel = Math.max(highestLevel, pet.level);
             }
@@ -801,8 +815,13 @@ export abstract class Pet {
     }
 
     get petAhead(): Pet {
-        for (let i = this.position - 1; i > -1; i--) {
-            let pet = this.parent.getPetAtPosition(i);
+        const parent = this.parent;
+        if (!parent) {
+            return null;
+        }
+        const start = this.position !== undefined ? this.position : this.savedPosition;
+        for (let i = start - 1; i > -1; i--) {
+            let pet = parent.getPetAtPosition(i);
             if (pet != null && pet.alive) {
                 return pet;
             }

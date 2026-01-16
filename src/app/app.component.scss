@@ -66,6 +66,30 @@ $night: #33377a;
     justify-content: space-between;
 }
 
+.team-row {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+}
+
+.team-row-left,
+.team-row-right {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.team-name-input {
+    max-width: 180px;
+}
+
+.team-select {
+    max-width: 220px;
+}
+
 .meta-text {
     color: #6c757d;
     font-size: 0.9rem;
@@ -106,6 +130,26 @@ $night: #33377a;
     span {
         margin-right: 1em;
     }
+}
+
+.results-row {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 0.25rem;
+}
+
+.results-row .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.results-row .results-bar {
+    display: inline-block;
+    margin: 0 auto;
 }
 
 .battle-no {
@@ -257,6 +301,19 @@ $night: #33377a;
     width: 36px;
     height: 36px;
     object-fit: contain;
+}
+
+.toy-wrap {
+    position: relative;
+}
+
+.toy-level {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    margin-left: -6px;
+    margin-top: 18px;
 }
 
 .battle-row h2 {

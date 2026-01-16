@@ -5,6 +5,7 @@ export interface PetConfig {
     health?: number;
     exp?: number;
     equipment?: { name: string } | null;
+    equipmentUses?: number | null;
     belugaSwallowedPet?: string | null;
     mana?: number;
     triggersConsumed?: number;
@@ -14,6 +15,7 @@ export interface PetConfig {
     battlesFought?: number;
     timesHurt?: number;
     sarcasticFringeheadSwallowedPet?: string | null;
+    friendsDiedBeforeBattle?: number;
 }
 
 export interface SimulationConfig {
