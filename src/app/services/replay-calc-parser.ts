@@ -8,9 +8,18 @@ import {
 } from "./replay-calc-schema";
 
 export class ReplayCalcParser {
-  parseReplayForCalculator(battleJson: any, buildModel?: any) {
-    const userBoard = battleJson?.UserBoard;
-    const opponentBoard = battleJson?.OpponentBoard;
+  parseReplayForCalculator(
+    battleJson: any,
+    buildModel?: any,
+    metaBoards?: { userBoard?: any; opponentBoard?: any },
+  ) {
+    const userBoard = battleJson?.UserBoard ?? metaBoards?.userBoard;
+    const opponentBoard = battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
+
+    const readBoardValue = (board: any, key: string, fallback: any = null) => {
+      const value = board?.[key];
+      return value === undefined ? fallback : value;
+    };
 
     const getTimesHurt = (petJson: any) => {
       const value = petJson?.Pow?.SabertoothTigerAbility;
@@ -124,17 +133,17 @@ export class ReplayCalcParser {
       playerToyLevel: String(playerToy.level),
       opponentToy: opponentToy.name,
       opponentToyLevel: String(opponentToy.level),
-      turn: userBoard?.Tur || 1,
-      playerGoldSpent: userBoard?.GoSp || 0,
-      opponentGoldSpent: opponentBoard?.GoSp || 0,
-      playerRollAmount: userBoard?.Rold || 0,
-      opponentRollAmount: opponentBoard?.Rold || 0,
-      playerSummonedAmount: userBoard?.MiSu || 0,
-      opponentSummonedAmount: opponentBoard?.MiSu || 0,
-      playerLevel3Sold: userBoard?.MSFL || 0,
-      opponentLevel3Sold: opponentBoard?.MSFL || 0,
-      playerTransformationAmount: userBoard?.TrTT || 0,
-      opponentTransformationAmount: opponentBoard?.TrTT || 0,
+      turn: readBoardValue(userBoard, "Tur", 1) || 1,
+      playerGoldSpent: readBoardValue(userBoard, "GoSp", 0) || 0,
+      opponentGoldSpent: readBoardValue(opponentBoard, "GoSp", 0) || 0,
+      playerRollAmount: readBoardValue(userBoard, "Rold", 0) || 0,
+      opponentRollAmount: readBoardValue(opponentBoard, "Rold", 0) || 0,
+      playerSummonedAmount: readBoardValue(userBoard, "MiSu", 0) || 0,
+      opponentSummonedAmount: readBoardValue(opponentBoard, "MiSu", 0) || 0,
+      playerLevel3Sold: readBoardValue(userBoard, "MSFL", 0) || 0,
+      opponentLevel3Sold: readBoardValue(opponentBoard, "MSFL", 0) || 0,
+      playerTransformationAmount: readBoardValue(userBoard, "TrTT", 0) || 0,
+      opponentTransformationAmount: readBoardValue(opponentBoard, "TrTT", 0) || 0,
       playerPets: parseBoardPets(userBoard),
       opponentPets: parseBoardPets(opponentBoard),
       angler: false,

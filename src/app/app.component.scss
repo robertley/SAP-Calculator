@@ -6,13 +6,7 @@ $night: #33377a;
 }
 
 .day-night-container {
-    min-height: 1em;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    min-height: 1em
 }
 
 .flex-col {
@@ -21,13 +15,16 @@ $night: #33377a;
 }
 
 .player-card {
-    background-color: #e9c137;
+    background-color: transparent;
     display: grid;
     grid-auto-rows: minmax(min-content, max-content);
     grid-template-columns: auto 1fr auto;
+    border-color: transparent;
+    box-shadow: none;
 }
 
-.back, .front {
+.back,
+.front {
     transform: rotate(180deg);
     writing-mode: vertical-lr;
     text-align: center;
@@ -35,14 +32,100 @@ $night: #33377a;
 
 .battle-row {
     background-color: #5ebe09;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
-.button-bar, .battle-controller {
+.button-bar,
+.battle-controller {
     background-color: whitesmoke;
+}
+
+.button-bar.border,
+.battle-controller.border {
+    border: 0;
+}
+
+.button-bar .col-12>div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.meta-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding-bottom: 0.25rem;
+}
+
+.action-row {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.team-row {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+}
+
+.team-row-left,
+.team-row-right {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.team-name-input {
+    max-width: 180px;
+}
+
+.team-select {
+    max-width: 220px;
+}
+
+.meta-text {
+    color: #6c757d;
+    font-size: 0.9rem;
 }
 
 .battle-controller .min-w-input {
     min-width: 100px;
+}
+
+.control-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+}
+
+.control-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.control-group.group-options {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0.5rem 1rem;
+}
+
+.control-group .form-check {
+    margin-right: 0.5rem;
 }
 
 .small-w-input {
@@ -53,9 +136,30 @@ $night: #33377a;
     label {
         margin-right: .25em;
     }
+
     span {
         margin-right: 1em;
     }
+}
+
+.results-row {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding-bottom: 0.25rem;
+}
+
+.results-row .stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.results-row .results-bar {
+    display: inline-block;
+    margin: 0 auto;
 }
 
 .battle-no {
@@ -67,11 +171,14 @@ $night: #33377a;
     cursor: pointer;
 }
 
-.results-bar, .draw-bar, .lose-bar {
+.results-bar,
+.draw-bar,
+.lose-bar {
     display: inline-block;
 }
 
-.draw-bar, .lose-bar {
+.draw-bar,
+.lose-bar {
     height: 100%;
     position: absolute;
     right: 0;
@@ -95,16 +202,31 @@ $night: #33377a;
 }
 
 .log-player {
-    background-color: rgb(228, 255, 224);;
+    background-color: rgb(228, 255, 224);
+    ;
 }
 
 .log-opponent {
     background-color: rgb(255, 224, 224);
 }
 
+.battle-win td {
+    background-color: rgb(228, 255, 224);
+}
+
+.battle-loss td {
+    background-color: rgb(255, 224, 224);
+}
+
 .log-container {
     display: flex;
     align-content: flex-start;
+}
+
+.log-container span {
+    color: #343a40;
+    font-size: 0.9rem;
+    line-height: 1.35;
 }
 
 .random-event {
@@ -118,13 +240,34 @@ $night: #33377a;
 
 .bottom-container {
     min-height: 30em;
-    > div {
+    padding-top: 0.75rem;
+
+    >div {
         min-height: 15em;
     }
 }
 
+.bottom-container .border {
+    border: 0;
+}
+
+.bottom-container .table {
+    border: 0;
+}
+
+.bottom-container .table> :not(caption)>*>* {
+    border-bottom: 0;
+}
+
+.bottom-container .form-control,
+.bottom-container .form-check-input {
+    border-color: transparent;
+    box-shadow: none;
+}
+
 .scroll {
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .h-100 {
@@ -134,6 +277,7 @@ $night: #33377a;
 .pre {
     white-space: pre;
 }
+
 .btn-link {
     color: #0d6efd;
     cursor: pointer;
@@ -168,8 +312,31 @@ $night: #33377a;
 }
 
 .info-link {
-    margin-left: 1em;
-    margin-bottom: .5em;
+    margin-bottom: 0;
+}
+
+.toy-art {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.toy-wrap {
+    position: relative;
+}
+
+.toy-level {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+    margin-left: -6px;
+    margin-top: 18px;
+}
+
+.battle-row h2 {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
 }
 
 // if window is xs breakpoint
@@ -178,7 +345,8 @@ $night: #33377a;
         max-width: 18em;
     }
 
-    .back, .front {
+    .back,
+    .front {
         // transform: rotate(180deg);
         transform: initial;
         writing-mode: initial;

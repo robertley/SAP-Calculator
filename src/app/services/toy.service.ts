@@ -16,6 +16,7 @@ import * as toysJson from "../files/toys.json";
 interface ToyJsonEntry {
   Name: string;
   Tier: number | string;
+  NameId?: string;
 }
 
 @Injectable({
@@ -24,6 +25,7 @@ interface ToyJsonEntry {
 export class ToyService {
 
     toys: Map<number, string[]> = new Map();
+    private toyNameIds: Map<string, string> = new Map();
 
     startOfBattleEvents: AbilityEvent[] = [];
     emptyFrontSpaceEvents: AbilityEvent[] = [];
@@ -40,6 +42,7 @@ export class ToyService {
 
     setToys() {
         this.toys.clear();
+        this.toyNameIds.clear();
         const toyEntries = this.getToyEntriesFromJson();
         for (const toy of toyEntries) {
             const tier = Number(toy.Tier);
@@ -53,10 +56,20 @@ export class ToyService {
             if (tierList) {
                 tierList.push(toy.Name);
             }
+            if (toy.Name && toy.NameId) {
+                this.toyNameIds.set(toy.Name, toy.NameId);
+            }
         }
         for (const [tier, toyNames] of this.toys) {
             this.toys.set(tier, [...new Set(toyNames)]);
         }
+    }
+
+    getToyNameId(toyName: string): string | null {
+        if (!toyName) {
+            return null;
+        }
+        return this.toyNameIds.get(toyName) ?? null;
     }
 
     private getToyEntriesFromJson(): ToyJsonEntry[] {
@@ -296,6 +309,7 @@ export class ToyService {
     }
 
     setStartOfBattleEvent(event: AbilityEvent) {
+        event.tieBreaker = Math.random();
         this.startOfBattleEvents.push(event);
     }
 
@@ -307,13 +321,33 @@ export class ToyService {
         // shuffle, so that same priority events are in random order
         this.startOfBattleEvents = shuffle(this.startOfBattleEvents);
 
-        this.startOfBattleEvents.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
+        this.startOfBattleEvents.sort((a, b) => {
+            if (a.priority !== b.priority) {
+                return a.priority > b.priority ? -1 : 1;
+            }
+            return (a.tieBreaker ?? Math.random()) > (b.tieBreaker ?? Math.random()) ? -1 : 1;
+        });
 
         for (let event of this.startOfBattleEvents) {
+            this.logToyEvent(event, 'activated at start of battle');
             event.callback(this.gameService.gameApi);
         }
 
         this.resetStartOfBattleEvents();
+    }
+
+    private logToyEvent(event: AbilityEvent, label: string) {
+        const toyName = event.player?.toy?.name;
+        if (!toyName) {
+            return;
+        }
+        const triggerPetName = event.triggerPet?.name ? ` (${event.triggerPet.name})` : '';
+        this.logService.createLog({
+            message: `${toyName} ${label}${triggerPetName}`,
+            type: 'ability',
+            player: event.player,
+            randomEvent: true
+        });
     }
 
 

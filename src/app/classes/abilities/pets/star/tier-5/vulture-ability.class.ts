@@ -35,6 +35,12 @@ export class VultureAbility extends Ability {
         }
         let power = this.level * 4;
         owner.snipePet(targetResp.pet, power, targetResp.random, tiger);
+        this.logService.createLog({
+            message: `${owner.name} sniped ${targetResp.pet.name} for ${power} after a friend died.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: tiger
+        });
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
     }

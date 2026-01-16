@@ -296,7 +296,7 @@ export class AbilityService {
     };
 
 
-    constructor(private gameService: GameService) {
+    constructor(private gameService: GameService, private logService: LogService) {
 
     }
 
@@ -360,6 +360,16 @@ export class AbilityService {
         return Array.from(triggers);
     }
 
+    simulateFriendDiedCounters(pet: Pet, count: number) {
+        if (!pet || count <= 0) {
+            return;
+        }
+        const triggers = this.getNumberedTriggersForPet(pet, 'FriendDied');
+        for (let i = 0; i < count; i++) {
+            this.handleNumberedCounterTriggers(pet, undefined, undefined, triggers);
+        }
+    }
+
     private enqueueToyEvents(
         queue: AbilityEvent[],
         player: Player,
@@ -370,7 +380,8 @@ export class AbilityService {
             callback,
             priority: 100,
             level: player.toy.level,
-            triggerPet
+            triggerPet,
+            player
         });
 
         const pumas = player.petArray.filter(pet => pet instanceof Puma) as Puma[];
@@ -379,7 +390,8 @@ export class AbilityService {
                 callback,
                 priority: +puma.attack,
                 level: puma.level,
-                triggerPet
+                triggerPet,
+                player
             });
         }
     }
@@ -388,15 +400,32 @@ export class AbilityService {
         queue.push(event);
     }
 
-    private executeToyEventQueue(queue: AbilityEvent[], executor: (event: AbilityEvent) => void): void {
+    private executeToyEventQueue(queue: AbilityEvent[], executor: (event: AbilityEvent) => void, label?: string): void {
         const events = shuffle(queue);
         events.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
 
         for (const event of events) {
+            if (label) {
+                this.logToyEvent(event, label);
+            }
             executor(event);
         }
 
         queue.length = 0;
+    }
+
+    private logToyEvent(event: AbilityEvent, label: string) {
+        const toyName = event.player?.toy?.name;
+        if (!toyName) {
+            return;
+        }
+        const triggerPetName = event.triggerPet?.name ? ` (${event.triggerPet.name})` : '';
+        this.logService.createLog({
+            message: `${toyName} ${label}${triggerPetName}`,
+            type: 'ability',
+            player: event.player,
+            randomEvent: true
+        });
     }
 
     private getAbilityPriority(trigger: AbilityTrigger): number {
@@ -823,6 +852,8 @@ export class AbilityService {
         // Check enemies (if this is an enemy summon)
         const enemyPets = parent.opponent && Array.isArray(parent.opponent.petArray) ? parent.opponent.petArray : [];
         enemyPets.forEach((pet: Pet) => this.triggerAbility(pet, 'EnemySummoned', summonedPet));
+
+        this.executeFriendSummonedToyEvents();
     }
 
     triggerFaintEvents(faintedPet: Pet) {
@@ -875,6 +906,8 @@ export class AbilityService {
                 this.getNumberedTriggersForPet(pet, 'EnemyFaint')
             );
         }
+
+        this.executeFriendFaintsToyEvents();
     }
 
     //food events handler
@@ -1160,6 +1193,8 @@ export class AbilityService {
         for (let pet of this.getTeam(jumpPet.parent?.opponent)) {
             this.triggerAbility(pet, 'AnyoneJumped', jumpPet);
         }
+
+        this.executeFriendJumpedToyEvents();
     }
 
     // mana events handler
@@ -1215,7 +1250,7 @@ export class AbilityService {
     executeEmptyFrontSpaceToyEvents() {
         this.executeToyEventQueue(this.emptyFrontSpaceToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.priority < 100, event.level, event.priority);
-        });
+        }, 'triggered after empty front space');
     }
 
     // Toy events
@@ -1237,7 +1272,7 @@ export class AbilityService {
     executeFriendSummonedToyEvents() {
         this.executeToyEventQueue(this.friendSummonedToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        });
+        }, 'reacted to friend summoned');
     }
 
     // friendly level up toy events
@@ -1259,7 +1294,7 @@ export class AbilityService {
     executeFriendlyLevelUpToyEvents() {
         this.executeToyEventQueue(this.friendlyLevelUpToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        });
+        }, 'reacted to friendly level up');
     }
 
     // friend faints toy events
@@ -1281,7 +1316,7 @@ export class AbilityService {
     executeFriendFaintsToyEvents() {
         this.executeToyEventQueue(this.friendFaintsToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        });
+        }, 'reacted to friend fainting');
     }
 
     // friend jumped toy events
@@ -1304,6 +1339,6 @@ export class AbilityService {
     executeFriendJumpedToyEvents() {
         this.executeToyEventQueue(this.friendJumpedToyEvents, (event) => {
             event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        });
+        }, 'reacted to friend jumping');
     }
 }

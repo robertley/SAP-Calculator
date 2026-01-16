@@ -22,9 +22,14 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { UrlStateService } from './services/url-state.service';
 import { CalculatorStateService } from './services/calculator-state.service';
 import { SimulationService } from './services/simulation.service';
+import { EquipmentService } from './services/equipment.service';
+import { cloneEquipment } from './util/equipment-utils';
+import { TeamPresetsService, TeamPreset } from './services/team-presets.service';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
+const BATTLE_BACKGROUND_BASE = '/assets/art/Public/Public/Background/';
+const TOY_ART_BASE = '/assets/art/Public/Public/Toys/';
 
 
 // TODO
@@ -85,6 +90,46 @@ export class AppComponent implements OnInit, AfterViewInit {
   previousPackOpponent = null;
 
   dayNight = true;
+  battleBackgroundUrl = '';
+  playerToyImageUrl = '';
+  opponentToyImageUrl = '';
+  savedTeams: TeamPreset[] = [];
+  selectedTeamId = '';
+  teamName = '';
+  private battleBackgrounds = [
+    'AboveCloudsBattle.png',
+    'ArcticBattle.png',
+    'AutumnForestBattle.png',
+    'BeachBattle.png',
+    'BridgeBattle.png',
+    'CastleWallBattle.png',
+    'CaveBattle.png',
+    'ColosseumBattle.png',
+    'CornFieldBattle.png',
+    'DesertBattle.png',
+    'DungeonBattle.png',
+    'FarmBattle.png',
+    'FieldBattle.png',
+    'FoodLandBattle.png',
+    'FrontYardBattle.png',
+    'HalloweenStreetBattle.png',
+    'JungleBattle.png',
+    'LavaCaveBattle.png',
+    'LavaMountainBattle.png',
+    'MoneyBinBattle.png',
+    'MoonBattle.png',
+    'PagodaBattle.png',
+    'PlaygroundBattle.png',
+    'SavannaBattle.png',
+    'ScaryForestBattle.png',
+    'SnowBattle.png',
+    'SpaceStationBattle.png',
+    'UnderwaterBattle.png',
+    'UrbanCityBattle.png',
+    'WildWestTownBattle.png',
+    'WinterPineForestBattle.png',
+    'WizardSchoolBattle.png'
+  ];
 
   api = false;
   apiResponse = null;
@@ -97,10 +142,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     private gameService: GameService,
     private petService: PetService,
     private toyService: ToyService,
+    private equipmentService: EquipmentService,
     private localStorageService: LocalStorageService,
     private urlStateService: UrlStateService,
     private calculatorStateService: CalculatorStateService,
-    private simulationService: SimulationService
+    private simulationService: SimulationService,
+    private teamPresetsService: TeamPresetsService
   ) {
     InjectorService.setInjector(this.injector);
     this.player = new Player(logService, abilityService, gameService);
@@ -163,6 +210,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.initApp();
+    this.loadTeamPresets();
+    this.setRandomBackground();
     this.initGameApi();
     this.setDayNight();
     this.toys = this.toyService.toys;
@@ -231,6 +280,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
+  setRandomBackground() {
+    if (!this.battleBackgrounds.length) {
+      this.battleBackgroundUrl = '';
+      return;
+    }
+    const idx = Math.floor(Math.random() * this.battleBackgrounds.length);
+    this.battleBackgroundUrl = `${BATTLE_BACKGROUND_BASE}${this.battleBackgrounds[idx]}`;
+  }
+
   fixCustomPackSelect() {
     this.formGroup.get('playerPack').setValue(this.formGroup.get('playerPack').value, { emitEvent: false });
     this.formGroup.get('opponentPack').setValue(this.formGroup.get('opponentPack').value, { emitEvent: false });
@@ -284,7 +342,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   randomizePlayerPets(player: Player) {
     for (let i = 0; i < 5; i++) {
-      player.setPet(i, this.petService.getRandomPet(player), true);
+      const pet = this.petService.getRandomPet(player);
+      pet.equipment = this.getRandomEquipment();
+      player.setPet(i, pet, true);
     }
   }
 
@@ -321,7 +381,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
       mana: new FormControl(false),
-      triggersConsumed: new FormControl(true),
+      triggersConsumed: new FormControl(false),
       playerRollAmount: new FormControl(4),
       opponentRollAmount: new FormControl(4),
       playerLevel3Sold: new FormControl(0),
@@ -331,11 +391,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       playerTransformationAmount: new FormControl(0),
       opponentTransformationAmount: new FormControl(0),
       showAdvanced: new FormControl(false),
-      ailmentEquipment: new FormControl(false),
+      ailmentEquipment: new FormControl(true),
+      changeEquipmentUses: new FormControl(false),
     })
 
     this.initPetForms();
-
+ 
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       // happens on import
       if (value == null) {
@@ -441,6 +502,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
         exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
         equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
+      equipmentUses: new FormControl(this.player[`pet${foo}`]?.equipment?.uses ?? null),
         belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
         sarcasticFringeheadSwallowedPet: new FormControl(this.player[`pet${foo}`]?.sarcasticFringeheadSwallowedPet),
         mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
@@ -448,6 +510,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
+        friendsDiedBeforeBattle: new FormControl(this.player[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
       })
@@ -465,6 +528,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
         exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
         equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
+      equipmentUses: new FormControl(this.opponent[`pet${foo}`]?.equipment?.uses ?? null),
         belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
         sarcasticFringeheadSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.sarcasticFringeheadSwallowedPet),
         mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
@@ -472,6 +536,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+        friendsDiedBeforeBattle: new FormControl(this.opponent[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
       })
@@ -549,6 +614,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     let level = Number(this.formGroup.get(levelControlName).value);
     player.toy = this.toyService.createToy(toy, player, level);
     player.originalToy = player.toy;
+    this.setToyImage(player, toy);
+  }
+
+  setToyImage(player: Player, toyName: string) {
+    const nameId = this.toyService.getToyNameId(toyName);
+    const imageUrl = nameId ? `${TOY_ART_BASE}${nameId}.png` : '';
+    if (player == this.player) {
+      this.playerToyImageUrl = imageUrl;
+    } else if (player == this.opponent) {
+      this.opponentToyImageUrl = imageUrl;
+    }
   }
 
   updatePreviousShopTier(turn) {
@@ -580,6 +656,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (player.toy) {
       player.toy.level = level;
     }
+  }
+
+  getRandomEquipment() {
+    const equipment = Array.from(this.equipmentService.getInstanceOfAllEquipment().values());
+    const allowAilments = this.formGroup?.get('ailmentEquipment')?.value;
+    const ailments = allowAilments ? Array.from(this.equipmentService.getInstanceOfAllAilments().values()) : [];
+    const options = equipment.concat(ailments);
+    if (options.length === 0) {
+      return null;
+    }
+    const idx = Math.floor(Math.random() * options.length);
+    return options[idx];
   }
 
 
@@ -655,6 +743,140 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
     return events;
+  }
+
+  saveTeam(side: 'player' | 'opponent') {
+    const name = this.teamName?.trim() || prompt('Team name?');
+    if (!name) {
+      return;
+    }
+    const pets = this.buildTeamFromSide(side);
+    const toyName = side === 'player'
+      ? this.formGroup.get('playerToy').value
+      : this.formGroup.get('opponentToy').value;
+    const toyLevel = side === 'player'
+      ? Number(this.formGroup.get('playerToyLevel').value)
+      : Number(this.formGroup.get('opponentToyLevel').value);
+    const existing = this.savedTeams.find((team) => team.name.toLowerCase() === name.toLowerCase());
+    if (existing) {
+      existing.pets = pets;
+      existing.name = name;
+      existing.toyName = toyName;
+      existing.toyLevel = toyLevel;
+    } else {
+      const id = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+      this.savedTeams.push({ id, name, pets, createdAt: Date.now(), toyName, toyLevel });
+      this.selectedTeamId = id;
+    }
+    this.teamName = '';
+    this.teamPresetsService.persistTeams(this.savedTeams);
+  }
+
+  loadTeam(side: 'player' | 'opponent') {
+    const team = this.savedTeams.find((entry) => entry.id === this.selectedTeamId);
+    if (!team) {
+      return;
+    }
+    if (side === 'player') {
+      this.formGroup.get('playerToy').setValue(team.toyName ?? null);
+      this.formGroup.get('playerToyLevel').setValue(team.toyLevel ?? 1);
+    } else {
+      this.formGroup.get('opponentToy').setValue(team.toyName ?? null);
+      this.formGroup.get('opponentToyLevel').setValue(team.toyLevel ?? 1);
+    }
+    const targetPlayer = side === 'player' ? this.player : this.opponent;
+    const equipment = this.equipmentService.getInstanceOfAllEquipment();
+    const ailments = this.equipmentService.getInstanceOfAllAilments();
+    for (let i = 0; i < 5; i++) {
+      const petData = team.pets?.[i];
+      if (!petData?.name) {
+        targetPlayer.setPet(i, null, true);
+        continue;
+      }
+      const equipmentName = petData.equipment?.name;
+      const equipmentObj = equipmentName
+        ? (equipment.get(equipmentName) ?? ailments.get(equipmentName))
+        : null;
+      let equipmentForPet = equipmentObj ? cloneEquipment(equipmentObj) : null;
+      if (equipmentForPet) {
+        const usesValue = petData.equipmentUses ?? equipmentForPet.uses;
+        if (usesValue != null) {
+          equipmentForPet.uses = usesValue;
+          equipmentForPet.originalUses = usesValue;
+        }
+      }
+      const pet = this.petService.createPet(
+        {
+          name: petData.name,
+          attack: petData.attack ?? 0,
+          health: petData.health ?? 0,
+          exp: petData.exp ?? 0,
+          equipment: equipmentForPet ?? null,
+          belugaSwallowedPet: petData.belugaSwallowedPet ?? null,
+          sarcasticFringeheadSwallowedPet: petData.sarcasticFringeheadSwallowedPet ?? null,
+          mana: petData.mana ?? 0,
+          triggersConsumed: petData.triggersConsumed ?? 0,
+          abominationSwallowedPet1: petData.abominationSwallowedPet1 ?? null,
+          abominationSwallowedPet2: petData.abominationSwallowedPet2 ?? null,
+          abominationSwallowedPet3: petData.abominationSwallowedPet3 ?? null,
+          friendsDiedBeforeBattle: petData.friendsDiedBeforeBattle ?? 0,
+          battlesFought: petData.battlesFought ?? 0,
+          timesHurt: petData.timesHurt ?? 0,
+        },
+        targetPlayer
+      );
+      targetPlayer.setPet(i, pet, true);
+    }
+    this.initPetForms();
+    this.applyTeamEquipmentUses(side, team.pets);
+  }
+
+  private buildTeamFromSide(side: 'player' | 'opponent'): any[] {
+    const key = side === 'player' ? 'playerPets' : 'opponentPets';
+    const formArray = this.formGroup.get(key) as FormArray;
+    return formArray.controls.map((control) => this.sanitizePetFormValue(control.value));
+  }
+
+  private sanitizePetFormValue(petValue: any): any {
+    if (!petValue?.name) {
+      return null;
+    }
+    const equipmentName = petValue.equipment?.name ?? null;
+    return {
+      name: petValue.name ?? null,
+      attack: petValue.attack ?? 0,
+      health: petValue.health ?? 0,
+      exp: petValue.exp ?? 0,
+      equipment: equipmentName ? { name: equipmentName } : null,
+      belugaSwallowedPet: petValue.belugaSwallowedPet ?? null,
+      sarcasticFringeheadSwallowedPet: petValue.sarcasticFringeheadSwallowedPet ?? null,
+      mana: petValue.mana ?? 0,
+      triggersConsumed: petValue.triggersConsumed ?? 0,
+      abominationSwallowedPet1: petValue.abominationSwallowedPet1 ?? null,
+      abominationSwallowedPet2: petValue.abominationSwallowedPet2 ?? null,
+      abominationSwallowedPet3: petValue.abominationSwallowedPet3 ?? null,
+      friendsDiedBeforeBattle: petValue.friendsDiedBeforeBattle ?? 0,
+      battlesFought: petValue.battlesFought ?? 0,
+      timesHurt: petValue.timesHurt ?? 0,
+      equipmentUses: petValue.equipmentUses ?? null,
+    };
+  }
+
+  private applyTeamEquipmentUses(side: 'player' | 'opponent', pets?: any[]) {
+    const key = side === 'player' ? 'playerPets' : 'opponentPets';
+    const formArray = this.formGroup.get(key) as FormArray;
+    if (!formArray) {
+      return;
+    }
+    for (let i = 0; i < formArray.length; i++) {
+      const control = formArray.at(i) as FormGroup;
+      const petData = pets?.[i];
+      control.get('equipmentUses')?.setValue(petData?.equipmentUses ?? null, { emitEvent: false });
+    }
+  }
+
+  private loadTeamPresets() {
+    this.savedTeams = this.teamPresetsService.loadTeams();
   }
 
   /**
