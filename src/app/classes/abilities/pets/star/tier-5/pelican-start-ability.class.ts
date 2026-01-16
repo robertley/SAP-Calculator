@@ -41,7 +41,7 @@ export class PelicanStartAbility extends Ability {
                 name: 'Salmon',
                 attack: currentPet.attack,
                 health: currentPet.health,
-                exp: this.minExpForLevel,
+                exp: currentPet.exp,
                 equipment: null,
                 mana: 0
             }, owner.parent);

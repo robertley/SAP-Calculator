@@ -45,6 +45,8 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
             message: `${message} (Peanut)`,
             type: 'attack',
             player: self.parent,
+            sourcePet: self,
+            targetPet: pet,
             randomEvent: random
         })
         dealDamage(self, pet, damage);
@@ -55,6 +57,8 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
             message: `${message} (Peanut Butter)`,
             type: 'attack',
             player: self.parent,
+            sourcePet: self,
+            targetPet: pet,
             randomEvent: random
         })
 
@@ -178,6 +182,8 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
             message: message,
             type: "attack",
             player: self.parent,
+            sourcePet: self,
+            targetPet: pet,
             randomEvent: random
         });
         let skewerEquipment: Equipment = self.equipment?.equipmentClass == 'skewer' ? self.equipment : null;
@@ -325,6 +331,8 @@ export function snipePet(
         type: "attack",
         randomEvent: randomEvent,
         player: self.parent,
+        sourcePet: self,
+        targetPet: pet,
         pteranodon: pteranodon
     });
 

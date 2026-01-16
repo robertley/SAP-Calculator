@@ -8,8 +8,12 @@ import { ReplayCalcParser } from "./replay-calc-parser";
 export class ReplayCalcService {
   private parser = new ReplayCalcParser();
 
-  parseReplayForCalculator(battleJson: any, buildModel?: any) {
-    return this.parser.parseReplayForCalculator(battleJson, buildModel);
+  parseReplayForCalculator(
+    battleJson: any,
+    buildModel?: any,
+    metaBoards?: { userBoard?: any; opponentBoard?: any },
+  ) {
+    return this.parser.parseReplayForCalculator(battleJson, buildModel, metaBoards);
   }
 
   buildCustomPacksFromGenesis(buildModel?: any, battleJson?: any) {

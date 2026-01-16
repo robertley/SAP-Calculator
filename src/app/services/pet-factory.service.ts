@@ -31,6 +31,8 @@ export interface PetForm {
     abominationSwallowedPet3?: string;
     battlesFought?: number;
     timesHurt?: number;
+    friendsDiedBeforeBattle?: number;
+    equipmentUses?: number;
 }
 
 @Injectable({
@@ -81,6 +83,7 @@ export class PetFactoryService {
         const applySarcasticSetting = (pet: Pet) => {
             if (pet) {
                 pet.sarcasticFringeheadSwallowedPet = petForm.sarcasticFringeheadSwallowedPet ?? null;
+                pet.friendsDiedBeforeBattle = petForm.friendsDiedBeforeBattle ?? 0;
             }
             return pet;
         };
@@ -88,28 +91,42 @@ export class PetFactoryService {
         // Check if pet needs GameService (highest priority)
         if (PETS_NEEDING_GAMESERVICE[name]) {
             const PetClass = PETS_NEEDING_GAMESERVICE[name];
-            return applySarcasticSetting(new PetClass(this.logService, this.abilityService, petService, this.gameService, parent, health, attack, mana, exp, equipment, triggersConsumed));
+            const petInstance = new PetClass(this.logService, this.abilityService, petService, this.gameService, parent, health, attack, mana, exp, equipment, triggersConsumed);
+            return applySarcasticSetting(this.applyEquipmentUsesOverride(petInstance, petForm));
         }
 
         // Special handling for pets with extra parameters
         const specialBuilder = SPECIAL_FORM_PET_BUILDERS[name];
         if (specialBuilder) {
-            return applySarcasticSetting(specialBuilder(deps, petForm, parent, petService));
+            const petInstance = specialBuilder(deps, petForm, parent, petService);
+            return applySarcasticSetting(this.applyEquipmentUsesOverride(petInstance, petForm));
         }
 
         // Check if pet needs PetService
         if (PETS_NEEDING_PETSERVICE[name]) {
             const PetClass = PETS_NEEDING_PETSERVICE[name];
-            return applySarcasticSetting(new PetClass(this.logService, this.abilityService, petService, parent, health, attack, mana, exp, equipment, triggersConsumed));
+            const petInstance = new PetClass(this.logService, this.abilityService, petService, parent, health, attack, mana, exp, equipment, triggersConsumed);
+            return applySarcasticSetting(this.applyEquipmentUsesOverride(petInstance, petForm));
         }
 
         // Generic case using registry
         const PetClass = registry[name];
         if (PetClass) {
-            return applySarcasticSetting(new PetClass(this.logService, this.abilityService, parent, health, attack, mana, exp, equipment, triggersConsumed));
+            const petInstance = new PetClass(this.logService, this.abilityService, parent, health, attack, mana, exp, equipment, triggersConsumed);
+            return applySarcasticSetting(this.applyEquipmentUsesOverride(petInstance, petForm));
         }
 
         // Should not reach here if registry is complete
         return null;
+    }
+
+    private applyEquipmentUsesOverride(pet: Pet, petForm: PetForm): Pet {
+        if (!pet) {
+            return pet;
+        }
+        if (petForm.equipmentUses != null) {
+            (pet as any).equipmentUsesOverride = petForm.equipmentUses;
+        }
+        return pet;
     }
 }

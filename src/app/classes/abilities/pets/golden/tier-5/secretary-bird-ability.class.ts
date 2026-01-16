@@ -46,6 +46,13 @@ export class SecretaryBirdAbility extends Ability {
 
         // Tiger system: trigger Tiger execution at the end
         this.triggerTigerExecution(context);
+        this.logService.createLog({
+            message: `${owner.name} triggered secretary bird ability at level ${this.level}.`,
+            type: 'ability',
+            player: owner.parent,
+            tiger: tiger,
+            pteranodon: pteranodon
+        });
     }
 
     copy(newOwner: Pet): SecretaryBirdAbility {
