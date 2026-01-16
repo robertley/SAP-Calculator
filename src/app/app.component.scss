@@ -6,7 +6,7 @@ $night: #33377a;
 }
 
 .day-night-container {
-    min-height: 1em;
+    min-height: 1em
 }
 
 .flex-col {
@@ -23,7 +23,8 @@ $night: #33377a;
     box-shadow: none;
 }
 
-.back, .front {
+.back,
+.front {
     transform: rotate(180deg);
     writing-mode: vertical-lr;
     text-align: center;
@@ -36,7 +37,8 @@ $night: #33377a;
     background-size: cover;
 }
 
-.button-bar, .battle-controller {
+.button-bar,
+.battle-controller {
     background-color: whitesmoke;
 }
 
@@ -45,7 +47,7 @@ $night: #33377a;
     border: 0;
 }
 
-.button-bar .col-12 > div {
+.button-bar .col-12>div {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -98,6 +100,7 @@ $night: #33377a;
 .battle-controller .min-w-input {
     min-width: 100px;
 }
+
 .control-groups {
     display: flex;
     flex-wrap: wrap;
@@ -115,6 +118,12 @@ $night: #33377a;
     background-color: rgba(255, 255, 255, 0.9);
 }
 
+.control-group.group-options {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 0.5rem 1rem;
+}
+
 .control-group .form-check {
     margin-right: 0.5rem;
 }
@@ -127,6 +136,7 @@ $night: #33377a;
     label {
         margin-right: .25em;
     }
+
     span {
         margin-right: 1em;
     }
@@ -161,11 +171,14 @@ $night: #33377a;
     cursor: pointer;
 }
 
-.results-bar, .draw-bar, .lose-bar {
+.results-bar,
+.draw-bar,
+.lose-bar {
     display: inline-block;
 }
 
-.draw-bar, .lose-bar {
+.draw-bar,
+.lose-bar {
     height: 100%;
     position: absolute;
     right: 0;
@@ -189,12 +202,14 @@ $night: #33377a;
 }
 
 .log-player {
-    background-color: rgb(228, 255, 224);;
+    background-color: rgb(228, 255, 224);
+    ;
 }
 
 .log-opponent {
     background-color: rgb(255, 224, 224);
 }
+
 .battle-win td {
     background-color: rgb(228, 255, 224);
 }
@@ -226,7 +241,8 @@ $night: #33377a;
 .bottom-container {
     min-height: 30em;
     padding-top: 0.75rem;
-    > div {
+
+    >div {
         min-height: 15em;
     }
 }
@@ -239,7 +255,7 @@ $night: #33377a;
     border: 0;
 }
 
-.bottom-container .table > :not(caption) > * > * {
+.bottom-container .table> :not(caption)>*>* {
     border-bottom: 0;
 }
 
@@ -261,6 +277,7 @@ $night: #33377a;
 .pre {
     white-space: pre;
 }
+
 .btn-link {
     color: #0d6efd;
     cursor: pointer;
@@ -297,6 +314,7 @@ $night: #33377a;
 .info-link {
     margin-bottom: 0;
 }
+
 .toy-art {
     width: 36px;
     height: 36px;
@@ -327,7 +345,8 @@ $night: #33377a;
         max-width: 18em;
     }
 
-    .back, .front {
+    .back,
+    .front {
         // transform: rotate(180deg);
         transform: initial;
         writing-mode: initial;
