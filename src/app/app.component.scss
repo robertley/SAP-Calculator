@@ -9,22 +9,18 @@ $night: #33377a;
     min-height: 1em;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
 .flex-col {
     display: flex;
     flex-direction: column;
 }
 
 .player-card {
-    background-color: #e9c137;
+    background-color: transparent;
     display: grid;
     grid-auto-rows: minmax(min-content, max-content);
     grid-template-columns: auto 1fr auto;
+    border-color: transparent;
+    box-shadow: none;
 }
 
 .back, .front {
@@ -35,14 +31,68 @@ $night: #33377a;
 
 .battle-row {
     background-color: #5ebe09;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 .button-bar, .battle-controller {
     background-color: whitesmoke;
 }
 
+.button-bar.border,
+.battle-controller.border {
+    border: 0;
+}
+
+.button-bar .col-12 > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.meta-row {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding-bottom: 0.25rem;
+}
+
+.action-row {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.meta-text {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
 .battle-controller .min-w-input {
     min-width: 100px;
+}
+.control-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-end;
+}
+
+.control-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.control-group .form-check {
+    margin-right: 0.5rem;
 }
 
 .small-w-input {
@@ -101,10 +151,23 @@ $night: #33377a;
 .log-opponent {
     background-color: rgb(255, 224, 224);
 }
+.battle-win td {
+    background-color: rgb(228, 255, 224);
+}
+
+.battle-loss td {
+    background-color: rgb(255, 224, 224);
+}
 
 .log-container {
     display: flex;
     align-content: flex-start;
+}
+
+.log-container span {
+    color: #343a40;
+    font-size: 0.9rem;
+    line-height: 1.35;
 }
 
 .random-event {
@@ -118,13 +181,33 @@ $night: #33377a;
 
 .bottom-container {
     min-height: 30em;
+    padding-top: 0.75rem;
     > div {
         min-height: 15em;
     }
 }
 
+.bottom-container .border {
+    border: 0;
+}
+
+.bottom-container .table {
+    border: 0;
+}
+
+.bottom-container .table > :not(caption) > * > * {
+    border-bottom: 0;
+}
+
+.bottom-container .form-control,
+.bottom-container .form-check-input {
+    border-color: transparent;
+    box-shadow: none;
+}
+
 .scroll {
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .h-100 {
@@ -168,8 +251,17 @@ $night: #33377a;
 }
 
 .info-link {
-    margin-left: 1em;
-    margin-bottom: .5em;
+    margin-bottom: 0;
+}
+.toy-art {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.battle-row h2 {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
 }
 
 // if window is xs breakpoint

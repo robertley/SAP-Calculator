@@ -22,9 +22,12 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { UrlStateService } from './services/url-state.service';
 import { CalculatorStateService } from './services/calculator-state.service';
 import { SimulationService } from './services/simulation.service';
+import { EquipmentService } from './services/equipment.service';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
+const BATTLE_BACKGROUND_BASE = '/assets/art/Public/Public/Background/';
+const TOY_ART_BASE = '/assets/art/Public/Public/Toys/';
 
 
 // TODO
@@ -85,6 +88,43 @@ export class AppComponent implements OnInit, AfterViewInit {
   previousPackOpponent = null;
 
   dayNight = true;
+  battleBackgroundUrl = '';
+  playerToyImageUrl = '';
+  opponentToyImageUrl = '';
+  private battleBackgrounds = [
+    'AboveCloudsBattle.png',
+    'ArcticBattle.png',
+    'AutumnForestBattle.png',
+    'BeachBattle.png',
+    'BridgeBattle.png',
+    'CastleWallBattle.png',
+    'CaveBattle.png',
+    'ColosseumBattle.png',
+    'CornFieldBattle.png',
+    'DesertBattle.png',
+    'DungeonBattle.png',
+    'FarmBattle.png',
+    'FieldBattle.png',
+    'FoodLandBattle.png',
+    'FrontYardBattle.png',
+    'HalloweenStreetBattle.png',
+    'JungleBattle.png',
+    'LavaCaveBattle.png',
+    'LavaMountainBattle.png',
+    'MoneyBinBattle.png',
+    'MoonBattle.png',
+    'PagodaBattle.png',
+    'PlaygroundBattle.png',
+    'SavannaBattle.png',
+    'ScaryForestBattle.png',
+    'SnowBattle.png',
+    'SpaceStationBattle.png',
+    'UnderwaterBattle.png',
+    'UrbanCityBattle.png',
+    'WildWestTownBattle.png',
+    'WinterPineForestBattle.png',
+    'WizardSchoolBattle.png'
+  ];
 
   api = false;
   apiResponse = null;
@@ -97,6 +137,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private gameService: GameService,
     private petService: PetService,
     private toyService: ToyService,
+    private equipmentService: EquipmentService,
     private localStorageService: LocalStorageService,
     private urlStateService: UrlStateService,
     private calculatorStateService: CalculatorStateService,
@@ -163,6 +204,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.initApp();
+    this.setRandomBackground();
     this.initGameApi();
     this.setDayNight();
     this.toys = this.toyService.toys;
@@ -231,6 +273,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   }
 
+  setRandomBackground() {
+    if (!this.battleBackgrounds.length) {
+      this.battleBackgroundUrl = '';
+      return;
+    }
+    const idx = Math.floor(Math.random() * this.battleBackgrounds.length);
+    this.battleBackgroundUrl = `${BATTLE_BACKGROUND_BASE}${this.battleBackgrounds[idx]}`;
+  }
+
   fixCustomPackSelect() {
     this.formGroup.get('playerPack').setValue(this.formGroup.get('playerPack').value, { emitEvent: false });
     this.formGroup.get('opponentPack').setValue(this.formGroup.get('opponentPack').value, { emitEvent: false });
@@ -284,7 +335,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   randomizePlayerPets(player: Player) {
     for (let i = 0; i < 5; i++) {
-      player.setPet(i, this.petService.getRandomPet(player), true);
+      const pet = this.petService.getRandomPet(player);
+      pet.equipment = this.getRandomEquipment();
+      player.setPet(i, pet, true);
     }
   }
 
@@ -321,7 +374,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
       mana: new FormControl(false),
-      triggersConsumed: new FormControl(true),
+      triggersConsumed: new FormControl(false),
       playerRollAmount: new FormControl(4),
       opponentRollAmount: new FormControl(4),
       playerLevel3Sold: new FormControl(0),
@@ -549,6 +602,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     let level = Number(this.formGroup.get(levelControlName).value);
     player.toy = this.toyService.createToy(toy, player, level);
     player.originalToy = player.toy;
+    this.setToyImage(player, toy);
+  }
+
+  setToyImage(player: Player, toyName: string) {
+    const nameId = this.toyService.getToyNameId(toyName);
+    const imageUrl = nameId ? `${TOY_ART_BASE}${nameId}.png` : '';
+    if (player == this.player) {
+      this.playerToyImageUrl = imageUrl;
+    } else if (player == this.opponent) {
+      this.opponentToyImageUrl = imageUrl;
+    }
   }
 
   updatePreviousShopTier(turn) {
@@ -580,6 +644,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (player.toy) {
       player.toy.level = level;
     }
+  }
+
+  getRandomEquipment() {
+    const equipment = Array.from(this.equipmentService.getInstanceOfAllEquipment().values());
+    const allowAilments = this.formGroup?.get('ailmentEquipment')?.value;
+    const ailments = allowAilments ? Array.from(this.equipmentService.getInstanceOfAllAilments().values()) : [];
+    const options = equipment.concat(ailments);
+    if (options.length === 0) {
+      return null;
+    }
+    const idx = Math.floor(Math.random() * options.length);
+    return options[idx];
   }
 
 

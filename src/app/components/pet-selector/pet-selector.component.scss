@@ -1,22 +1,43 @@
-.select-attack {
-    background-color: gray;
-    color: white;
+.stat-tile {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
-.select-health {
-    background-color: #ca0202;
-    color: white;
+
+.stat-attack {
+    background-image: url('/assets/art/Public/Public/Icons/fist-from-textmap.png');
 }
-.select-mana {
-    background-color: #7388f8;
-    color: white;
+
+.stat-health {
+    background-image: url('/assets/art/Public/Public/Icons/heart-from-textmap.png');
+}
+
+.stat-mana {
+    background-image: url('/assets/art/Public/Public/Icons/mana-from-textmap.png');
+}
+
+.stat-input {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    text-align: center;
+    color: #ffffff;
+    font-size: 1.5em;
+    line-height: 52px;
+    box-shadow: none;
+    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.75);
+    outline: none;
 }
 
 .select-triggers-consumed {
     background-color: #28a745;
     color: white;
-}
-
-.select-attack, .select-health, .select-mana, .select-triggers-consumed {
     font-size: 1.5em;
     padding-right: 0;
 }
@@ -26,12 +47,73 @@
     margin: 0 auto;
 }
 
+.pet-art {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.pet-art img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
+.pet-art img.flipped {
+    transform: scaleX(-1);
+}
+
+.equipment-art {
+    position: absolute;
+    top: -4px;
+}
+
+.pet-art.equipment-right .equipment-art {
+    right: -6px;
+}
+
+.pet-art.equipment-left .equipment-art {
+    left: -6px;
+}
+
+.equipment-art img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .level-bar, .level-bar-numbers {
     height: 1em;
     span {
         width: calc(100% / 5);
         height: 100%;
     }
+}
+
+.level-bar-numbers {
+    align-items: center;
+    span {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.level-icon img {
+    height: 18px;
+    width: auto;
+    display: block;
 }
 
 .level-bar {
@@ -59,6 +141,10 @@
     }
 }
 
+.level-bar span {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
 .level-3 {
     text-align: right;
 }
@@ -71,4 +157,9 @@
     z-index: 1;
     box-shadow: 12px 4px 9px 7px rgba(0,0,0,0.1);
 
+}
+.card {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
 }

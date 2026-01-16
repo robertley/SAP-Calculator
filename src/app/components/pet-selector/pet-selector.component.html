@@ -2,11 +2,17 @@
 <div class="card p-3">
     <div class="row form-group" [formGroup]="formGroup">
         <div class="col-12 d-flex level-bar-numbers mb-1">
-            <span>1</span>
+            <span class="level-icon">
+                <img src="/assets/art/Public/Public/Icons/Level_L1.png" alt="Level 1">
+            </span>
             <span></span>
-            <span>2</span>
+            <span class="level-icon">
+                <img src="/assets/art/Public/Public/Icons/Level_L2.png" alt="Level 2">
+            </span>
             <span></span>
-            <span class="level-3">3</span>
+            <span class="level-icon level-3">
+                <img src="/assets/art/Public/Public/Icons/Level_L3.png" alt="Level 3">
+            </span>
         </div>
         <div class="col-12 d-flex level-bar mb-2">
             <span (click)="setExp(0)" class="remove-exp" *ngIf="showRemoveExp()">x</span>
@@ -77,7 +83,7 @@
             </select>
         </div>
         <div class="col-12 mb-2">
-            <select class="form-control" formControlName="equipment">
+            <select class="form-control" formControlName="equipment" [compareWith]="compareEquipment">
                 <option [ngValue]="null">None</option>
                 <optgroup *ngFor="let group of equipmentCategoryGroups" [label]="group.label">
                     <option *ngFor="let equip of group.items" [ngValue]="equip">{{equip.name}}</option>
@@ -87,27 +93,42 @@
                 </optgroup>
             </select>
         </div>
+        <div class="col-12 pet-art" *ngIf="petImageSrc && !petImageBroken" [class.equipment-left]="!flipImage" [class.equipment-right]="flipImage">
+            <img [src]="petImageSrc" [alt]="formGroup.get('name').value || 'Pet'" [class.flipped]="flipImage" (error)="petImageBroken = true">
+            <div class="equipment-art" *ngIf="(equipmentImageSrc || ailmentImageSrc) && !equipmentImageBroken">
+                <img *ngIf="equipmentImageSrc" [src]="equipmentImageSrc" [alt]="formGroup.get('equipment').value?.name || 'Equipment'" (error)="equipmentImageBroken = true">
+                <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [src]="ailmentImageSrc" [alt]="formGroup.get('equipment').value?.name || 'Ailment'" (error)="equipmentImageBroken = true">
+            </div>
+        </div>
         <ng-container *ngIf="mana || triggersConsumed">
             <div class="col-12" *ngIf="mana && !triggersConsumed">
-                <input class="form-control select-mana single-stat-input" formControlName="mana" type="number" min="0" max="100" placeholder="Mana">
+                <div class="stat-tile stat-mana">
+                    <input class="form-control stat-input select-mana" formControlName="mana" type="number" min="0" max="50" placeholder="Mana">
+                </div>
             </div>
             <div class="col-12" *ngIf="!mana && triggersConsumed">
-                <input class="form-control select-triggers-consumed single-stat-input" formControlName="triggersConsumed" type="number" min="0" max="100" placeholder="Triggers Consumed">
+                <input class="form-control select-triggers-consumed single-stat-input" formControlName="triggersConsumed" type="number" min="0" max="10" placeholder="Triggers Consumed">
             </div>
             <ng-container *ngIf="mana && triggersConsumed">
                 <div class="col-6">
-                    <input class="form-control select-mana" formControlName="mana" type="number" min="0" max="100" placeholder="Mana">
+                    <div class="stat-tile stat-mana">
+                        <input class="form-control stat-input select-mana" formControlName="mana" type="number" min="0" max="50" placeholder="Mana">
+                    </div>
                 </div>
                 <div class="col-6">
-                    <input class="form-control select-triggers-consumed" formControlName="triggersConsumed" type="number" min="0" max="100" placeholder="Triggers Consumed">
+                    <input class="form-control select-triggers-consumed" formControlName="triggersConsumed" type="number" min="0" max="10" placeholder="Triggers Consumed">
                 </div>
             </ng-container>
         </ng-container>
         <div class="col-6">
-            <input class="form-control select-attack" formControlName="attack" type="number" min="1" [max]="attackHealthMax">
+            <div class="stat-tile stat-attack">
+                <input class="form-control stat-input select-attack" formControlName="attack" type="number" min="1" [max]="attackHealthMax">
+            </div>
         </div>
         <div class="col-6">
-            <input class="form-control select-health" formControlName="health" type="number" min="1" [max]="attackHealthMax">
+            <div class="stat-tile stat-health">
+                <input class="form-control stat-input select-health" formControlName="health" type="number" min="1" [max]="attackHealthMax">
+            </div>
         </div>
     </div>
 </div>

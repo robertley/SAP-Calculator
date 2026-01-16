@@ -16,6 +16,7 @@ import * as toysJson from "../files/toys.json";
 interface ToyJsonEntry {
   Name: string;
   Tier: number | string;
+  NameId?: string;
 }
 
 @Injectable({
@@ -24,6 +25,7 @@ interface ToyJsonEntry {
 export class ToyService {
 
     toys: Map<number, string[]> = new Map();
+    private toyNameIds: Map<string, string> = new Map();
 
     startOfBattleEvents: AbilityEvent[] = [];
     emptyFrontSpaceEvents: AbilityEvent[] = [];
@@ -40,6 +42,7 @@ export class ToyService {
 
     setToys() {
         this.toys.clear();
+        this.toyNameIds.clear();
         const toyEntries = this.getToyEntriesFromJson();
         for (const toy of toyEntries) {
             const tier = Number(toy.Tier);
@@ -53,10 +56,20 @@ export class ToyService {
             if (tierList) {
                 tierList.push(toy.Name);
             }
+            if (toy.Name && toy.NameId) {
+                this.toyNameIds.set(toy.Name, toy.NameId);
+            }
         }
         for (const [tier, toyNames] of this.toys) {
             this.toys.set(tier, [...new Set(toyNames)]);
         }
+    }
+
+    getToyNameId(toyName: string): string | null {
+        if (!toyName) {
+            return null;
+        }
+        return this.toyNameIds.get(toyName) ?? null;
     }
 
     private getToyEntriesFromJson(): ToyJsonEntry[] {
