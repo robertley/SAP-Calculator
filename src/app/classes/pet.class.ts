@@ -67,6 +67,9 @@ export abstract class Pet {
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    abominationSwallowedPet1Level?: number;
+    abominationSwallowedPet2Level?: number;
+    abominationSwallowedPet3Level?: number;
     belugaSwallowedPet: string;
     sarcasticFringeheadSwallowedPet?: string;
     friendsDiedBeforeBattle: number = 0;

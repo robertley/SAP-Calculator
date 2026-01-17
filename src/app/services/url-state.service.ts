@@ -2,13 +2,16 @@ import { Injectable } from "@angular/core";
 
 const REVERSE_KEY_MAP = {
     "pP": "playerPack", "oP": "opponentPack", "pT": "playerToy", "pTL": "playerToyLevel",
-    "oT": "opponentToy", "oTL": "opponentToyLevel", "t": "turn", "pGS": "playerGoldSpent",
+    "pHT": "playerHardToy", "pHTL": "playerHardToyLevel",
+    "oT": "opponentToy", "oTL": "opponentToyLevel",
+    "oHT": "opponentHardToy", "oHTL": "opponentHardToyLevel",
+    "t": "turn", "pGS": "playerGoldSpent",
     "oGS": "opponentGoldSpent", "pRA": "playerRollAmount", "oRA": "opponentRollAmount",
     "pSA": "playerSummonedAmount", "oSA": "opponentSummonedAmount", "pL3": "playerLevel3Sold",
-    "oL3": "opponentLevel3Sold", "p": "playerPets", "o": "opponentPets", "an": "angler",
-    "ap": "allPets", "lf": "logFilter", "fs": "fontSize", "cp": "customPacks",
+    "oL3": "opponentLevel3Sold", "p": "playerPets", "o": "opponentPets",
+    "ap": "allPets", "lf": "logFilter", "cp": "customPacks",
     "os": "oldStork", "tp": "tokenPets", "ks": "komodoShuffle", "m": "mana", "tc": "triggersConsumed",
-    "sa": "showAdvanced", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
+    "sa": "showAdvanced", "swl": "showSwallowedLevels", "ae": "ailmentEquipment", "pTA": "playerTransformationAmount", "oTA": "opponentTransformationAmount",
     // Pet Object Keys
     "n": "name", "a": "attack", "h": "health", "e": "exp", "eq": "equipment", "bSP": "belugaSwallowedPet", "tH": "timesHurt"
 };

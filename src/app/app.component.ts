@@ -25,6 +25,7 @@ import { SimulationService } from './services/simulation.service';
 import { EquipmentService } from './services/equipment.service';
 import { cloneEquipment } from './util/equipment-utils';
 import { TeamPresetsService, TeamPreset } from './services/team-presets.service';
+import { getToyIconPath } from './util/asset-utils';
 
 const DAY = '#85ddf2';
 const NIGHT = '#33377a';
@@ -84,6 +85,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   simulated = false;
   formGroup: FormGroup;
   toys: Map<number, string[]>;
+  regularToys: Map<number, string[]> = new Map();
+  hardWackyToys: Map<number, string[]> = new Map();
   customPackEditorModal: Modal;
 
   previousPackPlayer = null;
@@ -93,6 +96,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   battleBackgroundUrl = '';
   playerToyImageUrl = '';
   opponentToyImageUrl = '';
+  playerHardToyImageUrl = '';
+  opponentHardToyImageUrl = '';
   savedTeams: TeamPreset[] = [];
   selectedTeamId = '';
   teamName = '';
@@ -130,7 +135,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     'WinterPineForestBattle.png',
     'WizardSchoolBattle.png'
   ];
-
+  logFilterTabs = [
+    { label: 'None', value: null },
+    { label: 'Player', value: 'player' },
+    { label: 'Opponent', value: 'opponent' },
+    { label: 'Draw', value: 'draw' }
+  ];
   api = false;
   apiResponse = null;
 
@@ -215,6 +225,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.initGameApi();
     this.setDayNight();
     this.toys = this.toyService.toys;
+    this.regularToys = this.toyService.getToysByType(0);
+    this.hardWackyToys = this.toyService.getToysByType(1);
   }
 
   loadStateFromUrl(isInitialLoad: boolean = false): boolean {
@@ -296,12 +308,17 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   initApp() {
     this.petService.buildCustomPackPets(this.formGroup.get('customPacks') as FormArray);
-    this.setFontSize();
     this.initPlayerPets();
     this.updatePlayerPack(this.player, this.formGroup.get('playerPack').value, false);
     this.updatePlayerPack(this.opponent, this.formGroup.get('opponentPack').value, false);
     this.updatePlayerToy(this.player, this.formGroup.get('playerToy').value);
     this.updatePlayerToy(this.opponent, this.formGroup.get('opponentToy').value);
+    this.gameService.gameApi.playerHardToy = this.formGroup.get('playerHardToy').value;
+    this.gameService.gameApi.playerHardToyLevel = this.formGroup.get('playerHardToyLevel').value;
+    this.gameService.gameApi.opponentHardToy = this.formGroup.get('opponentHardToy').value;
+    this.gameService.gameApi.opponentHardToyLevel = this.formGroup.get('opponentHardToyLevel').value;
+    this.setHardToyImage(this.player, this.formGroup.get('playerHardToy').value);
+    this.setHardToyImage(this.opponent, this.formGroup.get('opponentHardToy').value);
     this.previousPackOpponent = this.opponent.pack;
     this.previousPackPlayer = this.player.pack;
   }
@@ -367,21 +384,24 @@ export class AppComponent implements OnInit, AfterViewInit {
       playerToyLevel: new FormControl(this.player.toy?.level ?? 1),
       opponentToy: new FormControl(this.opponent.toy?.name),
       opponentToyLevel: new FormControl(this.opponent.toy?.level ?? 1),
+      playerHardToy: new FormControl(null),
+      playerHardToyLevel: new FormControl(1),
+      opponentHardToy: new FormControl(null),
+      opponentHardToyLevel: new FormControl(1),
       turn: new FormControl(defaultTurn),
       playerGoldSpent: new FormControl(defaultGoldSpent),
       opponentGoldSpent: new FormControl(defaultGoldSpent),
-      angler: new FormControl(false),
       allPets: new FormControl(false),
       logFilter: new FormControl(null),
       playerPets: new FormArray([]),
       opponentPets: new FormArray([]),
-      fontSize: new FormControl(13),
       customPacks: new FormArray([]),
       oldStork: new FormControl(false),
       tokenPets: new FormControl(false),
       komodoShuffle: new FormControl(false),
       mana: new FormControl(false),
       triggersConsumed: new FormControl(false),
+      showSwallowedLevels: new FormControl(false),
       playerRollAmount: new FormControl(4),
       opponentRollAmount: new FormControl(4),
       playerLevel3Sold: new FormControl(0),
@@ -435,6 +455,20 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('opponentToyLevel').valueChanges.subscribe((value) => {
       this.updateToyLevel(this.opponent, value);
     })
+    this.formGroup.get('playerHardToy').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerHardToy = value;
+      this.setHardToyImage(this.player, value);
+    })
+    this.formGroup.get('playerHardToyLevel').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.playerHardToyLevel = value;
+    })
+    this.formGroup.get('opponentHardToy').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentHardToy = value;
+      this.setHardToyImage(this.opponent, value);
+    })
+    this.formGroup.get('opponentHardToyLevel').valueChanges.subscribe((value) => {
+      this.gameService.gameApi.opponentHardToyLevel = value;
+    })
     this.formGroup.get('turn').valueChanges.subscribe((value) => {
       this.updatePreviousShopTier(value);
       this.setDayNight();
@@ -444,11 +478,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
     this.formGroup.get('opponentGoldSpent').valueChanges.subscribe((value) => {
       this.updateGoldSpent(null, value);
-    })
-    this.formGroup.get('angler').valueChanges.subscribe((value) => {
-      setTimeout(() => {
-        this.updateSelectorPets();
-      })
     })
     this.formGroup.get('oldStork').valueChanges.subscribe((value) => {
       this.gameService.gameApi.oldStork = value;
@@ -510,6 +539,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
+        abominationSwallowedPet1Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
+        abominationSwallowedPet2Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
+        abominationSwallowedPet3Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
         friendsDiedBeforeBattle: new FormControl(this.player[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
@@ -536,6 +568,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+        abominationSwallowedPet1Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
+        abominationSwallowedPet2Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
+        abominationSwallowedPet3Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
         friendsDiedBeforeBattle: new FormControl(this.opponent[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
@@ -597,12 +632,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
-  updateSelectorPets() {
-    this.petSelectors.forEach((petSelector) => {
-      petSelector.initPets();
-    })
-  }
-
   updatePlayerToy(player: Player, toy) {
     let levelControlName;
     if (player == this.player) {
@@ -624,6 +653,16 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.playerToyImageUrl = imageUrl;
     } else if (player == this.opponent) {
       this.opponentToyImageUrl = imageUrl;
+    }
+  }
+
+  setHardToyImage(player: Player, toyName: string) {
+    const nameId = this.toyService.getToyNameId(toyName);
+    const imageUrl = nameId ? `${TOY_ART_BASE}${nameId}.png` : '';
+    if (player == this.player) {
+      this.playerHardToyImageUrl = imageUrl;
+    } else if (player == this.opponent) {
+      this.opponentHardToyImageUrl = imageUrl;
     }
   }
 
@@ -777,6 +816,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (!team) {
       return;
     }
+    if (team.rollAmount != null) {
+      const rollControl = side === 'player' ? 'playerRollAmount' : 'opponentRollAmount';
+      this.formGroup.get(rollControl).setValue(team.rollAmount);
+    }
     if (side === 'player') {
       this.formGroup.get('playerToy').setValue(team.toyName ?? null);
       this.formGroup.get('playerToyLevel').setValue(team.toyLevel ?? 1);
@@ -819,6 +862,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet1: petData.abominationSwallowedPet1 ?? null,
           abominationSwallowedPet2: petData.abominationSwallowedPet2 ?? null,
           abominationSwallowedPet3: petData.abominationSwallowedPet3 ?? null,
+          abominationSwallowedPet1Level: petData.abominationSwallowedPet1Level ?? 1,
+          abominationSwallowedPet2Level: petData.abominationSwallowedPet2Level ?? 1,
+          abominationSwallowedPet3Level: petData.abominationSwallowedPet3Level ?? 1,
           friendsDiedBeforeBattle: petData.friendsDiedBeforeBattle ?? 0,
           battlesFought: petData.battlesFought ?? 0,
           timesHurt: petData.timesHurt ?? 0,
@@ -855,6 +901,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       abominationSwallowedPet1: petValue.abominationSwallowedPet1 ?? null,
       abominationSwallowedPet2: petValue.abominationSwallowedPet2 ?? null,
       abominationSwallowedPet3: petValue.abominationSwallowedPet3 ?? null,
+      abominationSwallowedPet1Level: petValue.abominationSwallowedPet1Level ?? 1,
+      abominationSwallowedPet2Level: petValue.abominationSwallowedPet2Level ?? 1,
+      abominationSwallowedPet3Level: petValue.abominationSwallowedPet3Level ?? 1,
       friendsDiedBeforeBattle: petValue.friendsDiedBeforeBattle ?? 0,
       battlesFought: petValue.battlesFought ?? 0,
       timesHurt: petValue.timesHurt ?? 0,
@@ -906,21 +955,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         selector.initSelector();
       })
     })
-  }
-
-  zoomIn() {
-    this.formGroup.get('fontSize').setValue(Math.min(this.formGroup.get('fontSize').value + 1, 20));
-    this.setFontSize();
-  }
-
-  zoomOut() {
-    this.formGroup.get('fontSize').setValue(Math.max(this.formGroup.get('fontSize').value - 1, 8));
-    this.setFontSize();
-  }
-
-  setFontSize() {
-    // grab root html element and change the font size
-    document.documentElement.style.fontSize = `${this.formGroup.get('fontSize').value}px`;
   }
 
   clearCache() {
@@ -1081,6 +1115,24 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
     return validFormGroups;
+  }
+
+  getToyIcon(toy: string): string {
+    return getToyIconPath(toy) ?? '';
+  }
+
+  getToyOptionStyle(toy: string | null) {
+    if (!toy) {
+      return {};
+    }
+    const icon = this.getToyIcon(toy);
+    return {
+      'background-image': `url(${icon})`,
+      'background-repeat': 'no-repeat',
+      'background-size': '20px 20px',
+      'background-position': 'left center',
+      'padding-left': '2rem'
+    };
   }
 
 

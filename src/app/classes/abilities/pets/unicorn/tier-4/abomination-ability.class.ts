@@ -28,7 +28,7 @@ export class AbominationAbility extends Ability {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let swallowedPets = [];
+        let swallowedPets: Array<{ name: string; level: number }> = [];
         let oneSwallowed = false;
         let twoSwallowed = false;
         let threeSwallowed = false;
@@ -36,13 +36,22 @@ export class AbominationAbility extends Ability {
 
         for (let i = 0; i < swallowSpots; i++) {
             if (owner.abominationSwallowedPet1 != null && !oneSwallowed) {
-                swallowedPets.push(owner.abominationSwallowedPet1);
+                swallowedPets.push({
+                    name: owner.abominationSwallowedPet1,
+                    level: owner.abominationSwallowedPet1Level ?? 1
+                });
                 oneSwallowed = true;
             } else if (owner.abominationSwallowedPet2 != null && !twoSwallowed) {
-                swallowedPets.push(owner.abominationSwallowedPet2);
+                swallowedPets.push({
+                    name: owner.abominationSwallowedPet2,
+                    level: owner.abominationSwallowedPet2Level ?? 1
+                });
                 twoSwallowed = true;
             } else if (owner.abominationSwallowedPet3 != null && !threeSwallowed) {
-                swallowedPets.push(owner.abominationSwallowedPet3);
+                swallowedPets.push({
+                    name: owner.abominationSwallowedPet3,
+                    level: owner.abominationSwallowedPet3Level ?? 1
+                });
                 threeSwallowed = true;
             }
         }
@@ -52,7 +61,7 @@ export class AbominationAbility extends Ability {
                 health: null,
                 mana: null,
                 equipment: null,
-                name: swallowedPet,
+                name: swallowedPet.name,
                 exp: 0
             }, owner.parent);
 
@@ -60,12 +69,12 @@ export class AbominationAbility extends Ability {
                 return;
             }
             this.logService.createLog({
-                message: `${owner.name} gained ${swallowedPet}'s Ability.`,
+                message: `${owner.name} gained ${swallowedPet.name}'s Ability.`,
                 type: 'ability',
                 player: owner.parent
             });
             owner.removeAbility('AbominationAbility')
-            owner.gainAbilities(copyPet, 'Pet', 1);
+            owner.gainAbilities(copyPet, 'Pet', swallowedPet.level ?? 1);
         }
 
         // Tiger system: trigger Tiger execution at the end

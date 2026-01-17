@@ -64,6 +64,9 @@ export class ReplayCalcParser {
         abominationSwallowedPet1: null,
         abominationSwallowedPet2: null,
         abominationSwallowedPet3: null,
+        abominationSwallowedPet1Level: 1,
+        abominationSwallowedPet2Level: 1,
+        abominationSwallowedPet3Level: 1,
         battlesFought: 0,
         triggersConsumed: abilityTriggersConsumed.length > 0 ? Math.max(...abilityTriggersConsumed) : 0,
       };
@@ -131,8 +134,12 @@ export class ReplayCalcParser {
       opponentPack: opponentPackName,
       playerToy: playerToy.name,
       playerToyLevel: String(playerToy.level),
+      playerHardToy: null,
+      playerHardToyLevel: 1,
       opponentToy: opponentToy.name,
       opponentToyLevel: String(opponentToy.level),
+      opponentHardToy: null,
+      opponentHardToyLevel: 1,
       turn: readBoardValue(userBoard, "Tur", 1) || 1,
       playerGoldSpent: readBoardValue(userBoard, "GoSp", 0) || 0,
       opponentGoldSpent: readBoardValue(opponentBoard, "GoSp", 0) || 0,
@@ -146,10 +153,8 @@ export class ReplayCalcParser {
       opponentTransformationAmount: readBoardValue(opponentBoard, "TrTT", 0) || 0,
       playerPets: parseBoardPets(userBoard),
       opponentPets: parseBoardPets(opponentBoard),
-      angler: false,
       allPets: false,
       logFilter: null,
-      fontSize: 13,
       customPacks: customPacks,
       oldStork: false,
       tokenPets: false,
@@ -157,6 +162,7 @@ export class ReplayCalcParser {
       mana: true,
       triggersConsumed: true,
       showAdvanced: true,
+      showSwallowedLevels: false,
       ailmentEquipment: false,
     };
   }
@@ -320,7 +326,6 @@ export class ReplayCalcParser {
       strippedState.opponentTransformationAmount =
         state.opponentTransformationAmount;
 
-    if (state.angler) strippedState.angler = true;
     if (state.allPets) strippedState.allPets = true;
     if (state.oldStork) strippedState.oldStork = true;
     if (state.tokenPets) strippedState.tokenPets = true;
@@ -328,10 +333,10 @@ export class ReplayCalcParser {
     if (state.mana) strippedState.mana = true;
     if (state.triggersConsumed) strippedState.triggersConsumed = true;
     if (state.showAdvanced) strippedState.showAdvanced = true;
+    if (state.showSwallowedLevels) strippedState.showSwallowedLevels = true;
     if (state.ailmentEquipment) strippedState.ailmentEquipment = true;
 
     if (state.logFilter) strippedState.logFilter = state.logFilter;
-    if (state.fontSize !== 13) strippedState.fontSize = state.fontSize;
     if (state.customPacks && state.customPacks.length > 0)
       strippedState.customPacks = state.customPacks;
 

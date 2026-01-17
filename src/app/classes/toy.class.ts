@@ -13,10 +13,12 @@ export class Toy {
     friendlyLevelUp?(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number);
     friendFaints?(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number);
     friendJumped?(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number);
+    allEnemiesFainted?(gameApi?: GameAPI, puma?: boolean);
     parent: Player;
     level: number;
     tier: number;
     used: boolean = false;
+    suppressFriendFaintLog = false;
     triggers = 0;
     constructor(protected logService: LogService, protected toyService: ToyService, parent: Player, level: number) {
         this.parent = parent;
