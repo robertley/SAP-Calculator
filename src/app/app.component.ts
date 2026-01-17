@@ -154,6 +154,56 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // list of pets that need roll amount input
+  readonly ROLL_PETS = [
+    'Nessie',
+    'Bunyip',
+    'Mana Hound',
+    'Ammonite',
+    'Fossa',
+    'Hippocampus',
+    'Platybelodon',
+    'Barnacle',
+    'Olm'
+  ];
+
+  shouldShowRollInputs(): boolean {
+    const players = [this.player, this.opponent];
+    for (const player of players) {
+      if (!player || !player.petArray) continue;
+      for (const pet of player.petArray) {
+        if (!pet) continue;
+
+        // Direct match
+        if (this.ROLL_PETS.includes(pet.name)) {
+          return true;
+        }
+
+        // Swallowed pets (Abomination)
+        if (pet.name === 'Abomination') {
+          if (this.ROLL_PETS.includes(pet.abominationSwallowedPet1)) return true;
+          if (this.ROLL_PETS.includes(pet.abominationSwallowedPet2)) return true;
+          if (this.ROLL_PETS.includes(pet.abominationSwallowedPet3)) return true;
+        }
+
+        // Swallowed pets (Beluga)
+        if (pet.name === 'Beluga Whale' && this.ROLL_PETS.includes(pet.belugaSwallowedPet)) {
+          return true;
+        }
+
+        // Swallowed pets (Sarcastic Fringehead)
+        if (pet.name === 'Sarcastic Fringehead' && this.ROLL_PETS.includes(pet.sarcasticFringeheadSwallowedPet)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  get rollInputVisible(): boolean {
+    return this.formGroup.get('showAdvanced').value || this.shouldShowRollInputs();
+  }
+
   buildApiResponse() {
     let repsonse = {
       playerWins: this.playerWinner,
