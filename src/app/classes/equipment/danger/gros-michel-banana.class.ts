@@ -1,5 +1,5 @@
 import { LogService } from "../../../services/log.service";
-import { AbilityService } from "../../../services/ability.service";
+import { AbilityService } from "../../../services/ability/ability.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { GrosMichelBananaAbility } from "../../abilities/equipment/danger/gros-michel-banana-ability.class";

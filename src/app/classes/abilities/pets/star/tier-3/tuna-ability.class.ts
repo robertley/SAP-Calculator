@@ -5,8 +5,9 @@ import { LogService } from "app/services/log.service";
 
 export class TunaAbility extends Ability {
     private logService: LogService;
+    private timesHurtOverride: number | null;
 
-    constructor(owner: Pet, logService: LogService) {
+    constructor(owner: Pet, logService: LogService, timesHurtOverride?: number) {
         super({
             name: 'TunaAbility',
             owner: owner,
@@ -19,13 +20,14 @@ export class TunaAbility extends Ability {
             }
         });
         this.logService = logService;
+        this.timesHurtOverride = timesHurtOverride ?? null;
     }
 
     private executeAbility(context: AbilityContext): void {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let totalHurt = owner.timesHurt;
+        let totalHurt = this.timesHurtOverride ?? owner.timesHurt;
         for (let i = 0; i < totalHurt; i++) {
             const targetResp = owner.parent.getRandomPet([owner], true, false, true, owner);
 
@@ -52,6 +54,6 @@ export class TunaAbility extends Ability {
     }
 
     copy(newOwner: Pet): TunaAbility {
-        return new TunaAbility(newOwner, this.logService);
+        return new TunaAbility(newOwner, this.logService, this.timesHurtOverride ?? this.owner.timesHurt);
     }
 }

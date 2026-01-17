@@ -2,8 +2,8 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { InjectorService } from "app/services/injector.service";
-import { PetFactoryService } from "app/services/pet-factory.service";
-import { PetService } from "app/services/pet.service";
+import { PetFactoryService } from "app/services/pet/pet-factory.service";
+import { PetService } from "app/services/pet/pet.service";
 
 export class TapirAbility extends Ability {
     private logService: LogService;

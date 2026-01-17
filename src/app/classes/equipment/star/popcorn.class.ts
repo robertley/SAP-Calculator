@@ -1,6 +1,6 @@
 import { GameService } from "../../../services/game.service";
 import { LogService } from "../../../services/log.service";
-import { PetService } from "../../../services/pet.service";
+import { PetService } from "../../../services/pet/pet.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";
 import { PopcornAbility } from "../../abilities/equipment/star/popcorn-ability.class";

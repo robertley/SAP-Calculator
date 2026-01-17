@@ -1,6 +1,6 @@
 import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
-import { PetService } from "app/services/pet.service";
+import { PetService } from "app/services/pet/pet.service";
 import { InjectorService } from "app/services/injector.service";
 import { LogService } from "app/services/log.service";
 

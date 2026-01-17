@@ -1,7 +1,7 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { PetService } from "app/services/pet.service";
+import { PetService } from "app/services/pet/pet.service";
 
 export class RedLippedBatfishAbility extends Ability {
     private logService: LogService;

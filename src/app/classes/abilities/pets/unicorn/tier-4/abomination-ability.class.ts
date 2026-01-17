@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { PetService } from "app/services/pet.service";
+import { PetService } from "app/services/pet/pet.service";
 
 export class AbominationAbility extends Ability {
     private logService: LogService;
@@ -26,43 +26,42 @@ export class AbominationAbility extends Ability {
 
     private executeAbility(context: AbilityContext): void {
         
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { gameApi, triggerPet, tiger, pteranodon } = context;
+        const owner = this.owner;
 
-        let swallowedPets: Array<{ name: string; level: number }> = [];
-        let oneSwallowed = false;
-        let twoSwallowed = false;
-        let threeSwallowed = false;
         const swallowSpots = this.level;
-
-        for (let i = 0; i < swallowSpots; i++) {
-            if (owner.abominationSwallowedPet1 != null && !oneSwallowed) {
-                swallowedPets.push({
-                    name: owner.abominationSwallowedPet1,
-                    level: owner.abominationSwallowedPet1Level ?? 1
-                });
-                oneSwallowed = true;
-            } else if (owner.abominationSwallowedPet2 != null && !twoSwallowed) {
-                swallowedPets.push({
-                    name: owner.abominationSwallowedPet2,
-                    level: owner.abominationSwallowedPet2Level ?? 1
-                });
-                twoSwallowed = true;
-            } else if (owner.abominationSwallowedPet3 != null && !threeSwallowed) {
-                swallowedPets.push({
-                    name: owner.abominationSwallowedPet3,
-                    level: owner.abominationSwallowedPet3Level ?? 1
-                });
-                threeSwallowed = true;
+        const orderedSwallowedPets: Array<{ name?: string | null; level: number; timesHurt: number }> = [
+            {
+                name: owner.abominationSwallowedPet1,
+                level: owner.abominationSwallowedPet1Level ?? 1,
+                timesHurt: owner.abominationSwallowedPet1TimesHurt ?? 0
+            },
+            {
+                name: owner.abominationSwallowedPet2,
+                level: owner.abominationSwallowedPet2Level ?? 1,
+                timesHurt: owner.abominationSwallowedPet2TimesHurt ?? 0
+            },
+            {
+                name: owner.abominationSwallowedPet3,
+                level: owner.abominationSwallowedPet3Level ?? 1,
+                timesHurt: owner.abominationSwallowedPet3TimesHurt ?? 0
             }
+        ].filter((pet): pet is { name: string; level: number; timesHurt: number } => pet.name != null);
+        const swallowedPets = orderedSwallowedPets.slice(0, swallowSpots);
+        // Tiger repeats only the first swallowed pet's ability.
+        let executedSwallowedPets = swallowedPets;
+        if (tiger && swallowedPets.length > 0) {
+            executedSwallowedPets = swallowedPets.slice(0, 1);
         }
-        for (let swallowedPet of swallowedPets) {
+        for (let swallowedPet of executedSwallowedPets) {
             let copyPet = this.petService.createPet({
                 attack: null,
                 health: null,
                 mana: null,
                 equipment: null,
                 name: swallowedPet.name,
-                exp: 0
+                exp: 0,
+                timesHurt: swallowedPet.timesHurt ?? 0
             }, owner.parent);
 
             if (!copyPet) {

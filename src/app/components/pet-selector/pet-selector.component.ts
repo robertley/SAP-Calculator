@@ -2,11 +2,11 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
-import { PetService } from '../../services/pet.service';
-import { EquipmentService } from '../../services/equipment.service';
+import { PetService } from '../../services/pet/pet.service';
+import { EquipmentService } from '../../services/equipment/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
 import { cloneEquipment } from '../../util/equipment-utils';
-import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment-categories';
+import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment/equipment-categories';
 import { Subscription } from 'rxjs';
 import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
 import { getPetIconPath, getEquipmentIconPath, getPetIconFileName } from '../../util/asset-utils';
@@ -237,6 +237,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     this.formGroup.get('abominationSwallowedPet1Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('mana').valueChanges.subscribe(() => {
       this.clampControl('mana', 0, 50);
       this.substitutePet(false);
@@ -524,6 +527,15 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.abominationSwallowedPet1Level = swallowedPets[0]?.level ?? 1;
     pet.abominationSwallowedPet2Level = swallowedPets[1]?.level ?? 1;
     pet.abominationSwallowedPet3Level = swallowedPets[2]?.level ?? 1;
+    pet.abominationSwallowedPet1TimesHurt = this.getAbominationTimesHurtValue('abominationSwallowedPet1TimesHurt');
+    pet.abominationSwallowedPet2TimesHurt = this.getAbominationTimesHurtValue('abominationSwallowedPet2TimesHurt');
+    pet.abominationSwallowedPet3TimesHurt = this.getAbominationTimesHurtValue('abominationSwallowedPet3TimesHurt');
+  }
+
+  shouldShowAbominationSwallowTimesHurt(index: number): boolean {
+    const control = this.formGroup.get(`abominationSwallowedPet${index + 1}`);
+    const name = control?.value;
+    return name === 'Sabertooth Tiger' || name === 'Tuna';
   }
 
   setBattlesFought(value: number) {
@@ -541,6 +553,18 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     }
     pet.timesHurt = value;
     this.substitutePet(false);
+  }
+
+  private getAbominationTimesHurtValue(controlName: string): number {
+    const control = this.formGroup.get(controlName);
+    if (!control) {
+      return 0;
+    }
+    const rawValue = Number(control.value);
+    if (Number.isNaN(rawValue)) {
+      return 0;
+    }
+    return Math.max(0, Math.min(99, rawValue));
   }
 
   removePet() {

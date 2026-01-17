@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { InjectorService } from "app/services/injector.service";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { PetService } from "app/services/pet.service";
+import { PetService } from "app/services/pet/pet.service";
 import { BASE_PACK_NAMES, BasePackName } from "app/util/pack-names";
 
 export class DugongAbility extends Ability {

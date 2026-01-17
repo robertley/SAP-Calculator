@@ -217,6 +217,33 @@ $night: #33377a;
     align-items: start;
 }
 
+.advanced-number-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.advanced-number-grid .form-group {
+    margin-bottom: 0;
+}
+
+.advanced-input label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.small-w-input label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.advanced-input input {
+    text-align: center;
+}
+
 .advanced-toggle {
     display: flex;
     justify-content: flex-start;

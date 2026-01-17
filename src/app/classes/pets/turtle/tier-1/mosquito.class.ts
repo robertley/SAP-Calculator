@@ -4,7 +4,7 @@ import { LogService } from "../../../../services/log.service";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { Equipment } from "../../../equipment.class";
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { MosquitoAbility } from "../../../abilities/pets/turtle/tier-1/mosquito-ability.class";
 
 export class Mosquito extends Pet {

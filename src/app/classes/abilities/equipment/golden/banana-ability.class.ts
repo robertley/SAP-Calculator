@@ -3,7 +3,7 @@ import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { Monkey } from "../../../pets/turtle/tier-5/monkey.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 
 export class BananaAbility extends Ability {
     private equipment: Equipment;

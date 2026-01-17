@@ -302,55 +302,54 @@
         </div>
       </div>
       <div class="row battle-controller border mt-2" *ngIf="formGroup.get('showAdvanced').value">
-          <div class="col-12 d-flex justify-content-between py-2">
-            <div class="border-end d-flex flex-wrap pe-3">
-              <div class="form-group small-w-input me-s-3">
-                <label for="turn">Turn</label>
-                <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerGoldSpent" title="Player Gold Spent">Player Gold Spent</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentGoldSpent" title="Opponent Gold Spent">Opponent Gold Spent</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerRollAmount" title="Player Roll Amount">Player Roll Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerRollAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentRollAmount" title="Opponent Roll Amount">Opponent Roll Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentRollAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerLevel3Sold" title="Player Level 3 Sold">Player Lvl 3 Sold</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerLevel3Sold" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">Opponent Lvl 3 Sold</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentLevel3Sold" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerSummonedAmount" title="Player Summoned Amount">Player Summoned Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerSummonedAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentSummonedAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerTransformationAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentTransformationAmount"
-                  max="99" />
-              </div>
+        <div class="col-12 py-2">
+          <div class="advanced-number-grid">
+            <div class="form-group small-w-input">
+              <label for="turn">Turn Number</label>
+              <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerGoldSpent" title="Player Gold Spent">Player Gold Spent</label>
+              <input class="form-control" type="number" formControlName="playerGoldSpent" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentGoldSpent" title="Opponent Gold Spent">Opponent Gold Spent</label>
+              <input class="form-control" type="number" formControlName="opponentGoldSpent" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerRollAmount" title="Player Roll Amount">Player Roll Amount</label>
+              <input class="form-control" type="number" formControlName="playerRollAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentRollAmount" title="Opponent Roll Amount">Opponent Roll Amount</label>
+              <input class="form-control" type="number" formControlName="opponentRollAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerLevel3Sold" title="Player Level 3 Sold">Player Level 3 Sold</label>
+              <input class="form-control" type="number" formControlName="playerLevel3Sold" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">Opponent Level 3 Sold</label>
+              <input class="form-control" type="number" formControlName="opponentLevel3Sold" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerSummonedAmount" title="Player Summoned Amount">Player Summoned Amount</label>
+              <input class="form-control" type="number" formControlName="playerSummonedAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amount</label>
+              <input class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation Amount</label>
+              <input class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation Amount</label>
+              <input class="form-control" type="number" formControlName="opponentTransformationAmount" max="99" />
             </div>
           </div>
+        </div>
       </div>
     </div>
     <div class="row flex-1 bottom-container" *ngIf="simulated">

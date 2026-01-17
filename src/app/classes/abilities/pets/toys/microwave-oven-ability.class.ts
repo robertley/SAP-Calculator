@@ -1,7 +1,7 @@
 import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { EquipmentService } from "app/services/equipment.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
 
 export class MicrowaveOvenAbility extends Ability {
     constructor(owner: Pet, logService: LogService, equipmentService: EquipmentService) {

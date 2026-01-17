@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { ToyService } from "app/services/toy.service";
+import { ToyService } from "app/services/toy/toy.service";
 import { InjectorService } from "app/services/injector.service";
 
 export class FlyingSquirrelAbility extends Ability {

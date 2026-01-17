@@ -2,10 +2,10 @@ import { SimulationConfig, SimulationResult, PetConfig } from "../interfaces/sim
 import { Player } from "../classes/player.class";
 import { LogService } from "../services/log.service";
 import { GameService } from "../services/game.service";
-import { AbilityService } from "../services/ability.service";
-import { PetService } from "../services/pet.service";
-import { EquipmentService } from "../services/equipment.service";
-import { ToyService } from "../services/toy.service";
+import { AbilityService } from "../services/ability/ability.service";
+import { PetService } from "../services/pet/pet.service";
+import { EquipmentService } from "../services/equipment/equipment.service";
+import { ToyService } from "../services/toy/toy.service";
 import { Battle } from "../interfaces/battle.interface";
 import { Dazed } from "../classes/equipment/ailments/dazed.class";
 import { ChocolateCake } from "../classes/equipment/golden/chocolate-cake.class";
@@ -239,6 +239,9 @@ export class SimulationRunner {
                 abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level,
                 abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level,
                 abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level,
+                abominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet3TimesHurt ?? 0,
                 battlesFought: petConfig.battlesFought ?? 0,
             timesHurt: petConfig.timesHurt ?? 0
             }, player);
@@ -446,6 +449,10 @@ export class SimulationRunner {
     }
 
     protected emptyFrontSpaceCheck() {
+        if (!this.gameService.gameApi.FirstNonJumpAttackHappened) {
+            return;
+        }
+
         if (this.player.pet0 == null) {
             this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
         } else {

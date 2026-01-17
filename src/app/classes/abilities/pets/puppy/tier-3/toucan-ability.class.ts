@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { EquipmentService } from "app/services/equipment.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
 import { InjectorService } from "app/services/injector.service";
 import { Equipment } from "../../../../equipment.class";
 

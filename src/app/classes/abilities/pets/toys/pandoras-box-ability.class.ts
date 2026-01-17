@@ -1,8 +1,8 @@
 import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
-import { EquipmentService } from "app/services/equipment.service";
+import { AbilityService } from "app/services/ability/ability.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
 import { getOpponent } from "../../../../util/helper-functions";
 import { cloneEquipment } from "app/util/equipment-utils";
 

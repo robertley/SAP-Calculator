@@ -1,7 +1,7 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { EquipmentService } from "app/services/equipment.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
 import { InjectorService } from "app/services/injector.service";
 import { getRandomInt } from "app/util/helper-functions";
 import { canApplyAilment, logAbility } from "../../../ability-helpers";

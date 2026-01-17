@@ -1,6 +1,6 @@
 import { GiantTortoiseAbility } from "app/classes/abilities/pets/danger/tier-4/giant-tortoise-ability.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";

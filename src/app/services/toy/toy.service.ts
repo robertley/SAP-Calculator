@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
-import { LogService } from "./log.service";
-import { Player } from "../classes/player.class";
-import { Pet } from "../classes/pet.class";
-import { Equipment } from "../classes/equipment.class";
-import { AbilityService } from "./ability.service";
-import { AbilityEvent } from "../interfaces/ability-event.interface";
+import { LogService } from "../log.service";
+import { Player } from "../../classes/player.class";
+import { Pet } from "../../classes/pet.class";
+import { Equipment } from "../../classes/equipment.class";
+import { AbilityService } from "../ability/ability.service";
+import { AbilityEvent } from "../../interfaces/ability-event.interface";
 import { cloneDeep, shuffle } from "lodash";
-import { GameService } from "./game.service";
-import { PetService } from "./pet.service";
-import { EquipmentService } from "./equipment.service";
+import { GameService } from "../game.service";
+import { PetService } from "../pet/pet.service";
+import { EquipmentService } from "../equipment/equipment.service";
 import { ToyFactoryService } from "./toy-factory.service";
-import { Toy } from "../classes/toy.class";
-import * as toysJson from "../files/toys.json";
+import { Toy } from "../../classes/toy.class";
+import * as toysJson from "../../files/toys.json";
 
 interface ToyJsonEntry {
   Name: string;
