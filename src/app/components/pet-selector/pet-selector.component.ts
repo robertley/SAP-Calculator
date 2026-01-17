@@ -349,17 +349,10 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
   get equipmentImageSrc(): string | null {
     const equipment = this.formGroup?.get('equipment')?.value;
-    if (!equipment?.name) {
+    if (!equipment?.name || equipment.equipmentClass?.startsWith('ailment')) {
       return null;
     }
-    if (equipment.equipmentClass?.startsWith('ailment')) {
-      return null;
-    }
-    const fileName = this.normalizePetName(equipment.name);
-    if (!fileName) {
-      return null;
-    }
-    return `/assets/art/Public/Public/Food/${fileName}.png`;
+    return getEquipmentIconPath(equipment.name, false);
   }
 
   get ailmentImageSrc(): string | null {
@@ -367,11 +360,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (!equipment?.name || !equipment.equipmentClass?.startsWith('ailment')) {
       return null;
     }
-    const fileName = this.normalizePetName(equipment.name);
-    if (!fileName) {
-      return null;
-    }
-    return `/assets/art/Ailments/Ailments/${fileName}.png`;
+    return getEquipmentIconPath(equipment.name, true);
   }
 
   get equipmentSelected(): boolean {
@@ -417,10 +406,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       'background-size': '24px 24px',
       'padding-left': '2.5rem'
     };
-  }
-
-  private normalizePetName(name: string): string {
-    return (name || '').replace(/[^a-zA-Z0-9]/g, '');
   }
 
   shouldShowFriendsDiedInput(): boolean {
