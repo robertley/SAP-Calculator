@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { EquipmentService } from '../../../services/equipment.service';
 import { remove } from 'lodash';
+import { getPetIconPath } from '../../../util/asset-utils';
 
 @Component({
   selector: 'app-custom-pack-form',
@@ -25,7 +25,8 @@ export class CustomPackFormComponent implements OnInit {
 
   checkboxFormGroup: FormGroup;
   loaded = false;
-  constructor(private equipmentService: EquipmentService) {
+  private readonly fallbackIcon = 'assets/art/Public/Public/Icons/Level_L1.png';
+  constructor() {
 
   }
 
@@ -119,6 +120,19 @@ export class CustomPackFormComponent implements OnInit {
       remove(formControlValue, (value) => value === pet);
     }
     this.formGroup.get(`tier${tier}Pets`).updateValueAndValidity();
+  }
+
+  getPetIcon(pet: string): string {
+    return getPetIconPath(pet) ?? this.fallbackIcon;
+  }
+
+  handlePetIconError(event: Event) {
+    const target = event.target as HTMLImageElement;
+    if (target?.dataset?.fallback) {
+      return;
+    }
+    target.dataset.fallback = 'true';
+    target.src = this.fallbackIcon;
   }
 
   submit() {

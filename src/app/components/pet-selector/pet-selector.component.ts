@@ -6,10 +6,10 @@ import { PetService } from '../../services/pet.service';
 import { EquipmentService } from '../../services/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
 import { cloneEquipment } from '../../util/equipment-utils';
-import { Weak } from '../../classes/equipment/ailments/weak.class';
 import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment-categories';
 import { Subscription } from 'rxjs';
 import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
+import { getPetIconPath, getEquipmentIconPath, getPetIconFileName } from '../../util/asset-utils';
 
 @Component({
   selector: 'app-pet-selector',
@@ -27,8 +27,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   @Input()
   index: number;
   @Input()
-  angler: boolean;
-  @Input()
   ailments: boolean;
   @Input()
   allPets: boolean;
@@ -44,6 +42,8 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   flipImage = false;
   @Input()
   allowEquipmentUseOverrides: boolean;
+  @Input()
+  showSwallowedLevels = false;
 
   equipment: Map<string, Equipment>;
   ailmentEquipment: Map<string, Equipment>;
@@ -234,6 +234,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet1Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet2Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet3Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('mana').valueChanges.subscribe(() => {
       this.clampControl('mana', 0, 50);
       this.substitutePet(false);
@@ -311,7 +314,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (!name) {
       return null;
     }
-    const fileName = this.normalizePetName(this.mapPetNameToAsset(name));
+    const fileName = getPetIconFileName(name);
     if (!fileName) {
       return null;
     }
@@ -393,6 +396,29 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     return this.equipmentSelected && this.equipmentHasUses;
   }
 
+  getPetOptionStyle(pet: string) {
+    const icon = getPetIconPath(pet);
+    return this.buildOptionStyle(icon);
+  }
+
+  getEquipmentOptionStyle(equipment: Equipment, isAilment = false) {
+    const icon = getEquipmentIconPath(equipment?.name, isAilment);
+    return this.buildOptionStyle(icon);
+  }
+
+  private buildOptionStyle(icon: string | null) {
+    if (!icon) {
+      return {};
+    }
+    return {
+      'background-image': `url(${icon})`,
+      'background-repeat': 'no-repeat',
+      'background-position': 'left center',
+      'background-size': '24px 24px',
+      'padding-left': '2.5rem'
+    };
+  }
+
   private normalizePetName(name: string): string {
     return (name || '').replace(/[^a-zA-Z0-9]/g, '');
   }
@@ -411,24 +437,11 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     return this.friendsDiedCaps.get(name) ?? 5;
   }
 
-  private mapPetNameToAsset(name: string): string {
-    switch (name) {
-      case 'Beluga Whale':
-        return 'WhiteWhale';
-      case 'Great One':
-        return 'Cthulu';
-      case 'Small One':
-        return 'BabyCthulhu';
-      default:
-        return name;
-    }
-  }
-
   private getPetImagePath(petName?: string | null): string | null {
     if (!petName) {
       return null;
     }
-    const fileName = this.normalizePetName(this.mapPetNameToAsset(petName));
+    const fileName = getPetIconFileName(petName);
     if (!fileName) {
       return null;
     }
@@ -498,25 +511,34 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.sarcasticFringeheadSwallowedPet = value;
   }
 
-  setSwallowedPets(value: string) {
+  setSwallowedPets(value: any) {
     let pet = this.player.getPet(this.index);
     if (pet == null) {
       return;
     }
-    let swallowedPets = [];
-    if (this.formGroup.get('abominationSwallowedPet1').value != null) {
-      swallowedPets.push(this.formGroup.get('abominationSwallowedPet1').value);
+    const swallowedPets: Array<{ name: string; level: number }> = [];
+    const pet1 = this.formGroup.get('abominationSwallowedPet1').value;
+    const pet2 = this.formGroup.get('abominationSwallowedPet2').value;
+    const pet3 = this.formGroup.get('abominationSwallowedPet3').value;
+    const level1 = Number(this.formGroup.get('abominationSwallowedPet1Level').value ?? 1);
+    const level2 = Number(this.formGroup.get('abominationSwallowedPet2Level').value ?? 1);
+    const level3 = Number(this.formGroup.get('abominationSwallowedPet3Level').value ?? 1);
+
+    if (pet1 != null) {
+      swallowedPets.push({ name: pet1, level: level1 || 1 });
     }
-    if (this.formGroup.get('abominationSwallowedPet2').value != null) {
-      swallowedPets.push(this.formGroup.get('abominationSwallowedPet2').value);
+    if (pet2 != null) {
+      swallowedPets.push({ name: pet2, level: level2 || 1 });
     }
-    if (this.formGroup.get('abominationSwallowedPet3').value != null) {
-      swallowedPets.push(this.formGroup.get('abominationSwallowedPet3').value);
+    if (pet3 != null) {
+      swallowedPets.push({ name: pet3, level: level3 || 1 });
     }
-    console.log(swallowedPets)
-    pet.abominationSwallowedPet1 = swallowedPets[0];
-    pet.abominationSwallowedPet2 = swallowedPets[1];
-    pet.abominationSwallowedPet3 = swallowedPets[2];
+    pet.abominationSwallowedPet1 = swallowedPets[0]?.name ?? null;
+    pet.abominationSwallowedPet2 = swallowedPets[1]?.name ?? null;
+    pet.abominationSwallowedPet3 = swallowedPets[2]?.name ?? null;
+    pet.abominationSwallowedPet1Level = swallowedPets[0]?.level ?? 1;
+    pet.abominationSwallowedPet2Level = swallowedPets[1]?.level ?? 1;
+    pet.abominationSwallowedPet3Level = swallowedPets[2]?.level ?? 1;
   }
 
   setBattlesFought(value: number) {
@@ -557,13 +579,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (playerPackSet.has(option)) {
       return false;
     }
-    if (this.angler) {
-      const opponentPackSet = this.getOpponentPackSet();
-      if (opponentPackSet.has(option)) {
-        return false;
-      }
-    }
-
     if (this.player.getPet(this.index)?.name == option) {
       return false;
     }

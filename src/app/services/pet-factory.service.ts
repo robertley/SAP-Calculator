@@ -29,6 +29,9 @@ export interface PetForm {
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    abominationSwallowedPet1Level?: number;
+    abominationSwallowedPet2Level?: number;
+    abominationSwallowedPet3Level?: number;
     battlesFought?: number;
     timesHurt?: number;
     friendsDiedBeforeBattle?: number;

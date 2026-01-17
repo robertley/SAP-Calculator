@@ -158,6 +158,11 @@ export class SimulationRunner {
             this.opponent.originalToy = null;
         }
 
+        this.gameService.gameApi.playerHardToy = config.playerHardToy ?? null;
+        this.gameService.gameApi.playerHardToyLevel = config.playerHardToyLevel ?? 1;
+        this.gameService.gameApi.opponentHardToy = config.opponentHardToy ?? null;
+        this.gameService.gameApi.opponentHardToyLevel = config.opponentHardToyLevel ?? 1;
+
         this.startBattle();
         this.initToys();
         this.gameService.gameApi.FirstNonJumpAttackHappened = false;
@@ -177,11 +182,16 @@ export class SimulationRunner {
             this.abilityCycle();
         } while (this.abilityService.hasAbilityCycleEvents);
 
+        const hasChurros = (pet) => pet.equipment?.name === 'Churros';
+        // Init SOB (Churros pets before toys)
+        this.abilityService.triggerStartBattleEvents(hasChurros);
+        this.abilityService.executeStartBattleEvents();
+
         // Execute toy SOB
         this.toyService.executeStartOfBattleEvents();
 
-        // Init SOB
-        this.abilityService.triggerStartBattleEvents();
+        // Init SOB (remaining pets after toys)
+        this.abilityService.triggerStartBattleEvents((pet) => !hasChurros(pet));
         this.abilityService.executeStartBattleEvents();
 
         this.checkPetsAlive();
@@ -226,6 +236,9 @@ export class SimulationRunner {
                 abominationSwallowedPet1: petConfig.abominationSwallowedPet1,
                 abominationSwallowedPet2: petConfig.abominationSwallowedPet2,
                 abominationSwallowedPet3: petConfig.abominationSwallowedPet3,
+                abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level,
+                abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level,
+                abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level,
                 battlesFought: petConfig.battlesFought ?? 0,
             timesHurt: petConfig.timesHurt ?? 0
             }, player);
@@ -271,22 +284,41 @@ export class SimulationRunner {
         let winner = null;
         this.turns++;
 
-        if (!this.player.alive() && this.opponent.alive()) {
-            winner = this.opponent;
-            this.currBattle.winner = 'opponent';
-            this.opponentWinner++;
-            finished = true;
+        let playerAlive = this.player.alive();
+        let opponentAlive = this.opponent.alive();
+
+        if (playerAlive && !opponentAlive) {
+            const revived = this.tryAllEnemiesFaintedToyTrigger(this.player, this.opponent);
+            opponentAlive = this.opponent.alive();
+            if (!revived) {
+                winner = this.player;
+                this.currBattle.winner = 'player';
+                this.playerWinner++;
+                finished = true;
+            }
         }
-        if (!this.opponent.alive() && this.player.alive()) {
-            winner = this.player;
-            this.currBattle.winner = 'player';
-            this.playerWinner++;
-            finished = true;
+        if (!playerAlive && opponentAlive) {
+            const revived = this.tryAllEnemiesFaintedToyTrigger(this.opponent, this.player);
+            playerAlive = this.player.alive();
+            if (!revived) {
+                winner = this.opponent;
+                this.currBattle.winner = 'opponent';
+                this.opponentWinner++;
+                finished = true;
+            }
         }
-        if (!this.opponent.alive() && !this.player.alive()) {
+        if (!playerAlive && !opponentAlive) {
             this.draw++;
             finished = true;
-        } else if (this.turns >= this.maxTurns) {
+        }
+        if (finished) {
+            this.logService.printState(this.player, this.opponent);
+            this.endLog(winner);
+            this.battleStarted = false;
+            return;
+        }
+
+        if (this.turns >= this.maxTurns) {
             this.draw++;
             finished = true;
         }
@@ -341,6 +373,14 @@ export class SimulationRunner {
         do {
             this.abilityCycle();
         } while (this.abilityService.hasAbilityCycleEvents);
+    }
+
+    private tryAllEnemiesFaintedToyTrigger(winner: Player, loser: Player): boolean {
+        if (!winner.toy?.allEnemiesFainted) {
+            return false;
+        }
+        winner.toy.allEnemiesFainted(this.gameService.gameApi);
+        return loser.alive();
     }
 
     protected fight() {

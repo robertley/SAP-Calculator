@@ -123,7 +123,10 @@ export const SPECIAL_FORM_PET_BUILDERS: { [key: string]: (deps: PetFactoryDeps, 
             petForm.triggersConsumed,
             petForm.abominationSwallowedPet1,
             petForm.abominationSwallowedPet2,
-            petForm.abominationSwallowedPet3
+            petForm.abominationSwallowedPet3,
+            petForm.abominationSwallowedPet1Level,
+            petForm.abominationSwallowedPet2Level,
+            petForm.abominationSwallowedPet3Level
         );
     },
     'Sabertooth Tiger': (deps, petForm, parent, petService) => {

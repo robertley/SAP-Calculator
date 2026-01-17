@@ -25,7 +25,7 @@
             <select class="form-control" formControlName="name">
                 <option [ngValue]="null">None</option>
                 <optgroup label="Token Pets" [hidden]="!showTokenPets">
-                    <option *ngFor="let pet of tokenPets" [ngValue]="pet">{{pet}}</option>
+                    <option *ngFor="let pet of tokenPets" [ngValue]="pet" [ngStyle]="getPetOptionStyle(pet)">{{pet}}</option>
                 </optgroup>
                 <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                     <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
@@ -62,9 +62,17 @@
                     <option [ngValue]="null">None</option>
                     <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                         <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
-                            [disabled]="optionHidden(pet)">{{pet}}</option>
+                            [disabled]="optionHidden(pet)" [ngStyle]="getPetOptionStyle(pet)">{{pet}}</option>
                     </optgroup>
                 </select>
+                <ng-container *ngIf="showSwallowedLevels">
+                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}Level">Swallowed Level</label>
+                    <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}Level">
+                        <option [ngValue]="1">1</option>
+                        <option [ngValue]="2">2</option>
+                        <option [ngValue]="3">3</option>
+                    </select>
+                </ng-container>
             </div>
         </div>
         <div class="col-12 mb-2" *ngIf="formGroup.get('name').value == 'Sarcastic Fringehead'">
@@ -73,7 +81,7 @@
                 <option [ngValue]="null">None</option>
                 <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
                     <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
-                        [disabled]="optionHidden(pet)">{{pet}}</option>
+                        [disabled]="optionHidden(pet)" [ngStyle]="getPetOptionStyle(pet)">{{pet}}</option>
                 </optgroup>
             </select>
         </div>
@@ -82,15 +90,15 @@
             <input class="form-control" type="number" min="0" max="5" formControlName="friendsDiedBeforeBattle">
         </div>
         <div class="col-12 mb-2">
-            <select class="form-control" formControlName="equipment" [compareWith]="compareEquipment">
-                <option [ngValue]="null">None</option>
-                <optgroup *ngFor="let group of equipmentCategoryGroups" [label]="group.label">
-                    <option *ngFor="let equip of group.items" [ngValue]="equip">{{equip.name}}</option>
-                </optgroup>
-                <optgroup *ngFor="let group of ailmentCategoryGroups" [label]="group.label">
-                    <option *ngFor="let ailment of group.items" [ngValue]="ailment">{{ailment.name}}</option>
-                </optgroup>
-            </select>
+                <select class="form-control" formControlName="equipment" [compareWith]="compareEquipment">
+                    <option [ngValue]="null">None</option>
+                    <optgroup *ngFor="let group of equipmentCategoryGroups" [label]="group.label">
+                    <option *ngFor="let equip of group.items" [ngValue]="equip" [ngStyle]="getEquipmentOptionStyle(equip)">{{equip.name}}</option>
+                    </optgroup>
+                    <optgroup *ngFor="let group of ailmentCategoryGroups" [label]="group.label">
+                    <option *ngFor="let ailment of group.items" [ngValue]="ailment" [ngStyle]="getEquipmentOptionStyle(ailment, true)">{{ailment.name}}</option>
+                    </optgroup>
+                </select>
         </div>
         <div class="col-6 mb-2" *ngIf="allowEquipmentUseOverrides && equipmentUsesAvailable">
             <label [for]="equipmentUsesInputId">Uses</label>

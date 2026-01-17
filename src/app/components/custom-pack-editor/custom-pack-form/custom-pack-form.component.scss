@@ -1,6 +1,6 @@
 .editor-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     grid-gap: 1rem;
 }
 
@@ -10,4 +10,20 @@
 
 .valid {
     color: rgb(10, 180, 10)
+}
+.form-check {
+    min-height: 2.5rem;
+}
+.pet-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    line-height: 1.2;
+    flex-wrap: wrap;
+    white-space: normal;
+}
+.pet-icon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
 }

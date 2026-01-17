@@ -10,6 +10,10 @@ export interface GameAPI {
     turnNumber?: number;
     playerGoldSpent?: number;
     opponentGoldSpent?: number;
+    playerHardToy?: string | null;
+    playerHardToyLevel?: number;
+    opponentHardToy?: string | null;
+    opponentHardToyLevel?: number;
     oldStork?: boolean;
     komodoShuffle?: boolean;
     mana?: boolean;

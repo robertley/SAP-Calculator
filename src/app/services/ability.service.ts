@@ -400,12 +400,17 @@ export class AbilityService {
         queue.push(event);
     }
 
-    private executeToyEventQueue(queue: AbilityEvent[], executor: (event: AbilityEvent) => void, label?: string): void {
+    private executeToyEventQueue(
+        queue: AbilityEvent[],
+        executor: (event: AbilityEvent) => void,
+        label?: string,
+        shouldLog?: (event: AbilityEvent) => boolean
+    ): void {
         const events = shuffle(queue);
         events.sort((a, b) => { return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0 });
 
         for (const event of events) {
-            if (label) {
+            if (label && (shouldLog == null || shouldLog(event))) {
                 this.logToyEvent(event, label);
             }
             executor(event);
@@ -646,15 +651,15 @@ export class AbilityService {
         this.addEventToQueue(event);
     }
     //sob events
-    triggerStartBattleEvents() {
+    triggerStartBattleEvents(filter?: (pet: Pet) => boolean) {
         this.gameApi = this.gameService.gameApi;
         for (let pet of this.gameApi.player.petArray) {
-            if (pet.hasTrigger('StartBattle')) {
+            if (pet.hasTrigger('StartBattle') && (!filter || filter(pet))) {
                 this.enqueueAbilityEvent(this.startBattleEvents, pet, 'StartBattle');
             }
         }
         for (let pet of this.gameApi.opponent.petArray) {
-            if (pet.hasTrigger('StartBattle')) {
+            if (pet.hasTrigger('StartBattle') && (!filter || filter(pet))) {
                 this.enqueueAbilityEvent(this.startBattleEvents, pet, 'StartBattle', undefined, pet.attack);
             }
         }
@@ -1314,9 +1319,14 @@ export class AbilityService {
     }
 
     executeFriendFaintsToyEvents() {
-        this.executeToyEventQueue(this.friendFaintsToyEvents, (event) => {
-            event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
-        }, 'reacted to friend fainting');
+        this.executeToyEventQueue(
+            this.friendFaintsToyEvents,
+            (event) => {
+                event.callback(this.gameService.gameApi, event.triggerPet, event.priority < 100, event.level);
+            },
+            'reacted to friend fainting',
+            (event) => !event.player?.toy?.suppressFriendFaintLog
+        );
     }
 
     // friend jumped toy events

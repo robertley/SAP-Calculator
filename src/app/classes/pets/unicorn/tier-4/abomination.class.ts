@@ -28,11 +28,17 @@ export class Abomination extends Pet {
         triggersConsumed?: number,
         abominationSwallowedPet1?: string,
         abominationSwallowedPet2?: string,
-        abominationSwallowedPet3?: string) {
+        abominationSwallowedPet3?: string,
+        abominationSwallowedPet1Level?: number,
+        abominationSwallowedPet2Level?: number,
+        abominationSwallowedPet3Level?: number) {
             super(logService, abilityService, parent);
             this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
             this.abominationSwallowedPet1 = abominationSwallowedPet1;
             this.abominationSwallowedPet2 = abominationSwallowedPet2;
             this.abominationSwallowedPet3 = abominationSwallowedPet3;
+            this.abominationSwallowedPet1Level = abominationSwallowedPet1Level ?? 1;
+            this.abominationSwallowedPet2Level = abominationSwallowedPet2Level ?? 1;
+            this.abominationSwallowedPet3Level = abominationSwallowedPet3Level ?? 1;
     }
 }

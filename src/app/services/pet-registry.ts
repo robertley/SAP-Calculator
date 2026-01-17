@@ -752,7 +752,7 @@ export const PET_REGISTRY: { [key: string]: any } = {
     'Siamese': Siamese,
     'Elk': Elk,
     'Sparrow': Sparrow,
-    'Sword Fish': SwordFish,
+    'Swordfish': SwordFish,
     'Polar Bear': PolarBear,
     'Siberian Husky': SiberianHusky,
     'Lion': Lion,

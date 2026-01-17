@@ -27,7 +27,7 @@ import { MagicLampAbility } from "../../../../abilities/pets/toys/magic-lamp-abi
 import { MagicCarpetAbility } from "../../../../abilities/pets/toys/magic-carpet-ability.class";
 import { MagicWandAbility } from "../../../../abilities/pets/toys/magic-wand-ability.class";
 import { MagicMirrorAbility } from "../../../../abilities/pets/toys/magic-mirror-ability.class";
-import { NutcrackerAbility } from "../../../../abilities/pets/toys/nutcraker-ability.class";
+import { NutcrackerAbility } from "../../../../abilities/pets/toys/nutcracker-ability.class";
 import { PickaxeAbility } from "../../../../abilities/pets/toys/pickaxe-ability.class";
 import { TreasureChestAbility } from "../../../../abilities/pets/toys/treasure-chest-ability.class";
 import { TinderBoxAbility } from "../../../../abilities/pets/toys/tinder-box-ability.class";
