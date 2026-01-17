@@ -10,7 +10,7 @@
           <div class="d-flex align-items-center toy-wrap">
             <h2 class="me-2">Player</h2>
             <img *ngIf="playerToyImageUrl" class="toy-art" [src]="playerToyImageUrl" alt="Player Toy">
-            <span *ngIf="playerToyImageUrl" class="toy-level">Lv{{formGroup.get('playerToyLevel').value}}</span>
+            <span *ngIf="playerToyImageUrl" class="toy-level-text">Lv{{formGroup.get('playerToyLevel').value}}</span>
             <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [src]="playerHardToyImageUrl" alt="Player Hard Toy">
           </div>
           <button class="btn btn-secondary mb-1" (click)="resetPlayer('player')">Reset</button>
@@ -47,7 +47,7 @@
           <div class="d-flex align-items-center toy-wrap">
             <h2 class="me-2">Opponent</h2>
             <img *ngIf="opponentToyImageUrl" class="toy-art" [src]="opponentToyImageUrl" alt="Opponent Toy">
-            <span *ngIf="opponentToyImageUrl" class="toy-level">Lv{{formGroup.get('opponentToyLevel').value}}</span>
+            <span *ngIf="opponentToyImageUrl" class="toy-level-text">Lv{{formGroup.get('opponentToyLevel').value}}</span>
             <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [src]="opponentHardToyImageUrl" alt="Opponent Hard Toy">
           </div>
           <button class="btn btn-secondary mb-1" (click)="resetPlayer('opponent')">Reset</button>
@@ -57,8 +57,8 @@
           <!-- <div class="front">FRONT</div> -->
           <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
             (cdkDropListDropped)="drop($event, 'opponent')">
-            <div class="col drag-container mb-2 mb-sm-0 px-0" *ngFor="let pet of getOpponentPetsFormArray() ; index as i"
-              cdkDrag>
+            <div class="col drag-container mb-2 mb-sm-0 px-0"
+              *ngFor="let pet of getOpponentPetsFormArray() ; index as i" cdkDrag>
               <div class="drag-handle" cdkDragHandle>
                 <svg fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -386,7 +386,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let battle of filteredBattles; index as i" (click)="setViewBattle(battle)"
-                class="table-battle-row" [ngClass]="battle.winner === 'player' ? 'battle-win' : battle.winner === 'opponent' ? 'battle-loss' : ''">
+                class="table-battle-row"
+                [ngClass]="battle.winner === 'player' ? 'battle-win' : battle.winner === 'opponent' ? 'battle-loss' : ''">
                 <td>{{i}}</td>
                 <td>{{battle.winner}}</td>
                 <td class="pre">{{getRandomEvents(battle)}}</td>

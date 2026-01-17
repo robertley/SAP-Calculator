@@ -6,7 +6,7 @@ $night: #33377a;
 }
 
 .day-night-container {
-    min-height: 1em;
+    min-height: 1em
 }
 
 .flex-col {
@@ -23,7 +23,8 @@ $night: #33377a;
     box-shadow: none;
 }
 
-.back, .front {
+.back,
+.front {
     transform: rotate(180deg);
     writing-mode: vertical-lr;
     text-align: center;
@@ -267,6 +268,7 @@ $night: #33377a;
     label {
         margin-right: .25em;
     }
+
     span {
         margin-right: 1em;
     }
@@ -344,11 +346,14 @@ $night: #33377a;
     cursor: pointer;
 }
 
-.results-bar, .draw-bar, .lose-bar {
+.results-bar,
+.draw-bar,
+.lose-bar {
     display: inline-block;
 }
 
-.draw-bar, .lose-bar {
+.draw-bar,
+.lose-bar {
     height: 100%;
     position: absolute;
     right: 0;
@@ -373,12 +378,14 @@ $night: #33377a;
 }
 
 .log-player {
-    background-color: rgb(228, 255, 224);;
+    background-color: rgb(228, 255, 224);
+    ;
 }
 
 .log-opponent {
     background-color: rgb(255, 224, 224);
 }
+
 .battle-win td {
     background-color: rgb(228, 255, 224);
 }
@@ -410,7 +417,8 @@ $night: #33377a;
 .bottom-container {
     min-height: 30em;
     padding-top: 0.75rem;
-    > div {
+
+    >div {
         min-height: 15em;
     }
 }
@@ -423,7 +431,7 @@ $night: #33377a;
     border: 0;
 }
 
-.bottom-container .table > :not(caption) > * > * {
+.bottom-container .table> :not(caption)>*>* {
     border-bottom: 0;
 }
 
@@ -485,6 +493,7 @@ $night: #33377a;
 .pre {
     white-space: pre;
 }
+
 .btn-link {
     color: #0d6efd;
     cursor: pointer;
@@ -499,17 +508,33 @@ $night: #33377a;
 }
 
 .drag-handle {
-    width: 1.25em;
+    width: 1.8em;
+    height: 1.8em;
     position: absolute;
     right: 1em;
     z-index: 1;
-    opacity: .5;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
     cursor: pointer;
+}
+
+.drag-handle:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.75);
 }
 
 .info-link {
     margin-bottom: 0;
 }
+
 .toy-art {
     width: 36px;
     height: 36px;
@@ -524,7 +549,7 @@ $night: #33377a;
     margin-left: 0.35rem;
 }
 
-.toy-level {
+.toy-level-text {
     color: #ffffff;
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
@@ -542,7 +567,8 @@ $night: #33377a;
         max-width: 18em;
     }
 
-    .back, .front {
+    .back,
+    .front {
         // transform: rotate(180deg);
         transform: initial;
         writing-mode: initial;
