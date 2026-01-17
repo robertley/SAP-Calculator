@@ -1,4 +1,3 @@
-import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
@@ -7,7 +6,7 @@ import { Player } from "../../../player.class";
 import { SwordFishAbility } from "../../../abilities/pets/star/tier-5/sword-fish-ability.class";
 
 export class SwordFish extends Pet {
-    name = "Sword Fish";
+    name = "Swordfish";
     tier = 5;
     pack: Pack = 'Star';
     attack = 5;

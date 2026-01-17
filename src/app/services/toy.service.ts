@@ -17,6 +17,7 @@ interface ToyJsonEntry {
   Name: string;
   Tier: number | string;
   NameId?: string;
+  ToyType?: number | string;
 }
 
 @Injectable({
@@ -25,6 +26,7 @@ interface ToyJsonEntry {
 export class ToyService {
 
     toys: Map<number, string[]> = new Map();
+    private toysByType: Map<number, Map<number, string[]>> = new Map();
     private toyNameIds: Map<string, string> = new Map();
 
     startOfBattleEvents: AbilityEvent[] = [];
@@ -43,6 +45,7 @@ export class ToyService {
     setToys() {
         this.toys.clear();
         this.toyNameIds.clear();
+        this.toysByType.clear();
         const toyEntries = this.getToyEntriesFromJson();
         for (const toy of toyEntries) {
             const tier = Number(toy.Tier);
@@ -56,12 +59,29 @@ export class ToyService {
             if (tierList) {
                 tierList.push(toy.Name);
             }
+            const toyType = Number.isFinite(Number(toy.ToyType)) ? Number(toy.ToyType) : 0;
+            if (!this.toysByType.has(toyType)) {
+                this.toysByType.set(toyType, new Map());
+            }
+            const typeMap = this.toysByType.get(toyType);
+            if (typeMap && !typeMap.has(tier)) {
+                typeMap.set(tier, []);
+            }
+            const typeTierList = typeMap?.get(tier);
+            if (typeTierList) {
+                typeTierList.push(toy.Name);
+            }
             if (toy.Name && toy.NameId) {
                 this.toyNameIds.set(toy.Name, toy.NameId);
             }
         }
         for (const [tier, toyNames] of this.toys) {
             this.toys.set(tier, [...new Set(toyNames)]);
+        }
+        for (const [toyType, tierMap] of this.toysByType) {
+            for (const [tier, toyNames] of tierMap) {
+                tierMap.set(tier, [...new Set(toyNames)]);
+            }
         }
     }
 
@@ -70,6 +90,16 @@ export class ToyService {
             return null;
         }
         return this.toyNameIds.get(toyName) ?? null;
+    }
+
+    getToysByType(toyType: number): Map<number, string[]> {
+        const tierMap = this.toysByType.get(toyType);
+        if (!tierMap) {
+            return new Map();
+        }
+        return new Map(
+            Array.from(tierMap.entries()).map(([tier, names]) => [tier, [...names]]),
+        );
     }
 
     private getToyEntriesFromJson(): ToyJsonEntry[] {
@@ -321,10 +351,8 @@ export class ToyService {
         // shuffle, so that same priority events are in random order
         this.startOfBattleEvents = shuffle(this.startOfBattleEvents);
 
+        // Randomize order without tier priority.
         this.startOfBattleEvents.sort((a, b) => {
-            if (a.priority !== b.priority) {
-                return a.priority > b.priority ? -1 : 1;
-            }
             return (a.tieBreaker ?? Math.random()) > (b.tieBreaker ?? Math.random()) ? -1 : 1;
         });
 

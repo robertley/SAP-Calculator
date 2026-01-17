@@ -12,6 +12,9 @@ export interface PetConfig {
     abominationSwallowedPet1?: string | null;
     abominationSwallowedPet2?: string | null;
     abominationSwallowedPet3?: string | null;
+    abominationSwallowedPet1Level?: number | null;
+    abominationSwallowedPet2Level?: number | null;
+    abominationSwallowedPet3Level?: number | null;
     battlesFought?: number;
     timesHurt?: number;
     sarcasticFringeheadSwallowedPet?: string | null;
@@ -23,8 +26,12 @@ export interface SimulationConfig {
     opponentPack: string;
     playerToy?: string | null;
     playerToyLevel?: number;
+    playerHardToy?: string | null;
+    playerHardToyLevel?: number;
     opponentToy?: string | null;
     opponentToyLevel?: number;
+    opponentHardToy?: string | null;
+    opponentHardToyLevel?: number;
     turn: number;
     playerGoldSpent?: number;
     opponentGoldSpent?: number;
@@ -38,7 +45,6 @@ export interface SimulationConfig {
     opponentTransformationAmount?: number;
     playerPets: (PetConfig | null)[];
     opponentPets: (PetConfig | null)[];
-    angler?: boolean;
     allPets?: boolean;
     oldStork?: boolean;
     tokenPets?: boolean;

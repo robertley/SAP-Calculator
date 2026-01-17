@@ -8,6 +8,26 @@ import { GameService } from "./game.service";
 import { Balloon } from "../classes/toys/tier-1/balloon.class";
 import { TennisBall } from "../classes/toys/tier-1/tennis-ball.class";
 import { Stick } from "../classes/toys/tier-1/stick.class";
+import { ActionFigure } from "../classes/toys/tier-1/action-figure.class";
+import { ChocolateBox } from "../classes/toys/tier-1/chocolate-box.class";
+import { DiceCup } from "../classes/toys/tier-1/dice-cup.class";
+import { Handkerchief } from "../classes/toys/tier-1/handkerchief.class";
+import { Kite } from "../classes/toys/tier-1/kite.class";
+import { Lamp } from "../classes/toys/tier-1/lamp.class";
+import { Lunchbox } from "../classes/toys/tier-1/lunchbox.class";
+import { Onesie } from "../classes/toys/tier-1/onesie.class";
+import { PaperShredder } from "../classes/toys/tier-1/paper-shredder.class";
+import { Pen } from "../classes/toys/tier-1/pen.class";
+import { PillBottle } from "../classes/toys/tier-1/pill-bottle.class";
+import { PogoStick } from "../classes/toys/tier-1/pogo-stick.class";
+import { RemoteCar } from "../classes/toys/tier-1/remote-car.class";
+import { RingPyramid } from "../classes/toys/tier-1/ring-pyramid.class";
+import { RubberDuck } from "../classes/toys/tier-1/rubber-duck.class";
+import { Scale } from "../classes/toys/tier-1/scale.class";
+import { SoccerBall } from "../classes/toys/tier-1/soccer-ball.class";
+import { StickyHand } from "../classes/toys/tier-1/sticky-hand.class";
+import { StuffedBear } from "../classes/toys/tier-1/stuffed-bear.class";
+import { ToyMouse } from "../classes/toys/tier-1/toy-mouse.class";
 import { Radio } from "../classes/toys/tier-2/radio.class";
 import { PlasticSaw } from "../classes/toys/tier-2/plastic-saw.class";
 import { ToiletPaper } from "../classes/toys/tier-3/toilet-paper.class";
@@ -41,7 +61,7 @@ import { RedCape } from "../classes/toys/unicorn/red-cape.class";
 import { Rosebud } from "../classes/toys/unicorn/rosebud.class";
 import { Excalibur } from "../classes/toys/unicorn/excalibur.class";
 import { HolyGrail } from "../classes/toys/unicorn/holy-grail.class";
-import { Nutcracker } from "../classes/toys/unicorn/nutcraker.class";
+import { Nutcracker } from "../classes/toys/unicorn/nutcracker.class";
 import { TinderBox } from "../classes/toys/unicorn/tinder-box.class";
 import { MicrowaveOven } from "../classes/toys/f2p/microwave-oven.class";
 
@@ -58,8 +78,27 @@ export interface ToyRegistryDeps {
 
 // Standard toys (logService, toyService, parent, level)
 export const STANDARD_TOYS: { [key: string]: any } = {
+    'Action Figure': ActionFigure,
     'Balloon': Balloon,
+    'Chocolate Box': ChocolateBox,
+    'Dice Cup': DiceCup,
+    'Handkerchief': Handkerchief,
+    'Kite': Kite,
+    'Lamp': Lamp,
+    'Lunchbox': Lunchbox,
     'Tennis Ball': TennisBall,
+    'Onesie': Onesie,
+    'Paper Shredder': PaperShredder,
+    'Pen': Pen,
+    'Pill Bottle': PillBottle,
+    'Pogo Stick': PogoStick,
+    'Remote Car': RemoteCar,
+    'Ring Pyramid': RingPyramid,
+    'Rubber Duck': RubberDuck,
+    'Scale': Scale,
+    'Soccer Ball': SoccerBall,
+    'Sticky Hand': StickyHand,
+    'Stuffed Bear': StuffedBear,
     'Radio': Radio,
     'Plastic Saw': PlasticSaw,
     'Toilet Paper': ToiletPaper,
@@ -67,6 +106,7 @@ export const STANDARD_TOYS: { [key: string]: any } = {
     'Melon Helmet': MelonHelmet,
     'Foam Sword': FoamSword,
     'Toy Gun': ToyGun,
+    'Toy Mouse': ToyMouse,
     'Cash Register': CashRegister,
     'Camera': Camera,
     'Flashlight': Flashlight,
@@ -101,7 +141,9 @@ export const TOYS_NEEDING_ABILITY_SERVICE: { [key: string]: any } = {
 };
 
 export const SPECIAL_TOY_BUILDERS: { [key: string]: (deps: ToyRegistryDeps) => Toy } = {
+    'Rubber Duck': (deps) => new RubberDuck(deps.logService, deps.toyService, deps.petService, deps.parent, deps.level),
     'Stick': (deps) => new Stick(deps.logService, deps.toyService, deps.parent, deps.level, deps.petService),
+    'Stuffed Bear': (deps) => new StuffedBear(deps.logService, deps.toyService, deps.petService, deps.parent, deps.level),
     'Pandoras Box': (deps) => new PandorasBox(deps.logService, deps.toyService, deps.parent, deps.level, deps.equipmentService),
     'Microwave Oven': (deps) => new MicrowaveOven(deps.logService, deps.toyService, deps.parent, deps.level, deps.petService, deps.gameService)
 };
