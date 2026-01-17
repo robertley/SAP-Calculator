@@ -43,17 +43,17 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
     "KitsuneFriendDies": 9,
     // "ThisDiesForPerks": 9,
     "FriendAheadDied": 10,
-    "ThisDied": 11,
-    "FriendDied": 12,
-    "AdjacentFriendsDie": 12,
-    "EnemyDied": 12,
-    // "EnemyFaint": 12,
-    "PetDied": 12,
+    // "ThisDied": 11, // Moved to 26 to handle post-removal
+    // "FriendDied": 12, // Moved to 26
+    // "AdjacentFriendsDie": 12, // Moved to 26
+    // "EnemyDied": 12, // Moved to 26
+    // "EnemyFaint": 12, // Moved to 26
+    // "PetDied": 12, // Moved to 26
     // "AllEnemiesDied": 12,
     // "AllFriendsFainted": 12,
 
     // Toy events
-    "FriendlyToyBroke": 12,
+    // "FriendlyToyBroke": 12, // Moved to 26
     // "ToyBroke": 12,
     // "ThisBroke": 12,
     // "ToySummoned": 12,
@@ -125,10 +125,18 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
     manaSnipe: 22,
 
     // Space/positioning events
-    "ClearFront": 23,
+    "ClearFront": 25,
+
+    // Post-removal Death events (User list 11/12, but must be after ClearFront 25)
+    "ThisDied": 26,
+    "FriendDied": 26,
+    "AdjacentFriendsDie": 26,
+    "EnemyDied": 26,
+    "PetDied": 26,
+    "FriendlyToyBroke": 26,
 
     // Special summons
-    goldenRetrieverSummons: 24,
+    goldenRetrieverSummons: 27,
 
     // Composite/unused categories kept for reference
     // "Composite": 99,

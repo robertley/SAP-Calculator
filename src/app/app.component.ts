@@ -152,7 +152,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.error(apiState.error);
       this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
     }
-
   }
 
   buildApiResponse() {
@@ -374,7 +373,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
 
     this.initPetForms();
- 
+
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       // happens on import
       if (value == null) {
@@ -489,7 +488,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
         exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
         equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
-      equipmentUses: new FormControl(this.player[`pet${foo}`]?.equipment?.uses ?? null),
+        equipmentUses: new FormControl(this.player[`pet${foo}`]?.equipment?.uses ?? null),
         belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
         sarcasticFringeheadSwallowedPet: new FormControl(this.player[`pet${foo}`]?.sarcasticFringeheadSwallowedPet),
         mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
@@ -497,13 +496,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
-          abominationSwallowedPet1Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
-          abominationSwallowedPet2Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
-          abominationSwallowedPet3Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
-          abominationSwallowedPet1TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1TimesHurt ?? 0),
-          abominationSwallowedPet2TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2TimesHurt ?? 0),
-          abominationSwallowedPet3TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3TimesHurt ?? 0),
-          friendsDiedBeforeBattle: new FormControl(this.player[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
+        abominationSwallowedPet1Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
+        abominationSwallowedPet2Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
+        abominationSwallowedPet3Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
+        abominationSwallowedPet1TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1TimesHurt ?? 0),
+        abominationSwallowedPet2TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2TimesHurt ?? 0),
+        abominationSwallowedPet3TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3TimesHurt ?? 0),
+        friendsDiedBeforeBattle: new FormControl(this.player[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
       })
@@ -521,7 +520,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
         exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
         equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
-      equipmentUses: new FormControl(this.opponent[`pet${foo}`]?.equipment?.uses ?? null),
+        equipmentUses: new FormControl(this.opponent[`pet${foo}`]?.equipment?.uses ?? null),
         belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
         sarcasticFringeheadSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.sarcasticFringeheadSwallowedPet),
         mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
@@ -529,13 +528,13 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
-          abominationSwallowedPet1Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
-          abominationSwallowedPet2Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
-          abominationSwallowedPet3Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
-          abominationSwallowedPet1TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1TimesHurt ?? 0),
-          abominationSwallowedPet2TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2TimesHurt ?? 0),
-          abominationSwallowedPet3TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3TimesHurt ?? 0),
-          friendsDiedBeforeBattle: new FormControl(this.opponent[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
+        abominationSwallowedPet1Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
+        abominationSwallowedPet2Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
+        abominationSwallowedPet3Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
+        abominationSwallowedPet1TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1TimesHurt ?? 0),
+        abominationSwallowedPet2TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2TimesHurt ?? 0),
+        abominationSwallowedPet3TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3TimesHurt ?? 0),
+        friendsDiedBeforeBattle: new FormControl(this.opponent[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
       })
