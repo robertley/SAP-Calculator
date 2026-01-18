@@ -8,12 +8,12 @@ import { Battle } from './interfaces/battle.interface';
 import { money_round } from './util/helper-functions';
 import { GameService } from './services/game.service';
 import { Log } from './interfaces/log.interface';
-import { AbilityService } from './services/ability.service';
+import { AbilityService } from './services/ability/ability.service';
 
-import { PetService } from './services/pet.service';
+import { PetService } from './services/pet/pet.service';
 import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
-import { ToyService } from './services/toy.service';
+import { ToyService } from './services/toy/toy.service';
 import { cloneDeep } from 'lodash';
 import { LocalStorageService } from './services/local-storage.service';
 import { Modal } from 'bootstrap';
@@ -21,16 +21,12 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { UrlStateService } from './services/url-state.service';
 import { CalculatorStateService } from './services/calculator-state.service';
-import { SimulationService } from './services/simulation.service';
-import { EquipmentService } from './services/equipment.service';
+import { SimulationService } from './services/simulation/simulation.service';
+import { EquipmentService } from './services/equipment/equipment.service';
 import { cloneEquipment } from './util/equipment-utils';
 import { TeamPresetsService, TeamPreset } from './services/team-presets.service';
 import { getToyIconPath } from './util/asset-utils';
-
-const DAY = '#85ddf2';
-const NIGHT = '#33377a';
-const BATTLE_BACKGROUND_BASE = '/assets/art/Public/Public/Background/';
-const TOY_ART_BASE = '/assets/art/Public/Public/Toys/';
+import { BATTLE_BACKGROUND_BASE, BATTLE_BACKGROUNDS, DAY, LOG_FILTER_TABS, NIGHT, TOY_ART_BASE } from './app.constants';
 
 
 // TODO
@@ -101,46 +97,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   savedTeams: TeamPreset[] = [];
   selectedTeamId = '';
   teamName = '';
-  private battleBackgrounds = [
-    'AboveCloudsBattle.png',
-    'ArcticBattle.png',
-    'AutumnForestBattle.png',
-    'BeachBattle.png',
-    'BridgeBattle.png',
-    'CastleWallBattle.png',
-    'CaveBattle.png',
-    'ColosseumBattle.png',
-    'CornFieldBattle.png',
-    'DesertBattle.png',
-    'DungeonBattle.png',
-    'FarmBattle.png',
-    'FieldBattle.png',
-    'FoodLandBattle.png',
-    'FrontYardBattle.png',
-    'HalloweenStreetBattle.png',
-    'JungleBattle.png',
-    'LavaCaveBattle.png',
-    'LavaMountainBattle.png',
-    'MoneyBinBattle.png',
-    'MoonBattle.png',
-    'PagodaBattle.png',
-    'PlaygroundBattle.png',
-    'SavannaBattle.png',
-    'ScaryForestBattle.png',
-    'SnowBattle.png',
-    'SpaceStationBattle.png',
-    'UnderwaterBattle.png',
-    'UrbanCityBattle.png',
-    'WildWestTownBattle.png',
-    'WinterPineForestBattle.png',
-    'WizardSchoolBattle.png'
-  ];
-  logFilterTabs = [
-    { label: 'None', value: null },
-    { label: 'Player', value: 'player' },
-    { label: 'Opponent', value: 'opponent' },
-    { label: 'Draw', value: 'draw' }
-  ];
+  private battleBackgrounds = [...BATTLE_BACKGROUNDS];
+  logFilterTabs = [...LOG_FILTER_TABS];
   api = false;
   apiResponse = null;
 
@@ -194,7 +152,56 @@ export class AppComponent implements OnInit, AfterViewInit {
       console.error(apiState.error);
       this.apiResponse = JSON.stringify({ error: "Invalid or corrupted data provided in the URL." });
     }
+  }
 
+  // list of pets that need roll amount input
+  readonly ROLL_PETS = [
+    'Nessie',
+    'Bunyip',
+    'Mana Hound',
+    'Ammonite',
+    'Fossa',
+    'Hippocampus',
+    'Platybelodon',
+    'Barnacle',
+    'Olm'
+  ];
+
+  shouldShowRollInputs(): boolean {
+    const players = [this.player, this.opponent];
+    for (const player of players) {
+      if (!player || !player.petArray) continue;
+      for (const pet of player.petArray) {
+        if (!pet) continue;
+
+        // Direct match
+        if (this.ROLL_PETS.includes(pet.name)) {
+          return true;
+        }
+
+        // Swallowed pets (Abomination)
+        if (pet.name === 'Abomination') {
+          if (this.ROLL_PETS.includes(pet.abominationSwallowedPet1)) return true;
+          if (this.ROLL_PETS.includes(pet.abominationSwallowedPet2)) return true;
+          if (this.ROLL_PETS.includes(pet.abominationSwallowedPet3)) return true;
+        }
+
+        // Swallowed pets (Beluga)
+        if (pet.name === 'Beluga Whale' && this.ROLL_PETS.includes(pet.belugaSwallowedPet)) {
+          return true;
+        }
+
+        // Swallowed pets (Sarcastic Fringehead)
+        if (pet.name === 'Sarcastic Fringehead' && this.ROLL_PETS.includes(pet.sarcasticFringeheadSwallowedPet)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  get rollInputVisible(): boolean {
+    return this.formGroup.get('showAdvanced').value || this.shouldShowRollInputs();
   }
 
   buildApiResponse() {
@@ -416,7 +423,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     })
 
     this.initPetForms();
- 
+
     this.formGroup.get('playerPack').valueChanges.subscribe((value) => {
       // happens on import
       if (value == null) {
@@ -531,7 +538,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         health: new FormControl(this.player[`pet${foo}`]?.health ?? 0),
         exp: new FormControl(this.player[`pet${foo}`]?.exp ?? 0),
         equipment: new FormControl(this.player[`pet${foo}`]?.equipment),
-      equipmentUses: new FormControl(this.player[`pet${foo}`]?.equipment?.uses ?? null),
+        equipmentUses: new FormControl(this.player[`pet${foo}`]?.equipment?.uses ?? null),
         belugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.belugaSwallowedPet),
         sarcasticFringeheadSwallowedPet: new FormControl(this.player[`pet${foo}`]?.sarcasticFringeheadSwallowedPet),
         mana: new FormControl(this.player[`pet${foo}`]?.mana ?? 0),
@@ -542,6 +549,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
         abominationSwallowedPet2Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
         abominationSwallowedPet3Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
+        abominationSwallowedPet1TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1TimesHurt ?? 0),
+        abominationSwallowedPet2TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2TimesHurt ?? 0),
+        abominationSwallowedPet3TimesHurt: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3TimesHurt ?? 0),
         friendsDiedBeforeBattle: new FormControl(this.player[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.player[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.player[`pet${foo}`]?.timesHurt ?? 0),
@@ -560,7 +570,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         health: new FormControl(this.opponent[`pet${foo}`]?.health ?? 0),
         exp: new FormControl(this.opponent[`pet${foo}`]?.exp ?? 0),
         equipment: new FormControl(this.opponent[`pet${foo}`]?.equipment),
-      equipmentUses: new FormControl(this.opponent[`pet${foo}`]?.equipment?.uses ?? null),
+        equipmentUses: new FormControl(this.opponent[`pet${foo}`]?.equipment?.uses ?? null),
         belugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.belugaSwallowedPet),
         sarcasticFringeheadSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.sarcasticFringeheadSwallowedPet),
         mana: new FormControl(this.opponent[`pet${foo}`]?.mana ?? 0),
@@ -571,6 +581,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
         abominationSwallowedPet2Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
         abominationSwallowedPet3Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
+        abominationSwallowedPet1TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1TimesHurt ?? 0),
+        abominationSwallowedPet2TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2TimesHurt ?? 0),
+        abominationSwallowedPet3TimesHurt: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3TimesHurt ?? 0),
         friendsDiedBeforeBattle: new FormControl(this.opponent[`pet${foo}`]?.friendsDiedBeforeBattle ?? 0),
         battlesFought: new FormControl(this.opponent[`pet${foo}`]?.battlesFought ?? 0),
         timesHurt: new FormControl(this.opponent[`pet${foo}`]?.timesHurt ?? 0),
@@ -865,6 +878,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet1Level: petData.abominationSwallowedPet1Level ?? 1,
           abominationSwallowedPet2Level: petData.abominationSwallowedPet2Level ?? 1,
           abominationSwallowedPet3Level: petData.abominationSwallowedPet3Level ?? 1,
+          abominationSwallowedPet1TimesHurt: petData.abominationSwallowedPet1TimesHurt ?? 0,
+          abominationSwallowedPet2TimesHurt: petData.abominationSwallowedPet2TimesHurt ?? 0,
+          abominationSwallowedPet3TimesHurt: petData.abominationSwallowedPet3TimesHurt ?? 0,
           friendsDiedBeforeBattle: petData.friendsDiedBeforeBattle ?? 0,
           battlesFought: petData.battlesFought ?? 0,
           timesHurt: petData.timesHurt ?? 0,
@@ -904,6 +920,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       abominationSwallowedPet1Level: petValue.abominationSwallowedPet1Level ?? 1,
       abominationSwallowedPet2Level: petValue.abominationSwallowedPet2Level ?? 1,
       abominationSwallowedPet3Level: petValue.abominationSwallowedPet3Level ?? 1,
+      abominationSwallowedPet1TimesHurt: petValue.abominationSwallowedPet1TimesHurt ?? 0,
+      abominationSwallowedPet2TimesHurt: petValue.abominationSwallowedPet2TimesHurt ?? 0,
+      abominationSwallowedPet3TimesHurt: petValue.abominationSwallowedPet3TimesHurt ?? 0,
       friendsDiedBeforeBattle: petValue.friendsDiedBeforeBattle ?? 0,
       battlesFought: petValue.battlesFought ?? 0,
       timesHurt: petValue.timesHurt ?? 0,

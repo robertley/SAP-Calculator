@@ -4,7 +4,7 @@ import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
 import { Peanut } from "./equipment/turtle/peanut.class";
 import { Corncob } from "./equipment/custom/corncob.class";
-import { AbilityService } from "../services/ability.service";
+import { AbilityService } from "../services/ability/ability.service";
 import { Tiger } from "./pets/turtle/tier-6/tiger.class";
 import { Albatross } from "./pets/custom/tier-6/albatross.class";
 import { Salt } from "./equipment/puppy/salt.class";
@@ -70,6 +70,9 @@ export abstract class Pet {
     abominationSwallowedPet1Level?: number;
     abominationSwallowedPet2Level?: number;
     abominationSwallowedPet3Level?: number;
+    abominationSwallowedPet1TimesHurt: number = 0;
+    abominationSwallowedPet2TimesHurt: number = 0;
+    abominationSwallowedPet3TimesHurt: number = 0;
     belugaSwallowedPet: string;
     sarcasticFringeheadSwallowedPet?: string;
     friendsDiedBeforeBattle: number = 0;

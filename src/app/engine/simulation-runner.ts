@@ -2,10 +2,10 @@ import { SimulationConfig, SimulationResult, PetConfig } from "../interfaces/sim
 import { Player } from "../classes/player.class";
 import { LogService } from "../services/log.service";
 import { GameService } from "../services/game.service";
-import { AbilityService } from "../services/ability.service";
-import { PetService } from "../services/pet.service";
-import { EquipmentService } from "../services/equipment.service";
-import { ToyService } from "../services/toy.service";
+import { AbilityService } from "../services/ability/ability.service";
+import { PetService } from "../services/pet/pet.service";
+import { EquipmentService } from "../services/equipment/equipment.service";
+import { ToyService } from "../services/toy/toy.service";
 import { Battle } from "../interfaces/battle.interface";
 import { Dazed } from "../classes/equipment/ailments/dazed.class";
 import { ChocolateCake } from "../classes/equipment/golden/chocolate-cake.class";
@@ -239,8 +239,11 @@ export class SimulationRunner {
                 abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level,
                 abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level,
                 abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level,
+                abominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet3TimesHurt ?? 0,
                 battlesFought: petConfig.battlesFought ?? 0,
-            timesHurt: petConfig.timesHurt ?? 0
+                timesHurt: petConfig.timesHurt ?? 0
             }, player);
             pet.friendsDiedBeforeBattle = petConfig.friendsDiedBeforeBattle ?? 0;
 
@@ -403,11 +406,12 @@ export class SimulationRunner {
         while (this.abilityService.hasGlobalEvents) {
             const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
 
-            if (nextEvent && this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 23) {
+            if (nextEvent && this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 25) {
                 this.checkPetsAlive();
                 const petsWereRemoved = this.removeDeadPets();
 
                 if (petsWereRemoved) {
+                    this.resetClearFrontFlags();
                     this.emptyFrontSpaceCheck();
                     continue;
                 }
@@ -425,6 +429,7 @@ export class SimulationRunner {
 
         let petRemoved = this.removeDeadPets();
         if (petRemoved) {
+            this.resetClearFrontFlags();
             this.emptyFrontSpaceCheck();
         }
         if (!this.abilityService.hasGlobalEvents) {
@@ -446,6 +451,8 @@ export class SimulationRunner {
     }
 
     protected emptyFrontSpaceCheck() {
+
+
         if (this.player.pet0 == null) {
             this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
         } else {
@@ -544,6 +551,14 @@ export class SimulationRunner {
             if (pet.equipment) {
                 pet.setEquipmentMultiplier();
             }
+        }
+    }
+    protected resetClearFrontFlags() {
+        for (const pet of this.player.petArray) {
+            pet.clearFrontTriggered = false;
+        }
+        for (const pet of this.opponent.petArray) {
+            pet.clearFrontTriggered = false;
         }
     }
 }

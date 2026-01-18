@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
 import { FormGroup } from "@angular/forms";
-import { SimulationRunner } from "../engine/simulation-runner";
-import { SimulationConfig, SimulationResult } from "../interfaces/simulation-config.interface";
-import { AbilityService } from "./ability.service";
-import { EquipmentService } from "./equipment.service";
-import { GameService } from "./game.service";
-import { LogService } from "./log.service";
-import { PetService } from "./pet.service";
-import { ToyService } from "./toy.service";
-import { Player } from "../classes/player.class";
+import { SimulationRunner } from "../../engine/simulation-runner";
+import { SimulationConfig, SimulationResult } from "../../interfaces/simulation-config.interface";
+import { AbilityService } from "../ability/ability.service";
+import { EquipmentService } from "../equipment/equipment.service";
+import { GameService } from "../game.service";
+import { LogService } from "../log.service";
+import { PetService } from "../pet/pet.service";
+import { ToyService } from "../toy/toy.service";
+import { Player } from "../../classes/player.class";
 
 @Injectable({
     providedIn: "root"

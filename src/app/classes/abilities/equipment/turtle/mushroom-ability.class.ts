@@ -2,8 +2,8 @@ import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
-import { PetService } from "app/services/pet.service";
+import { AbilityService } from "app/services/ability/ability.service";
+import { PetService } from "app/services/pet/pet.service";
 
 export class MushroomAbility extends Ability {
     private equipment: Equipment;

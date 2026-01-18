@@ -11,7 +11,8 @@
             <h2 class="me-2">Player</h2>
             <img *ngIf="playerToyImageUrl" class="toy-art" [src]="playerToyImageUrl" alt="Player Toy">
             <span *ngIf="playerToyImageUrl" class="toy-level-text">Lv{{formGroup.get('playerToyLevel').value}}</span>
-            <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [src]="playerHardToyImageUrl" alt="Player Hard Toy">
+            <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [src]="playerHardToyImageUrl"
+              alt="Player Hard Toy">
           </div>
           <button class="btn btn-secondary mb-1" (click)="resetPlayer('player')">Reset</button>
         </div>
@@ -29,9 +30,8 @@
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-            <app-pet-selector [pet]="player['pet' + (4 - i)]" [player]="player" [opponent]="opponent" [index]="4 - i"
-              [formGroup]="makeFormGroup(pet)"
-                [ailments]="true" [allPets]="formGroup.get('allPets').value"
+              <app-pet-selector [pet]="player['pet' + (4 - i)]" [player]="player" [opponent]="opponent" [index]="4 - i"
+                [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [allowEquipmentUseOverrides]="formGroup.get('changeEquipmentUses').value"
                 [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="true"
@@ -47,8 +47,10 @@
           <div class="d-flex align-items-center toy-wrap">
             <h2 class="me-2">Opponent</h2>
             <img *ngIf="opponentToyImageUrl" class="toy-art" [src]="opponentToyImageUrl" alt="Opponent Toy">
-            <span *ngIf="opponentToyImageUrl" class="toy-level-text">Lv{{formGroup.get('opponentToyLevel').value}}</span>
-            <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [src]="opponentHardToyImageUrl" alt="Opponent Hard Toy">
+            <span *ngIf="opponentToyImageUrl"
+              class="toy-level-text">Lv{{formGroup.get('opponentToyLevel').value}}</span>
+            <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [src]="opponentHardToyImageUrl"
+              alt="Opponent Hard Toy">
           </div>
           <button class="btn btn-secondary mb-1" (click)="resetPlayer('opponent')">Reset</button>
         </div>
@@ -68,12 +70,10 @@
                 </svg>
               </div>
               <app-pet-selector [pet]="opponent['pet' + i]" [player]="opponent" [opponent]="player" [index]="i"
-                [formGroup]="makeFormGroup(pet)"
-                [ailments]="true" [allPets]="formGroup.get('allPets').value"
+                [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [allowEquipmentUseOverrides]="formGroup.get('changeEquipmentUses').value"
-                [showTokenPets]="formGroup.get('tokenPets').value"
-                [customPacks]="formGroup.get('customPacks')"
+                [showTokenPets]="formGroup.get('tokenPets').value" [customPacks]="formGroup.get('customPacks')"
                 [showSwallowedLevels]="formGroup.get('showSwallowedLevels').value"></app-pet-selector>
             </div>
           </div>
@@ -148,7 +148,8 @@
               </div>
             </div>
             <div class="team-column">
-              <select class="form-control team-select" [(ngModel)]="selectedTeamId" [ngModelOptions]="{standalone: true}">
+              <select class="form-control team-select" [(ngModel)]="selectedTeamId"
+                [ngModelOptions]="{standalone: true}">
                 <option value="">Saved teams</option>
                 <option *ngFor="let team of savedTeams" [value]="team.id">{{team.name}}</option>
               </select>
@@ -206,7 +207,8 @@
                   <select class="form-control" id="playerToy" formControlName="playerToy">
                     <option [ngValue]="null">None</option>
                     <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of regularToys | keyvalue">
-                      <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">{{toy}}</option>
+                      <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">
+                        {{toy}}</option>
                     </optgroup>
                   </select>
                 </div>
@@ -223,7 +225,8 @@
                   <select class="form-control" id="opponentToy" formControlName="opponentToy">
                     <option [ngValue]="null">None</option>
                     <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of regularToys | keyvalue">
-                      <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">{{toy}}</option>
+                      <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">
+                        {{toy}}</option>
                     </optgroup>
                   </select>
                 </div>
@@ -243,7 +246,8 @@
                     <select class="form-control" id="playerHardToy" formControlName="playerHardToy">
                       <option [ngValue]="null">None</option>
                       <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of hardWackyToys | keyvalue">
-                        <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">{{toy}}</option>
+                        <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">
+                          {{toy}}</option>
                       </optgroup>
                     </select>
                   </div>
@@ -252,7 +256,8 @@
                     <select class="form-control" id="opponentHardToy" formControlName="opponentHardToy">
                       <option [ngValue]="null">None</option>
                       <optgroup [label]="'Tier ' + toyGroup.key" *ngFor="let toyGroup of hardWackyToys | keyvalue">
-                        <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">{{toy}}</option>
+                        <option *ngFor="let toy of toyGroup.value" [ngValue]="toy" [ngStyle]="getToyOptionStyle(toy)">
+                          {{toy}}</option>
                       </optgroup>
                     </select>
                   </div>
@@ -295,85 +300,90 @@
               </div>
             </ng-container>
             <div class="advanced-toggle">
-              <span class="btn-link" (click)="toggleAdvanced()">{{formGroup.get('showAdvanced').value ? 'Hide' : 'Show'}}
+              <span class="btn-link" (click)="toggleAdvanced()">{{formGroup.get('showAdvanced').value ? 'Hide' :
+                'Show'}}
                 Advanced Settings</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="row battle-controller border mt-2" *ngIf="formGroup.get('showAdvanced').value">
-          <div class="col-12 d-flex justify-content-between py-2">
-            <div class="border-end d-flex flex-wrap pe-3">
-              <div class="form-group small-w-input me-s-3">
-                <label for="turn">Turn</label>
-                <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerGoldSpent" title="Player Gold Spent">Player Gold Spent</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerGoldSpent" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentGoldSpent" title="Opponent Gold Spent">Opponent Gold Spent</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentGoldSpent" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerRollAmount" title="Player Roll Amount">Player Roll Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerRollAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentRollAmount" title="Opponent Roll Amount">Opponent Roll Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentRollAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerLevel3Sold" title="Player Level 3 Sold">Player Lvl 3 Sold</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerLevel3Sold" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">Opponent Lvl 3 Sold</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentLevel3Sold" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerSummonedAmount" title="Player Summoned Amount">Player Summoned Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerSummonedAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentSummonedAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="playerTransformationAmount" max="99" />
-              </div>
-              <div class="form-group advanced-input ms-3">
-                <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation Amt</label>
-                <input class="form-control" id="turn" type="number" formControlName="opponentTransformationAmount"
-                  max="99" />
-              </div>
+      <div class="row battle-controller border mt-2" *ngIf="rollInputVisible">
+        <div class="col-12 py-2">
+          <div class="advanced-number-grid">
+            <div class="form-group advanced-input">
+              <label for="playerRollAmount" title="Player Roll Amount">Player Roll Amount</label>
+              <input class="form-control" type="number" formControlName="playerRollAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentRollAmount" title="Opponent Roll Amount">Opponent Roll Amount</label>
+              <input class="form-control" type="number" formControlName="opponentRollAmount" max="99" />
             </div>
           </div>
+        </div>
+      </div>
+      <div class="row battle-controller border mt-2" *ngIf="formGroup.get('showAdvanced').value">
+        <div class="col-12 py-2">
+          <div class="advanced-number-grid">
+            <div class="form-group small-w-input">
+              <label for="turn">Turn Number</label>
+              <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerGoldSpent" title="Player Gold Spent">Player Gold Spent</label>
+              <input class="form-control" type="number" formControlName="playerGoldSpent" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentGoldSpent" title="Opponent Gold Spent">Opponent Gold Spent</label>
+              <input class="form-control" type="number" formControlName="opponentGoldSpent" max="99" />
+            </div>
+            <!-- Rolled Amount inputs moved to contextual section below -->
+            <div class="form-group advanced-input">
+              <label for="playerLevel3Sold" title="Player Level 3 Sold">Player Level 3 Sold</label>
+              <input class="form-control" type="number" formControlName="playerLevel3Sold" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentLevel3Sold" title="Opponent Level 3 Sold">Opponent Level 3 Sold</label>
+              <input class="form-control" type="number" formControlName="opponentLevel3Sold" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerSummonedAmount" title="Player Summoned Amount">Player Summoned Amount</label>
+              <input class="form-control" type="number" formControlName="playerSummonedAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentSummonedAmount" title="Opponent Summoned Amount">Opponent Summoned Amount</label>
+              <input class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="playerTransformationAmount" title="Player Transformation Amount">Player Transformation
+                Amount</label>
+              <input class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
+            </div>
+            <div class="form-group advanced-input">
+              <label for="opponentTransformationAmount" title="Opponent Transformation Amount">Opponent Transformation
+                Amount</label>
+              <input class="form-control" type="number" formControlName="opponentTransformationAmount" max="99" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row flex-1 bottom-container" *ngIf="simulated">
       <div class="col-12 col-md-6 border h-100 flex-col pe-0">
         <h3>Battles</h3>
-          <div class="row">
-            <div class="col-12">
-              <label for="logFilter" class="form-label">Filter Battles By Winner</label>
-            </div>
-            <div class="col-12">
-              <div class="log-filter-tabs" id="logFilter">
-                <button
-                  *ngFor="let tab of logFilterTabs"
-                  type="button"
-                  class="log-filter-tab"
-                  [class.active]="formGroup.get('logFilter').value === tab.value"
-                  (click)="formGroup.get('logFilter').setValue(tab.value)"
-                >
-                  {{ tab.label }}
-                </button>
-              </div>
+        <div class="row">
+          <div class="col-12">
+            <label for="logFilter" class="form-label">Filter Battles By Winner</label>
+          </div>
+          <div class="col-12">
+            <div class="log-filter-tabs" id="logFilter">
+              <button *ngFor="let tab of logFilterTabs" type="button" class="log-filter-tab"
+                [class.active]="formGroup.get('logFilter').value === tab.value"
+                (click)="formGroup.get('logFilter').setValue(tab.value)">
+                {{ tab.label }}
+              </button>
             </div>
           </div>
+        </div>
 
         <div class="battle-container flex-1 scroll">
           <table class="table">

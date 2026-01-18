@@ -1,18 +1,18 @@
 import { Injectable } from "@angular/core";
-import { Pet } from "../classes/pet.class";
-import { LogService } from "./log.service";
+import { Pet } from "../../classes/pet.class";
+import { LogService } from "../log.service";
 import { PetFactoryService, PetForm } from "./pet-factory.service";
-import { Player } from "../classes/player.class";
-import { Equipment } from "../classes/equipment.class";
-import { AbilityService } from "./ability.service";
-import { GameService } from "./game.service";
-import { getRandomInt } from "../util/helper-functions";
+import { Player } from "../../classes/player.class";
+import { Equipment } from "../../classes/equipment.class";
+import { AbilityService } from "../ability/ability.service";
+import { GameService } from "../game.service";
+import { getRandomInt } from "../../util/helper-functions";
 import { FormArray } from "@angular/forms";
-import { EquipmentService } from "./equipment.service";
-import { Mouse } from "../classes/pets/custom/tier-1/mouse.class";
+import { EquipmentService } from "../equipment/equipment.service";
+import { Mouse } from "../../classes/pets/custom/tier-1/mouse.class";
 import { PET_REGISTRY } from "./pet-registry";
-import { BASE_PACK_NAMES, PackName } from "../util/pack-names";
-import * as petJson from "../files/pets.json";
+import { BASE_PACK_NAMES, PackName } from "../../util/pack-names";
+import * as petJson from "../../files/pets.json";
 
 interface PetJsonEntry {
   Name: string;

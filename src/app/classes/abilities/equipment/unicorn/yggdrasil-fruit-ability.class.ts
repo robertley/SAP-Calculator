@@ -4,7 +4,7 @@ import { Equipment } from "../../../equipment.class";
 import { Tandgnost } from "../../../pets/custom/tier-4/tandgnost.class";
 import { Tandgrisner } from "../../../pets/custom/tier-5/tandgrisner.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 
 export class YggdrasilFruitAbility extends Ability {
     private equipment: Equipment;

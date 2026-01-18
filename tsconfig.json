@@ -22,10 +22,12 @@
       "es2018",
       "dom"
     ],
+    "types": [],
     "typeRoots": [
       "node_modules/@types",
       "node_modules/@angular",
-      "node_modules/@angular/material"]
+      "node_modules/@angular/material"
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { InjectorService } from "app/services/injector.service";
-import { EquipmentService } from "app/services/equipment.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
 
 export class FoxAbility extends Ability {
     private logService: LogService;

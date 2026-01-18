@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { Equipment } from "../classes/equipment.class";
-import { LogService } from "./log.service";
-import { AbilityService } from "./ability.service";
-import { GameService } from "./game.service";
+import { Equipment } from "../../classes/equipment.class";
+import { LogService } from "../log.service";
+import { AbilityService } from "../ability/ability.service";
+import { GameService } from "../game.service";
 import { EquipmentFactoryService } from "./equipment-factory.service";
 
 @Injectable({

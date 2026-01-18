@@ -8,7 +8,7 @@ import {
   ValidatorFn,
   Validators,
 } from "@angular/forms";
-import { PetService } from "../../services/pet.service";
+import { PetService } from "../../services/pet/pet.service";
 import { remove } from "lodash";
 import { LocalStorageService } from "../../services/local-storage.service";
 import * as petJson from "../../files/pets.json";

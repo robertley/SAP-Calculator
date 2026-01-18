@@ -1,7 +1,7 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../services/ability.service";
+import { AbilityService } from "../../../services/ability/ability.service";
 import { LogService } from "../../../services/log.service";
-import { ToyService } from "../../../services/toy.service";
+import { ToyService } from "../../../services/toy/toy.service";
 import { Pet } from "../../pet.class";
 import { SalmonOfKnowledge } from "../../pets/unicorn/tier-5/salmon-of-knowledge.class";
 import { Player } from "../../player.class";

@@ -73,6 +73,10 @@
                         <option [ngValue]="3">3</option>
                     </select>
                 </ng-container>
+                <ng-container *ngIf="shouldShowAbominationSwallowTimesHurt(i)">
+                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}TimesHurt">Times Hurt</label>
+                    <input class="form-control" formControlName="abominationSwallowedPet{{i + 1}}TimesHurt" type="number" min="0" max="99">
+                </ng-container>
             </div>
         </div>
         <div class="col-12 mb-2" *ngIf="formGroup.get('name').value == 'Sarcastic Fringehead'">

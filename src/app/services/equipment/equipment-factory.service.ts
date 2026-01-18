@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Equipment } from "../classes/equipment.class";
-import { LogService } from "./log.service";
-import { AbilityService } from "./ability.service";
-import { GameService } from "./game.service";
-import { PetService } from "./pet.service";
-import { InjectorService } from "./injector.service";
+import { Equipment } from "../../classes/equipment.class";
+import { LogService } from "../log.service";
+import { AbilityService } from "../ability/ability.service";
+import { GameService } from "../game.service";
+import { PetService } from "../pet/pet.service";
+import { InjectorService } from "../injector.service";
 import {
     EquipmentRegistryDeps,
     NO_ARG_EQUIPMENT,

@@ -2,8 +2,8 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
-import { PetService } from "app/services/pet.service";
+import { AbilityService } from "app/services/ability/ability.service";
+import { PetService } from "app/services/pet/pet.service";
 import { logAbility, resolveFriendSummonedTarget } from "../../../ability-helpers";
 
 export class HippogriffAbility extends Ability {

@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { LogService } from "./log.service";
-import { AbilityService } from "./ability.service";
-import { EquipmentService } from "./equipment.service";
-import { PetService } from "./pet.service";
-import { GameService } from "./game.service";
-import { Player } from "../classes/player.class";
-import { Toy } from "../classes/toy.class";
+import { LogService } from "../log.service";
+import { AbilityService } from "../ability/ability.service";
+import { EquipmentService } from "../equipment/equipment.service";
+import { PetService } from "../pet/pet.service";
+import { GameService } from "../game.service";
+import { Player } from "../../classes/player.class";
+import { Toy } from "../../classes/toy.class";
 import {
     ToyRegistryDeps,
     STANDARD_TOYS,

@@ -1,8 +1,8 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { GameService } from "../../../services/game.service";
 import { LogService } from "../../../services/log.service";
-import { PetService } from "../../../services/pet.service";
-import { ToyService } from "../../../services/toy.service";
+import { PetService } from "../../../services/pet/pet.service";
+import { ToyService } from "../../../services/toy/toy.service";
 import { Popcorn } from "../../equipment/star/popcorn.class";
 import { Player } from "../../player.class";
 import { Toy } from "../../toy.class";

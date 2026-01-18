@@ -1,6 +1,6 @@
 import { ManticoreAbility } from "app/classes/abilities/pets/unicorn/tier-6/manticore-ability.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Crisp } from "../../../equipment/ailments/crisp.class";

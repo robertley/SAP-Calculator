@@ -24,11 +24,7 @@
         "resolveJsonModule": true
     },
     "include": [
-        "src/app/services/*.ts",
-        "src/app/classes/**/*.ts",
-        "src/app/engine/*.ts",
-        "src/app/interfaces/*.ts",
-        "src/app/util/*.ts",
-        "simulation/**/*.ts"
+        "./*.ts",
+        "../src/app/**/*.ts"
     ]
 }
