@@ -20,6 +20,7 @@ interface PetJsonEntry {
   Packs?: string[];
   PacksRequired?: string[];
   Abilities?: Array<{ Level?: number; About?: string }>;
+  Rollable?: boolean;
 }
 
 const PACK_CODE_TO_NAME: Record<string, PackName> = {
@@ -47,6 +48,7 @@ export class PetService {
   dangerPackPets: Map<number, string[]> = new Map();
   playerCustomPackPets: Map<string, Map<number, string[]>> = new Map();
   allPets: Map<number, string[]> = new Map();
+  tokenPetsMap: Map<number, string[]> = new Map();
   readonly basePackPetsByName: Record<PackName, Map<number, string[]>>;
   startOfBattlePets: string[] = [];
 
@@ -86,6 +88,7 @@ export class PetService {
       this.unicornPackPets,
       this.dangerPackPets,
       this.customPackPets,
+      this.tokenPetsMap,
     ];
     for (const map of tierMaps) {
       map.clear();
@@ -117,10 +120,14 @@ export class PetService {
           tierPets.push(pet.Name);
         }
       }
+      if (pet.Rollable === false || pet.Rollable === undefined) {
+        this.tokenPetsMap.get(tier)?.push(pet.Name);
+      }
     }
     for (const tierMap of Object.values(this.basePackPetsByName)) {
       this.deduplicateTierMap(tierMap);
     }
+    this.deduplicateTierMap(this.tokenPetsMap);
   }
 
   private getPackNamesFromEntry(pet: PetJsonEntry): PackName[] {
@@ -234,21 +241,35 @@ export class PetService {
 
   getRandomPet(parent: Player) {
     let tier = getRandomInt(1, 6);
-    let pets;
-    if (parent.pack == "Turtle") {
-      pets = this.turtlePackPets.get(tier);
+    let pets: string[];
+    if (parent.allPets) {
+      pets = [...(this.allPets.get(tier) || [])];
+    } else if (parent.pack == "Turtle") {
+      pets = [...(this.turtlePackPets.get(tier) || [])];
     } else if (parent.pack == "Puppy") {
-      pets = this.puppyPackPets.get(tier);
+      pets = [...(this.puppyPackPets.get(tier) || [])];
     } else if (parent.pack == "Star") {
-      pets = this.starPackPets.get(tier);
+      pets = [...(this.starPackPets.get(tier) || [])];
     } else if (parent.pack == "Golden") {
-      pets = this.goldenPackPets.get(tier);
+      pets = [...(this.goldenPackPets.get(tier) || [])];
     } else if (parent.pack == "Unicorn") {
-      pets = this.unicornPackPets.get(tier);
+      pets = [...(this.unicornPackPets.get(tier) || [])];
     } else if (parent.pack == "Danger") {
-      pets = this.dangerPackPets.get(tier);
+      pets = [...(this.dangerPackPets.get(tier) || [])];
     } else {
-      pets = this.playerCustomPackPets.get(parent.pack).get(tier);
+      pets = [...(this.playerCustomPackPets.get(parent.pack)?.get(tier) || [])];
+    }
+
+    if (parent.tokenPets) {
+      const tokens = this.tokenPetsMap.get(tier) || [];
+      pets.push(...tokens);
+      // Deduplicate in case some tokens are also in the pack (though unlikely)
+      pets = [...new Set(pets)];
+    }
+
+    if (!pets || pets.length === 0) {
+      // Fallback if tier has no pets in this configuration
+      pets = ["Ant"]; // Very safe fallback
     }
     let petNum = getRandomInt(0, pets.length - 1);
     let pet = pets[petNum];

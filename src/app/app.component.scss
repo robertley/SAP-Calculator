@@ -2,7 +2,7 @@ $day: #85ddf2;
 $night: #33377a;
 
 .app-wrapper {
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .day-night-container {
@@ -73,6 +73,23 @@ $night: #33377a;
     justify-content: center;
 }
 
+.simulate-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.simulate-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    .simulate-input {
+        width: 80px;
+        text-align: center;
+    }
+}
+
 .results-placeholder {
     display: flex;
     flex-direction: column;
@@ -133,6 +150,10 @@ $night: #33377a;
     background-color: #f8f9fa;
 }
 
+.controls-section.advanced-section {
+    grid-column: span 2;
+}
+
 .teams-section {
     flex-direction: row;
     flex-wrap: wrap;
@@ -177,11 +198,70 @@ $night: #33377a;
     border: 1px solid #eef1f4;
 }
 
+.selection-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-align: left;
+    min-height: 40px;
+
+    &:hover {
+        background: #f1f3f5;
+        border-color: #adb5bd;
+        transform: translateY(-1px);
+    }
+
+    .btn-icon {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+    }
+
+    .btn-text {
+        font-size: 0.9rem;
+        color: #495057;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    i {
+        color: #adb5bd;
+        font-size: 0.8rem;
+    }
+}
+
+:host-context(.night) {
+    .selection-btn {
+        background: #3d3d3d;
+        border-color: #444;
+        color: #eee;
+
+        &:hover {
+            background: #444;
+            border-color: #555;
+        }
+
+        .btn-text {
+            color: #eee;
+        }
+    }
+}
+
 .compact-toy-group .toy-row {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
     align-items: flex-end;
+    justify-content: center;
 }
 
 .compact-toy-group .toy-inline {
@@ -212,14 +292,14 @@ $night: #33377a;
 
 .advanced-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    grid-template-columns: repeat(3, minmax(140px, 1fr));
     gap: 0.35rem 0.75rem;
     align-items: start;
 }
 
 .advanced-number-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 0.75rem;
     align-items: flex-start;
 }
@@ -267,6 +347,10 @@ $night: #33377a;
     .controls-grid {
         grid-template-columns: repeat(2, minmax(220px, 1fr));
     }
+
+    .controls-section.advanced-section {
+        grid-column: span 2;
+    }
 }
 
 @media (max-width: 991.98px) {
@@ -284,6 +368,10 @@ $night: #33377a;
 
     .controls-grid {
         grid-template-columns: 1fr;
+    }
+
+    .controls-section.advanced-section {
+        grid-column: span 1;
     }
 
     .teams-section {
@@ -404,9 +492,24 @@ $night: #33377a;
     background-color: red;
 }
 
+::ng-deep .log-pet-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
+::ng-deep .log-inline-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin: 0 3px 2px 3px;
+}
+
 .log-player {
     background-color: rgb(228, 255, 224);
-    ;
 }
 
 .log-opponent {
@@ -434,6 +537,9 @@ $night: #33377a;
 
 .random-event {
     color: purple;
+}
+
+.bold {
     font-weight: bold;
 }
 
@@ -570,10 +676,242 @@ $night: #33377a;
 
 .toy-wrap {
     position: relative;
+    gap: 0.5rem;
 }
 
-.toy-wrap .toy-art + .toy-art {
+.toy-wrap .toy-art+.toy-art {
     margin-left: 0.35rem;
+}
+
+.toy-select-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 2px;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.05);
+    }
+
+    &.toy-none {
+        background: rgba(0, 0, 0, 0.3);
+        border: 1px dashed rgba(255, 255, 255, 0.5);
+        padding: 8px 12px;
+        min-width: 50px;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+.toy-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.toy-slot {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.toy-select-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.8rem;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.32);
+        transform: translateY(-1px);
+    }
+
+    i {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.85);
+    }
+}
+
+.toy-label {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.toy-main {
+    display: flex;
+    align-items: center;
+}
+
+.toy-level-controls {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 12px;
+    padding: 0.15rem 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toy-level-controls.inline {
+    position: static;
+    transform: none;
+    opacity: 1;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(6px);
+}
+
+.glass-btn {
+    background: rgba(0, 0, 0, 0.25);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(6px);
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.32);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-1px);
+    }
+}
+
+.toy-select-container:hover .toy-level-controls,
+.toy-select-container:hover .toy-remove-btn,
+.toy-wrap:hover .toy-add-hard {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.toy-level-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 999px;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.65rem;
+    padding: 0;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+}
+
+.toy-level-label {
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 22px;
+    text-align: center;
+}
+
+.toy-remove-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    background: #d63384;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.75rem;
+
+    &:hover {
+        background: #c2185b;
+        transform: scale(1.1);
+    }
+}
+
+.toy-remove-btn-inline {
+    width: 22px;
+    height: 22px;
+    background: #d63384;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.75rem;
+
+    &:hover {
+        background: #c2185b;
+        transform: scale(1.05);
+    }
+}
+
+.toy-add-hard {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 0.75rem;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.9);
+        border-color: rgba(255, 255, 255, 0.7);
+        color: #fff;
+        transform: scale(1.15);
+    }
+}
+
+.toy-select-icon {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border-radius: 999px;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.toy-select-container:hover .toy-select-icon {
+    opacity: 1;
 }
 
 .toy-level-text {
@@ -581,6 +919,7 @@ $night: #33377a;
     font-weight: 700;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.75);
     margin-left: 0.35rem;
+    display: none;
 }
 
 .battle-row h2 {
@@ -655,7 +994,7 @@ $night: #33377a;
         flex-direction: column;
     }
 
-    .action-row > div {
+    .action-row>div {
         width: 100%;
         display: flex;
         flex-wrap: wrap;

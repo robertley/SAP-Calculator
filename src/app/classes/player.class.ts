@@ -96,6 +96,8 @@ export class Player {
     spawnedGoldenRetiever: boolean = false;
     summonedBoatThisBattle: boolean = false;
     public isOpponent: boolean = false;
+    public allPets: boolean = false;
+    public tokenPets: boolean = false;
 
     cannedAilments: string[] = [];
 

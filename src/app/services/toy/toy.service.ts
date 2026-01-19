@@ -369,9 +369,10 @@ export class ToyService {
         if (!toyName) {
             return;
         }
+        const ownerLabel = event.player?.isOpponent ? "Opponent's" : "Player's";
         const triggerPetName = event.triggerPet?.name ? ` (${event.triggerPet.name})` : '';
         this.logService.createLog({
-            message: `${toyName} ${label}${triggerPetName}`,
+            message: `${ownerLabel} ${toyName} ${label}${triggerPetName}`,
             type: 'ability',
             player: event.player,
             randomEvent: true

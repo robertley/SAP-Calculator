@@ -3,16 +3,16 @@ import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../../classes/equipment.class";
 import { Pack, Pet } from "../../../../classes/pet.class";
 import { Player } from "../../../../classes/player.class";
-import { CuckooAbility } from "../../../abilities/pets/custom/tier-4/cuckoo-ability.class";
+import { CuckooAbility } from "../../../abilities/pets/custom/tier-5/cuckoo-ability.class";
 
 export class Cuckoo extends Pet {
     name = "Cuckoo";
-    tier = 4;
+    tier = 5;
     pack: Pack = 'Custom';
-    attack = 5;
+    attack = 4;
     health = 4;
     override initAbilities(): void {
-        this.addAbility(new CuckooAbility(this, this.logService));
+        this.addAbility(new CuckooAbility(this, this.logService, this.abilityService));
         super.initAbilities();
     }
 

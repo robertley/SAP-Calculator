@@ -1,45 +1,36 @@
 <div class="card p-3">
     <div class="row form-group" [formGroup]="formGroup">
         <div class="col-12 d-flex level-bar-numbers mb-1">
-            <span class="level-icon">
-                <img src="/assets/art/Public/Public/Icons/Level_L1.png" alt="Level 1">
-            </span>
-            <span></span>
-            <span class="level-icon">
-                <img src="/assets/art/Public/Public/Icons/Level_L2.png" alt="Level 2">
-            </span>
-            <span></span>
-            <span class="level-icon level-3">
-                <img src="/assets/art/Public/Public/Icons/Level_L3.png" alt="Level 3">
-            </span>
+            <span class="remove-exp spacer" *ngIf="showRemoveExp()"></span>
+            <div class="level-slots-labels d-flex flex-grow-1">
+                <span class="level-icon">
+                    <img src="/assets/art/Public/Public/Icons/Level_L1.png" alt="Level 1">
+                </span>
+                <span></span>
+                <span class="level-icon">
+                    <img src="/assets/art/Public/Public/Icons/Level_L2.png" alt="Level 2">
+                </span>
+                <span></span>
+                <span class="level-icon level-3">
+                    <img src="/assets/art/Public/Public/Icons/Level_L3.png" alt="Level 3">
+                </span>
+            </div>
         </div>
         <div class="col-12 d-flex level-bar mb-2">
             <span (click)="setExp(0)" class="remove-exp" *ngIf="showRemoveExp()">x</span>
-            <span (click)="setExp(1)" [class]="getIsSelected(1) ? 'selected' : ''"></span>
-            <span (click)="setExp(2)" [class]="getIsSelected(2) ? 'selected' : ''"></span>
-            <span (click)="setExp(3)" [class]="getIsSelected(3) ? 'selected' : ''"></span>
-            <span (click)="setExp(4)" [class]="getIsSelected(4) ? 'selected' : ''"></span>
-            <span (click)="setExp(5)" [class]="getIsSelected(5) ? 'selected' : ''"></span>
+            <span (click)="setExp(1)" [class.selected]="getIsSelected(1)"></span>
+            <span (click)="setExp(2)" [class.selected]="getIsSelected(2)"></span>
+            <span (click)="setExp(3)" [class.selected]="getIsSelected(3)"></span>
+            <span (click)="setExp(4)" [class.selected]="getIsSelected(4)"></span>
+            <span (click)="setExp(5)" [class.selected]="getIsSelected(5)"></span>
         </div>
-        <div class="col-12 mb-2 d-flex">
-            <select class="form-control" formControlName="name">
-                <option [ngValue]="null">None</option>
-                <optgroup label="Token Pets" [hidden]="!showTokenPets">
-                    <option *ngFor="let pet of tokenPets" [ngValue]="pet" [ngStyle]="getPetOptionStyle(pet)">{{pet}}</option>
-                </optgroup>
-                <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
-                        [disabled]="optionHidden(pet)">{{pet}}</option>
-                </optgroup>
-            </select>
-        </div>
-        <div class="col-12 mb-2" *ngIf="pet?.name == 'Slime'">
-            <label for="battlesFought">Battles Fought</label>
-            <input class="form-control" formControlName="battlesFought" type="number" max="99">
-        </div>
-        <div class="col-12 mb-2" *ngIf="pet?.name == 'Sabertooth Tiger'">
-            <label for="timesHurt">Times Hurt</label>
-            <input class="form-control" formControlName="timesHurt" type="number" min="0" max="99">
+        <div class="col-12 mb-2">
+            <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
+                (click)="openSelectionDialog('pet')">
+                <img *ngIf="petImageSrc" [src]="petImageSrc" class="btn-icon me-2" width="24" height="24">
+                <span class="btn-text">{{ formGroup.get('name').value || 'Select Pet' }}</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
         </div>
         <div class="col-12 mb-2" *ngIf="pet?.name == 'Tuna'">
             <label for="timesHurt">Times Hurt</label>
@@ -47,26 +38,41 @@
         </div>
         <div class="col-12 mb-2" *ngIf="pet?.name == 'Beluga Whale'">
             <label class="swallowed-label" for="belugaSwallowedPet">Swallowed Pet</label>
-            <select class="form-control" formControlName="belugaSwallowedPet">
-                <option [ngValue]="null">None</option>
-                <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
-                        [disabled]="optionHidden(pet)">{{pet}}</option>
-                </optgroup>
-            </select>
+            <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
+                (click)="openSelectionDialog('swallowed-pet')">
+                <img *ngIf="getPetImagePath(formGroup.get('belugaSwallowedPet').value)"
+                    [src]="getPetImagePath(formGroup.get('belugaSwallowedPet').value)" class="btn-icon me-2" width="24"
+                    height="24">
+                <span class="btn-text">{{ formGroup.get('belugaSwallowedPet').value || 'Select Pet' }}</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
         </div>
         <div class="col-12 mb-2" *ngIf="pet?.name == 'Abomination'">
             <div *ngFor="let a of [].constructor(pet.level); index as i">
                 <label class="swallowed-label" for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
-                <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}">
-                    <option [ngValue]="null">None</option>
-                    <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                        <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
-                            [disabled]="optionHidden(pet)" [ngStyle]="getPetOptionStyle(pet)">{{pet}}</option>
-                    </optgroup>
-                </select>
+                <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
+                    (click)="openSelectionDialog('swallowed-pet', i+1, 'abomination')">
+                    <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1)).value)"
+                        [src]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1)).value)"
+                        class="btn-icon me-2" width="24" height="24">
+                    <span class="btn-text">{{ formGroup.get('abominationSwallowedPet' + (i+1)).value || 'Select Pet'
+                        }}</span>
+                    <i class="bi bi-chevron-down ms-auto"></i>
+                </button>
+                <ng-container *ngIf="formGroup.get('abominationSwallowedPet' + (i+1)).value === 'Beluga Whale'">
+                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}BelugaSwallowedPet">Beluga Swallowed Pet</label>
+                    <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
+                        (click)="openSelectionDialog('swallowed-pet', i+1, 'abomination-beluga')">
+                        <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value)"
+                            [src]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value)"
+                            class="btn-icon me-2" width="24" height="24">
+                        <span class="btn-text">{{ formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value || 'Select Pet' }}</span>
+                        <i class="bi bi-chevron-down ms-auto"></i>
+                    </button>
+                </ng-container>
                 <ng-container *ngIf="showSwallowedLevels">
-                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}Level">Swallowed Level</label>
+                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}Level">Swallowed
+                        Level</label>
                     <select class="form-control" formControlName="abominationSwallowedPet{{i + 1}}Level">
                         <option [ngValue]="1">1</option>
                         <option [ngValue]="2">2</option>
@@ -74,35 +80,38 @@
                     </select>
                 </ng-container>
                 <ng-container *ngIf="shouldShowAbominationSwallowTimesHurt(i)">
-                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}TimesHurt">Times Hurt</label>
-                    <input class="form-control" formControlName="abominationSwallowedPet{{i + 1}}TimesHurt" type="number" min="0" max="99">
+                    <label class="swallowed-label mt-1" for="abominationSwallowedPet{{i + 1}}TimesHurt">Times
+                        Hurt</label>
+                    <input class="form-control" formControlName="abominationSwallowedPet{{i + 1}}TimesHurt"
+                        type="number" min="0" max="99">
                 </ng-container>
             </div>
         </div>
         <div class="col-12 mb-2" *ngIf="formGroup.get('name').value == 'Sarcastic Fringehead'">
             <label class="swallowed-label" for="sarcasticFringeheadSwallowedPet">Swallowed Pet</label>
-            <select class="form-control" formControlName="sarcasticFringeheadSwallowedPet">
-                <option [ngValue]="null">None</option>
-                <optgroup [label]="'Tier ' + petGroup.key" *ngFor="let petGroup of pets | keyvalue">
-                    <option *ngFor="let pet of petGroup.value" [ngValue]="pet" [hidden]="optionHidden(pet)"
-                        [disabled]="optionHidden(pet)" [ngStyle]="getPetOptionStyle(pet)">{{pet}}</option>
-                </optgroup>
-            </select>
+            <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
+                (click)="openSelectionDialog('swallowed-pet')">
+                <img *ngIf="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet').value)"
+                    [src]="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet').value)"
+                    class="btn-icon me-2" width="24" height="24">
+                <span class="btn-text">{{ formGroup.get('sarcasticFringeheadSwallowedPet').value || 'Select Pet'
+                    }}</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
         </div>
         <div class="col-12 mb-2" *ngIf="shouldShowFriendsDiedInput()">
             <label class="swallowed-label" for="friendsDiedBeforeBattle">Friends Fainted in Shop</label>
             <input class="form-control" type="number" min="0" max="5" formControlName="friendsDiedBeforeBattle">
         </div>
         <div class="col-12 mb-2">
-                <select class="form-control" formControlName="equipment" [compareWith]="compareEquipment">
-                    <option [ngValue]="null">None</option>
-                    <optgroup *ngFor="let group of equipmentCategoryGroups" [label]="group.label">
-                    <option *ngFor="let equip of group.items" [ngValue]="equip" [ngStyle]="getEquipmentOptionStyle(equip)">{{equip.name}}</option>
-                    </optgroup>
-                    <optgroup *ngFor="let group of ailmentCategoryGroups" [label]="group.label">
-                    <option *ngFor="let ailment of group.items" [ngValue]="ailment" [ngStyle]="getEquipmentOptionStyle(ailment, true)">{{ailment.name}}</option>
-                    </optgroup>
-                </select>
+            <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
+                (click)="openSelectionDialog('equipment')">
+                <img *ngIf="equipmentImageSrc" [src]="equipmentImageSrc" class="btn-icon me-2" width="24" height="24">
+                <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [src]="ailmentImageSrc" class="btn-icon me-2"
+                    width="24" height="24">
+                <span class="btn-text">{{ formGroup.get('equipment').value?.name || 'Select Equipment' }}</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
+            </button>
         </div>
         <div class="col-6 mb-2" *ngIf="allowEquipmentUseOverrides && equipmentUsesAvailable">
             <label [for]="equipmentUsesInputId">Uses</label>
@@ -164,3 +173,7 @@
         </div>
     </div>
 </div>
+
+<app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType" [showAllPets]="allPets"
+    [currentPack]="player?.pack" (select)="onItemSelected($event)" (close)="showSelectionDialog = false">
+</app-item-selection-dialog>

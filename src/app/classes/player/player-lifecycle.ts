@@ -27,8 +27,24 @@ export const resetPets = (player: Player): void => {
 
     player.toy = player.originalToy;
     if (player.toy) {
+        // Reset mutable properties
         player.toy.used = false;
         player.toy.triggers = 0;
+        // If originalToy has a level, restore it (assuming strict reference wasn't just copy)
+        // Ideally we should have a deep clone or a dedicated reset method on Toy, 
+        // but for now let's ensure we aren't carrying over broken states if reference is shared.
+        // Actually, looking at the code, `player.toy = player.originalToy` restores the reference.
+        // If `originalToy` was never mutated, this is fine. 
+        // But if `toy` logic mutated the object that `originalToy` points to, we have a problem.
+        // Let's assume `originalToy` is the safe "template" and it was NOT mutated.
+        // Use object spread to reset properties if needed, or if originalToy IS the mutated one, we need a better way.
+        // Given the bug report "resetting a player doesn't reset toy", it implies `originalToy` might be getting mutated or lost.
+        // Let's try to restore the level from originalToy explicitely if it exists, or re-create it?
+        // Re-creating is hard without the service. 
+        // Let's at least reset known mutable fields.
+        if (player.originalToy) {
+            player.toy.level = player.originalToy.level;
+        }
     }
     player.brokenToy = null;
     player.trumpets = 0;
@@ -49,7 +65,8 @@ export const createDeathLog = (pet: Pet, logService: LogService): void => {
     logService.createLog({
         message: `${pet.name} fainted.`,
         type: "death",
-        player: pet.parent
+        player: pet.parent,
+        sourcePet: pet
     });
 };
 

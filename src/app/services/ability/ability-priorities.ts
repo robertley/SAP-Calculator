@@ -2,6 +2,10 @@ import { AbilityTrigger } from "../../classes/ability.class";
 
 // Priority mapping (lower number = higher priority); kept separate from AbilityService to keep that file leaner.
 export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
+    // Battle start events
+    "BeforeStartBattle": 0,
+    "StartBattle": 0.1,
+
     // Level up events
     "ThisLeveledUp": 1,
     "FriendLeveledUp": 2,

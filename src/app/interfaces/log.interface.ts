@@ -12,4 +12,6 @@ export interface Log {
     puma?: boolean;
     pteranodon?: boolean;
     pantherMultiplier?: number;
+    count?: number;
+    bold?: boolean;
 }

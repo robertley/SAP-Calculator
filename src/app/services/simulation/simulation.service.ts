@@ -44,8 +44,28 @@ export class SimulationService {
 
         // Restore GameService to UI players
         this.gameService.init(player, opponent);
+        this.syncGameApiFromForm(formGroup);
 
         return result;
+    }
+
+    private syncGameApiFromForm(formGroup: FormGroup) {
+        this.gameService.gameApi.oldStork = formGroup.get('oldStork').value;
+        this.gameService.gameApi.komodoShuffle = formGroup.get('komodoShuffle').value;
+        this.gameService.gameApi.mana = formGroup.get('mana').value;
+        this.gameService.gameApi.playerRollAmount = formGroup.get('playerRollAmount').value;
+        this.gameService.gameApi.opponentRollAmount = formGroup.get('opponentRollAmount').value;
+        this.gameService.gameApi.playerLevel3Sold = formGroup.get('playerLevel3Sold').value;
+        this.gameService.gameApi.opponentLevel3Sold = formGroup.get('opponentLevel3Sold').value;
+        this.gameService.gameApi.playerSummonedAmount = formGroup.get('playerSummonedAmount').value;
+        this.gameService.gameApi.opponentSummonedAmount = formGroup.get('opponentSummonedAmount').value;
+        this.gameService.gameApi.playerTransformationAmount = formGroup.get('playerTransformationAmount').value;
+        this.gameService.gameApi.opponentTransformationAmount = formGroup.get('opponentTransformationAmount').value;
+        this.gameService.setGoldSpent(
+            formGroup.get('playerGoldSpent').value,
+            formGroup.get('opponentGoldSpent').value
+        );
+        this.gameService.setTurnNumber(formGroup.get('turn').value);
     }
 
     private buildConfig(formGroup: FormGroup, count: number): SimulationConfig {
@@ -63,14 +83,14 @@ export class SimulationService {
             turn: formGroup.get('turn').value,
             playerGoldSpent: formGroup.get('playerGoldSpent').value,
             opponentGoldSpent: formGroup.get('opponentGoldSpent').value,
-            playerRollAmount: this.gameService.gameApi.playerRollAmount,
-            opponentRollAmount: this.gameService.gameApi.opponentRollAmount,
-            playerSummonedAmount: this.gameService.gameApi.playerSummonedAmount,
-            opponentSummonedAmount: this.gameService.gameApi.opponentSummonedAmount,
-            playerLevel3Sold: this.gameService.gameApi.playerLevel3Sold,
-            opponentLevel3Sold: this.gameService.gameApi.opponentLevel3Sold,
-            playerTransformationAmount: this.gameService.gameApi.playerTransformationAmount,
-            opponentTransformationAmount: this.gameService.gameApi.opponentTransformationAmount,
+            playerRollAmount: formGroup.get('playerRollAmount').value,
+            opponentRollAmount: formGroup.get('opponentRollAmount').value,
+            playerSummonedAmount: formGroup.get('playerSummonedAmount').value,
+            opponentSummonedAmount: formGroup.get('opponentSummonedAmount').value,
+            playerLevel3Sold: formGroup.get('playerLevel3Sold').value,
+            opponentLevel3Sold: formGroup.get('opponentLevel3Sold').value,
+            playerTransformationAmount: formGroup.get('playerTransformationAmount').value,
+            opponentTransformationAmount: formGroup.get('opponentTransformationAmount').value,
             playerPets: formGroup.get('playerPets').value,
             opponentPets: formGroup.get('opponentPets').value,
             allPets: formGroup.get('allPets').value,

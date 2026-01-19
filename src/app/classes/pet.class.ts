@@ -67,6 +67,9 @@ export abstract class Pet {
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    abominationSwallowedPet1BelugaSwallowedPet?: string;
+    abominationSwallowedPet2BelugaSwallowedPet?: string;
+    abominationSwallowedPet3BelugaSwallowedPet?: string;
     abominationSwallowedPet1Level?: number;
     abominationSwallowedPet2Level?: number;
     abominationSwallowedPet3Level?: number;
@@ -930,7 +933,21 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
-            ability.native = false;
+            copiedAbility.native = false;
+
+            // Wrap ability function to show "Owner's SourcePet" in logs
+            const originalFunction = copiedAbility.abilityFunction;
+            const sourcePetName = sourcePet.name;
+            copiedAbility.abilityFunction = (context) => {
+                const originalName = this.name;
+                this.name = `${originalName}'s ${sourcePetName}`;
+                try {
+                    originalFunction(context);
+                } finally {
+                    this.name = originalName;
+                }
+            };
+
             this.addAbility(copiedAbility);
         }
 
@@ -947,7 +964,21 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
-            ability.native = false;
+            copiedAbility.native = false;
+
+            // Wrap ability function to show "Owner's SourcePet" in logs
+            const originalFunction = copiedAbility.abilityFunction;
+            const sourcePetName = sourcePet.name;
+            copiedAbility.abilityFunction = (context) => {
+                const originalName = this.name;
+                this.name = `${originalName}'s ${sourcePetName}`;
+                try {
+                    originalFunction(context);
+                } finally {
+                    this.name = originalName;
+                }
+            };
+
             this.addAbility(copiedAbility);
         }
     }

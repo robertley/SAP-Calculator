@@ -47,6 +47,7 @@ export function logAbility(
         player: owner.parent,
         tiger,
         pteranodon,
+        sourcePet: owner,
         ...extras
     });
 }

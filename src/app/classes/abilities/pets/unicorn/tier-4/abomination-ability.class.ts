@@ -25,28 +25,31 @@ export class AbominationAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
+
         const { gameApi, triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
 
         const swallowSpots = this.level;
-        const orderedSwallowedPets: Array<{ name?: string | null; level: number; timesHurt: number }> = [
+        const orderedSwallowedPets: Array<{ name?: string | null; level: number; timesHurt: number; belugaSwallowedPet?: string | null }> = [
             {
                 name: owner.abominationSwallowedPet1,
                 level: owner.abominationSwallowedPet1Level ?? 1,
-                timesHurt: owner.abominationSwallowedPet1TimesHurt ?? 0
+                timesHurt: owner.abominationSwallowedPet1TimesHurt ?? 0,
+                belugaSwallowedPet: owner.abominationSwallowedPet1BelugaSwallowedPet ?? null
             },
             {
                 name: owner.abominationSwallowedPet2,
                 level: owner.abominationSwallowedPet2Level ?? 1,
-                timesHurt: owner.abominationSwallowedPet2TimesHurt ?? 0
+                timesHurt: owner.abominationSwallowedPet2TimesHurt ?? 0,
+                belugaSwallowedPet: owner.abominationSwallowedPet2BelugaSwallowedPet ?? null
             },
             {
                 name: owner.abominationSwallowedPet3,
                 level: owner.abominationSwallowedPet3Level ?? 1,
-                timesHurt: owner.abominationSwallowedPet3TimesHurt ?? 0
+                timesHurt: owner.abominationSwallowedPet3TimesHurt ?? 0,
+                belugaSwallowedPet: owner.abominationSwallowedPet3BelugaSwallowedPet ?? null
             }
-        ].filter((pet): pet is { name: string; level: number; timesHurt: number } => pet.name != null);
+        ].filter((pet): pet is { name: string; level: number; timesHurt: number; belugaSwallowedPet: string | null } => pet.name != null);
         const swallowedPets = orderedSwallowedPets.slice(0, swallowSpots);
         // Tiger repeats only the first swallowed pet's ability.
         let executedSwallowedPets = swallowedPets;
@@ -61,17 +64,16 @@ export class AbominationAbility extends Ability {
                 equipment: null,
                 name: swallowedPet.name,
                 exp: 0,
-                timesHurt: swallowedPet.timesHurt ?? 0
+                timesHurt: swallowedPet.timesHurt ?? 0,
+                belugaSwallowedPet: swallowedPet.name === 'Beluga Whale'
+                    ? swallowedPet.belugaSwallowedPet ?? null
+                    : null
             }, owner.parent);
 
             if (!copyPet) {
-                return;
+                continue;
             }
-            this.logService.createLog({
-                message: `${owner.name} gained ${swallowedPet.name}'s Ability.`,
-                type: 'ability',
-                player: owner.parent
-            });
+
             owner.removeAbility('AbominationAbility')
             owner.gainAbilities(copyPet, 'Pet', swallowedPet.level ?? 1);
         }

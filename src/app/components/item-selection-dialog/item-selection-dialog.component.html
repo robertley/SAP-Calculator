@@ -1,0 +1,56 @@
+<div class="selection-overlay" (click)="onCancel()">
+    <div class="selection-dialog card shadow-lg" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+            <h3>Select {{
+                type === 'pet' ? 'Pet' :
+                type === 'swallowed-pet' ? 'Swallowed Pet' :
+                type === 'equipment' ? 'Equipment' :
+                type === 'toy' ? 'Toy' :
+                type === 'hard-toy' ? 'Hard Toy' : 'Pack'
+                }}</h3>
+            <button class="btn-close" (click)="onCancel()"></button>
+        </div>
+
+        <div class="dialog-body">
+            <div class="search-container">
+                <input type="text" class="form-control search-input" placeholder="Search..." [(ngModel)]="searchQuery"
+                    (ngModelChange)="onSearchChange()" autoFocus>
+            </div>
+
+            <div class="pack-filters" *ngIf="type === 'pet' || type === 'swallowed-pet'">
+                <button *ngFor="let pack of availablePacks" class="btn btn-sm"
+                    [class.btn-primary]="selectedPack === pack" [class.btn-outline-primary]="selectedPack !== pack"
+                    (click)="selectPack(pack)">
+                    {{pack}}
+                </button>
+            </div>
+
+            <div class="items-grid scroll">
+                <div class="item-card none-card" *ngIf="type !== 'swallowed-pet' && type !== 'pack'"
+                    (click)="onItemClick({name: null, item: null})">
+                    <div class="item-icon-container">
+                        <span class="none-icon">None</span>
+                    </div>
+                    <div class="item-name">None</div>
+                </div>
+
+                <ng-container *ngFor="let item of filteredItems; let i = index">
+                    <div class="category-header" *ngIf="i === 0 || filteredItems[i-1].category !== item.category">
+                        {{item.category}}
+                    </div>
+                    <div class="item-card" (click)="onItemClick(item)">
+                        <div class="item-icon-container">
+                            <img *ngIf="item.icon" [src]="item.icon" [alt]="item.name" class="item-icon">
+                            <div *ngIf="item.tier > 0" class="tier-badge">{{item.tier}}</div>
+                        </div>
+                        <div class="item-name">{{item.displayName || item.name}}</div>
+                    </div>
+                </ng-container>
+
+                <div class="no-results" *ngIf="filteredItems.length === 0">
+                    No items found matching "{{searchQuery}}"
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

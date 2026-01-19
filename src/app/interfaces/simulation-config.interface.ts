@@ -12,6 +12,9 @@ export interface PetConfig {
     abominationSwallowedPet1?: string | null;
     abominationSwallowedPet2?: string | null;
     abominationSwallowedPet3?: string | null;
+    abominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet3BelugaSwallowedPet?: string | null;
     abominationSwallowedPet1Level?: number | null;
     abominationSwallowedPet2Level?: number | null;
     abominationSwallowedPet3Level?: number | null;

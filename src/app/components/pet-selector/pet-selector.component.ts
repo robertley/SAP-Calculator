@@ -76,43 +76,23 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
   @Input()
   showTokenPets = false;
+  showSelectionDialog = false;
+  selectionType: 'pet' | 'equipment' | 'swallowed-pet' = 'pet';
+  swallowedPetIndex?: number;
+  swallowedPetTarget: 'pet' | 'abomination' | 'sarcastic' | 'abomination-beluga' = 'pet';
+
   tokenPets: string[] = [
-    'Bee',
-    'Bus',
-    'Chick',
-    'Dirty Rat',
-    'Lizard Tail',
-    'Ram',
-    'Smaller Slug',
-    'Smallest Slug',
-    'Zombie Cricket',
-    'Zombie Fly',
-    'Chimera Goat',
-    'Chimera Lion',
-    'Chimera Snake',
-    'Daycrawler',
-    'Head',
-    'Monty',
-    'Nessie?',
-    'Smaller Slime',
-    'Young Phoenix',
-    'Good Dog',
-    'Adult Flounder',
-    'Burbel',
-    'Cooked Roach',
-    'Cuckoo Chick',
-    'Fake Nessie',
-    'Guinea Piglet',
-    'Hydra Head',
-    'Moby Dick',
-    'Quail',
-    'Sleeping Gelada',
-    'Tand and Tand',
-];
+    'Bee', 'Bus', 'Chick', 'Dirty Rat', 'Lizard Tail', 'Ram', 'Smaller Slug', 'Smallest Slug',
+    'Zombie Cricket', 'Zombie Fly', 'Chimera Goat', 'Chimera Lion', 'Chimera Snake', 'Daycrawler',
+    'Head', 'Monty', 'Nessie?', 'Smaller Slime', 'Young Phoenix', 'Good Dog', 'Adult Flounder',
+    'Burbel', 'Cooked Roach', 'Cuckoo Chick', 'Fake Nessie', 'Guinea Piglet', 'Hydra Head',
+    'Moby Dick', 'Quail', 'Sleeping Gelada', 'Tand and Tand',
+  ];
 
-  constructor(private petService: PetService, private equipmentService: EquipmentService) {
-
-  }
+  constructor(
+    private petService: PetService,
+    private equipmentService: EquipmentService
+  ) { }
 
   ngOnInit(): void {
     this.initSelector();
@@ -122,7 +102,36 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     }) ?? null;
 
     this.fixLoadEquipment();
+  }
 
+  openSelectionDialog(
+    type: 'pet' | 'equipment' | 'swallowed-pet',
+    index?: number,
+    target: 'pet' | 'abomination' | 'sarcastic' | 'abomination-beluga' = 'pet'
+  ) {
+    this.selectionType = type;
+    this.swallowedPetIndex = index;
+    this.swallowedPetTarget = target;
+    this.showSelectionDialog = true;
+  }
+
+  onItemSelected(item: any) {
+    if (this.selectionType === 'pet') {
+      this.formGroup.get('name').setValue(item);
+    } else if (this.selectionType === 'equipment') {
+      this.formGroup.get('equipment').setValue(item);
+    } else if (this.selectionType === 'swallowed-pet') {
+      if (this.swallowedPetTarget === 'abomination-beluga') {
+        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`).setValue(item);
+      } else if (this.pet?.name === 'Beluga Whale') {
+        this.formGroup.get('belugaSwallowedPet').setValue(item);
+      } else if (this.swallowedPetTarget === 'abomination' || this.pet?.name === 'Abomination') {
+        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}`).setValue(item);
+      } else if (this.pet?.name === 'Sarcastic Fringehead') {
+        this.formGroup.get('sarcasticFringeheadSwallowedPet').setValue(item);
+      }
+    }
+    this.showSelectionDialog = false;
   }
 
   initSelector() {
@@ -224,7 +233,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         if (equipment == null) {
           equipment = this.ailmentEquipment.get(value.name);
         }
-        this.formGroup.get('equipment').setValue(equipment, {emitEvent: false});
+        this.formGroup.get('equipment').setValue(equipment, { emitEvent: false });
       }
       this.substitutePet(false)
     });
@@ -234,6 +243,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet1Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
@@ -299,13 +311,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
-  
+
       // console.log('pet substituted', this.player);
       if (nameChange) {
-        this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
-        this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
-        this.formGroup.get('mana').setValue(pet.mana, {emitEvent: false});
-        this.formGroup.get('triggersConsumed').setValue(pet.triggersConsumed, {emitEvent: false});
+        this.formGroup.get('attack').setValue(pet.attack, { emitEvent: false });
+        this.formGroup.get('health').setValue(pet.health, { emitEvent: false });
+        this.formGroup.get('mana').setValue(pet.mana, { emitEvent: false });
+        this.formGroup.get('triggersConsumed').setValue(pet.triggersConsumed, { emitEvent: false });
       }
 
     })
@@ -341,13 +353,36 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       return [];
     }
     const values = [
-      this.formGroup.get('abominationSwallowedPet1')?.value,
-      this.formGroup.get('abominationSwallowedPet2')?.value,
-      this.formGroup.get('abominationSwallowedPet3')?.value,
+      {
+        name: this.formGroup.get('abominationSwallowedPet1')?.value,
+        belugaSwallowed: this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value
+      },
+      {
+        name: this.formGroup.get('abominationSwallowedPet2')?.value,
+        belugaSwallowed: this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value
+      },
+      {
+        name: this.formGroup.get('abominationSwallowedPet3')?.value,
+        belugaSwallowed: this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value
+      }
     ];
-    return values
-      .map((value) => this.getPetImagePath(value))
-      .filter((value) => value != null) as string[];
+    const images: string[] = [];
+    for (const value of values) {
+      if (!value.name) {
+        continue;
+      }
+      const image = this.getPetImagePath(value.name);
+      if (image) {
+        images.push(image);
+      }
+      if (value.name === 'Beluga Whale' && value.belugaSwallowed) {
+        const belugaImage = this.getPetImagePath(value.belugaSwallowed);
+        if (belugaImage) {
+          images.push(belugaImage);
+        }
+      }
+    }
+    return images;
   }
 
   get equipmentImageSrc(): string | null {
@@ -425,7 +460,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     return this.friendsDiedCaps.get(name) ?? 5;
   }
 
-  private getPetImagePath(petName?: string | null): string | null {
+  getPetImagePath(petName?: string | null): string | null {
     if (!petName) {
       return null;
     }
@@ -508,6 +543,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const pet1 = this.formGroup.get('abominationSwallowedPet1').value;
     const pet2 = this.formGroup.get('abominationSwallowedPet2').value;
     const pet3 = this.formGroup.get('abominationSwallowedPet3').value;
+    const beluga1 = this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value ?? null;
+    const beluga2 = this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value ?? null;
+    const beluga3 = this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value ?? null;
     const level1 = Number(this.formGroup.get('abominationSwallowedPet1Level').value ?? 1);
     const level2 = Number(this.formGroup.get('abominationSwallowedPet2Level').value ?? 1);
     const level3 = Number(this.formGroup.get('abominationSwallowedPet3Level').value ?? 1);
@@ -524,6 +562,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.abominationSwallowedPet1 = swallowedPets[0]?.name ?? null;
     pet.abominationSwallowedPet2 = swallowedPets[1]?.name ?? null;
     pet.abominationSwallowedPet3 = swallowedPets[2]?.name ?? null;
+    pet.abominationSwallowedPet1BelugaSwallowedPet = beluga1;
+    pet.abominationSwallowedPet2BelugaSwallowedPet = beluga2;
+    pet.abominationSwallowedPet3BelugaSwallowedPet = beluga3;
     pet.abominationSwallowedPet1Level = swallowedPets[0]?.level ?? 1;
     pet.abominationSwallowedPet2Level = swallowedPets[1]?.level ?? 1;
     pet.abominationSwallowedPet3Level = swallowedPets[2]?.level ?? 1;
@@ -569,13 +610,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
   removePet() {
     this.player.setPet(this.index, null, true);
-    this.formGroup.get('name').setValue(null, {emitEvent: false});
-    this.formGroup.get('attack').setValue(0, {emitEvent: false});
-    this.formGroup.get('health').setValue(0, {emitEvent: false});
-    this.formGroup.get('exp').setValue(0, {emitEvent: false});
-    this.formGroup.get('equipment').setValue(null, {emitEvent: false});
-    this.formGroup.get('mana').setValue(0, {emitEvent: false});
-    this.formGroup.get('triggersConsumed').setValue(0, {emitEvent: false});
+    this.formGroup.get('name').setValue(null, { emitEvent: false });
+    this.formGroup.get('attack').setValue(0, { emitEvent: false });
+    this.formGroup.get('health').setValue(0, { emitEvent: false });
+    this.formGroup.get('exp').setValue(0, { emitEvent: false });
+    this.formGroup.get('equipment').setValue(null, { emitEvent: false });
+    this.formGroup.get('mana').setValue(0, { emitEvent: false });
+    this.formGroup.get('triggersConsumed').setValue(0, { emitEvent: false });
   }
 
   optionHidden(option: string) {

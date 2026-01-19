@@ -13,6 +13,7 @@ import { AbilityService } from './services/ability/ability.service';
 import { PetService } from './services/pet/pet.service';
 import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { PetSelectorComponent } from './components/pet-selector/pet-selector.component';
+import { SelectionType } from './components/item-selection-dialog/item-selection-dialog.component';
 import { ToyService } from './services/toy/toy.service';
 import { cloneDeep } from 'lodash';
 import { LocalStorageService } from './services/local-storage.service';
@@ -25,7 +26,7 @@ import { SimulationService } from './services/simulation/simulation.service';
 import { EquipmentService } from './services/equipment/equipment.service';
 import { cloneEquipment } from './util/equipment-utils';
 import { TeamPresetsService, TeamPreset } from './services/team-presets.service';
-import { getToyIconPath } from './util/asset-utils';
+import { getToyIconPath, getPackIconPath } from './util/asset-utils';
 import { BATTLE_BACKGROUND_BASE, BATTLE_BACKGROUNDS, DAY, LOG_FILTER_TABS, NIGHT, TOY_ART_BASE } from './app.constants';
 
 
@@ -101,6 +102,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   logFilterTabs = [...LOG_FILTER_TABS];
   api = false;
   apiResponse = null;
+
+  showSelectionDialog = false;
+  selectionType: SelectionType = 'pet';
+  selectionSide: 'player' | 'opponent' | 'none' = 'none';
+
+  playerPackImageBroken = false;
+  opponentPackImageBroken = false;
 
   private isLoadedFromUrl = false;
 
@@ -184,6 +192,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           if (this.ROLL_PETS.includes(pet.abominationSwallowedPet1)) return true;
           if (this.ROLL_PETS.includes(pet.abominationSwallowedPet2)) return true;
           if (this.ROLL_PETS.includes(pet.abominationSwallowedPet3)) return true;
+          if (pet.abominationSwallowedPet1 === 'Beluga Whale' && this.ROLL_PETS.includes(pet.abominationSwallowedPet1BelugaSwallowedPet)) return true;
+          if (pet.abominationSwallowedPet2 === 'Beluga Whale' && this.ROLL_PETS.includes(pet.abominationSwallowedPet2BelugaSwallowedPet)) return true;
+          if (pet.abominationSwallowedPet3 === 'Beluga Whale' && this.ROLL_PETS.includes(pet.abominationSwallowedPet3BelugaSwallowedPet)) return true;
         }
 
         // Swallowed pets (Beluga)
@@ -420,6 +431,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       showAdvanced: new FormControl(false),
       ailmentEquipment: new FormControl(true),
       changeEquipmentUses: new FormControl(false),
+      simulations: new FormControl(100),
     })
 
     this.initPetForms();
@@ -434,6 +446,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.openCustomPackEditor();
         return;
       }
+      this.resetPackImageError('player', value);
       this.previousPackPlayer = value;
       this.updatePlayerPack(this.player, value);
     })
@@ -447,6 +460,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         this.openCustomPackEditor();
         return;
       }
+      this.resetPackImageError('opponent', value);
       this.previousPackOpponent = value;
       this.updatePlayerPack(this.opponent, value);
     })
@@ -546,6 +560,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3),
+        abominationSwallowedPet1BelugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1BelugaSwallowedPet ?? null),
+        abominationSwallowedPet2BelugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2BelugaSwallowedPet ?? null),
+        abominationSwallowedPet3BelugaSwallowedPet: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3BelugaSwallowedPet ?? null),
         abominationSwallowedPet1Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
         abominationSwallowedPet2Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
         abominationSwallowedPet3Level: new FormControl(this.player[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
@@ -578,6 +595,9 @@ export class AppComponent implements OnInit, AfterViewInit {
         abominationSwallowedPet1: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1),
         abominationSwallowedPet2: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2),
         abominationSwallowedPet3: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3),
+        abominationSwallowedPet1BelugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1BelugaSwallowedPet ?? null),
+        abominationSwallowedPet2BelugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2BelugaSwallowedPet ?? null),
+        abominationSwallowedPet3BelugaSwallowedPet: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3BelugaSwallowedPet ?? null),
         abominationSwallowedPet1Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet1Level ?? 1),
         abominationSwallowedPet2Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet2Level ?? 1),
         abominationSwallowedPet3Level: new FormControl(this.opponent[`pet${foo}`]?.abominationSwallowedPet3Level ?? 1),
@@ -791,7 +811,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let log of randomLogs) {
       events += log.message;
       if (log != randomLogs[randomLogs.length - 1]) {
-        events += '\n';
+        events += '<br>';
       }
     }
     return events;
@@ -875,6 +895,9 @@ export class AppComponent implements OnInit, AfterViewInit {
           abominationSwallowedPet1: petData.abominationSwallowedPet1 ?? null,
           abominationSwallowedPet2: petData.abominationSwallowedPet2 ?? null,
           abominationSwallowedPet3: petData.abominationSwallowedPet3 ?? null,
+          abominationSwallowedPet1BelugaSwallowedPet: petData.abominationSwallowedPet1BelugaSwallowedPet ?? null,
+          abominationSwallowedPet2BelugaSwallowedPet: petData.abominationSwallowedPet2BelugaSwallowedPet ?? null,
+          abominationSwallowedPet3BelugaSwallowedPet: petData.abominationSwallowedPet3BelugaSwallowedPet ?? null,
           abominationSwallowedPet1Level: petData.abominationSwallowedPet1Level ?? 1,
           abominationSwallowedPet2Level: petData.abominationSwallowedPet2Level ?? 1,
           abominationSwallowedPet3Level: petData.abominationSwallowedPet3Level ?? 1,
@@ -917,6 +940,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       abominationSwallowedPet1: petValue.abominationSwallowedPet1 ?? null,
       abominationSwallowedPet2: petValue.abominationSwallowedPet2 ?? null,
       abominationSwallowedPet3: petValue.abominationSwallowedPet3 ?? null,
+      abominationSwallowedPet1BelugaSwallowedPet: petValue.abominationSwallowedPet1BelugaSwallowedPet ?? null,
+      abominationSwallowedPet2BelugaSwallowedPet: petValue.abominationSwallowedPet2BelugaSwallowedPet ?? null,
+      abominationSwallowedPet3BelugaSwallowedPet: petValue.abominationSwallowedPet3BelugaSwallowedPet ?? null,
       abominationSwallowedPet1Level: petValue.abominationSwallowedPet1Level ?? 1,
       abominationSwallowedPet2Level: petValue.abominationSwallowedPet2Level ?? 1,
       abominationSwallowedPet3Level: petValue.abominationSwallowedPet3Level ?? 1,
@@ -961,8 +987,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     if (player) {
+      player.allPets = this.formGroup.get('allPets').value;
+      player.tokenPets = this.formGroup.get('tokenPets').value;
       this.randomizePlayerPets(player);
     } else {
+      this.player.allPets = this.formGroup.get('allPets').value;
+      this.player.tokenPets = this.formGroup.get('tokenPets').value;
+      this.opponent.allPets = this.formGroup.get('allPets').value;
+      this.opponent.tokenPets = this.formGroup.get('tokenPets').value;
       this.randomizePlayerPets(this.player);
       this.randomizePlayerPets(this.opponent);
     }
@@ -1023,6 +1055,17 @@ export class AppComponent implements OnInit, AfterViewInit {
     let petSelectors = this.petSelectors.toArray().slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
     for (let petSelector of petSelectors) {
       petSelector.removePet();
+    }
+    if (player === 'player') {
+      this.formGroup.get('playerToy').setValue(null);
+      this.formGroup.get('playerToyLevel').setValue(1);
+      this.formGroup.get('playerHardToy').setValue(null);
+      this.formGroup.get('playerHardToyLevel').setValue(1);
+    } else {
+      this.formGroup.get('opponentToy').setValue(null);
+      this.formGroup.get('opponentToyLevel').setValue(1);
+      this.formGroup.get('opponentHardToy').setValue(null);
+      this.formGroup.get('opponentHardToyLevel').setValue(1);
     }
   }
 
@@ -1154,6 +1197,90 @@ export class AppComponent implements OnInit, AfterViewInit {
     };
   }
 
+  openSelectionDialog(type: SelectionType, side: 'player' | 'opponent') {
+    this.selectionType = type;
+    this.selectionSide = side;
+    this.showSelectionDialog = true;
+  }
 
+  onItemSelected(item: any) {
+    if (!this.selectionSide || this.selectionSide === 'none') {
+      return;
+    }
+
+    const side = this.selectionSide;
+    const type = this.selectionType;
+
+    if (type === 'pack') {
+      const packName = item?.name || item;
+      if (side === 'player') {
+        this.formGroup.get('playerPack').setValue(packName);
+      } else {
+        this.formGroup.get('opponentPack').setValue(packName);
+      }
+    } else if (type === 'toy') {
+      const toyName = item?.name || item || null;
+      if (side === 'player') {
+        this.formGroup.get('playerToy').setValue(toyName);
+      } else {
+        this.formGroup.get('opponentToy').setValue(toyName);
+      }
+    } else if (type === 'hard-toy') {
+      const toyName = item?.name || item || null;
+      if (side === 'player') {
+        this.formGroup.get('playerHardToy').setValue(toyName);
+      } else {
+        this.formGroup.get('opponentHardToy').setValue(toyName);
+      }
+    }
+
+    this.showSelectionDialog = false;
+    this.selectionSide = 'none';
+  }
+
+  getPackIconPath(packName?: string): string | null {
+    return getPackIconPath(packName);
+  }
+
+  onPackImageError(side: 'player' | 'opponent') {
+    if (side === 'player') {
+      this.playerPackImageBroken = true;
+    } else {
+      this.opponentPackImageBroken = true;
+    }
+  }
+
+  resetPackImageError(side: 'player' | 'opponent', packName: string) {
+    if (side === 'player') {
+      this.playerPackImageBroken = false;
+    } else {
+      this.opponentPackImageBroken = false;
+    }
+  }
+
+  incrementToyLevel(side: 'player' | 'opponent') {
+    const controlName = side === 'player' ? 'playerToyLevel' : 'opponentToyLevel';
+    const currentLevel = this.formGroup.get(controlName).value;
+    if (currentLevel < 3) {
+      this.formGroup.get(controlName).setValue(currentLevel + 1);
+    }
+  }
+
+  decrementToyLevel(side: 'player' | 'opponent') {
+    const controlName = side === 'player' ? 'playerToyLevel' : 'opponentToyLevel';
+    const currentLevel = this.formGroup.get(controlName).value;
+    if (currentLevel > 1) {
+      this.formGroup.get(controlName).setValue(currentLevel - 1);
+    }
+  }
+
+  removeHardToy(side: 'player' | 'opponent') {
+    const controlName = side === 'player' ? 'playerHardToy' : 'opponentHardToy';
+    this.formGroup.get(controlName).setValue(null);
+  }
+
+  getToyIconPath(toyName?: string): string | null {
+    return getToyIconPath(toyName);
+  }
 
 }
