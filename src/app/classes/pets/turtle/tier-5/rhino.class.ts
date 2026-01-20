@@ -13,7 +13,7 @@ export class Rhino extends Pet {
     tier = 5;
     pack: Pack = 'Turtle';
     attack = 6;
-    health = 9;
+    health = 7;
     initAbilities(): void {
         this.addAbility(new RhinoAbility(this, this.logService));
         super.initAbilities();

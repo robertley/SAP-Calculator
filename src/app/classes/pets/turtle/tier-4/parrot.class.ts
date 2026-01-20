@@ -12,9 +12,8 @@ export class Parrot extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 2;
-    copyPet: Pet;
     initAbilities(): void {
-        this.addAbility(new ParrotAbility(this, this.logService));
+        this.addAbility(new ParrotAbility(this, this.logService, this.petService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

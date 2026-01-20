@@ -19,6 +19,7 @@
                     <td class="text"><span *ngIf="pack.valid" class="valid">Valid</span>
                         <span *ngIf="!pack.valid" class="invalid">Invalid</span></td>
                     <td><button class="btn btn-primary" (click)="editPack(pack)">Edit</button></td>
+                    <td><button class="btn btn-secondary" (click)="exportCustomPack(pack)">Export</button></td>
                     <td><button class="btn btn-danger" (click)="deletePack(pack)">Delete</button></td>
                 </tr>
             </table>

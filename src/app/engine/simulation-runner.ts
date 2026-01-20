@@ -24,7 +24,7 @@ export class SimulationRunner {
     protected battleStarted = false;
     protected turns = 0;
     protected maxTurns = 71;
-    protected currBattle: Battle;
+    protected currBattle: Battle | null = null;
     protected battles: Battle[] = [];
     protected playerWinner = 0;
     protected opponentWinner = 0;
@@ -188,7 +188,7 @@ export class SimulationRunner {
             this.abilityCycle();
         } while (this.abilityService.hasAbilityCycleEvents);
 
-        const hasChurros = (pet) => pet.equipment?.name === 'Churros';
+        const hasChurros = (pet: { equipment?: { name?: string } }) => pet.equipment?.name === 'Churros';
         // Init SOB (Churros pets before toys)
         this.logService.createLog({
             message: "Phase 2: Start of battle",
@@ -230,13 +230,14 @@ export class SimulationRunner {
 
             if (equipment) {
                 // Clone equipment
-                equipment = Object.assign(Object.create(Object.getPrototypeOf(equipment)), equipment);
+                const equipmentClone = Object.assign(Object.create(Object.getPrototypeOf(equipment)), equipment);
+                equipment = equipmentClone;
                 if (petConfig.equipmentUses != null) {
                     const usesValue = Number(petConfig.equipmentUses);
-                    const finalUses = Number.isFinite(usesValue) ? usesValue : equipment.uses;
+                    const finalUses = Number.isFinite(usesValue) ? usesValue : equipmentClone.uses;
                     if (finalUses != null) {
-                        equipment.uses = finalUses;
-                        equipment.originalUses = finalUses;
+                        equipmentClone.uses = finalUses;
+                        equipmentClone.originalUses = finalUses;
                     }
                 }
             }
@@ -249,16 +250,117 @@ export class SimulationRunner {
                 mana: petConfig.mana ?? 0,
                 equipment: equipment,
                 triggersConsumed: petConfig.triggersConsumed ?? 0,
-                belugaSwallowedPet: petConfig.belugaSwallowedPet,
-                abominationSwallowedPet1: petConfig.abominationSwallowedPet1,
-                abominationSwallowedPet2: petConfig.abominationSwallowedPet2,
-                abominationSwallowedPet3: petConfig.abominationSwallowedPet3,
-                abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level,
-                abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level,
-                abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level,
+                belugaSwallowedPet: petConfig.belugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1: petConfig.abominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet2: petConfig.abominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet3: petConfig.abominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level ?? undefined,
                 abominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet1TimesHurt ?? 0,
                 abominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet2TimesHurt ?? 0,
                 abominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet3TimesHurt ?? 0,
+                abominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPet: petConfig.abominationSwallowedPet1ParrotCopyPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPet: petConfig.abominationSwallowedPet2ParrotCopyPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPet: petConfig.abominationSwallowedPet3ParrotCopyPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPet: petConfig.parrotCopyPet ?? undefined,
+                parrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
                 battlesFought: petConfig.battlesFought ?? 0,
                 timesHurt: petConfig.timesHurt ?? 0
             }, player);
@@ -301,7 +403,7 @@ export class SimulationRunner {
 
     protected nextTurn() {
         let finished = false;
-        let winner = null;
+        let winner: Player | null = null;
         this.turns++;
 
         let playerAlive = this.player.alive();
@@ -312,7 +414,7 @@ export class SimulationRunner {
             opponentAlive = this.opponent.alive();
             if (!revived) {
                 winner = this.player;
-                this.currBattle.winner = 'player';
+                this.currBattle!.winner = 'player';
                 this.playerWinner++;
                 finished = true;
             }
@@ -322,7 +424,7 @@ export class SimulationRunner {
             playerAlive = this.player.alive();
             if (!revived) {
                 winner = this.opponent;
-                this.currBattle.winner = 'opponent';
+                this.currBattle!.winner = 'opponent';
                 this.opponentWinner++;
                 finished = true;
             }
@@ -357,8 +459,12 @@ export class SimulationRunner {
             let originalPlayerAttackingPet = this.player.pet0;
             let originalOpponentAttackingPet = this.opponent.pet0;
 
-            this.abilityService.triggerBeforeAttackEvent(this.player.pet0);
-            this.abilityService.triggerBeforeAttackEvent(this.opponent.pet0);
+            if (this.player.pet0) {
+                this.abilityService.triggerBeforeAttackEvent(this.player.pet0);
+            }
+            if (this.opponent.pet0) {
+                this.abilityService.triggerBeforeAttackEvent(this.opponent.pet0);
+            }
             this.abilityService.executeBeforeAttackEvents();
 
             this.checkPetsAlive();
@@ -373,10 +479,10 @@ export class SimulationRunner {
             this.pushPetsForwards();
 
             if (originalPlayerAttackingPet && originalPlayerAttackingPet.transformed) {
-                originalPlayerAttackingPet = originalPlayerAttackingPet.transformedInto;
+                originalPlayerAttackingPet = originalPlayerAttackingPet.transformedInto ?? originalPlayerAttackingPet;
             }
             if (originalOpponentAttackingPet && originalOpponentAttackingPet.transformed) {
-                originalOpponentAttackingPet = originalOpponentAttackingPet.transformedInto;
+                originalOpponentAttackingPet = originalOpponentAttackingPet.transformedInto ?? originalOpponentAttackingPet;
             }
 
             if (this.player.pet0 == originalPlayerAttackingPet && this.opponent.pet0 == originalOpponentAttackingPet) {
@@ -406,6 +512,9 @@ export class SimulationRunner {
     protected fight() {
         let playerPet = this.player.pet0;
         let opponentPet = this.opponent.pet0;
+        if (!playerPet || !opponentPet) {
+            return;
+        }
 
         playerPet.attackPet(opponentPet);
         opponentPet.attackPet(playerPet);
@@ -494,37 +603,41 @@ export class SimulationRunner {
     }
 
     protected initToys() {
-        if (this.player.toy?.startOfBattle) {
+        const playerToy = this.player.toy;
+        const playerToyStart = playerToy?.startOfBattle;
+        if (playerToy && playerToyStart) {
             this.toyService.setStartOfBattleEvent({
                 callback: () => {
-                    this.player.toy.startOfBattle(this.gameService.gameApi);
-                    let toyLevel = this.player.toy.level;
+                    playerToyStart.call(playerToy, this.gameService.gameApi);
+                    let toyLevel = playerToy.level;
                     for (let pet of this.player.petArray) {
                         if (pet instanceof Puma) {
-                            this.player.toy.level = pet.level;
-                            this.player.toy.startOfBattle(this.gameService.gameApi, true);
-                            this.player.toy.level = toyLevel;
+                            playerToy.level = pet.level;
+                            playerToyStart.call(playerToy, this.gameService.gameApi, true);
+                            playerToy.level = toyLevel;
                         }
                     }
                 },
-                priority: this.player.toy.tier,
+                priority: playerToy.tier,
                 player: this.player
             });
         }
-        if (this.opponent.toy?.startOfBattle) {
+        const opponentToy = this.opponent.toy;
+        const opponentToyStart = opponentToy?.startOfBattle;
+        if (opponentToy && opponentToyStart) {
             this.toyService.setStartOfBattleEvent({
                 callback: () => {
-                    this.opponent.toy.startOfBattle(this.gameService.gameApi);
-                    let toyLevel = this.opponent.toy.level;
+                    opponentToyStart.call(opponentToy, this.gameService.gameApi);
+                    let toyLevel = opponentToy.level;
                     for (let pet of this.opponent.petArray) {
                         if (pet instanceof Puma) {
-                            this.opponent.toy.level = pet.level;
-                            this.opponent.toy.startOfBattle(this.gameService.gameApi, true);
-                            this.opponent.toy.level = toyLevel;
+                            opponentToy.level = pet.level;
+                            opponentToyStart.call(opponentToy, this.gameService.gameApi, true);
+                            opponentToy.level = toyLevel;
                         }
                     }
                 },
-                priority: this.opponent.toy.tier,
+                priority: opponentToy.tier,
                 player: this.opponent
             });
         }
@@ -535,7 +648,7 @@ export class SimulationRunner {
         this.opponent.pushPetsForward();
     }
 
-    protected endLog(winner?: Player) {
+    protected endLog(winner?: Player | null) {
         let message;
         if (winner == null) {
             message = 'Draw';

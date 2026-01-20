@@ -15,6 +15,60 @@ import {
     SPECIAL_AILMENT_BUILDERS
 } from "./equipment-registry";
 
+const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
+    ['Blueberry', 1],
+    ['Golden Egg', 1],
+    ['Gros Michel Banana', 1],
+    ['Health Potion', 1],
+    ['Honey', 1],
+    ['Macaron', 1],
+    ['Mana Potion', 1],
+    ['Unagi', 1],
+    ['Caramel', 2],
+    ['Cherry', 2],
+    ['Chocolate Cake', 2],
+    ['Churros', 2],
+    ['Cod Roe', 2],
+    ['Eucalyptus', 2],
+    ['Faint Bread', 2],
+    ['Fairy Dust', 2],
+    ['Meat Bone', 2],
+    ['Radish', 2],
+    ['Sudduth Tomato', 2],
+    ['Brussels Sprout', 3],
+    ['Cucumber', 3],
+    ['Fig', 3],
+    ['Gingerbread Man', 3],
+    ['Pineapple', 3],
+    ['Rambutan', 3],
+    ['Sausage', 3],
+    ['Seaweed', 3],
+    ['White Truffle', 3],
+    ['Baguette', 4],
+    ['Banana', 4],
+    ['Cauliflower', 4],
+    ['Cheese', 4],
+    ['Donut', 4],
+    ['Fortune Cookie', 4],
+    ['Grapes', 4],
+    ['Melon Slice', 4],
+    ['Oyster Mushroom', 4],
+    ['Potato', 4],
+    ['Carrot', 5],
+    ['Chili', 5],
+    ['Durian', 5],
+    ['Easter Egg', 5],
+    ['Eggplant', 5],
+    ['Kiwano', 5],
+    ['Magic Beans', 5],
+    ['Onion', 5],
+    ['Pepper', 5],
+    ['Mild Chili', 4],
+    ['Popcorn', 6],
+    ['Sardinian Currant', 6],
+    ['Yggdrasil Fruit', 6]
+]);
+
 @Injectable({
     providedIn: 'root'
 })
@@ -54,6 +108,15 @@ export class EquipmentFactoryService {
         // Special cases with unique constructors
         for (const [name, builder] of Object.entries(SPECIAL_EQUIPMENT_BUILDERS)) {
             map.set(name, builder(deps));
+        }
+
+        for (const [name, equipment] of map.entries()) {
+            if (equipment?.tier == null) {
+                const overrideTier = EQUIPMENT_TIER_OVERRIDES.get(name);
+                if (overrideTier != null) {
+                    equipment.tier = overrideTier;
+                }
+            }
         }
 
         return map;

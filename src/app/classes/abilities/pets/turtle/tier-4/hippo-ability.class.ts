@@ -1,7 +1,6 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
+import { LogService } from "../../../../../services/log.service";
 
 export class HippoAbility extends Ability {
     private logService: LogService;

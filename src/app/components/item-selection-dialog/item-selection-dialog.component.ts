@@ -210,6 +210,9 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
         const ailmentMap = this.equipmentService.getInstanceOfAllAilments();
 
         equipmentMap.forEach((equip, name) => {
+            if (equip?.name === 'Corncob') {
+                return;
+            }
             allEquip.push({
                 name,
                 displayName: equip.name,
@@ -332,7 +335,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
 
         if (this.type === 'pet' || this.type === 'swallowed-pet') {
             if (this.selectedPack !== 'All') {
-                filtered = filtered.filter(item => item.pack === this.selectedPack);
+                filtered = filtered.filter(item => item.pack === this.selectedPack || (this.type === 'swallowed-pet' && item.pack === 'Tokens'));
             }
         }
 

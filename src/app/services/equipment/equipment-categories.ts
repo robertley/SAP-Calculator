@@ -5,7 +5,7 @@ export const EQUIPMENT_CATEGORIES: { [key: string]: string[] } = {
     'Golden': ['Banana', 'Bok Choy', 'Cherry', 'Chocolate Cake', 'Durian', 'Eggplant', 'Fig', 'Honeydew Melon', 'Maple Syrup', 'Onion', 'Pita Bread', 'Potato', 'Tomato'],
     'Unicorn': ['Ambrosia', 'Easter Egg', 'Faint Bread', 'Fairy Dust', 'Gingerbread Man', 'Golden Egg', 'Health Potion', 'Love Potion', 'Magic Beans', 'Rambutan', 'Yggdrasil Fruit'],
     'Danger': ['Cocoa Bean', 'Cod Roe', 'Gros Michel Banana', 'Sudduth Tomato', 'White Okra', 'White Truffle'],
-    'Custom': ['Blueberry', 'Brussels Sprout', 'Cashew Nut', 'Cauliflower', 'Churros', 'Corncob', 'Donut', 'Fortune Cookie', 'Guava', 'Kiwano', 'Kiwifruit', 'Macaron', 'Mana Potion', 'Melon Slice', 'Nachos', 'Oyster Mushroom', 'Pineapple', 'Pumpkin', 'Radish', 'Sardinian Currant', 'Sausage', 'Unagi'],
+    'Custom': ['Blueberry', 'Brussels Sprout', 'Cashew Nut', 'Cauliflower', 'Churros', 'Donut', 'Fortune Cookie', 'Guava', 'Kiwano', 'Kiwifruit', 'Macaron', 'Mana Potion', 'Melon Slice', 'Nachos', 'Oyster Mushroom', 'Pineapple', 'Pumpkin', 'Radish', 'Sardinian Currant', 'Sausage', 'Unagi'],
     'Hidden': ['Cake Slice', 'Peanut Butter'],
 };
 

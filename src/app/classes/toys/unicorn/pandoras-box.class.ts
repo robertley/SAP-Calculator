@@ -13,6 +13,7 @@ import { Weak } from "../../equipment/ailments/weak.class";
 import { Peanut } from "../../equipment/turtle/peanut.class";
 import { Player } from "../../player.class";
 import { Toy } from "../../toy.class";
+import { UNROLLABLE_PERK_NAMES, isUnrollablePerk } from "app/services/equipment/unrollable-perks";
 
 // Equipment effects are now multiplied by toy level via Equipment.getMultiplier()
 
@@ -33,7 +34,7 @@ export class PandorasBox extends Toy {
         ];
 
         // https://superautopets.wiki.gg/wiki/Pandoras_Box
-        let excludedPerks = [
+        const excludedPerks = new Set<string>([
             'Cake Slice',
             'Carrot',
             'Cherry',
@@ -54,7 +55,8 @@ export class PandorasBox extends Toy {
             'Rambutan',
             'Rice',
             'Skewer'
-        ]
+        ]);
+        UNROLLABLE_PERK_NAMES.forEach((perk) => excludedPerks.add(perk));
 
         let pets = [
             ...gameApi.player.petArray,
@@ -62,7 +64,7 @@ export class PandorasBox extends Toy {
         ];
 
         let equipments = Array.from(equipmentMap.values());
-        equipments = equipments.filter(equipment => !excludedPerks.includes(equipment.name));
+        equipments = equipments.filter((equipment) => !excludedPerks.has(equipment.name) && !isUnrollablePerk(equipment));
 
         for (let pet of pets) {
             // 50% chance for pool to be ailments

@@ -247,13 +247,6 @@
           <div class="controls-section advanced-section">
             <ng-container *ngIf="formGroup.get('showAdvanced').value">
               <div class="advanced-grid">
-                <div class="form-check" title="Include Token Pets in pet pool.">
-                  <input class="form-check-input" type="checkbox" value="" id="tokenPets" formControlName="tokenPets">
-                  <label class="form-check-label advanced-label-with-icon" for="tokenPets">
-                    <span class="advanced-icon token-icon" aria-hidden="true"></span>
-                    Token Pets
-                  </label>
-                </div>
                 <div class="form-check" title="Shuffle pets in front of Komodo if present.">
                   <input class="form-check-input" type="checkbox" value="" id="komodoShuffle"
                     formControlName="komodoShuffle">
@@ -280,12 +273,18 @@
                 <div class="form-check" title="Include Triggers Consumed.">
                   <input class="form-check-input" type="checkbox" value="" id="triggersConsumed"
                     formControlName="triggersConsumed">
-                  <label class="form-check-label" for="triggersConsumed">Triggers Consumed</label>
+                  <label class="form-check-label advanced-label-with-icon" for="triggersConsumed">
+                    <span class="advanced-icon pheasant-icon" aria-hidden="true"></span>
+                    Triggers Consumed
+                  </label>
                 </div>
                 <div class="form-check" title="Show swallowed pet level selection.">
                   <input class="form-check-input" type="checkbox" value="" id="showSwallowedLevels"
                     formControlName="showSwallowedLevels">
-                  <label class="form-check-label" for="showSwallowedLevels">Swallowed Levels</label>
+                  <label class="form-check-label advanced-label-with-icon" for="showSwallowedLevels">
+                    <span class="advanced-icon abomination-icon" aria-hidden="true"></span>
+                    Swallowed Levels
+                  </label>
                 </div>
               </div>
               <div class="advanced-number-grid mt-2">

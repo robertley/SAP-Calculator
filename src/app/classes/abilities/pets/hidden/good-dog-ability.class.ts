@@ -5,6 +5,7 @@ import { LogService } from "app/services/log.service";
 import { EquipmentService } from "app/services/equipment/equipment.service";
 import { InjectorService } from "app/services/injector.service";
 import { cloneEquipment } from "app/util/equipment-utils";
+import { isUnrollablePerk } from "app/services/equipment/unrollable-perks";
 
 export class GoodDogAbility extends Ability {
     private logService: LogService;
@@ -42,10 +43,10 @@ export class GoodDogAbility extends Ability {
         ]);
         const minTier = minTierByLevel.get(owner.level) ?? 1;
         let equipmentArray = Array.from(equipmentMap.values())
-            .filter((equipment) => equipment && (equipment.tier ?? 1) >= minTier);
+            .filter((equipment) => equipment && (equipment.tier ?? 1) >= minTier && !isUnrollablePerk(equipment));
 
         if (!equipmentArray.length) {
-            equipmentArray = Array.from(equipmentMap.values()).filter(Boolean);
+            equipmentArray = Array.from(equipmentMap.values()).filter((equipment) => equipment && !isUnrollablePerk(equipment));
         }
 
         for (let pet of targets) {

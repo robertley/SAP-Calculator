@@ -528,7 +528,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   getRandomEquipment() {
-    const equipment = Array.from(this.equipmentService.getInstanceOfAllEquipment().values());
+    const equipment = Array.from(this.equipmentService.getInstanceOfAllEquipment().values())
+      .filter((equip) => equip?.name !== 'Corncob');
     const allowAilments = this.formGroup?.get('ailmentEquipment')?.value;
     const ailments = allowAilments ? Array.from(this.equipmentService.getInstanceOfAllAilments().values()) : [];
     const options = equipment.concat(ailments);
