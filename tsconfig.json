@@ -1,0 +1,15 @@
+{
+  "extends": "./config/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "paths": {
+      "app/*": ["app/*"],
+      "assets/*": ["assets/*"],
+      "src/*": ["*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "simulation", "server"]
+}

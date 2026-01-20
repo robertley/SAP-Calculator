@@ -55,6 +55,12 @@
     "vitest": "^4.0.16"
   },
   "overrides": {
-    "undici": "^7.18.2"
+    "undici": "^7.18.2",
+    "karma": {
+      "glob": "^9.3.5",
+      "rimraf": {
+        "glob": "^9.3.5"
+      }
+    }
   }
 }

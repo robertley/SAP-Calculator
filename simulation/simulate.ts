@@ -4,6 +4,10 @@ import { SimulationConfig, SimulationResult } from '../src/app/interfaces/simula
 import { LogService } from '../src/app/services/log.service';
 import { GameService } from '../src/app/services/game.service';
 import { AbilityService } from '../src/app/services/ability/ability.service';
+import { AbilityQueueService } from '../src/app/services/ability/ability-queue.service';
+import { AttackEventService } from '../src/app/services/ability/attack-event.service';
+import { FaintEventService } from '../src/app/services/ability/faint-event.service';
+import { ToyEventService } from '../src/app/services/ability/toy-event.service';
 import { PetService } from '../src/app/services/pet/pet.service';
 import { EquipmentService } from '../src/app/services/equipment/equipment.service';
 import { ToyService } from '../src/app/services/toy/toy.service';
@@ -25,7 +29,18 @@ class NodeInjector {
 export function runSimulation(config: SimulationConfig): SimulationResult {
     const logService = new LogService();
     const gameService = new GameService();
-    const abilityService = new AbilityService(gameService);
+    const abilityQueueService = new AbilityQueueService();
+    const toyEventService = new ToyEventService(gameService, logService);
+    const attackEventService = new AttackEventService(abilityQueueService);
+    const faintEventService = new FaintEventService(abilityQueueService, toyEventService);
+    const abilityService = new AbilityService(
+        gameService,
+        logService,
+        toyEventService,
+        abilityQueueService,
+        attackEventService,
+        faintEventService
+    );
 
     // Pet Logic
     const petFactory = new PetFactoryService(logService, abilityService, gameService);
