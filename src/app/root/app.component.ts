@@ -445,6 +445,10 @@ export class AppComponent implements OnInit, AfterViewInit {
         break;
       default:
         petPool = this.petService.playerCustomPackPets.get(pack);
+        if (!petPool) {
+          this.formGroup.get('allPets').setValue(true, { emitEvent: false });
+          petPool = this.petService.allPets;
+        }
         break;
     }
     // console.log('petPool', petPool)

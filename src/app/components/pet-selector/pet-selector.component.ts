@@ -90,11 +90,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   forceShowAllPets = false;
 
   tokenPets: string[] = [
-    'Bee', 'Bus', 'Chick', 'Dirty Rat', 'Lizard Tail', 'Ram', 'Smaller Slug', 'Smallest Slug',
-    'Zombie Cricket', 'Zombie Fly', 'Chimera Goat', 'Chimera Lion', 'Chimera Snake', 'Daycrawler',
-    'Head', 'Monty', 'Nessie?', 'Smaller Slime', 'Young Phoenix', 'Good Dog', 'Adult Flounder',
-    'Burbel', 'Cooked Roach', 'Cuckoo Chick', 'Fake Nessie', 'Guinea Piglet', 'Hydra Head',
-    'Moby Dick', 'Quail', 'Sleeping Gelada', 'Tand and Tand', 'Fairy Ball',
+    'Adult Flounder', 'Angry Pygmy Hog', 'Baby Urchin', 'Bee', 'Bus', 'Butterfly', 'Chick',
+    'Chimera Goat', 'Chimera Lion', 'Chimera Snake', 'Cooked Roach', 'Cracked Egg', 'Cuckoo Chick',
+    'Daycrawler', 'Dirty Rat', 'Fairy Ball', 'Fake Nessie', 'Fire Pup', 'Giant Eyes Dog',
+    'Golden Retriever', 'Good Dog', 'Great One', 'Head', 'Lizard Tail', 'Loyal Chinchilla',
+    'Mimic Octopus', 'Moby Dick', 'Monty', 'Nessie?', 'Nest', 'Quail', 'Ram', 'Rock', 'Salmon',
+    'Sleeping Gelada', 'Smaller Slime', 'Smaller Slug', 'Smallest Slug', 'Tand and Tand',
+    'Young Phoenix', 'Zombie Cricket', 'Zombie Fly',
   ];
 
   constructor(

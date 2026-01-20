@@ -2,7 +2,6 @@ import { AdultFlounder } from "../../../classes/pets/hidden/adult-flounder.class
 import { AngryPygmyHog } from "../../../classes/pets/hidden/angry-pygmy-hog.class";
 import { BabyUrchin } from "../../../classes/pets/hidden/baby-urchin.class";
 import { Bee } from "../../../classes/pets/hidden/bee.class";
-import { Burbel } from "../../../classes/pets/hidden/burbel.class";
 import { Bus } from "../../../classes/pets/hidden/bus.class";
 import { Butterfly } from "../../../classes/pets/hidden/butterfly.class";
 import { Chick } from "../../../classes/pets/hidden/chick.class";
@@ -19,9 +18,7 @@ import { FirePup } from "../../../classes/pets/hidden/fire-pup.class";
 import { GiantEyesDog } from "../../../classes/pets/hidden/giant-eyes-dog.class";
 import { GoldenRetriever } from "../../../classes/pets/hidden/golden-retriever.class";
 import { GoodDog } from "../../../classes/pets/hidden/good-dog.class";
-import { GuineaPiglet } from "../../../classes/pets/hidden/guinea-piglet.class";
 import { Head } from "../../../classes/pets/hidden/head.class";
-import { HydraHead } from "../../../classes/pets/hidden/hydra-head.class";
 import { LizardTail } from "../../../classes/pets/hidden/lizard-tail.class";
 import { LoyalChinchilla } from "../../../classes/pets/hidden/loyal-chinchilla.class";
 import { Mantis } from "../../../classes/pets/hidden/mantis.class";
@@ -49,7 +46,6 @@ export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
   'Angry Pygmy Hog': AngryPygmyHog,
   'Baby Urchin': BabyUrchin,
   'Bee': Bee,
-  'Burbel': Burbel,
   'Bus': Bus,
   'Butterly': Butterfly,
   'Chick': Chick,
@@ -66,9 +62,7 @@ export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
   'Giant Eyes Dog': GiantEyesDog,
   'Golden Retriever': GoldenRetriever,
   'Good Dog': GoodDog,
-  'Guinea Piglet': GuineaPiglet,
   'Head': Head,
-  'Hydra Head': HydraHead,
   'Lizard Tail': LizardTail,
   'Loyal Chinchilla': LoyalChinchilla,
   'Mantis': Mantis,
