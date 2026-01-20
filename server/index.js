@@ -37,8 +37,7 @@ const API_VERSION = process.env.SAP_API_VERSION || '44';
 const SAP_EMAIL = process.env.SAP_EMAIL;
 const SAP_PASSWORD = process.env.SAP_PASSWORD;
 
-let authToken = null;
-let authExpiry = 0;
+const authCache = new Map();
 
 function makeError(message, statusCode = 500) {
   const error = new Error(message);
@@ -132,8 +131,8 @@ function postJson(hostname, path, body, headers = {}) {
   });
 }
 
-async function login() {
-  if (!SAP_EMAIL || !SAP_PASSWORD) {
+async function login(email, password) {
+  if (!email || !password) {
     throw makeError('SAP_EMAIL and SAP_PASSWORD must be set for replay lookups.', 400);
   }
 
@@ -141,8 +140,8 @@ async function login() {
     'api.teamwood.games',
     `/0.${API_VERSION}/api/user/login`,
     {
-      Email: SAP_EMAIL,
-      Password: SAP_PASSWORD,
+      Email: email,
+      Password: password,
       Version: API_VERSION
     },
     { authority: 'api.teamwood.games' }
@@ -153,19 +152,30 @@ async function login() {
     throw makeError('Failed to authenticate with Teamwood API.', 502);
   }
 
-  authToken = data.Token;
-  authExpiry = decodeJwtExpiry(authToken);
+  const token = data.Token;
+  authCache.set(email, {
+    token,
+    expiry: decodeJwtExpiry(token),
+    password
+  });
 }
 
-async function ensureAuth() {
+async function ensureAuth(email, password) {
   const now = Math.floor(Date.now() / 1000);
-  if (!authToken || authExpiry - now < 60) {
-    await login();
+  const cached = authCache.get(email);
+  if (!cached || cached.expiry - now < 60 || cached.password !== password) {
+    await login(email, password);
   }
 }
 
-async function fetchReplay(participationId) {
-  await ensureAuth();
+async function fetchReplay(participationId, email, password) {
+  await ensureAuth(email, password);
+
+  const cached = authCache.get(email);
+  const authToken = cached?.token;
+  if (!authToken) {
+    throw makeError('Failed to authenticate with Teamwood API.', 502);
+  }
 
   const { status, data } = await postJson(
     'api.teamwood.games',
@@ -182,8 +192,8 @@ async function fetchReplay(participationId) {
   );
 
   if (status === 401) {
-    await login();
-    return fetchReplay(participationId);
+    await login(email, password);
+    return fetchReplay(participationId, email, password);
   }
 
   if (status !== 200) {
@@ -210,7 +220,7 @@ const server = http.createServer(async (req, res) => {
     sendJson(res, 200, {
       ok: true,
       hasCredentials: Boolean(SAP_EMAIL && SAP_PASSWORD),
-      tokenLoaded: Boolean(authToken)
+      tokenLoaded: authCache.size > 0
     });
     return;
   }
@@ -220,13 +230,20 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req);
       const participationId = body?.Pid;
       const turnNumber = Number(body?.T);
+      const sapEmail = body?.SapEmail || body?.Email || SAP_EMAIL;
+      const sapPassword = body?.SapPassword || body?.Password || SAP_PASSWORD;
 
       if (!participationId || !turnNumber || Number.isNaN(turnNumber) || turnNumber <= 0) {
         sendJson(res, 400, { error: 'Pid and a positive T (turn number) are required.' });
         return;
       }
 
-      const replay = await fetchReplay(participationId);
+      if (!sapEmail || !sapPassword) {
+        sendJson(res, 400, { error: 'SAP credentials are required for participation lookups.' });
+        return;
+      }
+
+      const replay = await fetchReplay(participationId, sapEmail, sapPassword);
       const battles = replay.Actions
         .filter((action) => action?.Type === 0)
         .map((action) => JSON.parse(action.Battle));
@@ -254,13 +271,20 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req);
       const participationId = body?.Pid;
       const turnNumber = Number(body?.T);
+      const sapEmail = body?.SapEmail || body?.Email || SAP_EMAIL;
+      const sapPassword = body?.SapPassword || body?.Password || SAP_PASSWORD;
 
       if (!participationId) {
         sendJson(res, 400, { error: 'Pid is required.' });
         return;
       }
 
-      const replay = await fetchReplay(participationId);
+      if (!sapEmail || !sapPassword) {
+        sendJson(res, 400, { error: 'SAP credentials are required for participation lookups.' });
+        return;
+      }
+
+      const replay = await fetchReplay(participationId, sapEmail, sapPassword);
       const topLevelKeys = Object.keys(replay || {}).sort();
       const modeActions = replay.Actions
         .filter((action) => action?.Type === 1)

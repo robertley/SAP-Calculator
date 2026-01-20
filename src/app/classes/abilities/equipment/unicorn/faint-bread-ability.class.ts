@@ -1,9 +1,9 @@
 import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
-import { PetService } from "../../../../services/pet.service";
+import { PetService } from "../../../../services/pet/pet.service";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 
 export class FaintBreadAbility extends Ability {
     private equipment: Equipment;

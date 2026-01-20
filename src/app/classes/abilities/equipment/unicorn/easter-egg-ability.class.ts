@@ -3,7 +3,7 @@ import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { Monty } from "../../../pets/hidden/monty.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 
 export class EasterEggAbility extends Ability {
     private equipment: Equipment;

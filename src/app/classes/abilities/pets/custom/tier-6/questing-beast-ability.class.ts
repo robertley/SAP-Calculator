@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { InjectorService } from "app/services/injector.service";
-import { ToyService } from "app/services/toy.service";
+import { ToyService } from "app/services/toy/toy.service";
 import { getRandomInt } from "app/util/helper-functions";
 
 export class QuestingBeastAbility extends Ability {

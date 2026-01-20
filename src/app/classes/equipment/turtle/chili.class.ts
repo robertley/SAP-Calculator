@@ -1,5 +1,5 @@
-import { cloneDeep } from "lodash";
-import { AbilityService } from "../../../services/ability.service";
+import { cloneDeep } from "lodash-es";
+import { AbilityService } from "../../../services/ability/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment, EquipmentClass } from "../../equipment.class";
 import { Pet } from "../../pet.class";

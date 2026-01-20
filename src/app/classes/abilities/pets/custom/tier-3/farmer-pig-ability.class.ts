@@ -1,8 +1,8 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { EquipmentService } from "app/services/equipment.service";
-import { EquipmentFactoryService } from "app/services/equipment-factory.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
+import { EquipmentFactoryService } from "app/services/equipment/equipment-factory.service";
 import { Corncob } from "../../../../equipment/custom/corncob.class";
 import { InjectorService } from "app/services/injector.service";
 

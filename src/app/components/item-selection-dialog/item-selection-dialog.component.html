@@ -1,0 +1,67 @@
+<div class="selection-overlay" (click)="onCancel()">
+    <div class="selection-dialog card shadow-lg" (click)="$event.stopPropagation()">
+        <div class="dialog-header">
+            <h3>Select {{
+                type === 'pet' ? 'Pet' :
+                type === 'swallowed-pet' ? 'Swallowed Pet' :
+                type === 'equipment' ? 'Equipment' :
+                type === 'toy' ? 'Toy' :
+                type === 'hard-toy' ? 'Hard Toy' :
+                type === 'team' ? 'Team' : 'Pack'
+                }}</h3>
+            <button class="btn-close" (click)="onCancel()"></button>
+        </div>
+
+        <div class="dialog-body">
+            <div class="search-container">
+                <input type="text" class="form-control search-input" placeholder="Search..." [(ngModel)]="searchQuery"
+                    (ngModelChange)="onSearchChange()" autoFocus>
+            </div>
+
+            <div class="pack-filters" *ngIf="type === 'pet' || type === 'swallowed-pet'">
+                <button *ngFor="let pack of availablePacks; trackBy: trackByPack" class="btn btn-sm"
+                    [class.btn-primary]="selectedPack === pack" [class.btn-outline-primary]="selectedPack !== pack"
+                    (click)="selectPack(pack)">
+                    {{pack}}
+                </button>
+            </div>
+
+            <div class="items-grid scroll" [class.team-grid]="type === 'team'">
+                <div class="item-card none-card" *ngIf="type !== 'swallowed-pet' && type !== 'pack'"
+                    (click)="onItemClick({name: null, item: null})">
+                    <div class="item-icon-container">
+                        <span class="none-icon">None</span>
+                    </div>
+                    <div class="item-name">None</div>
+                </div>
+
+                <ng-container *ngFor="let item of filteredItems; let i = index; trackBy: trackByItem">
+                    <div class="category-header" *ngIf="i === 0 || filteredItems[i-1].category !== item.category">
+                        {{item.category}}
+                    </div>
+                    <div class="item-card" [class.team-card]="type === 'team'" (click)="onItemClick(item)"
+                        [appTooltip]="item.tooltip || (item.displayName || item.name)">
+                        <div class="item-icon-container" [class.team-container]="type === 'team'">
+                            <ng-container *ngIf="type !== 'team'; else teamIcons">
+                                <img *ngIf="item.icon" [ngSrc]="item.icon" width="48" height="48" loading="lazy" decoding="async" [alt]="item.name" class="item-icon">
+                                <div *ngIf="item.tier > 0" class="tier-badge">{{item.tier}}</div>
+                            </ng-container>
+                            <ng-template #teamIcons>
+                                <div class="team-icon-strip">
+                                    <img *ngFor="let icon of item.icons; trackBy: trackByIndex"
+                                        [ngSrc]="icon" width="32" height="32" loading="lazy" decoding="async"
+                                        [alt]="item.name" class="team-icon">
+                                </div>
+                            </ng-template>
+                        </div>
+                        <div class="item-name">{{item.displayName || item.name}}</div>
+                    </div>
+                </ng-container>
+
+                <div class="no-results" *ngIf="filteredItems.length === 0">
+                    No items found matching "{{searchQuery}}"
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

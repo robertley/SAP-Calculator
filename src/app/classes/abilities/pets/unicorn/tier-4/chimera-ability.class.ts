@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 import { ChimeraLion } from "../../../../pets/hidden/chimera-lion.class";
 import { ChimeraGoat } from "../../../../pets/hidden/chimera-goat.class";
 import { ChimeraSnake } from "../../../../pets/hidden/chimera-snake.class";

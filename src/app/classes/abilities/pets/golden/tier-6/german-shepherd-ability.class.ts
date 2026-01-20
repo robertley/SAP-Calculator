@@ -24,9 +24,11 @@ export class GermanShepherdAbility extends Ability {
 
     private executeAbility(context: AbilityContext): void {
         
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+        const { triggerPet, tiger, pteranodon } = context;
+        const owner = this.owner;
 
-        let power = Math.floor(owner.attack * owner.level * 0.25);
+        const percent = this.level * 0.25;
+        const power = Math.floor(owner.attack * percent);
         const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
         if (!targetResp.pet) {
             return;

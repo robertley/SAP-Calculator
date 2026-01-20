@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { LogService } from "app/services/log.service";
-import { PetService } from "app/services/pet.service";
+import { PetService } from "app/services/pet/pet.service";
 
 export class SeaweedAbility extends Ability {
     private equipment: Equipment;

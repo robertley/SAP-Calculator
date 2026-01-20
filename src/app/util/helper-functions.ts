@@ -68,6 +68,7 @@ export function createPack(customPack?) {
     // tier5Food: new FormControl([]),
     tier6Pets: new FormControl(customPack.tier6Pets ?? [], controlArrayLengthOf10()),
     // tier6Food: new FormControl([]),
+    spells: new FormControl(customPack.spells ?? []),
   })
   return formGroup;
 }

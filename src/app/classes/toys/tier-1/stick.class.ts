@@ -2,7 +2,7 @@ import { GameAPI } from "../../../interfaces/gameAPI.interface";
 import { Toy } from "../../toy.class";
 import { Walnut } from "../../equipment/puppy/walnut.class";
 import { LogService } from "../../../services/log.service";
-import { PetService } from "../../../services/pet.service";
+import { PetService } from "../../../services/pet/pet.service";
 
 export class Stick extends Toy {
     name = 'Stick';

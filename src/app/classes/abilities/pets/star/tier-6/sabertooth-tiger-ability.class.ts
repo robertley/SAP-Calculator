@@ -2,15 +2,16 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
-import { PetService } from "app/services/pet.service";
+import { AbilityService } from "app/services/ability/ability.service";
+import { PetService } from "app/services/pet/pet.service";
 
 export class SabertoothTigerAbility extends Ability {
     private logService: LogService;
     private abilityService: AbilityService;
     private petService: PetService;
+    private timesHurtOverride: number | null;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService, petService: PetService) {
+    constructor(owner: Pet, logService: LogService, abilityService: AbilityService, petService: PetService, timesHurtOverride?: number) {
         super({
             name: 'SabertoothTigerAbility',
             owner: owner,
@@ -25,13 +26,14 @@ export class SabertoothTigerAbility extends Ability {
         this.logService = logService;
         this.abilityService = abilityService;
         this.petService = petService;
+        this.timesHurtOverride = timesHurtOverride ?? null;
     }
 
     private executeAbility(context: AbilityContext): void {
         
         const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
 
-        let totalHurt = owner.timesHurt;
+        let totalHurt = this.timesHurtOverride ?? owner.timesHurt;
         if (totalHurt > 0) {
             for (let i = 0; i < this.level; i++) { // 1/2/3 Mammoths based on level
                 let mammothAttack = Math.min(2 * totalHurt, 50);
@@ -65,6 +67,12 @@ export class SabertoothTigerAbility extends Ability {
     }
 
     copy(newOwner: Pet): SabertoothTigerAbility {
-        return new SabertoothTigerAbility(newOwner, this.logService, this.abilityService, this.petService);
+        return new SabertoothTigerAbility(
+            newOwner,
+            this.logService,
+            this.abilityService,
+            this.petService,
+            this.timesHurtOverride ?? this.owner.timesHurt
+        );
     }
 }

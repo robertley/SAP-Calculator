@@ -1,6 +1,6 @@
 import { Chili } from "app/classes/equipment/turtle/chili.class";
 import { getOpponent } from "app/util/helper-functions";
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";

@@ -1,6 +1,6 @@
 import { Pet } from "../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 import { Player } from "../../../player.class";
 import { FlyingSquirrelAbility } from "../../../abilities/pets/puppy/tier-3/flying-squirrel-ability.class";
 export class FlyingSquirrel extends Pet {

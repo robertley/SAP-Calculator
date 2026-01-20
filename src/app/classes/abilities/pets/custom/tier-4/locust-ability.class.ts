@@ -1,7 +1,7 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "../../../../../services/ability.service";
+import { AbilityService } from "../../../../../services/ability/ability.service";
 import { Equipment } from "../../../../equipment.class";
 import { Pack } from "../../../../pet.class";
 import { Player } from "../../../../player.class";

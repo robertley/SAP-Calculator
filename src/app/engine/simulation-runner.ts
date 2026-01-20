@@ -2,21 +2,13 @@ import { SimulationConfig, SimulationResult, PetConfig } from "../interfaces/sim
 import { Player } from "../classes/player.class";
 import { LogService } from "../services/log.service";
 import { GameService } from "../services/game.service";
-import { AbilityService } from "../services/ability.service";
-import { PetService } from "../services/pet.service";
-import { EquipmentService } from "../services/equipment.service";
-import { ToyService } from "../services/toy.service";
+import { AbilityService } from "../services/ability/ability.service";
+import { PetService } from "../services/pet/pet.service";
+import { EquipmentService } from "../services/equipment/equipment.service";
+import { ToyService } from "../services/toy/toy.service";
 import { Battle } from "../interfaces/battle.interface";
-import { Dazed } from "../classes/equipment/ailments/dazed.class";
-import { ChocolateCake } from "../classes/equipment/golden/chocolate-cake.class";
-import { Pie } from "../classes/equipment/puppy/pie.class";
-import { Cherry } from "../classes/equipment/golden/cherry.class";
-import { Pancakes } from "../classes/equipment/puppy/pancakes.class";
-import { LovePotion } from "../classes/equipment/unicorn/love-potion.class";
-import { GingerbreadMan } from "../classes/equipment/unicorn/gingerbread-man.class";
-import { HealthPotion } from "../classes/equipment/unicorn/health-potion.class";
-import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
-import { shuffle } from "lodash";
+import { AbilityEngine } from "./ability/ability-engine";
+import { EventProcessor, EventProcessorContext } from "./processor/event-processor";
 
 export class SimulationRunner {
     protected player: Player;
@@ -24,11 +16,13 @@ export class SimulationRunner {
     protected battleStarted = false;
     protected turns = 0;
     protected maxTurns = 71;
-    protected currBattle: Battle;
+    protected currBattle: Battle | null = null;
     protected battles: Battle[] = [];
     protected playerWinner = 0;
     protected opponentWinner = 0;
     protected draw = 0;
+    protected abilityEngine: AbilityEngine;
+    protected eventProcessor: EventProcessor;
 
     // Services needed for simulation
     constructor(
@@ -43,6 +37,36 @@ export class SimulationRunner {
         this.opponent = new Player(logService, abilityService, gameService);
         this.opponent.isOpponent = true;
         this.gameService.init(this.player, this.opponent);
+
+        this.abilityEngine = new AbilityEngine(
+            this.logService,
+            this.gameService,
+            this.abilityService,
+            this.toyService,
+            this.player,
+            this.opponent
+        );
+
+        const context: EventProcessorContext = {
+            player: this.player,
+            opponent: this.opponent,
+            logService: this.logService,
+            gameService: this.gameService,
+            abilityService: this.abilityService,
+            abilityEngine: this.abilityEngine,
+            maxTurns: this.maxTurns,
+            getBattle: () => this.currBattle,
+            setBattle: (battle) => { this.currBattle = battle; },
+            getBattleStarted: () => this.battleStarted,
+            setBattleStarted: (value) => { this.battleStarted = value; },
+            getTurns: () => this.turns,
+            setTurns: (value) => { this.turns = value; },
+            incrementPlayerWinner: () => { this.playerWinner += 1; },
+            incrementOpponentWinner: () => { this.opponentWinner += 1; },
+            incrementDraw: () => { this.draw += 1; }
+        };
+
+        this.eventProcessor = new EventProcessor(context);
     }
 
     public run(config: SimulationConfig): SimulationResult {
@@ -121,6 +145,7 @@ export class SimulationRunner {
 
     protected initBattle(config: SimulationConfig) {
         this.logService.reset();
+        this.abilityService.clearGlobalEventQueue();
         this.currBattle = {
             winner: 'draw',
             logs: this.logService.getLogs()
@@ -174,6 +199,11 @@ export class SimulationRunner {
         this.initializeEquipmentMultipliers();
 
         // Before battle phase
+        this.logService.createLog({
+            message: "Phase 1: Before battle",
+            type: 'board'
+        });
+        this.logService.printState(this.player, this.opponent);
         this.abilityService.triggerBeforeStartOfBattleEvents();
         this.abilityService.executeBeforeStartOfBattleEvents();
 
@@ -182,8 +212,13 @@ export class SimulationRunner {
             this.abilityCycle();
         } while (this.abilityService.hasAbilityCycleEvents);
 
-        const hasChurros = (pet) => pet.equipment?.name === 'Churros';
+        const hasChurros = (pet: { equipment?: { name?: string } }) => pet.equipment?.name === 'Churros';
         // Init SOB (Churros pets before toys)
+        this.logService.createLog({
+            message: "Phase 2: Start of battle",
+            type: 'board'
+        });
+        this.logService.printState(this.player, this.opponent);
         this.abilityService.triggerStartBattleEvents(hasChurros);
         this.abilityService.executeStartBattleEvents();
 
@@ -198,6 +233,12 @@ export class SimulationRunner {
         do {
             this.abilityCycle();
         } while (this.abilityService.hasAbilityCycleEvents);
+
+        this.logService.createLog({
+            message: "Phase 3: After Start of Battle",
+            type: 'board'
+        });
+        this.logService.printState(this.player, this.opponent);
     }
 
     protected createPets(player: Player, petsConfig: (PetConfig | null)[]) {
@@ -213,13 +254,14 @@ export class SimulationRunner {
 
             if (equipment) {
                 // Clone equipment
-                equipment = Object.assign(Object.create(Object.getPrototypeOf(equipment)), equipment);
+                const equipmentClone = Object.assign(Object.create(Object.getPrototypeOf(equipment)), equipment);
+                equipment = equipmentClone;
                 if (petConfig.equipmentUses != null) {
                     const usesValue = Number(petConfig.equipmentUses);
-                    const finalUses = Number.isFinite(usesValue) ? usesValue : equipment.uses;
+                    const finalUses = Number.isFinite(usesValue) ? usesValue : equipmentClone.uses;
                     if (finalUses != null) {
-                        equipment.uses = finalUses;
-                        equipment.originalUses = finalUses;
+                        equipmentClone.uses = finalUses;
+                        equipmentClone.originalUses = finalUses;
                     }
                 }
             }
@@ -232,15 +274,119 @@ export class SimulationRunner {
                 mana: petConfig.mana ?? 0,
                 equipment: equipment,
                 triggersConsumed: petConfig.triggersConsumed ?? 0,
-                belugaSwallowedPet: petConfig.belugaSwallowedPet,
-                abominationSwallowedPet1: petConfig.abominationSwallowedPet1,
-                abominationSwallowedPet2: petConfig.abominationSwallowedPet2,
-                abominationSwallowedPet3: petConfig.abominationSwallowedPet3,
-                abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level,
-                abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level,
-                abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level,
+                belugaSwallowedPet: petConfig.belugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1: petConfig.abominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet2: petConfig.abominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet3: petConfig.abominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet1Level: petConfig.abominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet2Level: petConfig.abominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet3Level: petConfig.abominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet3TimesHurt ?? 0,
+                abominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPet: petConfig.abominationSwallowedPet1ParrotCopyPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPet: petConfig.abominationSwallowedPet2ParrotCopyPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPet: petConfig.abominationSwallowedPet3ParrotCopyPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPet: petConfig.parrotCopyPet ?? undefined,
+                parrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level ?? undefined,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+                parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: petConfig.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
                 battlesFought: petConfig.battlesFought ?? 0,
-            timesHurt: petConfig.timesHurt ?? 0
+                timesHurt: petConfig.timesHurt ?? 0
             }, player);
             pet.friendsDiedBeforeBattle = petConfig.friendsDiedBeforeBattle ?? 0;
 
@@ -249,281 +395,58 @@ export class SimulationRunner {
     }
 
     protected applyPreBattleFriendDeathCounts() {
-        const teams = [this.player, this.opponent];
-        for (const team of teams) {
-            for (const pet of team.petArray) {
-                if (pet?.friendsDiedBeforeBattle) {
-                    this.abilityService.simulateFriendDiedCounters(pet, pet.friendsDiedBeforeBattle);
-                }
-            }
-        }
+        this.abilityEngine.applyPreBattleFriendDeathCounts();
     }
 
 
     protected executeBattleLoop() {
-        while (this.battleStarted) {
-            this.nextTurn();
-        }
+        this.eventProcessor.executeBattleLoop();
     }
 
     // --- Logic moved from AppComponent ---
 
     protected startBattle() {
-        this.reset();
-        this.battleStarted = true;
-        this.turns = 0;
+        this.eventProcessor.startBattle();
     }
 
     protected reset() {
-        this.player.resetPets();
-        this.opponent.resetPets();
+        this.eventProcessor.reset();
     }
 
     protected nextTurn() {
-        let finished = false;
-        let winner = null;
-        this.turns++;
-
-        let playerAlive = this.player.alive();
-        let opponentAlive = this.opponent.alive();
-
-        if (playerAlive && !opponentAlive) {
-            const revived = this.tryAllEnemiesFaintedToyTrigger(this.player, this.opponent);
-            opponentAlive = this.opponent.alive();
-            if (!revived) {
-                winner = this.player;
-                this.currBattle.winner = 'player';
-                this.playerWinner++;
-                finished = true;
-            }
-        }
-        if (!playerAlive && opponentAlive) {
-            const revived = this.tryAllEnemiesFaintedToyTrigger(this.opponent, this.player);
-            playerAlive = this.player.alive();
-            if (!revived) {
-                winner = this.opponent;
-                this.currBattle.winner = 'opponent';
-                this.opponentWinner++;
-                finished = true;
-            }
-        }
-        if (!playerAlive && !opponentAlive) {
-            this.draw++;
-            finished = true;
-        }
-        if (finished) {
-            this.logService.printState(this.player, this.opponent);
-            this.endLog(winner);
-            this.battleStarted = false;
-            return;
-        }
-
-        if (this.turns >= this.maxTurns) {
-            this.draw++;
-            finished = true;
-        }
-
-        if (finished) {
-            this.logService.printState(this.player, this.opponent);
-            this.endLog(winner);
-            this.battleStarted = false;
-            return;
-        }
-
-        this.pushPetsForwards();
-        this.logService.printState(this.player, this.opponent);
-
-        while (true) {
-            let originalPlayerAttackingPet = this.player.pet0;
-            let originalOpponentAttackingPet = this.opponent.pet0;
-
-            this.abilityService.triggerBeforeAttackEvent(this.player.pet0);
-            this.abilityService.triggerBeforeAttackEvent(this.opponent.pet0);
-            this.abilityService.executeBeforeAttackEvents();
-
-            this.checkPetsAlive();
-            do {
-                this.abilityCycle();
-            } while (this.abilityService.hasAbilityCycleEvents);
-
-            if (!this.player.alive() || !this.opponent.alive()) {
-                return;
-            }
-
-            this.pushPetsForwards();
-
-            if (originalPlayerAttackingPet && originalPlayerAttackingPet.transformed) {
-                originalPlayerAttackingPet = originalPlayerAttackingPet.transformedInto;
-            }
-            if (originalOpponentAttackingPet && originalOpponentAttackingPet.transformed) {
-                originalOpponentAttackingPet = originalOpponentAttackingPet.transformedInto;
-            }
-
-            if (this.player.pet0 == originalPlayerAttackingPet && this.opponent.pet0 == originalOpponentAttackingPet) {
-                break;
-            }
-        }
-
-        this.player.resetJumpedFlags();
-        this.opponent.resetJumpedFlags();
-
-        this.fight();
-        this.checkPetsAlive();
-
-        do {
-            this.abilityCycle();
-        } while (this.abilityService.hasAbilityCycleEvents);
-    }
-
-    private tryAllEnemiesFaintedToyTrigger(winner: Player, loser: Player): boolean {
-        if (!winner.toy?.allEnemiesFainted) {
-            return false;
-        }
-        winner.toy.allEnemiesFainted(this.gameService.gameApi);
-        return loser.alive();
+        this.eventProcessor.nextTurn();
     }
 
     protected fight() {
-        let playerPet = this.player.pet0;
-        let opponentPet = this.opponent.pet0;
-
-        playerPet.attackPet(opponentPet);
-        opponentPet.attackPet(playerPet);
-
-        playerPet.useAttackDefenseEquipment();
-        opponentPet.useAttackDefenseEquipment();
-
-        this.gameService.gameApi.FirstNonJumpAttackHappened = true;
-        this.checkPetsAlive();
-        this.abilityService.executeAfterAttackEvents();
+        this.eventProcessor.fight();
     }
 
     protected abilityCycle() {
-        this.emptyFrontSpaceCheck();
-        while (this.abilityService.hasGlobalEvents) {
-            const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
-
-            if (nextEvent && this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 23) {
-                this.checkPetsAlive();
-                const petsWereRemoved = this.removeDeadPets();
-
-                if (petsWereRemoved) {
-                    this.emptyFrontSpaceCheck();
-                    continue;
-                }
-            }
-
-            const event = this.abilityService.getNextHighestPriorityEvent();
-            if (event) {
-                this.abilityService.executeEventCallback(event);
-                this.checkPetsAlive();
-            } else {
-                console.error('AbilityCycle: Expected event from queue but got null. Queue state inconsistent.');
-                break;
-            }
-        }
-
-        let petRemoved = this.removeDeadPets();
-        if (petRemoved) {
-            this.emptyFrontSpaceCheck();
-        }
-        if (!this.abilityService.hasGlobalEvents) {
-            this.player.checkGoldenSpawn();
-            this.opponent.checkGoldenSpawn();
-        }
+        this.abilityEngine.abilityCycle();
     }
 
     protected checkPetsAlive() {
-        this.player.checkPetsAlive();
-        this.opponent.checkPetsAlive();
+        this.abilityEngine.checkPetsAlive();
     }
 
     protected removeDeadPets() {
-        let petRemoved = false;
-        petRemoved = this.player.removeDeadPets();
-        petRemoved = this.opponent.removeDeadPets() || petRemoved;
-        return petRemoved;
+        return this.abilityEngine.removeDeadPets();
     }
 
     protected emptyFrontSpaceCheck() {
-        if (this.player.pet0 == null) {
-            this.abilityService.triggerEmptyFrontSpaceEvents(this.player);
-        } else {
-            for (const pet of this.player.petArray) {
-                pet.clearFrontTriggered = false;
-            }
-        }
-        if (this.opponent.pet0 == null) {
-            this.abilityService.triggerEmptyFrontSpaceEvents(this.opponent);
-        } else {
-            for (const pet of this.opponent.petArray) {
-                pet.clearFrontTriggered = false;
-            }
-        }
-        if (this.player.pet0 == null) {
-            this.abilityService.triggerEmptyFrontSpaceToyEvents(this.player);
-        }
-        if (this.opponent.pet0 == null) {
-            this.abilityService.triggerEmptyFrontSpaceToyEvents(this.opponent);
-        }
-        this.abilityService.executeEmptyFrontSpaceToyEvents();
+        this.abilityEngine.emptyFrontSpaceCheck();
     }
 
     protected initToys() {
-        if (this.player.toy?.startOfBattle) {
-            this.toyService.setStartOfBattleEvent({
-                callback: () => {
-                    this.player.toy.startOfBattle(this.gameService.gameApi);
-                    let toyLevel = this.player.toy.level;
-                    for (let pet of this.player.petArray) {
-                        if (pet instanceof Puma) {
-                            this.player.toy.level = pet.level;
-                            this.player.toy.startOfBattle(this.gameService.gameApi, true);
-                            this.player.toy.level = toyLevel;
-                        }
-                    }
-                },
-                priority: this.player.toy.tier,
-                player: this.player
-            });
-        }
-        if (this.opponent.toy?.startOfBattle) {
-            this.toyService.setStartOfBattleEvent({
-                callback: () => {
-                    this.opponent.toy.startOfBattle(this.gameService.gameApi);
-                    let toyLevel = this.opponent.toy.level;
-                    for (let pet of this.opponent.petArray) {
-                        if (pet instanceof Puma) {
-                            this.opponent.toy.level = pet.level;
-                            this.opponent.toy.startOfBattle(this.gameService.gameApi, true);
-                            this.opponent.toy.level = toyLevel;
-                        }
-                    }
-                },
-                priority: this.opponent.toy.tier,
-                player: this.opponent
-            });
-        }
+        this.abilityEngine.initToys();
     }
 
     protected pushPetsForwards() {
-        this.player.pushPetsForward();
-        this.opponent.pushPetsForward();
+        this.eventProcessor.pushPetsForwards();
     }
 
-    protected endLog(winner?: Player) {
-        let message;
-        if (winner == null) {
-            message = 'Draw';
-        } else if (winner == this.player) {
-            message = 'Player is the winner';
-        } else {
-            message = 'Opponent is the winner';
-        }
-        this.logService.createLog({
-            message: message,
-            type: 'board'
-        });
+    protected endLog(winner?: Player | null) {
+        this.eventProcessor.endLog(winner);
     }
 
     // Ported from updatePreviousShopTier logic in AppComponent, but renamed/integrated into setupGameEnvironment
@@ -531,19 +454,9 @@ export class SimulationRunner {
     // Ported initPlayerPets... integrated into createPets
 
     protected initializeEquipmentMultipliers() {
-        // Initialize multipliers for equipment that pets start the battle with
-        // This ensures Panther level multipliers and Pandora's Box toy multipliers work correctly
-
-        for (let pet of this.player.petArray) {
-            if (pet.equipment) {
-                pet.setEquipmentMultiplier();
-            }
-        }
-
-        for (let pet of this.opponent.petArray) {
-            if (pet.equipment) {
-                pet.setEquipmentMultiplier();
-            }
-        }
+        this.abilityEngine.initializeEquipmentMultipliers();
+    }
+    protected resetClearFrontFlags() {
+        this.abilityEngine.resetClearFrontFlags();
     }
 }

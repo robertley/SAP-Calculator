@@ -1,9 +1,11 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../services/ability.service";
+import { AbilityService } from "../../../services/ability/ability.service";
 import { LogService } from "../../../services/log.service";
 import { Equipment } from "../../../classes/equipment.class";
 import { Pack, Pet } from "../../../classes/pet.class";
 import { Player } from "../../../classes/player.class";
+
+import { MobyDickAbility } from "../../abilities/pets/hidden/moby-dick-ability.class";
 
 export class MobyDick extends Pet {
     name = "Moby Dick";
@@ -22,5 +24,10 @@ export class MobyDick extends Pet {
         equipment?: Equipment, triggersConsumed?: number) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+    }
+
+    initAbilities(): void {
+        this.addAbility(new MobyDickAbility(this, this.logService, this.abilityService));
+        super.initAbilities();
     }
 }

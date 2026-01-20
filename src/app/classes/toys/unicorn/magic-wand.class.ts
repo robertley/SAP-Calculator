@@ -1,6 +1,6 @@
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
-import { ToyService } from "../../../services/toy.service";
+import { ToyService } from "../../../services/toy/toy.service";
 import { getOpponent } from "../../../util/helper-functions";
 import { Weak } from "../../equipment/ailments/weak.class";
 import { Toy } from "../../toy.class";

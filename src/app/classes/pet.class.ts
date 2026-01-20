@@ -2,36 +2,17 @@ import { GameAPI } from "../interfaces/gameAPI.interface";
 import { LogService } from "../services/log.service";
 import { Equipment } from "./equipment.class";
 import { Player } from "./player.class";
-import { Peanut } from "./equipment/turtle/peanut.class";
 import { Corncob } from "./equipment/custom/corncob.class";
-import { AbilityService } from "../services/ability.service";
-import { Tiger } from "./pets/turtle/tier-6/tiger.class";
-import { Albatross } from "./pets/custom/tier-6/albatross.class";
-import { Salt } from "./equipment/puppy/salt.class";
+import { AbilityService } from "../services/ability/ability.service";
 import { Panther } from "./pets/puppy/tier-5/panther.class";
-import { getOpponent } from "../util/helper-functions";
-import { Cheese } from "./equipment/star/cheese.class";
-import { Pepper } from "./equipment/star/pepper.class";
-import { FortuneCookie } from "./equipment/custom/fortune-cookie.class";
 import { Dazed } from "./equipment/ailments/dazed.class";
-import { Silly } from "./equipment/ailments/silly.class";
 import { Icky } from "./equipment/ailments/icky.class";
 import { Crisp } from "./equipment/ailments/crisp.class";
 import { Toasty } from "./equipment/ailments/toasty.class";
-import { AbilityEvent } from "../interfaces/ability-event.interface";
-import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
-import { cloneDeep } from "lodash";
-import { PeanutButter } from "./equipment/hidden/peanut-butter";
 import { Blackberry } from "./equipment/puppy/blackberry.class";
-import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
-import { MapleSyrup, MapleSyrupAttack } from "./equipment/golden/maple-syrup.class";
 import { WhiteOkra } from "./equipment/danger/white-okra.class";
-import { FairyDust } from "./equipment/unicorn/fairy-dust.class";
 import { Ambrosia } from "./equipment/unicorn/ambrosia.class";
-import { Toad } from "./pets/star/tier-3/toad.class";
-import { WhiteTruffle } from "./equipment/danger/white-truffle.class";
 import { Ability, AbilityTrigger, AbilityType } from "./ability.class";
-import { Guava, GuavaAttack } from "./equipment/custom/guava.class";
 import { minExpForLevel } from "../util/leveling";
 import { EquipmentDamageHandler } from "./equipment/equipment-damage.handler";
 import {
@@ -50,6 +31,7 @@ export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom'
 
 export abstract class Pet {
     name: string;
+    baseName: string;
     tier: number;
     pack: Pack;
     hidden: boolean = false;
@@ -67,10 +49,114 @@ export abstract class Pet {
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    abominationSwallowedPet1BelugaSwallowedPet?: string;
+    abominationSwallowedPet2BelugaSwallowedPet?: string;
+    abominationSwallowedPet3BelugaSwallowedPet?: string;
+    abominationSwallowedPet1ParrotCopyPet?: string | null;
+    abominationSwallowedPet2ParrotCopyPet?: string | null;
+    abominationSwallowedPet3ParrotCopyPet?: string | null;
+    abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet?: string | null;
+    abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet?: string | null;
+    abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3?: string | null;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1?: string | null;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2?: string | null;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3?: string | null;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1?: string | null;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2?: string | null;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level?: number;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level?: number;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level?: number;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level?: number;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level?: number;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level?: number;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level?: number;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level?: number;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level?: number;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
     abominationSwallowedPet1Level?: number;
     abominationSwallowedPet2Level?: number;
     abominationSwallowedPet3Level?: number;
-    belugaSwallowedPet: string;
+    abominationSwallowedPet1TimesHurt: number = 0;
+    abominationSwallowedPet2TimesHurt: number = 0;
+    abominationSwallowedPet3TimesHurt: number = 0;
+    belugaSwallowedPet: string | null = null;
+    parrotCopyPet: string | null = null;
+    parrotCopyPetBelugaSwallowedPet: string | null = null;
+    parrotCopyPetAbominationSwallowedPet1?: string | null;
+    parrotCopyPetAbominationSwallowedPet2?: string | null;
+    parrotCopyPetAbominationSwallowedPet3?: string | null;
+    parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet1Level?: number;
+    parrotCopyPetAbominationSwallowedPet2Level?: number;
+    parrotCopyPetAbominationSwallowedPet3Level?: number;
+    parrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level?: number;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level?: number;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level?: number;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level?: number;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level?: number;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level?: number;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level?: number;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level?: number;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level?: number;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
+    parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
     sarcasticFringeheadSwallowedPet?: string;
     friendsDiedBeforeBattle: number = 0;
     timesHurt: number = 0;
@@ -124,7 +210,8 @@ export abstract class Pet {
         this.parent = parent;
     }
 
-    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment, triggersConsumed?: number) {
+    initPet(exp?: number, health?: number, attack?: number, mana?: number, equipment?: Equipment, triggersConsumed?: number) {
+        this.baseName = this.baseName ?? this.name;
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
@@ -927,7 +1014,22 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
-            ability.native = false;
+            copiedAbility.native = false;
+
+            // Wrap ability function to show "Owner's SourcePet" in logs
+            const originalFunction = copiedAbility.abilityFunction;
+            const sourcePetName = sourcePet.name;
+            copiedAbility.abilityFunction = (context) => {
+                const originalName = this.name;
+                const baseName = this.baseName ?? originalName;
+                this.name = `${baseName}'s ${sourcePetName}`;
+                try {
+                    originalFunction(context);
+                } finally {
+                    this.name = originalName;
+                }
+            };
+
             this.addAbility(copiedAbility);
         }
 
@@ -944,7 +1046,22 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
-            ability.native = false;
+            copiedAbility.native = false;
+
+            // Wrap ability function to show "Owner's SourcePet" in logs
+            const originalFunction = copiedAbility.abilityFunction;
+            const sourcePetName = sourcePet.name;
+            copiedAbility.abilityFunction = (context) => {
+                const originalName = this.name;
+                const baseName = this.baseName ?? originalName;
+                this.name = `${baseName}'s ${sourcePetName}`;
+                try {
+                    originalFunction(context);
+                } finally {
+                    this.name = originalName;
+                }
+            };
+
             this.addAbility(copiedAbility);
         }
     }
@@ -953,7 +1070,7 @@ export abstract class Pet {
         return this.getAbilities(trigger, abilityType).length > 0;
     }
 
-    hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): boolean {
+    hasTrigger(trigger?: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): boolean {
         return this.getAbilitiesWithTrigger(trigger, abilityType, abilityName).length > 0;
     }
 

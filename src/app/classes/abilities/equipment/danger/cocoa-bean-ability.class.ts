@@ -2,8 +2,8 @@ import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { LogService } from "app/services/log.service";
-import { PetService } from "app/services/pet.service";
-import { EquipmentService } from "app/services/equipment.service";
+import { PetService } from "app/services/pet/pet.service";
+import { EquipmentService } from "app/services/equipment/equipment.service";
 import { InjectorService } from "app/services/injector.service";
 
 export class CocoaBeanAbility extends Ability {

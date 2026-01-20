@@ -1,9 +1,9 @@
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
-import { PetService } from "../../../../services/pet.service";
+import { PetService } from "../../../../services/pet/pet.service";
 import { PteranodonAbility } from "../../../abilities/pets/golden/tier-6/pteranodon-ability.class";
 
 export class Pteranodon extends Pet {

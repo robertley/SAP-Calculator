@@ -1,6 +1,6 @@
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";
-import { PetService } from "../../../../services/pet.service";
+import { PetService } from "../../../../services/pet/pet.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
@@ -31,7 +31,10 @@ export class Abomination extends Pet {
         abominationSwallowedPet3?: string,
         abominationSwallowedPet1Level?: number,
         abominationSwallowedPet2Level?: number,
-        abominationSwallowedPet3Level?: number) {
+        abominationSwallowedPet3Level?: number,
+        abominationSwallowedPet1TimesHurt?: number,
+        abominationSwallowedPet2TimesHurt?: number,
+        abominationSwallowedPet3TimesHurt?: number) {
             super(logService, abilityService, parent);
             this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
             this.abominationSwallowedPet1 = abominationSwallowedPet1;
@@ -40,5 +43,8 @@ export class Abomination extends Pet {
             this.abominationSwallowedPet1Level = abominationSwallowedPet1Level ?? 1;
             this.abominationSwallowedPet2Level = abominationSwallowedPet2Level ?? 1;
             this.abominationSwallowedPet3Level = abominationSwallowedPet3Level ?? 1;
+            this.abominationSwallowedPet1TimesHurt = abominationSwallowedPet1TimesHurt ?? 0;
+            this.abominationSwallowedPet2TimesHurt = abominationSwallowedPet2TimesHurt ?? 0;
+            this.abominationSwallowedPet3TimesHurt = abominationSwallowedPet3TimesHurt ?? 0;
     }
 }

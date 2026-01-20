@@ -25,7 +25,7 @@ export class CashewNutAbility extends Ability {
 
         for (let i = 0; i < this.equipment.multiplier; i++) {
             let targetResp = owner.parent.nearestPetsAhead(2, owner, null, true);
-            let targets = targetResp.pets;
+            let targets = targetResp.pets.filter((pet) => pet?.alive);
             if (targets.length < 2) {
                 return;
             }

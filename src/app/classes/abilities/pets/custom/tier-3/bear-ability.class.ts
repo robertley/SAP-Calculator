@@ -3,7 +3,7 @@ import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { Honey } from "app/classes/equipment/turtle/honey.class";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 
 export class BearAbility extends Ability {
     private logService: LogService;

@@ -1,9 +1,9 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 import { InjectorService } from "app/services/injector.service";
-import { ToyService } from "app/services/toy.service";
+import { ToyService } from "app/services/toy/toy.service";
 import { getRandomInt } from "app/util/helper-functions";
 import { logAbility } from "../../../ability-helpers";
 

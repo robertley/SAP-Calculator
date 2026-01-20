@@ -2,7 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 import { Head } from "../../../../pets/hidden/head.class";
 
 export class HydraAbility extends Ability {
@@ -26,8 +26,8 @@ export class HydraAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let amt = Math.floor(owner.attack / 10);
         for (let i = 0; i < amt; i++) {
@@ -42,6 +42,7 @@ export class HydraAbility extends Ability {
                     player: owner.parent,
                     tiger: tiger,
                     pteranodon: pteranodon,
+                    sourcePet: owner,
                     randomEvent: summonResult.randomEvent
                 });
             }

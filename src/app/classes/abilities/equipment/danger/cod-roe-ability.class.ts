@@ -3,7 +3,7 @@ import { Pet } from "../../../pet.class";
 import { Equipment } from "../../../equipment.class";
 import { Fish } from "../../../pets/turtle/tier-1/fish.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 
 export class CodRoeAbility extends Ability {
     private equipment: Equipment;

@@ -1,5 +1,5 @@
 import { GameAPI } from "../../../interfaces/gameAPI.interface";
-import { ToyService } from "../../../services/toy.service";
+import { ToyService } from "../../../services/toy/toy.service";
 import { Toy } from "../../toy.class";
 
 export class Balloon extends Toy {

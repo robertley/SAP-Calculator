@@ -1,6 +1,6 @@
-import { PetService } from "app/services/pet.service";
+import { PetService } from "app/services/pet/pet.service";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../../services/ability.service";
+import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";
 import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
@@ -12,9 +12,8 @@ export class Parrot extends Pet {
     pack: Pack = 'Turtle';
     attack = 4;
     health = 2;
-    copyPet: Pet;
     initAbilities(): void {
-        this.addAbility(new ParrotAbility(this, this.logService));
+        this.addAbility(new ParrotAbility(this, this.logService, this.petService));
         super.initAbilities();
     }
     constructor(protected logService: LogService,

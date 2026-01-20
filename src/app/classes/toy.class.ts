@@ -1,6 +1,6 @@
 import { GameAPI } from "../interfaces/gameAPI.interface";
 import { LogService } from "../services/log.service";
-import { ToyService } from "../services/toy.service";
+import { ToyService } from "../services/toy/toy.service";
 import { Pet } from "./pet.class";
 import { Player } from "./player.class";
 

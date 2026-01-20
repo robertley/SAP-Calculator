@@ -1,7 +1,7 @@
 import { Ability, AbilityContext } from "../../../ability.class";
 import { Pet } from "../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability.service";
+import { AbilityService } from "app/services/ability/ability.service";
 import { GiantEyesDog } from "../../../pets/hidden/giant-eyes-dog.class";
 
 export class TinderBoxAbility extends Ability {

@@ -1,17 +1,78 @@
-import { clone, cloneDeep, shuffle, sum } from "lodash";
 import { Pet } from "./pet.class";
 import { LogService } from "../services/log.service";
-import { getOpponent, getRandomInt } from "../util/helper-functions";
-import { AbilityService } from "../services/ability.service";
+import { AbilityService } from "../services/ability/ability.service";
 import { Toy } from "./toy.class";
 import { Equipment } from "./equipment.class";
-import { AbilityEvent } from "../interfaces/ability-event.interface";
-import { Puma } from "./pets/puppy/tier-6/puma.class";
 import { GameService } from "../services/game.service";
-import { GoldenRetriever } from "./pets/hidden/golden-retriever.class";
-import { Onion } from "./equipment/golden/onion.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
-import { AbilityTrigger } from "./ability.class";
+import { getOpponent } from "../util/helper-functions";
+import {
+    alive as playerAlive,
+    checkPetsAlive as checkPetsAliveImpl,
+    createDeathLog as createDeathLogImpl,
+    handleDeath as handleDeathImpl,
+    removeDeadPets as removeDeadPetsImpl,
+    resetJumpedFlags as resetJumpedFlagsImpl,
+    resetPets as resetPetsImpl
+} from "./player/player-lifecycle";
+import {
+    getPetAtPosition as getPetAtPositionImpl,
+    getPetsWithEquipment as getPetsWithEquipmentImpl,
+    getPetsWithoutEquipment as getPetsWithoutEquipmentImpl,
+    getManticoreMult as getManticoreMultImpl
+} from "./player/player-utils";
+import {
+    getAll as getAllImpl,
+    getFurthestUpPet as getFurthestUpPetImpl,
+    getFurthestUpPets as getFurthestUpPetsImpl,
+    getHighestAttackPet as getHighestAttackPetImpl,
+    getHighestAttackPets as getHighestAttackPetsImpl,
+    getHighestHealthPet as getHighestHealthPetImpl,
+    getHighestHealthPets as getHighestHealthPetsImpl,
+    getHighestTierPets as getHighestTierPetsImpl,
+    getLastPet as getLastPetImpl,
+    getLastPets as getLastPetsImpl,
+    getLowestAttackPet as getLowestAttackPetImpl,
+    getLowestAttackPets as getLowestAttackPetsImpl,
+    getLowestHealthPet as getLowestHealthPetImpl,
+    getLowestHealthPets as getLowestHealthPetsImpl,
+    getMiddleFriend as getMiddleFriendImpl,
+    getOppositeEnemyPet as getOppositeEnemyPetImpl,
+    getPetsWithinXSpaces as getPetsWithinXSpacesImpl,
+    getRandomLivingPet as getRandomLivingPetImpl,
+    getRandomLivingPets as getRandomLivingPetsImpl,
+    getRandomPet as getRandomPetImpl,
+    getRandomPets as getRandomPetsImpl,
+    PetRandomResult,
+    getSpecificPet as getSpecificPetImpl,
+    getStrongestPet as getStrongestPetImpl,
+    getThis as getThisImpl,
+    getTierXOrLowerPet as getTierXOrLowerPetImpl,
+    nearestPetsAhead as nearestPetsAheadImpl,
+    nearestPetsBehind as nearestPetsBehindImpl
+} from "./player/player-targeting";
+import {
+    makeRoomForSlot as makeRoomForSlotImpl,
+    onionCheck as onionCheckImpl,
+    pushBackwardFromSlot as pushBackwardFromSlotImpl,
+    pushForwardFromSlot as pushForwardFromSlotImpl,
+    pushPet as pushPetImpl,
+    pushPetToBack as pushPetToBackImpl,
+    pushPetToFront as pushPetToFrontImpl,
+    pushPetsForward as pushPetsForwardImpl
+} from "./player/player-movement";
+import {
+    summonPet as summonPetImpl,
+    summonPetBehind as summonPetBehindImpl,
+    summonPetInFront as summonPetInFrontImpl,
+    transformPet as transformPetImpl
+} from "./player/player-summon";
+import { breakToy as breakToyImpl, setToy as setToyImpl } from "./player/player-toys";
+import {
+    checkGoldenSpawn as checkGoldenSpawnImpl,
+    gainTrumpets as gainTrumpetsImpl,
+    resolveTrumpetGainTarget as resolveTrumpetGainTargetImpl,
+    spendTrumpets as spendTrumpetsImpl
+} from "./player/player-trumpets";
 
 export class Player {
     pet0?: Pet;
@@ -20,22 +81,24 @@ export class Player {
     pet3?: Pet;
     pet4?: Pet;
 
-    private orignalPet0?: Pet;
-    private orignalPet1?: Pet;
-    private orignalPet2?: Pet;
-    private orignalPet3?: Pet;
-    private orignalPet4?: Pet;
+    orignalPet0?: Pet;
+    orignalPet1?: Pet;
+    orignalPet2?: Pet;
+    orignalPet3?: Pet;
+    orignalPet4?: Pet;
 
     pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' | 'Danger' = 'Turtle';
 
-    toy: Toy;
-    brokenToy: Toy;
-    originalToy: Toy;
+    toy: Toy | null = null;
+    brokenToy: Toy | null = null;
+    originalToy: Toy | null = null;
 
     trumpets: number = 0;
     spawnedGoldenRetiever: boolean = false;
     summonedBoatThisBattle: boolean = false;
     public isOpponent: boolean = false;
+    public allPets: boolean = false;
+    public tokenPets: boolean = false;
 
     cannedAilments: string[] = [];
 
@@ -43,45 +106,15 @@ export class Player {
     }
 
     alive(): boolean {
-        return this.petArray.length > 0;
+        return playerAlive(this);
     }
 
     resetPets() {
-        this.pet0 = this.orignalPet0;
-        this.pet0?.resetPet();
-        this.pet1 = this.orignalPet1;
-        this.pet1?.resetPet();
-        this.pet2 = this.orignalPet2;
-        this.pet2?.resetPet();
-        this.pet3 = this.orignalPet3;
-        this.pet3?.resetPet();
-        this.pet4 = this.orignalPet4;
-        this.pet4?.resetPet();
-
-        this.orignalPet0 = this.pet0;
-        this.orignalPet1 = this.pet1;
-        this.orignalPet2 = this.pet2;
-        this.orignalPet3 = this.pet3;
-        this.orignalPet4 = this.pet4;
-
-        this.toy = this.originalToy;
-        if (this.toy) {
-            this.toy.used = false;
-            this.toy.triggers = 0;
-        }
-        this.brokenToy = null
-        this.trumpets = 0;
-        this.spawnedGoldenRetiever = false;
-        this.summonedBoatThisBattle = false;
-        this.cannedAilments = [];
+        resetPetsImpl(this);
     }
 
     resetJumpedFlags() {
-        for (let pet of this.petArray) {
-            if (pet) {
-                pet.jumped = false;
-            }
-        }
+        resetJumpedFlagsImpl(this);
     }
 
     setPet(index: number, pet: Pet, init = false) {
@@ -140,233 +173,52 @@ export class Player {
     }
 
     getPet(index: number) {
-        return this[`pet${index}`];
+        switch (index) {
+            case 0:
+                return this.pet0;
+            case 1:
+                return this.pet1;
+            case 2:
+                return this.pet2;
+            case 3:
+                return this.pet3;
+            case 4:
+                return this.pet4;
+            default:
+                return undefined;
+        }
     }
 
     pushPetsForward() {
-        let array = clone(this.petArray);
-        try {
-            this.setPet(0, array[0]);
-        } catch {
-            this.pet0 = null;
-        }
-        try {
-            this.setPet(1, array[1]);
-        } catch {
-            this.pet1 = null;
-        }
-        try {
-            this.setPet(2, array[2]);
-        } catch {
-            this.pet2 = null;
-        }
-        try {
-            this.setPet(3, array[3]);
-        } catch {
-            this.pet3 = null;
-        }
-        try {
-            this.setPet(4, array[4]);
-        } catch {
-            this.pet4 = null;
-        }
+        pushPetsForwardImpl(this);
     }
 
     //TO DO: This needs fix, might be useless
     onionCheck() {
-        if (this.pet0?.equipment == null) {
-            return;
-        }
-        if (this.pet0.equipment instanceof Onion) {
-            this.pet0.equipment.callback(this.pet0);
-            this.pushPetsForward();
-        }
+        onionCheckImpl(this);
     }
 
     summonPet(spawnPet: Pet, position: number, fly = false, summoner?: Pet): { success: boolean, randomEvent: boolean } {
-        // Handle Silly ailment randomization
-        if (summoner && this.hasSilly(summoner)) {
-            // Randomly choose team (50% chance each)
-            let targetTeam = Math.random() < 0.5 ? this : this.opponent;
-            // Randomly choose position (0-4) without checking availability
-            let randomPosition = getRandomInt(0, 4);
-
-            spawnPet.parent = targetTeam;
-
-            let result = targetTeam.summonPet(spawnPet, randomPosition, fly, undefined);
-            return { success: result.success, randomEvent: true };
-        }
-        if (position < 0 || position > 4) {
-            if (!fly) {
-                this.logService.createLog({
-                    message: `No room to spawn ${spawnPet.name}!`,
-                    type: 'ability',
-                    player: this
-                })
-            }
-            return { success: false, randomEvent: false };
-        }
-
-        if (this.petArray.length == 5) {
-            if (!fly) {
-                this.logService.createLog({
-                    message: `No room to spawn ${spawnPet.name}!`,
-                    type: 'ability',
-                    player: this
-                })
-            }
-            return { success: false, randomEvent: false };
-        }
-        let isPlayer = this == this.gameService.gameApi.player;
-        if (isPlayer) {
-            this.gameService.gameApi.playerSummonedAmount++;
-        } else {
-            this.gameService.gameApi.opponentSummonedAmount++;
-        }
-        if (position == 0) {
-            if (this.pet0 != null) {
-                this.makeRoomForSlot(0)
-            }
-            this.setPet(0, spawnPet);
-        }
-        if (position == 1) {
-            if (this.pet1 != null) {
-                this.makeRoomForSlot(1)
-            }
-            this.setPet(1, spawnPet);
-        }
-        if (position == 2) {
-            if (this.pet2 != null) {
-                this.makeRoomForSlot(2)
-            }
-            this.setPet(2, spawnPet);
-        }
-        if (position == 3) {
-            if (this.pet3 != null) {
-                this.makeRoomForSlot(3)
-            }
-            this.setPet(3, spawnPet);
-        }
-        if (position == 4) {
-            if (this.pet4 != null) {
-                this.makeRoomForSlot(4)
-            }
-            this.setPet(4, spawnPet);
-        }
-        this.abilityService.triggerSummonEvents(spawnPet);
-
-        return { success: true, randomEvent: false };
+        return summonPetImpl(this, spawnPet, position, fly, summoner, this.logService, this.abilityService, this.gameService);
     }
 
     transformPet(originalPet: Pet, newPet: Pet): void {
-        // Make sure transforms happen on the pet's actual team (important when Silly retargets to opponents)
-        const targetPlayer = originalPet?.parent ?? this;
-
-        // Adopt the new pet onto the target team if it was created for a different parent
-        if (newPet.parent !== targetPlayer) {
-            newPet.parent = targetPlayer;
-        }
-
-        targetPlayer.setPet(originalPet.position, newPet);
-        const isPlayer = targetPlayer === this.gameService.gameApi.player;
-        if (isPlayer) {
-            this.gameService.gameApi.playerTransformationAmount++;
-        } else {
-            this.gameService.gameApi.opponentTransformationAmount++;
-        }
-        // Set transformation flags for ability execution tracking
-        originalPet.transformed = true;
-        originalPet.transformedInto = newPet;
-        newPet.applyEquipment(newPet.equipment);
-        targetPlayer.abilityService.triggerTransformEvents(originalPet)
+        transformPetImpl(this, originalPet, newPet, this.abilityService, this.gameService);
     }
     /** 
      *@returns if able to make space
     */
     pushForwardFromSlot(slot: number) {
-        let slotWithSpace = null;
-        // isSpaceAhead
-        let isSpaceAhead = false;
-        if (slot > 0) {
-            if (this.pet0 == null) {
-                isSpaceAhead = true;
-                slotWithSpace = 0;
-            }
-        }
-        if (slot > 1) {
-            if (this.pet1 == null) {
-                isSpaceAhead = true;
-                slotWithSpace = 1;
-            }
-        }
-        if (slot > 2) {
-            if (this.pet2 == null) {
-                isSpaceAhead = true;
-                slotWithSpace = 2;
-            }
-        }
-        if (slot > 3) {
-            if (this.pet3 == null) {
-                isSpaceAhead = true;
-                slotWithSpace = 3;
-            }
-        }
-        if (isSpaceAhead) {
-            for (let i = slotWithSpace; i < slot; i++) {
-                this[`pet${i}`] = this[`pet${i + 1}`];
-            }
-            return true;
-        }
-        return false;
+        return pushForwardFromSlotImpl(this, slot);
     }
     /**
      * @returns if able to make space
      */
     pushBackwardFromSlot(slot: number) {
-        let slotWithSpace = null;
-        let isSpaceBehind = false;
-        if (slot < 4) {
-            if (this.pet4 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 4;
-            }
-        }
-        if (slot < 3) {
-            if (this.pet3 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 3;
-            }
-        }
-        if (slot < 2) {
-            if (this.pet2 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 2;
-            }
-        }
-        if (slot < 1) {
-            if (this.pet1 == null) {
-                isSpaceBehind = true;
-                slotWithSpace = 1;
-            }
-        }
-        if (isSpaceBehind) {
-            for (let i = slotWithSpace; i > slot; i--) {
-                this[`pet${i}`] = this[`pet${i - 1}`];
-            }
-            return true;
-        }
-        return false;
+        return pushBackwardFromSlotImpl(this, slot);
     }
     makeRoomForSlot(slot: number) {
-        if (this.petArray.length == 5) {
-            console.warn("No room to Make Room") // should never happen
-            return;
-        }
-        if (this.pushForwardFromSlot(slot)) {
-            return;
-        } else {
-            this.pushBackwardFromSlot(slot)
-        }
+        makeRoomForSlotImpl(this, slot);
     }
 
     get petArray(): Pet[] {
@@ -396,65 +248,19 @@ export class Player {
     }
 
     handleDeath(pet: Pet) {
-        pet.seenDead = true;
-        pet.setFaintEventIfPresent();
-        this.createDeathLog(pet);
+        handleDeathImpl(pet, this.logService);
     }
 
     checkPetsAlive() {
-        if (this.pet0 && !this.pet0.alive && !this.pet0.seenDead) {
-            this.handleDeath(this.pet0)
-            // this.pet0 = null;
-        }
-        if (this.pet1 && !this.pet1.alive && !this.pet1.seenDead) {
-            this.handleDeath(this.pet1)
-            // this.pet1 = null;
-        }
-        if (this.pet2 && !this.pet2.alive && !this.pet2.seenDead) {
-            this.handleDeath(this.pet2)
-            // this.pet2 = null;
-        }
-        if (this.pet3 && !this.pet3.alive && !this.pet3.seenDead) {
-            this.handleDeath(this.pet3)
-            // this.pet3 = null;
-        }
-        if (this.pet4 && !this.pet4.alive && !this.pet4.seenDead) {
-            this.handleDeath(this.pet4)
-            // this.pet4 = null;
-        }
+        checkPetsAliveImpl(this, this.logService);
     }
 
     removeDeadPets(): boolean {
-        let petRemoved = false;
-
-        // Map pets to their slots for cleaner iteration
-        const petSlots = [
-            { pet: this.pet0, index: 0 },
-            { pet: this.pet1, index: 1 },
-            { pet: this.pet2, index: 2 },
-            { pet: this.pet3, index: 3 },
-            { pet: this.pet4, index: 4 }
-        ];
-
-        for (const slot of petSlots) {
-            if (slot.pet && !slot.pet.alive) {
-                slot.pet.removed = true;
-                this.abilityService.triggerAfterFaintEvents(slot.pet);
-                // Set the pet property to null using the index
-                this[`pet${slot.index}`] = null;
-                petRemoved = true;
-            }
-        }
-
-        return petRemoved;
+        return removeDeadPetsImpl(this, this.abilityService);
     }
 
     createDeathLog(pet: Pet) {
-        this.logService.createLog({
-            message: `${pet.name} fainted.`,
-            type: "death",
-            player: pet.parent
-        })
+        createDeathLogImpl(pet, this.logService);
     }
 
     /**
@@ -463,78 +269,8 @@ export class Player {
      * @param excludePet pet we want to exclude from being chosen
      * @returns Pet or null
      */
-    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, notFiftyFifty?: boolean, callingPet?: Pet, includeOpponent?: boolean): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - get random pet from both teams, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        // Normal behavior
-        let pets: Pet[] = [];
-        if (includeOpponent) {
-            pets = [
-                ...this.petArray,
-                ...this.opponent.petArray
-            ]
-        } else {
-            pets = this.petArray;
-        }
-
-        if (donut && blueberry) {
-            let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => { !excludePets?.includes(pet) });
-            let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => { !excludePets?.includes(pet) });
-            if (donutPets.length > 0 || blueberryPets.length > 0) {
-                pets = [
-                    ...donutPets,
-                    ...blueberryPets
-                ]
-            }
-        }
-        else if (donut) {
-            let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => { !excludePets?.includes(pet) });
-            if (donutPets.length > 0) {
-                pets = donutPets;
-            }
-            if (notFiftyFifty) {
-                pets = pets.filter((pet) => {
-                    return pet.health != 50 || pet.attack != 50 || pet.hasTrigger(undefined, 'Pet', 'BehemothAbility') || pet.hasTrigger(undefined, 'Pet', 'GiantTortoiseAbility');
-                });
-
-                if (pets.length == 0) {
-                    pets = this.petArray;
-                }
-            }
-        }
-        else if (blueberry) {
-            let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => { !excludePets?.includes(pet) });
-            if (blueberryPets.length > 0) {
-                pets = blueberryPets;
-            }
-        }
-
-        pets = pets.filter((pet) => {
-            let keep = true;
-            if (excludePets)
-                keep = !excludePets.includes(pet);
-            return keep && pet.health > 0;
-        });
-
-        if (notFiftyFifty) {
-            let beforeFilterPets = clone(pets);
-            pets = pets.filter((pet) => {
-                return pet.health != 50 || pet.attack != 50;
-            });
-            if (pets.length == 0) {
-                pets = beforeFilterPets;
-            }
-        }
-
-        if (pets.length == 0) {
-            return { pet: null, random: false };
-        }
-        let index = getRandomInt(0, pets.length - 1);
-        return { pet: pets[index], random: pets.length > 1 };
+    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: boolean, notFiftyFifty?: boolean, callingPet?: Pet, includeOpponent?: boolean): PetRandomResult {
+        return getRandomPetImpl(this, excludePets, donut, blueberry, notFiftyFifty, callingPet, includeOpponent);
     }
 
     /**
@@ -545,28 +281,8 @@ export class Player {
      * @param blueberry fine blueberry pets first
      * @returns pet array
      */
-    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: Boolean, callingPet?: Pet, includeOpponent?: boolean): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - get random pets from both teams, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(amt);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        // Normal behavior
-        let pets = [];
-        excludePets = excludePets ?? [];
-        let random = true;
-        for (let i = 0; i < amt; i++) {
-            let petResp = this.getRandomPet(excludePets, donut, blueberry, null, callingPet, includeOpponent);
-            random = petResp.random;
-            if (petResp.pet == null) {
-                break;
-            }
-            excludePets.push(petResp.pet);
-            pets.push(petResp.pet);
-        }
-
-        return { pets: pets, random: random };
+    getRandomPets(amt: number, excludePets?: Pet[], donut?: boolean, blueberry?: boolean, callingPet?: Pet, includeOpponent?: boolean): { pets: Pet[], random: boolean } {
+        return getRandomPetsImpl(this, amt, excludePets, donut, blueberry, callingPet, includeOpponent);
     }
 
     /**
@@ -576,48 +292,7 @@ export class Player {
      * @returns Array of random living pets from both teams
      */
     getRandomLivingPets(amt: number): { pets: Pet[], random: boolean } {
-        let pets = [];
-        let excludePets: Pet[] = [];
-
-        // Build the candidate pool the same way getRandomLivingPet does so we can signal randomness correctly
-        const getCandidatePool = (excludes: Pet[]) => {
-            let candidates = [...this.petArray, ...this.opponent.petArray];
-
-            let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => !excludes?.includes(pet));
-            let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => !excludes?.includes(pet));
-            let opponentDonutPets = this.opponent.getPetsWithEquipment('Donut').filter((pet) => !excludes?.includes(pet));
-            let opponentBlueberryPets = this.opponent.getPetsWithEquipment('Blueberry').filter((pet) => !excludes?.includes(pet));
-
-            if (donutPets.length > 0 || blueberryPets.length > 0 || opponentDonutPets.length > 0 || opponentBlueberryPets.length > 0) {
-                candidates = [
-                    ...donutPets,
-                    ...blueberryPets,
-                    ...opponentDonutPets,
-                    ...opponentBlueberryPets
-                ];
-            }
-
-            return candidates.filter((pet) => {
-                let keep = true;
-                if (excludes)
-                    keep = !excludes.includes(pet);
-                return keep && pet.health > 0;
-            });
-        };
-
-        const initialCandidateCount = getCandidatePool(excludePets).length;
-
-        for (let i = 0; i < amt; i++) {
-            let petResp = this.getRandomLivingPet(excludePets);
-            if (petResp.pet == null) {
-                break;
-            }
-            excludePets.push(petResp.pet);
-            pets.push(petResp.pet);
-        }
-
-        // Mark random when the eligible pool had more options than what was returned
-        return { pets: pets, random: initialCandidateCount > pets.length };
+        return getRandomLivingPetsImpl(this, amt);
     }
 
     /**
@@ -627,97 +302,26 @@ export class Player {
      * @returns Array of all living pets with random boolean
      */
     getAll(includeOpponent: boolean, callingPet?: Pet, excludeSelf?: boolean): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return all living pets from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let allLivingPets = [...this.petArray, ...this.opponent.petArray].filter(p => p.alive);
-            return { pets: allLivingPets, random: false };
-        }
-
-        // Normal behavior
-        let pets = [];
-        if (includeOpponent) {
-            pets = [...this.petArray, ...this.opponent.petArray];
-        } else {
-            pets = [...this.petArray];
-        }
-        if (excludeSelf) {
-            pets = pets.filter((pet) => pet != callingPet)
-        }
-        // Filter to living pets only
-        pets = pets.filter((pet) => pet.alive);
-
-        return { pets: pets, random: false };
+        return getAllImpl(this, includeOpponent, callingPet, excludeSelf);
     }
 
     getPetsWithEquipment(equipmentName: string): Pet[] {
-        let pets = [];
-        for (let pet of this.petArray) {
-            if (!pet.alive) {
-                continue;
-            }
-            if (equipmentName == 'perk') {
-                if (pet.equipment && !pet.equipment.equipmentClass?.startsWith("ailment")) {
-                    pets.push(pet);
-                }
-            }
-            else if (pet.equipment?.name == equipmentName) {
-                pets.push(pet);
-            }
-        }
-        return pets;
+        return getPetsWithEquipmentImpl(this, equipmentName);
     }
     getPetsWithoutEquipment(equipmentName: string): Pet[] {
-        let pets = [];
-        for (let pet of this.petArray) {
-            if (!pet.alive) {
-                continue;
-            }
-            if (equipmentName == 'Perk') {
-                if (!pet.equipment || pet.equipment.name.startsWith("ailment")) {
-                    pets.push(pet);
-                }
-            } else {
-                if (!pet.equipment || pet.equipment.name != equipmentName) {
-                    pets.push(pet);
-                }
-            }
-        }
-        return pets;
+        return getPetsWithoutEquipmentImpl(this, equipmentName);
     }
 
-    getPetAtPosition(position: number): Pet {
-        for (let pet of this.petArray) {
-            if (pet.position == position) {
-                return pet;
-            }
-        }
-        return null;
+    getPetAtPosition(position: number): Pet | null {
+        return getPetAtPositionImpl(this, position);
     }
 
-    getMiddleFriend(callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        let pet = this.getPet(2);
-        return { pet: pet, random: false };
+    getMiddleFriend(callingPet?: Pet): PetRandomResult {
+        return getMiddleFriendImpl(this, callingPet);
     }
 
-    getLastPet(excludePets?: Pet[], callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        for (let pet of [...this.petArray].reverse()) {
-            if (pet.alive && (!excludePets || !excludePets.includes(pet))) {
-                return { pet: pet, random: false };
-            }
-        }
-        return { pet: null, random: false };
+    getLastPet(excludePets?: Pet[], callingPet?: Pet): PetRandomResult {
+        return getLastPetImpl(this, excludePets, callingPet);
     }
 
     /**
@@ -728,23 +332,7 @@ export class Player {
      * @returns Array of pets from back positions
      */
     getLastPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Reverse to get pets from back positions first (position 4, 3, 2, 1, 0)
-        let reversedPets = [...availablePets].reverse();
-        let targets = reversedPets.slice(0, count);
-
-        return { pets: targets, random: false };
+        return getLastPetsImpl(this, count, excludePets, callingPet);
     }
 
     /**
@@ -753,42 +341,8 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getHighestHealthPet(excludePet?: Pet, callingPet?: Pet): {
-        pet: Pet,
-        random: boolean
-    } {
-        // Check for Silly ailment - return random living pet, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-        let targets = this.petArray.filter((pet) => { return pet != excludePet && pet.alive });
-        if (targets.length == 0) {
-            return { pet: null, random: false };
-        }
-        let highestHealthPets: Pet[];
-        for (let i in this.petArray) {
-            let index = +i;
-            let pet = this.petArray[index];
-            if (pet == excludePet) {
-                continue;
-            }
-            if (highestHealthPets == null) {
-                highestHealthPets = [pet];
-                continue;
-            }
-            if (pet.health == highestHealthPets[0].health) {
-                highestHealthPets.push(pet);
-                continue;
-            }
-            if (pet.health > highestHealthPets[0].health) {
-                highestHealthPets = [pet];
-            }
-        }
-        return {
-            pet: highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)],
-            random: highestHealthPets.length > 1
-        }
+    getHighestHealthPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
+        return getHighestHealthPetImpl(this, excludePet, callingPet);
     }
 
     /**
@@ -797,98 +351,16 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getHighestAttackPet(excludePet?: Pet, callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-        let highestAttackPets: Pet[];
-        for (let i in this.petArray) {
-            let index = +i;
-            let pet = this.petArray[index];
-            if (pet == excludePet) {
-                continue;
-            }
-            if (!pet.alive) {
-                continue;
-            }
-            if (highestAttackPets == null) {
-                highestAttackPets = [pet];
-                continue;
-            }
-            if (pet.attack == highestAttackPets[0].attack) {
-                highestAttackPets.push(pet);
-                continue;
-            }
-            if (pet.attack > highestAttackPets[0].attack) {
-                highestAttackPets = [pet];
-            }
-        }
-        let pet = highestAttackPets == null ? null : highestAttackPets[getRandomInt(0, highestAttackPets.length - 1)];
-
-        return {
-            pet: pet,
-            random: pet == null ? false : highestAttackPets.length > 1
-        };
+    getHighestAttackPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
+        return getHighestAttackPetImpl(this, excludePet, callingPet);
     }
 
     getHighestAttackPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Shuffle first, then sort by attack (highest first)
-        let shuffledPets = shuffle(availablePets);
-        shuffledPets.sort((a, b) => b.attack - a.attack);
-        let targets = shuffledPets.slice(0, count);
-        // Check if the (count+1)th pet has the same attack as the count-th pet
-        let isRandom = false;
-        if (targets.length === count && shuffledPets.length > count) {
-            let lastSelectedAttack = targets[count - 1].attack;
-            let nextPetAttack = shuffledPets[count].attack;
-            if (lastSelectedAttack === nextPetAttack) {
-                isRandom = true;
-            }
-        }
-        return { pets: targets, random: isRandom };
+        return getHighestAttackPetsImpl(this, count, excludePets, callingPet);
     }
 
     getLowestAttackPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Shuffle first, then sort by attack (lowest first)
-        let shuffledPets = shuffle(availablePets);
-        shuffledPets.sort((a, b) => a.attack - b.attack);
-        let targets = shuffledPets.slice(0, count);
-        // Check if the (count+1)th pet has the same attack as the count-th pet
-        let isRandom = false;
-        if (targets.length === count && shuffledPets.length > count) {
-            let lastSelectedAttack = targets[count - 1].attack;
-            let nextPetAttack = shuffledPets[count].attack;
-            if (lastSelectedAttack === nextPetAttack) {
-                isRandom = true;
-            }
-        }
-        return { pets: targets, random: isRandom };
+        return getLowestAttackPetsImpl(this, count, excludePets, callingPet);
     }
 
     /**
@@ -897,40 +369,8 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getLowestAttackPet(excludePet?: Pet, callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet, ignoring exclusions
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-        let lowestAttackPets: Pet[];
-        for (let i in this.petArray) {
-            let index = +i;
-            let pet = this.petArray[index];
-            if (pet == excludePet) {
-                continue;
-            }
-            if (!pet.alive) {
-                continue;
-            }
-            if (lowestAttackPets == null) {
-                lowestAttackPets = [pet];
-                continue;
-            }
-            if (pet.attack == lowestAttackPets[0].attack) {
-                lowestAttackPets.push(pet);
-                continue;
-            }
-            if (pet.attack < lowestAttackPets[0].attack) {
-                lowestAttackPets = [pet];
-            }
-        }
-        let pet = lowestAttackPets == null ? null : lowestAttackPets[getRandomInt(0, lowestAttackPets.length - 1)];
-
-        return {
-            pet: pet,
-            random: pet == null ? false : lowestAttackPets.length > 1
-        };
+    getLowestAttackPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
+        return getLowestAttackPetImpl(this, excludePet, callingPet);
     }
 
     /**
@@ -939,40 +379,8 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getLowestHealthPet(excludePet?: Pet, callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet, ignoring exclusions  
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-        let lowestHealthPets: Pet[];
-        for (let i in this.petArray) {
-            let index = +i;
-            let pet = this.petArray[index];
-            if (pet == excludePet) {
-                continue;
-            }
-            if (!pet.alive) {
-                continue;
-            }
-            if (lowestHealthPets == null) {
-                lowestHealthPets = [pet];
-                continue;
-            }
-            if (pet.health == lowestHealthPets[0].health) {
-                lowestHealthPets.push(pet);
-                continue;
-            }
-            if (pet.health < lowestHealthPets[0].health) {
-                lowestHealthPets = [pet];
-            }
-        }
-        let pet = lowestHealthPets == null ? null : lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
-
-        return {
-            pet: pet,
-            random: pet == null ? false : lowestHealthPets.length > 1
-        };
+    getLowestHealthPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
+        return getLowestHealthPetImpl(this, excludePet, callingPet);
     }
 
     /**
@@ -983,35 +391,7 @@ export class Player {
      * @returns Array of pets sorted by health (lowest first)
      */
     getLowestHealthPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Shuffle first, then sort by health (lowest first)
-        let shuffledPets = shuffle(availablePets);
-        shuffledPets.sort((a, b) => a.health - b.health);
-
-        let targets = shuffledPets.slice(0, count);
-
-        // Check if the (count+1)th pet has the same health as the count-th pet
-        let isRandom = false;
-        if (targets.length === count && shuffledPets.length > count) {
-            let lastSelectedHealth = targets[count - 1].health;
-            let nextPetHealth = shuffledPets[count].health;
-            if (lastSelectedHealth === nextPetHealth) {
-                isRandom = true;
-            }
-        }
-
-        return { pets: targets, random: isRandom };
+        return getLowestHealthPetsImpl(this, count, excludePets, callingPet);
     }
 
     /**
@@ -1022,35 +402,7 @@ export class Player {
      * @returns Array of pets sorted by health (highest first)
      */
     getHighestHealthPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Shuffle first, then sort by health (highest first)
-        let shuffledPets = shuffle(availablePets);
-        shuffledPets.sort((a, b) => b.health - a.health);
-
-        let targets = shuffledPets.slice(0, count);
-
-        // Check if the (count+1)th pet has the same health as the count-th pet
-        let isRandom = false;
-        if (targets.length === count && shuffledPets.length > count) {
-            let lastSelectedHealth = targets[count - 1].health;
-            let nextPetHealth = shuffledPets[count].health;
-            if (lastSelectedHealth === nextPetHealth) {
-                isRandom = true;
-            }
-        }
-
-        return { pets: targets, random: isRandom };
+        return getHighestHealthPetsImpl(this, count, excludePets, callingPet);
     }
 
     /**
@@ -1061,35 +413,7 @@ export class Player {
      * @returns Array of pets sorted by tier (highest first)
      */
     getHighestTierPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count)
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Shuffle first, then sort by tier (highest first)
-        let shuffledPets = shuffle(availablePets);
-        shuffledPets.sort((a, b) => b.tier - a.tier);
-
-        let targets = shuffledPets.slice(0, count);
-
-        // Check if the (count+1)th pet has the same tier as the count-th pet
-        let isRandom = false;
-        if (targets.length === count && shuffledPets.length > count) {
-            let lastSelectedTier = targets[count - 1].tier;
-            let nextPetTier = shuffledPets[count].tier;
-            if (lastSelectedTier === nextPetTier) {
-                isRandom = true;
-            }
-        }
-
-        return { pets: targets, random: isRandom };
+        return getHighestTierPetsImpl(this, count, excludePets, callingPet);
     }
     /**
  * Returns a pet that's tier X or lower
@@ -1098,24 +422,10 @@ export class Player {
  * @param callingPet Pet calling this method (for Silly ailment detection)
  * @returns Pet object with random boolean
  */
-    getTierXOrLowerPet(tier: number, excludePets?: Pet[], callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petResp = this.getRandomLivingPet();
-            return { pet: petResp.pet, random: petResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && pet.tier <= tier && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pet: null, random: false };
-        }
-
-        let index = getRandomInt(0, availablePets.length - 1);
-        return { pet: availablePets[index], random: availablePets.length > 1 };
-
+    getTierXOrLowerPet(tier: number, excludePets?: Pet[], callingPet?: Pet): PetRandomResult {
+        return getTierXOrLowerPetImpl(this, tier, excludePets, callingPet);
     }
-    get furthestUpPet(): Pet {
+    get furthestUpPet(): Pet | null {
         for (let pet of this.petArray) {
             if (pet.alive) {
                 return pet;
@@ -1123,23 +433,8 @@ export class Player {
         }
         return null;
     }
-    getFurthestUpPet(callingPet?: Pet, excludePets?: Pet[]): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet, ignoring all positioning
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        for (let pet of this.petArray) {
-            if (pet.alive) {
-                // Check if we should exclude specific pets
-                if (excludePets && excludePets.includes(pet)) {
-                    continue;
-                }
-                return { pet: pet, random: false };
-            }
-        }
-        return { pet: null, random: false };
+    getFurthestUpPet(callingPet?: Pet, excludePets?: Pet[]): PetRandomResult {
+        return getFurthestUpPetImpl(this, callingPet, excludePets);
     }
 
     /**
@@ -1150,22 +445,7 @@ export class Player {
      * @returns Object with pets array and random boolean (for Silly compatibility)
      */
     getFurthestUpPets(count: number, excludePets?: Pet[], callingPet?: Pet): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(count);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        let availablePets = [...this.petArray].filter((pet) => pet.alive && (!excludePets || !excludePets.includes(pet)));
-
-        if (availablePets.length === 0) {
-            return { pets: [], random: false };
-        }
-
-        // Get pets from front positions first (position 0, 1, 2, 3, 4)
-        let targets = availablePets.slice(0, count);
-
-        return { pets: targets, random: false };
+        return getFurthestUpPetsImpl(this, count, excludePets, callingPet);
     }
 
     /**
@@ -1176,18 +456,7 @@ export class Player {
      * @returns Array of pets behind the calling pet
      */
     nearestPetsBehind(amt: number, callingPet: Pet, excludePets?: Pet[]): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(amt);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        // Use the existing getPetsBehind method on the calling pet, but we need to handle excludePets differently
-        // For now, get all pets behind and then filter out excluded pets
-        let allPetsBehind = callingPet.getPetsBehind(amt * 2); // Get more than needed
-        let filteredPets = allPetsBehind.filter(pet => !excludePets || !excludePets.includes(pet));
-        let pets = filteredPets.slice(0, amt); // Take only the amount we need
-        return { pets: pets, random: false };
+        return nearestPetsBehindImpl(this, amt, callingPet, excludePets);
     }
 
     /**
@@ -1195,25 +464,11 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns The calling pet or random pet if Silly is active
      */
-    getThis(callingPet: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        // Normal behavior - return the calling pet
-        return { pet: callingPet, random: false };
+    getThis(callingPet: Pet): PetRandomResult {
+        return getThisImpl(this, callingPet);
     }
-    getSpecificPet(callingPet: Pet, target: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        // Normal behavior - return the calling pet
-        return { pet: target, random: false };
+    getSpecificPet(callingPet: Pet, target: Pet): PetRandomResult {
+        return getSpecificPetImpl(this, callingPet, target);
     }
     /**
      * Returns pets ahead of the calling pet, starting from the position right ahead of it
@@ -1224,149 +479,31 @@ export class Player {
      * @returns Array of pets ahead of the calling pet
      */
     nearestPetsAhead(amt: number, callingPet: Pet, excludePets?: Pet[], includeOpponent?: boolean): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(amt);
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        // Use the existing getPetsAhead method on the calling pet, but we need to handle excludePets differently
-        // For now, get all pets ahead and then filter out excluded pets
-        let allPetsAhead = callingPet.getPetsAhead(amt * 2, includeOpponent || false); // Get more than needed
-        let filteredPets = allPetsAhead.filter(pet => !excludePets || !excludePets.includes(pet));
-        let pets = filteredPets.slice(0, amt); // Take only the amount we need
-        return { pets: pets, random: false };
+        return nearestPetsAheadImpl(this, amt, callingPet, excludePets, includeOpponent);
     }
 
     breakToy(respawn = false) {
-        if (this.toy == null) {
-            return;
-        }
-        this.brokenToy = this.toy;
-        this.logService.createLog({
-            message: `${this.toy.name} broke!`,
-            type: 'ability',
-            player: this,
-            randomEvent: false
-        })
-        if (this.toy.onBreak != null) {
-            let events: AbilityEvent[] = [{
-                callback: this.toy.onBreak.bind(this.toy),
-                priority: 99
-            }];
-            let toyLevel = this.toy.level;
-            for (let pet of this.petArray) {
-                if (pet instanceof Puma) {
-                    let callback = () => {
-                        this.toy.level = pet.level;
-                        this.toy.onBreak(this.gameService.gameApi, true);
-                        this.toy.level = toyLevel;
-                    }
-                    events.push({
-                        callback: callback,
-                        priority: pet.attack,
-                    });
-                }
-            }
-            events.sort((a, b) => {
-                return a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0;
-            });
-            for (let event of events) {
-                event.callback(this.gameService.gameApi);
-            }
-        }
-        this.toy = null;
-        if (respawn) {
-            this.setToy(this.brokenToy);
-        }
+        breakToyImpl(this, respawn, this.logService, this.abilityService, this.gameService);
     }
 
     setToy(toy: Toy) {
-        this.toy = toy;
-        // do on toy abilities
+        setToyImpl(this, toy);
     }
 
-    getStrongestPet(callingPet?: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        let strongestPets: Pet[] = [];
-        let maxStrength = -1;
-        let pets = shuffle(this.petArray.filter(p => p.alive));
-
-        for (let pet of pets) {
-            let strength = pet.attack + pet.health;
-            if (strength > maxStrength) {
-                maxStrength = strength;
-                strongestPets = [pet];
-            } else if (strength === maxStrength) {
-                strongestPets.push(pet);
-            }
-        }
-
-        if (strongestPets.length === 0) {
-            return { pet: null, random: false };
-        }
-
-        let selectedPet = strongestPets[getRandomInt(0, strongestPets.length - 1)];
-        return {
-            pet: selectedPet,
-            random: strongestPets.length > 1
-        };
+    getStrongestPet(callingPet?: Pet): PetRandomResult {
+        return getStrongestPetImpl(this, callingPet);
     }
 
     pushPetToFront(pet: Pet, jump = false) {
-        this.pushPet(pet, 4, jump);
+        pushPetToFrontImpl(this, pet, jump, this.logService, this.abilityService);
     }
 
     pushPetToBack(pet: Pet) {
-        this.pushPet(pet, -4);
+        pushPetToBackImpl(this, pet, this.logService, this.abilityService);
     }
 
     pushPet(pet: Pet, spaces = 1, jump?: boolean) {
-        if (pet?.equipment?.name === 'Brussels Sprout') {
-            this.logService.createLog({
-                message: `${pet.name} blocked being pushed. (Brussels Sprout)`,
-                type: 'equipment',
-                player: pet.parent
-            });
-            pet.removePerk();
-            return;
-        }
-
-        let player = pet.parent;
-        let position = pet.position;
-        player[`pet${position}`] = null;
-        let destination;
-        if (spaces > 0) {
-            destination = Math.max(position - spaces, 0);
-            if (this.getPet(destination) != null) {
-                if (!this.pushForwardFromSlot(destination)) {
-                    this.pushBackwardFromSlot(destination);
-                }
-            }
-            this.setPet(destination, pet);
-        }
-        if (spaces < 0) {
-            destination = Math.min(position - spaces, 4);
-            if (this.getPet(destination) != null) {
-                if (!this.pushBackwardFromSlot(destination)) {
-                    this.pushForwardFromSlot(destination);
-                }
-            }
-            this.setPet(destination, pet);
-        }
-
-        if (jump) {
-            pet.jumped = true;
-            this.abilityService.triggerJumpEvents(pet);
-        } else {
-            this.abilityService.triggerPushedEvents(pet);
-        }
-
+        pushPetImpl(this, pet, spaces, jump, this.logService, this.abilityService);
     }
 
     get opponent() {
@@ -1375,165 +512,31 @@ export class Player {
     }
 
     resolveTrumpetGainTarget(callingPet?: Pet): { player: Player, random: boolean } {
-        if (callingPet && this.hasSilly(callingPet)) {
-            // Silly randomly chooses which team gains trumpets
-            let targetPlayer = Math.random() < 0.5 ? this : this.opponent;
-            return { player: targetPlayer, random: true };
-        }
-        return { player: this, random: false };
+        return resolveTrumpetGainTargetImpl(this, callingPet);
     }
 
     gainTrumpets(amt: number, pet: Pet | Equipment, pteranodon?: boolean, pantherMultiplier?: number, cherry?: boolean, randomEvent?: boolean) {
-        this.trumpets = Math.min(50, this.trumpets += amt);
-        const opponentGain = pet instanceof Pet && pet.parent != null && pet.parent !== this;
-        let message = opponentGain
-            ? `${pet.name} gave opponent ${amt} trumpets. (${this.trumpets})`
-            : `${pet.name} gained ${amt} trumpets. (${this.trumpets})`;
-        if (cherry) {
-            message += ` (Cherry)`;
-        }
-        this.logService.createLog({
-            message: message,
-            type: 'trumpets',
-            player: this,
-            pteranodon: pteranodon,
-            pantherMultiplier: pantherMultiplier,
-            randomEvent: randomEvent
-        })
+        gainTrumpetsImpl(this, amt, pet, this.logService, pteranodon, pantherMultiplier, cherry, randomEvent);
     }
 
     spendTrumpets(amt: number, pet: Pet, pteranodon?: boolean) {
-        this.trumpets = Math.max(0, this.trumpets -= amt);
-        this.logService.createLog({
-            message: `${pet.name} spent ${amt} trumpets. (${this.trumpets})`,
-            type: 'trumpets',
-            player: this,
-            pteranodon: pteranodon
-        })
+        spendTrumpetsImpl(this, amt, pet, this.logService, pteranodon);
     }
 
     checkGoldenSpawn() {
-        if (this.spawnedGoldenRetiever) {
-            return;
-        }
-        if (this.petArray.length > 1 || this.trumpets == 0) {
-            return;
-        }
-        this.abilityService.setgoldenRetrieverSummonsEvent({
-            priority: 0,
-            callback: (trigger: AbilityTrigger, gameApi: GameAPI, triggerPet?: Pet) => {
-                let goldenRetriever = new GoldenRetriever(this.logService, this.abilityService, this, this.trumpets, this.trumpets);
-
-                let name = this == gameApi.player ? 'Player' : 'Opponent';
-
-                this.logService.createLog(
-                    {
-                        message: `${name} spawned Golden Retriever (${goldenRetriever.attack}/${goldenRetriever.health})`,
-                        type: "ability",
-                        player: this
-                    }
-                )
-
-                this.summonPet(goldenRetriever, 0);
-                this.trumpets = 0;
-            }
-        })
-
-        this.spawnedGoldenRetiever = true;
+        checkGoldenSpawnImpl(this, this.abilityService, this.logService, this.gameService);
     }
 
     getManticoreMult(): number[] {
-        let mult = [];
-        for (let pet of this.petArray) {
-            if (pet.hasTrigger(undefined, 'Pet', 'ManticoreAbility')) {
-                // let petBehind = pet.petBehind();
-                // if (petBehind == null) {
-                //     mult.push(pet.level + 1);
-                // }
-                // if (petBehind != null && petBehind.name == 'Tiger') {
-                //     mult.push(petBehind.level + 1);
-                // }
-                for (let ability of pet.abilityList) {
-                    if (ability.name == 'ManticoreAbility') {
-                        mult.push(ability.level);
-                    }
-                }
-            }
-        }
-
-        return mult;
+        return getManticoreMultImpl(this);
     }
 
     summonPetInFront(summoner: Pet, summonedPet: Pet): { success: boolean, randomEvent: boolean } {
-        if (this.petArray.length == 5) {
-            this.logService.createLog({
-                message: `No room to spawn ${summonedPet.name}!`,
-                type: 'ability',
-                player: this
-            })
-            return { success: false, randomEvent: false };
-        }
-
-        // Check if ANY space exists in front (positions 0 to summoner.position-1)
-        let hasSpaceInFront = false;
-        for (let pos = 0; pos < summoner.position; pos++) {
-            if (this.getPet(pos) == null) {
-                hasSpaceInFront = true;
-                break;
-            }
-        }
-
-        if (hasSpaceInFront) {
-            // Let makeRoomForSlot handle the positioning
-            return this.summonPet(summonedPet, summoner.position - 1, false, summoner);
-        } else {
-            // No space in front, move summoner backward and summon in old spot
-            let oldPosition = summoner.position;
-            let destination = Math.min(oldPosition + 1, 4);
-            summoner.parent[`pet${oldPosition}`] = null;
-            if (this.getPet(destination) != null) {
-                this.pushBackwardFromSlot(destination);
-            }
-            this.setPet(destination, summoner);
-            return this.summonPet(summonedPet, oldPosition, false, summoner);
-        }
+        return summonPetInFrontImpl(this, summoner, summonedPet, this.logService, this.abilityService, this.gameService);
     }
 
     summonPetBehind(summoner: Pet, summonedPet: Pet): { success: boolean, randomEvent: boolean } {
-        if (this.petArray.length == 5) {
-            this.logService.createLog({
-                message: `No room to spawn ${summonedPet.name}!`,
-                type: 'ability',
-                player: this
-            })
-            return { success: false, randomEvent: false };
-        }
-
-        // Normal behavior - try to summon behind
-        // Check if ANY space exists in front (positions 0 to summoner.position-1)
-        let hasSpaceInFront = false;
-        for (let pos = 0; pos < summoner.position; pos++) {
-            if (this.getPet(pos) == null) {
-                hasSpaceInFront = true;
-                break;
-            }
-        }
-
-        if (hasSpaceInFront) {
-            // Move summoner forward and summon behind
-            let player = summoner.parent;
-            let position = summoner.position;
-            player[`pet${position}`] = null;
-            let destination = Math.max(position - 1, 0);
-            if (this.getPet(destination) != null) {
-                this.pushForwardFromSlot(destination);
-            }
-            this.setPet(destination, summoner);
-            return this.summonPet(summonedPet, summoner.position + 1, false, summoner);
-        } else {
-            // No space in front, summon directly behind (let makeRoomForSlot handle it)
-            return this.summonPet(summonedPet, summoner.position + 1, false, summoner);
-        }
+        return summonPetBehindImpl(this, summoner, summonedPet, this.logService, this.abilityService, this.gameService);
     }
 
     /**
@@ -1544,36 +547,7 @@ export class Player {
      * @returns Object with pets array and random boolean (for Silly compatibility)
      */
     getPetsWithinXSpaces(callingPet: Pet, range: number): { pets: Pet[], random: boolean } {
-        // Check for Silly ailment - return random living pets from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let petsResp = this.getRandomLivingPets(range * 2); // Rough estimate of expected targets
-            return { pets: petsResp.pets, random: petsResp.random };
-        }
-
-        const callingPosition = callingPet.savedPosition;
-        const targets: Pet[] = [];
-
-        for (const pet of this.petArray) {
-            if (pet.alive && pet !== callingPet) {
-                const distance = Math.abs(pet.position - callingPosition);
-                if (distance > 0 && distance <= range) {
-                    targets.push(pet);
-                }
-            }
-        }
-
-        // Check opponent pets (enemy team)
-        for (const pet of this.opponent.petArray) {
-            if (pet.alive) {
-                const distance = callingPosition + pet.position + 1;
-                if (distance <= range) {
-                    targets.push(pet);
-                }
-            }
-        }
-
-
-        return { pets: targets, random: false };
+        return getPetsWithinXSpacesImpl(this, callingPet, range);
     }
 
     /**
@@ -1581,75 +555,12 @@ export class Player {
      * @param callingPet Pet making the call (for position and Silly detection)
      * @returns Object with pet and random boolean (for Silly compatibility)
      */
-    getOppositeEnemyPet(callingPet: Pet): { pet: Pet, random: boolean } {
-        // Check for Silly ailment - return random living pet from both teams
-        if (callingPet && this.hasSilly(callingPet)) {
-            let randomPetResp = this.getRandomLivingPet();
-            return { pet: randomPetResp.pet, random: randomPetResp.random };
-        }
-
-        let position = callingPet.position;
-
-        // Try exact position first
-        let target = this.opponent.getPetAtPosition(position);
-        if (target && target.alive) {
-            return { pet: target, random: false };
-        }
-
-        // Search nearby positions up to distance 4
-        for (let distance = 1; distance <= 4; distance++) {
-            // Try position + distance
-            target = this.opponent.getPetAtPosition(position + distance);
-            if (target && target.alive) {
-                return { pet: target, random: false };
-            }
-
-            // Try position - distance  
-            target = this.opponent.getPetAtPosition(position - distance);
-            if (target && target.alive) {
-                return { pet: target, random: false };
-            }
-        }
-
-        return { pet: null, random: false };
+    getOppositeEnemyPet(callingPet: Pet): PetRandomResult {
+        return getOppositeEnemyPetImpl(this, callingPet);
     }
 
-    private hasSilly(pet: Pet): boolean {
-        return pet.equipment?.name === 'Silly';
-    }
-
-    getRandomLivingPet(excludePets?: Pet[]): { pet: Pet, random: boolean } {
-        // Always get pets from both teams (no Silly check, always include opponent)
-        let pets = [...this.petArray, ...this.opponent.petArray];
-
-        // Handle donut/blueberry prioritization like getRandomPet
-        let donutPets = this.getPetsWithEquipment('Donut').filter((pet) => !excludePets?.includes(pet));
-        let blueberryPets = this.getPetsWithEquipment('Blueberry').filter((pet) => !excludePets?.includes(pet));
-        let opponentDonutPets = this.opponent.getPetsWithEquipment('Donut').filter((pet) => !excludePets?.includes(pet));
-        let opponentBlueberryPets = this.opponent.getPetsWithEquipment('Blueberry').filter((pet) => !excludePets?.includes(pet));
-
-        if (donutPets.length > 0 || blueberryPets.length > 0 || opponentDonutPets.length > 0 || opponentBlueberryPets.length > 0) {
-            pets = [
-                ...donutPets,
-                ...blueberryPets,
-                ...opponentDonutPets,
-                ...opponentBlueberryPets
-            ];
-        }
-
-        // Filter to living pets and exclude specified pets (same as getRandomPet)
-        pets = pets.filter((pet) => {
-            let keep = true;
-            if (excludePets)
-                keep = !excludePets.includes(pet);
-            return keep && pet.health > 0;
-        });
-
-        if (pets.length == 0) {
-            return { pet: null, random: false };
-        }
-        let index = getRandomInt(0, pets.length - 1);
-        return { pet: pets[index], random: pets.length > 1 };
+    getRandomLivingPet(excludePets?: Pet[]): PetRandomResult {
+        return getRandomLivingPetImpl(this, excludePets);
     }
 
 }
