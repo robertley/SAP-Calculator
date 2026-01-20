@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormGroup, FormControl, AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, AbstractControl, FormArray, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet/pet.service';
@@ -17,7 +17,7 @@ import { ItemSelectionDialogComponent } from '../item-selection-dialog/item-sele
 @Component({
   selector: 'app-pet-selector',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, ReactiveFormsModule, ItemSelectionDialogComponent],
+  imports: [CommonModule, NgOptimizedImage, ReactiveFormsModule, FormsModule, ItemSelectionDialogComponent],
   templateUrl: './pet-selector.component.html',
   styleUrls: ['./pet-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

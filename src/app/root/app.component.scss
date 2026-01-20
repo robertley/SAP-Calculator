@@ -1,4 +1,4 @@
-@import './app.shared';
+@use './app.shared' as *;
 
 .player-stat,
 .opponent-stat {

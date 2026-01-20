@@ -27,12 +27,7 @@
       "assets/*": ["assets/*"],
       "src/*": ["*"]
     },
-    "types": [],
-    "typeRoots": [
-      "../node_modules/@types",
-      "../node_modules/@angular",
-      "../node_modules/@angular/material"
-    ]
+    "types": []
   },
   "files": [
     "./typings.d.ts"

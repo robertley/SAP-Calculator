@@ -1,5 +1,5 @@
 <div class="card p-3">
-    <div class="row form-group" [formGroup]="formGroup">
+    <form class="row form-group" [formGroup]="formGroup">
         <div class="col-12 d-flex level-bar-numbers mb-1">
             <span class="remove-exp spacer" *ngIf="showRemoveExp()"></span>
             <div class="level-slots-labels d-flex flex-grow-1">
@@ -348,7 +348,7 @@
                     [max]="attackHealthMax">
             </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType" [showAllPets]="allPets || forceShowAllPets"

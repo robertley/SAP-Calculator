@@ -1,7 +1,6 @@
 
 import { describe, it, expect } from 'vitest';
-import { runSimulation } from '../../simulation/simulate';
-import { SimulationConfig } from './interfaces/simulation-config.interface';
+import { runSimulation, SimulationConfig } from '../../simulation/simulate';
 
 describe('Foam Sword Chameleon Interaction', () => {
     it('should result in a draw', () => {
