@@ -1,11 +1,11 @@
-import { clone, shuffle } from "lodash";
+import { clone, shuffle } from "lodash-es";
 import type { Player } from "../player.class";
 import { Pet } from "../pet.class";
 import { getRandomInt } from "../../util/helper-functions";
 import { getPetAtPosition, getPetsWithEquipment, hasSilly } from "./player-utils";
 
 export interface PetRandomResult {
-    pet: Pet;
+    pet: Pet | null;
     random: boolean;
 }
 
@@ -106,7 +106,7 @@ export const getRandomPets = (
     const localExclude = excludePets ?? [];
     let random = true;
     for (let i = 0; i < amt; i++) {
-        const petResp = getRandomPet(player, localExclude, donut, blueberry, null, callingPet, includeOpponent);
+        const petResp = getRandomPet(player, localExclude, donut, blueberry, undefined, callingPet, includeOpponent);
         random = petResp.random;
         if (petResp.pet == null) {
             break;
@@ -187,7 +187,7 @@ export const getMiddleFriend = (player: Player, callingPet?: Pet): PetRandomResu
         return getRandomLivingPet(player);
     }
 
-    const pet = player.getPet(2);
+    const pet = player.getPet(2) ?? null;
     return { pet, random: false };
 };
 
@@ -229,14 +229,14 @@ export const getHighestHealthPet = (player: Player, excludePet?: Pet, callingPet
     if (targets.length === 0) {
         return { pet: null, random: false };
     }
-    let highestHealthPets: Pet[];
+    let highestHealthPets: Pet[] = [];
     for (let i in player.petArray) {
         const index = +i;
         const pet = player.petArray[index];
         if (pet === excludePet) {
             continue;
         }
-        if (highestHealthPets == null) {
+        if (highestHealthPets.length === 0) {
             highestHealthPets = [pet];
             continue;
         }
@@ -248,6 +248,9 @@ export const getHighestHealthPet = (player: Player, excludePet?: Pet, callingPet
             highestHealthPets = [pet];
         }
     }
+    if (highestHealthPets.length === 0) {
+        return { pet: null, random: false };
+    }
     return {
         pet: highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)],
         random: highestHealthPets.length > 1
@@ -258,7 +261,7 @@ export const getHighestAttackPet = (player: Player, excludePet?: Pet, callingPet
     if (callingPet && hasSilly(callingPet)) {
         return getRandomLivingPet(player);
     }
-    let highestAttackPets: Pet[];
+    let highestAttackPets: Pet[] = [];
     for (let i in player.petArray) {
         const index = +i;
         const pet = player.petArray[index];
@@ -268,7 +271,7 @@ export const getHighestAttackPet = (player: Player, excludePet?: Pet, callingPet
         if (!pet.alive) {
             continue;
         }
-        if (highestAttackPets == null) {
+        if (highestAttackPets.length === 0) {
             highestAttackPets = [pet];
             continue;
         }
@@ -280,7 +283,7 @@ export const getHighestAttackPet = (player: Player, excludePet?: Pet, callingPet
             highestAttackPets = [pet];
         }
     }
-    const pet = highestAttackPets == null ? null : highestAttackPets[getRandomInt(0, highestAttackPets.length - 1)];
+    const pet = highestAttackPets.length === 0 ? null : highestAttackPets[getRandomInt(0, highestAttackPets.length - 1)];
 
     return {
         pet,
@@ -342,7 +345,7 @@ export const getLowestAttackPet = (player: Player, excludePet?: Pet, callingPet?
     if (callingPet && hasSilly(callingPet)) {
         return getRandomLivingPet(player);
     }
-    let lowestAttackPets: Pet[];
+    let lowestAttackPets: Pet[] = [];
     for (let i in player.petArray) {
         const index = +i;
         const pet = player.petArray[index];
@@ -352,7 +355,7 @@ export const getLowestAttackPet = (player: Player, excludePet?: Pet, callingPet?
         if (!pet.alive) {
             continue;
         }
-        if (lowestAttackPets == null) {
+        if (lowestAttackPets.length === 0) {
             lowestAttackPets = [pet];
             continue;
         }
@@ -364,7 +367,7 @@ export const getLowestAttackPet = (player: Player, excludePet?: Pet, callingPet?
             lowestAttackPets = [pet];
         }
     }
-    const pet = lowestAttackPets == null ? null : lowestAttackPets[getRandomInt(0, lowestAttackPets.length - 1)];
+    const pet = lowestAttackPets.length === 0 ? null : lowestAttackPets[getRandomInt(0, lowestAttackPets.length - 1)];
 
     return {
         pet,
@@ -376,7 +379,7 @@ export const getLowestHealthPet = (player: Player, excludePet?: Pet, callingPet?
     if (callingPet && hasSilly(callingPet)) {
         return getRandomLivingPet(player);
     }
-    let lowestHealthPets: Pet[];
+    let lowestHealthPets: Pet[] = [];
     for (let i in player.petArray) {
         const index = +i;
         const pet = player.petArray[index];
@@ -386,7 +389,7 @@ export const getLowestHealthPet = (player: Player, excludePet?: Pet, callingPet?
         if (!pet.alive) {
             continue;
         }
-        if (lowestHealthPets == null) {
+        if (lowestHealthPets.length === 0) {
             lowestHealthPets = [pet];
             continue;
         }
@@ -398,7 +401,7 @@ export const getLowestHealthPet = (player: Player, excludePet?: Pet, callingPet?
             lowestHealthPets = [pet];
         }
     }
-    const pet = lowestHealthPets == null ? null : lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
+    const pet = lowestHealthPets.length === 0 ? null : lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
 
     return {
         pet,

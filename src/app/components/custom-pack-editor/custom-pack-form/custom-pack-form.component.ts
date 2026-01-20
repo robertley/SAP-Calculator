@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { remove } from 'lodash';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { remove } from 'lodash-es';
 import { getPetIconPath } from '../../../util/asset-utils';
 
 @Component({
   selector: 'app-custom-pack-form',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './custom-pack-form.component.html',
   styleUrls: ['./custom-pack-form.component.scss']
 })

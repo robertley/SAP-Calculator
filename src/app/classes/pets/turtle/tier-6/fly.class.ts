@@ -5,7 +5,7 @@ import { Equipment } from "../../../equipment.class";
 import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { ZombieFly } from "../../hidden/zombie-fly.class";
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { FlyAbility } from "../../../abilities/pets/turtle/tier-6/fly-ability.class";
 
 export class Fly extends Pet {

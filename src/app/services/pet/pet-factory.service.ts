@@ -18,12 +18,12 @@ import {
 
 export interface PetForm {
     name: string;
-    attack: number;
-    health: number;
-    mana: number;
+    attack?: number | null;
+    health?: number | null;
+    mana?: number | null;
     triggersConsumed?: number;
     exp: number;
-    equipment: Equipment;
+    equipment?: Equipment | null;
     belugaSwallowedPet?: string;
     sarcasticFringeheadSwallowedPet?: string;
     abominationSwallowedPet1?: string;

@@ -24,14 +24,14 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "config/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "src/app/art",
+                "input": "src/assets/art",
                 "output": "assets/art"
               }
             ],
@@ -78,10 +78,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "sap-calculator:build:production"
+              "buildTarget": "sap-calculator:build:production"
             },
             "development": {
-              "browserTarget": "sap-calculator:build:development"
+              "buildTarget": "sap-calculator:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -89,23 +89,23 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "sap-calculator:build"
+            "buildTarget": "sap-calculator:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
+            "main": "src/test/test.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
+            "tsConfig": "config/tsconfig.spec.json",
+            "karmaConfig": "config/karma.conf.js",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "src/app/art",
+                "input": "src/assets/art",
                 "output": "assets/art"
               }
             ],
@@ -119,5 +119,7 @@
       }
     }
   },
-  "defaultProject": "sap-calculator"
+  "cli": {
+    "analytics": "b225503f-8f6f-4bce-8d64-fe06acbbe85a"
+  }
 }

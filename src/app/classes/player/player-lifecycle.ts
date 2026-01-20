@@ -109,7 +109,23 @@ export const removeDeadPets = (player: Player, abilityService: AbilityService): 
         if (slot.pet && !slot.pet.alive) {
             slot.pet.removed = true;
             abilityService.triggerAfterFaintEvents(slot.pet);
-            player[`pet${slot.index}`] = null;
+            switch (slot.index) {
+                case 0:
+                    player.pet0 = undefined;
+                    break;
+                case 1:
+                    player.pet1 = undefined;
+                    break;
+                case 2:
+                    player.pet2 = undefined;
+                    break;
+                case 3:
+                    player.pet3 = undefined;
+                    break;
+                case 4:
+                    player.pet4 = undefined;
+                    break;
+            }
             petRemoved = true;
         }
     }

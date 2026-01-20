@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { LogService } from "../../../../services/log.service";
 import { Pack, Pet } from "../../../pet.class";

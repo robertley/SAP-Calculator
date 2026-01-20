@@ -1,8 +1,8 @@
 import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
+import { GameAPI } from "../../../../../interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
-import { PetService } from "app/services/pet/pet.service";
+import { LogService } from "../../../../../services/log.service";
+import { PetService } from "../../../../../services/pet/pet.service";
 
 export class AbominationAbility extends Ability {
     private logService: LogService;
@@ -57,21 +57,29 @@ export class AbominationAbility extends Ability {
             executedSwallowedPets = swallowedPets.slice(0, 1);
         }
         for (let swallowedPet of executedSwallowedPets) {
+            if (!swallowedPet.name) {
+                continue;
+            }
+            const swallowedName = swallowedPet.name;
             let copyPet = this.petService.createPet({
-                attack: null,
-                health: null,
-                mana: null,
+                attack: 0,
+                health: 0,
+                mana: 0,
                 equipment: null,
-                name: swallowedPet.name,
+                name: swallowedName,
                 exp: 0,
                 timesHurt: swallowedPet.timesHurt ?? 0,
-                belugaSwallowedPet: swallowedPet.name === 'Beluga Whale'
-                    ? swallowedPet.belugaSwallowedPet ?? null
-                    : null
+                belugaSwallowedPet: swallowedName === 'Beluga Whale'
+                    ? swallowedPet.belugaSwallowedPet ?? undefined
+                    : undefined
             }, owner.parent);
 
             if (!copyPet) {
                 continue;
+            }
+
+            if (swallowedName === 'Beluga Whale') {
+                owner.belugaSwallowedPet = swallowedPet.belugaSwallowedPet ?? null;
             }
 
             owner.removeAbility('AbominationAbility')

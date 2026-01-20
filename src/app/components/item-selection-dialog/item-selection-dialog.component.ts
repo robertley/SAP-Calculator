@@ -1,19 +1,25 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { PetService } from '../../services/pet/pet.service';
 import { EquipmentService } from '../../services/equipment/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
-import { getPetIconPath, getEquipmentIconPath, getToyIconPath, getPackIconPath } from '../../util/asset-utils';
+import { getPetAbilityText, getPetIconPath, getEquipmentAbilityText, getEquipmentIconPath, getToyAbilityText, getToyIconPath, getPackIconPath } from '../../util/asset-utils';
 import { PACK_NAMES } from '../../util/pack-names';
 import { ToyService } from '../../services/toy/toy.service';
-import { AbstractControl, FormArray } from '@angular/forms';
+import { AbstractControl, FormArray, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { TooltipPositionDirective } from './tooltip-position.directive';
+import { TeamPreset } from '../../services/team-presets.service';
 
-export type SelectionType = 'pet' | 'equipment' | 'swallowed-pet' | 'toy' | 'hard-toy' | 'pack';
+export type SelectionType = 'pet' | 'equipment' | 'swallowed-pet' | 'toy' | 'hard-toy' | 'pack' | 'team';
 
 @Component({
     selector: 'app-item-selection-dialog',
+    standalone: true,
+    imports: [CommonModule, NgOptimizedImage, FormsModule, TooltipPositionDirective],
     templateUrl: './item-selection-dialog.component.html',
-    styleUrls: ['./item-selection-dialog.component.scss']
+    styleUrls: ['./item-selection-dialog.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
     @Input() type: SelectionType = 'pet';
@@ -21,6 +27,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
     @Input() showTokenPets = false;
     @Input() showAllPets = false;
     @Input() customPacks: AbstractControl | null = null;
+    @Input() savedTeams: TeamPreset[] = [];
 
     @Output() select = new EventEmitter<any>();
     @Output() close = new EventEmitter<void>();
@@ -33,6 +40,18 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
     filteredItems: any[] = [];
 
     private customPacksSubscription: Subscription | null = null;
+
+    trackByPack(index: number, pack: string): string {
+        return pack ?? String(index);
+    }
+
+    trackByItem(index: number, item: any): string | number {
+        return item?.id ?? item?.name ?? index;
+    }
+
+    trackByIndex(index: number): number {
+        return index;
+    }
 
     constructor(
         private petService: PetService,
@@ -67,7 +86,8 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
     }
 
     private updateAvailablePacks() {
-        this.availablePacks = ['All', ...PACK_NAMES.filter(p => p !== 'Custom'), 'Tokens'];
+        // Include Custom so registry-only custom pets can be filtered in the picker
+        this.availablePacks = ['All', ...PACK_NAMES, 'Tokens'];
 
         // Add custom packs to availablePacks
         if (this.customPacks && this.customPacks instanceof FormArray) {
@@ -92,6 +112,8 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
             this.loadToys(true);
         } else if (this.type === 'pack') {
             this.loadPacks();
+        } else if (this.type === 'team') {
+            this.loadTeams();
         }
         this.filterItems();
     }
@@ -101,7 +123,6 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
 
         // Base Pack Pets
         for (const pack of PACK_NAMES) {
-            if (pack === 'Custom') continue;
             const packPets = this.petService.basePackPetsByName[pack];
             if (packPets) {
                 for (const [tier, pets] of packPets) {
@@ -112,6 +133,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
                             tier,
                             pack,
                             icon: getPetIconPath(name),
+                            tooltip: getPetAbilityText(name),
                             type: 'pet',
                             category: `Tier ${tier}`
                         });
@@ -137,6 +159,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
                                 tier,
                                 pack: packName,
                                 icon: getPetIconPath(name),
+                                tooltip: getPetAbilityText(name),
                                 type: 'pet',
                                 category: `Tier ${tier}`
                             });
@@ -162,18 +185,23 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
                 tier: 0,
                 pack: 'Tokens',
                 icon: getPetIconPath(name),
+                tooltip: getPetAbilityText(name),
                 type: 'pet',
                 category: 'Tokens'
             });
         });
 
         // De-duplicate
-        const seen = new Set();
-        this.items = allPets.filter(item => {
-            const duplicate = seen.has(item.name);
-            seen.add(item.name);
-            return !duplicate;
+        const byName = new Map<string, any>();
+        allPets.forEach(item => {
+            const existing = byName.get(item.name);
+            // Prefer token classification if duplicates exist
+            const isToken = item.pack === 'Tokens';
+            if (!existing || isToken) {
+                byName.set(item.name, item);
+            }
         });
+        this.items = Array.from(byName.values());
     }
 
     loadEquipment() {
@@ -187,6 +215,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
                 displayName: equip.name,
                 tier: equip.tier || 0,
                 icon: getEquipmentIconPath(equip.name),
+                tooltip: getEquipmentAbilityText(equip.name),
                 type: 'equipment',
                 category: equip.tier ? `Tier ${equip.tier}` : 'Perks',
                 item: equip
@@ -199,6 +228,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
                 displayName: ailment.name,
                 tier: 0,
                 icon: getEquipmentIconPath(ailment.name, true),
+                tooltip: getEquipmentAbilityText(ailment.name),
                 type: 'ailment',
                 category: 'Ailments',
                 item: ailment
@@ -206,6 +236,25 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
         });
 
         this.items = allEquip;
+    }
+
+    private loadTeams() {
+        const teams = Array.isArray(this.savedTeams) ? this.savedTeams : [];
+        this.items = teams.map(team => {
+            const petNames = (team.pets || []).map(p => p?.name).filter(Boolean).slice(0, 5);
+            const icons = petNames.map(name => getPetIconPath(name));
+            return {
+                id: team.id,
+                name: team.name,
+                displayName: team.name,
+                tier: 0,
+                icon: null,
+                icons,
+                tooltip: petNames.join(', '),
+                type: 'team',
+                category: 'Saved Teams'
+            };
+        });
     }
 
     loadToys(isHard: boolean) {
@@ -219,6 +268,7 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
                     displayName: name,
                     tier,
                     icon: getToyIconPath(name),
+                    tooltip: getToyAbilityText(name),
                     type: isHard ? 'hard-toy' : 'toy',
                     category: `Tier ${tier}`,
                     item: name
@@ -316,6 +366,10 @@ export class ItemSelectionDialogComponent implements OnInit, OnDestroy {
     }
 
     onItemClick(item: any) {
+        if (this.type === 'team') {
+            this.select.emit(item.id || item.name);
+            return;
+        }
         if (this.type === 'pet' || this.type === 'swallowed-pet' || this.type === 'pack') {
             this.select.emit(item.name);
         } else {

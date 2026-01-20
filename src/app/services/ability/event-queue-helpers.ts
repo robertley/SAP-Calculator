@@ -41,6 +41,7 @@ export function processEventQueue(
     gameApi: GameAPI,
     options?: {
         shuffle?: boolean;
+        filter?: (event: AbilityEvent) => boolean;
         onExecute?: (event: AbilityEvent) => void;
     }
 ): void {
@@ -52,13 +53,23 @@ export function processEventQueue(
         }
     }
 
-    sortEventsByPriority(queue);
+    // Queue order is maintained by AbilityQueueService.addEventToQueue.
+    // Do not re-sort here or we will lose trigger priority ordering.
 
+    const remaining: AbilityEvent[] = [];
     while (queue.length > 0) {
         const event = queue.shift()!;
+        if (options?.filter && !options.filter(event)) {
+            remaining.push(event);
+            continue;
+        }
         if (options?.onExecute) {
             options.onExecute(event);
         }
         executeEventWithTransform(event, gameApi);
+    }
+
+    if (remaining.length > 0) {
+        queue.push(...remaining);
     }
 }

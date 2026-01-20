@@ -16,7 +16,7 @@ import { LovePotion } from "../classes/equipment/unicorn/love-potion.class";
 import { GingerbreadMan } from "../classes/equipment/unicorn/gingerbread-man.class";
 import { HealthPotion } from "../classes/equipment/unicorn/health-potion.class";
 import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 
 export class SimulationRunner {
     protected player: Player;

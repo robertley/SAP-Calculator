@@ -10,14 +10,15 @@ import { ToyEventService } from "./toy-event.service";
 import { AbilityQueueService } from "./ability-queue.service";
 import { AttackEventService } from "./attack-event.service";
 import { FaintEventService } from "./faint-event.service";
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 
 @Injectable({
     providedIn: "root"
 })
 export class AbilityService {
 
-    public gameApi: GameAPI;
+    public gameApi!: GameAPI;
+    private lastLoggedTrigger?: AbilityTrigger;
 
     constructor(
         private gameService: GameService,
@@ -33,6 +34,7 @@ export class AbilityService {
     // Clear the global event queue
     clearGlobalEventQueue() {
         this.abilityQueueService.clearGlobalEventQueue();
+        this.lastLoggedTrigger = undefined;
     }
 
     // Check if global queue has events
@@ -58,7 +60,28 @@ export class AbilityService {
     }
 
     executeEventCallback(event: AbilityEvent) {
+        this.logTriggerHeader(event);
         this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
+        if (!this.hasGlobalEvents) {
+            this.lastLoggedTrigger = undefined;
+        }
+    }
+
+    private logTriggerHeader(event: AbilityEvent) {
+        const trigger = event?.abilityType;
+        if (!trigger) {
+            return;
+        }
+        if (this.lastLoggedTrigger === trigger) {
+            return;
+        }
+        this.lastLoggedTrigger = trigger;
+        const player = event.player ?? event.pet?.parent;
+        this.logService.createLog({
+            message: `${trigger}:`,
+            type: 'ability',
+            player
+        });
     }
 
     simulateFriendDiedCounters(pet: Pet, count: number) {
@@ -130,7 +153,18 @@ export class AbilityService {
     }
 
     executeBeforeAttackEvents() {
-        this.abilityQueueService.processQueue(this.gameService.gameApi);
+        const beforeAttackTriggers = new Set([
+            'BeforeFriendlyAttack',
+            'BeforeThisAttacks',
+            'BeforeFirstAttack',
+            'BeforeFriendAttacks',
+            'BeforeAdjacentFriendAttacked'
+        ]);
+        this.abilityQueueService.processQueue(this.gameService.gameApi, {
+            filter: (event) => beforeAttackTriggers.has(event.abilityType as string),
+            onExecute: (event) => this.logTriggerHeader(event)
+        });
+        this.lastLoggedTrigger = undefined;
     }
 
     // Friend/After attacks events
@@ -307,6 +341,9 @@ export class AbilityService {
     // Transform events handler
     triggerTransformEvents(originalPet: Pet) {
         const transformedPet = originalPet.transformedInto;
+        if (!transformedPet) {
+            return;
+        }
         // Check friends
         for (let pet of this.abilityQueueService.getTeam(transformedPet)) {
             if (pet == transformedPet) {
@@ -378,7 +415,7 @@ export class AbilityService {
                     this.abilityQueueService.getNumberedTriggersForPet(pet, 'FriendHurt')
                 );
             }
-            if (pet == hurtedPet.petBehind(null, true)) {
+            if (pet == hurtedPet.petBehind(undefined, true)) {
                 this.abilityQueueService.triggerAbility(pet, 'FriendAheadHurt', hurtedPet, customParams);
             }
             if (pet == pet.petBehind() || pet.petAhead) {

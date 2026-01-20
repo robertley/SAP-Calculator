@@ -4,15 +4,15 @@
             <span class="remove-exp spacer" *ngIf="showRemoveExp()"></span>
             <div class="level-slots-labels d-flex flex-grow-1">
                 <span class="level-icon">
-                    <img src="/assets/art/Public/Public/Icons/Level_L1.png" alt="Level 1">
+                    <img ngSrc="/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/l1.png" width="18" height="18" loading="lazy" decoding="async" alt="Level 1">
                 </span>
                 <span></span>
                 <span class="level-icon">
-                    <img src="/assets/art/Public/Public/Icons/Level_L2.png" alt="Level 2">
+                    <img ngSrc="/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/l2.png" width="18" height="18" loading="lazy" decoding="async" alt="Level 2">
                 </span>
                 <span></span>
                 <span class="level-icon level-3">
-                    <img src="/assets/art/Public/Public/Icons/Level_L3.png" alt="Level 3">
+                    <img ngSrc="/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/l3.png" width="18" height="18" loading="lazy" decoding="async" alt="Level 3">
                 </span>
             </div>
         </div>
@@ -27,7 +27,7 @@
         <div class="col-12 mb-2">
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                 (click)="openSelectionDialog('pet')">
-                <img *ngIf="petImageSrc" [src]="petImageSrc" class="btn-icon me-2" width="24" height="24">
+                <img *ngIf="petImageSrc" [ngSrc]="petImageSrc" class="btn-icon me-2" width="24" height="24" loading="lazy" decoding="async">
                 <span class="btn-text">{{ formGroup.get('name').value || 'Select Pet' }}</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </button>
@@ -41,20 +41,20 @@
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                 (click)="openSelectionDialog('swallowed-pet')">
                 <img *ngIf="getPetImagePath(formGroup.get('belugaSwallowedPet').value)"
-                    [src]="getPetImagePath(formGroup.get('belugaSwallowedPet').value)" class="btn-icon me-2" width="24"
-                    height="24">
+                    [ngSrc]="getPetImagePath(formGroup.get('belugaSwallowedPet').value)" class="btn-icon me-2" width="24"
+                    height="24" loading="lazy" decoding="async">
                 <span class="btn-text">{{ formGroup.get('belugaSwallowedPet').value || 'Select Pet' }}</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </button>
         </div>
         <div class="col-12 mb-2" *ngIf="pet?.name == 'Abomination'">
-            <div *ngFor="let a of [].constructor(pet.level); index as i">
+            <div *ngFor="let a of [].constructor(pet.level); index as i; trackBy: trackByIndex">
                 <label class="swallowed-label" for="abominationSwallowedPet{{i + 1}}">Swallowed Pet</label>
                 <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                     (click)="openSelectionDialog('swallowed-pet', i+1, 'abomination')">
                     <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1)).value)"
-                        [src]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1)).value)"
-                        class="btn-icon me-2" width="24" height="24">
+                        [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1)).value)"
+                        class="btn-icon me-2" width="24" height="24" loading="lazy" decoding="async">
                     <span class="btn-text">{{ formGroup.get('abominationSwallowedPet' + (i+1)).value || 'Select Pet'
                         }}</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
@@ -64,8 +64,8 @@
                     <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                         (click)="openSelectionDialog('swallowed-pet', i+1, 'abomination-beluga')">
                         <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value)"
-                            [src]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value)"
-                            class="btn-icon me-2" width="24" height="24">
+                            [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value)"
+                            class="btn-icon me-2" width="24" height="24" loading="lazy" decoding="async">
                         <span class="btn-text">{{ formGroup.get('abominationSwallowedPet' + (i+1) + 'BelugaSwallowedPet').value || 'Select Pet' }}</span>
                         <i class="bi bi-chevron-down ms-auto"></i>
                     </button>
@@ -92,8 +92,8 @@
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                 (click)="openSelectionDialog('swallowed-pet')">
                 <img *ngIf="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet').value)"
-                    [src]="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet').value)"
-                    class="btn-icon me-2" width="24" height="24">
+                    [ngSrc]="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet').value)"
+                    class="btn-icon me-2" width="24" height="24" loading="lazy" decoding="async">
                 <span class="btn-text">{{ formGroup.get('sarcasticFringeheadSwallowedPet').value || 'Select Pet'
                     }}</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
@@ -106,9 +106,9 @@
         <div class="col-12 mb-2">
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                 (click)="openSelectionDialog('equipment')">
-                <img *ngIf="equipmentImageSrc" [src]="equipmentImageSrc" class="btn-icon me-2" width="24" height="24">
-                <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [src]="ailmentImageSrc" class="btn-icon me-2"
-                    width="24" height="24">
+                <img *ngIf="equipmentImageSrc" [ngSrc]="equipmentImageSrc" class="btn-icon me-2" width="24" height="24" loading="lazy" decoding="async">
+                <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [ngSrc]="ailmentImageSrc" class="btn-icon me-2"
+                    width="24" height="24" loading="lazy" decoding="async">
                 <span class="btn-text">{{ formGroup.get('equipment').value?.name || 'Select Equipment' }}</span>
                 <i class="bi bi-chevron-down ms-auto"></i>
             </button>
@@ -120,19 +120,19 @@
         </div>
         <div class="col-12 pet-art" *ngIf="petImageSrc && !petImageBroken" [class.equipment-left]="!flipImage"
             [class.equipment-right]="flipImage">
-            <img [src]="petImageSrc" [alt]="formGroup.get('name').value || 'Pet'" [class.flipped]="flipImage"
+            <img [ngSrc]="petImageSrc" width="72" height="72" [alt]="formGroup.get('name').value || 'Pet'" [class.flipped]="flipImage" loading="lazy" decoding="async"
                 (error)="petImageBroken = true">
             <div class="equipment-art" *ngIf="(equipmentImageSrc || ailmentImageSrc) && !equipmentImageBroken">
-                <img *ngIf="equipmentImageSrc" [src]="equipmentImageSrc"
+                <img *ngIf="equipmentImageSrc" [ngSrc]="equipmentImageSrc" width="32" height="32" loading="lazy" decoding="async"
                     [alt]="formGroup.get('equipment').value?.name || 'Equipment'" (error)="equipmentImageBroken = true">
-                <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [src]="ailmentImageSrc"
+                <img *ngIf="!equipmentImageSrc && ailmentImageSrc" [ngSrc]="ailmentImageSrc" width="32" height="32" loading="lazy" decoding="async"
                     [alt]="formGroup.get('equipment').value?.name || 'Ailment'" (error)="equipmentImageBroken = true">
             </div>
             <div class="swallowed-art" *ngIf="swallowedPetImageSrc">
-                <img [src]="swallowedPetImageSrc" alt="Swallowed Pet">
+                <img [ngSrc]="swallowedPetImageSrc" width="32" height="32" loading="lazy" decoding="async" alt="Swallowed Pet">
             </div>
             <div class="swallowed-art swallowed-stack" *ngIf="abominationSwallowedPetImages.length">
-                <img *ngFor="let image of abominationSwallowedPetImages" [src]="image" alt="Swallowed Pet">
+                <img *ngFor="let image of abominationSwallowedPetImages; trackBy: trackByIndex" [ngSrc]="image" width="32" height="32" loading="lazy" decoding="async" alt="Swallowed Pet">
             </div>
         </div>
         <ng-container *ngIf="mana || triggersConsumed">

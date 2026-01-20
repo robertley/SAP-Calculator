@@ -142,7 +142,7 @@ export interface AbilityFunction {
 export class Ability {
     public name?: string;
     public owner: Pet;
-    protected _triggers: AbilityTrigger[];
+    protected _triggers: AbilityTrigger[] = [];
     public get triggers(): AbilityTrigger[] {
         return this._triggers;
     }
@@ -244,7 +244,7 @@ export class Ability {
         }
 
         const tigerPet = tigerPetOverride ?? (this.owner).petBehind(true, true);
-        if (tigerPet && tigerPet.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
+        if (tigerPet && tigerPet.hasTrigger(undefined, undefined, 'TigerAbility') && (tiger == null || tiger == false)) {
             return true;
         }
         return false;
@@ -291,7 +291,7 @@ export class Ability {
         this.currentUses = this.initialCurrentUses;
     }
 
-    copy(newOwner: Pet): Ability {
+    copy(newOwner: Pet): Ability | null {
         return null;
     }
 

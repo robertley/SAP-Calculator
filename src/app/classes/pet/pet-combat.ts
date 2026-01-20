@@ -24,8 +24,8 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
         damage = Math.floor(damage / 2);
     }
 
-    let attackMultiplier = self.equipment?.multiplier;
-    let defenseMultiplier = pet.equipment?.multiplier;
+    let attackMultiplier = self.equipment?.multiplier ?? 1;
+    let defenseMultiplier = pet.equipment?.multiplier ?? 1;
     self.currentTarget = pet;
     let message: string;
     if (jumpAttack) {
@@ -68,9 +68,10 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
     } else {
         dealDamage(self, pet, damage);
         if (attackEquipment != null) {
-            let power: any = Math.abs(attackEquipment.power);
+            const attackPower = attackEquipment.power ?? 0;
+            let power: any = Math.abs(attackPower);
             let sign = '-';
-            if (attackEquipment.power > 0) {
+            if (attackPower > 0) {
                 sign = '+';
             }
             let powerAmt = `${sign}${power}`;
@@ -101,14 +102,15 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
 
             message += ` (${attackEquipment.name} ${powerAmt})`;
 
-            if (attackMultiplier > 1) {
+            if (attackMultiplier > 1 && self.equipment) {
                 message += self.equipment.multiplierMessage;
             }
         }
         if (defenseEquipment != null) {
-            let power: any = Math.abs(defenseEquipment.power);
+            const defensePower = defenseEquipment.power ?? 0;
+            let power: any = Math.abs(defensePower);
             let sign = '-';
-            if (defenseEquipment.power < 0) {
+            if (defensePower < 0) {
                 sign = '+';
             }
             if (defenseEquipment.name === 'Coconut') {
@@ -134,7 +136,7 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
                 message += ` (${defenseEquipment.name} ${sign}${power})`;
             }
 
-            if (defenseMultiplier > 1) {
+            if (defenseMultiplier > 1 && pet.equipment) {
                 message += pet.equipment.multiplierMessage;
             }
             //pet.useDefenseEquipment();
@@ -150,16 +152,16 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
         if (damageResp.nurikabe > 0) {
             message += ` -${damageResp.nurikabe} (Nurikabe)`;
         }
-        if (damageResp.fairyBallReduction > 0) {
+        if ((damageResp.fairyBallReduction ?? 0) > 0) {
             message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
         }
-        if (damageResp.fanMusselReduction > 0) {
+        if ((damageResp.fanMusselReduction ?? 0) > 0) {
             message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
         }
-        if (damageResp.ghostKittenReduction > 0) {
+        if ((damageResp.ghostKittenReduction ?? 0) > 0) {
             message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
         }
-        if (damageResp.mapleSyrupReduction > 0) {
+        if ((damageResp.mapleSyrupReduction ?? 0) > 0) {
             message += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`;
         }
 
@@ -170,7 +172,8 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
             'Icky',
             'Spooked'
         ]
-        let hasAilment = manticoreAilments.includes(pet.equipment?.name);
+        const petEquipName = pet.equipment?.name ?? '';
+        let hasAilment = manticoreAilments.includes(petEquipName);
 
         if (manticoreMult.length > 0 && hasAilment) {
             for (let mult of manticoreMult) {
@@ -186,10 +189,8 @@ export function attackPet(self: Pet, pet: Pet, jumpAttack: boolean = false, powe
             targetPet: pet,
             randomEvent: random
         });
-        let skewerEquipment: Equipment = self.equipment?.equipmentClass == 'skewer' ? self.equipment : null;
-        if (skewerEquipment != null) {
-            skewerEquipment.attackCallback(self, pet);
-        }
+        let skewerEquipment: Equipment | null = self.equipment?.equipmentClass == 'skewer' ? self.equipment : null;
+        skewerEquipment?.attackCallback?.(self, pet);
     }
 
     if (usedSleepy) {
@@ -244,9 +245,10 @@ export function snipePet(
     let message = `${self.name} sniped ${pet.name} for ${damage}.`;
     if (defenseEquipment != null) {
         pet.useDefenseEquipment(true)
-        let power = Math.abs(defenseEquipment.power);
+        const defensePower = defenseEquipment.power ?? 0;
+        let power = Math.abs(defensePower);
         let sign = '-';
-        if (defenseEquipment.power < 0) {
+        if (defensePower < 0) {
             sign = '+';
         }
         if (defenseEquipment.name === 'Coconut') {
@@ -263,16 +265,17 @@ export function snipePet(
         message += defenseEquipment.multiplierMessage;
     }
     if (attackEquipment != null && attackEquipment.equipmentClass == 'attack-snipe') {
-        let power = Math.abs(attackEquipment.power);
+        const attackPower = attackEquipment.power ?? 0;
+        let power = Math.abs(attackPower);
         let sign = '-';
-        if (attackEquipment.power > 0) {
+        if (attackPower > 0) {
             sign = '+';
         }
         message += ` (${attackEquipment.name} ${sign}${power})`;
     }
 
     // Add equipment multiplier message support (like Pandora's Box)
-    if (self.equipment?.multiplier > 1) {
+    if (self.equipment?.multiplier && self.equipment.multiplier > 1) {
         message += self.equipment.multiplierMessage;
     }
 
@@ -306,7 +309,8 @@ export function snipePet(
         'Icky',
         'Spooked'
     ]
-    let hasAilment = manticoreAilments.includes(pet.equipment?.name);
+    const petEquipName = pet.equipment?.name ?? '';
+    let hasAilment = manticoreAilments.includes(petEquipName);
     if (manticoreMult.length > 0 && hasAilment) {
         for (let mult of manticoreMult) {
             message += ` x${mult + 1} (Manticore)`;
@@ -316,13 +320,13 @@ export function snipePet(
     if (damageResp.nurikabe > 0) {
         message += ` -${damageResp.nurikabe} (Nurikabe)`
     }
-    if (damageResp.fairyBallReduction > 0) {
+    if ((damageResp.fairyBallReduction ?? 0) > 0) {
         message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`
     }
-    if (damageResp.fanMusselReduction > 0) {
+    if ((damageResp.fanMusselReduction ?? 0) > 0) {
         message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`
     }
-    if (damageResp.ghostKittenReduction > 0) {
+    if ((damageResp.ghostKittenReduction ?? 0) > 0) {
         message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`
     }
 
@@ -353,8 +357,8 @@ export function calculateDamage(
     power?: number,
     snipe = false
 ): {
-    defenseEquipment: Equipment,
-    attackEquipment: Equipment,
+    defenseEquipment: Equipment | null,
+    attackEquipment: Equipment | null,
     damage: number,
     fortuneCookie: boolean,
     nurikabe: number,
@@ -363,8 +367,8 @@ export function calculateDamage(
     mapleSyrupReduction?: number,
     ghostKittenReduction?: number,
 } {
-    let attackMultiplier = self.equipment?.multiplier;
-    let defenseMultiplier = pet.equipment?.multiplier;
+    let attackMultiplier = self.equipment?.multiplier ?? 1;
+    let defenseMultiplier = pet.equipment?.multiplier ?? 1;
 
     const manticoreDefenseAilments = [
         'Cold',
@@ -380,7 +384,7 @@ export function calculateDamage(
         'Icky'
     ]
 
-    let defenseEquipment: Equipment = pet.equipment?.equipmentClass == 'defense'
+    let defenseEquipment: Equipment | null = pet.equipment?.equipmentClass == 'defense'
         || pet.equipment?.equipmentClass == 'shield'
         || pet.equipment?.equipmentClass == 'ailment-defense'
         || (snipe && pet.equipment?.equipmentClass == 'shield-snipe') ? pet.equipment : null;
@@ -394,21 +398,23 @@ export function calculateDamage(
                 defenseEquipment.power = sparrowLevel * 5;
             }
         } else {
-            if (manticoreDefenseAilments.includes(defenseEquipment?.name)) {
+            const defenseEquipName = defenseEquipment?.name ?? '';
+            if (manticoreDefenseAilments.includes(defenseEquipName)) {
                 for (let mult of manticoreMult) {
                     defenseMultiplier += mult;
                 }
             }
-            defenseEquipment.power = defenseEquipment.originalPower * defenseMultiplier;
+            const basePower = defenseEquipment.originalPower ?? defenseEquipment.power ?? 0;
+            defenseEquipment.power = basePower * defenseMultiplier;
         }
     }
 
-
-    let attackEquipment: Equipment;
+    let attackEquipment: Equipment | null;
     let attackAmt: number;
     if (snipe) {
         attackEquipment = self.equipment?.equipmentClass == 'attack-snipe' ? self.equipment : null;
-        attackAmt = attackEquipment != null ? power + attackEquipment.power : power;
+        const basePower = power ?? 0;
+        attackAmt = basePower + (attackEquipment?.power ?? 0);
         if (defenseEquipment instanceof MapleSyrup) {
             defenseEquipment = null;
         }
@@ -428,13 +434,14 @@ export function calculateDamage(
                 || self.equipment?.equipmentClass == 'ailment-attack' ? self.equipment : null;
         }
         if (attackEquipment != null) {
-
-            if (manticoreAttackAilments.includes(attackEquipment?.name)) {
+            const attackEquipName = attackEquipment?.name ?? '';
+            if (manticoreAttackAilments.includes(attackEquipName)) {
                 for (let mult of manticoreMult) {
                     attackMultiplier += mult;
                 }
             }
-            attackEquipment.power = attackEquipment.originalPower * attackMultiplier;
+            const basePower = attackEquipment.originalPower ?? attackEquipment.power ?? 0;
+            attackEquipment.power = basePower * attackMultiplier;
 
         }
 
@@ -444,11 +451,11 @@ export function calculateDamage(
         }
         //use input power, or pet Attack
         const baseAttack = power != null ? power : petAttack;
-        //0 if equipment is stuff liek salt
-        const equipmentBonus = attackEquipment?.power ? attackEquipment.power : 0;
+        // 0 if equipment is stuff like salt
+        const equipmentBonus = attackEquipment?.power ?? 0;
         attackAmt = baseAttack + equipmentBonus;
     }
-    let defenseAmt = defenseEquipment?.power ? defenseEquipment.power : 0;
+    let defenseAmt = defenseEquipment?.power ?? 0;
 
     // Check for Sparrow enhancement of Strawberries
     let sparrowLevel = pet.getSparrowLevel();
@@ -604,13 +611,13 @@ export function jumpAttack(
 
     let attackPet: Pet;
     if (self.transformed) {
-        attackPet = self.transformedInto
+        attackPet = self.transformedInto ?? self;
     } else {
         attackPet = self;
     }
 
     if (target.transformed) {
-        target = target.transformedInto
+        target = target.transformedInto ?? target;
     }
     // 3. Check if jumping pet is still alive
     if (!attackPet.alive || !target.alive) {

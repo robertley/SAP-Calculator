@@ -1,5 +1,6 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl, FormArray } from '@angular/forms';
+import { Component, Input, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { FormGroup, FormControl, AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet/pet.service';
@@ -8,13 +9,18 @@ import { Equipment } from '../../classes/equipment.class';
 import { cloneEquipment } from '../../util/equipment-utils';
 import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment/equipment-categories';
 import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
 import { getPetIconPath, getEquipmentIconPath, getPetIconFileName } from '../../util/asset-utils';
+import { ItemSelectionDialogComponent } from '../item-selection-dialog/item-selection-dialog.component';
 
 @Component({
   selector: 'app-pet-selector',
+  standalone: true,
+  imports: [CommonModule, NgOptimizedImage, ReactiveFormsModule, ItemSelectionDialogComponent],
   templateUrl: './pet-selector.component.html',
-  styleUrls: ['./pet-selector.component.scss']
+  styleUrls: ['./pet-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PetSelectorComponent implements OnInit, OnDestroy {
 
@@ -93,6 +99,10 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     private petService: PetService,
     private equipmentService: EquipmentService
   ) { }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
 
   ngOnInit(): void {
     this.initSelector();
@@ -208,7 +218,11 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     //   belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
     // })
 
-    this.formGroup.get('name').valueChanges.subscribe((value) => {
+    const inputDebounceMs = 50;
+
+    this.formGroup.get('name').valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe((value) => {
       this.petImageBroken = false;
       if (value == null) {
         this.removePet();
@@ -216,15 +230,23 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       }
       this.substitutePet(true)
     });
-    this.formGroup.get('attack').valueChanges.subscribe(() => {
+    this.formGroup.get('attack').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('attack', 0, 100);
       this.substitutePet(false);
     });
-    this.formGroup.get('health').valueChanges.subscribe(() => {
+    this.formGroup.get('health').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('health', 0, 100);
       this.substitutePet(false);
     });
-    this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('exp').valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe(() => { this.substitutePet(false) });
     const equipmentUsesControl = this.formGroup.get('equipmentUses');
     this.formGroup.get('equipment').valueChanges.subscribe((value) => {
       this.equipmentImageBroken = false;
@@ -237,7 +259,10 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       }
       this.substitutePet(false)
     });
-    this.formGroup.get('equipmentUses')?.valueChanges.subscribe(() => this.substitutePet(false));
+    this.formGroup.get('equipmentUses')?.valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => this.substitutePet(false));
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
     this.formGroup.get('sarcasticFringeheadSwallowedPet')?.valueChanges.subscribe((value) => { this.setSarcasticFringeheadSwallowedPet(value) });
     this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
@@ -252,20 +277,35 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     this.formGroup.get('abominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('mana').valueChanges.subscribe(() => {
+    this.formGroup.get('mana').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('mana', 0, 50);
       this.substitutePet(false);
     });
-    this.formGroup.get('triggersConsumed').valueChanges.subscribe(() => {
+    this.formGroup.get('triggersConsumed').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('triggersConsumed', 0, 10);
       this.substitutePet(false);
     });
-    this.formGroup.get('friendsDiedBeforeBattle')?.valueChanges.subscribe(() => {
+    this.formGroup.get('friendsDiedBeforeBattle')?.valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampFriendsDiedBeforeBattle();
       this.substitutePet(false);
     });
-    this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
-    this.formGroup.get('timesHurt').valueChanges.subscribe((value) => { this.setTimesHurt(value) });
+    this.formGroup.get('battlesFought').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe((value) => { this.setBattlesFought(value) });
+    this.formGroup.get('timesHurt').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe((value) => { this.setTimesHurt(value) });
   }
 
   setExp(amt: number) {

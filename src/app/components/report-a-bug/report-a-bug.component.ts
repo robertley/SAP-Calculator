@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { cloneDeep } from 'lodash';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-report-a-bug',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './report-a-bug.component.html',
   styleUrls: ['./report-a-bug.component.scss']
 })

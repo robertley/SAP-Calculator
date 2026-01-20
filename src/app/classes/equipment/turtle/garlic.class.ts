@@ -1,4 +1,5 @@
 import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Pet } from "../../pet.class";
 
 export class Garlic extends Equipment {
     equipmentClass = 'defense' as EquipmentClass;
@@ -7,7 +8,6 @@ export class Garlic extends Equipment {
     power = 2;
     originalPower = 2;
     minimumDamage = 2;
-    callback: () => {
-
+    callback = (_pet: Pet) => {
     }
 }

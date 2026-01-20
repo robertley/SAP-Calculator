@@ -6,7 +6,7 @@ import { Pack, Pet } from "../../../pet.class";
 import { Player } from "../../../player.class";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { PetService } from "../../../../services/pet/pet.service";
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import { WhaleSwallowAbility } from "../../../abilities/pets/turtle/tier-4/whale-swallow-ability.class";
 import { WhaleSummonAbility } from "../../../abilities/pets/turtle/tier-4/whale-summon-ability.class";
 

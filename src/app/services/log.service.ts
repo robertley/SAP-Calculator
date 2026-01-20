@@ -149,16 +149,32 @@ export class LogService {
         updated = this.replaceMatchesWithIcons(updated, this.toyNameRegex, (name) => getToyIconPath(name));
         updated = this.replaceMatchesWithIcons(updated, this.equipmentNameRegex, (name) => {
             return getEquipmentIconPath(name) ?? getEquipmentIconPath(name, true);
+        }, (name) => {
+            const foodIcon = getEquipmentIconPath(name);
+            const ailmentIcon = getEquipmentIconPath(name, true);
+            const primary = foodIcon ?? ailmentIcon;
+            if (!primary) {
+                return null;
+            }
+            const secondary = primary === foodIcon ? ailmentIcon : foodIcon;
+            const secondaryAttr = secondary ? `this.dataset.step='1';this.src='${secondary}';` : `this.dataset.step='1';`;
+            return `<img src="${primary}" class="log-inline-icon" alt="${name}" onerror="if(!this.dataset.step){${secondaryAttr}return;}this.remove();"> ${name}`;
         });
         return updated;
     }
 
-    private replaceMatchesWithIcons(message: string, regex: RegExp, getIcon: (name: string) => string | null): string {
+    private replaceMatchesWithIcons(message: string, regex: RegExp, getIcon: (name: string) => string | null, getHtml?: (name: string, icon: string | null) => string | null): string {
         if (!regex) {
             return message;
         }
         return message.replace(regex, (match) => {
             const icon = getIcon(match);
+            if (getHtml) {
+                const html = getHtml(match, icon);
+                if (html) {
+                    return html;
+                }
+            }
             if (!icon) {
                 return match;
             }

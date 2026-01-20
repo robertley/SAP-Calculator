@@ -64,9 +64,9 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
     // "FriendlyToySummoned": 12,
     // "ThisBoughtOrToyBroke": 12,
 
-    // Kill events
-    "ThisKilled": 9,
-    "ThisKilledEnemy": 13,
+    // Kill events (post-removal ordering)
+    "ThisKilled": 26.5,
+    "ThisKilledEnemy": 26.5,
 
     // Transform events
     "ThisTransformed": 14,
