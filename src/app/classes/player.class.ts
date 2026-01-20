@@ -42,6 +42,7 @@ import {
     getRandomLivingPets as getRandomLivingPetsImpl,
     getRandomPet as getRandomPetImpl,
     getRandomPets as getRandomPetsImpl,
+    PetRandomResult,
     getSpecificPet as getSpecificPetImpl,
     getStrongestPet as getStrongestPetImpl,
     getThis as getThisImpl,
@@ -88,9 +89,9 @@ export class Player {
 
     pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' | 'Danger' = 'Turtle';
 
-    toy!: Toy;
+    toy: Toy | null = null;
     brokenToy: Toy | null = null;
-    originalToy!: Toy;
+    originalToy: Toy | null = null;
 
     trumpets: number = 0;
     spawnedGoldenRetiever: boolean = false;
@@ -268,7 +269,7 @@ export class Player {
      * @param excludePet pet we want to exclude from being chosen
      * @returns Pet or null
      */
-    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: boolean, notFiftyFifty?: boolean, callingPet?: Pet, includeOpponent?: boolean): { pet: Pet, random: boolean } {
+    getRandomPet(excludePets?: Pet[], donut?: boolean, blueberry?: boolean, notFiftyFifty?: boolean, callingPet?: Pet, includeOpponent?: boolean): PetRandomResult {
         return getRandomPetImpl(this, excludePets, donut, blueberry, notFiftyFifty, callingPet, includeOpponent);
     }
 
@@ -315,11 +316,11 @@ export class Player {
         return getPetAtPositionImpl(this, position);
     }
 
-    getMiddleFriend(callingPet?: Pet): { pet: Pet, random: boolean } {
+    getMiddleFriend(callingPet?: Pet): PetRandomResult {
         return getMiddleFriendImpl(this, callingPet);
     }
 
-    getLastPet(excludePets?: Pet[], callingPet?: Pet): { pet: Pet, random: boolean } {
+    getLastPet(excludePets?: Pet[], callingPet?: Pet): PetRandomResult {
         return getLastPetImpl(this, excludePets, callingPet);
     }
 
@@ -340,10 +341,7 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getHighestHealthPet(excludePet?: Pet, callingPet?: Pet): {
-        pet: Pet,
-        random: boolean
-    } {
+    getHighestHealthPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
         return getHighestHealthPetImpl(this, excludePet, callingPet);
     }
 
@@ -353,7 +351,7 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getHighestAttackPet(excludePet?: Pet, callingPet?: Pet): { pet: Pet, random: boolean } {
+    getHighestAttackPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
         return getHighestAttackPetImpl(this, excludePet, callingPet);
     }
 
@@ -371,7 +369,7 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getLowestAttackPet(excludePet?: Pet, callingPet?: Pet): { pet: Pet, random: boolean } {
+    getLowestAttackPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
         return getLowestAttackPetImpl(this, excludePet, callingPet);
     }
 
@@ -381,7 +379,7 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns 
      */
-    getLowestHealthPet(excludePet?: Pet, callingPet?: Pet): { pet: Pet, random: boolean } {
+    getLowestHealthPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
         return getLowestHealthPetImpl(this, excludePet, callingPet);
     }
 
@@ -424,7 +422,7 @@ export class Player {
  * @param callingPet Pet calling this method (for Silly ailment detection)
  * @returns Pet object with random boolean
  */
-    getTierXOrLowerPet(tier: number, excludePets?: Pet[], callingPet?: Pet): { pet: Pet, random: boolean } {
+    getTierXOrLowerPet(tier: number, excludePets?: Pet[], callingPet?: Pet): PetRandomResult {
         return getTierXOrLowerPetImpl(this, tier, excludePets, callingPet);
     }
     get furthestUpPet(): Pet | null {
@@ -435,7 +433,7 @@ export class Player {
         }
         return null;
     }
-    getFurthestUpPet(callingPet?: Pet, excludePets?: Pet[]): { pet: Pet, random: boolean } {
+    getFurthestUpPet(callingPet?: Pet, excludePets?: Pet[]): PetRandomResult {
         return getFurthestUpPetImpl(this, callingPet, excludePets);
     }
 
@@ -466,10 +464,10 @@ export class Player {
      * @param callingPet Pet calling this method (for Silly ailment detection)
      * @returns The calling pet or random pet if Silly is active
      */
-    getThis(callingPet: Pet): { pet: Pet, random: boolean } {
+    getThis(callingPet: Pet): PetRandomResult {
         return getThisImpl(this, callingPet);
     }
-    getSpecificPet(callingPet: Pet, target: Pet): { pet: Pet, random: boolean } {
+    getSpecificPet(callingPet: Pet, target: Pet): PetRandomResult {
         return getSpecificPetImpl(this, callingPet, target);
     }
     /**
@@ -492,7 +490,7 @@ export class Player {
         setToyImpl(this, toy);
     }
 
-    getStrongestPet(callingPet?: Pet): { pet: Pet, random: boolean } {
+    getStrongestPet(callingPet?: Pet): PetRandomResult {
         return getStrongestPetImpl(this, callingPet);
     }
 
@@ -557,11 +555,11 @@ export class Player {
      * @param callingPet Pet making the call (for position and Silly detection)
      * @returns Object with pet and random boolean (for Silly compatibility)
      */
-    getOppositeEnemyPet(callingPet: Pet): { pet: Pet, random: boolean } {
+    getOppositeEnemyPet(callingPet: Pet): PetRandomResult {
         return getOppositeEnemyPetImpl(this, callingPet);
     }
 
-    getRandomLivingPet(excludePets?: Pet[]): { pet: Pet, random: boolean } {
+    getRandomLivingPet(excludePets?: Pet[]): PetRandomResult {
         return getRandomLivingPetImpl(this, excludePets);
     }
 

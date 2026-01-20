@@ -26,6 +26,7 @@ export class CalculatorStateService {
         }
         this.loadCustomPacks(formGroup, customPacks);
         formGroup.patchValue(calculator, { emitEvent: false });
+        formGroup.get('tokenPets')?.setValue(true, { emitEvent: false });
 
         if (fixCustomPackSelect) {
             setTimeout(() => fixCustomPackSelect());
@@ -85,7 +86,7 @@ export class CalculatorStateService {
             logFilter: null,
             customPacks: [],
             oldStork: false,
-            tokenPets: false,
+            tokenPets: true,
             komodoShuffle: false,
             mana: false,
             showAdvanced: false,

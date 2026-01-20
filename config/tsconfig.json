@@ -25,7 +25,6 @@
     "paths": {
       "app/*": ["app/*"],
       "assets/*": ["assets/*"],
-      "environments/*": ["environments/*"],
       "src/*": ["*"]
     },
     "types": [],

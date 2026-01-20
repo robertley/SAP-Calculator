@@ -153,9 +153,7 @@ export function loadTeamPreset(options: {
   if (team.allPets != null) {
     options.formGroup.get('allPets').setValue(team.allPets);
   }
-  if (team.tokenPets != null) {
-    options.formGroup.get('tokenPets').setValue(team.tokenPets);
-  }
+  options.formGroup.get('tokenPets').setValue(true);
   if (team.komodoShuffle != null) {
     options.formGroup.get('komodoShuffle').setValue(team.komodoShuffle);
   }

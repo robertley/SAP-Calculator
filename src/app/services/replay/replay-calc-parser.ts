@@ -220,6 +220,7 @@ export class ReplayCalcParser {
     }
 
     const minions = deck.Minions.map((id: number) => String(id));
+    const spells = Array.isArray(deck.Spells) ? deck.Spells.slice() : [];
     const tierPets: Record<number, string[]> = {
       1: [],
       2: [],
@@ -265,6 +266,7 @@ export class ReplayCalcParser {
       tier4Pets: normalizeTierPets(tierPets[4]),
       tier5Pets: normalizeTierPets(tierPets[5]),
       tier6Pets: normalizeTierPets(tierPets[6]),
+      spells: spells,
     };
   }
 

@@ -31,6 +31,7 @@ export class CustomPackEditorComponent implements OnInit {
   // Map<tier, Map<pack, pets>>
   petPackMap: Map<number, Map<string, string[]>>;
   petIdLookup: Map<string, { name: string; tier: number }> = new Map();
+  petNameToId: Map<string, string> = new Map();
   petNameToTier: Map<string, number> = new Map();
   focusedGroup: FormGroup = null;
 
@@ -93,6 +94,7 @@ export class CustomPackEditorComponent implements OnInit {
       // tier5Food: new FormControl([]),
       tier6Pets: new FormControl([], this.controlArrayLengthOf10()),
       // tier6Food: new FormControl([]),
+      spells: new FormControl([]),
     });
 
     return formGroup;
@@ -161,6 +163,7 @@ export class CustomPackEditorComponent implements OnInit {
     try {
       code = JSON.parse(code);
       let parsed = this.parseMinions(code.Minions, code.MinionMap);
+      const parsedSpells = Array.isArray(code.Spells) ? code.Spells : [];
       let formValue = {
         name: code.Title,
         tier1Pets: parsed.tierMinions.get(1),
@@ -169,6 +172,7 @@ export class CustomPackEditorComponent implements OnInit {
         tier4Pets: parsed.tierMinions.get(4),
         tier5Pets: parsed.tierMinions.get(5),
         tier6Pets: parsed.tierMinions.get(6),
+        spells: parsedSpells,
       };
       this.createNewPack();
       this.focusedGroup.patchValue(formValue);
@@ -185,6 +189,7 @@ export class CustomPackEditorComponent implements OnInit {
 
   buildPetIdLookup() {
     this.petIdLookup = new Map();
+    this.petNameToId = new Map();
     const petList =
       (
         petJson as unknown as {
@@ -202,6 +207,53 @@ export class CustomPackEditorComponent implements OnInit {
       if (!this.petIdLookup.has(id)) {
         this.petIdLookup.set(id, { name: pet.Name, tier: tier });
       }
+      if (!this.petNameToId.has(pet.Name)) {
+        this.petNameToId.set(pet.Name, id);
+      }
+    }
+  }
+
+  exportCustomPack(pack: AbstractControl) {
+    const payload = this.buildExportPayload(pack);
+    const json = JSON.stringify(payload);
+    this.importFormGroup.get("code")?.setValue(json);
+    this.copyToClipboard(json);
+  }
+
+  private buildExportPayload(pack: AbstractControl) {
+    const getPetsForTier = (tier: number): string[] => {
+      const control = pack.get(`tier${tier}Pets`);
+      const pets = Array.isArray(control?.value) ? control.value : [];
+      return pets.filter((pet: string | null) => Boolean(pet));
+    };
+
+    const minions: Array<string | number> = [];
+    for (let tier = 1; tier <= 6; tier++) {
+      const pets = getPetsForTier(tier);
+      for (const petName of pets) {
+        const id = this.petNameToId.get(petName);
+        minions.push(id ?? petName);
+      }
+    }
+
+    const spellsControl = pack.get("spells");
+    const rawSpells = Array.isArray(spellsControl?.value)
+      ? spellsControl.value
+      : Array.isArray((pack as FormGroup)?.value?.spells)
+        ? (pack as FormGroup).value.spells
+        : [];
+    const spells = rawSpells.filter((spell: string | number | null) => Boolean(spell));
+
+    return {
+      Title: pack.get("name")?.value || "Custom Pack",
+      Minions: minions,
+      ...(spells.length ? { Spells: spells } : {})
+    };
+  }
+
+  private copyToClipboard(text: string) {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).catch(() => undefined);
     }
   }
 
@@ -269,4 +321,5 @@ export class CustomPackEditorComponent implements OnInit {
 
     return { tierMinions, missingMinions };
   }
+
 }

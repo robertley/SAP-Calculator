@@ -51,6 +51,7 @@ export class PetService {
   tokenPetsMap: Map<number, string[]> = new Map();
   readonly basePackPetsByName: Record<PackName, Map<number, string[]>>;
   startOfBattlePets: string[] = [];
+  faintPetsByTier: Map<number, string[]> = new Map();
 
   constructor(
     private logService: LogService,
@@ -180,11 +181,38 @@ export class PetService {
     return Array.from(names);
   }
 
+  private buildFaintPetsByTier(pets: PetJsonEntry[]): Map<number, string[]> {
+    const faintMap = new Map<number, string[]>();
+    for (let tier = 1; tier <= 6; tier++) {
+      faintMap.set(tier, []);
+    }
+    for (const pet of pets) {
+      const tier = Number(pet.Tier);
+      if (!Number.isFinite(tier) || tier < 1 || tier > 6) {
+        continue;
+      }
+      if (!Array.isArray(pet.Abilities)) {
+        continue;
+      }
+      const hasFaintAbility = pet.Abilities.some((ability) => {
+        const about = ability?.About;
+        return typeof about === "string" && about.includes("Faint:");
+      });
+      if (!hasFaintAbility) {
+        continue;
+      }
+      faintMap.get(tier)?.push(pet.Name);
+    }
+    this.deduplicateTierMap(faintMap);
+    return faintMap;
+  }
+
   init() {
     this.resetPackMaps();
     const pets = this.getPetEntriesFromJson();
     this.populatePackMaps(pets);
     this.startOfBattlePets = this.buildStartOfBattlePets(pets);
+    this.faintPetsByTier = this.buildFaintPetsByTier(pets);
     this.setAllPets();
   }
 
@@ -287,161 +315,16 @@ export class PetService {
   }
 
   getRandomFaintPet(parent: Player, tier?: number, excludeNames: string[] = []): Pet {
-    let faintPetsByTier = {
-      1: [
-        "Ant",
-        "Cockroach",
-        "Cricket",
-        "Ethiopian Wolf",
-        "Farmer Mouse",
-        "Firefly",
-        "Groundhog",
-        "Hummingbird",
-        "Peacock Spider",
-        "Pied Tamarin",
-        "Sneaky Egg",
-        "Togian Babirusa",
-        "Volcano Snail",
-      ],
-      2: [
-        "Beluga Sturgeon",
-        "Bigfoot",
-        "Black Necked Stilt",
-        "Dove",
-        "Dung Beetle",
-        "Flamingo",
-        "Frost Wolf",
-        "Gargoyle",
-        "Hedgehog",
-        "Mandrill",
-        "Nightcrawler",
-        "Olm",
-        "Pink Robin",
-        "Rat",
-        "Sea Urchin",
-        "Spider",
-        "Squid",
-        "Stork",
-        "Takhi",
-        "Thorny Dragon",
-      ],
-      3: [
-        "Anteater",
-        "Baby Urchin",
-        "Badger",
-        "Bear",
-        "Betta Fish",
-        "Calygreyhound",
-        "Dugong",
-        "Flea",
-        "Fur-Bearing Trout",
-        "Hirola",
-        "Hoopoe Bird",
-        "Jewel Caterpillar",
-        "Mandrake",
-        "Mole",
-        "Musk Ox",
-        "Osprey",
-        "Ox",
-        "Pangolin",
-        "Patagonian Mara",
-        "Quetzalcoatlus",
-        "Royal Flycatcher",
-        "Sarcastic Fringehead",
-        "Sheep",
-        "Skeleton Dog",
-        "Slime",
-        "Surgeon Fish",
-        "Tatzelwurm",
-        "Tucuxi",
-        "Tuna",
-        "Weasel",
-      ],
-      4: [
-        "Blue-Footed Booby",
-        "Chimera",
-        "Cuttlefish",
-        "Deer",
-        "Donkey",
-        "Goblin Shark",
-        "Kakapo",
-        "Leaf Gecko",
-        "Locust",
-        "Microbe",
-        "Mimic",
-        "Platypus",
-        "Poison Dart Frog",
-        "Red Lipped Batfish",
-        "Saiga Antelope",
-        "Slug",
-        "Spiny Bush Viper",
-        "Tahr",
-        "Tardigrade",
-        "Turtle",
-        "Vaquita",
-        "Visitor",
-        "Whale",
-      ],
-      5: [
-        "Beluga Whale",
-        "Blobfish",
-        "Blue Jay",
-        "Brahma Chicken",
-        "Eagle",
-        "Egyptian Vulture",
-        "Farmer Crow",
-        "Fire Ant",
-        "Giant Isopod",
-        "Giant Pangasius",
-        "Hawaiian Monk Seal",
-        "Hippocampus",
-        "Kappa",
-        "Kitsune",
-        "Lusca",
-        "Maltese",
-        "Namazu",
-        "Nessie",
-        "Nurse Shark",
-        "Nyala",
-        "Painted Terrapin",
-        "Pelican",
-        "Pixiu",
-        "Rooster",
-        "Secretary Bird",
-        "Shark",
-        "Snapping Turtle",
-        "Stonefish",
-        "Tarasque",
-        "Vulture",
-        "Wolf",
-      ],
-      6: [
-        "Akhlut",
-        "Ammonite",
-        "Bay Cat",
-        "Black Bear",
-        "Eagle Owl",
-        "Fly",
-        "Hydra",
-        "Lamprey",
-        "Lionfish",
-        "Mammoth",
-        "Markhor",
-        "Orca",
-        "Phoenix",
-        "Sabertooth Tiger",
-        "Walrus",
-        "Warthog",
-        "Yellow Boxfish",
-      ],
-    };
+    if (!this.faintPetsByTier?.size) {
+      this.faintPetsByTier = this.buildFaintPetsByTier(this.getPetEntriesFromJson());
+    }
 
     let faintPets: string[] = [];
-    if (tier && faintPetsByTier[tier]) {
-      faintPets = faintPetsByTier[tier];
+    if (tier && this.faintPetsByTier.get(tier)) {
+      faintPets = this.faintPetsByTier.get(tier) ?? [];
     } else {
       // If no tier specified or invalid tier, use all faint pets
-      faintPets = [].concat(...Object.values(faintPetsByTier));
+      faintPets = Array.from(this.faintPetsByTier.values()).flat();
     }
 
     const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
@@ -450,7 +333,8 @@ export class PetService {
     // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
     let pool = filteredFaintPets;
     if (!pool.length && tier) {
-      const allFiltered = [].concat(...Object.values(faintPetsByTier))
+      const allFiltered = Array.from(this.faintPetsByTier.values())
+        .flat()
         .filter((name: string) => !excludeSet.has(name.toLowerCase()));
       if (allFiltered.length) {
         pool = allFiltered;

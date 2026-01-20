@@ -25,11 +25,11 @@ export function executeEventWithTransform(
         const transformedPet = executingPet.transformedInto;
         // Replace the callback with the transformed pet's method
         event.callback = (trigger: AbilityTrigger, api: GameAPI) => {
-            transformedPet.executeAbilities(trigger, api, undefined, undefined, undefined, customParams);
+            transformedPet.executeAbilities(trigger, api, event.triggerPet, undefined, undefined, customParams);
         };
     }
 
-    event.callback(event.abilityType, gameApi);
+    event.callback(event.abilityType, gameApi, event.triggerPet);
 }
 
 /**

@@ -87,7 +87,6 @@ import { Ambrosia } from "../../classes/equipment/unicorn/ambrosia.class";
 import { FaintBread } from "../../classes/equipment/unicorn/faint-bread.class";
 import { PeanutButter } from "../../classes/equipment/hidden/peanut-butter";
 import { CakeSlice } from "../../classes/equipment/hidden/cake-slice.class";
-import { Raspberry } from "../../classes/equipment/custom/raspberry.class";
 import { Cold } from "../../classes/equipment/ailments/cold.class";
 import { Icky } from "../../classes/equipment/ailments/icky.class";
 import { Crisp } from "../../classes/equipment/ailments/crisp.class";
@@ -160,7 +159,6 @@ export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
     'Sardinian Currant': SardinianCurrant,
     'Sausage': Sausage,
     'Walnut': Walnut,
-    'Raspberry': Raspberry,
     'Honeydew Melon': HoneydewMelon,
     'Maple Syrup': MapleSyrup,
     'White Okra': WhiteOkra,
