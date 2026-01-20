@@ -37,7 +37,13 @@ const petNameOverrides: Record<string, string> = {
   'Swordfish': 'SwordFish',
   'Doberman': 'DobermanDog',
   'Highland Cow': 'HighlandCow',
-  'Sabertooth Tiger': 'SaberToothTiger'
+  'Sabertooth Tiger': 'SaberToothTiger',
+  'Moby Dick': 'MochaDick',
+  'Chimera Goat': 'ChimeraGoat',
+  'Chimera Lion': 'ChimeraLion',
+  'Chimera Snake': 'ChimeraSnake',
+  'Fake Nessie': 'FakeNessie',
+  'Tand and Tand': 'ThorGoats'
 };
 
 export const perkNameOverrides: Record<string, string> = {

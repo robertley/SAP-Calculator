@@ -1405,7 +1405,7 @@
             },
             {
                 "Level": 2,
-                "About": "Start of battle: Give friends lots of useful perks!"
+                "About": "Start of battle: Give friends silly amounts of useful perks!"
             },
             {
                 "Level": 3,
@@ -1604,16 +1604,12 @@
             }
         ],
         "Id": "643",
-        "Name": "Hydra Head",
+        "Name": "Head",
         "NameId": "HydraHead",
         "Tier": 1,
         "TierMax": 2147483647,
-        "Packs": [
-            "Pack5"
-        ],
-        "PacksRequired": [
-            "Pack5"
-        ],
+        "Packs": [],
+        "PacksRequired": [],
         "CustomArchetypes": []
     },
     {
@@ -12213,7 +12209,7 @@
             }
         ],
         "Id": "819",
-        "Name": "Tand & Tand",
+        "Name": "Tand and Tand",
         "NameId": "ThorGoats",
         "Tier": 4,
         "TierMax": 2147483647,
@@ -18933,5 +18929,135 @@
         "CustomArchetypes": [
             "Roll"
         ]
+    },
+    {
+        "Attack": 1,
+        "Health": 1,
+        "Abilities": [
+            {
+                "Level": 1,
+                "About": "No ability."
+            },
+            {
+                "Level": 2,
+                "About": "No ability."
+            },
+            {
+                "Level": 3,
+                "About": "No ability."
+            }
+        ],
+        "Id": "648",
+        "Name": "Chimera Goat",
+        "NameId": "ChimeraGoat",
+        "Tier": 1,
+        "TierMax": 2147483647,
+        "Packs": [],
+        "PacksRequired": [],
+        "CustomArchetypes": []
+    },
+    {
+        "Attack": 1,
+        "Health": 1,
+        "Abilities": [
+            {
+                "Level": 1,
+                "About": "No ability."
+            },
+            {
+                "Level": 2,
+                "About": "No ability."
+            },
+            {
+                "Level": 3,
+                "About": "No ability."
+            }
+        ],
+        "Id": "650",
+        "Name": "Chimera Lion",
+        "NameId": "ChimeraLion",
+        "Tier": 1,
+        "TierMax": 2147483647,
+        "Packs": [],
+        "PacksRequired": [],
+        "CustomArchetypes": []
+    },
+    {
+        "Attack": 1,
+        "Health": 1,
+        "Abilities": [
+            {
+                "Level": 1,
+                "About": "No ability."
+            },
+            {
+                "Level": 2,
+                "About": "No ability."
+            },
+            {
+                "Level": 3,
+                "About": "No ability."
+            }
+        ],
+        "Id": "649",
+        "Name": "Chimera Snake",
+        "NameId": "ChimeraSnake",
+        "Tier": 1,
+        "TierMax": 2147483647,
+        "Packs": [],
+        "PacksRequired": [],
+        "CustomArchetypes": []
+    },
+    {
+        "Attack": 1,
+        "Health": 2,
+        "Abilities": [
+            {
+                "Level": 1,
+                "About": "No ability."
+            },
+            {
+                "Level": 2,
+                "About": "No ability."
+            },
+            {
+                "Level": 3,
+                "About": "No ability."
+            }
+        ],
+        "Id": "614",
+        "Name": "Fake Nessie",
+        "NameId": "FakeNessie",
+        "Tier": 1,
+        "TierMax": 2147483647,
+        "Packs": [],
+        "PacksRequired": [],
+        "CustomArchetypes": []
+    },
+    {
+        "Attack": 8,
+        "Health": 8,
+        "Abilities": [
+            {
+                "Level": 1,
+                "About": "Start of battle: Remove this."
+            },
+            {
+                "Level": 2,
+                "About": "Start of battle: Remove this. Summoned: Remove this."
+            },
+            {
+                "Level": 3,
+                "About": "Start of battle: Remove this. Summoned: Remove this."
+            }
+        ],
+        "Id": "823",
+        "Name": "Moby Dick",
+        "NameId": "MochaDick",
+        "Tier": 1,
+        "TierMax": 2147483647,
+        "Packs": [],
+        "PacksRequired": [],
+        "CustomArchetypes": []
     }
 ]
