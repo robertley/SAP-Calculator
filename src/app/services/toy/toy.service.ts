@@ -5,7 +5,7 @@ import { Pet } from "../../classes/pet.class";
 import { Equipment } from "../../classes/equipment.class";
 import { AbilityService } from "../ability/ability.service";
 import { AbilityEvent } from "../../interfaces/ability-event.interface";
-import { cloneDeep, shuffle } from "lodash";
+import { cloneDeep, shuffle } from "lodash-es";
 import { GameService } from "../game.service";
 import { PetService } from "../pet/pet.service";
 import { EquipmentService } from "../equipment/equipment.service";
@@ -369,9 +369,10 @@ export class ToyService {
         if (!toyName) {
             return;
         }
+        const ownerLabel = event.player?.isOpponent ? "Opponent's" : "Player's";
         const triggerPetName = event.triggerPet?.name ? ` (${event.triggerPet.name})` : '';
         this.logService.createLog({
-            message: `${toyName} ${label}${triggerPetName}`,
+            message: `${ownerLabel} ${toyName} ${label}${triggerPetName}`,
             type: 'ability',
             player: event.player,
             randomEvent: true

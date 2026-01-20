@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { Ability, AbilityContext } from "../../../../ability.class";
 import { Equipment } from "../../../../equipment.class";
 import { Pet } from "../../../../pet.class";

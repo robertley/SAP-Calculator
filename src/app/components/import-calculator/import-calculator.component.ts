@@ -1,10 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReplayCalcService } from '../../services/replay/replay-calc.service';
 
 @Component({
   selector: 'app-import-calculator',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './import-calculator.component.html',
   styleUrls: ['./import-calculator.component.scss']
 })
@@ -31,11 +34,16 @@ export class ImportCalculatorComponent implements OnInit {
 
   submit() {
     this.errorMessage = '';
-    const rawInput = this.formGroup.get('calcCode').value?.trim();
+    const calcControl = this.formGroup.get('calcCode');
+    const rawInput = calcControl?.value?.trim();
     if (!rawInput) {
       this.errorMessage = 'Paste calculator JSON or replay JSON.';
       return;
     }
+    calcControl?.setValue('', { emitEvent: false });
+    calcControl?.markAsPristine();
+    calcControl?.markAsUntouched();
+    calcControl?.updateValueAndValidity({ emitEvent: false });
 
     let parsedInput: any;
     try {

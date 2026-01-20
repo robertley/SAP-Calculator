@@ -5,9 +5,36 @@ export interface TeamPreset {
   name: string;
   createdAt: number;
   pets: any[];
-  toyName?: string;
+  toyName?: string | null;
   toyLevel?: number;
+  playerToyName?: string | null;
+  playerToyLevel?: number;
+  opponentToyName?: string | null;
+  opponentToyLevel?: number;
+  playerHardToy?: string | null;
+  playerHardToyLevel?: number;
+  opponentHardToy?: string | null;
+  opponentHardToyLevel?: number;
   rollAmount?: number;
+  transformationAmount?: number;
+  turn?: number;
+  playerGoldSpent?: number;
+  opponentGoldSpent?: number;
+  allPets?: boolean;
+  tokenPets?: boolean;
+  komodoShuffle?: boolean;
+  mana?: boolean;
+  triggersConsumed?: boolean;
+  showSwallowedLevels?: boolean;
+  changeEquipmentUses?: boolean;
+  playerRollAmount?: number;
+  opponentRollAmount?: number;
+  playerLevel3Sold?: number;
+  opponentLevel3Sold?: number;
+  playerSummonedAmount?: number;
+  opponentSummonedAmount?: number;
+  playerTransformationAmount?: number;
+  opponentTransformationAmount?: number;
 }
 
 @Injectable({
@@ -193,6 +220,132 @@ export class TeamPresetsService {
           timesHurt: 0,
           equipmentUses: null,
         })),
+      },
+      {
+        id: 'default-infinite-damage',
+        name: 'Infinite Damage',
+        createdAt: Date.now(),
+        toyName: 'Nutcracker',
+        toyLevel: 1,
+        rollAmount: 47,
+        transformationAmount: 200,
+        pets: [
+          {
+            name: 'Giant Pangasius',
+            attack: 50,
+            health: 1,
+            exp: 5,
+            equipment: { name: 'Mushroom' },
+            belugaSwallowedPet: null,
+            sarcasticFringeheadSwallowedPet: null,
+            mana: 50,
+            triggersConsumed: 0,
+            abominationSwallowedPet1: null,
+            abominationSwallowedPet2: null,
+            abominationSwallowedPet3: null,
+            abominationSwallowedPet1TimesHurt: 0,
+            abominationSwallowedPet2TimesHurt: 0,
+            abominationSwallowedPet3TimesHurt: 0,
+            battlesFought: 0,
+            timesHurt: 0,
+            equipmentUses: null,
+          },
+          {
+            name: 'Abomination',
+            attack: 100,
+            health: 100,
+            exp: 5,
+            equipment: { name: 'Churros' },
+            belugaSwallowedPet: null,
+            sarcasticFringeheadSwallowedPet: null,
+            mana: 50,
+            triggersConsumed: 0,
+            abominationSwallowedPet1: 'Behemoth',
+            abominationSwallowedPet1Level: 3,
+            abominationSwallowedPet2: 'Leopard',
+            abominationSwallowedPet2Level: 3,
+            abominationSwallowedPet3: 'Beluga Whale',
+            abominationSwallowedPet3Level: 1,
+            abominationSwallowedPet3BelugaSwallowedPet: 'Giant Pangasius',
+            abominationSwallowedPet1TimesHurt: 0,
+            abominationSwallowedPet2TimesHurt: 0,
+            abominationSwallowedPet3TimesHurt: 0,
+            battlesFought: 0,
+            timesHurt: 0,
+            equipmentUses: null,
+          },
+          {
+            name: 'Abomination',
+            attack: 100,
+            health: 100,
+            exp: 5,
+            equipment: { name: 'Cashew Nut' },
+            belugaSwallowedPet: null,
+            sarcasticFringeheadSwallowedPet: null,
+            mana: 50,
+            triggersConsumed: 0,
+            abominationSwallowedPet1: 'Behemoth',
+            abominationSwallowedPet1Level: 3,
+            abominationSwallowedPet2: 'Leopard',
+            abominationSwallowedPet2Level: 3,
+            abominationSwallowedPet3: 'Beluga Whale',
+            abominationSwallowedPet3Level: 1,
+            abominationSwallowedPet3BelugaSwallowedPet: 'Nessie',
+            abominationSwallowedPet1TimesHurt: 0,
+            abominationSwallowedPet2TimesHurt: 0,
+            abominationSwallowedPet3TimesHurt: 0,
+            battlesFought: 0,
+            timesHurt: 0,
+            equipmentUses: null,
+          },
+          {
+            name: 'Abomination',
+            attack: 100,
+            health: 100,
+            exp: 5,
+            equipment: { name: 'Churros' },
+            belugaSwallowedPet: null,
+            sarcasticFringeheadSwallowedPet: null,
+            mana: 50,
+            triggersConsumed: 0,
+            abominationSwallowedPet1: 'Behemoth',
+            abominationSwallowedPet1Level: 3,
+            abominationSwallowedPet2: 'Leopard',
+            abominationSwallowedPet2Level: 3,
+            abominationSwallowedPet3: 'Sabertooth Tiger',
+            abominationSwallowedPet3Level: 3,
+            abominationSwallowedPet1TimesHurt: 0,
+            abominationSwallowedPet2TimesHurt: 0,
+            abominationSwallowedPet3TimesHurt: 25,
+            battlesFought: 0,
+            timesHurt: 0,
+            equipmentUses: null,
+          },
+          {
+            name: 'Abomination',
+            attack: 100,
+            health: 100,
+            exp: 5,
+            equipment: { name: 'Churros' },
+            belugaSwallowedPet: null,
+            sarcasticFringeheadSwallowedPet: null,
+            mana: 50,
+            triggersConsumed: 0,
+            abominationSwallowedPet1: 'Behemoth',
+            abominationSwallowedPet1Level: 3,
+            abominationSwallowedPet2: 'Leopard',
+            abominationSwallowedPet2Level: 3,
+            abominationSwallowedPet3: 'Beluga Whale',
+            abominationSwallowedPet3Level: 1,
+            abominationSwallowedPet3BelugaSwallowedPet: 'Slug',
+            abominationSwallowedPet1TimesHurt: 0,
+            abominationSwallowedPet2TimesHurt: 0,
+            abominationSwallowedPet3TimesHurt: 0,
+            battlesFought: 0,
+            timesHurt: 0,
+            equipmentUses: null,
+          },
+        ],
       },
       {
         id: 'default-shoggoths-return',

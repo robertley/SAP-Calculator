@@ -47,6 +47,7 @@ export class CerberusAbility extends Ability {
                     type: "ability",
                     player: owner.parent,
                     tiger: tiger,
+                    sourcePet: owner,
                     randomEvent: summonResult.randomEvent
                 }
             )

@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { Power } from "../../../../interfaces/power.interface";
 import { AbilityService } from "../../../../services/ability/ability.service";
@@ -29,9 +29,9 @@ export class BelugaWhale extends Pet {
         exp?: number,
         equipment?: Equipment,
         triggersConsumed?: number,
-        swallowedPet?: string) {
+        swallowedPet?: string | null) {
         super(logService, abilityService, parent);
         this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
-        this.belugaSwallowedPet = swallowedPet;
+        this.belugaSwallowedPet = swallowedPet ?? null;
     }
 }

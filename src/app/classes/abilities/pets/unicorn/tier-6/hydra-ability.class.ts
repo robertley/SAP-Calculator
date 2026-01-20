@@ -26,8 +26,8 @@ export class HydraAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let amt = Math.floor(owner.attack / 10);
         for (let i = 0; i < amt; i++) {
@@ -42,6 +42,7 @@ export class HydraAbility extends Ability {
                     player: owner.parent,
                     tiger: tiger,
                     pteranodon: pteranodon,
+                    sourcePet: owner,
                     randomEvent: summonResult.randomEvent
                 });
             }

@@ -20,7 +20,7 @@ import { Crisp } from "./equipment/ailments/crisp.class";
 import { Toasty } from "./equipment/ailments/toasty.class";
 import { AbilityEvent } from "../interfaces/ability-event.interface";
 import { Nurikabe } from "./pets/custom/tier-5/nurikabe.class";
-import { cloneDeep } from "lodash";
+import { cloneDeep } from "lodash-es";
 import { PeanutButter } from "./equipment/hidden/peanut-butter";
 import { Blackberry } from "./equipment/puppy/blackberry.class";
 import { HoneydewMelon, HoneydewMelonAttack } from "./equipment/golden/honeydew-melon.class";
@@ -50,6 +50,7 @@ export type Pack = 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Unicorn' | 'Custom'
 
 export abstract class Pet {
     name: string;
+    baseName: string;
     tier: number;
     pack: Pack;
     hidden: boolean = false;
@@ -67,13 +68,16 @@ export abstract class Pet {
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    abominationSwallowedPet1BelugaSwallowedPet?: string;
+    abominationSwallowedPet2BelugaSwallowedPet?: string;
+    abominationSwallowedPet3BelugaSwallowedPet?: string;
     abominationSwallowedPet1Level?: number;
     abominationSwallowedPet2Level?: number;
     abominationSwallowedPet3Level?: number;
     abominationSwallowedPet1TimesHurt: number = 0;
     abominationSwallowedPet2TimesHurt: number = 0;
     abominationSwallowedPet3TimesHurt: number = 0;
-    belugaSwallowedPet: string;
+    belugaSwallowedPet: string | null = null;
     sarcasticFringeheadSwallowedPet?: string;
     friendsDiedBeforeBattle: number = 0;
     timesHurt: number = 0;
@@ -127,7 +131,8 @@ export abstract class Pet {
         this.parent = parent;
     }
 
-    initPet(exp: number, health: number, attack: number, mana: number, equipment: Equipment, triggersConsumed?: number) {
+    initPet(exp?: number, health?: number, attack?: number, mana?: number, equipment?: Equipment, triggersConsumed?: number) {
+        this.baseName = this.baseName ?? this.name;
         this.exp = exp ?? this.exp;
         this.health = health ?? this.health * this.level;
         this.attack = attack ?? this.attack * this.level;
@@ -930,7 +935,22 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
-            ability.native = false;
+            copiedAbility.native = false;
+
+            // Wrap ability function to show "Owner's SourcePet" in logs
+            const originalFunction = copiedAbility.abilityFunction;
+            const sourcePetName = sourcePet.name;
+            copiedAbility.abilityFunction = (context) => {
+                const originalName = this.name;
+                const baseName = this.baseName ?? originalName;
+                this.name = `${baseName}'s ${sourcePetName}`;
+                try {
+                    originalFunction(context);
+                } finally {
+                    this.name = originalName;
+                }
+            };
+
             this.addAbility(copiedAbility);
         }
 
@@ -947,7 +967,22 @@ export abstract class Pet {
                 copiedAbility.alwaysIgnorePetLevel = true;
                 copiedAbility.reset();
             }
-            ability.native = false;
+            copiedAbility.native = false;
+
+            // Wrap ability function to show "Owner's SourcePet" in logs
+            const originalFunction = copiedAbility.abilityFunction;
+            const sourcePetName = sourcePet.name;
+            copiedAbility.abilityFunction = (context) => {
+                const originalName = this.name;
+                const baseName = this.baseName ?? originalName;
+                this.name = `${baseName}'s ${sourcePetName}`;
+                try {
+                    originalFunction(context);
+                } finally {
+                    this.name = originalName;
+                }
+            };
+
             this.addAbility(copiedAbility);
         }
     }
@@ -956,7 +991,7 @@ export abstract class Pet {
         return this.getAbilities(trigger, abilityType).length > 0;
     }
 
-    hasTrigger(trigger: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): boolean {
+    hasTrigger(trigger?: AbilityTrigger, abilityType?: AbilityType, abilityName?: string): boolean {
         return this.getAbilitiesWithTrigger(trigger, abilityType, abilityName).length > 0;
     }
 

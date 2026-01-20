@@ -1,5 +1,6 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl, FormArray } from '@angular/forms';
+import { Component, Input, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { FormGroup, FormControl, AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet/pet.service';
@@ -8,13 +9,18 @@ import { Equipment } from '../../classes/equipment.class';
 import { cloneEquipment } from '../../util/equipment-utils';
 import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment/equipment-categories';
 import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
 import { getPetIconPath, getEquipmentIconPath, getPetIconFileName } from '../../util/asset-utils';
+import { ItemSelectionDialogComponent } from '../item-selection-dialog/item-selection-dialog.component';
 
 @Component({
   selector: 'app-pet-selector',
+  standalone: true,
+  imports: [CommonModule, NgOptimizedImage, ReactiveFormsModule, ItemSelectionDialogComponent],
   templateUrl: './pet-selector.component.html',
-  styleUrls: ['./pet-selector.component.scss']
+  styleUrls: ['./pet-selector.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PetSelectorComponent implements OnInit, OnDestroy {
 
@@ -76,42 +82,26 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
   @Input()
   showTokenPets = false;
+  showSelectionDialog = false;
+  selectionType: 'pet' | 'equipment' | 'swallowed-pet' = 'pet';
+  swallowedPetIndex?: number;
+  swallowedPetTarget: 'pet' | 'abomination' | 'sarcastic' | 'abomination-beluga' = 'pet';
+
   tokenPets: string[] = [
-    'Bee',
-    'Bus',
-    'Chick',
-    'Dirty Rat',
-    'Lizard Tail',
-    'Ram',
-    'Smaller Slug',
-    'Smallest Slug',
-    'Zombie Cricket',
-    'Zombie Fly',
-    'Chimera Goat',
-    'Chimera Lion',
-    'Chimera Snake',
-    'Daycrawler',
-    'Head',
-    'Monty',
-    'Nessie?',
-    'Smaller Slime',
-    'Young Phoenix',
-    'Good Dog',
-    'Adult Flounder',
-    'Burbel',
-    'Cooked Roach',
-    'Cuckoo Chick',
-    'Fake Nessie',
-    'Guinea Piglet',
-    'Hydra Head',
-    'Moby Dick',
-    'Quail',
-    'Sleeping Gelada',
-    'Tand and Tand',
-];
+    'Bee', 'Bus', 'Chick', 'Dirty Rat', 'Lizard Tail', 'Ram', 'Smaller Slug', 'Smallest Slug',
+    'Zombie Cricket', 'Zombie Fly', 'Chimera Goat', 'Chimera Lion', 'Chimera Snake', 'Daycrawler',
+    'Head', 'Monty', 'Nessie?', 'Smaller Slime', 'Young Phoenix', 'Good Dog', 'Adult Flounder',
+    'Burbel', 'Cooked Roach', 'Cuckoo Chick', 'Fake Nessie', 'Guinea Piglet', 'Hydra Head',
+    'Moby Dick', 'Quail', 'Sleeping Gelada', 'Tand and Tand',
+  ];
 
-  constructor(private petService: PetService, private equipmentService: EquipmentService) {
+  constructor(
+    private petService: PetService,
+    private equipmentService: EquipmentService
+  ) { }
 
+  trackByIndex(index: number): number {
+    return index;
   }
 
   ngOnInit(): void {
@@ -122,7 +112,36 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     }) ?? null;
 
     this.fixLoadEquipment();
+  }
 
+  openSelectionDialog(
+    type: 'pet' | 'equipment' | 'swallowed-pet',
+    index?: number,
+    target: 'pet' | 'abomination' | 'sarcastic' | 'abomination-beluga' = 'pet'
+  ) {
+    this.selectionType = type;
+    this.swallowedPetIndex = index;
+    this.swallowedPetTarget = target;
+    this.showSelectionDialog = true;
+  }
+
+  onItemSelected(item: any) {
+    if (this.selectionType === 'pet') {
+      this.formGroup.get('name').setValue(item);
+    } else if (this.selectionType === 'equipment') {
+      this.formGroup.get('equipment').setValue(item);
+    } else if (this.selectionType === 'swallowed-pet') {
+      if (this.swallowedPetTarget === 'abomination-beluga') {
+        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`).setValue(item);
+      } else if (this.pet?.name === 'Beluga Whale') {
+        this.formGroup.get('belugaSwallowedPet').setValue(item);
+      } else if (this.swallowedPetTarget === 'abomination' || this.pet?.name === 'Abomination') {
+        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}`).setValue(item);
+      } else if (this.pet?.name === 'Sarcastic Fringehead') {
+        this.formGroup.get('sarcasticFringeheadSwallowedPet').setValue(item);
+      }
+    }
+    this.showSelectionDialog = false;
   }
 
   initSelector() {
@@ -199,7 +218,11 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     //   belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
     // })
 
-    this.formGroup.get('name').valueChanges.subscribe((value) => {
+    const inputDebounceMs = 50;
+
+    this.formGroup.get('name').valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe((value) => {
       this.petImageBroken = false;
       if (value == null) {
         this.removePet();
@@ -207,15 +230,23 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       }
       this.substitutePet(true)
     });
-    this.formGroup.get('attack').valueChanges.subscribe(() => {
+    this.formGroup.get('attack').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('attack', 0, 100);
       this.substitutePet(false);
     });
-    this.formGroup.get('health').valueChanges.subscribe(() => {
+    this.formGroup.get('health').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('health', 0, 100);
       this.substitutePet(false);
     });
-    this.formGroup.get('exp').valueChanges.subscribe(() => { this.substitutePet(false) });
+    this.formGroup.get('exp').valueChanges.pipe(
+      distinctUntilChanged()
+    ).subscribe(() => { this.substitutePet(false) });
     const equipmentUsesControl = this.formGroup.get('equipmentUses');
     this.formGroup.get('equipment').valueChanges.subscribe((value) => {
       this.equipmentImageBroken = false;
@@ -224,36 +255,57 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         if (equipment == null) {
           equipment = this.ailmentEquipment.get(value.name);
         }
-        this.formGroup.get('equipment').setValue(equipment, {emitEvent: false});
+        this.formGroup.get('equipment').setValue(equipment, { emitEvent: false });
       }
       this.substitutePet(false)
     });
-    this.formGroup.get('equipmentUses')?.valueChanges.subscribe(() => this.substitutePet(false));
+    this.formGroup.get('equipmentUses')?.valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => this.substitutePet(false));
     this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
     this.formGroup.get('sarcasticFringeheadSwallowedPet')?.valueChanges.subscribe((value) => { this.setSarcasticFringeheadSwallowedPet(value) });
     this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
+    this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet1Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
     this.formGroup.get('abominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('mana').valueChanges.subscribe(() => {
+    this.formGroup.get('mana').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('mana', 0, 50);
       this.substitutePet(false);
     });
-    this.formGroup.get('triggersConsumed').valueChanges.subscribe(() => {
+    this.formGroup.get('triggersConsumed').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampControl('triggersConsumed', 0, 10);
       this.substitutePet(false);
     });
-    this.formGroup.get('friendsDiedBeforeBattle')?.valueChanges.subscribe(() => {
+    this.formGroup.get('friendsDiedBeforeBattle')?.valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe(() => {
       this.clampFriendsDiedBeforeBattle();
       this.substitutePet(false);
     });
-    this.formGroup.get('battlesFought').valueChanges.subscribe((value) => { this.setBattlesFought(value) });
-    this.formGroup.get('timesHurt').valueChanges.subscribe((value) => { this.setTimesHurt(value) });
+    this.formGroup.get('battlesFought').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe((value) => { this.setBattlesFought(value) });
+    this.formGroup.get('timesHurt').valueChanges.pipe(
+      debounceTime(inputDebounceMs),
+      distinctUntilChanged()
+    ).subscribe((value) => { this.setTimesHurt(value) });
   }
 
   setExp(amt: number) {
@@ -299,13 +351,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
-  
+
       // console.log('pet substituted', this.player);
       if (nameChange) {
-        this.formGroup.get('attack').setValue(pet.attack, {emitEvent: false});
-        this.formGroup.get('health').setValue(pet.health, {emitEvent: false});
-        this.formGroup.get('mana').setValue(pet.mana, {emitEvent: false});
-        this.formGroup.get('triggersConsumed').setValue(pet.triggersConsumed, {emitEvent: false});
+        this.formGroup.get('attack').setValue(pet.attack, { emitEvent: false });
+        this.formGroup.get('health').setValue(pet.health, { emitEvent: false });
+        this.formGroup.get('mana').setValue(pet.mana, { emitEvent: false });
+        this.formGroup.get('triggersConsumed').setValue(pet.triggersConsumed, { emitEvent: false });
       }
 
     })
@@ -341,13 +393,36 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       return [];
     }
     const values = [
-      this.formGroup.get('abominationSwallowedPet1')?.value,
-      this.formGroup.get('abominationSwallowedPet2')?.value,
-      this.formGroup.get('abominationSwallowedPet3')?.value,
+      {
+        name: this.formGroup.get('abominationSwallowedPet1')?.value,
+        belugaSwallowed: this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value
+      },
+      {
+        name: this.formGroup.get('abominationSwallowedPet2')?.value,
+        belugaSwallowed: this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value
+      },
+      {
+        name: this.formGroup.get('abominationSwallowedPet3')?.value,
+        belugaSwallowed: this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value
+      }
     ];
-    return values
-      .map((value) => this.getPetImagePath(value))
-      .filter((value) => value != null) as string[];
+    const images: string[] = [];
+    for (const value of values) {
+      if (!value.name) {
+        continue;
+      }
+      const image = this.getPetImagePath(value.name);
+      if (image) {
+        images.push(image);
+      }
+      if (value.name === 'Beluga Whale' && value.belugaSwallowed) {
+        const belugaImage = this.getPetImagePath(value.belugaSwallowed);
+        if (belugaImage) {
+          images.push(belugaImage);
+        }
+      }
+    }
+    return images;
   }
 
   get equipmentImageSrc(): string | null {
@@ -425,7 +500,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     return this.friendsDiedCaps.get(name) ?? 5;
   }
 
-  private getPetImagePath(petName?: string | null): string | null {
+  getPetImagePath(petName?: string | null): string | null {
     if (!petName) {
       return null;
     }
@@ -508,6 +583,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const pet1 = this.formGroup.get('abominationSwallowedPet1').value;
     const pet2 = this.formGroup.get('abominationSwallowedPet2').value;
     const pet3 = this.formGroup.get('abominationSwallowedPet3').value;
+    const beluga1 = this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value ?? null;
+    const beluga2 = this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value ?? null;
+    const beluga3 = this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value ?? null;
     const level1 = Number(this.formGroup.get('abominationSwallowedPet1Level').value ?? 1);
     const level2 = Number(this.formGroup.get('abominationSwallowedPet2Level').value ?? 1);
     const level3 = Number(this.formGroup.get('abominationSwallowedPet3Level').value ?? 1);
@@ -524,6 +602,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.abominationSwallowedPet1 = swallowedPets[0]?.name ?? null;
     pet.abominationSwallowedPet2 = swallowedPets[1]?.name ?? null;
     pet.abominationSwallowedPet3 = swallowedPets[2]?.name ?? null;
+    pet.abominationSwallowedPet1BelugaSwallowedPet = beluga1;
+    pet.abominationSwallowedPet2BelugaSwallowedPet = beluga2;
+    pet.abominationSwallowedPet3BelugaSwallowedPet = beluga3;
     pet.abominationSwallowedPet1Level = swallowedPets[0]?.level ?? 1;
     pet.abominationSwallowedPet2Level = swallowedPets[1]?.level ?? 1;
     pet.abominationSwallowedPet3Level = swallowedPets[2]?.level ?? 1;
@@ -569,13 +650,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
   removePet() {
     this.player.setPet(this.index, null, true);
-    this.formGroup.get('name').setValue(null, {emitEvent: false});
-    this.formGroup.get('attack').setValue(0, {emitEvent: false});
-    this.formGroup.get('health').setValue(0, {emitEvent: false});
-    this.formGroup.get('exp').setValue(0, {emitEvent: false});
-    this.formGroup.get('equipment').setValue(null, {emitEvent: false});
-    this.formGroup.get('mana').setValue(0, {emitEvent: false});
-    this.formGroup.get('triggersConsumed').setValue(0, {emitEvent: false});
+    this.formGroup.get('name').setValue(null, { emitEvent: false });
+    this.formGroup.get('attack').setValue(0, { emitEvent: false });
+    this.formGroup.get('health').setValue(0, { emitEvent: false });
+    this.formGroup.get('exp').setValue(0, { emitEvent: false });
+    this.formGroup.get('equipment').setValue(null, { emitEvent: false });
+    this.formGroup.get('mana').setValue(0, { emitEvent: false });
+    this.formGroup.get('triggersConsumed').setValue(0, { emitEvent: false });
   }
 
   optionHidden(option: string) {

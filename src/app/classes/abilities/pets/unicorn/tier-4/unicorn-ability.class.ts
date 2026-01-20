@@ -2,8 +2,7 @@ import { Ability, AbilityContext } from "../../../../ability.class";
 import { GameAPI } from "app/interfaces/gameAPI.interface";
 import { Pet } from "../../../../pet.class";
 import { LogService } from "app/services/log.service";
-import { words } from "lodash";
-import { retagTsFile } from "@angular/compiler-cli/src/ngtsc/shims";
+import { words } from "lodash-es";
 
 export class UnicornAbility extends Ability {
     private logService: LogService;

@@ -1,10 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { LocalStorageService } from '../../services/local-storage.service';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-export-calculator',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './export-calculator.component.html',
   styleUrls: ['./export-calculator.component.scss']
 })

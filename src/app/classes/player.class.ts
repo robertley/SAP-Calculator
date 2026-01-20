@@ -88,14 +88,16 @@ export class Player {
 
     pack: 'Turtle' | 'Puppy' | 'Star' | 'Golden' | 'Custom' | 'Unicorn' | 'Danger' = 'Turtle';
 
-    toy: Toy;
-    brokenToy: Toy;
-    originalToy: Toy;
+    toy!: Toy;
+    brokenToy: Toy | null = null;
+    originalToy!: Toy;
 
     trumpets: number = 0;
     spawnedGoldenRetiever: boolean = false;
     summonedBoatThisBattle: boolean = false;
     public isOpponent: boolean = false;
+    public allPets: boolean = false;
+    public tokenPets: boolean = false;
 
     cannedAilments: string[] = [];
 
@@ -170,7 +172,20 @@ export class Player {
     }
 
     getPet(index: number) {
-        return this[`pet${index}`];
+        switch (index) {
+            case 0:
+                return this.pet0;
+            case 1:
+                return this.pet1;
+            case 2:
+                return this.pet2;
+            case 3:
+                return this.pet3;
+            case 4:
+                return this.pet4;
+            default:
+                return undefined;
+        }
     }
 
     pushPetsForward() {
@@ -296,7 +311,7 @@ export class Player {
         return getPetsWithoutEquipmentImpl(this, equipmentName);
     }
 
-    getPetAtPosition(position: number): Pet {
+    getPetAtPosition(position: number): Pet | null {
         return getPetAtPositionImpl(this, position);
     }
 
@@ -412,7 +427,7 @@ export class Player {
     getTierXOrLowerPet(tier: number, excludePets?: Pet[], callingPet?: Pet): { pet: Pet, random: boolean } {
         return getTierXOrLowerPetImpl(this, tier, excludePets, callingPet);
     }
-    get furthestUpPet(): Pet {
+    get furthestUpPet(): Pet | null {
         for (let pet of this.petArray) {
             if (pet.alive) {
                 return pet;

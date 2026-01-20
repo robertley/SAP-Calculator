@@ -18,17 +18,20 @@ import {
 
 export interface PetForm {
     name: string;
-    attack: number;
-    health: number;
-    mana: number;
+    attack?: number | null;
+    health?: number | null;
+    mana?: number | null;
     triggersConsumed?: number;
     exp: number;
-    equipment: Equipment;
+    equipment?: Equipment | null;
     belugaSwallowedPet?: string;
     sarcasticFringeheadSwallowedPet?: string;
     abominationSwallowedPet1?: string;
     abominationSwallowedPet2?: string;
     abominationSwallowedPet3?: string;
+    abominationSwallowedPet1BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet2BelugaSwallowedPet?: string | null;
+    abominationSwallowedPet3BelugaSwallowedPet?: string | null;
     abominationSwallowedPet1Level?: number;
     abominationSwallowedPet2Level?: number;
     abominationSwallowedPet3Level?: number;
@@ -103,12 +106,21 @@ export class PetFactoryService {
             }
             return pet;
         };
+        const applyAbominationBelugaSwallows = (petInstance: Pet) => {
+            if (petInstance?.name !== 'Abomination') {
+                return petInstance;
+            }
+            petInstance.abominationSwallowedPet1BelugaSwallowedPet = petForm.abominationSwallowedPet1BelugaSwallowedPet ?? null;
+            petInstance.abominationSwallowedPet2BelugaSwallowedPet = petForm.abominationSwallowedPet2BelugaSwallowedPet ?? null;
+            petInstance.abominationSwallowedPet3BelugaSwallowedPet = petForm.abominationSwallowedPet3BelugaSwallowedPet ?? null;
+            return petInstance;
+        };
         const buildPetInstance = (petInstance: Pet) => {
             if (!petInstance) {
                 return petInstance;
             }
             const withEquipment = this.applyEquipmentUsesOverride(petInstance, petForm);
-            return finalizePet(applySarcasticSetting(withEquipment));
+            return finalizePet(applySarcasticSetting(applyAbominationBelugaSwallows(withEquipment)));
         };
 
         // Check if pet needs GameService (highest priority)

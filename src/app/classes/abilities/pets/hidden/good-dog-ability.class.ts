@@ -4,6 +4,7 @@ import { Pet } from "../../../pet.class";
 import { LogService } from "app/services/log.service";
 import { EquipmentService } from "app/services/equipment/equipment.service";
 import { InjectorService } from "app/services/injector.service";
+import { cloneEquipment } from "app/util/equipment-utils";
 
 export class GoodDogAbility extends Ability {
     private logService: LogService;
@@ -33,14 +34,29 @@ export class GoodDogAbility extends Ability {
             return;
         }
 
-        let equipmentMap = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment();
-        let equipmentArray = Array.from(equipmentMap.values());
+        const equipmentMap = InjectorService.getInjector().get(EquipmentService).getInstanceOfAllEquipment();
+        const minTierByLevel = new Map([
+            [1, 1],
+            [2, 3],
+            [3, 5]
+        ]);
+        const minTier = minTierByLevel.get(owner.level) ?? 1;
+        let equipmentArray = Array.from(equipmentMap.values())
+            .filter((equipment) => equipment && (equipment.tier ?? 1) >= minTier);
+
+        if (!equipmentArray.length) {
+            equipmentArray = Array.from(equipmentMap.values()).filter(Boolean);
+        }
 
         for (let pet of targets) {
             if (!pet.alive) {
                 continue;
             }
-            let equipment = equipmentArray[Math.floor(Math.random() * equipmentArray.length)];
+            const baseEquipment = equipmentArray[Math.floor(Math.random() * equipmentArray.length)];
+            const equipment = cloneEquipment(baseEquipment);
+            if (!equipment) {
+                continue;
+            }
             this.logService.createLog({
                 message: `${owner.name} gave ${pet.name} ${equipment.name}`,
                 type: "ability",

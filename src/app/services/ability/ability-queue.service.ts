@@ -22,9 +22,8 @@ export class AbilityQueueService {
         const abilityPriority = this.getAbilityPriority(event.abilityType);
 
         // Assign random tie breaker if not already set
-        if (event.tieBreaker === undefined) {
-            event.tieBreaker = Math.random();
-        }
+        event.tieBreaker = Math.random();
+
 
         // Binary search to find insertion point (Descending priority)
         let left = 0;
@@ -48,7 +47,9 @@ export class AbilityQueueService {
                     left = mid + 1;
                 } else {
                     // Same priority - use random tie breaker (lower tieBreaker = first)
-                    if (event.tieBreaker < midEvent.tieBreaker) {
+                    const eventTieBreaker = event.tieBreaker ?? 0;
+                    const midTieBreaker = midEvent.tieBreaker ?? 0;
+                    if (eventTieBreaker < midTieBreaker) {
                         right = mid;
                     } else {
                         left = mid + 1;
@@ -68,8 +69,8 @@ export class AbilityQueueService {
         return this.globalEventQueue.length > 0;
     }
 
-    processQueue(gameApi: GameAPI) {
-        processEventQueue(this.globalEventQueue, gameApi);
+    processQueue(gameApi: GameAPI, options?: { shuffle?: boolean; filter?: (event: AbilityEvent) => boolean; onExecute?: (event: AbilityEvent) => void }) {
+        processEventQueue(this.globalEventQueue, gameApi, options);
     }
 
     getNextHighestPriorityEvent(): AbilityEvent | null {

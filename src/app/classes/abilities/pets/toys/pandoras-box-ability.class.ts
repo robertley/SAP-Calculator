@@ -33,29 +33,7 @@ export class PandorasBoxAbility extends Ability {
         const owner = this.owner;
         const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
         const ailments = Array.from(this.equipmentService.getInstanceOfAllAilments().values());
-        const excludedPerks = new Set([
-            'Cake Slice',
-            'Carrot',
-            'Cherry',
-            'Chocolate Cake',
-            'Coconut',
-            'Croissant',
-            'Cucumber',
-            'Eggplant',
-            'Fig',
-            'Gingerbread Man',
-            'Grapes',
-            'Golden Egg',
-            'Health Potion',
-            'Love Potion',
-            'Magic Beans',
-            'Peanut',
-            'Pie',
-            'Rambutan',
-            'Rice',
-            'Skewer'
-        ]);
-        const perks = Array.from(equipmentMap.values()).filter((equipment) => equipment && !excludedPerks.has(equipment.name));
+        const perks = Array.from(equipmentMap.values()).filter((equipment) => equipment);
         const opponent = getOpponent(gameApi, owner.parent);
         const pets = [...owner.parent.petArray, ...opponent.petArray].filter((pet) => pet?.alive);
         for (const pet of pets) {

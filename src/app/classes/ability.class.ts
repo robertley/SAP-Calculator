@@ -31,17 +31,14 @@ export type NumberedTriggerBase =
 
 export type AbilityTriggerBase =
     | 'None'
-    | 'Composite'
     | 'StartTurn'
     | 'EndTurn'
     | 'StartBattle'
     | 'ShopUpgrade'
     | 'ThisBought'
     | 'ThisSold'
-    | 'FoodBought'
     | 'FoodEatenByAny'
     | 'ThisSummoned'
-    | 'OtherSummoned'
     | 'EnemySummoned'
     | 'FriendSummoned'
     | 'ThisTransformed'
@@ -50,7 +47,6 @@ export type AbilityTriggerBase =
     | 'BeforeFriendAttacks'
     | 'ThisDied'
     | 'BeforeThisDies'
-    | 'ThisDiesForPerks'
     | 'FriendDied'
     | 'ThisKilled'
     | 'ThisHurt'
@@ -58,7 +54,6 @@ export type AbilityTriggerBase =
     | 'ThisLeveledUp'
     | 'FriendLeveledUp'
     | 'AnyLeveledUp'
-    | 'ShopRolled'
     | 'FriendAheadDied'
     | 'Tier1FriendBought'
     | 'FoodEatenByThis'
@@ -67,7 +62,6 @@ export type AbilityTriggerBase =
     | 'FriendBought'
     | 'FriendHurt'
     | 'FriendlyLeveledUp'
-    | 'CompositeEnemySummonedOrPushed'
     | 'AppleEatenByThis'
     | 'AdjacentFriendsDie'
     | 'EnemyDied'
@@ -76,99 +70,47 @@ export type AbilityTriggerBase =
     | 'ThisLostPerk'
     | 'ThisAttacked'
     | 'ClearFront'
-    | 'AllEnemiesDied'
     | 'FriendAttacked'
-    | 'BuyFromShop'
-    | 'SpendGold'
     | 'FriendGainsAilment'
-    | 'ToyBroke'
-    | 'ToySummoned'
-    | 'ThisBroke'
-    | 'ThisGainedPerkOrAilment'
     | 'FriendGainsPerk'
-    | 'ThisHurtOrFaint'
-    | 'ThisBoughtOrToyBroke'
-    | 'StartBattleOrTurn'
-    | 'AllFriendsFainted'
     | 'BeforeStartBattle'
     | 'FriendlyToyBroke'
-    | 'FriendlyToySummoned'
     | 'FriendlyGainsPerk'
     | 'FriendJumped'
-    | 'FriendGainedAttack'
-    | 'FriendGainedHealth'
-    | 'ThisGainedAttack'
-    | 'ThisGainedHealth'
-    | 'ShopRewardStocked'
     | 'ThisGainedMana'
     | 'EnemyGainedAilment'
     | 'ThisGainedAilment'
     | 'ThisGainedStrawberry'
-    | 'EnemyHurtOrPushed'
     | 'AnyoneAttack'
     | 'ThisKilledEnemy'
-    | 'BeforeSell'
-    | 'SellFriend'
-    | 'FriendSoldOrFaint'
-    | 'Level3FriendSold'
     | 'FriendTransformed'
-    | 'Disabled137'
-    | 'Disabled138'
-    | 'Disabled139'
-    | 'Disabled140'
-    | 'Disabled141'
-    | 'Disabled142'
-    | 'Disabled143'
-    | 'Disabled144'
-    | 'SpendAttack'
-    | 'SpendHealth'
-    | 'FriendSpendAttack'
-    | 'FriendSpendHealth'
-    | 'FriendSpendsAttackOrHealth'
-    | 'CompositeStartOfBattleOrTransformed'
-    | 'CompositeBuyOrStartTurn'
-    | 'FriendHurtOrFaint'
-    | 'FriendTransformedInBattle'
     | 'FriendLostPerk'
     | 'LostStrawberry'
     | 'FriendLostStrawberry'
     | 'FriendGainedStrawberry'
     | 'BeeSummoned'
     | 'FriendFlung'
-    | 'ThisSummonedLate'
-    | 'AnythingBought'
     | 'AnyoneGainedAilment'
     | 'CornEatenByThis'
     | 'CornEatenByFriend'
     | 'AnyoneFlung'
-    | 'GainExp'
     | 'FriendGainedExp'
-    | 'BeforeRoll'
-    | 'PleaseDontShowUpInLocalizationFiles'
     | 'FriendlyGainedStrawberry'
     | 'FoodEatenByFriend'
     | 'FoodEatenByFriendly'
     | 'AnyoneHurt'
     | 'FriendlyAttacked'
-    | 'ShopFoodEatenByThis'
     | 'FriendlyGainedExp'
     | 'PetDied'
     | 'FriendlyAbilityActivated'
-    | 'EnemyAbilityActivated'
-    | 'FriendAheadGainedHealth'
     | 'AdjacentFriendAttacked'
     | 'BeforeAdjacentFriendAttacked'
-    | 'LostAttack'
     | 'AdjacentFriendsHurt'
     | 'AnyoneBehindHurt'
     | 'AnyoneJumped'
-    | 'BeforeFriendTransformed'
     | 'EnemyAttacked'
-    | 'FriendJumpedOrTransformed'
     | 'AnyoneGainedWeak'
     | 'ThisFirstAttack'
-    | 'PetSold'
-    | 'PetGainedAilment'
     | 'PetLostPerk'
     | 'BeforeFirstAttack'
     | 'BeforeFriendlyAttack'
@@ -200,7 +142,13 @@ export interface AbilityFunction {
 export class Ability {
     public name?: string;
     public owner: Pet;
-    public triggers: AbilityTrigger[];
+    protected _triggers: AbilityTrigger[] = [];
+    public get triggers(): AbilityTrigger[] {
+        return this._triggers;
+    }
+    public set triggers(value: AbilityTrigger[]) {
+        this._triggers = value;
+    }
     public abilityType: AbilityType;
     public maxUses: number;
     public currentUses: number;
@@ -296,7 +244,7 @@ export class Ability {
         }
 
         const tigerPet = tigerPetOverride ?? (this.owner).petBehind(true, true);
-        if (tigerPet && tigerPet.hasTrigger(null, null, 'TigerAbility') && (tiger == null || tiger == false)) {
+        if (tigerPet && tigerPet.hasTrigger(undefined, undefined, 'TigerAbility') && (tiger == null || tiger == false)) {
             return true;
         }
         return false;
@@ -343,7 +291,7 @@ export class Ability {
         this.currentUses = this.initialCurrentUses;
     }
 
-    copy(newOwner: Pet): Ability {
+    copy(newOwner: Pet): Ability | null {
         return null;
     }
 

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Log } from "../interfaces/log.interface";
 import { FormGroup } from "@angular/forms";
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 
 @Injectable({
     providedIn: 'root'

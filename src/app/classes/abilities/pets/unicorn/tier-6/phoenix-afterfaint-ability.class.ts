@@ -26,8 +26,8 @@ export class PhoenixAfterFaintAbility extends Ability {
     }
 
     private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+
+        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
 
         let power = 4 * this.level;
         let youngPhoenix = new YoungPhoenix(this.logService, this.abilityService, owner.parent, power, power, 0);
@@ -40,6 +40,7 @@ export class PhoenixAfterFaintAbility extends Ability {
                 player: owner.parent,
                 tiger: tiger,
                 pteranodon: pteranodon,
+                sourcePet: owner,
                 randomEvent: summonResult.randomEvent
             });
         }

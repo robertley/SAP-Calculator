@@ -1,4 +1,4 @@
-import { clone, shuffle } from "lodash";
+import { clone, shuffle } from "lodash-es";
 import { GameAPI } from "../../../../interfaces/gameAPI.interface";
 import { AbilityService } from "../../../../services/ability/ability.service";
 import { LogService } from "../../../../services/log.service";

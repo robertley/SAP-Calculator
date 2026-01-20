@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 import { AbilityEvent } from "../../interfaces/ability-event.interface";
 import { Pet } from "../../classes/pet.class";
 import { Player } from "../../classes/player.class";

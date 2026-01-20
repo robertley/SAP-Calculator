@@ -1,4 +1,4 @@
-import { clone } from "lodash";
+import { clone } from "lodash-es";
 import type { Player } from "../player.class";
 import { Pet } from "../pet.class";
 import { LogService } from "../../services/log.service";
@@ -10,27 +10,27 @@ export const pushPetsForward = (player: Player): void => {
     try {
         player.setPet(0, array[0]);
     } catch {
-        player.pet0 = null;
+        player.pet0 = undefined;
     }
     try {
         player.setPet(1, array[1]);
     } catch {
-        player.pet1 = null;
+        player.pet1 = undefined;
     }
     try {
         player.setPet(2, array[2]);
     } catch {
-        player.pet2 = null;
+        player.pet2 = undefined;
     }
     try {
         player.setPet(3, array[3]);
     } catch {
-        player.pet3 = null;
+        player.pet3 = undefined;
     }
     try {
         player.setPet(4, array[4]);
     } catch {
-        player.pet4 = null;
+        player.pet4 = undefined;
     }
 };
 
@@ -45,7 +45,7 @@ export const onionCheck = (player: Player): void => {
 };
 
 export const pushForwardFromSlot = (player: Player, slot: number): boolean => {
-    let slotWithSpace = null;
+    let slotWithSpace: number | null = null;
     let isSpaceAhead = false;
     if (slot > 0) {
         if (player.pet0 == null) {
@@ -72,8 +72,30 @@ export const pushForwardFromSlot = (player: Player, slot: number): boolean => {
         }
     }
     if (isSpaceAhead) {
+        if (slotWithSpace == null) {
+            return false;
+        }
+        const setSlot = (index: number, value?: Pet) => {
+            switch (index) {
+                case 0:
+                    player.pet0 = value;
+                    break;
+                case 1:
+                    player.pet1 = value;
+                    break;
+                case 2:
+                    player.pet2 = value;
+                    break;
+                case 3:
+                    player.pet3 = value;
+                    break;
+                case 4:
+                    player.pet4 = value;
+                    break;
+            }
+        };
         for (let i = slotWithSpace; i < slot; i++) {
-            player[`pet${i}`] = player[`pet${i + 1}`];
+            setSlot(i, player.getPet(i + 1));
         }
         return true;
     }
@@ -81,7 +103,7 @@ export const pushForwardFromSlot = (player: Player, slot: number): boolean => {
 };
 
 export const pushBackwardFromSlot = (player: Player, slot: number): boolean => {
-    let slotWithSpace = null;
+    let slotWithSpace: number | null = null;
     let isSpaceBehind = false;
     if (slot < 4) {
         if (player.pet4 == null) {
@@ -108,8 +130,30 @@ export const pushBackwardFromSlot = (player: Player, slot: number): boolean => {
         }
     }
     if (isSpaceBehind) {
+        if (slotWithSpace == null) {
+            return false;
+        }
+        const setSlot = (index: number, value?: Pet) => {
+            switch (index) {
+                case 0:
+                    player.pet0 = value;
+                    break;
+                case 1:
+                    player.pet1 = value;
+                    break;
+                case 2:
+                    player.pet2 = value;
+                    break;
+                case 3:
+                    player.pet3 = value;
+                    break;
+                case 4:
+                    player.pet4 = value;
+                    break;
+            }
+        };
         for (let i = slotWithSpace; i > slot; i--) {
-            player[`pet${i}`] = player[`pet${i - 1}`];
+            setSlot(i, player.getPet(i - 1));
         }
         return true;
     }
@@ -146,7 +190,23 @@ export const pushPet = (
     }
 
     const position = pet.position;
-    pet.parent[`pet${position}`] = null;
+    switch (position) {
+        case 0:
+            pet.parent.pet0 = undefined;
+            break;
+        case 1:
+            pet.parent.pet1 = undefined;
+            break;
+        case 2:
+            pet.parent.pet2 = undefined;
+            break;
+        case 3:
+            pet.parent.pet3 = undefined;
+            break;
+        case 4:
+            pet.parent.pet4 = undefined;
+            break;
+    }
     let destination;
     if (spaces > 0) {
         destination = Math.max(position - spaces, 0);

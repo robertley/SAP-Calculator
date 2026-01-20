@@ -16,7 +16,7 @@ import { LovePotion } from "../classes/equipment/unicorn/love-potion.class";
 import { GingerbreadMan } from "../classes/equipment/unicorn/gingerbread-man.class";
 import { HealthPotion } from "../classes/equipment/unicorn/health-potion.class";
 import { Puma } from "../classes/pets/puppy/tier-6/puma.class";
-import { shuffle } from "lodash";
+import { shuffle } from "lodash-es";
 
 export class SimulationRunner {
     protected player: Player;
@@ -121,6 +121,7 @@ export class SimulationRunner {
 
     protected initBattle(config: SimulationConfig) {
         this.logService.reset();
+        this.abilityService.clearGlobalEventQueue();
         this.currBattle = {
             winner: 'draw',
             logs: this.logService.getLogs()
@@ -174,6 +175,11 @@ export class SimulationRunner {
         this.initializeEquipmentMultipliers();
 
         // Before battle phase
+        this.logService.createLog({
+            message: "Phase 1: Before battle",
+            type: 'board'
+        });
+        this.logService.printState(this.player, this.opponent);
         this.abilityService.triggerBeforeStartOfBattleEvents();
         this.abilityService.executeBeforeStartOfBattleEvents();
 
@@ -184,6 +190,11 @@ export class SimulationRunner {
 
         const hasChurros = (pet) => pet.equipment?.name === 'Churros';
         // Init SOB (Churros pets before toys)
+        this.logService.createLog({
+            message: "Phase 2: Start of battle",
+            type: 'board'
+        });
+        this.logService.printState(this.player, this.opponent);
         this.abilityService.triggerStartBattleEvents(hasChurros);
         this.abilityService.executeStartBattleEvents();
 
@@ -198,6 +209,12 @@ export class SimulationRunner {
         do {
             this.abilityCycle();
         } while (this.abilityService.hasAbilityCycleEvents);
+
+        this.logService.createLog({
+            message: "Phase 3: After Start of Battle",
+            type: 'board'
+        });
+        this.logService.printState(this.player, this.opponent);
     }
 
     protected createPets(player: Player, petsConfig: (PetConfig | null)[]) {

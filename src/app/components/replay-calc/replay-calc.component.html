@@ -1,8 +1,31 @@
 <div class="replay-calc" [formGroup]="formGroup">
   <p class="text-muted">
     Paste a replay JSON (with an Actions array) or a single battle JSON to generate a calculator link for a turn.
-    Participation ID lookup requires the local replay backend to be running with `SAP_EMAIL` and `SAP_PASSWORD` set.
+    Participation ID lookup uses the credentials saved below in local storage and the local replay backend.
   </p>
+
+  <div class="row g-3 mb-3">
+    <div class="col-12 col-md-6">
+      <label for="sapEmail" class="form-label">SAP Email</label>
+      <input
+        id="sapEmail"
+        type="email"
+        class="form-control"
+        formControlName="sapEmail"
+        placeholder="you@example.com"
+      />
+    </div>
+    <div class="col-12 col-md-6">
+      <label for="sapPassword" class="form-label">SAP Password</label>
+      <input
+        id="sapPassword"
+        type="password"
+        class="form-control"
+        formControlName="sapPassword"
+        placeholder="••••••••"
+      />
+    </div>
+  </div>
 
   <label for="replayJson" class="form-label">Replay or Battle JSON</label>
   <textarea

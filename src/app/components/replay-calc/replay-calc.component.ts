@@ -1,17 +1,24 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ReplayCalcService } from '../../services/replay/replay-calc.service';
 
 @Component({
   selector: 'app-replay-calc',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './replay-calc.component.html',
   styleUrls: ['./replay-calc.component.scss']
 })
 export class ReplayCalcComponent {
+  private readonly sapCredentialsKey = 'sapCredentials';
+
   formGroup = new FormGroup({
     replayJson: new FormControl('', Validators.required),
-    turn: new FormControl(1, Validators.min(1))
+    turn: new FormControl(1, Validators.min(1)),
+    sapEmail: new FormControl(''),
+    sapPassword: new FormControl('')
   });
 
   errorMessage = '';
@@ -22,6 +29,16 @@ export class ReplayCalcComponent {
     private replayCalcService: ReplayCalcService,
     private http: HttpClient
   ) {}
+
+  ngOnInit(): void {
+    const saved = this.loadSapCredentials();
+    if (saved) {
+      this.formGroup.patchValue({
+        sapEmail: saved.email || '',
+        sapPassword: saved.password || ''
+      });
+    }
+  }
 
   generate() {
     this.errorMessage = '';
@@ -50,7 +67,15 @@ export class ReplayCalcComponent {
         return;
       }
       this.loading = true;
-      this.http.post('/api/replay-battle', { Pid: parsedInput.Pid, T: turnNumber }).subscribe({
+      this.saveSapCredentials();
+      const sapEmail = this.formGroup.get('sapEmail').value?.trim();
+      const sapPassword = this.formGroup.get('sapPassword').value;
+      this.http.post('/api/replay-battle', {
+        Pid: parsedInput.Pid,
+        T: turnNumber,
+        SapEmail: sapEmail || undefined,
+        SapPassword: sapPassword || undefined
+      }).subscribe({
         next: (response: any) => {
           this.loading = false;
           battleJson = response?.battle;
@@ -119,5 +144,24 @@ export class ReplayCalcComponent {
     }).catch(() => {
       alert('Failed to copy link. Please copy it manually.');
     });
+  }
+
+  private saveSapCredentials() {
+    const email = this.formGroup.get('sapEmail').value?.trim() || '';
+    const password = this.formGroup.get('sapPassword').value || '';
+    const payload = { email, password };
+    window.localStorage.setItem(this.sapCredentialsKey, JSON.stringify(payload));
+  }
+
+  private loadSapCredentials(): { email?: string; password?: string } | null {
+    const raw = window.localStorage.getItem(this.sapCredentialsKey);
+    if (!raw) {
+      return null;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
   }
 }
