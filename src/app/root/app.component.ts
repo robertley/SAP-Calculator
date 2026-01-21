@@ -404,6 +404,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.formGroup.get('logFilter')?.valueChanges.subscribe(() => {
       this.refreshFilteredBattles();
     });
+    this.formGroup.get('simulations')?.valueChanges.subscribe((val) => {
+      if (val > 1000) {
+        this.formGroup.get('simulations')?.setValue(1000, { emitEvent: false });
+      }
+    });
   }
 
   toggleAdvanced() {
@@ -547,6 +552,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   simulate(count: number = 1000) {
+    if (count > 1000) {
+      count = 1000;
+    }
     try {
       this.runSimulation(count);
     } catch (error) {
