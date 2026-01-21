@@ -12,7 +12,8 @@
             <div class="toy-row">
               <div class="toy-slot">
                 <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'player')">
-                  <img *ngIf="playerToyImageUrl" class="toy-art" [ngSrc]="playerToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Player Toy">
+                  <img *ngIf="playerToyImageUrl" class="toy-art" [ngSrc]="playerToyImageUrl" width="36" height="36"
+                    loading="lazy" decoding="async" alt="Player Toy">
                   <span class="toy-label">{{formGroup.get('playerToy').value || 'Select Toy'}}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
@@ -28,11 +29,13 @@
               </div>
               <div class="toy-slot">
                 <button type="button" class="toy-select-btn" (click)="openSelectionDialog('hard-toy', 'player')">
-                  <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="playerHardToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Player Hard Toy">
+                  <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="playerHardToyImageUrl"
+                    width="36" height="36" loading="lazy" decoding="async" alt="Player Hard Toy">
                   <span class="toy-label">{{formGroup.get('playerHardToy').value || 'Hard Toy'}}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <button type="button" *ngIf="playerHardToyImageUrl" class="toy-remove-btn-inline" (click)="removeHardToy('player')" title="Remove hard toy">
+                <button type="button" *ngIf="playerHardToyImageUrl" class="toy-remove-btn-inline"
+                  (click)="removeHardToy('player')" title="Remove hard toy">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -44,8 +47,8 @@
           <!-- <div class="back">BACK</div> -->
           <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
             (cdkDropListDropped)="drop($event, 'player')">
-            <div class="col drag-container mb-2 mb-md-0 px-0" *ngFor="let pet of playerPetsControls ; index as i; trackBy: trackByIndex"
-              cdkDrag>
+            <div class="col drag-container mb-2 mb-md-0 px-0"
+              *ngFor="let pet of playerPetsControls ; index as i; trackBy: trackByIndex" cdkDrag>
               <div class="drag-handle" cdkDragHandle>
                 <svg fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -73,7 +76,8 @@
             <div class="toy-row">
               <div class="toy-slot">
                 <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'opponent')">
-                  <img *ngIf="opponentToyImageUrl" class="toy-art" [ngSrc]="opponentToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Opponent Toy">
+                  <img *ngIf="opponentToyImageUrl" class="toy-art" [ngSrc]="opponentToyImageUrl" width="36" height="36"
+                    loading="lazy" decoding="async" alt="Opponent Toy">
                   <span class="toy-label">{{formGroup.get('opponentToy').value || 'Select Toy'}}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
@@ -89,11 +93,13 @@
               </div>
               <div class="toy-slot">
                 <button type="button" class="toy-select-btn" (click)="openSelectionDialog('hard-toy', 'opponent')">
-                  <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="opponentHardToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Opponent Hard Toy">
+                  <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="opponentHardToyImageUrl"
+                    width="36" height="36" loading="lazy" decoding="async" alt="Opponent Hard Toy">
                   <span class="toy-label">{{formGroup.get('opponentHardToy').value || 'Hard Toy'}}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <button type="button" *ngIf="opponentHardToyImageUrl" class="toy-remove-btn-inline" (click)="removeHardToy('opponent')" title="Remove hard toy">
+                <button type="button" *ngIf="opponentHardToyImageUrl" class="toy-remove-btn-inline"
+                  (click)="removeHardToy('opponent')" title="Remove hard toy">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -135,8 +141,7 @@
           <div class="simulate-controls">
             <div class="simulate-input-group">
               <button class="btn btn-primary" (click)="simulate(formGroup.get('simulations').value)">Simulate</button>
-              <input class="form-control simulate-input" type="number" formControlName="simulations" min="1"
-                max="10000">
+              <input class="form-control simulate-input" type="number" formControlName="simulations" min="1" max="1000">
             </div>
             <button class="btn btn-secondary" (click)="randomize()">Randomize</button>
           </div>
@@ -172,15 +177,20 @@
         </div>
         <div class="top-controls-right">
           <div class="external-meta">
-            <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link" (click)="showInfo = true">Info/Guide</span>
+            <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link"
+              (click)="showInfo = true">Info/Guide</span>
             <span class="meta-text">Last Updated: {{lastUpdated}}</span>
             <span class="meta-text">Version: {{version}}</span>
-            <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link" (click)="showPatchNotes = true">Patch Notes</span>
+            <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link"
+              (click)="showPatchNotes = true">Patch Notes</span>
           </div>
           <div class="external-buttons">
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug" (click)="showReportABug = true">Report A Bug</button>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#export" (click)="showExport = true">Export Calculator</button>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import" (click)="showImport = true">Import / Replay</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug"
+              (click)="showReportABug = true">Report A Bug</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#export"
+              (click)="showExport = true">Export Calculator</button>
+            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import"
+              (click)="showImport = true">Import / Replay</button>
             <button class="btn btn-primary" (click)="generateShareLink()">Generate Link</button>
           </div>
         </div>
@@ -200,9 +210,8 @@
             <div class="team-column">
               <button class="selection-btn team-selection-btn" (click)="openSelectionDialog('team', 'none')">
                 <div class="team-preview" *ngIf="getSelectedTeamPreviewIcons().length; else teamPlaceholder">
-                  <img *ngFor="let icon of getSelectedTeamPreviewIcons(); let i = index"
-                    [ngSrc]="icon" width="28" height="28" loading="lazy" decoding="async"
-                    [alt]="getSelectedTeamName()" class="team-preview-icon">
+                  <img *ngFor="let icon of getSelectedTeamPreviewIcons(); let i = index" [ngSrc]="icon" width="28"
+                    height="28" loading="lazy" decoding="async" [alt]="getSelectedTeamName()" class="team-preview-icon">
                 </div>
                 <ng-template #teamPlaceholder>
                   <span class="btn-placeholder">Saved teams</span>
@@ -222,8 +231,8 @@
               <label>Player Pack</label>
               <button class="selection-btn" (click)="openSelectionDialog('pack', 'player')">
                 <img *ngIf="getPackIconPath(formGroup.get('playerPack').value) && !playerPackImageBroken"
-                  [ngSrc]="getPackIconPath(formGroup.get('playerPack').value)" class="btn-icon" width="24" height="24" loading="lazy" decoding="async"
-                  (error)="onPackImageError('player')">
+                  [ngSrc]="getPackIconPath(formGroup.get('playerPack').value)" class="btn-icon" width="24" height="24"
+                  loading="lazy" decoding="async" (error)="onPackImageError('player')">
                 <span class="btn-text">{{formGroup.get('playerPack').value || 'Select Pack'}}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
@@ -232,8 +241,8 @@
               <label>Opponent Pack</label>
               <button class="selection-btn" (click)="openSelectionDialog('pack', 'opponent')">
                 <img *ngIf="getPackIconPath(formGroup.get('opponentPack').value) && !opponentPackImageBroken"
-                  [ngSrc]="getPackIconPath(formGroup.get('opponentPack').value)" class="btn-icon" width="24" height="24" loading="lazy" decoding="async"
-                  (error)="onPackImageError('opponent')">
+                  [ngSrc]="getPackIconPath(formGroup.get('opponentPack').value)" class="btn-icon" width="24" height="24"
+                  loading="lazy" decoding="async" (error)="onPackImageError('opponent')">
                 <span class="btn-text">{{formGroup.get('opponentPack').value || 'Select Pack'}}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
@@ -349,14 +358,16 @@
                   <input class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="playerTransformationAmount" title="Player Transformation Amount" class="advanced-label-with-icon">
+                  <label for="playerTransformationAmount" title="Player Transformation Amount"
+                    class="advanced-label-with-icon">
                     <span class="advanced-icon transform-icon" aria-hidden="true"></span>
                     Player Transformation Amount
                   </label>
                   <input class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="opponentTransformationAmount" title="Opponent Transformation Amount" class="advanced-label-with-icon">
+                  <label for="opponentTransformationAmount" title="Opponent Transformation Amount"
+                    class="advanced-label-with-icon">
                     <span class="advanced-icon transform-icon" aria-hidden="true"></span>
                     Opponent Transformation Amount
                   </label>
@@ -401,8 +412,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let battle of filteredBattlesCache; index as i; trackBy: trackByIndex" (click)="setViewBattle(battle)"
-                class="table-battle-row"
+              <tr *ngFor="let battle of filteredBattlesCache; index as i; trackBy: trackByIndex"
+                (click)="setViewBattle(battle)" class="table-battle-row"
                 [ngClass]="battle.winner === 'player' ? 'battle-win' : battle.winner === 'opponent' ? 'battle-loss' : ''">
                 <td>{{i}}</td>
                 <td>{{battle.winner}}</td>
@@ -417,8 +428,7 @@
         <h3>Logs</h3>
         <div class="row log-container flex-1 scroll">
           <div class="col-12" *ngFor="let log of viewBattleLogRows; trackBy: trackByIndex">
-            <span [ngClass]="log.classes"
-              [innerHTML]="log.message"></span>
+            <span [ngClass]="log.classes" [innerHTML]="log.message"></span>
           </div>
         </div>
       </div>
@@ -437,9 +447,9 @@
         </div>
         <div class="modal-body">
           @defer (when showPatchNotes) {
-            <app-patch-notes></app-patch-notes>
+          <app-patch-notes></app-patch-notes>
           } @placeholder {
-            <div class="text-muted">Loading patch notes…</div>
+          <div class="text-muted">Loading patch notes…</div>
           }
         </div>
         <div class="modal-footer">
@@ -474,9 +484,9 @@
         </div>
         <div class="modal-body">
           @defer (when showInfo) {
-            <app-info></app-info>
+          <app-info></app-info>
           } @placeholder {
-            <div class="text-muted">Loading info…</div>
+          <div class="text-muted">Loading info…</div>
           }
         </div>
       </div>
@@ -492,9 +502,9 @@
         </div>
         <div class="modal-body">
           @defer (when showImport) {
-            <app-import-calculator [importFunc]="import.bind(this)"></app-import-calculator>
+          <app-import-calculator [importFunc]="import.bind(this)"></app-import-calculator>
           } @placeholder {
-            <div class="text-muted">Loading import tools…</div>
+          <div class="text-muted">Loading import tools…</div>
           }
         </div>
       </div>
@@ -510,9 +520,9 @@
         </div>
         <div class="modal-body">
           @defer (when showExport) {
-            <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
+          <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
           } @placeholder {
-            <div class="text-muted">Loading export tools…</div>
+          <div class="text-muted">Loading export tools…</div>
           }
         </div>
       </div>
@@ -528,9 +538,9 @@
         </div>
         <div class="modal-body">
           @defer (when showReportABug) {
-            <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
+          <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
           } @placeholder {
-            <div class="text-muted">Loading report form…</div>
+          <div class="text-muted">Loading report form…</div>
           }
         </div>
       </div>
@@ -540,8 +550,6 @@
 </ng-container>
 
 <app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType"
-  [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')"
-  [savedTeams]="savedTeams"
-  (select)="onItemSelected($event)"
-  (close)="showSelectionDialog = false">
+  [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')" [savedTeams]="savedTeams"
+  (select)="onItemSelected($event)" (close)="showSelectionDialog = false">
 </app-item-selection-dialog>
