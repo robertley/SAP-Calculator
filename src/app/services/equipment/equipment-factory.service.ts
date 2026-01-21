@@ -22,7 +22,6 @@ const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
     ['Health Potion', 1],
     ['Honey', 1],
     ['Macaron', 1],
-    ['Mana Potion', 1],
     ['Unagi', 1],
     ['Caramel', 2],
     ['Cherry', 2],
