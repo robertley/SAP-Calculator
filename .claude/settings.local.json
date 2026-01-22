@@ -1,9 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(grep:*)",
-      "Bash(find:*)"
-    ],
+    "allow": ["Bash(grep:*)", "Bash(find:*)"],
     "deny": [],
     "ask": []
   }

@@ -1,34 +1,38 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
-import { AbilityService } from "app/services/ability/ability.service";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
 
 export class PigAbility extends Ability {
-    private logService: LogService;
-    private abilityService: AbilityService;
+  private logService: LogService;
+  private abilityService: AbilityService;
 
-    constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
-        super({
-            name: 'PigAbility',
-            owner: owner,
-            triggers: [],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.logService = logService;
-        this.abilityService = abilityService;
-    }
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'PigAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
 
-    private executeAbility(context: AbilityContext): void {
-        // Empty implementation - to be filled by user
-        this.triggerTigerExecution(context);
-    }
+  private executeAbility(context: AbilityContext): void {
+    // Empty implementation - to be filled by user
+    this.triggerTigerExecution(context);
+  }
 
-    copy(newOwner: Pet): PigAbility {
-        return new PigAbility(newOwner, this.logService, this.abilityService);
-    }
+  copy(newOwner: Pet): PigAbility {
+    return new PigAbility(newOwner, this.logService, this.abilityService);
+  }
 }

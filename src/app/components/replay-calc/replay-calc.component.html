@@ -1,7 +1,8 @@
 <div class="replay-calc" [formGroup]="formGroup">
   <p class="text-muted">
-    Paste a replay JSON (with an Actions array) or a single battle JSON to generate a calculator link for a turn.
-    Participation ID lookup uses the credentials saved below in local storage and the local replay backend.
+    Paste a replay JSON (with an Actions array) or a single battle JSON to
+    generate a calculator link for a turn. Participation ID lookup uses the
+    credentials saved below in local storage and the local replay backend.
   </p>
 
   <div class="row g-3 mb-3">
@@ -47,11 +48,11 @@
       />
     </div>
     <button class="btn btn-primary" (click)="generate()" [disabled]="loading">
-      {{loading ? 'Fetching...' : 'Generate Link'}}
+      {{ loading ? "Fetching..." : "Generate Link" }}
     </button>
   </div>
 
-  <div *ngIf="errorMessage" class="text-danger mb-2">{{errorMessage}}</div>
+  <div *ngIf="errorMessage" class="text-danger mb-2">{{ errorMessage }}</div>
 
   <div *ngIf="calculatorLink">
     <label for="calcLink" class="form-label">Calculator Link</label>
@@ -61,7 +62,15 @@
       [value]="calculatorLink"
       readonly
     />
-    <button class="btn btn-secondary me-2" (click)="copyLink()">Copy Link</button>
-    <a class="btn btn-secondary" [href]="calculatorLink" target="_blank" rel="noopener">Open</a>
+    <button class="btn btn-secondary me-2" (click)="copyLink()">
+      Copy Link
+    </button>
+    <a
+      class="btn btn-secondary"
+      [href]="calculatorLink"
+      target="_blank"
+      rel="noopener"
+      >Open</a
+    >
   </div>
 </div>

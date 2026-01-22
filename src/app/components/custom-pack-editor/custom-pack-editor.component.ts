@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormArray,
@@ -8,21 +8,21 @@ import {
   ValidationErrors,
   ValidatorFn,
   Validators,
-} from "@angular/forms";
-import { PetService } from "../../services/pet/pet.service";
-import { remove } from "lodash-es";
-import { LocalStorageService } from "../../services/local-storage.service";
-import * as petJson from "../../files/pets.json";
-import { PACK_NAMES } from "../../util/pack-names";
-import { ReactiveFormsModule } from "@angular/forms";
-import { CustomPackFormComponent } from "./custom-pack-form/custom-pack-form.component";
+} from '@angular/forms';
+import { PetService } from '../../services/pet/pet.service';
+import { remove } from 'lodash-es';
+import { LocalStorageService } from '../../services/local-storage.service';
+import * as petJson from '../../files/pets.json';
+import { PACK_NAMES } from '../../util/pack-names';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CustomPackFormComponent } from './custom-pack-form/custom-pack-form.component';
 
 @Component({
-  selector: "app-custom-pack-editor",
+  selector: 'app-custom-pack-editor',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, CustomPackFormComponent],
-  templateUrl: "./custom-pack-editor.component.html",
-  styleUrls: ["./custom-pack-editor.component.scss"],
+  templateUrl: './custom-pack-editor.component.html',
+  styleUrls: ['./custom-pack-editor.component.scss'],
 })
 export class CustomPackEditorComponent implements OnInit {
   @Input()
@@ -39,13 +39,14 @@ export class CustomPackEditorComponent implements OnInit {
     code: new FormControl(null),
   });
 
+
   constructor(
     private petService: PetService,
     private localStorageService: LocalStorageService,
   ) {}
 
   ngOnInit(): void {
-    this.customPacks = this.formGroup.get("customPacks") as FormArray;
+    this.customPacks = this.formGroup.get('customPacks') as FormArray;
     this.buildPetPackMap();
     this.buildPetNameToTierMap();
     this.buildPetIdLookup();
@@ -122,7 +123,7 @@ export class CustomPackEditorComponent implements OnInit {
     }
     this.petService.buildCustomPackPets(this.customPacks);
     this.focusedGroup = null;
-    this.localStorageService.setStorage(this.formGroup.value);
+    this.localStorageService.setFormStorage(this.formGroup);
   }
 
   cancelEvent(event: FormGroup) {
@@ -134,22 +135,23 @@ export class CustomPackEditorComponent implements OnInit {
   }
 
   deletePack(group: AbstractControl) {
-    if (confirm("Are you sure you want to delete this pack?")) {
+    if (confirm('Are you sure you want to delete this pack?')) {
       let index = this.customPacks.controls.indexOf(group);
       this.customPacks.removeAt(index);
-      this.localStorageService.setStorage(this.formGroup.value);
+      this.focusedGroup = null;
+      this.localStorageService.setFormStorage(this.formGroup);
     }
   }
 
   forbiddenNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      let forbiddenNames = ["custom"];
+      let forbiddenNames = ['custom'];
       for (let formGroup of this.customPacks.controls) {
-        let con = formGroup.get("name");
+        let con = formGroup.get('name');
         if (control == con) {
           continue;
         }
-        forbiddenNames.push(formGroup.get("name").value?.toLowerCase());
+        forbiddenNames.push(formGroup.get('name').value?.toLowerCase());
       }
       if (forbiddenNames.includes(control.value?.toLowerCase())) {
         return { forbiddenName: true };
@@ -159,13 +161,19 @@ export class CustomPackEditorComponent implements OnInit {
   }
 
   importCustomPack() {
-    let code = this.importFormGroup.get("code").value;
+    let code = this.importFormGroup.get('code').value;
     try {
-      code = JSON.parse(code);
-      let parsed = this.parseMinions(code.Minions, code.MinionMap);
-      const parsedSpells = Array.isArray(code.Spells) ? code.Spells : [];
+      let jsonString = code;
+      const firstBracket = code.indexOf('{');
+      const lastBracket = code.lastIndexOf('}');
+      if (firstBracket !== -1 && lastBracket > firstBracket) {
+        jsonString = code.substring(firstBracket, lastBracket + 1);
+      }
+      const parsedCode = JSON.parse(jsonString);
+      let parsed = this.parseMinions(parsedCode.Minions, parsedCode.MinionMap);
+      const parsedSpells = Array.isArray(parsedCode.Spells) ? parsedCode.Spells : [];
       let formValue = {
-        name: code.Title,
+        name: parsedCode.Title,
         tier1Pets: parsed.tierMinions.get(1),
         tier2Pets: parsed.tierMinions.get(2),
         tier3Pets: parsed.tierMinions.get(3),
@@ -178,11 +186,11 @@ export class CustomPackEditorComponent implements OnInit {
       this.focusedGroup.patchValue(formValue);
       if (parsed.missingMinions.length > 0) {
         alert(
-          `Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(", ")}`,
+          `Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(', ')}`,
         );
       }
     } catch (e) {
-      alert("Invalid code");
+      alert('Invalid code');
       console.error(e);
     }
   }
@@ -216,7 +224,7 @@ export class CustomPackEditorComponent implements OnInit {
   exportCustomPack(pack: AbstractControl) {
     const payload = this.buildExportPayload(pack);
     const json = JSON.stringify(payload);
-    this.importFormGroup.get("code")?.setValue(json);
+    this.importFormGroup.get('code')?.setValue(json);
     this.copyToClipboard(json);
   }
 
@@ -236,18 +244,20 @@ export class CustomPackEditorComponent implements OnInit {
       }
     }
 
-    const spellsControl = pack.get("spells");
+    const spellsControl = pack.get('spells');
     const rawSpells = Array.isArray(spellsControl?.value)
       ? spellsControl.value
       : Array.isArray((pack as FormGroup)?.value?.spells)
         ? (pack as FormGroup).value.spells
         : [];
-    const spells = rawSpells.filter((spell: string | number | null) => Boolean(spell));
+    const spells = rawSpells.filter((spell: string | number | null) =>
+      Boolean(spell),
+    );
 
     return {
-      Title: pack.get("name")?.value || "Custom Pack",
+      Title: pack.get('name')?.value || 'Custom Pack',
       Minions: minions,
-      ...(spells.length ? { Spells: spells } : {})
+      ...(spells.length ? { Spells: spells } : {}),
     };
   }
 
@@ -286,9 +296,9 @@ export class CustomPackEditorComponent implements OnInit {
     for (let minion of minions) {
       let name: string | null = null;
       let idKey: string | null = null;
-      if (typeof minion === "number") {
+      if (typeof minion === 'number') {
         idKey = String(minion);
-      } else if (typeof minion === "string") {
+      } else if (typeof minion === 'string') {
         let trimmed = minion.trim();
         if (trimmed && trimmed.match(/^\d+$/)) {
           idKey = trimmed;
@@ -321,5 +331,4 @@ export class CustomPackEditorComponent implements OnInit {
 
     return { tierMinions, missingMinions };
   }
-
 }

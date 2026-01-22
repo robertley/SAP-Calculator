@@ -1,47 +1,47 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
 
 export class YakAbility extends Ability {
-    private logService: LogService;
+  private logService: LogService;
 
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'Yak Ability',
-            owner: owner,
-            triggers: ['EndTurn'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => this.executeAbility(context)
-        });
-        this.logService = logService;
-    }
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Yak Ability',
+      owner: owner,
+      triggers: ['EndTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
 
-    private executeAbility(context: AbilityContext): void {
-        const { tiger, pteranodon } = context;
-        const owner = this.owner;
-        const damage = this.level;
-        const attackGain = 2 * this.level;
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const damage = this.level;
+    const attackGain = 2 * this.level;
 
-        // Take damage
-        owner.dealDamage(owner, damage);
+    // Take damage
+    owner.dealDamage(owner, damage);
 
-        // Gain attack
-        owner.increaseAttack(attackGain);
+    // Gain attack
+    owner.increaseAttack(attackGain);
 
-        this.logService.createLog({
-            message: `${owner.name} took ${damage} damage and gained +${attackGain} attack.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon
-        });
+    this.logService.createLog({
+      message: `${owner.name} took ${damage} damage and gained +${attackGain} attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
 
-        this.triggerTigerExecution(context);
-    }
+    this.triggerTigerExecution(context);
+  }
 
-    override copy(newOwner: Pet): YakAbility {
-        return new YakAbility(newOwner, this.logService);
-    }
+  override copy(newOwner: Pet): YakAbility {
+    return new YakAbility(newOwner, this.logService);
+  }
 }

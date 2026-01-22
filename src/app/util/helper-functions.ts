@@ -1,22 +1,31 @@
-import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
-import { Pet } from "app/classes/pet.class";
-import { Player } from "app/classes/player.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 
 // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
 export function shuffle(array) {
-  let currentIndex = array.length, randomIndex;
+  let currentIndex = array.length,
+    randomIndex;
 
   // While there remain elements to shuffle.
   while (currentIndex != 0) {
-
     // Pick a remaining element.
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
     // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
 
   return array;
@@ -52,24 +61,41 @@ export function getOpponent(gameApi: GameAPI, player: Player): Player {
   return opponent;
 }
 
-
 export function createPack(customPack?) {
   let formGroup = new FormGroup({
     name: new FormControl(customPack.name ?? null, Validators.required),
-    tier1Pets: new FormControl(customPack.tier1Pets ?? [], controlArrayLengthOf10()),
+    tier1Pets: new FormControl(
+      customPack.tier1Pets ?? [],
+      controlArrayLengthOf10(),
+    ),
     // tier1Food: new FormControl([]),
-    tier2Pets: new FormControl(customPack.tier2Pets ?? [], controlArrayLengthOf10()),
+    tier2Pets: new FormControl(
+      customPack.tier2Pets ?? [],
+      controlArrayLengthOf10(),
+    ),
     // tier2Food: new FormControl([]),
-    tier3Pets: new FormControl(customPack.tier3Pets ?? [], controlArrayLengthOf10()),
+    tier3Pets: new FormControl(
+      customPack.tier3Pets ?? [],
+      controlArrayLengthOf10(),
+    ),
     // tier3Food: new FormControl([]),
-    tier4Pets: new FormControl(customPack.tier4Pets ?? [], controlArrayLengthOf10()),
+    tier4Pets: new FormControl(
+      customPack.tier4Pets ?? [],
+      controlArrayLengthOf10(),
+    ),
     // tier4Food: new FormControl([]),
-    tier5Pets: new FormControl(customPack.tier5Pets ?? [], controlArrayLengthOf10()),
+    tier5Pets: new FormControl(
+      customPack.tier5Pets ?? [],
+      controlArrayLengthOf10(),
+    ),
     // tier5Food: new FormControl([]),
-    tier6Pets: new FormControl(customPack.tier6Pets ?? [], controlArrayLengthOf10()),
+    tier6Pets: new FormControl(
+      customPack.tier6Pets ?? [],
+      controlArrayLengthOf10(),
+    ),
     // tier6Food: new FormControl([]),
     spells: new FormControl(customPack.spells ?? []),
-  })
+  });
   return formGroup;
 }
 
@@ -84,4 +110,4 @@ function controlArrayLengthOf10(): ValidatorFn {
   };
 }
 
-export { levelToExp, minExpForLevel } from "./leveling";
+export { levelToExp, minExpForLevel } from './leveling';

@@ -1,66 +1,149 @@
 <ng-container *ngIf="api">
-  <div id="apiResponse">{{apiResponse}}</div>
+  <div id="apiResponse">{{ apiResponse }}</div>
 </ng-container>
 <ng-container *ngIf="!api">
-  <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" #container>
-    <div class="row battle-row pb-5 pt-3"
-      [style.background-image]="battleBackgroundUrl ? 'url(' + battleBackgroundUrl + ')' : ''">
+  <div
+    class="container-fluid app-wrapper flex-col"
+    [formGroup]="formGroup"
+    #container
+  >
+    <div
+      class="row battle-row pb-5 pt-3"
+      [style.background-image]="
+        battleBackgroundUrl ? 'url(' + battleBackgroundUrl + ')' : ''
+      "
+    >
       <div class="col-12 col-xl-6 px-4 mb-2 mb-xl-0">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center toy-wrap">
             <h2 class="me-2">Player</h2>
             <div class="toy-row">
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'player')">
-                  <img *ngIf="playerToyImageUrl" class="toy-art" [ngSrc]="playerToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Player Toy">
-                  <span class="toy-label">{{formGroup.get('playerToy').value || 'Select Toy'}}</span>
+                <button
+                  type="button"
+                  class="toy-select-btn"
+                  (click)="openSelectionDialog('toy', 'player')"
+                >
+                  <img
+                    *ngIf="playerToyImageUrl"
+                    class="toy-art"
+                    [ngSrc]="playerToyImageUrl"
+                    width="36"
+                    height="36"
+                    loading="lazy"
+                    decoding="async"
+                    alt="Player Toy"
+                  />
+                  <span class="toy-label">{{
+                    formGroup.get("playerToy").value || "Select Toy"
+                  }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="toy-level-controls inline" *ngIf="playerToyImageUrl">
-                  <button class="toy-level-btn" (click)="decrementToyLevel('player')" title="Decrease level">
+                <div
+                  class="toy-level-controls inline"
+                  *ngIf="playerToyImageUrl"
+                >
+                  <button
+                    class="toy-level-btn"
+                    (click)="decrementToyLevel('player')"
+                    title="Decrease level"
+                  >
                     <i class="fas fa-minus"></i>
                   </button>
-                  <span class="toy-level-label">Lv{{formGroup.get('playerToyLevel').value}}</span>
-                  <button class="toy-level-btn" (click)="incrementToyLevel('player')" title="Increase level">
+                  <span class="toy-level-label"
+                    >Lv{{ formGroup.get("playerToyLevel").value }}</span
+                  >
+                  <button
+                    class="toy-level-btn"
+                    (click)="incrementToyLevel('player')"
+                    title="Increase level"
+                  >
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
               </div>
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('hard-toy', 'player')">
-                  <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="playerHardToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Player Hard Toy">
-                  <span class="toy-label">{{formGroup.get('playerHardToy').value || 'Hard Toy'}}</span>
+                <button
+                  type="button"
+                  class="toy-select-btn"
+                  (click)="openSelectionDialog('hard-toy', 'player')"
+                >
+                  <img
+                    *ngIf="playerHardToyImageUrl"
+                    class="toy-art hard-toy-art"
+                    [ngSrc]="playerHardToyImageUrl"
+                    width="36"
+                    height="36"
+                    loading="lazy"
+                    decoding="async"
+                    alt="Player Hard Toy"
+                  />
+                  <span class="toy-label">{{
+                    formGroup.get("playerHardToy").value || "Hard Toy"
+                  }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <button type="button" *ngIf="playerHardToyImageUrl" class="toy-remove-btn-inline" (click)="removeHardToy('player')" title="Remove hard toy">
+                <button
+                  type="button"
+                  *ngIf="playerHardToyImageUrl"
+                  class="toy-remove-btn-inline"
+                  (click)="removeHardToy('player')"
+                  title="Remove hard toy"
+                >
                   <i class="fas fa-times"></i>
                 </button>
               </div>
             </div>
           </div>
-          <button class="btn glass-btn mb-1" (click)="resetPlayer('player')">Reset</button>
+          <button class="btn glass-btn mb-1" (click)="resetPlayer('player')">
+            Reset
+          </button>
         </div>
         <div class="card p-2 player-card">
           <!-- <div class="back">BACK</div> -->
-          <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
-            (cdkDropListDropped)="drop($event, 'player')">
-            <div class="col drag-container mb-2 mb-md-0 px-0" *ngFor="let pet of playerPetsControls ; index as i; trackBy: trackByIndex"
-              cdkDrag>
+          <div
+            class="row row-cols-1 row-cols-md-5 g-0"
+            cdkDropList
+            cdkDropListOrientation="horizontal"
+            (cdkDropListDropped)="drop($event, 'player')"
+          >
+            <div
+              class="col drag-container mb-2 mb-md-0 px-0"
+              *ngFor="
+                let pet of playerPetsControls;
+                index as i;
+                trackBy: trackByIndex
+              "
+              cdkDrag
+            >
               <div class="drag-handle" cdkDragHandle>
                 <svg fill="currentColor" viewBox="0 0 24 24">
                   <path
-                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                  </path>
+                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                  ></path>
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-              <app-pet-selector [pet]="player['pet' + (4 - i)]" [player]="player" [opponent]="opponent" [index]="4 - i"
-                [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
-                [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
-                [allowEquipmentUseOverrides]="formGroup.get('changeEquipmentUses').value"
-                [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="true"
+              <app-pet-selector
+                [pet]="player['pet' + (4 - i)]"
+                [player]="player"
+                [opponent]="opponent"
+                [index]="4 - i"
+                [formGroup]="makeFormGroup(pet)"
+                [ailments]="true"
+                [allPets]="formGroup.get('allPets').value"
+                [mana]="formGroup.get('mana').value"
+                [triggersConsumed]="formGroup.get('triggersConsumed').value"
+                [allowEquipmentUseOverrides]="
+                  formGroup.get('changeEquipmentUses').value
+                "
+                [showTokenPets]="formGroup.get('tokenPets').value"
+                [flipImage]="true"
                 [customPacks]="formGroup.get('customPacks')"
-                [showSwallowedLevels]="formGroup.get('showSwallowedLevels').value"></app-pet-selector>
+                [showSwallowedLevels]="
+                  formGroup.get('showSwallowedLevels').value
+                "
+              ></app-pet-selector>
             </div>
           </div>
           <!-- <div class="front">FRONT</div> -->
@@ -72,56 +155,131 @@
             <h2 class="me-2">Opponent</h2>
             <div class="toy-row">
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'opponent')">
-                  <img *ngIf="opponentToyImageUrl" class="toy-art" [ngSrc]="opponentToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Opponent Toy">
-                  <span class="toy-label">{{formGroup.get('opponentToy').value || 'Select Toy'}}</span>
+                <button
+                  type="button"
+                  class="toy-select-btn"
+                  (click)="openSelectionDialog('toy', 'opponent')"
+                >
+                  <img
+                    *ngIf="opponentToyImageUrl"
+                    class="toy-art"
+                    [ngSrc]="opponentToyImageUrl"
+                    width="36"
+                    height="36"
+                    loading="lazy"
+                    decoding="async"
+                    alt="Opponent Toy"
+                  />
+                  <span class="toy-label">{{
+                    formGroup.get("opponentToy").value || "Select Toy"
+                  }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="toy-level-controls inline" *ngIf="opponentToyImageUrl">
-                  <button class="toy-level-btn" (click)="decrementToyLevel('opponent')" title="Decrease level">
+                <div
+                  class="toy-level-controls inline"
+                  *ngIf="opponentToyImageUrl"
+                >
+                  <button
+                    class="toy-level-btn"
+                    (click)="decrementToyLevel('opponent')"
+                    title="Decrease level"
+                  >
                     <i class="fas fa-minus"></i>
                   </button>
-                  <span class="toy-level-label">Lv{{formGroup.get('opponentToyLevel').value}}</span>
-                  <button class="toy-level-btn" (click)="incrementToyLevel('opponent')" title="Increase level">
+                  <span class="toy-level-label"
+                    >Lv{{ formGroup.get("opponentToyLevel").value }}</span
+                  >
+                  <button
+                    class="toy-level-btn"
+                    (click)="incrementToyLevel('opponent')"
+                    title="Increase level"
+                  >
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
               </div>
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('hard-toy', 'opponent')">
-                  <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="opponentHardToyImageUrl" width="36" height="36" loading="lazy" decoding="async" alt="Opponent Hard Toy">
-                  <span class="toy-label">{{formGroup.get('opponentHardToy').value || 'Hard Toy'}}</span>
+                <button
+                  type="button"
+                  class="toy-select-btn"
+                  (click)="openSelectionDialog('hard-toy', 'opponent')"
+                >
+                  <img
+                    *ngIf="opponentHardToyImageUrl"
+                    class="toy-art hard-toy-art"
+                    [ngSrc]="opponentHardToyImageUrl"
+                    width="36"
+                    height="36"
+                    loading="lazy"
+                    decoding="async"
+                    alt="Opponent Hard Toy"
+                  />
+                  <span class="toy-label">{{
+                    formGroup.get("opponentHardToy").value || "Hard Toy"
+                  }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <button type="button" *ngIf="opponentHardToyImageUrl" class="toy-remove-btn-inline" (click)="removeHardToy('opponent')" title="Remove hard toy">
+                <button
+                  type="button"
+                  *ngIf="opponentHardToyImageUrl"
+                  class="toy-remove-btn-inline"
+                  (click)="removeHardToy('opponent')"
+                  title="Remove hard toy"
+                >
                   <i class="fas fa-times"></i>
                 </button>
               </div>
             </div>
           </div>
-          <button class="btn glass-btn mb-1" (click)="resetPlayer('opponent')">Reset</button>
+          <button class="btn glass-btn mb-1" (click)="resetPlayer('opponent')">
+            Reset
+          </button>
         </div>
 
         <div class="card p-2 player-card ml-auto">
           <!-- <div class="front">FRONT</div> -->
-          <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
-            (cdkDropListDropped)="drop($event, 'opponent')">
-            <div class="col drag-container mb-2 mb-sm-0 px-0"
-              *ngFor="let pet of opponentPetsControls ; index as i; trackBy: trackByIndex" cdkDrag>
+          <div
+            class="row row-cols-1 row-cols-md-5 g-0"
+            cdkDropList
+            cdkDropListOrientation="horizontal"
+            (cdkDropListDropped)="drop($event, 'opponent')"
+          >
+            <div
+              class="col drag-container mb-2 mb-sm-0 px-0"
+              *ngFor="
+                let pet of opponentPetsControls;
+                index as i;
+                trackBy: trackByIndex
+              "
+              cdkDrag
+            >
               <div class="drag-handle" cdkDragHandle>
                 <svg fill="currentColor" viewBox="0 0 24 24">
                   <path
-                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                  </path>
+                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"
+                  ></path>
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-              <app-pet-selector [pet]="opponent['pet' + i]" [player]="opponent" [opponent]="player" [index]="i"
-                [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
-                [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
-                [allowEquipmentUseOverrides]="formGroup.get('changeEquipmentUses').value"
-                [showTokenPets]="formGroup.get('tokenPets').value" [customPacks]="formGroup.get('customPacks')"
-                [showSwallowedLevels]="formGroup.get('showSwallowedLevels').value"></app-pet-selector>
+              <app-pet-selector
+                [pet]="opponent['pet' + i]"
+                [player]="opponent"
+                [opponent]="player"
+                [index]="i"
+                [formGroup]="makeFormGroup(pet)"
+                [ailments]="true"
+                [allPets]="formGroup.get('allPets').value"
+                [mana]="formGroup.get('mana').value"
+                [triggersConsumed]="formGroup.get('triggersConsumed').value"
+                [allowEquipmentUseOverrides]="
+                  formGroup.get('changeEquipmentUses').value
+                "
+                [showTokenPets]="formGroup.get('tokenPets').value"
+                [customPacks]="formGroup.get('customPacks')"
+                [showSwallowedLevels]="
+                  formGroup.get('showSwallowedLevels').value
+                "
+              ></app-pet-selector>
             </div>
           </div>
           <!-- <div class="back">BACK</div> -->
@@ -134,11 +292,23 @@
         <div class="top-controls-left">
           <div class="simulate-controls">
             <div class="simulate-input-group">
-              <button class="btn btn-primary" (click)="simulate(formGroup.get('simulations').value)">Simulate</button>
-              <input class="form-control simulate-input" type="number" formControlName="simulations" min="1"
-                max="10000">
+              <button
+                class="btn btn-primary"
+                (click)="simulate(formGroup.get('simulations').value)"
+              >
+                Simulate
+              </button>
+              <input
+                class="form-control simulate-input"
+                type="number"
+                formControlName="simulations"
+                min="1"
+                max="10000"
+              />
             </div>
-            <button class="btn btn-secondary" (click)="randomize()">Randomize</button>
+            <button class="btn btn-secondary" (click)="randomize()">
+              Randomize
+            </button>
           </div>
         </div>
         <div class="top-controls-center">
@@ -146,42 +316,82 @@
             <div class="results-row">
               <div class="stats">
                 <span class="stat-block player-stat">
-                  <span class="stat-label">Player Wins:</span><span>{{playerWinner}} - {{winPercent}}%</span>
+                  <span class="stat-label">Player Wins:</span
+                  ><span>{{ playerWinner }} - {{ winPercent }}%</span>
                 </span>
                 <span class="stat-block draw-stat">
-                  <span class="stat-label">Draws:</span><span>{{draw}} - {{drawPercent}}%</span>
+                  <span class="stat-label">Draws:</span
+                  ><span>{{ draw }} - {{ drawPercent }}%</span>
                 </span>
                 <span class="stat-block opponent-stat">
-                  <span class="stat-label">Opponent Wins:</span><span>{{opponentWinner}} - {{losePercent}}%</span>
+                  <span class="stat-label">Opponent Wins:</span
+                  ><span>{{ opponentWinner }} - {{ losePercent }}%</span>
                 </span>
               </div>
               <div class="py-1">
                 <span class="results-bar">
-                  <span class="draw-bar" [style.width]="getDrawWidth()"></span>
-                  <span class="lose-bar" [style.width]="getLoseWidth()"></span>
+                  <span class="draw-bar" [style.width]="drawWidth"></span>
+                  <span class="lose-bar" [style.width]="loseWidth"></span>
                 </span>
               </div>
             </div>
           </ng-container>
           <ng-template #resultsPlaceholder>
             <div class="results-placeholder">
-              <span class="results-placeholder-text">Simulate to see results</span>
+              <span class="results-placeholder-text"
+                >Simulate to see results</span
+              >
               <span class="results-bar placeholder-bar"></span>
             </div>
           </ng-template>
         </div>
         <div class="top-controls-right">
           <div class="external-meta">
-            <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link" (click)="showInfo = true">Info/Guide</span>
-            <span class="meta-text">Last Updated: {{lastUpdated}}</span>
-            <span class="meta-text">Version: {{version}}</span>
-            <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link" (click)="showPatchNotes = true">Patch Notes</span>
+            <span
+              data-bs-toggle="modal"
+              data-bs-target="#info"
+              class="btn-link info-link"
+              (click)="showInfo = true"
+              >Info/Guide</span
+            >
+            <span class="meta-text">Last Updated: {{ lastUpdated }}</span>
+            <span class="meta-text">Version: {{ version }}</span>
+            <span
+              data-bs-toggle="modal"
+              data-bs-target="#patchNotes"
+              class="btn-link"
+              (click)="showPatchNotes = true"
+              >Patch Notes</span
+            >
           </div>
           <div class="external-buttons">
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug" (click)="showReportABug = true">Report A Bug</button>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#export" (click)="showExport = true">Export Calculator</button>
-            <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import" (click)="showImport = true">Import / Replay</button>
-            <button class="btn btn-primary" (click)="generateShareLink()">Generate Link</button>
+            <button
+              class="btn btn-secondary"
+              data-bs-toggle="modal"
+              data-bs-target="#reportABug"
+              (click)="showReportABug = true"
+            >
+              Report A Bug
+            </button>
+            <button
+              class="btn btn-secondary"
+              data-bs-toggle="modal"
+              data-bs-target="#export"
+              (click)="showExport = true"
+            >
+              Export Calculator
+            </button>
+            <button
+              class="btn btn-secondary"
+              data-bs-toggle="modal"
+              data-bs-target="#import"
+              (click)="showImport = true"
+            >
+              Import / Replay
+            </button>
+            <button class="btn btn-primary" (click)="generateShareLink()">
+              Generate Link
+            </button>
           </div>
         </div>
       </div>
@@ -190,29 +400,72 @@
         <div class="controls-grid">
           <div class="controls-section teams-section">
             <div class="team-column">
-              <input class="form-control team-name-input" [(ngModel)]="teamName" [ngModelOptions]="{standalone: true}"
-                placeholder="Team name">
+              <input
+                class="form-control team-name-input"
+                [(ngModel)]="teamName"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Team name"
+              />
               <div class="team-name-actions">
-                <button class="btn btn-secondary btn-sm" (click)="saveTeam('player')">Save Player</button>
-                <button class="btn btn-secondary btn-sm" (click)="saveTeam('opponent')">Save Opponent</button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  (click)="saveTeam('player')"
+                >
+                  Save Player
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  (click)="saveTeam('opponent')"
+                >
+                  Save Opponent
+                </button>
               </div>
             </div>
             <div class="team-column">
-              <button class="selection-btn team-selection-btn" (click)="openSelectionDialog('team', 'none')">
-                <div class="team-preview" *ngIf="getSelectedTeamPreviewIcons().length; else teamPlaceholder">
-                  <img *ngFor="let icon of getSelectedTeamPreviewIcons(); let i = index"
-                    [ngSrc]="icon" width="28" height="28" loading="lazy" decoding="async"
-                    [alt]="getSelectedTeamName()" class="team-preview-icon">
+              <button
+                class="selection-btn team-selection-btn"
+                (click)="openSelectionDialog('team', 'none')"
+              >
+                <div
+                  class="team-preview"
+                  *ngIf="
+                    selectedTeamPreviewIcons.length;
+                    else teamPlaceholder
+                  "
+                >
+                  <img
+                    *ngFor="
+                      let icon of selectedTeamPreviewIcons;
+                      let i = index
+                    "
+                    [ngSrc]="icon"
+                    width="28"
+                    height="28"
+                    loading="lazy"
+                    decoding="async"
+                    [alt]="selectedTeamName"
+                    class="team-preview-icon"
+                  />
                 </div>
                 <ng-template #teamPlaceholder>
                   <span class="btn-placeholder">Saved teams</span>
                 </ng-template>
-                <span class="btn-text">{{getSelectedTeamName()}}</span>
+                <span class="btn-text">{{ selectedTeamName }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
               <div class="team-name-actions load-actions">
-                <button class="btn btn-secondary btn-sm" (click)="loadTeam('player')">Load Player</button>
-                <button class="btn btn-secondary btn-sm" (click)="loadTeam('opponent')">Load Opponent</button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  (click)="loadTeam('player')"
+                >
+                  Load Player
+                </button>
+                <button
+                  class="btn btn-secondary btn-sm"
+                  (click)="loadTeam('opponent')"
+                >
+                  Load Opponent
+                </button>
               </div>
             </div>
           </div>
@@ -220,26 +473,65 @@
           <div class="controls-section packs-section">
             <div class="form-group min-w-input">
               <label>Player Pack</label>
-              <button class="selection-btn" (click)="openSelectionDialog('pack', 'player')">
-                <img *ngIf="getPackIconPath(formGroup.get('playerPack').value) && !playerPackImageBroken"
-                  [ngSrc]="getPackIconPath(formGroup.get('playerPack').value)" class="btn-icon" width="24" height="24" loading="lazy" decoding="async"
-                  (error)="onPackImageError('player')">
-                <span class="btn-text">{{formGroup.get('playerPack').value || 'Select Pack'}}</span>
+              <button
+                class="selection-btn"
+                (click)="openSelectionDialog('pack', 'player')"
+              >
+                <img
+                  *ngIf="
+                    getPackIconPath(formGroup.get('playerPack').value) &&
+                    !playerPackImageBroken
+                  "
+                  [ngSrc]="getPackIconPath(formGroup.get('playerPack').value)"
+                  class="btn-icon"
+                  width="24"
+                  height="24"
+                  loading="lazy"
+                  decoding="async"
+                  (error)="onPackImageError('player')"
+                />
+                <span class="btn-text">{{
+                  formGroup.get("playerPack").value || "Select Pack"
+                }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
             </div>
             <div class="form-group min-w-input">
               <label>Opponent Pack</label>
-              <button class="selection-btn" (click)="openSelectionDialog('pack', 'opponent')">
-                <img *ngIf="getPackIconPath(formGroup.get('opponentPack').value) && !opponentPackImageBroken"
-                  [ngSrc]="getPackIconPath(formGroup.get('opponentPack').value)" class="btn-icon" width="24" height="24" loading="lazy" decoding="async"
-                  (error)="onPackImageError('opponent')">
-                <span class="btn-text">{{formGroup.get('opponentPack').value || 'Select Pack'}}</span>
+              <button
+                class="selection-btn"
+                (click)="openSelectionDialog('pack', 'opponent')"
+              >
+                <img
+                  *ngIf="
+                    getPackIconPath(formGroup.get('opponentPack').value) &&
+                    !opponentPackImageBroken
+                  "
+                  [ngSrc]="getPackIconPath(formGroup.get('opponentPack').value)"
+                  class="btn-icon"
+                  width="24"
+                  height="24"
+                  loading="lazy"
+                  decoding="async"
+                  (error)="onPackImageError('opponent')"
+                />
+                <span class="btn-text">{{
+                  formGroup.get("opponentPack").value || "Select Pack"
+                }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
             </div>
-            <div class="form-check" title="All pets are included in the pet pool.">
-              <input class="form-check-input" type="checkbox" value="" id="allPets" formControlName="allPets">
+            <div
+              class="form-check"
+              title="All pets are included in the pet pool."
+            >
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="allPets"
+                formControlName="allPets"
+              />
               <label class="form-check-label" for="allPets">All Pets</label>
             </div>
           </div>
@@ -247,42 +539,107 @@
           <div class="controls-section advanced-section">
             <ng-container *ngIf="formGroup.get('showAdvanced').value">
               <div class="advanced-grid">
-                <div class="form-check" title="Shuffle pets in front of Komodo if present.">
-                  <input class="form-check-input" type="checkbox" value="" id="komodoShuffle"
-                    formControlName="komodoShuffle">
-                  <label class="form-check-label advanced-label-with-icon" for="komodoShuffle">
-                    <span class="advanced-icon komodo-icon" aria-hidden="true"></span>
+                <div
+                  class="form-check"
+                  title="Shuffle pets in front of Komodo if present."
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    id="komodoShuffle"
+                    formControlName="komodoShuffle"
+                  />
+                  <label
+                    class="form-check-label advanced-label-with-icon"
+                    for="komodoShuffle"
+                  >
+                    <span
+                      class="advanced-icon komodo-icon"
+                      aria-hidden="true"
+                    ></span>
                     Komodo Shuffle
                   </label>
                 </div>
-                <div class="form-check" title="Enable changing equipment uses globally.">
-                  <input class="form-check-input" type="checkbox" value="" id="changeEquipmentUses"
-                    formControlName="changeEquipmentUses">
-                  <label class="form-check-label advanced-label-with-icon" for="changeEquipmentUses">
-                    <span class="advanced-icon perk-icon" aria-hidden="true"></span>
+                <div
+                  class="form-check"
+                  title="Enable changing equipment uses globally."
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    id="changeEquipmentUses"
+                    formControlName="changeEquipmentUses"
+                  />
+                  <label
+                    class="form-check-label advanced-label-with-icon"
+                    for="changeEquipmentUses"
+                  >
+                    <span
+                      class="advanced-icon perk-icon"
+                      aria-hidden="true"
+                    ></span>
                     Change equipment uses
                   </label>
                 </div>
                 <div class="form-check" title="Include Mana.">
-                  <input class="form-check-input" type="checkbox" value="" id="mana" formControlName="mana">
-                  <label class="form-check-label advanced-label-with-icon" for="mana">
-                    <span class="advanced-icon mana-icon" aria-hidden="true"></span>
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    id="mana"
+                    formControlName="mana"
+                  />
+                  <label
+                    class="form-check-label advanced-label-with-icon"
+                    for="mana"
+                  >
+                    <span
+                      class="advanced-icon mana-icon"
+                      aria-hidden="true"
+                    ></span>
                     Mana
                   </label>
                 </div>
                 <div class="form-check" title="Include Triggers Consumed.">
-                  <input class="form-check-input" type="checkbox" value="" id="triggersConsumed"
-                    formControlName="triggersConsumed">
-                  <label class="form-check-label advanced-label-with-icon" for="triggersConsumed">
-                    <span class="advanced-icon pheasant-icon" aria-hidden="true"></span>
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    id="triggersConsumed"
+                    formControlName="triggersConsumed"
+                  />
+                  <label
+                    class="form-check-label advanced-label-with-icon"
+                    for="triggersConsumed"
+                  >
+                    <span
+                      class="advanced-icon pheasant-icon"
+                      aria-hidden="true"
+                    ></span>
                     Triggers Consumed
                   </label>
                 </div>
-                <div class="form-check" title="Show swallowed pet level selection.">
-                  <input class="form-check-input" type="checkbox" value="" id="showSwallowedLevels"
-                    formControlName="showSwallowedLevels">
-                  <label class="form-check-label advanced-label-with-icon" for="showSwallowedLevels">
-                    <span class="advanced-icon abomination-icon" aria-hidden="true"></span>
+                <div
+                  class="form-check"
+                  title="Show swallowed pet level selection."
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    id="showSwallowedLevels"
+                    formControlName="showSwallowedLevels"
+                  />
+                  <label
+                    class="form-check-label advanced-label-with-icon"
+                    for="showSwallowedLevels"
+                  >
+                    <span
+                      class="advanced-icon abomination-icon"
+                      aria-hidden="true"
+                    ></span>
                     Swallowed Levels
                   </label>
                 </div>
@@ -290,84 +647,213 @@
               <div class="advanced-number-grid mt-2">
                 <div class="form-group small-w-input">
                   <label for="turn">Turn Number</label>
-                  <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
+                  <input
+                    class="form-control"
+                    id="turn"
+                    type="number"
+                    formControlName="turn"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="playerGoldSpent" title="Player Gold Spent" class="advanced-label-with-icon">
-                    <span class="advanced-icon gold-icon" aria-hidden="true"></span>
+                  <label
+                    for="playerGoldSpent"
+                    title="Player Gold Spent"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon gold-icon"
+                      aria-hidden="true"
+                    ></span>
                     Player Gold Spent
                   </label>
-                  <input class="form-control" type="number" formControlName="playerGoldSpent" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="playerGoldSpent"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="opponentGoldSpent" title="Opponent Gold Spent" class="advanced-label-with-icon">
-                    <span class="advanced-icon gold-icon" aria-hidden="true"></span>
+                  <label
+                    for="opponentGoldSpent"
+                    title="Opponent Gold Spent"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon gold-icon"
+                      aria-hidden="true"
+                    ></span>
                     Opponent Gold Spent
                   </label>
-                  <input class="form-control" type="number" formControlName="opponentGoldSpent" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="opponentGoldSpent"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input" *ngIf="rollInputVisible">
-                  <label for="playerRollAmount" title="Player Roll Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon roll-icon" aria-hidden="true"></span>
+                  <label
+                    for="playerRollAmount"
+                    title="Player Roll Amount"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon roll-icon"
+                      aria-hidden="true"
+                    ></span>
                     Player Roll Amount
                   </label>
-                  <input class="form-control" type="number" formControlName="playerRollAmount" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="playerRollAmount"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input" *ngIf="rollInputVisible">
-                  <label for="opponentRollAmount" title="Opponent Roll Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon roll-icon" aria-hidden="true"></span>
+                  <label
+                    for="opponentRollAmount"
+                    title="Opponent Roll Amount"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon roll-icon"
+                      aria-hidden="true"
+                    ></span>
                     Opponent Roll Amount
                   </label>
-                  <input class="form-control" type="number" formControlName="opponentRollAmount" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="opponentRollAmount"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="playerLevel3Sold" title="Player Level 3 Sold" class="advanced-label-with-icon">
-                    <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
+                  <label
+                    for="playerLevel3Sold"
+                    title="Player Level 3 Sold"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon cycle-icon"
+                      aria-hidden="true"
+                    ></span>
                     Player Level 3 Sold
                   </label>
-                  <input class="form-control" type="number" formControlName="playerLevel3Sold" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="playerLevel3Sold"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="opponentLevel3Sold" title="Opponent Level 3 Sold" class="advanced-label-with-icon">
-                    <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
+                  <label
+                    for="opponentLevel3Sold"
+                    title="Opponent Level 3 Sold"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon cycle-icon"
+                      aria-hidden="true"
+                    ></span>
                     Opponent Level 3 Sold
                   </label>
-                  <input class="form-control" type="number" formControlName="opponentLevel3Sold" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="opponentLevel3Sold"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="playerSummonedAmount" title="Player Summoned Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon summon-icon" aria-hidden="true"></span>
+                  <label
+                    for="playerSummonedAmount"
+                    title="Player Summoned Amount"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon summon-icon"
+                      aria-hidden="true"
+                    ></span>
                     Player Summoned Amount
                   </label>
-                  <input class="form-control" type="number" formControlName="playerSummonedAmount" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="playerSummonedAmount"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="opponentSummonedAmount" title="Opponent Summoned Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon summon-icon" aria-hidden="true"></span>
+                  <label
+                    for="opponentSummonedAmount"
+                    title="Opponent Summoned Amount"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon summon-icon"
+                      aria-hidden="true"
+                    ></span>
                     Opponent Summoned Amount
                   </label>
-                  <input class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="opponentSummonedAmount"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="playerTransformationAmount" title="Player Transformation Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon transform-icon" aria-hidden="true"></span>
+                  <label
+                    for="playerTransformationAmount"
+                    title="Player Transformation Amount"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon transform-icon"
+                      aria-hidden="true"
+                    ></span>
                     Player Transformation Amount
                   </label>
-                  <input class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="playerTransformationAmount"
+                    max="99"
+                  />
                 </div>
                 <div class="form-group advanced-input">
-                  <label for="opponentTransformationAmount" title="Opponent Transformation Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon transform-icon" aria-hidden="true"></span>
+                  <label
+                    for="opponentTransformationAmount"
+                    title="Opponent Transformation Amount"
+                    class="advanced-label-with-icon"
+                  >
+                    <span
+                      class="advanced-icon transform-icon"
+                      aria-hidden="true"
+                    ></span>
                     Opponent Transformation Amount
                   </label>
-                  <input class="form-control" type="number" formControlName="opponentTransformationAmount" max="99" />
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="opponentTransformationAmount"
+                    max="99"
+                  />
                 </div>
               </div>
             </ng-container>
             <div class="advanced-toggle">
-              <span class="btn-link" (click)="toggleAdvanced()">{{formGroup.get('showAdvanced').value ? 'Hide' :
-                'Show'}}
-                Advanced Settings</span>
+              <span class="btn-link" (click)="toggleAdvanced()"
+                >{{
+                  formGroup.get("showAdvanced").value ? "Hide" : "Show"
+                }}
+                Advanced Settings</span
+              >
             </div>
           </div>
         </div>
@@ -378,13 +864,19 @@
         <h3>Battles</h3>
         <div class="row">
           <div class="col-12">
-            <label for="logFilter" class="form-label">Filter Battles By Winner</label>
+            <label for="logFilter" class="form-label"
+              >Filter Battles By Winner</label
+            >
           </div>
           <div class="col-12">
             <div class="log-filter-tabs" id="logFilter">
-              <button *ngFor="let tab of logFilterTabs; trackBy: trackByLogTab" type="button" class="log-filter-tab"
+              <button
+                *ngFor="let tab of logFilterTabs; trackBy: trackByLogTab"
+                type="button"
+                class="log-filter-tab"
                 [class.active]="formGroup.get('logFilter').value === tab.value"
-                (click)="formGroup.get('logFilter').setValue(tab.value)">
+                (click)="formGroup.get('logFilter').setValue(tab.value)"
+              >
                 {{ tab.label }}
               </button>
             </div>
@@ -401,12 +893,36 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let battle of filteredBattlesCache; index as i; trackBy: trackByIndex" (click)="setViewBattle(battle)"
+              <tr
+                *ngFor="
+                  let battle of filteredBattlesCache;
+                  index as i;
+                  trackBy: trackByIndex
+                "
+                (click)="setViewBattle(battle)"
                 class="table-battle-row"
-                [ngClass]="battle.winner === 'player' ? 'battle-win' : battle.winner === 'opponent' ? 'battle-loss' : ''">
-                <td>{{i}}</td>
-                <td>{{battle.winner}}</td>
-                <td class="pre"><span [innerHTML]="battleRandomEvents[i]"></span></td>
+                [ngClass]="
+                  battle.winner === 'player'
+                    ? 'battle-win'
+                    : battle.winner === 'opponent'
+                      ? 'battle-loss'
+                      : ''
+                "
+              >
+                <td>{{ i }}</td>
+                <td>{{ battle.winner }}</td>
+                <td class="pre">
+                  <ng-container *ngFor="let part of battleRandomEvents[i]">
+                    <img
+                      *ngIf="part.type === 'img'"
+                      [src]="part.src"
+                      class="log-inline-icon"
+                      [alt]="part.alt"
+                    />
+                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                    <br *ngIf="part.type === 'br'" />
+                  </ng-container>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -416,24 +932,46 @@
       <div class="col-12 col-md-6 border h-100 flex-col">
         <h3>Logs</h3>
         <div class="row log-container flex-1 scroll">
-          <div class="col-12" *ngFor="let log of viewBattleLogRows; trackBy: trackByIndex">
-            <span [ngClass]="log.classes"
-              [innerHTML]="log.message"></span>
+          <div
+            class="col-12"
+            *ngFor="let log of viewBattleLogRows; trackBy: trackByIndex"
+          >
+            <span [ngClass]="log.classes">
+              <ng-container *ngFor="let part of log.parts">
+                <img
+                  *ngIf="part.type === 'img'"
+                  [src]="part.src"
+                  class="log-pet-icon"
+                  [alt]="part.alt"
+                />
+                <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                <br *ngIf="part.type === 'br'" />
+              </ng-container>
+            </span>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
-
   <!-- Modal -->
-  <div class="modal fade" id="patchNotes" tabindex="-1" aria-labelledby="patchNotesLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="patchNotes"
+    tabindex="-1"
+    aria-labelledby="patchNotesLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="patchNotesLabel">Patch Notes</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           @defer (when showPatchNotes) {
@@ -450,27 +988,53 @@
   </div>
 
   <!-- Custom Pack -->
-  <div class="modal fade" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true"
-    #customPackEditor>
+  <div
+    class="modal fade"
+    id="customPackEditor"
+    tabindex="-1"
+    aria-labelledby="customPackEditorLabel"
+    aria-hidden="true"
+    #customPackEditor
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="customPackEditorLabel">Custom Pack Editor</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h1 class="modal-title fs-5" id="customPackEditorLabel">
+            Custom Pack Editor
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
-          <app-custom-pack-editor [formGroup]="formGroup"></app-custom-pack-editor>
+          <app-custom-pack-editor
+            [formGroup]="formGroup"
+          ></app-custom-pack-editor>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="info"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">Info</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           @defer (when showInfo) {
@@ -483,16 +1047,31 @@
     </div>
   </div>
 
-  <div class="modal fade" id="import" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="import"
+    tabindex="-1"
+    aria-labelledby="importModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="importModalLabel">Import / Replay</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h1 class="modal-title fs-5" id="importModalLabel">
+            Import / Replay
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           @defer (when showImport) {
-            <app-import-calculator [importFunc]="import.bind(this)"></app-import-calculator>
+            <app-import-calculator
+              [importFunc]="import.bind(this)"
+            ></app-import-calculator>
           } @placeholder {
             <div class="text-muted">Loading import tools…</div>
           }
@@ -501,16 +1080,31 @@
     </div>
   </div>
 
-  <div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="export"
+    tabindex="-1"
+    aria-labelledby="exportModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exportModalLabel">Export Calculator</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h1 class="modal-title fs-5" id="exportModalLabel">
+            Export Calculator
+          </h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           @defer (when showExport) {
-            <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
+            <app-export-calculator
+              [formGroup]="formGroup"
+            ></app-export-calculator>
           } @placeholder {
             <div class="text-muted">Loading export tools…</div>
           }
@@ -519,12 +1113,23 @@
     </div>
   </div>
 
-  <div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABug" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="reportABug"
+    tabindex="-1"
+    aria-labelledby="reportABug"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="reportABug">Report A Bug</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           @defer (when showReportABug) {
@@ -536,12 +1141,15 @@
       </div>
     </div>
   </div>
-
 </ng-container>
 
-<app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType"
-  [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')"
+<app-item-selection-dialog
+  *ngIf="showSelectionDialog"
+  [type]="selectionType"
+  [showAllPets]="formGroup.get('allPets').value"
+  [customPacks]="formGroup.get('customPacks')"
   [savedTeams]="savedTeams"
   (select)="onItemSelected($event)"
-  (close)="showSelectionDialog = false">
+  (close)="showSelectionDialog = false"
+>
 </app-item-selection-dialog>

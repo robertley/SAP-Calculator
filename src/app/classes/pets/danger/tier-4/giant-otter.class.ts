@@ -1,31 +1,35 @@
-import { AbilityService } from "../../../../services/ability/ability.service";
-import { LogService } from "../../../../services/log.service";
-import { Equipment } from "../../../equipment.class";
-import { Pack, Pet } from "../../../pet.class";
-import { Player } from "../../../player.class";
-import { GiantOtterAbility } from "../../../abilities/pets/danger/tier-4/giant-otter-ability.class";
+import { AbilityService } from '../../../../services/ability/ability.service';
+import { LogService } from '../../../../services/log.service';
+import { Equipment } from '../../../equipment.class';
+import { Pack, Pet } from '../../../pet.class';
+import { Player } from '../../../player.class';
+import { GiantOtterAbility } from '../../../abilities/pets/danger/tier-4/giant-otter-ability.class';
 export class GiantOtter extends Pet {
-    name = "Giant Otter";
-    tier = 4;
-    pack: Pack = 'Danger';
-    attack = 4;
-    health = 3;
+  name = 'Giant Otter';
+  tier = 4;
+  pack: Pack = 'Danger';
+  attack = 4;
+  health = 3;
 
-    // Track which friends received buffs and how much
-    private buffedFriends: Map<Pet, {attack: number, health: number}> = new Map();
-    initAbilities(): void {
-        this.addAbility(new GiantOtterAbility(this, this.logService));
-        super.initAbilities();
-    }
-    constructor(protected logService: LogService,
-        protected abilityService: AbilityService,
-        parent: Player,
-        health?: number,
-        attack?: number,
-        mana?: number,
-        exp?: number,
-        equipment?: Equipment, triggersConsumed?: number) {
-        super(logService, abilityService, parent);
-        this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
-    }
+  // Track which friends received buffs and how much
+  private buffedFriends: Map<Pet, { attack: number; health: number }> =
+    new Map();
+  initAbilities(): void {
+    this.addAbility(new GiantOtterAbility(this, this.logService));
+    super.initAbilities();
+  }
+  constructor(
+    protected logService: LogService,
+    protected abilityService: AbilityService,
+    parent: Player,
+    health?: number,
+    attack?: number,
+    mana?: number,
+    exp?: number,
+    equipment?: Equipment,
+    triggersConsumed?: number,
+  ) {
+    super(logService, abilityService, parent);
+    this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
 }

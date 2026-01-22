@@ -6,13 +6,10 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './info.component.html',
-  styleUrls: ['./info.component.scss']
+  styleUrls: ['./info.component.scss'],
 })
 export class InfoComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

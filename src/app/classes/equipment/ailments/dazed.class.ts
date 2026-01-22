@@ -1,6 +1,6 @@
-import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Equipment, EquipmentClass } from '../../equipment.class';
 
 export class Dazed extends Equipment {
-    name = 'Dazed';
-    equipmentClass: EquipmentClass = 'ailment-other';
+  name = 'Dazed';
+  equipmentClass: EquipmentClass = 'ailment-other';
 }

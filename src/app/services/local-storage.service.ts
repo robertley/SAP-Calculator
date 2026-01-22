@@ -1,57 +1,60 @@
-import { Injectable } from "@angular/core";
-import { Log } from "../interfaces/log.interface";
-import { FormGroup } from "@angular/forms";
+import { Injectable } from '@angular/core';
+import { Log } from '../interfaces/log.interface';
+import { FormGroup } from '@angular/forms';
 import { cloneDeep } from 'lodash-es';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class LocalStorageService {
-    key = 'sapData'
-    constructor() {
+  key = 'sapData';
+  constructor() {}
 
-    }
+  getStorage() {
+    let storage = window.localStorage.getItem(this.key);
 
-    getStorage() {
-        let storage = window.localStorage.getItem(this.key);
+    return window.localStorage.getItem(this.key);
+  }
 
-        return window.localStorage.getItem(this.key);
-    }
+  setFormStorage(formGroup: FormGroup) {
+    this.setStorage(formGroup.value);
+  }
 
-    setFormStorage(formGroup: FormGroup) {
-        let value = cloneDeep(formGroup.value);
+  setStorage(value: any) {
+    if (typeof value === 'object' && value !== null) {
+      const cache = new Set();
+      const replacer = (key: string, value: any) => {
+        if (key === 'equipment' && value && typeof value === 'object' && value.name) {
+          return { name: value.name };
+        }
 
-        const petsToClean = [...(value.playerPets || []), ...(value.opponentPets || [])];
+        // Prune service references that might be causing circular dependencies.
+        if (['parent', 'logService', 'abilityService', 'gameService', 'petService'].includes(key)) {
+            return undefined;
+        }
 
-        for (const pet of petsToClean) {
-            // This check is important because the array can have null slots
-            if (pet) {
-                // Remove all complex objects and circular references
-                delete pet.parent;
-                delete pet.logService;
-                delete pet.abilityService;
-                delete pet.gameService;
-                delete pet.petService;
-
-                // Simplify equipment to just its name
-                if (pet.equipment != null) {
-                    pet.equipment = {
-                        name: pet.equipment.name
-                    };
-                }
+        if (typeof value === 'object' && value !== null) {
+            if (cache.has(value)) {
+                // Circular reference found, discard.
+                return undefined;
             }
+            cache.add(value);
         }
-        this.setStorage(value);
-    }
+        return value;
+      };
 
-    setStorage(value: any) {
-        if (typeof value == 'object') {
-            value = JSON.stringify(value);
-        }
-        window.localStorage.setItem(this.key, value);
+      try {
+          const jsonString = JSON.stringify(value, replacer);
+          window.localStorage.setItem(this.key, jsonString);
+      } catch (e) {
+          console.error("Could not stringify value for local storage", e);
+      }
+    } else if (typeof value == 'string') {
+      window.localStorage.setItem(this.key, value);
     }
+  }
 
-    clearStorage() {
-        window.localStorage.removeItem(this.key);
-    }
+  clearStorage() {
+    window.localStorage.removeItem(this.key);
+  }
 }

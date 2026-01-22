@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
-import { ReplayCalcParser } from "./replay-calc-parser";
+import { ReplayCalcParser } from './replay-calc-parser';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ReplayCalcService {
   private parser = new ReplayCalcParser();
@@ -13,7 +13,11 @@ export class ReplayCalcService {
     buildModel?: any,
     metaBoards?: { userBoard?: any; opponentBoard?: any },
   ) {
-    return this.parser.parseReplayForCalculator(battleJson, buildModel, metaBoards);
+    return this.parser.parseReplayForCalculator(
+      battleJson,
+      buildModel,
+      metaBoards,
+    );
   }
 
   buildCustomPacksFromGenesis(buildModel?: any, battleJson?: any) {

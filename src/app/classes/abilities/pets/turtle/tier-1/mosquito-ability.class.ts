@@ -1,44 +1,50 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
-import { Player } from "../../../../player.class";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
+import { Player } from '../../../../player.class';
 
 export class MosquitoAbility extends Ability {
-    private logService: LogService;
+  private logService: LogService;
 
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'MosquitoAbility',
-            owner: owner,
-            triggers: ['StartBattle'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.logService = logService;
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'MosquitoAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let opponent = owner.parent.opponent;
+
+    let targetsResp = opponent.getRandomPets(
+      this.level,
+      null,
+      null,
+      true,
+      owner,
+    );
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        owner.snipePet(target, 1, targetsResp.random, tiger);
+      }
     }
 
-    private executeAbility(context: AbilityContext): void {
-        const { gameApi, triggerPet, tiger, pteranodon } = context;
-        const owner = this.owner;
+    this.triggerTigerExecution(context);
+  }
 
-        let opponent = owner.parent.opponent;
-
-        let targetsResp = opponent.getRandomPets(this.level, null, null, true, owner);
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                owner.snipePet(target, 1, targetsResp.random, tiger);
-            }
-        }
-
-        this.triggerTigerExecution(context);
-    }
-
-    copy(newOwner: Pet): MosquitoAbility {
-        return new MosquitoAbility(newOwner, this.logService);
-    }
+  copy(newOwner: Pet): MosquitoAbility {
+    return new MosquitoAbility(newOwner, this.logService);
+  }
 }

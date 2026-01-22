@@ -9,17 +9,15 @@ import { cloneDeep } from 'lodash-es';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './export-calculator.component.html',
-  styleUrls: ['./export-calculator.component.scss']
+  styleUrls: ['./export-calculator.component.scss'],
 })
 export class ExportCalculatorComponent implements OnInit {
-
   @Input()
   formGroup: FormGroup;
 
-  constructor(private localStorageService: LocalStorageService) { }
+  constructor(private localStorageService: LocalStorageService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   formGroupValueString() {
     if (!this.formGroup) {
@@ -29,8 +27,11 @@ export class ExportCalculatorComponent implements OnInit {
       const rawValue = this.formGroup.value;
       const cleanValue = cloneDeep(rawValue);
 
-      const petsToClean = [...(cleanValue.playerPets || []), ...(cleanValue.opponentPets || [])];
-      
+      const petsToClean = [
+        ...(cleanValue.playerPets || []),
+        ...(cleanValue.opponentPets || []),
+      ];
+
       for (const pet of petsToClean) {
         if (pet) {
           // Remove properties that are class instances or cause cycles
@@ -47,10 +48,9 @@ export class ExportCalculatorComponent implements OnInit {
       }
 
       return JSON.stringify(cleanValue, null, 2);
-
     } catch (e) {
-      console.error("Error creating export string:", e);
-      return "Error: Could not generate the export data.";
+      console.error('Error creating export string:', e);
+      return 'Error: Could not generate the export data.';
     }
   }
 
@@ -67,12 +67,14 @@ export class ExportCalculatorComponent implements OnInit {
     }
 
     // copy to clipboard
-    navigator.clipboard.writeText(calc).then(() => {
-      alert('Copied to clipboard');
-    }).catch((error) => {
-      console.error('Clipboard error:', error);
-      alert('Failed to copy to clipboard.');
-    });
+    navigator.clipboard
+      .writeText(calc)
+      .then(() => {
+        alert('Copied to clipboard');
+      })
+      .catch((error) => {
+        console.error('Clipboard error:', error);
+        alert('Failed to copy to clipboard.');
+      });
   }
-
 }

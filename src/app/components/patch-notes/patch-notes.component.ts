@@ -6,13 +6,10 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './patch-notes.component.html',
-  styleUrls: ['./patch-notes.component.scss']
+  styleUrls: ['./patch-notes.component.scss'],
 })
 export class PatchNotesComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

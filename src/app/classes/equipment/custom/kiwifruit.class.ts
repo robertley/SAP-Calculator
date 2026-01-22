@@ -1,7 +1,7 @@
-import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Equipment, EquipmentClass } from '../../equipment.class';
 
 export class Kiwifruit extends Equipment {
-    name = 'Kiwifruit';
-    equipmentClass: EquipmentClass = 'shop';
-    tier = 2;
+  name = 'Kiwifruit';
+  equipmentClass: EquipmentClass = 'shop';
+  tier = 2;
 }

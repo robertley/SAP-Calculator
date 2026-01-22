@@ -1,97 +1,110 @@
-import { Injectable } from "@angular/core";
-import { FormArray, FormGroup } from "@angular/forms";
-import { createPack } from "../util/helper-functions";
-import { GameService } from "./game.service";
+import { Injectable } from '@angular/core';
+import { FormArray, FormGroup } from '@angular/forms';
+import { createPack } from '../util/helper-functions';
+import { GameService } from './game.service';
 
 @Injectable({
-    providedIn: "root"
+  providedIn: 'root',
 })
 export class CalculatorStateService {
-    constructor(private gameService: GameService) { }
+  constructor(private gameService: GameService) {}
 
-    applyCalculatorState(
-        formGroup: FormGroup,
-        calculator: any,
-        dayNight: boolean,
-        fixCustomPackSelect?: () => void
-    ): void {
-        const defaultState = this.getDefaultState();
-        const finalState = { ...defaultState, ...calculator };
+  applyCalculatorState(
+    formGroup: FormGroup,
+    calculator: any,
+    dayNight: boolean,
+    fixCustomPackSelect?: () => void,
+  ): void {
+    const defaultState = this.getDefaultState();
+    const finalState = { ...defaultState, ...calculator };
 
-        formGroup.patchValue(finalState, { emitEvent: false });
+    formGroup.patchValue(finalState, { emitEvent: false });
 
-        const customPacks = calculator?.customPacks;
-        if (calculator) {
-            calculator.customPacks = [];
-        }
-        this.loadCustomPacks(formGroup, customPacks);
-        formGroup.patchValue(calculator, { emitEvent: false });
-        formGroup.get('tokenPets')?.setValue(true, { emitEvent: false });
+    const customPacks = calculator?.customPacks;
+    if (calculator) {
+      calculator.customPacks = [];
+    }
+    this.loadCustomPacks(formGroup, customPacks);
+    formGroup.patchValue(calculator, { emitEvent: false });
+    formGroup.get('tokenPets')?.setValue(true, { emitEvent: false });
 
-        if (fixCustomPackSelect) {
-            setTimeout(() => fixCustomPackSelect());
-        }
-
-        this.gameService.gameApi.oldStork = formGroup.get('oldStork').value;
-        this.gameService.gameApi.komodoShuffle = formGroup.get('komodoShuffle').value;
-        this.gameService.gameApi.mana = formGroup.get('mana').value;
-        this.gameService.gameApi.playerRollAmount = formGroup.get('playerRollAmount').value;
-        this.gameService.gameApi.opponentRollAmount = formGroup.get('opponentRollAmount').value;
-        this.gameService.gameApi.playerLevel3Sold = formGroup.get('playerLevel3Sold').value;
-        this.gameService.gameApi.opponentLevel3Sold = formGroup.get('opponentLevel3Sold').value;
-        this.gameService.gameApi.playerSummonedAmount = formGroup.get('playerSummonedAmount').value;
-        this.gameService.gameApi.opponentSummonedAmount = formGroup.get('opponentSummonedAmount').value;
-        this.gameService.gameApi.playerTransformationAmount = formGroup.get('playerTransformationAmount').value;
-        this.gameService.gameApi.opponentTransformationAmount = formGroup.get('opponentTransformationAmount').value;
-        this.gameService.gameApi.day = dayNight;
-        this.gameService.gameApi.turnNumber = formGroup.get('turn').value;
+    if (fixCustomPackSelect) {
+      setTimeout(() => fixCustomPackSelect());
     }
 
-    loadCustomPacks(formGroup: FormGroup, customPacks: any): void {
-        const formArray = formGroup.get('customPacks') as FormArray;
-        formArray.clear();
-        const packs = Array.isArray(customPacks) ? customPacks : [];
-        for (const customPack of packs) {
-            const packFormGroup = createPack(customPack);
-            formArray.push(packFormGroup);
-        }
-    }
+    this.gameService.gameApi.oldStork = formGroup.get('oldStork').value;
+    this.gameService.gameApi.komodoShuffle =
+      formGroup.get('komodoShuffle').value;
+    this.gameService.gameApi.mana = formGroup.get('mana').value;
+    this.gameService.gameApi.playerRollAmount =
+      formGroup.get('playerRollAmount').value;
+    this.gameService.gameApi.opponentRollAmount =
+      formGroup.get('opponentRollAmount').value;
+    this.gameService.gameApi.playerLevel3Sold =
+      formGroup.get('playerLevel3Sold').value;
+    this.gameService.gameApi.opponentLevel3Sold =
+      formGroup.get('opponentLevel3Sold').value;
+    this.gameService.gameApi.playerSummonedAmount = formGroup.get(
+      'playerSummonedAmount',
+    ).value;
+    this.gameService.gameApi.opponentSummonedAmount = formGroup.get(
+      'opponentSummonedAmount',
+    ).value;
+    this.gameService.gameApi.playerTransformationAmount = formGroup.get(
+      'playerTransformationAmount',
+    ).value;
+    this.gameService.gameApi.opponentTransformationAmount = formGroup.get(
+      'opponentTransformationAmount',
+    ).value;
+    this.gameService.gameApi.day = dayNight;
+    this.gameService.gameApi.turnNumber = formGroup.get('turn').value;
+  }
 
-    private getDefaultState() {
-        return {
-            playerPack: "Turtle",
-            opponentPack: "Turtle",
-            playerToy: null,
-            playerToyLevel: "1",
-            playerHardToy: null,
-            playerHardToyLevel: "1",
-            opponentToy: null,
-            opponentToyLevel: "1",
-            opponentHardToy: null,
-            opponentHardToyLevel: "1",
-            turn: 11,
-            playerGoldSpent: 10,
-            opponentGoldSpent: 10,
-            playerRollAmount: 4,
-            opponentRollAmount: 4,
-            playerSummonedAmount: 0,
-            opponentSummonedAmount: 0,
-            playerTransformationAmount: 0,
-            opponentTransformationAmount: 0,
-            playerLevel3Sold: 0,
-            opponentLevel3Sold: 0,
-            playerPets: Array(5).fill(null),
-            opponentPets: Array(5).fill(null),
-            allPets: false,
-            logFilter: null,
-            customPacks: [],
-            oldStork: false,
-            tokenPets: true,
-            komodoShuffle: false,
-            mana: false,
-            showAdvanced: false,
-            showSwallowedLevels: false,
-            ailmentEquipment: false
-        };
+  loadCustomPacks(formGroup: FormGroup, customPacks: any): void {
+    const formArray = formGroup.get('customPacks') as FormArray;
+    formArray.clear();
+    const packs = Array.isArray(customPacks) ? customPacks : [];
+    for (const customPack of packs) {
+      const packFormGroup = createPack(customPack);
+      formArray.push(packFormGroup);
     }
+  }
+
+  private getDefaultState() {
+    return {
+      playerPack: 'Turtle',
+      opponentPack: 'Turtle',
+      playerToy: null,
+      playerToyLevel: '1',
+      playerHardToy: null,
+      playerHardToyLevel: '1',
+      opponentToy: null,
+      opponentToyLevel: '1',
+      opponentHardToy: null,
+      opponentHardToyLevel: '1',
+      turn: 11,
+      playerGoldSpent: 10,
+      opponentGoldSpent: 10,
+      playerRollAmount: 4,
+      opponentRollAmount: 4,
+      playerSummonedAmount: 0,
+      opponentSummonedAmount: 0,
+      playerTransformationAmount: 0,
+      opponentTransformationAmount: 0,
+      playerLevel3Sold: 0,
+      opponentLevel3Sold: 0,
+      playerPets: Array(5).fill(null),
+      opponentPets: Array(5).fill(null),
+      allPets: false,
+      logFilter: null,
+      customPacks: [],
+      oldStork: false,
+      tokenPets: true,
+      komodoShuffle: false,
+      mana: false,
+      showAdvanced: false,
+      showSwallowedLevels: false,
+      ailmentEquipment: false,
+    };
+  }
 }

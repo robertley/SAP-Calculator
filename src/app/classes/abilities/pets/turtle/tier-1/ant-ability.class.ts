@@ -1,55 +1,61 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
 
 export class AntAbility extends Ability {
-    private logService: LogService;
+  private logService: LogService;
 
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'AntAbility',
-            owner: owner,
-            triggers: ['BeforeThisDies'],
-            abilityType: 'Pet',
-            native: true, // Pet abilities are native
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.logService = logService;
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'AntAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true, // Pet abilities are native
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Use ability level - Tiger system will override this.level during second execution
+    const power = this.level;
+
+    const boostResp = owner.parent.getRandomPet(
+      [owner],
+      true,
+      false,
+      true,
+      owner,
+    );
+    if (boostResp.pet == null) {
+      return;
     }
 
-    private executeAbility(context: AbilityContext): void {
-        const { gameApi, triggerPet, tiger, pteranodon } = context;
-        const owner = this.owner;
+    this.logService.createLog({
+      message: `${owner.name} gave ${boostResp.pet.name} ${power} attack and ${power} health.`,
+      type: 'ability',
+      randomEvent: boostResp.random,
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
 
-        // Use ability level - Tiger system will override this.level during second execution
-        const power = this.level;
+    boostResp.pet.increaseAttack(power);
+    boostResp.pet.increaseHealth(power);
 
-        const boostResp = owner.parent.getRandomPet([owner], true, false, true, owner);
-        if (boostResp.pet == null) {
-            return;
-        }
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
 
-        this.logService.createLog({
-            message: `${owner.name} gave ${boostResp.pet.name} ${power} attack and ${power} health.`,
-            type: "ability",
-            randomEvent: boostResp.random,
-            player: owner.parent,
-            tiger: tiger,
-            pteranodon: pteranodon
-        });
-
-        boostResp.pet.increaseAttack(power);
-        boostResp.pet.increaseHealth(power);
-
-        // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(context);
-    }
-
-    copy(newOwner: Pet): AntAbility {
-        return new AntAbility(newOwner, this.logService);
-    }
+  copy(newOwner: Pet): AntAbility {
+    return new AntAbility(newOwner, this.logService);
+  }
 }

@@ -1,65 +1,65 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
-import { Power } from "app/interfaces/power.interface";
-import { Guava } from "../../../../equipment/custom/guava.class";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
+import { Power } from 'app/interfaces/power.interface';
+import { Guava } from '../../../../equipment/custom/guava.class';
 
 export class BettaFishAbility extends Ability {
-    private logService: LogService;
-    private targetedPets: Set<Pet> = new Set();
+  private logService: LogService;
+  private targetedPets: Set<Pet> = new Set();
 
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'Betta Fish Ability',
-            owner: owner,
-            triggers: ['FriendLostPerk'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            maxUses: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.logService = logService;
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Betta Fish Ability',
+      owner: owner,
+      triggers: ['FriendLostPerk'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  reset(): void {
+    this.maxUses = this.level;
+    this.targetedPets.clear();
+    super.reset();
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    if (!triggerPet || triggerPet == owner) {
+      return;
     }
 
-    reset(): void {
-        this.maxUses = this.level;
-        this.targetedPets.clear();
-        super.reset();
+    // Check if we already targeted this pet this turn (for "different friends" logic)
+    if (this.targetedPets.has(triggerPet)) {
+      return;
     }
 
-    private executeAbility(context: AbilityContext): void {
+    this.targetedPets.add(triggerPet);
 
-        const { gameApi, triggerPet, tiger, pteranodon } = context; const owner = this.owner;
+    triggerPet.givePetEquipment(new Guava());
 
-        if (!triggerPet || triggerPet == owner) {
-            return;
-        }
+    this.logService.createLog({
+      message: `${owner.name} gave ${triggerPet.name} Guava.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+    });
 
-        // Check if we already targeted this pet this turn (for "different friends" logic)
-        if (this.targetedPets.has(triggerPet)) {
-            return;
-        }
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
 
-        this.targetedPets.add(triggerPet);
-
-        triggerPet.givePetEquipment(new Guava());
-
-        this.logService.createLog({
-            message: `${owner.name} gave ${triggerPet.name} Guava.`,
-            type: 'ability',
-            player: owner.parent,
-            tiger: tiger
-        });
-
-        // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(context);
-    }
-
-    copy(newOwner: Pet): BettaFishAbility {
-        return new BettaFishAbility(newOwner, this.logService);
-    }
+  copy(newOwner: Pet): BettaFishAbility {
+    return new BettaFishAbility(newOwner, this.logService);
+  }
 }
