@@ -11,7 +11,8 @@
     "build": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build",
     "bundle-simulation": "node simulation/build.js",
     "watch": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build --watch --configuration development",
-    "test": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng test"
+    "test": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng test",
+    "test:vitest": "vitest run --config config/vitest.config.ts"
   },
   "engines": {
     "node": ">=20.0.0"

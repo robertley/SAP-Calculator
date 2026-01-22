@@ -4,8 +4,8 @@ import {
   PERKS_BY_ID,
   PETS_BY_ID,
   PETS_META_BY_ID,
-  TOYS_BY_ID
-} from "./replay-calc-schema";
+  TOYS_BY_ID,
+} from './replay-calc-schema';
 
 export class ReplayCalcParser {
   parseReplayForCalculator(
@@ -14,7 +14,8 @@ export class ReplayCalcParser {
     metaBoards?: { userBoard?: any; opponentBoard?: any },
   ) {
     const userBoard = battleJson?.UserBoard ?? metaBoards?.userBoard;
-    const opponentBoard = battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
+    const opponentBoard =
+      battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
 
     const readBoardValue = (board: any, key: string, fallback: any = null) => {
       const value = board?.[key];
@@ -36,7 +37,7 @@ export class ReplayCalcParser {
       const petTempHp = petJson.Hp?.Temp ?? 0;
 
       let belugaSwallowedPet = null;
-      if (petId === "182") {
+      if (petId === '182') {
         const swallowedPets = petJson?.MiMs?.Lsts?.WhiteWhaleAbility || [];
         if (swallowedPets.length > 0) {
           const swallowedPetId = swallowedPets[0]?.Enu;
@@ -56,7 +57,7 @@ export class ReplayCalcParser {
         health: (petJson.Hp?.Perm ?? 0) + petTempHp,
         exp: petJson.Exp || 0,
         equipment: petJson.Perk
-          ? { name: PERKS_BY_ID.get(String(petJson.Perk)) || "Unknown Perk" }
+          ? { name: PERKS_BY_ID.get(String(petJson.Perk)) || 'Unknown Perk' }
           : null,
         mana: petJson.Mana || 0,
         belugaSwallowedPet: belugaSwallowedPet,
@@ -68,7 +69,10 @@ export class ReplayCalcParser {
         abominationSwallowedPet2Level: 1,
         abominationSwallowedPet3Level: 1,
         battlesFought: 0,
-        triggersConsumed: abilityTriggersConsumed.length > 0 ? Math.max(...abilityTriggersConsumed) : 0,
+        triggersConsumed:
+          abilityTriggersConsumed.length > 0
+            ? Math.max(...abilityTriggersConsumed)
+            : 0,
       };
 
       if (timesHurt !== null) {
@@ -125,9 +129,9 @@ export class ReplayCalcParser {
       opponentBoard?.Deck,
     );
     const playerPackName =
-      PACK_MAP[userBoard?.Pack] || playerCustomPack?.name || "Turtle";
+      PACK_MAP[userBoard?.Pack] || playerCustomPack?.name || 'Turtle';
     const opponentPackName =
-      PACK_MAP[opponentBoard?.Pack] || opponentCustomPack?.name || "Turtle";
+      PACK_MAP[opponentBoard?.Pack] || opponentCustomPack?.name || 'Turtle';
 
     return {
       playerPack: playerPackName,
@@ -140,17 +144,18 @@ export class ReplayCalcParser {
       opponentToyLevel: String(opponentToy.level),
       opponentHardToy: null,
       opponentHardToyLevel: 1,
-      turn: readBoardValue(userBoard, "Tur", 1) || 1,
-      playerGoldSpent: readBoardValue(userBoard, "GoSp", 0) || 0,
-      opponentGoldSpent: readBoardValue(opponentBoard, "GoSp", 0) || 0,
-      playerRollAmount: readBoardValue(userBoard, "Rold", 0) || 0,
-      opponentRollAmount: readBoardValue(opponentBoard, "Rold", 0) || 0,
-      playerSummonedAmount: readBoardValue(userBoard, "MiSu", 0) || 0,
-      opponentSummonedAmount: readBoardValue(opponentBoard, "MiSu", 0) || 0,
-      playerLevel3Sold: readBoardValue(userBoard, "MSFL", 0) || 0,
-      opponentLevel3Sold: readBoardValue(opponentBoard, "MSFL", 0) || 0,
-      playerTransformationAmount: readBoardValue(userBoard, "TrTT", 0) || 0,
-      opponentTransformationAmount: readBoardValue(opponentBoard, "TrTT", 0) || 0,
+      turn: readBoardValue(userBoard, 'Tur', 1) || 1,
+      playerGoldSpent: readBoardValue(userBoard, 'GoSp', 0) || 0,
+      opponentGoldSpent: readBoardValue(opponentBoard, 'GoSp', 0) || 0,
+      playerRollAmount: readBoardValue(userBoard, 'Rold', 0) || 0,
+      opponentRollAmount: readBoardValue(opponentBoard, 'Rold', 0) || 0,
+      playerSummonedAmount: readBoardValue(userBoard, 'MiSu', 0) || 0,
+      opponentSummonedAmount: readBoardValue(opponentBoard, 'MiSu', 0) || 0,
+      playerLevel3Sold: readBoardValue(userBoard, 'MSFL', 0) || 0,
+      opponentLevel3Sold: readBoardValue(opponentBoard, 'MSFL', 0) || 0,
+      playerTransformationAmount: readBoardValue(userBoard, 'TrTT', 0) || 0,
+      opponentTransformationAmount:
+        readBoardValue(opponentBoard, 'TrTT', 0) || 0,
       playerPets: parseBoardPets(userBoard),
       opponentPets: parseBoardPets(opponentBoard),
       allPets: false,
@@ -248,7 +253,7 @@ export class ReplayCalcParser {
       return normalized as (string | null)[];
     };
 
-    let deckName = deck.Title || "Custom Pack";
+    let deckName = deck.Title || 'Custom Pack';
     if (usedNames.has(deckName)) {
       let suffix = 2;
       while (usedNames.has(`${deckName} (${suffix})`)) {
@@ -294,15 +299,15 @@ export class ReplayCalcParser {
   private stripDefaultValues(state: any) {
     const strippedState: any = {};
 
-    if (state.playerPack !== "Turtle")
+    if (state.playerPack !== 'Turtle')
       strippedState.playerPack = state.playerPack;
-    if (state.opponentPack !== "Turtle")
+    if (state.opponentPack !== 'Turtle')
       strippedState.opponentPack = state.opponentPack;
     if (state.playerToy) strippedState.playerToy = state.playerToy;
-    if (state.playerToyLevel && state.playerToyLevel !== "1")
+    if (state.playerToyLevel && state.playerToyLevel !== '1')
       strippedState.playerToyLevel = state.playerToyLevel;
     if (state.opponentToy) strippedState.opponentToy = state.opponentToy;
-    if (state.opponentToyLevel && state.opponentToyLevel !== "1")
+    if (state.opponentToyLevel && state.opponentToyLevel !== '1')
       strippedState.opponentToyLevel = state.opponentToyLevel;
     if (state.turn !== 11) strippedState.turn = state.turn;
     if (state.playerGoldSpent !== 10)
@@ -379,7 +384,7 @@ export class ReplayCalcParser {
     if (Array.isArray(data)) {
       return data.map((item) => this.truncateKeys(item));
     }
-    if (data !== null && typeof data === "object") {
+    if (data !== null && typeof data === 'object') {
       const newObj: any = {};
       for (const key in data) {
         const newKey = KEY_MAP[key] || key;

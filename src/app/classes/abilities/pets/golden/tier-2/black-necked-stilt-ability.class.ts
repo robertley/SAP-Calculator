@@ -1,39 +1,46 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
 
 export class BlackNeckedStiltAbility extends Ability {
-    private logService: LogService;
+  private logService: LogService;
 
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'BlackNeckedStiltAbility',
-            owner: owner,
-            triggers: ['BeforeThisDies'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.logService = logService;
-    }
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BlackNeckedStiltAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
 
-    private executeAbility(context: AbilityContext): void {
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
 
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+    let power = this.level * 2;
+    const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+    trumpetTargetResp.player.gainTrumpets(
+      power,
+      owner,
+      pteranodon,
+      undefined,
+      undefined,
+      trumpetTargetResp.random,
+    );
 
-        let power = this.level * 2;
-        const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
-        trumpetTargetResp.player.gainTrumpets(power, owner, pteranodon, undefined, undefined, trumpetTargetResp.random);
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
 
-        // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(context);
-    }
-
-    copy(newOwner: Pet): BlackNeckedStiltAbility {
-        return new BlackNeckedStiltAbility(newOwner, this.logService);
-    }
+  copy(newOwner: Pet): BlackNeckedStiltAbility {
+    return new BlackNeckedStiltAbility(newOwner, this.logService);
+  }
 }

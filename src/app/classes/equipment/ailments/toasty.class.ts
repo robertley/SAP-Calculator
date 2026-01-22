@@ -1,8 +1,8 @@
-import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Equipment, EquipmentClass } from '../../equipment.class';
 
 export class Toasty extends Equipment {
-    name = 'Toasty';
-    equipmentClass: EquipmentClass = 'ailment-other';
-    uses = 1;
-    originalUses = 1;
+  name = 'Toasty';
+  equipmentClass: EquipmentClass = 'ailment-other';
+  uses = 1;
+  originalUses = 1;
 }

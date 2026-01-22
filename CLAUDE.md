@@ -9,6 +9,7 @@ This is a Super Auto Pets battle calculator built with Angular 12. The applicati
 ## Key Commands
 
 ### Development
+
 - `npm start` - Start development server on http://localhost:4200/
 - `npm run build` - Build for production (output: `dist/sap-calculator/`)
 - `npm run watch` - Build in watch mode for development
@@ -16,6 +17,7 @@ This is a Super Auto Pets battle calculator built with Angular 12. The applicati
 - `ng generate component component-name` - Generate new Angular component
 
 ### Node.js Compatibility Note
+
 This Angular 12 project requires the `--openssl-legacy-provider` flag for Node.js 17+ compatibility (already configured in package.json scripts). For long-term compatibility, consider upgrading to Angular 15+.
 
 ## Architecture Overview
@@ -25,18 +27,21 @@ The application follows Angular's component-service architecture with a complex 
 ### Core Classes
 
 #### Player (`src/app/classes/player.class.ts`)
+
 - Manages a team of 5 pets (pet0-pet4)
 - Handles pet positioning, summoning, and battle mechanics
 - Tracks toy items, trumpets, and battle state flags
 - Methods: `alive()`, `resetPets()`, `setPet()`, `summonPet()`, `getRandomPets()`
 
 #### Pet (`src/app/classes/pet.class.ts`)
+
 - Individual pet entities with attack, health, abilities, and equipment
 - Properties: name, tier, pack, health, attack, exp, equipment, mana
 - Pet memories: swallowedPets, abominationSwallowedPet, etc.
 - Methods: `givePetEquipment()`, `snipePet()`, `executeAbilities()`, `abilityValidCheck()`
 
 #### Equipment & Toys
+
 - **Equipment** (`src/app/classes/equipment.class.ts`) - Items that pets equip for various effects
 - **Toy** (`src/app/classes/toy.class.ts`) - Player-level items affecting the entire team
 
@@ -54,9 +59,11 @@ The application follows Angular's component-service architecture with a complex 
 ### Directory Structure
 
 #### Pets by Pack & Tier
+
 Pets are organized in: `src/app/classes/pets/[pack]/tier-[1-6]/`
 
 Packs:
+
 - `turtle/` - Base game pack
 - `puppy/` - Puppy pack expansion
 - `star/` - Star pack expansion
@@ -67,11 +74,13 @@ Packs:
 - `hidden/` - Special hidden pets (Bee, Golden Retriever, Nest, etc.)
 
 #### Equipment & Toys
+
 - `src/app/classes/equipment/[pack]/` - Equipment organized by pack type
 - `src/app/classes/equipment/ailments/` - Negative status effects (Dazed, Silly, Icky, Crisp, Toasty, Weak)
 - `src/app/classes/toys/` - Player-level toy items
 
 #### Abilities (New Framework)
+
 - `src/app/classes/abilities/pets/[pack]/tier-[1-6]/` - Pet-specific abilities extending Ability class
 - `src/app/classes/abilities/equipment/[pack]/` - Equipment abilities
 - `src/app/classes/abilities/toys/` - Toy abilities
@@ -108,6 +117,7 @@ The ability system uses a flexible `Ability` class with `AbilityContext` objects
 **Base class**: `src/app/classes/ability.class.ts`
 
 Key components:
+
 - **AbilityTrigger** - 150+ trigger types (ThisHurt, FriendDied, StartBattle, etc.)
 - **AbilityContext** - Parameter object containing gameApi, triggerPet, tiger, pteranodon, and custom params
 - **Ability class** - Encapsulates triggers, conditions, execution logic, max uses, Tiger synergy
@@ -116,34 +126,34 @@ Key components:
 
 ```typescript
 export class MyPetAbility extends Ability {
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'MyPetAbility',
-            owner: owner,
-            triggers: ['ThisHurt', 'FriendDied'],
-            abilityType: 'Pet',
-            maxUses: owner.level,
-            condition: (context: AbilityContext) => {
-                return this.owner.alive; // Optional validation
-            },
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.logService = logService;
-    }
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: "MyPetAbility",
+      owner: owner,
+      triggers: ["ThisHurt", "FriendDied"],
+      abilityType: "Pet",
+      maxUses: owner.level,
+      condition: (context: AbilityContext) => {
+        return this.owner.alive; // Optional validation
+      },
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
 
-    private executeAbility(context: AbilityContext): void {
-        const { gameApi, triggerPet, tiger } = context;
-        // Ability logic here
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger } = context;
+    // Ability logic here
 
-        // IMPORTANT: Always call at the end for Tiger synergy support
-        this.triggerTigerExecution(context);
-    }
+    // IMPORTANT: Always call at the end for Tiger synergy support
+    this.triggerTigerExecution(context);
+  }
 
-    copy(newOwner: Pet): MyPetAbility {
-        return new MyPetAbility(newOwner, this.logService);
-    }
+  copy(newOwner: Pet): MyPetAbility {
+    return new MyPetAbility(newOwner, this.logService);
+  }
 }
 ```
 

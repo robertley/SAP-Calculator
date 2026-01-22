@@ -1,21 +1,35 @@
-export const UNROLLABLE_PERK_NAMES = new Set<string>([
-    'Mild Chili',
-    'Melon Slice',
-    'Coconut',
-    'Golden Egg',
-    'Skewer',
-    'Guava',
-    'Eucalyptus',
-    'Rambutan'
-]);
+import * as foodJson from '../../files/food.json';
 
-export const isUnrollablePerk = (equipment?: { name?: string; tier?: number } | null): boolean => {
-    if (!equipment) {
-        return true;
-    }
-    const tier = equipment.tier ?? 1;
-    if (tier >= 7) {
-        return true;
-    }
-    return UNROLLABLE_PERK_NAMES.has(equipment.name ?? '');
+interface FoodJsonEntry {
+  Name?: string;
+  Rollable?: boolean;
+}
+
+const rollablePerkNames = new Map<string, boolean>();
+const foodEntries =
+  (
+    (foodJson as unknown as { default?: FoodJsonEntry[] }).default ??
+    (foodJson as unknown as FoodJsonEntry[])
+  ) ?? [];
+
+for (const entry of foodEntries) {
+  if (!entry?.Name) {
+    continue;
+  }
+  rollablePerkNames.set(entry.Name, entry.Rollable === true);
+}
+
+export const isRollablePerk = (
+  equipment?: { name?: string } | null,
+): boolean => {
+  if (!equipment?.name) {
+    return false;
+  }
+  return rollablePerkNames.get(equipment.name) === true;
+};
+
+export const isUnrollablePerk = (
+  equipment?: { name?: string } | null,
+): boolean => {
+  return !isRollablePerk(equipment);
 };

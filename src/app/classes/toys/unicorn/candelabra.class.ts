@@ -1,7 +1,7 @@
-import { GameAPI } from "../../../interfaces/gameAPI.interface";
-import { Toy } from "../../toy.class";
+import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { Toy } from '../../toy.class';
 
 export class Candelabra extends Toy {
-    name = "Candelabra";
-    tier = 4;
+  name = 'Candelabra';
+  tier = 4;
 }

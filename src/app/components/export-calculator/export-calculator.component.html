@@ -1,4 +1,12 @@
 <div class="form-group">
-    <textarea class="form-control mb-2 calc-textarea" id="calcCode" rows="8" [value]="formGroupValueString()" readonly></textarea>
-    <button class="btn btn-primary" (click)="copyToClipboard()">Copy to Clipboard</button>
+  <textarea
+    class="form-control mb-2 calc-textarea"
+    id="calcCode"
+    rows="8"
+    [value]="formGroupValueString()"
+    readonly
+  ></textarea>
+  <button class="btn btn-primary" (click)="copyToClipboard()">
+    Copy to Clipboard
+  </button>
 </div>

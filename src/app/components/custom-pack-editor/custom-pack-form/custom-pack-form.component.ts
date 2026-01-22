@@ -9,10 +9,9 @@ import { getPetIconPath } from '../../../util/asset-utils';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './custom-pack-form.component.html',
-  styleUrls: ['./custom-pack-form.component.scss']
+  styleUrls: ['./custom-pack-form.component.scss'],
 })
 export class CustomPackFormComponent implements OnInit {
-
   @Input()
   formGroup: FormGroup;
 
@@ -25,13 +24,10 @@ export class CustomPackFormComponent implements OnInit {
   @Output()
   cancelEvent: EventEmitter<any> = new EventEmitter<any>();
 
-
   checkboxFormGroup: FormGroup;
   loaded = false;
   private readonly fallbackIcon = 'assets/art/Public/Public/Icons/Level_L1.png';
-  constructor() {
-
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.initCheckboxFormGroup();
@@ -46,42 +42,54 @@ export class CustomPackFormComponent implements OnInit {
     let tier5Pets: FormGroup = new FormGroup({});
     let tier6Pets: FormGroup = new FormGroup({});
     for (let pet of this.getPets(1)) {
-      let control = new FormControl(this.formGroup.get(`tier1Pets`).value.includes(pet));
+      let control = new FormControl(
+        this.formGroup.get(`tier1Pets`).value.includes(pet),
+      );
       control.valueChanges.subscribe((value) => {
         this.processCheckboxChange(1, pet, value);
       });
       tier1Pets.addControl(pet, control);
     }
     for (let pet of this.getPets(2)) {
-      let control = new FormControl(this.formGroup.get(`tier2Pets`).value.includes(pet));
+      let control = new FormControl(
+        this.formGroup.get(`tier2Pets`).value.includes(pet),
+      );
       control.valueChanges.subscribe((value) => {
         this.processCheckboxChange(2, pet, value);
       });
       tier2Pets.addControl(pet, control);
     }
     for (let pet of this.getPets(3)) {
-      let control = new FormControl(this.formGroup.get(`tier3Pets`).value.includes(pet));
+      let control = new FormControl(
+        this.formGroup.get(`tier3Pets`).value.includes(pet),
+      );
       control.valueChanges.subscribe((value) => {
         this.processCheckboxChange(3, pet, value);
       });
       tier3Pets.addControl(pet, control);
     }
     for (let pet of this.getPets(4)) {
-      let control = new FormControl(this.formGroup.get(`tier4Pets`).value.includes(pet));
+      let control = new FormControl(
+        this.formGroup.get(`tier4Pets`).value.includes(pet),
+      );
       control.valueChanges.subscribe((value) => {
         this.processCheckboxChange(4, pet, value);
       });
       tier4Pets.addControl(pet, control);
     }
     for (let pet of this.getPets(5)) {
-      let control = new FormControl(this.formGroup.get(`tier5Pets`).value.includes(pet));
+      let control = new FormControl(
+        this.formGroup.get(`tier5Pets`).value.includes(pet),
+      );
       control.valueChanges.subscribe((value) => {
         this.processCheckboxChange(5, pet, value);
       });
       tier5Pets.addControl(pet, control);
     }
     for (let pet of this.getPets(6)) {
-      let control = new FormControl(this.formGroup.get(`tier6Pets`).value.includes(pet));
+      let control = new FormControl(
+        this.formGroup.get(`tier6Pets`).value.includes(pet),
+      );
       control.valueChanges.subscribe((value) => {
         this.processCheckboxChange(6, pet, value);
       });
@@ -93,7 +101,7 @@ export class CustomPackFormComponent implements OnInit {
       tier3Pets: tier3Pets,
       tier4Pets: tier4Pets,
       tier5Pets: tier5Pets,
-      tier6Pets: tier6Pets
+      tier6Pets: tier6Pets,
     });
   }
 
@@ -151,5 +159,4 @@ export class CustomPackFormComponent implements OnInit {
   submitDisabled() {
     return this.formGroup.get('name').invalid;
   }
-
 }

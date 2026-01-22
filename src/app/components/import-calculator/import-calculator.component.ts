@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ReplayCalcService } from '../../services/replay/replay-calc.service';
 
 @Component({
@@ -9,16 +14,15 @@ import { ReplayCalcService } from '../../services/replay/replay-calc.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './import-calculator.component.html',
-  styleUrls: ['./import-calculator.component.scss']
+  styleUrls: ['./import-calculator.component.scss'],
 })
 export class ImportCalculatorComponent implements OnInit {
-
   @Input()
   importFunc: (importVal: string) => boolean;
 
   formGroup: FormGroup = new FormGroup({
     calcCode: new FormControl(null, Validators.required),
-    turn: new FormControl(1, Validators.min(1))
+    turn: new FormControl(1, Validators.min(1)),
   });
 
   errorMessage = '';
@@ -26,11 +30,10 @@ export class ImportCalculatorComponent implements OnInit {
 
   constructor(
     private replayCalcService: ReplayCalcService,
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   submit() {
     this.errorMessage = '';
@@ -52,33 +55,39 @@ export class ImportCalculatorComponent implements OnInit {
       if (this.tryReplayPid(rawInput)) {
         return;
       }
-      this.errorMessage = 'Invalid JSON. Please paste a valid calculator or replay JSON.';
+      this.errorMessage =
+        'Invalid JSON. Please paste a valid calculator or replay JSON.';
       return;
     }
 
     if ((parsedInput?.Pid || parsedInput?.pid) && !parsedInput?.Actions) {
       const pidValue = parsedInput?.Pid ?? parsedInput?.pid;
-      const turnNumber = Number(parsedInput?.T ?? parsedInput?.t ?? this.formGroup.get('turn').value);
+      const turnNumber = Number(
+        parsedInput?.T ?? parsedInput?.t ?? this.formGroup.get('turn').value,
+      );
       if (!Number.isFinite(turnNumber) || turnNumber <= 0) {
         this.errorMessage = 'Enter a valid turn number.';
         return;
       }
       this.loading = true;
-      this.http.post('/api/replay-battle', { Pid: pidValue, T: turnNumber }).subscribe({
-        next: (response: any) => {
-          this.loading = false;
-          const battleJson = response?.battle;
-          if (!battleJson) {
-            this.errorMessage = 'Replay lookup failed to return a battle.';
-            return;
-          }
-          this.importReplayBattle(battleJson, response?.genesisBuildModel);
-        },
-        error: (error) => {
-          this.loading = false;
-          this.errorMessage = error?.error?.error || 'Failed to fetch replay data.';
-        }
-      });
+      this.http
+        .post('/api/replay-battle', { Pid: pidValue, T: turnNumber })
+        .subscribe({
+          next: (response: any) => {
+            this.loading = false;
+            const battleJson = response?.battle;
+            if (!battleJson) {
+              this.errorMessage = 'Replay lookup failed to return a battle.';
+              return;
+            }
+            this.importReplayBattle(battleJson, response?.genesisBuildModel);
+          },
+          error: (error) => {
+            this.loading = false;
+            this.errorMessage =
+              error?.error?.error || 'Failed to fetch replay data.';
+          },
+        });
       return;
     }
 
@@ -91,7 +100,9 @@ export class ImportCalculatorComponent implements OnInit {
     }
 
     if (parsedInput?.Actions) {
-      const turnNumber = Number(this.formGroup.get('turn').value ?? parsedInput?.T);
+      const turnNumber = Number(
+        this.formGroup.get('turn').value ?? parsedInput?.T,
+      );
       if (!Number.isFinite(turnNumber) || turnNumber <= 0) {
         this.errorMessage = 'Enter a valid turn number.';
         return;
@@ -139,7 +150,7 @@ export class ImportCalculatorComponent implements OnInit {
     const calculatorState = this.replayCalcService.parseReplayForCalculator(
       battleJson,
       buildModel,
-      metaBoards
+      metaBoards,
     );
     if (this.importFunc(JSON.stringify(calculatorState))) {
       alert('Import successful');
@@ -163,22 +174,24 @@ export class ImportCalculatorComponent implements OnInit {
       return true;
     }
     this.loading = true;
-    this.http.post('/api/replay-battle', { Pid: pid, T: turnNumber }).subscribe({
-      next: (response: any) => {
-        this.loading = false;
-        const battleJson = response?.battle;
-        if (!battleJson) {
-          this.errorMessage = 'Replay lookup failed to return a battle.';
-          return;
-        }
-        this.importReplayBattle(battleJson, response?.genesisBuildModel);
-      },
-      error: (error) => {
-        this.loading = false;
-        this.errorMessage = error?.error?.error || 'Failed to fetch replay data.';
-      }
-    });
+    this.http
+      .post('/api/replay-battle', { Pid: pid, T: turnNumber })
+      .subscribe({
+        next: (response: any) => {
+          this.loading = false;
+          const battleJson = response?.battle;
+          if (!battleJson) {
+            this.errorMessage = 'Replay lookup failed to return a battle.';
+            return;
+          }
+          this.importReplayBattle(battleJson, response?.genesisBuildModel);
+        },
+        error: (error) => {
+          this.loading = false;
+          this.errorMessage =
+            error?.error?.error || 'Failed to fetch replay data.';
+        },
+      });
     return true;
   }
-
 }

@@ -1,18 +1,18 @@
-import { Injectable } from "@angular/core";
-import { Pet } from "../../classes/pet.class";
-import { LogService } from "../log.service";
-import { PetFactoryService, PetForm } from "./pet-factory.service";
-import { Player } from "../../classes/player.class";
-import { Equipment } from "../../classes/equipment.class";
-import { AbilityService } from "../ability/ability.service";
-import { GameService } from "../game.service";
-import { getRandomInt } from "../../util/helper-functions";
-import { FormArray } from "@angular/forms";
-import { EquipmentService } from "../equipment/equipment.service";
-import { Mouse } from "../../classes/pets/custom/tier-1/mouse.class";
-import { PET_REGISTRY } from "./pet-registry";
-import { BASE_PACK_NAMES, PackName } from "../../util/pack-names";
-import * as petJson from "../../files/pets.json";
+import { Injectable } from '@angular/core';
+import { Pet } from '../../classes/pet.class';
+import { LogService } from '../log.service';
+import { PetFactoryService, PetForm } from './pet-factory.service';
+import { Player } from '../../classes/player.class';
+import { Equipment } from '../../classes/equipment.class';
+import { AbilityService } from '../ability/ability.service';
+import { GameService } from '../game.service';
+import { getRandomInt } from '../../util/helper-functions';
+import { FormArray } from '@angular/forms';
+import { EquipmentService } from '../equipment/equipment.service';
+import { Mouse } from '../../classes/pets/custom/tier-1/mouse.class';
+import { PET_REGISTRY } from './pet-registry';
+import { BASE_PACK_NAMES, PackName } from '../../util/pack-names';
+import * as petJson from '../../files/pets.json';
 
 interface PetJsonEntry {
   Name: string;
@@ -24,19 +24,19 @@ interface PetJsonEntry {
 }
 
 const PACK_CODE_TO_NAME: Record<string, PackName> = {
-  Pack1: "Turtle",
-  Pack2: "Puppy",
-  Pack3: "Star",
-  Pack4: "Golden",
-  Pack5: "Unicorn",
-  Danger: "Danger",
-  Custom: "Custom",
-  MiniPack1: "Custom",
-  MiniPack2: "Custom",
-  MiniPack3: "Custom",
+  Pack1: 'Turtle',
+  Pack2: 'Puppy',
+  Pack3: 'Star',
+  Pack4: 'Golden',
+  Pack5: 'Unicorn',
+  Danger: 'Danger',
+  Custom: 'Custom',
+  MiniPack1: 'Custom',
+  MiniPack2: 'Custom',
+  MiniPack3: 'Custom',
 };
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class PetService {
   turtlePackPets: Map<number, string[]> = new Map();
@@ -76,7 +76,7 @@ export class PetService {
       for (let i = 1; i <= 6; i++) {
         pack.set(i, customPack.get(`tier${i}Pets`).value);
       }
-      this.playerCustomPackPets.set(customPack.get("name").value, pack);
+      this.playerCustomPackPets.set(customPack.get('name').value, pack);
     }
   }
 
@@ -101,10 +101,9 @@ export class PetService {
 
   private getPetEntriesFromJson(): PetJsonEntry[] {
     const entries =
-      (
-        (petJson as unknown as { default?: PetJsonEntry[] }).default ??
-        (petJson as unknown as PetJsonEntry[])
-      ) ?? [];
+      (petJson as unknown as { default?: PetJsonEntry[] }).default ??
+      (petJson as unknown as PetJsonEntry[]) ??
+      [];
     return entries.filter((pet) => Boolean(pet?.Name));
   }
 
@@ -172,7 +171,10 @@ export class PetService {
       if (
         pet.Abilities.some((ability) => {
           const about = ability?.About;
-          return typeof about === "string" && about.toLowerCase().includes("start of battle");
+          return (
+            typeof about === 'string' &&
+            about.toLowerCase().includes('start of battle')
+          );
         })
       ) {
         names.add(pet.Name);
@@ -191,12 +193,15 @@ export class PetService {
       if (!Number.isFinite(tier) || tier < 1 || tier > 6) {
         continue;
       }
+      if (pet.Rollable !== true) {
+        continue;
+      }
       if (!Array.isArray(pet.Abilities)) {
         continue;
       }
       const hasFaintAbility = pet.Abilities.some((ability) => {
         const about = ability?.About;
-        return typeof about === "string" && about.includes("Faint:");
+        return typeof about === 'string' && about.includes('Faint:');
       });
       if (!hasFaintAbility) {
         continue;
@@ -215,8 +220,6 @@ export class PetService {
     this.faintPetsByTier = this.buildFaintPetsByTier(pets);
     this.setAllPets();
   }
-
-
 
   setAllPets() {
     this.allPets = new Map();
@@ -272,17 +275,17 @@ export class PetService {
     let pets: string[];
     if (parent.allPets) {
       pets = [...(this.allPets.get(tier) || [])];
-    } else if (parent.pack == "Turtle") {
+    } else if (parent.pack == 'Turtle') {
       pets = [...(this.turtlePackPets.get(tier) || [])];
-    } else if (parent.pack == "Puppy") {
+    } else if (parent.pack == 'Puppy') {
       pets = [...(this.puppyPackPets.get(tier) || [])];
-    } else if (parent.pack == "Star") {
+    } else if (parent.pack == 'Star') {
       pets = [...(this.starPackPets.get(tier) || [])];
-    } else if (parent.pack == "Golden") {
+    } else if (parent.pack == 'Golden') {
       pets = [...(this.goldenPackPets.get(tier) || [])];
-    } else if (parent.pack == "Unicorn") {
+    } else if (parent.pack == 'Unicorn') {
       pets = [...(this.unicornPackPets.get(tier) || [])];
-    } else if (parent.pack == "Danger") {
+    } else if (parent.pack == 'Danger') {
       pets = [...(this.dangerPackPets.get(tier) || [])];
     } else {
       pets = [...(this.playerCustomPackPets.get(parent.pack)?.get(tier) || [])];
@@ -297,7 +300,7 @@ export class PetService {
 
     if (!pets || pets.length === 0) {
       // Fallback if tier has no pets in this configuration
-      pets = ["Ant"]; // Very safe fallback
+      pets = ['Ant']; // Very safe fallback
     }
     let petNum = getRandomInt(0, pets.length - 1);
     let pet = pets[petNum];
@@ -314,9 +317,15 @@ export class PetService {
     );
   }
 
-  getRandomFaintPet(parent: Player, tier?: number, excludeNames: string[] = []): Pet {
+  getRandomFaintPet(
+    parent: Player,
+    tier?: number,
+    excludeNames: string[] = [],
+  ): Pet {
     if (!this.faintPetsByTier?.size) {
-      this.faintPetsByTier = this.buildFaintPetsByTier(this.getPetEntriesFromJson());
+      this.faintPetsByTier = this.buildFaintPetsByTier(
+        this.getPetEntriesFromJson(),
+      );
     }
 
     let faintPets: string[] = [];
@@ -328,7 +337,9 @@ export class PetService {
     }
 
     const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
-    const filteredFaintPets = faintPets.filter((name) => !excludeSet.has(name.toLowerCase()));
+    const filteredFaintPets = faintPets.filter(
+      (name) => !excludeSet.has(name.toLowerCase()),
+    );
 
     // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
     let pool = filteredFaintPets;

@@ -38,7 +38,7 @@ export interface TeamPreset {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TeamPresetsService {
   private readonly storageKey = 'sap-team-presets';
@@ -167,7 +167,7 @@ export class TeamPresetsService {
             battlesFought: 0,
             timesHurt: 0,
             equipmentUses: null,
-          }))
+          })),
         ],
       },
       {
@@ -475,11 +475,11 @@ export class TeamPresetsService {
             timesHurt: 0,
             equipmentUses: null,
           },
-        ]
+        ],
       },
       {
         id: 'default-shoggoth',
-        name: "Shoggoth",
+        name: 'Shoggoth',
         createdAt: Date.now(),
         toyName: 'Tinder Box',
         toyLevel: 3,
@@ -581,7 +581,7 @@ export class TeamPresetsService {
             timesHurt: 0,
             equipmentUses: null,
           },
-        ]
+        ],
       },
     ];
   }

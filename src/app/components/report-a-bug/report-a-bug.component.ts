@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { cloneDeep } from 'lodash-es';
 
 @Component({
@@ -9,24 +14,22 @@ import { cloneDeep } from 'lodash-es';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './report-a-bug.component.html',
-  styleUrls: ['./report-a-bug.component.scss']
+  styleUrls: ['./report-a-bug.component.scss'],
 })
 export class ReportABugComponent implements OnInit {
-
   @Input() calcFormGroup: FormGroup;
 
   formGroup: FormGroup = new FormGroup({
-    'name': new FormControl(''),
-    'description': new FormControl(null, Validators.required)
+    name: new FormControl(''),
+    description: new FormControl(null, Validators.required),
   });
 
   reported = false;
   submitted = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   submit() {
     this.submitted = true;
@@ -40,7 +43,10 @@ export class ReportABugComponent implements OnInit {
       const rawValue = this.calcFormGroup.value;
       const cleanValue = cloneDeep(rawValue);
 
-      const petsToClean = [...(cleanValue.playerPets || []), ...(cleanValue.opponentPets || [])];
+      const petsToClean = [
+        ...(cleanValue.playerPets || []),
+        ...(cleanValue.opponentPets || []),
+      ];
 
       for (const pet of petsToClean) {
         if (pet) {
@@ -69,20 +75,30 @@ export class ReportABugComponent implements OnInit {
 
     let message = {
       ...this.formGroup.value,
-      link: shareableLink
-    }
+      link: shareableLink,
+    };
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    this.http.post('https://formspree.io/f/mgvzngzp',
-      { name: 'SAP CALC', replyto: 'Ruihan20080129@gmail.com', message: message },
-      { 'headers': headers }).subscribe(
-          response => {
-            console.log('Bug report submitted successfully:', response);
-            this.reported = true;
-          },
-          error => {
-            console.error('Error submitting bug report:', error);
-            alert('Failed to submit bug report. Please try again or contact the developer directly.');
-          }
+    this.http
+      .post(
+        'https://formspree.io/f/mgvzngzp',
+        {
+          name: 'SAP CALC',
+          replyto: 'Ruihan20080129@gmail.com',
+          message: message,
+        },
+        { headers: headers },
+      )
+      .subscribe(
+        (response) => {
+          console.log('Bug report submitted successfully:', response);
+          this.reported = true;
+        },
+        (error) => {
+          console.error('Error submitting bug report:', error);
+          alert(
+            'Failed to submit bug report. Please try again or contact the developer directly.',
+          );
+        },
       );
   }
 

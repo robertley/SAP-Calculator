@@ -1,52 +1,58 @@
-import { Ability, AbilityContext } from "../../../../ability.class";
-import { GameAPI } from "app/interfaces/gameAPI.interface";
-import { Pet } from "../../../../pet.class";
-import { LogService } from "app/services/log.service";
+import { Ability, AbilityContext } from '../../../../ability.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Pet } from '../../../../pet.class';
+import { LogService } from 'app/services/log.service';
 
 export class TabbyCatAbility extends Ability {
-    private logService: LogService;
+  private logService: LogService;
 
-    constructor(owner: Pet, logService: LogService) {
-        super({
-            name: 'TabbyCatAbility',
-            owner: owner,
-            triggers: ['FriendlyGainsPerk'],
-            abilityType: 'Pet',
-            native: true,
-            abilitylevel: owner.level,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'TabbyCatAbility',
+      owner: owner,
+      triggers: ['FriendlyGainsPerk'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getRandomPets(
+      2,
+      [owner],
+      true,
+      false,
+      owner,
+    );
+    if (targetsResp.pets.length == 0) {
+      return;
+    }
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        this.logService.createLog({
+          message: `${owner.name} increased ${target.name}'s health by ${this.level}.`,
+          type: 'ability',
+          player: owner.parent,
+          randomEvent: targetsResp.random,
+          tiger: tiger,
         });
-        this.logService = logService;
+        target.increaseHealth(this.level);
+      }
     }
 
-    private executeAbility(context: AbilityContext): void {
-        
-        const { gameApi, triggerPet, tiger, pteranodon } = context;const owner = this.owner;
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
 
-        let targetsResp = owner.parent.getRandomPets(2, [owner], true, false, owner);
-        if (targetsResp.pets.length == 0) {
-            return;
-        }
-        for (let target of targetsResp.pets) {
-            if (target != null) {
-                this.logService.createLog({
-                    message: `${owner.name} increased ${target.name}'s health by ${this.level}.`,
-                    type: 'ability',
-                    player: owner.parent,
-                    randomEvent: targetsResp.random,
-                    tiger: tiger
-                });
-                target.increaseHealth(this.level);
-            }
-        }
-
-        // Tiger system: trigger Tiger execution at the end
-        this.triggerTigerExecution(context);
-    }
-
-    copy(newOwner: Pet): TabbyCatAbility {
-        return new TabbyCatAbility(newOwner, this.logService);
-    }
+  copy(newOwner: Pet): TabbyCatAbility {
+    return new TabbyCatAbility(newOwner, this.logService);
+  }
 }

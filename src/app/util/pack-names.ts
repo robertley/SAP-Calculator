@@ -8,7 +8,7 @@ export const PACK_NAMES = [
   'Custom',
 ] as const;
 
-export type PackName = typeof PACK_NAMES[number];
+export type PackName = (typeof PACK_NAMES)[number];
 
 export type BasePackName = Exclude<PackName, 'Custom'>;
 

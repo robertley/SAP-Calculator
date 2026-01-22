@@ -1,68 +1,80 @@
-import { GameAPI } from "../../../interfaces/gameAPI.interface";
-import { AbilityService } from "../../../services/ability/ability.service";
-import { LogService } from "../../../services/log.service";
-import { ToyService } from "../../../services/toy/toy.service";
-import { Pet } from "../../pet.class";
-import { SalmonOfKnowledge } from "../../pets/unicorn/tier-5/salmon-of-knowledge.class";
-import { Player } from "../../player.class";
-import { Toy } from "../../toy.class";
+import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { AbilityService } from '../../../services/ability/ability.service';
+import { LogService } from '../../../services/log.service';
+import { ToyService } from '../../../services/toy/toy.service';
+import { Pet } from '../../pet.class';
+import { SalmonOfKnowledge } from '../../pets/unicorn/tier-5/salmon-of-knowledge.class';
+import { Player } from '../../player.class';
+import { Toy } from '../../toy.class';
 
 export class Nutcracker extends Toy {
-    name = "Nutcracker";
-    tier = 4;
-    suppressFriendFaintLog = true;
-    private pendingSpawn = false;
+  name = 'Nutcracker';
+  tier = 4;
+  suppressFriendFaintLog = true;
+  private pendingSpawn = false;
 
-    friendFaints(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number) {
-        if (this.used || this.pendingSpawn) {
-            return;
-        }
-        const alivePets = pet.parent.petArray.filter(p => p.alive);
-        if (alivePets.length > 0) {
-            return;
-        }
-
-        this.queueSalmonSpawn();
+  friendFaints(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number) {
+    if (this.used || this.pendingSpawn) {
+      return;
+    }
+    const alivePets = pet.parent.petArray.filter((p) => p.alive);
+    if (alivePets.length > 0) {
+      return;
     }
 
-    private queueSalmonSpawn() {
-        this.pendingSpawn = true;
-        this.abilityService.setCounterEvent({
-            priority: 0,
-            callback: (_trigger?: any, _gameApi?: GameAPI, _triggerPet?: Pet) => {
-                this.pendingSpawn = false;
-                this.attemptSalmonSpawn();
-            }
-        });
+    this.queueSalmonSpawn();
+  }
+
+  private queueSalmonSpawn() {
+    this.pendingSpawn = true;
+    this.abilityService.setCounterEvent({
+      priority: 0,
+      callback: (_trigger?: any, _gameApi?: GameAPI, _triggerPet?: Pet) => {
+        this.pendingSpawn = false;
+        this.attemptSalmonSpawn();
+      },
+    });
+  }
+
+  private attemptSalmonSpawn() {
+    if (this.used) {
+      return;
     }
 
-    private attemptSalmonSpawn() {
-        if (this.used) {
-            return;
-        }
-
-        const alivePets = this.parent.petArray.filter(p => p.alive);
-        if (alivePets.length > 0) {
-            return;
-        }
-
-        const power = this.level * 6;
-        const salmon = new SalmonOfKnowledge(this.logService, this.abilityService, this.parent, power, power, null, 0);
-
-        if (this.parent.summonPet(salmon, 0).success) {
-            this.logService.createLog(
-                {
-                    message: `${this.name} spawned Salmon of Knowledge (${power}/${power})`,
-                    type: "ability",
-                    player: this.parent
-                }
-            )
-        }
-
-        this.used = true;
+    const alivePets = this.parent.petArray.filter((p) => p.alive);
+    if (alivePets.length > 0) {
+      return;
     }
 
-    constructor(protected logService: LogService, protected toyService: ToyService, protected abilityService: AbilityService, parent: Player, level: number) {
-        super(logService, toyService, parent, level);
+    const power = this.level * 6;
+    const salmon = new SalmonOfKnowledge(
+      this.logService,
+      this.abilityService,
+      this.parent,
+      power,
+      power,
+      null,
+      0,
+    );
+
+    if (this.parent.summonPet(salmon, 0).success) {
+      this.logService.createLog({
+        message: `${this.name} spawned Salmon of Knowledge (${power}/${power})`,
+        type: 'ability',
+        player: this.parent,
+      });
     }
+
+    this.used = true;
+  }
+
+  constructor(
+    protected logService: LogService,
+    protected toyService: ToyService,
+    protected abilityService: AbilityService,
+    parent: Player,
+    level: number,
+  ) {
+    super(logService, toyService, parent, level);
+  }
 }

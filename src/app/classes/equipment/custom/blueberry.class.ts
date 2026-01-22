@@ -1,10 +1,9 @@
-import { Equipment, EquipmentClass } from "../../equipment.class";
+import { Equipment, EquipmentClass } from '../../equipment.class';
 
 export class Blueberry extends Equipment {
-    name = 'Blueberry';
-    equipmentClass: EquipmentClass = 'target';
-    constructor(
-    ) {
-        super()
-    }
+  name = 'Blueberry';
+  equipmentClass: EquipmentClass = 'target';
+  constructor() {
+    super();
+  }
 }

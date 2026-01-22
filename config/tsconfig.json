@@ -18,10 +18,7 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "es2020",
-    "lib": [
-      "ES2022",
-      "dom"
-    ],
+    "lib": ["ES2022", "dom"],
     "paths": {
       "app/*": ["app/*"],
       "assets/*": ["assets/*"],
@@ -29,9 +26,7 @@
     },
     "types": []
   },
-  "files": [
-    "./typings.d.ts"
-  ],
+  "files": ["./typings.d.ts"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

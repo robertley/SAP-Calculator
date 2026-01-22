@@ -1,29 +1,54 @@
-import { Component, Input, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { FormGroup, FormControl, AbstractControl, FormArray, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  AbstractControl,
+  FormArray,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { Player } from '../../classes/player.class';
 import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet/pet.service';
 import { EquipmentService } from '../../services/equipment/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
 import { cloneEquipment } from '../../util/equipment-utils';
-import { AILMENT_CATEGORIES, EQUIPMENT_CATEGORIES } from '../../services/equipment/equipment-categories';
+import {
+  AILMENT_CATEGORIES,
+  EQUIPMENT_CATEGORIES,
+} from '../../services/equipment/equipment-categories';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
-import { getPetIconPath, getEquipmentIconPath, getPetIconFileName } from '../../util/asset-utils';
+import {
+  getPetIconPath,
+  getEquipmentIconPath,
+  getPetIconFileName,
+} from '../../util/asset-utils';
 import { ItemSelectionDialogComponent } from '../item-selection-dialog/item-selection-dialog.component';
 
 @Component({
   selector: 'app-pet-selector',
   standalone: true,
-  imports: [CommonModule, NgOptimizedImage, ReactiveFormsModule, FormsModule, ItemSelectionDialogComponent],
+  imports: [
+    CommonModule,
+    NgOptimizedImage,
+    ReactiveFormsModule,
+    FormsModule,
+    ItemSelectionDialogComponent,
+  ],
   templateUrl: './pet-selector.component.html',
   styleUrls: ['./pet-selector.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PetSelectorComponent implements OnInit, OnDestroy {
-
   @Input()
   pet: Pet;
   @Input()
@@ -43,7 +68,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   @Input()
   formGroup: FormGroup;
   @Input()
-  customPacks: AbstractControl;//FormArray;
+  customPacks: AbstractControl; //FormArray;
   @Input()
   flipImage = false;
   @Input()
@@ -71,7 +96,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     ['Vulture', 1],
     ['Saiga Antelope', 1],
     ['Secretary Bird', 1],
-    ['Mimic', 2]
+    ['Mimic', 2],
   ]);
   private customPackPetsCache = new Map<string, Set<string>>();
   private cachedPlayerPack: string | null = null;
@@ -86,23 +111,74 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   selectionType: 'pet' | 'equipment' | 'swallowed-pet' = 'pet';
   swallowedPetIndex?: number;
   swallowedPetParentIndex?: number;
-  swallowedPetTarget: 'pet' | 'abomination' | 'sarcastic' | 'abomination-beluga' | 'parrot' | 'parrot-beluga' | 'parrot-abomination' | 'parrot-abomination-beluga' | 'abomination-parrot' | 'abomination-parrot-beluga' | 'abomination-parrot-abomination' | 'abomination-parrot-abomination-beluga' | 'parrot-abomination-parrot' | 'parrot-abomination-parrot-beluga' | 'parrot-abomination-parrot-abomination' | 'parrot-abomination-parrot-abomination-beluga' = 'pet';
+  swallowedPetTarget:
+    | 'pet'
+    | 'abomination'
+    | 'sarcastic'
+    | 'abomination-beluga'
+    | 'parrot'
+    | 'parrot-beluga'
+    | 'parrot-abomination'
+    | 'parrot-abomination-beluga'
+    | 'abomination-parrot'
+    | 'abomination-parrot-beluga'
+    | 'abomination-parrot-abomination'
+    | 'abomination-parrot-abomination-beluga'
+    | 'parrot-abomination-parrot'
+    | 'parrot-abomination-parrot-beluga'
+    | 'parrot-abomination-parrot-abomination'
+    | 'parrot-abomination-parrot-abomination-beluga' = 'pet';
   forceShowAllPets = false;
 
   tokenPets: string[] = [
-    'Adult Flounder', 'Angry Pygmy Hog', 'Baby Urchin', 'Bee', 'Bus', 'Butterfly', 'Chick',
-    'Chimera Goat', 'Chimera Lion', 'Chimera Snake', 'Cooked Roach', 'Cracked Egg', 'Cuckoo Chick',
-    'Daycrawler', 'Dirty Rat', 'Fairy Ball', 'Fake Nessie', 'Fire Pup', 'Giant Eyes Dog',
-    'Golden Retriever', 'Good Dog', 'Great One', 'Head', 'Lizard Tail', 'Loyal Chinchilla',
-    'Mimic Octopus', 'Moby Dick', 'Monty', 'Nessie?', 'Nest', 'Quail', 'Ram', 'Rock', 'Salmon',
-    'Sleeping Gelada', 'Smaller Slime', 'Smaller Slug', 'Smallest Slug', 'Tand and Tand',
-    'Young Phoenix', 'Zombie Cricket', 'Zombie Fly',
+    'Adult Flounder',
+    'Angry Pygmy Hog',
+    'Baby Urchin',
+    'Bee',
+    'Bus',
+    'Butterfly',
+    'Chick',
+    'Chimera Goat',
+    'Chimera Lion',
+    'Chimera Snake',
+    'Cooked Roach',
+    'Cracked Egg',
+    'Cuckoo Chick',
+    'Daycrawler',
+    'Dirty Rat',
+    'Fairy Ball',
+    'Fake Nessie',
+    'Fire Pup',
+    'Giant Eyes Dog',
+    'Golden Retriever',
+    'Good Dog',
+    'Great One',
+    'Head',
+    'Lizard Tail',
+    'Loyal Chinchilla',
+    'Mimic Octopus',
+    'Moby Dick',
+    'Monty',
+    'Nessie?',
+    'Nest',
+    'Quail',
+    'Ram',
+    'Rock',
+    'Salmon',
+    'Sleeping Gelada',
+    'Smaller Slime',
+    'Smaller Slug',
+    'Smallest Slug',
+    'Tand and Tand',
+    'Young Phoenix',
+    'Zombie Cricket',
+    'Zombie Fly',
   ];
 
   constructor(
     private petService: PetService,
-    private equipmentService: EquipmentService
-  ) { }
+    private equipmentService: EquipmentService,
+  ) {}
 
   trackByIndex(index: number): number {
     return index;
@@ -111,9 +187,10 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initSelector();
     this.initPackSets();
-    this.customPackSubscription = (this.customPacks as FormArray)?.valueChanges?.subscribe(() => {
-      this.invalidatePackCaches();
-    }) ?? null;
+    this.customPackSubscription =
+      (this.customPacks as FormArray)?.valueChanges?.subscribe(() => {
+        this.invalidatePackCaches();
+      }) ?? null;
 
     this.fixLoadEquipment();
   }
@@ -121,14 +198,31 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   openSelectionDialog(
     type: 'pet' | 'equipment' | 'swallowed-pet',
     index?: number,
-    target: 'pet' | 'abomination' | 'sarcastic' | 'abomination-beluga' | 'parrot' | 'parrot-beluga' | 'parrot-abomination' | 'parrot-abomination-beluga' | 'abomination-parrot' | 'abomination-parrot-beluga' | 'abomination-parrot-abomination' | 'abomination-parrot-abomination-beluga' | 'parrot-abomination-parrot' | 'parrot-abomination-parrot-beluga' | 'parrot-abomination-parrot-abomination' | 'parrot-abomination-parrot-abomination-beluga' = 'pet',
-    parentIndex?: number
+    target:
+      | 'pet'
+      | 'abomination'
+      | 'sarcastic'
+      | 'abomination-beluga'
+      | 'parrot'
+      | 'parrot-beluga'
+      | 'parrot-abomination'
+      | 'parrot-abomination-beluga'
+      | 'abomination-parrot'
+      | 'abomination-parrot-beluga'
+      | 'abomination-parrot-abomination'
+      | 'abomination-parrot-abomination-beluga'
+      | 'parrot-abomination-parrot'
+      | 'parrot-abomination-parrot-beluga'
+      | 'parrot-abomination-parrot-abomination'
+      | 'parrot-abomination-parrot-abomination-beluga' = 'pet',
+    parentIndex?: number,
   ) {
     this.selectionType = type;
     this.swallowedPetIndex = index;
     this.swallowedPetTarget = target;
     this.swallowedPetParentIndex = parentIndex;
-    this.forceShowAllPets = type === 'swallowed-pet' && this.isParrotCopyTarget(target);
+    this.forceShowAllPets =
+      type === 'swallowed-pet' && this.isParrotCopyTarget(target);
     this.showSelectionDialog = true;
   }
 
@@ -139,47 +233,101 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       this.formGroup.get('equipment').setValue(item);
     } else if (this.selectionType === 'swallowed-pet') {
       if (this.swallowedPetTarget === 'abomination-beluga') {
-        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`).setValue(item);
+        this.formGroup
+          .get(
+            `abominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`,
+          )
+          .setValue(item);
       } else if (this.swallowedPetTarget === 'parrot') {
         this.formGroup.get('parrotCopyPet').setValue(item);
       } else if (this.swallowedPetTarget === 'parrot-beluga') {
         this.formGroup.get('parrotCopyPetBelugaSwallowedPet').setValue(item);
       } else if (this.swallowedPetTarget === 'parrot-abomination') {
-        this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}`).setValue(item);
+        this.formGroup
+          .get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}`)
+          .setValue(item);
       } else if (this.swallowedPetTarget === 'parrot-abomination-beluga') {
-        this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`).setValue(item);
+        this.formGroup
+          .get(
+            `parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`,
+          )
+          .setValue(item);
       } else if (this.swallowedPetTarget === 'abomination-parrot') {
-        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPet`).setValue(item);
+        this.formGroup
+          .get(`abominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPet`)
+          .setValue(item);
       } else if (this.swallowedPetTarget === 'abomination-parrot-beluga') {
-        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPetBelugaSwallowedPet`).setValue(item);
+        this.formGroup
+          .get(
+            `abominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPetBelugaSwallowedPet`,
+          )
+          .setValue(item);
       } else if (this.swallowedPetTarget === 'abomination-parrot-abomination') {
         if (this.swallowedPetParentIndex == null) {
           return;
         }
-        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}`).setValue(item);
-      } else if (this.swallowedPetTarget === 'abomination-parrot-abomination-beluga') {
+        this.formGroup
+          .get(
+            `abominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}`,
+          )
+          .setValue(item);
+      } else if (
+        this.swallowedPetTarget === 'abomination-parrot-abomination-beluga'
+      ) {
         if (this.swallowedPetParentIndex == null) {
           return;
         }
-        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`).setValue(item);
+        this.formGroup
+          .get(
+            `abominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`,
+          )
+          .setValue(item);
       } else if (this.swallowedPetTarget === 'parrot-abomination-parrot') {
-        this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPet`).setValue(item);
-      } else if (this.swallowedPetTarget === 'parrot-abomination-parrot-beluga') {
-        this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPetBelugaSwallowedPet`).setValue(item);
-      } else if (this.swallowedPetTarget === 'parrot-abomination-parrot-abomination') {
+        this.formGroup
+          .get(
+            `parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPet`,
+          )
+          .setValue(item);
+      } else if (
+        this.swallowedPetTarget === 'parrot-abomination-parrot-beluga'
+      ) {
+        this.formGroup
+          .get(
+            `parrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}ParrotCopyPetBelugaSwallowedPet`,
+          )
+          .setValue(item);
+      } else if (
+        this.swallowedPetTarget === 'parrot-abomination-parrot-abomination'
+      ) {
         if (this.swallowedPetParentIndex == null) {
           return;
         }
-        this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}`).setValue(item);
-      } else if (this.swallowedPetTarget === 'parrot-abomination-parrot-abomination-beluga') {
+        this.formGroup
+          .get(
+            `parrotCopyPetAbominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}`,
+          )
+          .setValue(item);
+      } else if (
+        this.swallowedPetTarget ===
+        'parrot-abomination-parrot-abomination-beluga'
+      ) {
         if (this.swallowedPetParentIndex == null) {
           return;
         }
-        this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`).setValue(item);
+        this.formGroup
+          .get(
+            `parrotCopyPetAbominationSwallowedPet${this.swallowedPetParentIndex}ParrotCopyPetAbominationSwallowedPet${this.swallowedPetIndex}BelugaSwallowedPet`,
+          )
+          .setValue(item);
       } else if (this.pet?.name === 'Beluga Whale') {
         this.formGroup.get('belugaSwallowedPet').setValue(item);
-      } else if (this.swallowedPetTarget === 'abomination' || this.pet?.name === 'Abomination') {
-        this.formGroup.get(`abominationSwallowedPet${this.swallowedPetIndex}`).setValue(item);
+      } else if (
+        this.swallowedPetTarget === 'abomination' ||
+        this.pet?.name === 'Abomination'
+      ) {
+        this.formGroup
+          .get(`abominationSwallowedPet${this.swallowedPetIndex}`)
+          .setValue(item);
       } else if (this.pet?.name === 'Sarcastic Fringehead') {
         this.formGroup.get('sarcasticFringeheadSwallowedPet').setValue(item);
       }
@@ -192,7 +340,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     this.forceShowAllPets = false;
   }
 
-  private isParrotCopyTarget(target: PetSelectorComponent['swallowedPetTarget']): boolean {
+  private isParrotCopyTarget(
+    target: PetSelectorComponent['swallowedPetTarget'],
+  ): boolean {
     return [
       'parrot',
       'parrot-beluga',
@@ -205,7 +355,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       'parrot-abomination-parrot',
       'parrot-abomination-parrot-beluga',
       'parrot-abomination-parrot-abomination',
-      'parrot-abomination-parrot-abomination-beluga'
+      'parrot-abomination-parrot-abomination-beluga',
     ].includes(target);
   }
 
@@ -256,21 +406,32 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
     this.ailmentEquipment = this.equipmentService.getInstanceOfAllAilments();
-    this.equipmentCategoryGroups = this.buildCategoryGroups(EQUIPMENT_CATEGORIES, this.equipment);
-    this.ailmentCategoryGroups = this.buildCategoryGroups(AILMENT_CATEGORIES, this.ailmentEquipment);
+    this.equipmentCategoryGroups = this.buildCategoryGroups(
+      EQUIPMENT_CATEGORIES,
+      this.equipment,
+    );
+    this.ailmentCategoryGroups = this.buildCategoryGroups(
+      AILMENT_CATEGORIES,
+      this.ailmentEquipment,
+    );
   }
 
-  buildCategoryGroups(categoryMap: { [key: string]: string[] }, source: Map<string, Equipment>) {
-    return Object.entries(categoryMap).map(([label, names]) => {
-      const items: Equipment[] = [];
-      for (const name of names) {
-        const equipment = source.get(name);
-        if (equipment) {
-          items.push(equipment);
+  buildCategoryGroups(
+    categoryMap: { [key: string]: string[] },
+    source: Map<string, Equipment>,
+  ) {
+    return Object.entries(categoryMap)
+      .map(([label, names]) => {
+        const items: Equipment[] = [];
+        for (const name of names) {
+          const equipment = source.get(name);
+          if (equipment) {
+            items.push(equipment);
+          }
         }
-      }
-      return { label, items };
-    }).filter(group => group.items.length > 0);
+        return { label, items };
+      })
+      .filter((group) => group.items.length > 0);
   }
 
   initForm() {
@@ -285,33 +446,37 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
     const inputDebounceMs = 50;
 
-    this.formGroup.get('name').valueChanges.pipe(
-      distinctUntilChanged()
-    ).subscribe((value) => {
-      this.petImageBroken = false;
-      if (value == null) {
-        this.removePet();
-        return;
-      }
-      this.substitutePet(true)
-    });
-    this.formGroup.get('attack').valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.clampControl('attack', 0, 100);
-      this.substitutePet(false);
-    });
-    this.formGroup.get('health').valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.clampControl('health', 0, 100);
-      this.substitutePet(false);
-    });
-    this.formGroup.get('exp').valueChanges.pipe(
-      distinctUntilChanged()
-    ).subscribe(() => { this.substitutePet(false) });
+    this.formGroup
+      .get('name')
+      .valueChanges.pipe(distinctUntilChanged())
+      .subscribe((value) => {
+        this.petImageBroken = false;
+        if (value == null) {
+          this.removePet();
+          return;
+        }
+        this.substitutePet(true);
+      });
+    this.formGroup
+      .get('attack')
+      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => {
+        this.clampControl('attack', 0, 100);
+        this.substitutePet(false);
+      });
+    this.formGroup
+      .get('health')
+      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => {
+        this.clampControl('health', 0, 100);
+        this.substitutePet(false);
+      });
+    this.formGroup
+      .get('exp')
+      .valueChanges.pipe(distinctUntilChanged())
+      .subscribe(() => {
+        this.substitutePet(false);
+      });
     const equipmentUsesControl = this.formGroup.get('equipmentUses');
     this.formGroup.get('equipment').valueChanges.subscribe((value) => {
       this.equipmentImageBroken = false;
@@ -320,155 +485,719 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         if (equipment == null) {
           equipment = this.ailmentEquipment.get(value.name);
         }
-        this.formGroup.get('equipment').setValue(equipment, { emitEvent: false });
+        this.formGroup
+          .get('equipment')
+          .setValue(equipment, { emitEvent: false });
       }
-      this.substitutePet(false)
-    });
-    this.formGroup.get('equipmentUses')?.valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe(() => this.substitutePet(false));
-    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => { this.setBelugaSwallow(value) });
-    this.formGroup.get('parrotCopyPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPet(value) });
-    this.formGroup.get('parrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetBelugaSwallowedPet(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationSwallowedPets(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setParrotCopyPetAbominationParrotSettings(value) });
-    this.formGroup.get('sarcasticFringeheadSwallowedPet')?.valueChanges.subscribe((value) => { this.setSarcasticFringeheadSwallowedPet(value) });
-    this.formGroup.get('abominationSwallowedPet1').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet2').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet3').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setAbominationParrotCopySettings(value) });
-    this.formGroup.get('abominationSwallowedPet1Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet2Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet3Level').valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet1TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet2TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('abominationSwallowedPet3TimesHurt')?.valueChanges.subscribe((value) => { this.setSwallowedPets(value) });
-    this.formGroup.get('mana').valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.clampControl('mana', 0, 50);
       this.substitutePet(false);
     });
-    this.formGroup.get('triggersConsumed').valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.clampControl('triggersConsumed', 0, 10);
-      this.substitutePet(false);
+    this.formGroup
+      .get('equipmentUses')
+      ?.valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => this.substitutePet(false));
+    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => {
+      this.setBelugaSwallow(value);
     });
-    this.formGroup.get('friendsDiedBeforeBattle')?.valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe(() => {
-      this.clampFriendsDiedBeforeBattle();
-      this.substitutePet(false);
+    this.formGroup.get('parrotCopyPet')?.valueChanges.subscribe((value) => {
+      this.setParrotCopyPet(value);
     });
-    this.formGroup.get('battlesFought').valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe((value) => { this.setBattlesFought(value) });
-    this.formGroup.get('timesHurt').valueChanges.pipe(
-      debounceTime(inputDebounceMs),
-      distinctUntilChanged()
-    ).subscribe((value) => { this.setTimesHurt(value) });
+    this.formGroup
+      .get('parrotCopyPetBelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetBelugaSwallowedPet(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1TimesHurt')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2TimesHurt')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3TimesHurt')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationSwallowedPets(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1ParrotCopyPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2ParrotCopyPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3ParrotCopyPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get(
+        'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setParrotCopyPetAbominationParrotSettings(value);
+      });
+    this.formGroup
+      .get('sarcasticFringeheadSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setSarcasticFringeheadSwallowedPet(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1')
+      .valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2')
+      .valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3')
+      .valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1BelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2BelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3BelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level')
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get(
+        'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+      )
+      ?.valueChanges.subscribe((value) => {
+        this.setAbominationParrotCopySettings(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1Level')
+      .valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2Level')
+      .valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3Level')
+      .valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet1TimesHurt')
+      ?.valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet2TimesHurt')
+      ?.valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('abominationSwallowedPet3TimesHurt')
+      ?.valueChanges.subscribe((value) => {
+        this.setSwallowedPets(value);
+      });
+    this.formGroup
+      .get('mana')
+      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => {
+        this.clampControl('mana', 0, 50);
+        this.substitutePet(false);
+      });
+    this.formGroup
+      .get('triggersConsumed')
+      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => {
+        this.clampControl('triggersConsumed', 0, 10);
+        this.substitutePet(false);
+      });
+    this.formGroup
+      .get('friendsDiedBeforeBattle')
+      ?.valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => {
+        this.clampFriendsDiedBeforeBattle();
+        this.substitutePet(false);
+      });
+    this.formGroup
+      .get('battlesFought')
+      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe((value) => {
+        this.setBattlesFought(value);
+      });
+    this.formGroup
+      .get('timesHurt')
+      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe((value) => {
+        this.setTimesHurt(value);
+      });
   }
 
   setExp(amt: number) {
@@ -495,7 +1224,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       this.applyStatCaps(formValue);
       let equipment = formValue.equipment;
       if (equipment != null) {
-        const baseEquipment = this.equipment.get(equipment.name) ?? this.ailmentEquipment.get(equipment.name);
+        const baseEquipment =
+          this.equipment.get(equipment.name) ??
+          this.ailmentEquipment.get(equipment.name);
         if (baseEquipment != null) {
           const cloned = cloneEquipment(baseEquipment);
           if (this.allowEquipmentUseOverrides) {
@@ -520,11 +1251,11 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         this.formGroup.get('attack').setValue(pet.attack, { emitEvent: false });
         this.formGroup.get('health').setValue(pet.health, { emitEvent: false });
         this.formGroup.get('mana').setValue(pet.mana, { emitEvent: false });
-        this.formGroup.get('triggersConsumed').setValue(pet.triggersConsumed, { emitEvent: false });
+        this.formGroup
+          .get('triggersConsumed')
+          .setValue(pet.triggersConsumed, { emitEvent: false });
       }
-
-    })
-
+    });
   }
 
   get petImageSrc(): string | null {
@@ -536,19 +1267,25 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (!fileName) {
       return null;
     }
-    return `/assets/art/Public/Public/Pets/${fileName}.png`;
+    return `assets/art/Public/Public/Pets/${fileName}.png`;
   }
 
   get swallowedPetImageSrc(): string | null {
     const name = this.formGroup?.get('name')?.value;
     if (name === 'Beluga Whale') {
-      return this.getPetImagePath(this.formGroup.get('belugaSwallowedPet')?.value);
+      return this.getPetImagePath(
+        this.formGroup.get('belugaSwallowedPet')?.value,
+      );
     }
     if (name === 'Sarcastic Fringehead') {
-      return this.getPetImagePath(this.formGroup.get('sarcasticFringeheadSwallowedPet')?.value);
+      return this.getPetImagePath(
+        this.formGroup.get('sarcasticFringeheadSwallowedPet')?.value,
+      );
     }
     if (name === 'Parrot') {
-      const belugaSwallowed = this.formGroup.get('parrotCopyPetBelugaSwallowedPet')?.value;
+      const belugaSwallowed = this.formGroup.get(
+        'parrotCopyPetBelugaSwallowedPet',
+      )?.value;
       if (belugaSwallowed) {
         return this.getPetImagePath(belugaSwallowed);
       }
@@ -565,16 +1302,22 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const values = [
       {
         name: this.formGroup.get('abominationSwallowedPet1')?.value,
-        belugaSwallowed: this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value
+        belugaSwallowed: this.formGroup.get(
+          'abominationSwallowedPet1BelugaSwallowedPet',
+        )?.value,
       },
       {
         name: this.formGroup.get('abominationSwallowedPet2')?.value,
-        belugaSwallowed: this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value
+        belugaSwallowed: this.formGroup.get(
+          'abominationSwallowedPet2BelugaSwallowedPet',
+        )?.value,
       },
       {
         name: this.formGroup.get('abominationSwallowedPet3')?.value,
-        belugaSwallowed: this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value
-      }
+        belugaSwallowed: this.formGroup.get(
+          'abominationSwallowedPet3BelugaSwallowedPet',
+        )?.value,
+      },
     ];
     const images: string[] = [];
     for (const value of values) {
@@ -652,7 +1395,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       'background-repeat': 'no-repeat',
       'background-position': 'left center',
       'background-size': '24px 24px',
-      'padding-left': '2.5rem'
+      'padding-left': '2.5rem',
     };
   }
 
@@ -678,7 +1421,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (!fileName) {
       return null;
     }
-    return `/assets/art/Public/Public/Pets/${fileName}.png`;
+    return `assets/art/Public/Public/Pets/${fileName}.png`;
   }
 
   private applyStatCaps(formValue: any) {
@@ -699,8 +1442,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       this.formGroup.get('mana').setValue(mana, { emitEvent: false });
       formValue.mana = mana;
     }
-    if (triggers !== formValue.triggersConsumed && formValue.triggersConsumed != null) {
-      this.formGroup.get('triggersConsumed').setValue(triggers, { emitEvent: false });
+    if (
+      triggers !== formValue.triggersConsumed &&
+      formValue.triggersConsumed != null
+    ) {
+      this.formGroup
+        .get('triggersConsumed')
+        .setValue(triggers, { emitEvent: false });
       formValue.triggersConsumed = triggers;
     }
   }
@@ -744,7 +1492,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.parrotCopyPet = value;
     if (value !== 'Beluga Whale') {
       pet.parrotCopyPetBelugaSwallowedPet = null;
-      this.formGroup.get('parrotCopyPetBelugaSwallowedPet')?.setValue(null, { emitEvent: false });
+      this.formGroup
+        .get('parrotCopyPetBelugaSwallowedPet')
+        ?.setValue(null, { emitEvent: false });
     }
     if (value !== 'Abomination') {
       this.clearParrotCopyPetAbominationSettings(pet);
@@ -784,13 +1534,19 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         continue;
       }
 
-      const parrotCopyPet = this.formGroup.get(`${base}ParrotCopyPet`)?.value ?? null;
-      const parrotCopyBeluga = this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.value ?? null;
+      const parrotCopyPet =
+        this.formGroup.get(`${base}ParrotCopyPet`)?.value ?? null;
+      const parrotCopyBeluga =
+        this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.value ??
+        null;
 
       (pet as any)[`${base}ParrotCopyPet`] = parrotCopyPet;
-      (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] = parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null;
+      (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] =
+        parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null;
       if (parrotCopyPet !== 'Beluga Whale') {
-        this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
+        this.formGroup
+          .get(`${base}ParrotCopyPetBelugaSwallowedPet`)
+          ?.setValue(null, { emitEvent: false });
       }
 
       if (parrotCopyPet !== 'Abomination') {
@@ -801,27 +1557,43 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       for (let inner = 1; inner <= 3; inner++) {
         const innerBase = `${base}ParrotCopyPetAbominationSwallowedPet${inner}`;
         const innerName = this.formGroup.get(innerBase)?.value ?? null;
-        const innerBeluga = this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.value ?? null;
-        const innerLevel = Number(this.formGroup.get(`${innerBase}Level`)?.value ?? 1);
+        const innerBeluga =
+          this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.value ?? null;
+        const innerLevel = Number(
+          this.formGroup.get(`${innerBase}Level`)?.value ?? 1,
+        );
         (pet as any)[innerBase] = innerName;
-        (pet as any)[`${innerBase}BelugaSwallowedPet`] = innerName === 'Beluga Whale' ? innerBeluga : null;
+        (pet as any)[`${innerBase}BelugaSwallowedPet`] =
+          innerName === 'Beluga Whale' ? innerBeluga : null;
         (pet as any)[`${innerBase}Level`] = innerLevel || 1;
-        (pet as any)[`${innerBase}TimesHurt`] = this.getAbominationParrotCopyAbominationTimesHurtValue(`${innerBase}TimesHurt`);
+        (pet as any)[`${innerBase}TimesHurt`] =
+          this.getAbominationParrotCopyAbominationTimesHurtValue(
+            `${innerBase}TimesHurt`,
+          );
 
         if (innerName !== 'Beluga Whale') {
-          this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
+          this.formGroup
+            .get(`${innerBase}BelugaSwallowedPet`)
+            ?.setValue(null, { emitEvent: false });
         }
       }
     }
   }
 
-  shouldShowAbominationParrotCopyAbominationTimesHurt(outerIndex: number, innerIndex: number): boolean {
-    const control = this.formGroup.get(`abominationSwallowedPet${outerIndex}ParrotCopyPetAbominationSwallowedPet${innerIndex}`);
+  shouldShowAbominationParrotCopyAbominationTimesHurt(
+    outerIndex: number,
+    innerIndex: number,
+  ): boolean {
+    const control = this.formGroup.get(
+      `abominationSwallowedPet${outerIndex}ParrotCopyPetAbominationSwallowedPet${innerIndex}`,
+    );
     const name = control?.value;
     return name === 'Sabertooth Tiger' || name === 'Tuna';
   }
 
-  private getAbominationParrotCopyAbominationTimesHurtValue(controlName: string): number {
+  private getAbominationParrotCopyAbominationTimesHurtValue(
+    controlName: string,
+  ): number {
     const control = this.formGroup.get(controlName);
     if (!control) {
       return 0;
@@ -837,12 +1609,19 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const base = `abominationSwallowedPet${slot}`;
     (pet as any)[`${base}ParrotCopyPet`] = null;
     (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] = null;
-    this.formGroup.get(`${base}ParrotCopyPet`)?.setValue(null, { emitEvent: false });
-    this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get(`${base}ParrotCopyPet`)
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get(`${base}ParrotCopyPetBelugaSwallowedPet`)
+      ?.setValue(null, { emitEvent: false });
     this.clearAbominationParrotCopyAbominationSettings(pet, slot);
   }
 
-  private clearAbominationParrotCopyAbominationSettings(pet: Pet, slot: number) {
+  private clearAbominationParrotCopyAbominationSettings(
+    pet: Pet,
+    slot: number,
+  ) {
     for (let inner = 1; inner <= 3; inner++) {
       const innerBase = `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${inner}`;
       (pet as any)[innerBase] = null;
@@ -850,9 +1629,15 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       (pet as any)[`${innerBase}Level`] = 1;
       (pet as any)[`${innerBase}TimesHurt`] = 0;
       this.formGroup.get(innerBase)?.setValue(null, { emitEvent: false });
-      this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
-      this.formGroup.get(`${innerBase}Level`)?.setValue(1, { emitEvent: false });
-      this.formGroup.get(`${innerBase}TimesHurt`)?.setValue(0, { emitEvent: false });
+      this.formGroup
+        .get(`${innerBase}BelugaSwallowedPet`)
+        ?.setValue(null, { emitEvent: false });
+      this.formGroup
+        .get(`${innerBase}Level`)
+        ?.setValue(1, { emitEvent: false });
+      this.formGroup
+        .get(`${innerBase}TimesHurt`)
+        ?.setValue(0, { emitEvent: false });
     }
   }
 
@@ -861,37 +1646,79 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (pet == null) {
       return;
     }
-    const pet1 = this.formGroup.get('parrotCopyPetAbominationSwallowedPet1')?.value;
-    const pet2 = this.formGroup.get('parrotCopyPetAbominationSwallowedPet2')?.value;
-    const pet3 = this.formGroup.get('parrotCopyPetAbominationSwallowedPet3')?.value;
-    const beluga1 = this.formGroup.get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.value ?? null;
-    const beluga2 = this.formGroup.get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.value ?? null;
-    const beluga3 = this.formGroup.get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.value ?? null;
-    const level1 = Number(this.formGroup.get('parrotCopyPetAbominationSwallowedPet1Level')?.value ?? 1);
-    const level2 = Number(this.formGroup.get('parrotCopyPetAbominationSwallowedPet2Level')?.value ?? 1);
-    const level3 = Number(this.formGroup.get('parrotCopyPetAbominationSwallowedPet3Level')?.value ?? 1);
+    const pet1 = this.formGroup.get(
+      'parrotCopyPetAbominationSwallowedPet1',
+    )?.value;
+    const pet2 = this.formGroup.get(
+      'parrotCopyPetAbominationSwallowedPet2',
+    )?.value;
+    const pet3 = this.formGroup.get(
+      'parrotCopyPetAbominationSwallowedPet3',
+    )?.value;
+    const beluga1 =
+      this.formGroup.get(
+        'parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
+      )?.value ?? null;
+    const beluga2 =
+      this.formGroup.get(
+        'parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
+      )?.value ?? null;
+    const beluga3 =
+      this.formGroup.get(
+        'parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
+      )?.value ?? null;
+    const level1 = Number(
+      this.formGroup.get('parrotCopyPetAbominationSwallowedPet1Level')?.value ??
+        1,
+    );
+    const level2 = Number(
+      this.formGroup.get('parrotCopyPetAbominationSwallowedPet2Level')?.value ??
+        1,
+    );
+    const level3 = Number(
+      this.formGroup.get('parrotCopyPetAbominationSwallowedPet3Level')?.value ??
+        1,
+    );
 
     pet.parrotCopyPetAbominationSwallowedPet1 = pet1 ?? null;
     pet.parrotCopyPetAbominationSwallowedPet2 = pet2 ?? null;
     pet.parrotCopyPetAbominationSwallowedPet3 = pet3 ?? null;
-    pet.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet = pet1 === 'Beluga Whale' ? beluga1 : null;
-    pet.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet = pet2 === 'Beluga Whale' ? beluga2 : null;
-    pet.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet = pet3 === 'Beluga Whale' ? beluga3 : null;
+    pet.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
+      pet1 === 'Beluga Whale' ? beluga1 : null;
+    pet.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
+      pet2 === 'Beluga Whale' ? beluga2 : null;
+    pet.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
+      pet3 === 'Beluga Whale' ? beluga3 : null;
     if (pet1 !== 'Beluga Whale') {
-      this.formGroup.get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.setValue(null, { emitEvent: false });
+      this.formGroup
+        .get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')
+        ?.setValue(null, { emitEvent: false });
     }
     if (pet2 !== 'Beluga Whale') {
-      this.formGroup.get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.setValue(null, { emitEvent: false });
+      this.formGroup
+        .get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')
+        ?.setValue(null, { emitEvent: false });
     }
     if (pet3 !== 'Beluga Whale') {
-      this.formGroup.get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.setValue(null, { emitEvent: false });
+      this.formGroup
+        .get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')
+        ?.setValue(null, { emitEvent: false });
     }
     pet.parrotCopyPetAbominationSwallowedPet1Level = level1 || 1;
     pet.parrotCopyPetAbominationSwallowedPet2Level = level2 || 1;
     pet.parrotCopyPetAbominationSwallowedPet3Level = level3 || 1;
-    pet.parrotCopyPetAbominationSwallowedPet1TimesHurt = this.getParrotAbominationTimesHurtValue('parrotCopyPetAbominationSwallowedPet1TimesHurt');
-    pet.parrotCopyPetAbominationSwallowedPet2TimesHurt = this.getParrotAbominationTimesHurtValue('parrotCopyPetAbominationSwallowedPet2TimesHurt');
-    pet.parrotCopyPetAbominationSwallowedPet3TimesHurt = this.getParrotAbominationTimesHurtValue('parrotCopyPetAbominationSwallowedPet3TimesHurt');
+    pet.parrotCopyPetAbominationSwallowedPet1TimesHurt =
+      this.getParrotAbominationTimesHurtValue(
+        'parrotCopyPetAbominationSwallowedPet1TimesHurt',
+      );
+    pet.parrotCopyPetAbominationSwallowedPet2TimesHurt =
+      this.getParrotAbominationTimesHurtValue(
+        'parrotCopyPetAbominationSwallowedPet2TimesHurt',
+      );
+    pet.parrotCopyPetAbominationSwallowedPet3TimesHurt =
+      this.getParrotAbominationTimesHurtValue(
+        'parrotCopyPetAbominationSwallowedPet3TimesHurt',
+      );
     this.setParrotCopyPetAbominationParrotSettings(null);
   }
 
@@ -908,13 +1735,19 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         continue;
       }
 
-      const parrotCopyPet = this.formGroup.get(`${base}ParrotCopyPet`)?.value ?? null;
-      const parrotCopyBeluga = this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.value ?? null;
+      const parrotCopyPet =
+        this.formGroup.get(`${base}ParrotCopyPet`)?.value ?? null;
+      const parrotCopyBeluga =
+        this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.value ??
+        null;
 
       (pet as any)[`${base}ParrotCopyPet`] = parrotCopyPet;
-      (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] = parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null;
+      (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] =
+        parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null;
       if (parrotCopyPet !== 'Beluga Whale') {
-        this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
+        this.formGroup
+          .get(`${base}ParrotCopyPetBelugaSwallowedPet`)
+          ?.setValue(null, { emitEvent: false });
       }
 
       if (parrotCopyPet !== 'Abomination') {
@@ -925,26 +1758,42 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       for (let inner = 1; inner <= 3; inner++) {
         const innerBase = `${base}ParrotCopyPetAbominationSwallowedPet${inner}`;
         const innerName = this.formGroup.get(innerBase)?.value ?? null;
-        const innerBeluga = this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.value ?? null;
-        const innerLevel = Number(this.formGroup.get(`${innerBase}Level`)?.value ?? 1);
+        const innerBeluga =
+          this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.value ?? null;
+        const innerLevel = Number(
+          this.formGroup.get(`${innerBase}Level`)?.value ?? 1,
+        );
         (pet as any)[innerBase] = innerName;
-        (pet as any)[`${innerBase}BelugaSwallowedPet`] = innerName === 'Beluga Whale' ? innerBeluga : null;
+        (pet as any)[`${innerBase}BelugaSwallowedPet`] =
+          innerName === 'Beluga Whale' ? innerBeluga : null;
         (pet as any)[`${innerBase}Level`] = innerLevel || 1;
-        (pet as any)[`${innerBase}TimesHurt`] = this.getParrotCopyPetAbominationParrotAbominationTimesHurtValue(`${innerBase}TimesHurt`);
+        (pet as any)[`${innerBase}TimesHurt`] =
+          this.getParrotCopyPetAbominationParrotAbominationTimesHurtValue(
+            `${innerBase}TimesHurt`,
+          );
         if (innerName !== 'Beluga Whale') {
-          this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
+          this.formGroup
+            .get(`${innerBase}BelugaSwallowedPet`)
+            ?.setValue(null, { emitEvent: false });
         }
       }
     }
   }
 
-  shouldShowParrotCopyPetAbominationParrotAbominationTimesHurt(outerIndex: number, innerIndex: number): boolean {
-    const control = this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${outerIndex}ParrotCopyPetAbominationSwallowedPet${innerIndex}`);
+  shouldShowParrotCopyPetAbominationParrotAbominationTimesHurt(
+    outerIndex: number,
+    innerIndex: number,
+  ): boolean {
+    const control = this.formGroup.get(
+      `parrotCopyPetAbominationSwallowedPet${outerIndex}ParrotCopyPetAbominationSwallowedPet${innerIndex}`,
+    );
     const name = control?.value;
     return name === 'Sabertooth Tiger' || name === 'Tuna';
   }
 
-  private getParrotCopyPetAbominationParrotAbominationTimesHurtValue(controlName: string): number {
+  private getParrotCopyPetAbominationParrotAbominationTimesHurtValue(
+    controlName: string,
+  ): number {
     const control = this.formGroup.get(controlName);
     if (!control) {
       return 0;
@@ -960,12 +1809,19 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const base = `parrotCopyPetAbominationSwallowedPet${slot}`;
     (pet as any)[`${base}ParrotCopyPet`] = null;
     (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] = null;
-    this.formGroup.get(`${base}ParrotCopyPet`)?.setValue(null, { emitEvent: false });
-    this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get(`${base}ParrotCopyPet`)
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get(`${base}ParrotCopyPetBelugaSwallowedPet`)
+      ?.setValue(null, { emitEvent: false });
     this.clearParrotCopyPetAbominationParrotAbominationSettings(pet, slot);
   }
 
-  private clearParrotCopyPetAbominationParrotAbominationSettings(pet: Pet, slot: number) {
+  private clearParrotCopyPetAbominationParrotAbominationSettings(
+    pet: Pet,
+    slot: number,
+  ) {
     for (let inner = 1; inner <= 3; inner++) {
       const innerBase = `parrotCopyPetAbominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${inner}`;
       (pet as any)[innerBase] = null;
@@ -973,14 +1829,22 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       (pet as any)[`${innerBase}Level`] = 1;
       (pet as any)[`${innerBase}TimesHurt`] = 0;
       this.formGroup.get(innerBase)?.setValue(null, { emitEvent: false });
-      this.formGroup.get(`${innerBase}BelugaSwallowedPet`)?.setValue(null, { emitEvent: false });
-      this.formGroup.get(`${innerBase}Level`)?.setValue(1, { emitEvent: false });
-      this.formGroup.get(`${innerBase}TimesHurt`)?.setValue(0, { emitEvent: false });
+      this.formGroup
+        .get(`${innerBase}BelugaSwallowedPet`)
+        ?.setValue(null, { emitEvent: false });
+      this.formGroup
+        .get(`${innerBase}Level`)
+        ?.setValue(1, { emitEvent: false });
+      this.formGroup
+        .get(`${innerBase}TimesHurt`)
+        ?.setValue(0, { emitEvent: false });
     }
   }
 
   shouldShowParrotCopyPetAbominationTimesHurt(index: number): boolean {
-    const control = this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${index + 1}`);
+    const control = this.formGroup.get(
+      `parrotCopyPetAbominationSwallowedPet${index + 1}`,
+    );
     const name = control?.value;
     return name === 'Sabertooth Tiger' || name === 'Tuna';
   }
@@ -1010,18 +1874,42 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.parrotCopyPetAbominationSwallowedPet1TimesHurt = 0;
     pet.parrotCopyPetAbominationSwallowedPet2TimesHurt = 0;
     pet.parrotCopyPetAbominationSwallowedPet3TimesHurt = 0;
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1')?.setValue(null, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2')?.setValue(null, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3')?.setValue(null, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')?.setValue(null, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')?.setValue(null, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')?.setValue(null, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1Level')?.setValue(1, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2Level')?.setValue(1, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3Level')?.setValue(1, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet1TimesHurt')?.setValue(0, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet2TimesHurt')?.setValue(0, { emitEvent: false });
-    this.formGroup.get('parrotCopyPetAbominationSwallowedPet3TimesHurt')?.setValue(0, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1')
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2')
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3')
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')
+      ?.setValue(null, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1Level')
+      ?.setValue(1, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2Level')
+      ?.setValue(1, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3Level')
+      ?.setValue(1, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet1TimesHurt')
+      ?.setValue(0, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet2TimesHurt')
+      ?.setValue(0, { emitEvent: false });
+    this.formGroup
+      .get('parrotCopyPetAbominationSwallowedPet3TimesHurt')
+      ?.setValue(0, { emitEvent: false });
     this.clearParrotCopyPetAbominationParrotSettings(pet, 1);
     this.clearParrotCopyPetAbominationParrotSettings(pet, 2);
     this.clearParrotCopyPetAbominationParrotSettings(pet, 3);
@@ -1043,12 +1931,24 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const pet1 = this.formGroup.get('abominationSwallowedPet1').value;
     const pet2 = this.formGroup.get('abominationSwallowedPet2').value;
     const pet3 = this.formGroup.get('abominationSwallowedPet3').value;
-    const beluga1 = this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value ?? null;
-    const beluga2 = this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value ?? null;
-    const beluga3 = this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value ?? null;
-    const level1 = Number(this.formGroup.get('abominationSwallowedPet1Level').value ?? 1);
-    const level2 = Number(this.formGroup.get('abominationSwallowedPet2Level').value ?? 1);
-    const level3 = Number(this.formGroup.get('abominationSwallowedPet3Level').value ?? 1);
+    const beluga1 =
+      this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value ??
+      null;
+    const beluga2 =
+      this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value ??
+      null;
+    const beluga3 =
+      this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value ??
+      null;
+    const level1 = Number(
+      this.formGroup.get('abominationSwallowedPet1Level').value ?? 1,
+    );
+    const level2 = Number(
+      this.formGroup.get('abominationSwallowedPet2Level').value ?? 1,
+    );
+    const level3 = Number(
+      this.formGroup.get('abominationSwallowedPet3Level').value ?? 1,
+    );
 
     pet.abominationSwallowedPet1 = pet1 ?? null;
     pet.abominationSwallowedPet2 = pet2 ?? null;
@@ -1059,9 +1959,15 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     pet.abominationSwallowedPet1Level = level1 || 1;
     pet.abominationSwallowedPet2Level = level2 || 1;
     pet.abominationSwallowedPet3Level = level3 || 1;
-    pet.abominationSwallowedPet1TimesHurt = this.getAbominationTimesHurtValue('abominationSwallowedPet1TimesHurt');
-    pet.abominationSwallowedPet2TimesHurt = this.getAbominationTimesHurtValue('abominationSwallowedPet2TimesHurt');
-    pet.abominationSwallowedPet3TimesHurt = this.getAbominationTimesHurtValue('abominationSwallowedPet3TimesHurt');
+    pet.abominationSwallowedPet1TimesHurt = this.getAbominationTimesHurtValue(
+      'abominationSwallowedPet1TimesHurt',
+    );
+    pet.abominationSwallowedPet2TimesHurt = this.getAbominationTimesHurtValue(
+      'abominationSwallowedPet2TimesHurt',
+    );
+    pet.abominationSwallowedPet3TimesHurt = this.getAbominationTimesHurtValue(
+      'abominationSwallowedPet3TimesHurt',
+    );
     this.setAbominationParrotCopySettings(null);
   }
 
@@ -1112,7 +2018,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   }
 
   optionHidden(option: string) {
-
     if (this.allPets) {
       return false;
     }
@@ -1191,7 +2096,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (!customPacks?.controls?.length) {
       return fallback;
     }
-    const customPack = customPacks.controls.find((pack) => pack.get('name').value === name);
+    const customPack = customPacks.controls.find(
+      (pack) => pack.get('name').value === name,
+    );
     if (!customPack) {
       return fallback;
     }
@@ -1207,7 +2114,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     return packSet;
   }
 
-
   fixLoadEquipment() {
     let equipment = this.formGroup.get('equipment').value;
     if (equipment == null) {
@@ -1218,10 +2124,12 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       newEquipment = this.ailmentEquipment.get(equipment.name);
     }
     setTimeout(() => {
-      this.formGroup.get('equipment').setValue(newEquipment, { emitEvent: false });
-      this.formGroup.get('equipment').updateValueAndValidity({ emitEvent: false });
+      this.formGroup
+        .get('equipment')
+        .setValue(newEquipment, { emitEvent: false });
+      this.formGroup
+        .get('equipment')
+        .updateValueAndValidity({ emitEvent: false });
     });
   }
-
-
 }

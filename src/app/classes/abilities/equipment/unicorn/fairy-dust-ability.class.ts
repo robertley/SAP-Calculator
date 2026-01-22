@@ -1,49 +1,49 @@
-import { Ability, AbilityContext } from "../../../ability.class";
-import { Pet } from "../../../pet.class";
-import { Equipment } from "../../../equipment.class";
-import { LogService } from "app/services/log.service";
+import { Ability, AbilityContext } from '../../../ability.class';
+import { Pet } from '../../../pet.class';
+import { Equipment } from '../../../equipment.class';
+import { LogService } from 'app/services/log.service';
 
 // NOTE: This ability uses a special 'EmptyFrontSpace' trigger that may not be implemented yet
 // The original equipment uses pet.emptyFrontSpace callback which is different from standard triggers
 export class FairyDustAbility extends Ability {
-    private equipment: Equipment;
-    private logService: LogService;
+  private equipment: Equipment;
+  private logService: LogService;
 
-    constructor(owner: Pet, equipment: Equipment, logService: LogService) {
-        super({
-            name: 'FairyDustAbility',
-            owner: owner,
-            triggers: ['ClearFront'], // This trigger may need to be implemented
-            abilityType: 'Equipment',
-            native: true,
-            maxUses: 1, // Fairy Dust is removed after one use
-            abilitylevel: 1,
-            abilityFunction: (context) => {
-                this.executeAbility(context);
-            }
-        });
-        this.equipment = equipment;
-        this.logService = logService;
+  constructor(owner: Pet, equipment: Equipment, logService: LogService) {
+    super({
+      name: 'FairyDustAbility',
+      owner: owner,
+      triggers: ['ClearFront'], // This trigger may need to be implemented
+      abilityType: 'Equipment',
+      native: true,
+      maxUses: 1, // Fairy Dust is removed after one use
+      abilitylevel: 1,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.equipment = equipment;
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+
+    if (owner.parent.pet0 != null) {
+      return;
     }
 
-    private executeAbility(context: AbilityContext): void {
-        const owner = this.owner;
+    let multiplier = this.equipment.multiplier;
+    let manaAmmt = 2 * multiplier;
 
-        if (owner.parent.pet0 != null) {
-            return;
-        }
+    this.logService.createLog({
+      message: `${owner.name} pushed itself to the front and gained ${manaAmmt} mana(Fairy Dust)${this.equipment.multiplierMessage}.`,
+      type: 'ability',
+      player: owner.parent,
+    });
 
-        let multiplier = this.equipment.multiplier;
-        let manaAmmt = 2 * multiplier;
-
-        this.logService.createLog({
-            message: `${owner.name} pushed itself to the front and gained ${manaAmmt} mana(Fairy Dust)${this.equipment.multiplierMessage}.`,
-            type: 'ability',
-            player: owner.parent
-        });
-
-        owner.parent.pushPetToFront(owner, true);
-        owner.increaseMana(manaAmmt);
-        owner.removePerk();
-    }
+    owner.parent.pushPetToFront(owner, true);
+    owner.increaseMana(manaAmmt);
+    owner.removePerk();
+  }
 }
