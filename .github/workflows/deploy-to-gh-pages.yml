@@ -1,0 +1,71 @@
+name: Build master and publish to gh-pages
+
+on:
+  push:
+    branches: ["master"]  # change to ["main"] if your default branch is main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "gh-pages-deploy"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # For Angular, this is usually correct.
+      # If your repo uses a different build command, replace this line.
+      - name: Build
+        run: npm run build
+
+      # Auto-detect the folder that contains index.html inside dist/
+      # Works for Angular outputs like:
+      # - dist/<app>/browser
+      # - dist/<app>
+      # - dist/
+      - name: Detect build output directory
+        shell: bash
+        run: |
+          INDEX_HTML=$(find dist -type f -name index.html | head -n 1)
+          if [ -z "$INDEX_HTML" ]; then
+            echo "❌ Could not find dist/**/index.html. Check your build output."
+            exit 1
+          fi
+          OUT_DIR=$(dirname "$INDEX_HTML")
+          echo "OUT_DIR=$OUT_DIR" >> $GITHUB_ENV
+          echo "✅ Detected OUT_DIR=$OUT_DIR"
+
+      # Optional but recommended if you use a custom domain
+      - name: Add CNAME (custom domain)
+        shell: bash
+        run: |
+          echo "www.sap-calculator.com" > "${OUT_DIR}/CNAME"
+
+      # Helps prevent Pages from trying to run Jekyll
+      - name: Disable Jekyll
+        shell: bash
+        run: |
+          touch "${OUT_DIR}/.nojekyll"
+
+      - name: Deploy build output to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: ${{ env.OUT_DIR }}
+          clean: true
