@@ -975,9 +975,9 @@
         </div>
         <div class="modal-body">
           @defer (when showPatchNotes) {
-            <app-patch-notes></app-patch-notes>
+          <app-patch-notes></app-patch-notes>
           } @placeholder {
-            <div class="text-muted">Loading patch notes…</div>
+          <div class="text-muted">Loading patch notes…</div>
           }
         </div>
         <div class="modal-footer">
@@ -1038,9 +1038,9 @@
         </div>
         <div class="modal-body">
           @defer (when showInfo) {
-            <app-info></app-info>
+          <app-info></app-info>
           } @placeholder {
-            <div class="text-muted">Loading info…</div>
+          <div class="text-muted">Loading info…</div>
           }
         </div>
       </div>
@@ -1073,7 +1073,7 @@
               [importFunc]="import.bind(this)"
             ></app-import-calculator>
           } @placeholder {
-            <div class="text-muted">Loading import tools…</div>
+          <div class="text-muted">Loading import tools…</div>
           }
         </div>
       </div>
@@ -1106,7 +1106,7 @@
               [formGroup]="formGroup"
             ></app-export-calculator>
           } @placeholder {
-            <div class="text-muted">Loading export tools…</div>
+          <div class="text-muted">Loading export tools…</div>
           }
         </div>
       </div>
@@ -1133,9 +1133,9 @@
         </div>
         <div class="modal-body">
           @defer (when showReportABug) {
-            <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
+          <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
           } @placeholder {
-            <div class="text-muted">Loading report form…</div>
+          <div class="text-muted">Loading report form…</div>
           }
         </div>
       </div>

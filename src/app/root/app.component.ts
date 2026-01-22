@@ -147,8 +147,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   customPackEditor: ElementRef;
 
   version = '0.9.3';
-  sapVersion = '0.33.3-156 BETA';
-  lastUpdated = '1/14/2026';
+  sapVersion = '0.33.3-156 BETA'
+  lastUpdated = '1/20/2026';
 
   title = 'sap-calculator';
   player: Player;
@@ -325,6 +325,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     initFormGroupImpl(this);
     this.formGroup.get('logFilter')?.valueChanges.subscribe(() => {
       this.refreshFilteredBattles();
+    });
+    this.formGroup.get('simulations')?.valueChanges.subscribe((val) => {
+      if (val > 1000) {
+        this.formGroup.get('simulations')?.setValue(1000, { emitEvent: false });
+      }
     });
   }
 
