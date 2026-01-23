@@ -10,7 +10,8 @@
     "paths": {
       "@angular/core": ["simulation/shims.ts"],
       "@angular/forms": ["simulation/shims.ts"],
-      "app/*": ["src/app/*"]
+      "app/*": ["src/app/*"],
+      "assets/*": ["src/assets/*"]
     },
     "resolveJsonModule": true
   },
