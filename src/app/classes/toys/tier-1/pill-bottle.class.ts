@@ -1,6 +1,7 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
-import { getOpponent } from '../../../util/helper-functions';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { getOpponent } from 'app/util/helper-functions';
 import { Toy } from '../../toy.class';
+
 
 export class PillBottle extends Toy {
   name = 'Pill Bottle';

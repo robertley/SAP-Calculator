@@ -1,5 +1,6 @@
 import type { Pet } from '../pet.class';
 
+
 export function resetPetState(self: Pet): void {
   self.health = self.originalHealth;
   self.attack = self.originalAttack;

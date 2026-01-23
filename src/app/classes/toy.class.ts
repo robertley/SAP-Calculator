@@ -1,8 +1,9 @@
-import { GameAPI } from '../interfaces/gameAPI.interface';
-import { LogService } from '../services/log.service';
-import { ToyService } from '../services/toy/toy.service';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { LogService } from 'app/services/log.service';
+import { ToyService } from 'app/services/toy/toy.service';
 import { Pet } from './pet.class';
 import { Player } from './player.class';
+
 
 export class Toy {
   name: string;

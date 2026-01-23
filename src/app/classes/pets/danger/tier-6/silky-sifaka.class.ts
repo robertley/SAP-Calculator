@@ -1,10 +1,12 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { PetService } from '../../../../services/pet/pet.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { PetService } from 'app/services/pet/pet.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SilkySifakaAbility } from '../../../abilities/pets/danger/tier-6/silky-sifaka-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
+
 export class SilkySifaka extends Pet {
   name = 'Silky Sifaka';
   tier = 6;
@@ -33,5 +35,81 @@ export class SilkySifaka extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SilkySifakaAbility extends Ability {
+  private logService: LogService;
+  private petService: PetService;
+
+  constructor(owner: Pet, logService: LogService, petService: PetService) {
+    super({
+      name: 'SilkySifakaAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.petService = petService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let sifakaPool = [
+      'Mammoth',
+      'Lionfish',
+      'Orca',
+      'Sabertooth Tiger',
+      'Warthog',
+      'Hydra',
+      'Phoenix',
+      'Bay Cat',
+      'Walrus',
+      'Ammonite',
+    ];
+
+    let targetsResp = owner.parent.nearestPetsBehind(2, owner);
+    let petsBehind = targetsResp.pets;
+
+    for (let targetPet of petsBehind) {
+      let randomPetName =
+        sifakaPool[Math.floor(Math.random() * sifakaPool.length)];
+      let newPet = this.petService.createPet(
+        {
+          name: randomPetName,
+          attack: targetPet.attack,
+          health: targetPet.health,
+          mana: targetPet.mana,
+          exp: owner.minExpForLevel,
+          equipment: targetPet.equipment,
+        },
+        owner.parent,
+      );
+
+      owner.parent.transformPet(targetPet, newPet);
+
+      this.logService.createLog({
+        message: `${owner.name} transformed ${targetPet.name} into level ${owner.level} ${newPet.name}`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: true,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SilkySifakaAbility {
+    return new SilkySifakaAbility(newOwner, this.logService, this.petService);
   }
 }

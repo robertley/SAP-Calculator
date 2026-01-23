@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { MarmosetAbility } from '../../../abilities/pets/star/tier-1/marmoset-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Marmoset extends Pet {
   name = 'Marmoset';
@@ -31,5 +31,40 @@ export class Marmoset extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class MarmosetAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'MarmosetAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    // Empty implementation - to be filled by user
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): MarmosetAbility {
+    return new MarmosetAbility(newOwner, this.logService, this.abilityService);
   }
 }

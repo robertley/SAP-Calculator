@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { VelociraptorAbility } from '../../../abilities/pets/star/tier-6/velociraptor-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Velociraptor extends Pet {
   name = 'Velociraptor';
@@ -29,5 +30,91 @@ export class Velociraptor extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class VelociraptorAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'VelociraptorAbility',
+      owner: owner,
+      triggers: ['FriendAttacked'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Find the pet ahead (to the left) with Strawberry
+    let targetPet: Pet | undefined;
+    let petIndex = owner.parent.petArray.indexOf(owner);
+
+    for (let i = petIndex - 1; i >= 0; i--) {
+      let checkPet = owner.parent.petArray[i];
+      if (
+        checkPet.alive &&
+        checkPet.equipment &&
+        checkPet.equipment.name === 'Strawberry'
+      ) {
+        targetPet = checkPet;
+        break;
+      }
+    }
+
+    if (!targetPet) {
+      return;
+    }
+
+    // Remove the Strawberry equipment
+    if (
+      targetPet &&
+      targetPet.equipment &&
+      targetPet.equipment.name === 'Strawberry'
+    ) {
+      targetPet.removePerk();
+      this.logService.createLog({
+        message: `${owner.name} removed Strawberry from ${targetPet.name}`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+      });
+
+      let attackBonus = this.level * 2;
+      let healthBonus = this.level * 3;
+
+      // Give all friends the bonus
+      let friendlyPetsResp = owner.parent.getAll(false, owner, true);
+      let friendlyPets = friendlyPetsResp.pets;
+      for (let friendPet of friendlyPets) {
+        friendPet.increaseAttack(attackBonus);
+        friendPet.increaseHealth(healthBonus);
+
+        this.logService.createLog({
+          message: `${owner.name} gave ${friendPet.name} +${attackBonus} attack and +${healthBonus} health`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          randomEvent: friendlyPetsResp.random,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): VelociraptorAbility {
+    return new VelociraptorAbility(newOwner, this.logService);
   }
 }

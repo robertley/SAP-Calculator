@@ -10,9 +10,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { PetService } from '../../services/pet/pet.service';
-import { remove } from 'lodash-es';
 import { LocalStorageService } from '../../services/local-storage.service';
-import * as petJson from '../../files/pets.json';
+import * as petJson from 'assets/data/pets.json';
 import { PACK_NAMES } from '../../util/pack-names';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CustomPackFormComponent } from './custom-pack-form/custom-pack-form.component';

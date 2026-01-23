@@ -1,11 +1,10 @@
-import { cloneDeep, shuffle } from 'lodash-es';
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CockatooAbility } from '../../../abilities/pets/golden/tier-4/cockatoo-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Cockatoo extends Pet {
   name = 'Cockatoo';
@@ -32,5 +31,40 @@ export class Cockatoo extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CockatooAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'CockatooAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    // Empty implementation - to be filled by user
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): CockatooAbility {
+    return new CockatooAbility(newOwner, this.logService, this.abilityService);
   }
 }

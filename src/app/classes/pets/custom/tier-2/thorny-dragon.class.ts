@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { ThornyDragonAbility } from '../../../abilities/pets/custom/tier-2/thorny-dragon-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class ThornyDragon extends Pet {
   name = 'Thorny Dragon';
@@ -30,5 +31,65 @@ export class ThornyDragon extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class ThornyDragonAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Thorny Dragon Ability',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const damage = 3 * this.level;
+
+    const opponentPets = owner.parent.opponent.petArray.filter((p) => p.alive);
+    if (opponentPets.length === 0) return;
+
+    // Prioritize pets with ailments
+    const petsWithAilments = opponentPets.filter((p) => {
+      if (!p.equipment) return false;
+      return (
+        p.equipment.equipmentClass === 'ailment-attack' ||
+        p.equipment.equipmentClass === 'ailment-defense' ||
+        p.equipment.equipmentClass === 'ailment-other'
+      );
+    });
+
+    const targetPool =
+      petsWithAilments.length > 0 ? petsWithAilments : opponentPets;
+    const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+
+    if (target) {
+      owner.snipePet(target, damage, true, tiger, pteranodon);
+
+      this.logService.createLog({
+        message: `${owner.name} fainted and dealt ${damage} damage to ${target.name} (prioritizing ailments).`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: true,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): ThornyDragonAbility {
+    return new ThornyDragonAbility(newOwner, this.logService);
   }
 }

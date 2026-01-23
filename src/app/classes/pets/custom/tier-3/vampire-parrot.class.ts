@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
 
-import { VampireParrotAbility } from '../../../abilities/pets/custom/tier-3/vampire-parrot-ability.class';
 
 export class VampireParrot extends Pet {
   name = 'Vampire Parrot';
@@ -30,5 +29,71 @@ export class VampireParrot extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class VampireParrotAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Vampire Parrot Ability',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const eligiblePets = owner.parent.petArray.filter(
+      (pet) => pet.alive && pet.equipment,
+    );
+    const uniqueAilments = new Set<string>();
+
+    for (const pet of eligiblePets) {
+      const equipmentClass = (pet.equipment as any).equipmentClass;
+      if (
+        equipmentClass === 'ailment-attack' ||
+        equipmentClass === 'ailment-defense' ||
+        equipmentClass === 'ailment-other'
+      ) {
+        uniqueAilments.add(pet.equipment.name);
+      }
+    }
+
+    const count = uniqueAilments.size;
+    if (count === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const attackPerPet = this.level;
+    const healthPerPet = this.level * 2;
+    const attackBuff = count * attackPerPet;
+    const healthBuff = count * healthPerPet;
+    owner.increaseAttack(attackBuff);
+    owner.increaseHealth(healthBuff);
+
+    this.logService.createLog({
+      message: `${owner.name} gained +${attackBuff}/+${healthBuff} (+${attackPerPet}/+${healthPerPet} per unique ailment) from ${count} friendly pets with different ailments.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): VampireParrotAbility {
+    return new VampireParrotAbility(newOwner, this.logService);
   }
 }

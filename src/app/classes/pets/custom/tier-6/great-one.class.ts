@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { GreatOneAbility } from '../../../abilities/pets/custom/tier-6/great-one-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class GreatOne extends Pet {
   name = 'Great One';
@@ -29,5 +30,42 @@ export class GreatOne extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class GreatOneAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'GreatOneAbility',
+      owner: owner,
+      triggers: ['ThisSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+    let targets = [...owner.parent.petArray, ...owner.parent.opponent.petArray];
+    targets = targets.filter((pet) => pet !== owner);
+    for (let target of targets) {
+      owner.snipePet(target, owner.level * 5);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): GreatOneAbility {
+    return new GreatOneAbility(newOwner, this.logService);
   }
 }

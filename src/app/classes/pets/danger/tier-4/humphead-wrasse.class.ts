@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { HumpheadWrasseAbility } from '../../../abilities/pets/danger/tier-4/humphead-wrasse-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class HumpheadWrasse extends Pet {
   name = 'Humphead Wrasse';
@@ -30,5 +31,61 @@ export class HumpheadWrasse extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class HumpheadWrasseAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'HumpheadWrasseAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let percentage = 0.3 * this.level; // 30%/60%/90%
+    let targetResp = owner.parent.opponent.getHighestAttackPet(
+      undefined,
+      owner,
+    );
+
+    if (!targetResp.pet) {
+      return;
+    }
+
+    let target = targetResp.pet;
+    let reductionAmount = Math.ceil(target.attack * percentage);
+    let newAttack = Math.max(1, target.attack - reductionAmount);
+
+    target.attack = newAttack;
+
+    this.logService.createLog({
+      message: `${owner.name} reduced ${target.name}'s attack by ${percentage * 100}% to (${target.attack})`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: targetResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): HumpheadWrasseAbility {
+    return new HumpheadWrasseAbility(newOwner, this.logService);
   }
 }

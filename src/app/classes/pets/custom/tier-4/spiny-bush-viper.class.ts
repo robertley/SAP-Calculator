@@ -1,10 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { SpinyBushViperAbility } from '../../../abilities/pets/custom/tier-4/spiny-bush-viper-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { shuffle } from 'app/util/helper-functions';
+
 
 export class SpinyBushViper extends Pet {
   name = 'Spiny Bush Viper';
@@ -29,5 +30,65 @@ export class SpinyBushViper extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SpinyBushViperAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Spiny Bush Viper Ability',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const opponentPets = owner.parent.opponent.petArray.filter(
+      (pet) => pet && pet.alive,
+    );
+    if (opponentPets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const targets = shuffle([...opponentPets]).slice(
+      0,
+      Math.min(2, opponentPets.length),
+    );
+    const ownerPosition = owner.position ?? owner.savedPosition ?? 0;
+    const damageLog: string[] = [];
+
+    for (const target of targets) {
+      const targetPosition = target.position ?? target.savedPosition ?? 0;
+      const distance = Math.max(1, Math.abs(ownerPosition - targetPosition));
+      const damage = Math.max(1, this.level) * distance;
+      owner.dealDamage(target, damage);
+      damageLog.push(`${damage} to ${target.name}`);
+    }
+
+    if (damageLog.length > 0) {
+      this.logService.createLog({
+        message: `${owner.name} dealt ${damageLog.join(' and ')}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SpinyBushViperAbility {
+    return new SpinyBushViperAbility(newOwner, this.logService);
   }
 }

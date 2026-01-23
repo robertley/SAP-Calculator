@@ -27,6 +27,12 @@ export class CalculatorStateService {
     this.loadCustomPacks(formGroup, customPacks);
     formGroup.patchValue(calculator, { emitEvent: false });
     formGroup.get('tokenPets')?.setValue(true, { emitEvent: false });
+    this.normalizeEquipmentControls(
+      formGroup.get('playerPets') as FormArray,
+    );
+    this.normalizeEquipmentControls(
+      formGroup.get('opponentPets') as FormArray,
+    );
 
     if (fixCustomPackSelect) {
       setTimeout(() => fixCustomPackSelect());
@@ -106,5 +112,36 @@ export class CalculatorStateService {
       showSwallowedLevels: false,
       ailmentEquipment: false,
     };
+  }
+
+  private normalizeEquipmentControls(formArray: FormArray | null): void {
+    if (!formArray?.controls?.length) {
+      return;
+    }
+    for (const control of formArray.controls) {
+      const group = control as FormGroup;
+      const equipmentControl = group.get('equipment');
+      if (!equipmentControl) {
+        continue;
+      }
+      const value = equipmentControl.value;
+      const equipmentName = this.getEquipmentName(value);
+      if (equipmentName !== value) {
+        equipmentControl.setValue(equipmentName, { emitEvent: false });
+      }
+    }
+  }
+
+  private getEquipmentName(value: any): string | null {
+    if (!value) {
+      return null;
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (typeof value === 'object' && typeof value.name === 'string') {
+      return value.name;
+    }
+    return null;
   }
 }

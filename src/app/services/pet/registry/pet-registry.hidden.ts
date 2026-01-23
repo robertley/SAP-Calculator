@@ -47,7 +47,7 @@ export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
   'Baby Urchin': BabyUrchin,
   Bee: Bee,
   Bus: Bus,
-  Butterly: Butterfly,
+  Butterfly: Butterfly,
   Chick: Chick,
   'Chimera Goat': ChimeraGoat,
   'Chimera Lion': ChimeraLion,

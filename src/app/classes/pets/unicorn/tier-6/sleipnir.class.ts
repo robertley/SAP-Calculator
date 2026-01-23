@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SleipnirAbility } from '../../../abilities/pets/unicorn/tier-6/sleipnir-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Sleipnir extends Pet {
   name = 'Sleipnir';
@@ -29,5 +29,61 @@ export class Sleipnir extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SleipnirAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SleipnirAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let manaAmt = Math.floor(owner.attack / 2);
+    let targetsResp = owner.parent.getFurthestUpPets(
+      this.level,
+      [owner],
+      owner,
+    );
+    let targets = targetsResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+    for (let target of targets) {
+      if (target != null) {
+        this.logService.createLog({
+          message: `${owner.name} gave ${target.name} ${manaAmt} mana.`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          randomEvent: targetsResp.random,
+        });
+
+        target.increaseMana(manaAmt);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SleipnirAbility {
+    return new SleipnirAbility(newOwner, this.logService);
   }
 }

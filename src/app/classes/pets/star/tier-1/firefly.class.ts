@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { FireflyAbility } from '../../../abilities/pets/star/tier-1/firefly-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Firefly extends Pet {
   name = 'Firefly';
@@ -30,5 +30,47 @@ export class Firefly extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class FireflyAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'FireflyAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getPetsWithinXSpaces(owner, this.level);
+    let targets = targetsResp.pets;
+
+    if (targets.length == 0) {
+      return;
+    }
+    for (const target of targets) {
+      owner.snipePet(target, 1, targetsResp.random, tiger, pteranodon);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): FireflyAbility {
+    return new FireflyAbility(newOwner, this.logService);
   }
 }

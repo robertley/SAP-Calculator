@@ -6,6 +6,8 @@ import { LogService } from '../log.service';
 import { AbilityService } from '../ability/ability.service';
 import { GameService } from '../game.service';
 import { levelToExp } from '../../util/leveling';
+import { EquipmentService } from '../equipment/equipment.service';
+import { cloneEquipment } from '../../util/equipment-utils';
 import {
   PetFactoryDeps,
   PETS_NEEDING_PETSERVICE,
@@ -22,7 +24,7 @@ export interface PetForm {
   mana?: number | null;
   triggersConsumed?: number;
   exp: number;
-  equipment?: Equipment | null;
+  equipment?: string | Equipment | { name?: string } | null;
   belugaSwallowedPet?: string;
   parrotCopyPet?: string;
   parrotCopyPetBelugaSwallowedPet?: string;
@@ -209,6 +211,7 @@ export class PetFactoryService {
     private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
+    private equipmentService: EquipmentService,
   ) {}
 
   /**
@@ -276,8 +279,13 @@ export class PetFactoryService {
     petService: any,
     registry: { [key: string]: any },
   ): Pet {
-    const { name, health, attack, mana, exp, equipment, triggersConsumed } =
-      petForm;
+    const equipment = this.resolveEquipment(
+      petForm.equipment,
+      petForm.equipmentUses,
+    );
+    const petFormWithEquipment = { ...petForm, equipment };
+    const { name, health, attack, mana, exp, triggersConsumed } =
+      petFormWithEquipment;
     const deps: PetFactoryDeps = {
       logService: this.logService,
       abilityService: this.abilityService,
@@ -627,7 +635,12 @@ export class PetFactoryService {
     // Special handling for pets with extra parameters
     const specialBuilder = SPECIAL_FORM_PET_BUILDERS[name];
     if (specialBuilder) {
-      const petInstance = specialBuilder(deps, petForm, parent, petService);
+      const petInstance = specialBuilder(
+        deps,
+        petFormWithEquipment,
+        parent,
+        petService,
+      );
       return buildPetInstance(petInstance);
     }
 
@@ -678,5 +691,71 @@ export class PetFactoryService {
       (pet as any).equipmentUsesOverride = petForm.equipmentUses;
     }
     return pet;
+  }
+
+  public resolveEquipmentFromForm(
+    equipmentValue: string | Equipment | { name?: string } | null | undefined,
+    equipmentUses?: number | null,
+  ): Equipment | null {
+    return this.resolveEquipment(equipmentValue, equipmentUses);
+  }
+
+  private resolveEquipment(
+    equipmentValue: string | Equipment | { name?: string } | null | undefined,
+    equipmentUses?: number | null,
+  ): Equipment | null {
+    const explicitUses =
+      equipmentUses == null
+        ? typeof (equipmentValue as { uses?: number })?.uses === 'number'
+          ? (equipmentValue as { uses?: number }).uses
+          : null
+        : equipmentUses;
+    if (equipmentValue instanceof Equipment) {
+      const clone = cloneEquipment(equipmentValue);
+      if (explicitUses != null) {
+        const usesValue = Number(explicitUses);
+        if (Number.isFinite(usesValue)) {
+          clone.uses = usesValue;
+          clone.originalUses = usesValue;
+        }
+      }
+      return clone;
+    }
+    const equipmentName = this.getEquipmentName(equipmentValue);
+    if (!equipmentName) {
+      return null;
+    }
+    const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
+    const ailmentMap = this.equipmentService.getInstanceOfAllAilments();
+    const baseEquipment =
+      equipmentMap.get(equipmentName) ?? ailmentMap.get(equipmentName);
+    if (!baseEquipment) {
+      return null;
+    }
+    const clone = cloneEquipment(baseEquipment);
+    if (explicitUses != null) {
+      const usesValue = Number(explicitUses);
+      if (Number.isFinite(usesValue)) {
+        clone.uses = usesValue;
+        clone.originalUses = usesValue;
+      }
+    }
+    return clone;
+  }
+
+  private getEquipmentName(
+    equipmentValue: string | Equipment | { name?: string } | null | undefined,
+  ): string | null {
+    if (!equipmentValue) {
+      return null;
+    }
+    if (typeof equipmentValue === 'string') {
+      return equipmentValue;
+    }
+    const name =
+      typeof (equipmentValue as { name?: string }).name === 'string'
+        ? (equipmentValue as { name?: string }).name
+        : null;
+    return name || null;
   }
 }

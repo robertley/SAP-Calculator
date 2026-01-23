@@ -1,9 +1,10 @@
 import { clone } from 'lodash-es';
 import type { Player } from '../player.class';
 import { Pet } from '../pet.class';
-import { LogService } from '../../services/log.service';
-import { AbilityService } from '../../services/ability/ability.service';
-import { Onion } from '../equipment/golden/onion.class';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { Onion } from 'app/classes/equipment/golden/onion.class';
+
 
 export const pushPetsForward = (player: Player): void => {
   const array = clone(player.petArray);

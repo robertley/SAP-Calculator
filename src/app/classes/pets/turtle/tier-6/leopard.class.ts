@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { LeopardAbility } from '../../../abilities/pets/turtle/tier-6/leopard-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Leopard extends Pet {
   name = 'Leopard';
@@ -30,5 +29,51 @@ export class Leopard extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class LeopardAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'LeopardAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = Math.floor(owner.attack * 0.5);
+    let targetsResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
+      this.level,
+      null,
+      null,
+      true,
+      owner,
+    );
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        owner.snipePet(target, power, targetsResp.random, tiger);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): LeopardAbility {
+    return new LeopardAbility(newOwner, this.logService);
   }
 }

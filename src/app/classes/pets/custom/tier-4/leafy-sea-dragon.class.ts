@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { LeafySeaDragonAbility } from '../../../abilities/pets/custom/tier-4/leafy-sea-dragon-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAdjacentAlivePets, logAbility } from 'app/classes/ability-helpers';
+
 
 export class LeafySeaDragon extends Pet {
   name = 'Leafy Sea Dragon';
@@ -31,3 +33,46 @@ export class LeafySeaDragon extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 }
+
+
+export class LeafySeaDragonAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Leafy Sea Dragon Ability',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const expGain = this.level;
+    const adjacent = getAdjacentAlivePets(owner);
+
+    adjacent.forEach((friend) => {
+      friend.increaseExp(expGain);
+    });
+
+    owner.health = 0;
+    owner.parent.handleDeath(owner);
+    owner.parent.removeDeadPets();
+
+    const message = `${owner.name} gave ${adjacent.length} adjacent friend${adjacent.length === 1 ? '' : 's'} +${expGain} experience and removed itself.`;
+    logAbility(this.logService, owner, message, tiger, pteranodon);
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): LeafySeaDragonAbility {
+    return new LeafySeaDragonAbility(newOwner, this.logService);
+  }
+}
+

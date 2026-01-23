@@ -1,9 +1,10 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
-import { PetService } from '../../../services/pet/pet.service';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { PetService } from 'app/services/pet/pet.service';
 import { Toy } from '../../toy.class';
-import { LogService } from '../../../services/log.service';
-import { ToyService } from '../../../services/toy/toy.service';
+import { LogService } from 'app/services/log.service';
+import { ToyService } from 'app/services/toy/toy.service';
 import { Player } from '../../player.class';
+
 
 export class RubberDuck extends Toy {
   name = 'Rubber Duck';

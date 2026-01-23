@@ -1,12 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
-import { Spooked } from '../../../equipment/ailments/spooked.class';
-import { Weak } from '../../../equipment/ailments/weak.class';
+import { Spooked } from 'app/classes/equipment/ailments/spooked.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BarghestAbility } from '../../../abilities/pets/unicorn/tier-1/barghest-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Barghest extends Pet {
   name = 'Barghest';
@@ -31,5 +30,68 @@ export class Barghest extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BarghestAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BarghestAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Get pets that have equipment (non-ailments) to exclude them (we want perk-less pets)
+    let petsWithPerks = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'perk',
+      owner,
+    );
+    let petsWithSpooked = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Spooked',
+      owner,
+    );
+    let excludePets = [...petsWithPerks, ...petsWithSpooked];
+    let targetsResp = owner.parent.opponent.getLastPets(
+      this.level,
+      excludePets,
+      owner,
+    );
+    let targets = targetsResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+
+    for (let target of targets) {
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} Spooked`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+      });
+
+      target.givePetEquipment(new Spooked());
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BarghestAbility {
+    return new BarghestAbility(newOwner, this.logService);
   }
 }

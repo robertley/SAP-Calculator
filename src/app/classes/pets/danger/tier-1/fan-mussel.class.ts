@@ -1,10 +1,10 @@
-import { FanMusselAbility } from 'app/classes/abilities/pets/danger/tier-1/fan-mussel-ability.class';
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class FanMussel extends Pet {
   name = 'Fan Mussel';
@@ -31,5 +31,32 @@ export class FanMussel extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class FanMusselAbility extends Ability {
+  constructor(owner: Pet) {
+    super({
+      name: 'FanMusselAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 2,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    // Empty implementation - to be filled by user
+    //this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): FanMusselAbility {
+    return new FanMusselAbility(newOwner);
   }
 }

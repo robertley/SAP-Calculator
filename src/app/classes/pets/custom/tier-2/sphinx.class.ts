@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { SphinxAbility } from '../../../abilities/pets/custom/tier-2/sphinx-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Sphinx extends Pet {
   name = 'Sphinx';
@@ -30,5 +31,59 @@ export class Sphinx extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SphinxAbility extends Ability {
+  constructor(owner: Pet) {
+    super({
+      name: 'Sphinx Ability',
+      owner: owner,
+      triggers: ['ThisBought'],
+      abilityType: 'Pet',
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi } = context;
+    const owner = this.owner;
+    const toyLevel = this.level;
+
+    const adventurousToys = [
+      'Tennis Ball',
+      'Plastic Saw',
+      'Toilet Paper',
+      'Foam Sword',
+      'Flashlight',
+      'Television',
+    ];
+
+    // Choose one random adventurous toy
+    const randomIndex = Math.floor(Math.random() * adventurousToys.length);
+    const toyName = adventurousToys[randomIndex];
+
+    const newToy = (gameApi as any).toyService.createToy(
+      toyName,
+      owner.parent,
+      toyLevel,
+    );
+    if (newToy) {
+      owner.parent.toy = newToy;
+
+      (gameApi as any).logService.createLog({
+        message: `${owner.name} gained a level ${toyLevel} ${toyName}.`,
+        type: 'ability',
+        player: owner.parent,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): SphinxAbility {
+    return new SphinxAbility(newOwner);
   }
 }

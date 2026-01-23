@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Player } from '../classes/player.class';
 import { GameAPI } from '../interfaces/gameAPI.interface';
-import { AbilityService } from './ability/ability.service';
-import { Pet } from '../classes/pet.class';
-import { PetService } from './pet/pet.service';
 
 @Injectable({
   providedIn: 'root',

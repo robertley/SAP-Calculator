@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { HedgehogAbility } from '../../../abilities/pets/turtle/tier-2/hedgehog-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Hedgehog extends Pet {
   name = 'Hedgehog';
@@ -29,5 +29,48 @@ export class Hedgehog extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class HedgehogAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'HedgehogAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getAll(true, owner);
+    let targets = targetsResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+
+    let damage = this.level * 2;
+    for (let pet of targets) {
+      owner.snipePet(pet, damage, targetsResp.random, tiger, pteranodon);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): HedgehogAbility {
+    return new HedgehogAbility(newOwner, this.logService);
   }
 }

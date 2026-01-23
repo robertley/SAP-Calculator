@@ -1,6 +1,10 @@
 import { Equipment, EquipmentClass } from '../../equipment.class';
 import { Pet } from '../../pet.class';
-import { WebbedAbility } from '../../abilities/equipment/ailments/webbed-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { InjectorService } from 'app/services/injector.service';
+import { LogService } from 'app/services/log.service';
+import { PetService } from 'app/services/pet/pet.service';
+
 
 export class Webbed extends Equipment {
   name = 'Webbed';
@@ -8,4 +12,51 @@ export class Webbed extends Equipment {
   callback = (pet: Pet) => {
     pet.addAbility(new WebbedAbility(pet));
   };
+}
+
+
+export class WebbedAbility extends Ability {
+  private logService: LogService;
+  private petService: PetService;
+
+  constructor(owner: Pet) {
+    super({
+      name: 'WebbedAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Equipment',
+      native: true,
+      abilitylevel: 1,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = InjectorService.getInjector().get(LogService);
+    this.petService = InjectorService.getInjector().get(PetService);
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const opponent = owner.parent.opponent;
+
+    const spider = this.petService.createPet(
+      {
+        name: 'Spider',
+        attack: 2,
+        health: 2,
+        exp: 0,
+        equipment: null,
+        mana: 0,
+      },
+      opponent,
+    );
+
+    const summonResult = opponent.summonPet(spider, 0, false, owner);
+    if (summonResult.success) {
+      this.logService.createLog({
+        message: `${owner.name} summoned ${spider.name} for the opponent. (Webbed)`,
+        type: 'equipment',
+        player: owner.parent,
+        randomEvent: summonResult.randomEvent,
+      });
+    }
+  }
 }

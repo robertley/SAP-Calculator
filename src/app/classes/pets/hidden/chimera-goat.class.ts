@@ -1,9 +1,9 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
-import { Equipment } from '../../../classes/equipment.class';
-import { Pack, Pet } from '../../../classes/pet.class';
-import { Player } from '../../../classes/player.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+
 
 export class ChimeraGoat extends Pet {
   name = 'Chimera Goat';

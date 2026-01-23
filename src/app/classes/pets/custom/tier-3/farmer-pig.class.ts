@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { FarmerPigAbility } from '../../../abilities/pets/custom/tier-3/farmer-pig-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Corncob } from 'app/classes/equipment/custom/corncob.class';
+
 
 export class FarmerPig extends Pet {
   name = 'Farmer Pig';
@@ -30,5 +32,52 @@ export class FarmerPig extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class FarmerPigAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Farmer Pig Ability',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const friends = [owner.petAhead, owner.petBehind()].filter(
+      (p) => p !== null && p.alive,
+    );
+
+    for (const friend of friends) {
+      friend.applyEquipment(new Corncob());
+    }
+
+    if (friends.length > 0) {
+      this.logService.createLog({
+        message: `${owner.name} fed adjacent friends Corncob.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): FarmerPigAbility {
+    return new FarmerPigAbility(newOwner, this.logService);
   }
 }

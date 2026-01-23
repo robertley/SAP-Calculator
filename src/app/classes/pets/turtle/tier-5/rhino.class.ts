@@ -1,12 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
-import { Peanut } from '../../../equipment/turtle/peanut.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { RhinoAbility } from '../../../abilities/pets/turtle/tier-5/rhino-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Rhino extends Pet {
   name = 'Rhino';
@@ -31,5 +29,48 @@ export class Rhino extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RhinoAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'RhinoAbility',
+      owner: owner,
+      triggers: ['ThisKilledEnemy'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.opponent.getFurthestUpPet(owner);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    let power = this.level * 4;
+    if (target.tier == 1) {
+      power *= 2;
+    }
+    owner.snipePet(target, power, targetResp.random, tiger);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): RhinoAbility {
+    return new RhinoAbility(newOwner, this.logService);
   }
 }

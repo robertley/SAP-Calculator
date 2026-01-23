@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { RaccoonAbility } from '../../../abilities/pets/custom/tier-5/raccoon-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Raccoon extends Pet {
   name = 'Raccoon';
@@ -28,5 +29,61 @@ export class Raccoon extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RaccoonAbility extends Ability {
+  private logService: LogService;
+
+  reset(): void {
+    this.maxUses = this.level;
+    super.reset();
+  }
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'RaccoonAbility',
+      owner: owner,
+      triggers: ['BeforeThisAttacks'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let opponent = owner.parent.opponent;
+    let target = opponent.getPetAtPosition(0);
+    if (target == null) {
+      return;
+    }
+    if (target.equipment == null) {
+      return;
+    }
+    this.logService.createLog({
+      message: `${owner.name} stole ${target.name}'s equipment. (${target.equipment.name})`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+    owner.givePetEquipment(target.equipment);
+    target.removePerk();
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): RaccoonAbility {
+    return new RaccoonAbility(newOwner, this.logService);
   }
 }

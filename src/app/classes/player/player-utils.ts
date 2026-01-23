@@ -1,8 +1,16 @@
 import type { Player } from '../player.class';
 import { Pet } from '../pet.class';
 
+
 export const hasSilly = (pet: Pet): boolean => {
-  return pet.equipment?.name === 'Silly';
+  const equipment = pet.equipment as unknown;
+  if (typeof equipment === 'string') {
+    return equipment === 'Silly';
+  }
+  if (equipment && typeof (equipment as { name?: string }).name === 'string') {
+    return (equipment as { name?: string }).name === 'Silly';
+  }
+  return false;
 };
 
 export const getPetsWithEquipment = (

@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { HirolaAbility } from '../../../abilities/pets/danger/tier-3/hirola-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { EthiopianWolf } from 'app/classes/pets/danger/tier-1/ethiopian-wolf.class';
+
 
 export class Hirola extends Pet {
   name = 'Hirola';
@@ -31,5 +33,72 @@ export class Hirola extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class HirolaAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'HirolaAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    for (let i = 0; i < this.level; i++) {
+      let wolf = new EthiopianWolf(
+        this.logService,
+        this.abilityService,
+        owner.parent,
+        3,
+        4,
+        owner.mana,
+        owner.exp,
+      );
+
+      let summonResult = owner.parent.summonPet(
+        wolf,
+        owner.savedPosition,
+        false,
+        owner,
+      );
+      if (summonResult.success) {
+        this.logService.createLog({
+          message: `${owner.name} summoned a ${4}/${3} ${wolf.name}.`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          pteranodon: pteranodon,
+          randomEvent: summonResult.randomEvent,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): HirolaAbility {
+    return new HirolaAbility(newOwner, this.logService, this.abilityService);
   }
 }

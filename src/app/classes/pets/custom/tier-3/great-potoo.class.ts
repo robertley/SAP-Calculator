@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { GreatPotooAbility } from '../../../abilities/pets/custom/tier-3/great-potoo-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class GreatPotoo extends Pet {
   name = 'Great Potoo';
@@ -30,5 +31,50 @@ export class GreatPotoo extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class GreatPotooAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Great Potoo Ability',
+      owner: owner,
+      triggers: ['AnyoneHurt'],
+      abilityType: 'Pet',
+      native: true,
+      maxUses: 5,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi } = context;
+    const owner = this.owner;
+
+    // "If nobody has attacked" logic
+    // We check if the first physical attack has happened yet.
+    const hasAnyoneAttacked = gameApi.FirstNonJumpAttackHappened === true;
+
+    if (!hasAnyoneAttacked) {
+      const healthBuff = 2 * this.level;
+      owner.increaseHealth(healthBuff);
+
+      this.logService.createLog({
+        message: `${owner.name} gained +${healthBuff} health from AnyoneHurt (before any attacks).`,
+        type: 'ability',
+        player: owner.parent,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): GreatPotooAbility {
+    return new GreatPotooAbility(newOwner, this.logService);
   }
 }

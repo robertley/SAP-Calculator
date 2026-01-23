@@ -1,6 +1,7 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
-import { Inked } from '../../equipment/ailments/inked.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Inked } from 'app/classes/equipment/ailments/inked.class';
 import { Toy } from '../../toy.class';
+
 
 export class Pen extends Toy {
   name = 'Pen';

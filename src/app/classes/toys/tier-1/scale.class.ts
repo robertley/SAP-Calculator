@@ -1,5 +1,6 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Toy } from '../../toy.class';
+
 
 export class Scale extends Toy {
   name = 'Scale';

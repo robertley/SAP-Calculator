@@ -1,5 +1,6 @@
 import { Equipment, EquipmentClass } from '../../equipment.class';
 
+
 export class Walnut extends Equipment {
   name = 'Walnut';
   tier = 1; // Assuming Tier 1 equivalent power

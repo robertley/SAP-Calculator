@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
-import { Weak } from '../../../equipment/ailments/weak.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Llama extends Pet {
   name = 'Llama';
@@ -26,5 +25,40 @@ export class Llama extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class LlamaAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'LlamaAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    // Empty implementation - to be filled by user
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): LlamaAbility {
+    return new LlamaAbility(newOwner, this.logService, this.abilityService);
   }
 }

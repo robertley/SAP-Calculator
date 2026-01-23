@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { PygmyHippoAbility } from '../../../abilities/pets/danger/tier-3/pygmy-hippo-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class PygmyHippo extends Pet {
   name = 'Pygmy Hippo';
@@ -31,5 +32,58 @@ export class PygmyHippo extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class PygmyHippoAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'PygmyHippoAbility',
+      owner: owner,
+      triggers: ['EnemyAttacked5'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let damage = Math.floor(owner.health * 0.33); // 33% of current health
+    let targetsResp = owner.parent.opponent.getLowestHealthPets(
+      this.level,
+      undefined,
+      owner,
+    );
+
+    for (let target of targetsResp.pets) {
+      owner.snipePet(target, damage, targetsResp.random, tiger);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): PygmyHippoAbility {
+    return new PygmyHippoAbility(
+      newOwner,
+      this.logService,
+      this.abilityService,
+    );
   }
 }

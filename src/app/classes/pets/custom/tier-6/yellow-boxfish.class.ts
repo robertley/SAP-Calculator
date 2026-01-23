@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { YellowBoxfishAbility } from '../../../abilities/pets/custom/tier-6/yellow-boxfish-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class YellowBoxfish extends Pet {
   name = 'Yellow Boxfish';
@@ -28,5 +29,67 @@ export class YellowBoxfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class YellowBoxfishAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'YellowBoxfishAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const allPets = owner.parent
+      .getAll(true, owner)
+      .pets.filter((pet) => pet && pet.alive && pet !== owner);
+    if (allPets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const sorted = [...allPets].sort((a, b) => {
+      const aVal = a.attack + a.health;
+      const bVal = b.attack + b.health;
+      return bVal - aVal;
+    });
+
+    const targets = sorted.slice(0, this.level);
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    for (const target of targets) {
+      target.attack = 20;
+      target.health = 20;
+    }
+
+    const names = targets.map((pet) => pet.name).join(', ');
+    this.logService.createLog({
+      message: `${owner.name} set ${names} to 20/20 at faint.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger,
+      pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): YellowBoxfishAbility {
+    return new YellowBoxfishAbility(newOwner, this.logService);
   }
 }

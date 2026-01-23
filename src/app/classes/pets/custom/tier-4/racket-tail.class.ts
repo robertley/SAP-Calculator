@@ -1,10 +1,12 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { RacketTailAbility } from '../../../abilities/pets/custom/tier-4/racket-tail-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { EquipmentService } from 'app/services/equipment/equipment.service';
+import { InjectorService } from 'app/services/injector.service';
+
 
 export class RacketTail extends Pet {
   name = 'Racket Tail';
@@ -30,5 +32,63 @@ export class RacketTail extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RacketTailAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Racket Tail Ability',
+      owner: owner,
+      triggers: ['BeforeFriendAttacks'],
+      abilityType: 'Pet',
+      maxUses: owner.level,
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    if (
+      !triggerPet ||
+      triggerPet.parent !== owner.parent ||
+      !triggerPet.alive
+    ) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const equipmentService =
+      InjectorService.getInjector().get(EquipmentService);
+    const strawberry = equipmentService
+      .getInstanceOfAllEquipment()
+      .get('Strawberry');
+    if (strawberry) {
+      triggerPet.givePetEquipment(strawberry);
+    }
+    const attackBonus = 5;
+    triggerPet.increaseAttack(attackBonus);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${triggerPet.name} Strawberry and +${attackBonus} attack before attacking.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): RacketTailAbility {
+    return new RacketTailAbility(newOwner, this.logService);
   }
 }

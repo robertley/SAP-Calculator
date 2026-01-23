@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TunaAbility } from '../../../abilities/pets/star/tier-3/tuna-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Tuna extends Pet {
   name = 'Tuna';
@@ -34,5 +34,71 @@ export class Tuna extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
     this.timesHurt = timesHurt ?? 0;
     this.originalTimesHurt = this.timesHurt;
+  }
+}
+
+
+export class TunaAbility extends Ability {
+  private logService: LogService;
+  private timesHurtOverride: number | null;
+
+  constructor(owner: Pet, logService: LogService, timesHurtOverride?: number) {
+    super({
+      name: 'TunaAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.timesHurtOverride = timesHurtOverride ?? null;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let totalHurt = this.timesHurtOverride ?? owner.timesHurt;
+    for (let i = 0; i < totalHurt; i++) {
+      const targetResp = owner.parent.getRandomPet(
+        [owner],
+        true,
+        false,
+        true,
+        owner,
+      );
+
+      if (targetResp.pet == null) {
+        continue;
+      }
+
+      const buffAmount = this.level;
+
+      this.logService.createLog({
+        message: `${owner.name} gave ${targetResp.pet.name} +${buffAmount} attack and +${buffAmount} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetResp.random,
+      });
+
+      targetResp.pet.increaseAttack(buffAmount);
+      targetResp.pet.increaseHealth(buffAmount);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TunaAbility {
+    return new TunaAbility(
+      newOwner,
+      this.logService,
+      this.timesHurtOverride ?? this.owner.timesHurt,
+    );
   }
 }

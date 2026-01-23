@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { AmazonRiverDolphinAbility } from '../../../abilities/pets/danger/tier-4/amazon-river-dolphin-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class AmazonRiverDolphin extends Pet {
   name = 'Amazon River Dolphin';
@@ -30,5 +31,65 @@ export class AmazonRiverDolphin extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class AmazonRiverDolphinAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'AmazonRiverDolphinAbility',
+      owner: owner,
+      triggers: ['AdjacentFriendAttacked'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Choice: Deal damage to its target OR gain attack
+    let targetResp = owner.parent.getSpecificPet(
+      owner,
+      triggerPet.currentTarget,
+    );
+    let target = targetResp.pet;
+    if (target && target.alive) {
+      let damage = 3 * this.level;
+      owner.snipePet(target, damage, targetResp.random, tiger);
+    } else {
+      let targetResp = owner.parent.getThis(owner);
+      let selfTarget = targetResp.pet;
+
+      if (!selfTarget) {
+        return;
+      }
+
+      let attackBonus = 3 * this.level;
+      selfTarget.increaseAttack(attackBonus);
+      this.logService.createLog({
+        message: `${owner.name} gave ${selfTarget.name} ${attackBonus} attack`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): AmazonRiverDolphinAbility {
+    return new AmazonRiverDolphinAbility(newOwner, this.logService);
   }
 }

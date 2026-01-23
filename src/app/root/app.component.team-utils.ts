@@ -306,7 +306,10 @@ export function loadTeamPreset(options: {
       targetPlayer.setPet(i, null, true);
       continue;
     }
-    const equipmentName = petData.equipment?.name;
+    const equipmentName =
+      typeof petData.equipment === 'string'
+        ? petData.equipment
+        : petData.equipment?.name;
     const equipmentObj = equipmentName
       ? (equipment.get(equipmentName) ?? ailments.get(equipmentName))
       : null;
@@ -379,7 +382,10 @@ function sanitizePetFormValue(petValue: any): any {
   if (!petValue?.name) {
     return null;
   }
-  const equipmentName = petValue.equipment?.name ?? null;
+  const equipmentName =
+    typeof petValue.equipment === 'string'
+      ? petValue.equipment
+      : petValue.equipment?.name ?? null;
   return {
     name: petValue.name ?? null,
     attack: petValue.attack ?? 0,

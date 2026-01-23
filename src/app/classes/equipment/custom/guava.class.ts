@@ -1,5 +1,6 @@
 import { Equipment, EquipmentClass } from '../../equipment.class';
 
+
 export class Guava extends Equipment {
   name = 'Guava';
   tier = 3;

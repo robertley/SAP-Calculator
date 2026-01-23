@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { PolarBearAbility } from '../../../abilities/pets/custom/tier-5/polar-bear-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class PolarBear extends Pet {
   name = 'Polar Bear';
@@ -29,5 +29,54 @@ export class PolarBear extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class PolarBearAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Polar Bear Ability',
+      owner: owner,
+      triggers: ['StartTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const levelBuffs = [4, 8, 12];
+    const buff =
+      levelBuffs[Math.min(Math.max(owner.level - 1, 0), levelBuffs.length - 1)];
+    const targetResp = owner.parent.getRandomPets(1, [], false, false, owner);
+    const target = targetResp.pets[0];
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    target.increaseAttack(buff);
+    target.increaseHealth(buff);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): PolarBearAbility {
+    return new PolarBearAbility(newOwner, this.logService);
   }
 }

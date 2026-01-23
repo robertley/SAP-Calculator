@@ -68,7 +68,7 @@
         <i class="bi bi-chevron-down ms-auto"></i>
       </button>
     </div>
-    <div class="col-12 mb-2" *ngIf="pet?.name == 'Tuna'">
+    <div class="col-12 mb-2" *ngIf="pet?.name === 'Tuna'">
       <label for="timesHurt">Times Hurt</label>
       <input
         class="form-control"
@@ -78,7 +78,7 @@
         max="99"
       />
     </div>
-    <div class="col-12 mb-2" *ngIf="pet?.name == 'Beluga Whale'">
+    <div class="col-12 mb-2" *ngIf="pet?.name === 'Beluga Whale'">
       <label class="swallowed-label" for="belugaSwallowedPet"
         >Swallowed Pet</label
       >
@@ -102,7 +102,7 @@
         <i class="bi bi-chevron-down ms-auto"></i>
       </button>
     </div>
-    <div class="col-12 mb-2" *ngIf="pet?.name == 'Parrot'">
+    <div class="col-12 mb-2" *ngIf="pet?.name === 'Parrot'">
       <label class="swallowed-label" for="parrotCopyPet">Copy Pet</label>
       <button
         type="button"
@@ -615,7 +615,7 @@
         </div>
       </ng-container>
     </div>
-    <div class="col-12 mb-2" *ngIf="pet?.name == 'Abomination'">
+    <div class="col-12 mb-2" *ngIf="pet?.name === 'Abomination'">
       <div
         *ngFor="
           let a of [].constructor(pet.level);
@@ -1032,7 +1032,7 @@
     </div>
     <div
       class="col-12 mb-2"
-      *ngIf="formGroup.get('name').value == 'Sarcastic Fringehead'"
+      *ngIf="formGroup.get('name').value === 'Sarcastic Fringehead'"
     >
       <label class="swallowed-label" for="sarcasticFringeheadSwallowedPet"
         >Swallowed Pet</label
@@ -1102,7 +1102,7 @@
           decoding="async"
         />
         <span class="btn-text">{{
-          formGroup.get("equipment").value?.name || "Select Equipment"
+          formGroup.get("equipment").value || "Select Equipment"
         }}</span>
         <i class="bi bi-chevron-down ms-auto"></i>
       </button>
@@ -1148,7 +1148,7 @@
           height="32"
           loading="lazy"
           decoding="async"
-          [alt]="formGroup.get('equipment').value?.name || 'Equipment'"
+          [alt]="formGroup.get('equipment').value || 'Equipment'"
           (error)="equipmentImageBroken = true"
         />
         <img
@@ -1158,7 +1158,7 @@
           height="32"
           loading="lazy"
           decoding="async"
-          [alt]="formGroup.get('equipment').value?.name || 'Ailment'"
+          [alt]="formGroup.get('equipment').value || 'Ailment'"
           (error)="equipmentImageBroken = true"
         />
       </div>

@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CrabAbility } from '../../../abilities/pets/turtle/tier-2/crab-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Crab extends Pet {
   name = 'Crab';
@@ -29,5 +29,61 @@ export class Crab extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CrabAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CrabAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    if (!owner.alive) {
+      return;
+    }
+
+    let highestHealthResp = owner.parent.getHighestHealthPet(owner, owner);
+    if (highestHealthResp.pet == null) {
+      return;
+    }
+
+    let gainAmmt = Math.floor(
+      highestHealthResp.pet.health * (0.25 * this.level),
+    );
+    let selfTargetResp = owner.parent.getThis(owner);
+    if (selfTargetResp.pet) {
+      selfTargetResp.pet.increaseHealth(gainAmmt);
+      this.logService.createLog({
+        message: `${owner.name} gave ${selfTargetResp.pet.name} ${0.25 * this.level * 100}% of ${highestHealthResp.pet.name}'s health (${gainAmmt})`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: selfTargetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): CrabAbility {
+    return new CrabAbility(newOwner, this.logService);
   }
 }

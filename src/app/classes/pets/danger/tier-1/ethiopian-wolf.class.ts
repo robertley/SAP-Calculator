@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { EthiopianWolfAbility } from '../../../abilities/pets/danger/tier-1/ethiopian-wolf-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class EthiopianWolf extends Pet {
   name = 'Ethiopian Wolf';
@@ -29,5 +30,57 @@ export class EthiopianWolf extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class EthiopianWolfAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'EthiopianWolfAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.opponent.getFurthestUpPets(
+      this.level,
+      undefined,
+      owner,
+    );
+
+    for (const target of targetResp.pets) {
+      if (target?.alive) {
+        target.increaseAttack(-1);
+        this.logService.createLog({
+          message: `${owner.name} removed 1 attack from ${target.name}.`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          pteranodon: pteranodon,
+          randomEvent: targetResp.random,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): EthiopianWolfAbility {
+    return new EthiopianWolfAbility(newOwner, this.logService);
   }
 }

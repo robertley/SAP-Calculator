@@ -1,10 +1,10 @@
-import { getOpponent } from 'app/util/helper-functions';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BlowfishAbility } from '../../../abilities/pets/turtle/tier-4/blowfish-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Blowfish extends Pet {
   name = 'Blowfish';
@@ -29,5 +29,49 @@ export class Blowfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BlowfishAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BlowfishAbility',
+      owner: owner,
+      triggers: ['ThisHurt'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 3;
+    let targetResp = owner.parent.opponent.getRandomPet(
+      [],
+      false,
+      true,
+      false,
+      owner,
+    );
+    if (targetResp.pet) {
+      owner.snipePet(targetResp.pet, power, targetResp.random, tiger);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BlowfishAbility {
+    return new BlowfishAbility(newOwner, this.logService);
   }
 }

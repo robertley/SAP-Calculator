@@ -8,7 +8,6 @@ import {
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   FormGroup,
-  FormControl,
   AbstractControl,
   FormArray,
   ReactiveFormsModule,
@@ -19,7 +18,6 @@ import { Pet } from '../../classes/pet.class';
 import { PetService } from '../../services/pet/pet.service';
 import { EquipmentService } from '../../services/equipment/equipment.service';
 import { Equipment } from '../../classes/equipment.class';
-import { cloneEquipment } from '../../util/equipment-utils';
 import {
   AILMENT_CATEGORIES,
   EQUIPMENT_CATEGORIES,
@@ -230,7 +228,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     if (this.selectionType === 'pet') {
       this.formGroup.get('name').setValue(item);
     } else if (this.selectionType === 'equipment') {
-      this.formGroup.get('equipment').setValue(item);
+      const equipmentName =
+        typeof item === 'string' ? item : item?.name ?? null;
+      this.formGroup.get('equipment').setValue(equipmentName);
     } else if (this.selectionType === 'swallowed-pet') {
       if (this.swallowedPetTarget === 'abomination-beluga') {
         this.formGroup
@@ -480,14 +480,14 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     const equipmentUsesControl = this.formGroup.get('equipmentUses');
     this.formGroup.get('equipment').valueChanges.subscribe((value) => {
       this.equipmentImageBroken = false;
-      if (value != null && value.reset == null) {
-        let equipment = this.equipment.get(value.name);
-        if (equipment == null) {
-          equipment = this.ailmentEquipment.get(value.name);
-        }
+      const equipmentName = this.normalizeEquipmentValue(value);
+      if (equipmentName !== value) {
         this.formGroup
           .get('equipment')
-          .setValue(equipment, { emitEvent: false });
+          .setValue(equipmentName, { emitEvent: false });
+      }
+      if (!equipmentName) {
+        equipmentUsesControl?.setValue(null, { emitEvent: false });
       }
       this.substitutePet(false);
     });
@@ -1222,26 +1222,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         formValue.triggersConsumed = null;
       }
       this.applyStatCaps(formValue);
-      let equipment = formValue.equipment;
-      if (equipment != null) {
-        const baseEquipment =
-          this.equipment.get(equipment.name) ??
-          this.ailmentEquipment.get(equipment.name);
-        if (baseEquipment != null) {
-          const cloned = cloneEquipment(baseEquipment);
-          if (this.allowEquipmentUseOverrides) {
-            const parsedUses = Number(formValue.equipmentUses);
-            const uses = Number.isFinite(parsedUses) ? parsedUses : cloned.uses;
-            if (uses != null) {
-              cloned.uses = uses;
-              cloned.originalUses = uses;
-            }
-          }
-          formValue.equipment = cloned;
-        } else {
-          formValue.equipment = baseEquipment;
-        }
-      }
+      formValue.equipment = this.normalizeEquipmentValue(formValue.equipment);
 
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
@@ -1339,28 +1320,27 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   }
 
   get equipmentImageSrc(): string | null {
-    const equipment = this.formGroup?.get('equipment')?.value;
-    if (!equipment?.name || equipment.equipmentClass?.startsWith('ailment')) {
+    const equipmentName = this.getSelectedEquipmentName();
+    if (!equipmentName || this.ailmentEquipment?.has(equipmentName)) {
       return null;
     }
-    return getEquipmentIconPath(equipment.name, false);
+    return getEquipmentIconPath(equipmentName, false);
   }
 
   get ailmentImageSrc(): string | null {
-    const equipment = this.formGroup?.get('equipment')?.value;
-    if (!equipment?.name || !equipment.equipmentClass?.startsWith('ailment')) {
+    const equipmentName = this.getSelectedEquipmentName();
+    if (!equipmentName || !this.ailmentEquipment?.has(equipmentName)) {
       return null;
     }
-    return getEquipmentIconPath(equipment.name, true);
+    return getEquipmentIconPath(equipmentName, true);
   }
 
   get equipmentSelected(): boolean {
-    const equipment = this.formGroup?.get('equipment')?.value;
-    return !!equipment;
+    return !!this.getSelectedEquipmentName();
   }
 
   get equipmentHasUses(): boolean {
-    const equipment = this.formGroup?.get('equipment')?.value;
+    const equipment = this.getSelectedEquipment();
     return equipment?.uses != null;
   }
 
@@ -2013,6 +1993,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     this.formGroup.get('health').setValue(0, { emitEvent: false });
     this.formGroup.get('exp').setValue(0, { emitEvent: false });
     this.formGroup.get('equipment').setValue(null, { emitEvent: false });
+    this.formGroup.get('equipmentUses').setValue(null, { emitEvent: false });
     this.formGroup.get('mana').setValue(0, { emitEvent: false });
     this.formGroup.get('triggersConsumed').setValue(0, { emitEvent: false });
   }
@@ -2115,21 +2096,45 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   }
 
   fixLoadEquipment() {
-    let equipment = this.formGroup.get('equipment').value;
-    if (equipment == null) {
+    const equipmentValue = this.formGroup.get('equipment').value;
+    const equipmentName = this.normalizeEquipmentValue(equipmentValue);
+    if (equipmentName === equipmentValue) {
       return;
-    }
-    let newEquipment = this.equipment.get(equipment.name);
-    if (newEquipment == null) {
-      newEquipment = this.ailmentEquipment.get(equipment.name);
     }
     setTimeout(() => {
       this.formGroup
         .get('equipment')
-        .setValue(newEquipment, { emitEvent: false });
+        .setValue(equipmentName, { emitEvent: false });
       this.formGroup
         .get('equipment')
         .updateValueAndValidity({ emitEvent: false });
     });
+  }
+
+  private normalizeEquipmentValue(value: any): string | null {
+    if (!value) {
+      return null;
+    }
+    if (typeof value === 'string') {
+      return value;
+    }
+    if (typeof value === 'object' && typeof value.name === 'string') {
+      return value.name;
+    }
+    return null;
+  }
+
+  private getSelectedEquipmentName(): string | null {
+    return this.normalizeEquipmentValue(
+      this.formGroup?.get('equipment')?.value,
+    );
+  }
+
+  private getSelectedEquipment(): Equipment | null {
+    const name = this.getSelectedEquipmentName();
+    if (!name) {
+      return null;
+    }
+    return this.equipment.get(name) ?? this.ailmentEquipment.get(name) ?? null;
   }
 }

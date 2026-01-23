@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { VolcanoSnailAbility } from '../../../abilities/pets/danger/tier-1/volcano-snail-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Toasty } from 'app/classes/equipment/ailments/toasty.class';
+
 
 export class VolcanoSnail extends Pet {
   name = 'Volcano Snail';
@@ -29,5 +31,71 @@ export class VolcanoSnail extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class VolcanoSnailAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'VolcanoSnailAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let petsWithPerk = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'perk',
+      owner,
+    );
+    let petsWithToasty = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Toasty',
+      owner,
+    );
+    let excludePets = [...petsWithPerk, ...petsWithToasty];
+    let targetResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
+      3,
+      excludePets,
+      null,
+      null,
+      owner,
+    );
+
+    if (targetResp.pets.length === 0) {
+      return;
+    }
+
+    for (let target of targetResp.pets) {
+      let toasty = new Toasty();
+      target.givePetEquipment(toasty);
+
+      this.logService.createLog({
+        message: `${owner.name} made ${target.name} Toasty`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): VolcanoSnailAbility {
+    return new VolcanoSnailAbility(newOwner, this.logService);
   }
 }

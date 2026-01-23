@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { PeacockAbility } from '../../../abilities/pets/turtle/tier-2/peacock-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Peacock extends Pet {
   name = 'Peacock';
@@ -28,5 +29,50 @@ export class Peacock extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class PeacockAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'PeacockAbility',
+      owner: owner,
+      triggers: ['ThisHurt'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let boost = this.level * 3;
+    let selfTargetResp = owner.parent.getThis(owner);
+    if (selfTargetResp.pet) {
+      selfTargetResp.pet.increaseAttack(boost);
+      this.logService.createLog({
+        message: `${owner.name} gave ${selfTargetResp.pet.name} ${boost} attack.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: selfTargetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): PeacockAbility {
+    return new PeacockAbility(newOwner, this.logService);
   }
 }

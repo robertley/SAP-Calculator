@@ -1,10 +1,11 @@
 import { Melon } from 'app/classes/equipment/turtle/melon.class';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TurtleAbility } from '../../../abilities/pets/turtle/tier-4/turtle-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Turtle extends Pet {
   name = 'Turtle';
@@ -29,5 +30,59 @@ export class Turtle extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class TurtleAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'TurtleAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipment('Melon');
+    let targetsBehindResp = owner.parent.nearestPetsBehind(
+      this.level,
+      owner,
+      excludePets,
+    );
+    if (targetsBehindResp.pets.length == 0) {
+      return;
+    }
+
+    for (let targetPet of targetsBehindResp.pets) {
+      this.logService.createLog({
+        message: `${owner.name} gave ${targetPet.name} Melon.`,
+        type: 'ability',
+        tiger: tiger,
+        player: owner.parent,
+        pteranodon: pteranodon,
+        randomEvent: targetsBehindResp.random,
+      });
+      targetPet.givePetEquipment(new Melon());
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TurtleAbility {
+    return new TurtleAbility(newOwner, this.logService);
   }
 }

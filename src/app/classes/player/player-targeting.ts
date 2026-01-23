@@ -1,12 +1,9 @@
 import { clone, shuffle } from 'lodash-es';
 import type { Player } from '../player.class';
 import { Pet } from '../pet.class';
-import { getRandomInt } from '../../util/helper-functions';
-import {
-  getPetAtPosition,
-  getPetsWithEquipment,
-  hasSilly,
-} from './player-utils';
+import { getRandomInt } from 'app/util/helper-functions';
+import { getPetAtPosition, getPetsWithEquipment, hasSilly } from './player-utils';
+
 
 export interface PetRandomResult {
   pet: Pet | null;
@@ -28,7 +25,11 @@ export const getRandomPet = (
   includeOpponent?: boolean,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, excludePets, true);
+    const localExclude = excludePets ? [...excludePets] : [];
+    if (!localExclude.includes(callingPet)) {
+      localExclude.push(callingPet);
+    }
+    return getRandomLivingPet(player, localExclude, true);
   }
 
   let pets: Pet[] = [];
@@ -113,7 +114,11 @@ export const getRandomPets = (
   includeOpponent?: boolean,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, amt, true);
+    const localExclude = excludePets ? [...excludePets] : [];
+    if (!localExclude.includes(callingPet)) {
+      localExclude.push(callingPet);
+    }
+    return getRandomLivingPets(player, amt, true, localExclude);
   }
 
   const pets: Pet[] = [];
@@ -140,13 +145,63 @@ export const getRandomPets = (
   return { pets, random };
 };
 
+export const getRandomEnemyPetsWithSillyFallback = (
+  player: Player,
+  amt: number,
+  excludePets?: Pet[],
+  donut?: boolean,
+  blueberry?: boolean,
+  callingPet?: Pet,
+): PetsRandomResult => {
+  if (callingPet && hasSilly(callingPet)) {
+    const localExclude = excludePets ? [...excludePets] : [];
+    if (!localExclude.includes(callingPet)) {
+      localExclude.push(callingPet);
+    }
+    return getRandomPets(
+      player,
+      amt,
+      localExclude,
+      donut,
+      blueberry,
+      undefined,
+      true,
+    );
+  }
+
+  return getRandomPets(
+    player.opponent,
+    amt,
+    excludePets,
+    donut,
+    blueberry,
+    callingPet,
+  );
+};
+
+export const getPetsWithEquipmentWithSillyFallback = (
+  player: Player,
+  equipmentName: string,
+  callingPet?: Pet,
+): Pet[] => {
+  if (callingPet && hasSilly(callingPet)) {
+    return [
+      ...getPetsWithEquipment(player, equipmentName),
+      ...getPetsWithEquipment(player.opponent, equipmentName),
+    ];
+  }
+
+  return getPetsWithEquipment(player.opponent, equipmentName);
+};
+
 export const getRandomLivingPets = (
   player: Player,
   amt: number,
   ignoreEquipmentPriority = false,
+  excludePets?: Pet[],
 ): PetsRandomResult => {
   const pets: Pet[] = [];
-  const excludePets: Pet[] = [];
+  const localExcludePets: Pet[] = excludePets ? [...excludePets] : [];
 
   const getCandidatePool = (excludes: Pet[]) => {
     let candidates = [...player.petArray, ...player.opponent.petArray];
@@ -191,18 +246,18 @@ export const getRandomLivingPets = (
     });
   };
 
-  const initialCandidateCount = getCandidatePool(excludePets).length;
+  const initialCandidateCount = getCandidatePool(localExcludePets).length;
 
   for (let i = 0; i < amt; i++) {
     const petResp = getRandomLivingPet(
       player,
-      excludePets,
+      localExcludePets,
       ignoreEquipmentPriority,
     );
     if (petResp.pet == null) {
       break;
     }
-    excludePets.push(petResp.pet);
+    localExcludePets.push(petResp.pet);
     pets.push(petResp.pet);
   }
 
@@ -242,7 +297,7 @@ export const getMiddleFriend = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   const pet = player.getPet(2) ?? null;
@@ -255,7 +310,7 @@ export const getLastPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   for (const pet of [...player.petArray].reverse()) {
@@ -273,7 +328,7 @@ export const getLastPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -296,7 +351,7 @@ export const getHighestHealthPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
   const targets = player.petArray.filter(
     (pet) => pet !== excludePet && pet.alive,
@@ -338,7 +393,7 @@ export const getHighestAttackPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
   let highestAttackPets: Pet[] = [];
   for (let i in player.petArray) {
@@ -380,7 +435,7 @@ export const getHighestAttackPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -412,7 +467,7 @@ export const getLowestAttackPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -443,7 +498,7 @@ export const getLowestAttackPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
   let lowestAttackPets: Pet[] = [];
   for (let i in player.petArray) {
@@ -484,7 +539,7 @@ export const getLowestHealthPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
   let lowestHealthPets: Pet[] = [];
   for (let i in player.petArray) {
@@ -526,7 +581,7 @@ export const getLowestHealthPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -561,7 +616,7 @@ export const getHighestHealthPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -596,7 +651,7 @@ export const getHighestTierPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -631,7 +686,7 @@ export const getTierXOrLowerPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -655,7 +710,7 @@ export const getFurthestUpPet = (
   excludePets?: Pet[],
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   for (const pet of player.petArray) {
@@ -676,7 +731,7 @@ export const getFurthestUpPets = (
   callingPet?: Pet,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, count, true);
+    return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
   const availablePets = [...player.petArray].filter(
@@ -698,7 +753,11 @@ export const nearestPetsBehind = (
   excludePets?: Pet[],
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, amt, true);
+    const localExclude = excludePets ? [...excludePets] : [];
+    if (!localExclude.includes(callingPet)) {
+      localExclude.push(callingPet);
+    }
+    return getRandomLivingPets(player, amt, true, localExclude);
   }
 
   const allPetsBehind = callingPet.getPetsBehind(amt * 2);
@@ -711,7 +770,7 @@ export const nearestPetsBehind = (
 
 export const getThis = (player: Player, callingPet: Pet): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   return { pet: callingPet, random: false };
@@ -723,7 +782,7 @@ export const getSpecificPet = (
   target: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   return { pet: target, random: false };
@@ -735,19 +794,51 @@ export const nearestPetsAhead = (
   callingPet: Pet,
   excludePets?: Pet[],
   includeOpponent?: boolean,
+  excludeEquipment?: string,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, amt, true);
+    const localExclude = excludePets ? [...excludePets] : [];
+    if (!localExclude.includes(callingPet)) {
+      localExclude.push(callingPet);
+    }
+    return getRandomLivingPets(player, amt, true, localExclude);
   }
 
-  const allPetsAhead = callingPet.getPetsAhead(
-    amt * 2,
-    includeOpponent || false,
-  );
-  const filteredPets = allPetsAhead.filter(
-    (pet) => !excludePets || !excludePets.includes(pet),
-  );
-  const pets = filteredPets.slice(0, amt);
+  const pets: Pet[] = [];
+  let petAhead = callingPet.petAhead;
+  while (petAhead) {
+    if (pets.length >= amt) {
+      break;
+    }
+    if (excludeEquipment && petAhead.equipment?.name === excludeEquipment) {
+      petAhead = petAhead.petAhead;
+      continue;
+    }
+    if (!excludePets || !excludePets.includes(petAhead)) {
+      pets.push(petAhead);
+    }
+    petAhead = petAhead.petAhead;
+  }
+
+  if (pets.length < amt && includeOpponent) {
+    let opponentPet = player.opponent.furthestUpPet;
+    while (opponentPet) {
+      if (pets.length >= amt) {
+        break;
+      }
+      if (
+        excludeEquipment &&
+        opponentPet.equipment?.name === excludeEquipment
+      ) {
+        opponentPet = opponentPet.petBehind();
+        continue;
+      }
+      if (!excludePets || !excludePets.includes(opponentPet)) {
+        pets.push(opponentPet);
+      }
+      opponentPet = opponentPet.petBehind();
+    }
+  }
   return { pets, random: false };
 };
 
@@ -756,7 +847,7 @@ export const getStrongestPet = (
   callingPet?: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   let strongestPets: Pet[] = [];
@@ -790,7 +881,7 @@ export const getPetsWithinXSpaces = (
   range: number,
 ): PetsRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPets(player, range * 2, true);
+    return getRandomLivingPets(player, range * 2, true, [callingPet]);
   }
 
   const callingPosition = callingPet.savedPosition;
@@ -822,7 +913,7 @@ export const getOppositeEnemyPet = (
   callingPet: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, undefined, true);
+    return getRandomLivingPet(player, [callingPet], true);
   }
 
   const position = callingPet.position;

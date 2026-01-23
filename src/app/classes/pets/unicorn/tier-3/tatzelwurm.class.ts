@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TatzelwurmAbility } from '../../../abilities/pets/unicorn/tier-3/tatzelwurm-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Tatzelwurm extends Pet {
   name = 'Tatzelwurm';
@@ -29,5 +30,48 @@ export class Tatzelwurm extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class TatzelwurmAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'TatzelwurmAbility',
+      owner: owner,
+      triggers: ['FriendAheadDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+    let power = this.level * 2;
+    if (triggerPet && triggerPet.level == 3) {
+      power = power * 2;
+    }
+
+    let targetResp = owner.parent.opponent.getFurthestUpPet(owner);
+    if (targetResp.pet == null) {
+      return;
+    }
+
+    owner.snipePet(targetResp.pet, power, targetResp.random, tiger);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TatzelwurmAbility {
+    return new TatzelwurmAbility(newOwner, this.logService);
   }
 }

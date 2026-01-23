@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SilverFoxAbility } from '../../../abilities/pets/custom/tier-5/silver-fox-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class SilverFox extends Pet {
   name = 'Silver Fox';
@@ -28,5 +29,47 @@ export class SilverFox extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SilverFoxAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Silver Fox Ability',
+      owner: owner,
+      triggers: ['BeforeThisAttacks'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 3,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const goldGain = this.level;
+    const player = owner.parent as any;
+    player.gold = (player.gold ?? 0) + goldGain;
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${goldGain} gold to the owner.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SilverFoxAbility {
+    return new SilverFoxAbility(newOwner, this.logService);
   }
 }

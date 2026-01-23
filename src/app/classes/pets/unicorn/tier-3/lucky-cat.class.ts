@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { LuckyCatAbility } from '../../../abilities/pets/unicorn/tier-3/lucky-cat-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class LuckyCat extends Pet {
   name = 'Lucky Cat';
@@ -28,5 +29,57 @@ export class LuckyCat extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class LuckyCatAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'LuckyCatAbility',
+      owner: owner,
+      triggers: ['ThisLeveledUp'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = 2;
+
+    if (owner.level == 3) {
+      power = 4;
+    }
+    let targetResp = owner.parent.getThis(owner);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} ${power} attack and ${power} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+    });
+
+    target.increaseAttack(power);
+    target.increaseHealth(power);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): LuckyCatAbility {
+    return new LuckyCatAbility(newOwner, this.logService);
   }
 }

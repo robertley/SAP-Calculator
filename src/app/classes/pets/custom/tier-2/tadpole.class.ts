@@ -1,9 +1,13 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { TadpoleAbility } from '../../../abilities/pets/custom/tier-2/tadpole-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { PetService } from 'app/services/pet/pet.service';
+import { InjectorService } from 'app/services/injector.service';
+import { levelToExp } from 'app/util/leveling';
+
 
 export class Tadpole extends Pet {
   name = 'Tadpole';
@@ -30,5 +34,56 @@ export class Tadpole extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class TadpoleAbility extends Ability {
+  constructor(owner: Pet) {
+    super({
+      name: 'Tadpole Ability',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const level = owner.level;
+
+    const petService = InjectorService.getInjector().get(PetService);
+    const logService = InjectorService.getInjector().get(LogService);
+    // Create a new Frog
+    const frog = petService.createPet(
+      {
+        name: 'Frog',
+        attack: null,
+        health: null,
+        mana: 0,
+        exp: levelToExp(level),
+        equipment: null,
+      },
+      owner.parent,
+    );
+
+    if (frog) {
+      // Transformation
+      owner.parent.transformPet(owner, frog);
+
+      logService.createLog({
+        message: `${owner.name} transformed into a level ${level} Frog.`,
+        type: 'ability',
+        player: owner.parent,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): TadpoleAbility {
+    return new TadpoleAbility(newOwner);
   }
 }

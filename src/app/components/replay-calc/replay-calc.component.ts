@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   FormControl,
@@ -16,7 +16,7 @@ import { ReplayCalcService } from '../../services/replay/replay-calc.service';
   templateUrl: './replay-calc.component.html',
   styleUrls: ['./replay-calc.component.scss'],
 })
-export class ReplayCalcComponent {
+export class ReplayCalcComponent implements OnInit {
   private readonly sapCredentialsKey = 'sapCredentials';
 
   formGroup = new FormGroup({

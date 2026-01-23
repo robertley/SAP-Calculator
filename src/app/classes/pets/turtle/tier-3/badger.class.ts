@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BadgerAbility } from '../../../abilities/pets/turtle/tier-3/badger-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Badger extends Pet {
   name = 'Badger';
@@ -29,5 +29,70 @@ export class Badger extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BadgerAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BadgerAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let attackAmt = Math.floor(owner.attack * (this.level * 0.5));
+
+    // Target behind (friendly only)
+    let targetsBehindResp = owner.parent.nearestPetsBehind(1, owner);
+    if (targetsBehindResp.pets.length > 0) {
+      let target = targetsBehindResp.pets[0];
+      owner.snipePet(
+        target,
+        attackAmt,
+        targetsBehindResp.random,
+        tiger,
+        pteranodon,
+      );
+    }
+
+    // Target ahead (including opponents if no friendlies available)
+    let targetsAheadResp = owner.parent.nearestPetsAhead(
+      1,
+      owner,
+      undefined,
+      true,
+    );
+    if (targetsAheadResp.pets.length > 0) {
+      let target = targetsAheadResp.pets[0];
+      owner.snipePet(
+        target,
+        attackAmt,
+        targetsAheadResp.random,
+        tiger,
+        pteranodon,
+      );
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BadgerAbility {
+    return new BadgerAbility(newOwner, this.logService);
   }
 }

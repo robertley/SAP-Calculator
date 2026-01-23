@@ -1,11 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
-import { Weak } from '../../../equipment/ailments/weak.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { logAbility, resolveFriendSummonedTarget } from 'app/classes/ability-helpers';
+
 
 export class Lobster extends Pet {
   name = 'Lobster';
@@ -28,3 +28,57 @@ export class Lobster extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 }
+
+
+export class LobsterAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'LobsterAbility',
+      owner: owner,
+      triggers: ['FriendSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const targetResp = resolveFriendSummonedTarget(owner, context.triggerPet);
+    if (!targetResp.pet) {
+      return;
+    }
+
+    const attackGain = this.level;
+    const healthGain = this.level * 2;
+    targetResp.pet.increaseAttack(attackGain);
+    targetResp.pet.increaseHealth(healthGain);
+
+    logAbility(
+      this.logService,
+      owner,
+      `${owner.name} gave ${targetResp.pet.name} ${attackGain} attack and ${healthGain} health.`,
+      context.tiger,
+      context.pteranodon,
+      { randomEvent: targetResp.random },
+    );
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): LobsterAbility {
+    return new LobsterAbility(newOwner, this.logService, this.abilityService);
+  }
+}
+

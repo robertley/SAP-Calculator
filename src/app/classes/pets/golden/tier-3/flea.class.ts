@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { FleaAbility } from '../../../abilities/pets/golden/tier-3/flea-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Weak } from 'app/classes/equipment/ailments/weak.class';
+
 
 export class Flea extends Pet {
   name = 'Flea';
@@ -28,5 +30,59 @@ export class Flea extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class FleaAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'FleaAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Weak',
+      owner,
+    );
+    let targetsResp = owner.parent.opponent.getHighestHealthPets(
+      this.level,
+      excludePets,
+      owner,
+    );
+
+    for (let target of targetsResp.pets) {
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} Weak.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetsResp.random,
+      });
+      target.givePetEquipment(new Weak());
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): FleaAbility {
+    return new FleaAbility(newOwner, this.logService);
   }
 }

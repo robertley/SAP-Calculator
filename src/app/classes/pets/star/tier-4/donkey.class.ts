@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { DonkeyAbility } from '../../../abilities/pets/star/tier-4/donkey-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Donkey extends Pet {
   name = 'Donkey';
@@ -30,5 +30,59 @@ export class Donkey extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+// Friend faints: Push the last enemy to the front and remove 3 attack.
+
+export class DonkeyAbility extends Ability {
+  private logService: LogService;
+  reset(): void {
+    this.maxUses = this.level;
+    super.reset();
+  }
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'DonkeyAbility',
+      owner: owner,
+      triggers: ['FriendDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let opponent = owner.parent.opponent;
+    let targetResp = opponent.getLastPet();
+    if (targetResp.pet == null) {
+      return;
+    }
+    owner.parent.pushPet(targetResp.pet, targetResp.pet.position);
+
+    targetResp.pet.increaseAttack(-3);
+
+    this.logService.createLog({
+      message: `${owner.name} pushed ${targetResp.pet.name} to the front and removed 3 attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): DonkeyAbility {
+    return new DonkeyAbility(newOwner, this.logService);
   }
 }

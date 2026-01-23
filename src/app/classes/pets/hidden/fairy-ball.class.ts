@@ -1,9 +1,10 @@
-import { FairyAbility } from 'app/classes/abilities/pets/custom/tier-4/fairy-ability.class';
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
+import { FairyAbility } from '../custom/tier-4/fairy.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../equipment.class';
 import { Pack, Pet } from '../../pet.class';
 import { Player } from '../../player.class';
+
 
 export class FairyBall extends Pet {
   name = 'Fairy Ball';

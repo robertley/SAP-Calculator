@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { shuffle } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { NurikabeAbility } from '../../../abilities/pets/custom/tier-5/nurikabe-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Nurikabe extends Pet {
   name = 'Nurikabe';
@@ -31,5 +30,30 @@ export class Nurikabe extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class NurikabeAbility extends Ability {
+  constructor(owner: Pet) {
+    super({
+      name: 'NurikabeAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 3,
+      abilityFunction: (context: AbilityContext) =>
+        this.executeAbility(context),
+    });
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    // Damage reduction handled in player combat; no direct execution needed
+  }
+
+  copy(newOwner: Pet): NurikabeAbility {
+    return new NurikabeAbility(newOwner);
   }
 }

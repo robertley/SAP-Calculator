@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { SeahorseAbility } from '../../../abilities/pets/custom/tier-2/seahorse-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Seahorse extends Pet {
   name = 'Seahorse';
@@ -30,5 +31,57 @@ export class Seahorse extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SeahorseAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SeahorseAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const opponent = owner.parent.opponent;
+    const targetResp = opponent.getLastPet();
+
+    if (targetResp.pet == null) {
+      return;
+    }
+
+    const target = targetResp.pet;
+    // Push the target within its own team
+    target.parent.pushPet(target, this.level);
+
+    this.logService.createLog({
+      message: `${owner.name} pushed ${target.name} forward ${this.level} space(s).`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): SeahorseAbility {
+    return new SeahorseAbility(newOwner, this.logService);
   }
 }

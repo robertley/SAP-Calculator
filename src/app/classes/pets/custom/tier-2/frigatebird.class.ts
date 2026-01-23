@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { FrigatebirdAbility } from '../../../abilities/pets/custom/tier-2/frigatebird-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Rice } from 'app/classes/equipment/puppy/rice.class';
+
 
 export class Frigatebird extends Pet {
   name = 'Frigatebird';
@@ -33,5 +35,53 @@ export class Frigatebird extends Pet {
 
   resetPet(): void {
     super.resetPet();
+  }
+}
+
+
+export class FrigatebirdAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'FrigatebirdAbility',
+      owner: owner,
+      triggers: ['FriendGainsAilment'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const equipment = triggerPet?.equipment;
+    if (!equipment || !equipment.equipmentClass?.startsWith('ailment')) {
+      return;
+    }
+    triggerPet.removePerk();
+    triggerPet.givePetEquipment(new Rice());
+    this.logService.createLog({
+      message: `${owner.name} removed ${equipment.name} from ${triggerPet.name} and gave ${triggerPet.name} Rice.`,
+      type: 'ability',
+      player: owner.parent,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+  reset(): void {
+    this.maxUses = this.level;
+    super.reset();
+  }
+  copy(newOwner: Pet): FrigatebirdAbility {
+    return new FrigatebirdAbility(newOwner, this.logService);
   }
 }

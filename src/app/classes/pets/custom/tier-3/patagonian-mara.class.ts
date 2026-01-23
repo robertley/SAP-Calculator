@@ -1,9 +1,12 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { PatagonianMaraAbility } from '../../../abilities/pets/custom/tier-3/patagonian-mara-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { InjectorService } from 'app/services/injector.service';
+import { GoldenRetriever } from 'app/classes/pets/hidden/golden-retriever.class';
+
 
 export class PatagonianMara extends Pet {
   name = 'Patagonian Mara';
@@ -30,5 +33,56 @@ export class PatagonianMara extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class PatagonianMaraAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Patagonian Mara Ability',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const player = owner.parent;
+    const trumpetsGained = 4 * this.level;
+
+    player.gainTrumpets(trumpetsGained, owner, pteranodon);
+
+    const abilityService = InjectorService.getInjector().get(AbilityService);
+    const retriever = new GoldenRetriever(
+      this.logService,
+      abilityService,
+      player,
+      this.level,
+      this.level,
+    );
+    player.summonPet(retriever, owner.position);
+
+    this.logService.createLog({
+      message: `${owner.name} gained ${trumpetsGained} trumpets and summoned a Golden Retriever.`,
+      type: 'ability',
+      player: player,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): PatagonianMaraAbility {
+    return new PatagonianMaraAbility(newOwner, this.logService);
   }
 }

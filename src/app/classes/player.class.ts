@@ -1,81 +1,18 @@
 import { Pet } from './pet.class';
-import { LogService } from '../services/log.service';
-import { AbilityService } from '../services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
 import { Toy } from './toy.class';
 import { Equipment } from './equipment.class';
-import { GameService } from '../services/game.service';
-import { getOpponent } from '../util/helper-functions';
-import {
-  alive as playerAlive,
-  checkPetsAlive as checkPetsAliveImpl,
-  createDeathLog as createDeathLogImpl,
-  handleDeath as handleDeathImpl,
-  removeDeadPets as removeDeadPetsImpl,
-  resetJumpedFlags as resetJumpedFlagsImpl,
-  resetPets as resetPetsImpl,
-} from './player/player-lifecycle';
-import {
-  getPetAtPosition as getPetAtPositionImpl,
-  getPetsWithEquipment as getPetsWithEquipmentImpl,
-  getPetsWithoutEquipment as getPetsWithoutEquipmentImpl,
-  getManticoreMult as getManticoreMultImpl,
-} from './player/player-utils';
-import {
-  getAll as getAllImpl,
-  getFurthestUpPet as getFurthestUpPetImpl,
-  getFurthestUpPets as getFurthestUpPetsImpl,
-  getHighestAttackPet as getHighestAttackPetImpl,
-  getHighestAttackPets as getHighestAttackPetsImpl,
-  getHighestHealthPet as getHighestHealthPetImpl,
-  getHighestHealthPets as getHighestHealthPetsImpl,
-  getHighestTierPets as getHighestTierPetsImpl,
-  getLastPet as getLastPetImpl,
-  getLastPets as getLastPetsImpl,
-  getLowestAttackPet as getLowestAttackPetImpl,
-  getLowestAttackPets as getLowestAttackPetsImpl,
-  getLowestHealthPet as getLowestHealthPetImpl,
-  getLowestHealthPets as getLowestHealthPetsImpl,
-  getMiddleFriend as getMiddleFriendImpl,
-  getOppositeEnemyPet as getOppositeEnemyPetImpl,
-  getPetsWithinXSpaces as getPetsWithinXSpacesImpl,
-  getRandomLivingPet as getRandomLivingPetImpl,
-  getRandomLivingPets as getRandomLivingPetsImpl,
-  getRandomPet as getRandomPetImpl,
-  getRandomPets as getRandomPetsImpl,
-  PetRandomResult,
-  getSpecificPet as getSpecificPetImpl,
-  getStrongestPet as getStrongestPetImpl,
-  getThis as getThisImpl,
-  getTierXOrLowerPet as getTierXOrLowerPetImpl,
-  nearestPetsAhead as nearestPetsAheadImpl,
-  nearestPetsBehind as nearestPetsBehindImpl,
-} from './player/player-targeting';
-import {
-  makeRoomForSlot as makeRoomForSlotImpl,
-  onionCheck as onionCheckImpl,
-  pushBackwardFromSlot as pushBackwardFromSlotImpl,
-  pushForwardFromSlot as pushForwardFromSlotImpl,
-  pushPet as pushPetImpl,
-  pushPetToBack as pushPetToBackImpl,
-  pushPetToFront as pushPetToFrontImpl,
-  pushPetsForward as pushPetsForwardImpl,
-} from './player/player-movement';
-import {
-  summonPet as summonPetImpl,
-  summonPetBehind as summonPetBehindImpl,
-  summonPetInFront as summonPetInFrontImpl,
-  transformPet as transformPetImpl,
-} from './player/player-summon';
-import {
-  breakToy as breakToyImpl,
-  setToy as setToyImpl,
-} from './player/player-toys';
-import {
-  checkGoldenSpawn as checkGoldenSpawnImpl,
-  gainTrumpets as gainTrumpetsImpl,
-  resolveTrumpetGainTarget as resolveTrumpetGainTargetImpl,
-  spendTrumpets as spendTrumpetsImpl,
-} from './player/player-trumpets';
+import { GameService } from 'app/services/game.service';
+import { getOpponent } from 'app/util/helper-functions';
+import { alive as playerAlive, checkPetsAlive as checkPetsAliveImpl, createDeathLog as createDeathLogImpl, handleDeath as handleDeathImpl, removeDeadPets as removeDeadPetsImpl, resetJumpedFlags as resetJumpedFlagsImpl, resetPets as resetPetsImpl } from './player/player-lifecycle';
+import { getPetAtPosition as getPetAtPositionImpl, getPetsWithEquipment as getPetsWithEquipmentImpl, getPetsWithoutEquipment as getPetsWithoutEquipmentImpl, getManticoreMult as getManticoreMultImpl } from './player/player-utils';
+import { getAll as getAllImpl, getFurthestUpPet as getFurthestUpPetImpl, getFurthestUpPets as getFurthestUpPetsImpl, getHighestAttackPet as getHighestAttackPetImpl, getHighestAttackPets as getHighestAttackPetsImpl, getHighestHealthPet as getHighestHealthPetImpl, getHighestHealthPets as getHighestHealthPetsImpl, getHighestTierPets as getHighestTierPetsImpl, getLastPet as getLastPetImpl, getLastPets as getLastPetsImpl, getLowestAttackPet as getLowestAttackPetImpl, getLowestAttackPets as getLowestAttackPetsImpl, getLowestHealthPet as getLowestHealthPetImpl, getLowestHealthPets as getLowestHealthPetsImpl, getMiddleFriend as getMiddleFriendImpl, getOppositeEnemyPet as getOppositeEnemyPetImpl, getPetsWithinXSpaces as getPetsWithinXSpacesImpl, getRandomLivingPet as getRandomLivingPetImpl, getRandomLivingPets as getRandomLivingPetsImpl, getRandomPet as getRandomPetImpl, getRandomPets as getRandomPetsImpl, getRandomEnemyPetsWithSillyFallback as getRandomEnemyPetsWithSillyFallbackImpl, getPetsWithEquipmentWithSillyFallback as getPetsWithEquipmentWithSillyFallbackImpl, PetRandomResult, getSpecificPet as getSpecificPetImpl, getStrongestPet as getStrongestPetImpl, getThis as getThisImpl, getTierXOrLowerPet as getTierXOrLowerPetImpl, nearestPetsAhead as nearestPetsAheadImpl, nearestPetsBehind as nearestPetsBehindImpl } from './player/player-targeting';
+import { makeRoomForSlot as makeRoomForSlotImpl, onionCheck as onionCheckImpl, pushBackwardFromSlot as pushBackwardFromSlotImpl, pushForwardFromSlot as pushForwardFromSlotImpl, pushPet as pushPetImpl, pushPetToBack as pushPetToBackImpl, pushPetToFront as pushPetToFrontImpl, pushPetsForward as pushPetsForwardImpl } from './player/player-movement';
+import { summonPet as summonPetImpl, summonPetBehind as summonPetBehindImpl, summonPetInFront as summonPetInFrontImpl, transformPet as transformPetImpl } from './player/player-summon';
+import { breakToy as breakToyImpl, setToy as setToyImpl } from './player/player-toys';
+import { checkGoldenSpawn as checkGoldenSpawnImpl, gainTrumpets as gainTrumpetsImpl, resolveTrumpetGainTarget as resolveTrumpetGainTargetImpl, spendTrumpets as spendTrumpetsImpl } from './player/player-trumpets';
+
 
 export class Player {
   pet0?: Pet;
@@ -348,6 +285,34 @@ export class Player {
     );
   }
 
+  getRandomEnemyPetsWithSillyFallback(
+    amt: number,
+    excludePets?: Pet[],
+    donut?: boolean,
+    blueberry?: boolean,
+    callingPet?: Pet,
+  ): { pets: Pet[]; random: boolean } {
+    return getRandomEnemyPetsWithSillyFallbackImpl(
+      this,
+      amt,
+      excludePets,
+      donut,
+      blueberry,
+      callingPet,
+    );
+  }
+
+  getPetsWithEquipmentWithSillyFallback(
+    equipmentName: string,
+    callingPet?: Pet,
+  ): Pet[] {
+    return getPetsWithEquipmentWithSillyFallbackImpl(
+      this,
+      equipmentName,
+      callingPet,
+    );
+  }
+
   /**
    * Returns multiple random living pets from both teams with donut/blueberry prioritization.
    * Calls getRandomLivingPet in a loop, same relationship as getRandomPets/getRandomPet.
@@ -586,6 +551,7 @@ export class Player {
     callingPet: Pet,
     excludePets?: Pet[],
     includeOpponent?: boolean,
+    excludeEquipment?: string,
   ): { pets: Pet[]; random: boolean } {
     return nearestPetsAheadImpl(
       this,
@@ -593,6 +559,7 @@ export class Player {
       callingPet,
       excludePets,
       includeOpponent,
+      excludeEquipment,
     );
   }
 

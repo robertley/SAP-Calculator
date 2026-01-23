@@ -1,23 +1,18 @@
 import type { Pet } from '../pet.class';
 import { Equipment } from '../equipment.class';
-import { Peanut } from '../equipment/turtle/peanut.class';
-import { PeanutButter } from '../equipment/hidden/peanut-butter';
-import { WhiteTruffle } from '../equipment/danger/white-truffle.class';
-import { Salt } from '../equipment/puppy/salt.class';
-import {
-  MapleSyrup,
-  MapleSyrupAttack,
-} from '../equipment/golden/maple-syrup.class';
-import { Cheese } from '../equipment/star/cheese.class';
-import { FortuneCookie } from '../equipment/custom/fortune-cookie.class';
-import { Pepper } from '../equipment/star/pepper.class';
-import { Icky } from '../equipment/ailments/icky.class';
-import { Sleepy } from '../equipment/ailments/sleepy.class';
-import {
-  HoneydewMelon,
-  HoneydewMelonAttack,
-} from '../equipment/golden/honeydew-melon.class';
-import { Guava, GuavaAttack } from '../equipment/custom/guava.class';
+import { Peanut } from 'app/classes/equipment/turtle/peanut.class';
+import { PeanutButter } from 'app/classes/equipment/hidden/peanut-butter';
+import { WhiteTruffle } from 'app/classes/equipment/danger/white-truffle.class';
+import { Salt } from 'app/classes/equipment/puppy/salt.class';
+import { Cheese } from 'app/classes/equipment/star/cheese.class';
+import { FortuneCookie } from 'app/classes/equipment/custom/fortune-cookie.class';
+import { Pepper } from 'app/classes/equipment/star/pepper.class';
+import { Icky } from 'app/classes/equipment/ailments/icky.class';
+import { Sleepy } from 'app/classes/equipment/ailments/sleepy.class';
+import { Guava, GuavaAttack } from 'app/classes/equipment/custom/guava.class';
+import { MapleSyrup, MapleSyrupAttack } from 'app/classes/equipment/golden/maple-syrup.class';
+import { HoneydewMelon, HoneydewMelonAttack } from 'app/classes/equipment/golden/honeydew-melon.class';
+
 
 export function attackPet(
   self: Pet,

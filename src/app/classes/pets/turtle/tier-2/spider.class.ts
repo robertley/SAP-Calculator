@@ -1,11 +1,12 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { PetService } from '../../../../services/pet/pet.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { PetService } from 'app/services/pet/pet.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SpiderAbility } from '../../../abilities/pets/turtle/tier-2/spider-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getRandomInt } from 'app/util/helper-functions';
+
 
 export class Spider extends Pet {
   name = 'Spider';
@@ -38,5 +39,98 @@ export class Spider extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SpiderAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+  private petService: PetService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+    petService: PetService,
+  ) {
+    super({
+      name: 'SpiderAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+    this.petService = petService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let tier3Pets;
+    if (owner.parent == gameApi.player) {
+      tier3Pets = gameApi.playerPetPool.get(3);
+    } else {
+      tier3Pets = gameApi.opponentPetPool.get(3);
+    }
+
+    let possibleSpawnPets = tier3Pets.filter((pet) => {
+      return pet != 'Spider';
+    });
+
+    let spawnPetName =
+      possibleSpawnPets[getRandomInt(0, possibleSpawnPets.length - 1)];
+    let level = this.level;
+    let exp = this.minExpForLevel;
+    let power = this.level * 2;
+
+    let spawnPet = this.petService.createPet(
+      {
+        attack: power,
+        exp: exp,
+        equipment: null,
+        health: power,
+        name: spawnPetName,
+        mana: 0,
+      },
+      owner.parent,
+    );
+
+    let summonResult = owner.parent.summonPet(
+      spawnPet,
+      owner.savedPosition,
+      false,
+      owner,
+    );
+
+    if (summonResult.success) {
+      this.logService.createLog({
+        message: `${owner.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
+        type: 'ability',
+        player: owner.parent,
+        randomEvent: true,
+        tiger: tiger,
+        pteranodon: pteranodon,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SpiderAbility {
+    return new SpiderAbility(
+      newOwner,
+      this.logService,
+      this.abilityService,
+      this.petService,
+    );
   }
 }

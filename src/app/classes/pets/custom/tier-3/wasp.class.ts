@@ -1,12 +1,10 @@
-import { getOpponent } from 'app/util/helper-functions';
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { Honey } from 'app/classes/equipment/turtle/honey.class';
-import { WaspAbility } from '../../../abilities/pets/custom/tier-3/wasp-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Wasp extends Pet {
   name = 'Wasp';
@@ -31,5 +29,43 @@ export class Wasp extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class WaspAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Wasp Ability',
+      owner: owner,
+      triggers: ['ShopUpgrade'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const multiplier = 0.5 * this.level;
+    const attackGain = Math.floor(owner.attack * multiplier);
+
+    if (attackGain > 0) {
+      owner.increaseAttack(attackGain);
+
+      this.logService.createLog({
+        message: `${owner.name} gained +${attackGain} attack from Shop Upgrade.`,
+        type: 'ability',
+        player: owner.parent,
+      });
+    }
+  }
+
+  override copy(newOwner: Pet): WaspAbility {
+    return new WaspAbility(newOwner, this.logService);
   }
 }

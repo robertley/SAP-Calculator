@@ -1,11 +1,12 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Pet } from '../../pet.class';
 import { Toy } from '../../toy.class';
-import { PetService } from '../../../services/pet/pet.service';
-import { cloneEquipment } from '../../../util/equipment-utils';
-import { LogService } from '../../../services/log.service';
-import { ToyService } from '../../../services/toy/toy.service';
+import { PetService } from 'app/services/pet/pet.service';
+import { cloneEquipment } from 'app/util/equipment-utils';
+import { LogService } from 'app/services/log.service';
+import { ToyService } from 'app/services/toy/toy.service';
 import { Player } from '../../player.class';
+
 
 export class StuffedBear extends Toy {
   name = 'Stuffed Bear';

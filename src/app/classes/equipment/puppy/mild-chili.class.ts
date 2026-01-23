@@ -1,7 +1,8 @@
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment, EquipmentClass } from '../../equipment.class';
 import { Pet } from '../../pet.class';
+
 
 export class MildChili extends Equipment {
   name = 'Mild Chili';

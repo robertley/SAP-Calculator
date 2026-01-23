@@ -1,10 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TahrAbility } from '../../../abilities/pets/puppy/tier-4/tahr-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { MildChili } from 'app/classes/equipment/puppy/mild-chili.class';
+
 
 export class Tahr extends Pet {
   name = 'Tahr';
@@ -31,5 +32,64 @@ export class Tahr extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class TahrAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'TahrAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipment('Mild Chili');
+    let targetsBehindResp = owner.parent.nearestPetsBehind(
+      this.level,
+      owner,
+      excludePets,
+    );
+    if (targetsBehindResp.pets.length === 0) {
+      return;
+    }
+    for (let pet of targetsBehindResp.pets) {
+      this.logService.createLog({
+        message: `${owner.name} gave ${pet.name} Mild Chili.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetsBehindResp.random,
+      });
+      pet.givePetEquipment(new MildChili(this.logService, this.abilityService));
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TahrAbility {
+    return new TahrAbility(newOwner, this.logService, this.abilityService);
   }
 }

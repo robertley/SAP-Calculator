@@ -1,6 +1,7 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Pet } from '../../pet.class';
 import { Toy } from '../../toy.class';
+
 
 export class PaperShredder extends Toy {
   name = 'Paper Shredder';
