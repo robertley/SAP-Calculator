@@ -1,0 +1,1917 @@
+[
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give Coconut perk to two first enemies."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "294",
+    "Name": "Action Figure",
+    "NameId": "RelicActionFigure",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Block damage, once.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 3,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Break: Give the front-most friend +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Give the two front-most friends +1 attack and +1 health."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Give the three front-most friends +1 attack and +1 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "479",
+    "Name": "Balloon",
+    "NameId": "RelicBalloon",
+    "Tier": 1,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: Deal 50 damage to the front-most friend."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "299",
+    "Name": "Boot",
+    "NameId": "RelicBoot",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: If you rolled less than 6 times this turn, deal the turn number as damage to friends."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "300",
+    "Name": "Bowling Ball",
+    "NameId": "RelicBowlingBall",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      { "Level": 1, "About": "Start of turn: Lose 3 gold." },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "310",
+    "Name": "Broken Piggy Bank",
+    "NameId": "RelicOpenPiggyBank",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of turn: Sell the two front-most friends."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "302",
+    "Name": "Cardboard Box",
+    "NameId": "RelicCardboardBox",
+    "Tier": 1,
+    "TierMax": 4,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give +1 experience to friends and +2 experience to enemies."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "794",
+    "Name": "Chocolate Box",
+    "NameId": "RelicChocolateBox",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Summoned: Replace this with another random toy."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "482",
+    "Name": "Crumpled Paper",
+    "NameId": "RelicCrumpledPaper",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 3,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give the front-most friend +2 mana."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give the front-most friend +4 mana."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give the front-most friend +6 mana."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "580",
+    "Name": "Crystal Ball",
+    "NameId": "RelicCrystalBall",
+    "Tier": 1,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Friend bought: Transform it into ANY random pet from the same tier with new base stats."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "303",
+    "Name": "Deck of Cards",
+    "NameId": "RelicCardDeck",
+    "Tier": 1,
+    "TierMax": 4,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      { "Level": 1, "About": "Roll: Lose 1 gold." },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "304",
+    "Name": "Dice",
+    "NameId": "RelicDice",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Shuffle positions of all friends."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "286",
+    "Name": "Dice Cup",
+    "NameId": "RelicDiceCup",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: If you did not buy any tier 1 food this turn, make friends Dazed until next turn."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "485",
+    "Name": "Flute",
+    "NameId": "RelicFlute",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Make the two front-most friends Weak."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "306",
+    "Name": "Handkerchief",
+    "NameId": "RelicHandkerchief",
+    "Tier": 1,
+    "TierMax": 3,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Take +3 damage.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Empty front space: Remove 20% attack from the back-most friend and move it to the front."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "307",
+    "Name": "Kite",
+    "NameId": "RelicKite",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Remove 20% attack and 20% health from friends."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "506",
+    "Name": "Lamp",
+    "NameId": "RelicLamp",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Feed Apples to random pets for each turn number. Double their power on enemies."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "308",
+    "Name": "Lunchbox",
+    "NameId": "RelicLunchbox",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 3,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give the back-most tier 2 or lower friend +1 experience."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give the back-most tier 2 or lower friend +2 experience."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give the back-most tier 2 or lower friend +3 experience."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "581",
+    "Name": "Magic Wand",
+    "NameId": "RelicMagicWand",
+    "Tier": 1,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      { "Level": 1, "About": "Start of battle: Make two random friends Cold." },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "590",
+    "Name": "Onesie",
+    "NameId": "RelicOnesie",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      { "Level": 1, "About": "Friend summoned: Knock it out." },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "312",
+    "Name": "Paper Shredder",
+    "NameId": "RelicPaperShredder",
+    "Tier": 1,
+    "TierMax": 5,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Make the two front-most friends Inked."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "313",
+    "Name": "Pen",
+    "NameId": "RelicPen",
+    "Tier": 1,
+    "TierMax": 3,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Attack and ability deal 3 less damage.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Knock out the two front-most friends and the front-most enemy."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "284",
+    "Name": "Pill Bottle",
+    "NameId": "RelicPillBottle",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Push the last enemy up front and give it +100% attack and +100% health."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "314",
+    "Name": "Pogo Stick",
+    "NameId": "RelicPogoStick",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give enemies +20% attack and +20% health."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "315",
+    "Name": "Remote Car",
+    "NameId": "RelicRemoteCar",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: If you spent less than 13 gold this turn, remove 20% health from friends."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "582",
+    "Name": "Ring",
+    "NameId": "RelicTheOneRing",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Knock out friends from the previous tier."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "316",
+    "Name": "Ring Pyramid",
+    "NameId": "RelicRingPyramid",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: Deal 1 damage to the three front-most friends. Multiply damage with their tiers."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "285",
+    "Name": "Rock Bag",
+    "NameId": "RelicRockBag",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "All enemies fainted: Summon one 50/1 enemy Duck. Works 1 time per battle."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "318",
+    "Name": "Rubber Duck",
+    "NameId": "RelicRubberDuck",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Set attack and health of all friends to the turn number."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "795",
+    "Name": "Scale",
+    "NameId": "RelicScale",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Knock out friends from the current tier."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "486",
+    "Name": "Soccer Ball",
+    "NameId": "RelicFootball",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 3,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give Walnut perk to the friend on the middle space."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give Walnut perk with double effect to the friend on the middle space."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give Walnut perk with triple effect to the friend on the middle space."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "496",
+    "Name": "Stick",
+    "NameId": "RelicWoodenStick",
+    "Tier": 1,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Block 2 damage, once.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Make the two back-most friends Icky."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "792",
+    "Name": "Sticky Hand",
+    "NameId": "RelicStickyHand",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Take double damage, twice.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Three friends faint: Summon one exact enemy copy of the back-most friend."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "324",
+    "Name": "Stuffed Bear",
+    "NameId": "RelicTeddyBear",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: Remove the lowest tier perks from two friends."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "793",
+    "Name": "Vacuum Cleaner",
+    "NameId": "RelicHandheldVacuumCleaner",
+    "Tier": 1,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 3,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Make one random perk-less enemy Weak."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Make two random perk-less enemies Weak."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Make three random perk-less enemies Weak."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "600",
+    "Name": "Witch Broom",
+    "NameId": "RelicWitchBroom",
+    "Tier": 1,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Take +3 damage.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give the front-most friend Garlic perk."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give the two front-most friends Garlic perk."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give the three front-most friends Garlic perk."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "509",
+    "Name": "Garlic Press",
+    "NameId": "RelicGarlicPress",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Takes 2 less damage.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      { "Level": 1, "About": "Friend summoned: Give it +1 attack." },
+      { "Level": 2, "About": "Friend summoned: Give it +2 attack." },
+      { "Level": 3, "About": "Friend summoned: Give it +3 attack." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "598",
+    "Name": "Magic Carpet",
+    "NameId": "RelicMagicCarpet",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Friendly level-up: Give it +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Friendly level-up: Give it +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Friendly level-up: Give it +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "575",
+    "Name": "Magic Lamp",
+    "NameId": "RelicMagicLamp",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give Popcorn perk to the front-most perkless friend."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give Popcorn perk to the two front-most perkless friends."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give Popcorn perk to the three front-most perkless friends."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "699",
+    "Name": "Microwave Oven",
+    "NameId": "RelicMicrowaver",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Faint: Summon one random pet from the same tier.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give Eucalyptus perk to the front-most friend."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give Eucalyptus perk to the two front-most friends."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give Eucalyptus perk to the three front-most friends."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "789",
+    "Name": "Plastic Saw",
+    "NameId": "RelicToySaw",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Block 4 enemy damage, once.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      { "Level": 1, "About": "Break: Give friends +1 health." },
+      { "Level": 2, "About": "Break: Give friends +2 health." },
+      { "Level": 3, "About": "Break: Give friends +3 health." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "488",
+    "Name": "Radio",
+    "NameId": "RelicRadio",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 5,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Deal 3 damage to one random enemy."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Deal 3 damage to two random enemies."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Deal 3 damage to three random enemies."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "478",
+    "Name": "Tennis Ball",
+    "NameId": "RelicTennisBall",
+    "Tier": 2,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Three friends bought: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Three friends bought: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Three friends bought: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "574",
+    "Name": "Candelabra",
+    "NameId": "RelicCandelabra",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Deal 5 damage to the lowest health enemy."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Deal 5 damage to the lowest health enemy. Triggers 2 times."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Deal 5 damage to the lowest health enemy. Triggers 3 times."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "507",
+    "Name": "Foam Sword",
+    "NameId": "RelicFoamSword",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Three friends faint: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Three friends faint: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Three friends faint: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "586",
+    "Name": "Glass Shoes",
+    "NameId": "RelicGlassShoes",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Spend 12 gold: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Spend 12 gold: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Spend 12 gold: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "589",
+    "Name": "Golden Harp",
+    "NameId": "RelicGoldenHarp",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Three food bought: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Three food bought: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Three food bought: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "595",
+    "Name": "Lock of Hair",
+    "NameId": "RelicLockofHair",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Three friends sold: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Three friends sold: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Three friends sold: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "578",
+    "Name": "Magic Mirror",
+    "NameId": "RelicMagicMirror",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      { "Level": 1, "About": "Break: Give the front-most friend Melon perk." },
+      {
+        "Level": 2,
+        "About": "Break: Give the two front-most friends Melon perk."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Give the three front-most friends Melon perk."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "510",
+    "Name": "Melon Helmet",
+    "NameId": "RelicMelonHelmet",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Block 20 damage, once.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Roll 7 times: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Roll 7 times: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Roll 7 times: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "599",
+    "Name": "Pickaxe",
+    "NameId": "RelicPickaxe",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Friend jumped: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Friend jumped: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Friend jumped: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "576",
+    "Name": "Red Cape",
+    "NameId": "RelicRedCape",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Two friendly level-up: Break and give all friends permanent +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Two friendly level-up: Break and give all friends permanent +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Two friendly level-up: Break and give all friends permanent +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "579",
+    "Name": "Rosebud",
+    "NameId": "RelicRosebud",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: Transform front-most friend into another random pet from 2 tiers below."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "319",
+    "Name": "Scissors",
+    "NameId": "RelicScissors",
+    "Tier": 3,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Deal 5 damage to the last enemy."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Deal 5 damage to the last enemy. Triggers 2 times."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Deal 5 damage to the last enemy. Triggers 3 times."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "493",
+    "Name": "Toy Gun",
+    "NameId": "RelicToyGun",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 1,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Transform all friends to level 1."
+      },
+      { "Level": 2, "About": "No ability." },
+      { "Level": 3, "About": "No ability." }
+    ],
+    "Type": 1,
+    "ToyType": 1,
+    "Id": "327",
+    "Name": "Toy Mouse",
+    "NameId": "RelicToyMouse",
+    "Tier": 3,
+    "TierMax": 6,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Break: Stock one free pet from tier 2 as a 4/4 level 3."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Stock one free pet from tier 4 as a 8/8 level 3."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Stock one free pet from tier 6 as a 12/12 level 3."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "591",
+    "Name": "Treasure Chest",
+    "NameId": "RelicTreasureChest",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      { "Level": 1, "About": "Break: Summon a level 1 Treasure Chest." },
+      { "Level": 2, "About": "Break: Summon a level 2 Treasure Chest." },
+      { "Level": 3, "About": "Break: Summon a level 3 Treasure Chest." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "594",
+    "Name": "Treasure Map",
+    "NameId": "RelicTreasureMap",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 7,
+    "Abilities": [
+      { "Level": 1, "About": "End turn: Gain one free roll next turn." },
+      { "Level": 2, "About": "End turn: Gain two free rolls next turn." },
+      { "Level": 3, "About": "End turn: Gain three free rolls next turn." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "597",
+    "Name": "Winged Sandals",
+    "NameId": "RelicWingedSandals",
+    "Tier": 3,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Break: Summon one 6/6 friend that sells for 3 gold."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Summon one 12/12 friend that sells for 6 gold."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Summon one 18/18 friend that sells for 9 gold."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "492",
+    "Name": "Cash Register",
+    "NameId": "RelicToyCashRegister",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "All friends fainted: Summon one 6/6 Salmon of Knowledge in battle once."
+      },
+      {
+        "Level": 2,
+        "About": "All friends fainted: Summon one 12/12 Salmon of Knowledge in battle once."
+      },
+      {
+        "Level": 3,
+        "About": "All friends fainted: Summon one 18/18 Salmon of Knowledge in battle once."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "584",
+    "Name": "Nutcracker",
+    "NameId": "RelicNutcracker",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give the middle friendly pet +6 mana."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give the middle friendly pet +12 mana."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give the middle friendly pet +18 mana."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "587",
+    "Name": "Ocarina",
+    "NameId": "RelicOcarina",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      { "Level": 1, "About": "Break: Stock one free Chicken Leg." },
+      { "Level": 2, "About": "Break: Stock two free Chicken Legs." },
+      { "Level": 3, "About": "Break: Stock three free Chicken Legs." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "311",
+    "Name": "Oven Mitts",
+    "NameId": "RelicOvenMitts",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give one random Tand & Tand +6 attack and +6 health."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give one random Tand & Tand +12 attack and +12 health."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give one random Tand & Tand +18 attack and +18 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "585",
+    "Name": "Thunder Hammer",
+    "NameId": "RelicThunderHammer",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Empty front space: Summon one 6/6 Giant Eyes Dog up front in battle once."
+      },
+      {
+        "Level": 2,
+        "About": "Empty front space: Summon one 12/12 Giant Eyes Dog up front in battle once."
+      },
+      {
+        "Level": 3,
+        "About": "Empty front space: Summon one 18/18 Giant Eyes Dog up front in battle once."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "588",
+    "Name": "Tinder Box",
+    "NameId": "RelicTinderBox",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 9,
+    "Abilities": [
+      { "Level": 1, "About": "Start of battle: Make the first enemy Weak." },
+      {
+        "Level": 2,
+        "About": "Start of battle: Make the first two enemies Weak."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Make the first three enemies Weak."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "326",
+    "Name": "Toilet Paper",
+    "NameId": "RelicToiletPaper",
+    "Tier": 4,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Take +3 damage.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 11,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Remove 30% attack from the highest attack enemy."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Remove 30% attack from the two highest attack enemies."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Remove 30% attack from the three highest attack enemies."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "503",
+    "Name": "Camera",
+    "NameId": "RelicCamera",
+    "Tier": 5,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 11,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Empty front space: Summon one 6/6 Great One in battle that deals 5 damage to ALL other pets."
+      },
+      {
+        "Level": 2,
+        "About": "Empty front space: Summon one 12/12 Great One in battle that deals 10 damage to ALL other pets."
+      },
+      {
+        "Level": 3,
+        "About": "Empty front space: Summon one 18/18 Great One in battle that deals 15 damage to ALL other pets."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "645",
+    "Name": "Evil Book",
+    "NameId": "RelicEvilBook",
+    "Tier": 5,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 11,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Break: Give front-most friend +5 attack and +5 health."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Give front-most friend +10 attack and +10 health."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Give front-most friend +15 attack and +15 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "484",
+    "Name": "Flashlight",
+    "NameId": "RelicFlashlight",
+    "Tier": 5,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 11,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give ALL pets random perks and ailments."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give ALL pets random perks and ailments with double effects."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give ALL pets random perks and ailments with triple effects."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "593",
+    "Name": "Pandoras Box",
+    "NameId": "RelicPandorasBox",
+    "Tier": 5,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 11,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Remove 40% health from the highest health enemy."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Remove 40% health from the two highest health enemies."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Remove 40% health from the three highest health enemies."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "513",
+    "Name": "Stinky Sock",
+    "NameId": "RelicStinkySock",
+    "Tier": 5,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 13,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give Coconut perk to the highest attack friend."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give Coconut perk to the two highest attack friends."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give Coconut perk to the three highest attack friends."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "511",
+    "Name": "Air Palm Tree",
+    "NameId": "RelicPalmTree",
+    "Tier": 6,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Block damage, once.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 13,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "End turn: Give the back-most friend +1 attack and +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "End turn: Give the back-most friend +2 attack and +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "End turn: Give the back-most friend +3 attack and +3 health."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "583",
+    "Name": "Excalibur",
+    "NameId": "RelicExcalibur",
+    "Tier": 6,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 13,
+    "Abilities": [
+      { "Level": 1, "About": "Break: Stock one free Holy Water." },
+      { "Level": 2, "About": "Break: Stock two free Holy Waters." },
+      { "Level": 3, "About": "Break: Stock three free Holy Waters." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "592",
+    "Name": "Holy Grail",
+    "NameId": "RelicHolyGrail",
+    "Tier": 6,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 13,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Start of battle: Give Peanut Butter perk to the lowest attack friend."
+      },
+      {
+        "Level": 2,
+        "About": "Start of battle: Give Peanut Butter perk to the two lowest attack friends."
+      },
+      {
+        "Level": 3,
+        "About": "Start of battle: Give Peanut Butter perk to the three lowest attack friends."
+      }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "512",
+    "Name": "Peanut Jar",
+    "NameId": "RelicPeanutJar",
+    "Tier": 6,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "PerkNote": "Knock out any pet attacked and hurt by this, once.",
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 1000,
+    "Health": 13,
+    "Abilities": [
+      { "Level": 1, "About": "Break: Give friends +2 attack and +2 health." },
+      { "Level": 2, "About": "Break: Give friends +4 attack and +4 health." },
+      { "Level": 3, "About": "Break: Give friends +6 attack and +6 health." }
+    ],
+    "Type": 1,
+    "ToyType": 0,
+    "Id": "491",
+    "Name": "Television",
+    "NameId": "RelicTelevision",
+    "Tier": 6,
+    "TierMax": 2147483647,
+    "Packs": [],
+    "PacksRequired": [],
+    "Rollable": true,
+    "CustomArchetypes": []
+  }
+]
