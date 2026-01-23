@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { WoodpeckerAbility } from '../../../abilities/pets/star/tier-5/woodpecker-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Woodpecker extends Pet {
   name = 'Woodpecker';
@@ -30,5 +30,52 @@ export class Woodpecker extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class WoodpeckerAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'WoodpeckerAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let triggers = this.level * 2; // L1=2, L2=4, L3=6 triggers
+
+    for (let i = 0; i < triggers; i++) {
+      // Find the nearest two pets ahead
+      let targetsResp = owner.parent.nearestPetsAhead(2, owner, null, true);
+      let targets = targetsResp.pets;
+      for (let target of targets) {
+        let power = 1;
+        if (target.parent != this.owner.parent) {
+          power *= 2;
+        }
+        owner.snipePet(target, power, targetsResp.random, tiger);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): WoodpeckerAbility {
+    return new WoodpeckerAbility(newOwner, this.logService);
   }
 }

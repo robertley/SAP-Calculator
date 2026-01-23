@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { DogAbility } from '../../../abilities/pets/turtle/tier-3/dog-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Dog extends Pet {
   name = 'Dog';
@@ -28,5 +29,54 @@ export class Dog extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class DogAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'DogAbility',
+      owner: owner,
+      triggers: ['FriendSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+    if (!triggerPet || triggerPet === owner) {
+      return;
+    }
+    let boostAtkAmt = this.level * 2;
+    let boostHealthAmt = this.level;
+    let selfTargetResp = owner.parent.getThis(owner);
+    if (selfTargetResp.pet) {
+      selfTargetResp.pet.increaseAttack(boostAtkAmt);
+      selfTargetResp.pet.increaseHealth(boostHealthAmt);
+      this.logService.createLog({
+        message: `${owner.name} gave ${selfTargetResp.pet.name} ${boostAtkAmt} attack and ${boostHealthAmt} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: selfTargetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): DogAbility {
+    return new DogAbility(newOwner, this.logService);
   }
 }

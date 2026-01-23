@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SeaTurtleAbility } from '../../../abilities/pets/golden/tier-2/sea-turtle-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { logAbility, resolveFriendSummonedTarget } from 'app/classes/ability-helpers';
+
 
 export class SeaTurtle extends Pet {
   name = 'Sea Turtle';
@@ -30,3 +32,53 @@ export class SeaTurtle extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 }
+
+
+export class SeaTurtleAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SeaTurtleAbility',
+      owner: owner,
+      triggers: ['FriendSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const power = this.level * 2;
+    const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+    if (!targetResp.pet) {
+      return;
+    }
+
+    const target = targetResp.pet;
+    target.increaseHealth(power);
+    logAbility(
+      this.logService,
+      owner,
+      `${owner.name} gave ${target.name} ${power} health.`,
+      tiger,
+      pteranodon,
+      { randomEvent: targetResp.random },
+    );
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SeaTurtleAbility {
+    return new SeaTurtleAbility(newOwner, this.logService);
+  }
+}
+

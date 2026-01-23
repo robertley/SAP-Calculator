@@ -42,28 +42,28 @@ import { StinkySock } from '../../classes/toys/tier-5/stinky-sock.class';
 import { Television } from '../../classes/toys/tier-6/television.class';
 import { PeanutJar } from '../../classes/toys/tier-6/peanut-jar.class';
 import { AirPalmTree } from '../../classes/toys/tier-6/air-palm-tree.class';
-import { PandorasBox } from '../../classes/toys/unicorn/pandoras-box.class';
-import { WitchBroom } from '../../classes/toys/unicorn/witch-broom.class';
-import { MagicWand } from '../../classes/toys/unicorn/magic-wand.class';
-import { CrystalBall } from '../../classes/toys/unicorn/crystal-ball.class';
-import { TreasureMap } from '../../classes/toys/unicorn/treasure-map.class';
-import { TreasureChest } from '../../classes/toys/unicorn/treasure-chest.class';
-import { EvilBook } from '../../classes/toys/unicorn/evil-book.class';
-import { MagicCarpet } from '../../classes/toys/unicorn/magic-carpet.class';
-import { MagicLamp } from '../../classes/toys/unicorn/magic-lamp.class';
-import { Candelabra } from '../../classes/toys/unicorn/candelabra.class';
-import { GlassShoes } from '../../classes/toys/unicorn/glass-shoes.class';
-import { GoldenHarp } from '../../classes/toys/unicorn/golden-harp.class';
-import { LockOfHair } from '../../classes/toys/unicorn/lock-of-hair.class';
-import { MagicMirror } from '../../classes/toys/unicorn/magic-mirror.class';
-import { Pickaxe } from '../../classes/toys/unicorn/pickaxe.class';
-import { RedCape } from '../../classes/toys/unicorn/red-cape.class';
-import { Rosebud } from '../../classes/toys/unicorn/rosebud.class';
-import { Excalibur } from '../../classes/toys/unicorn/excalibur.class';
-import { HolyGrail } from '../../classes/toys/unicorn/holy-grail.class';
-import { Nutcracker } from '../../classes/toys/unicorn/nutcracker.class';
-import { TinderBox } from '../../classes/toys/unicorn/tinder-box.class';
-import { MicrowaveOven } from '../../classes/toys/f2p/microwave-oven.class';
+import { PandorasBox } from '../../classes/toys/tier-5/pandoras-box.class';
+import { WitchBroom } from '../../classes/toys/tier-1/witch-broom.class';
+import { MagicWand } from '../../classes/toys/tier-1/magic-wand.class';
+import { CrystalBall } from '../../classes/toys/tier-1/crystal-ball.class';
+import { TreasureMap } from '../../classes/toys/tier-3/treasure-map.class';
+import { TreasureChest } from '../../classes/toys/tier-3/treasure-chest.class';
+import { EvilBook } from '../../classes/toys/tier-5/evil-book.class';
+import { MagicCarpet } from '../../classes/toys/tier-2/magic-carpet.class';
+import { MagicLamp } from '../../classes/toys/tier-2/magic-lamp.class';
+import { Candelabra } from '../../classes/toys/tier-4/candelabra.class';
+import { GlassShoes } from '../../classes/toys/tier-4/glass-shoes.class';
+import { GoldenHarp } from '../../classes/toys/tier-4/golden-harp.class';
+import { LockOfHair } from '../../classes/toys/tier-4/lock-of-hair.class';
+import { MagicMirror } from '../../classes/toys/tier-4/magic-mirror.class';
+import { Pickaxe } from '../../classes/toys/tier-4/pickaxe.class';
+import { RedCape } from '../../classes/toys/tier-4/red-cape.class';
+import { Rosebud } from '../../classes/toys/tier-4/rosebud.class';
+import { Excalibur } from '../../classes/toys/tier-6/excalibur.class';
+import { HolyGrail } from '../../classes/toys/tier-6/holy-grail.class';
+import { Nutcracker } from '../../classes/toys/tier-4/nutcracker.class';
+import { TinderBox } from '../../classes/toys/tier-4/tinder-box.class';
+import { MicrowaveOven } from '../../classes/toys/tier-2/microwave-oven.class';
 
 export interface ToyRegistryDeps {
   logService: LogService;
@@ -185,3 +185,6 @@ export const SPECIAL_TOY_BUILDERS: {
       deps.gameService,
     ),
 };
+
+
+

@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { ChimpanzeeAbility } from '../../../abilities/pets/custom/tier-6/chimpanzee-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Chimpanzee extends Pet {
   name = 'Chimpanzee';
@@ -29,5 +29,52 @@ export class Chimpanzee extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class ChimpanzeeAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Chimpanzee Ability',
+      owner: owner,
+      triggers: ['CornEatenByFriend'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const targetResp = owner.parent.getSpecificPet(owner, context.triggerPet);
+    const target = targetResp.pet;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = this.level;
+    target.increaseAttack(buff);
+    target.increaseHealth(buff);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buff}/+${buff} after eating Corncob.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): ChimpanzeeAbility {
+    return new ChimpanzeeAbility(newOwner, this.logService);
   }
 }

@@ -1,8 +1,7 @@
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
 import { Equipment, EquipmentClass } from '../../equipment.class';
 import { Pet } from '../../pet.class';
-import { CherryAbility } from '../../abilities/equipment/golden/cherry-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Cherry extends Equipment {
   name = 'Cherry';
@@ -10,4 +9,32 @@ export class Cherry extends Equipment {
   callback = (pet: Pet) => {
     pet.addAbility(new CherryAbility(pet, this));
   };
+}
+
+
+export class CherryAbility extends Ability {
+  private equipment: Equipment;
+
+  constructor(owner: Pet, equipment: Equipment) {
+    super({
+      name: 'CherryAbility',
+      owner: owner,
+      triggers: ['BeforeStartBattle'],
+      abilityType: 'Equipment',
+      native: true,
+      abilitylevel: 1,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.equipment = equipment;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+
+    let multiplier = this.equipment.multiplier;
+    owner.parent.gainTrumpets(2 * multiplier, owner, false, multiplier, true);
+    owner.removePerk(true);
+  }
 }

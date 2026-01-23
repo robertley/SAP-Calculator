@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { QueenBeeAbility } from '../../../abilities/pets/custom/tier-3/queen-bee-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class QueenBee extends Pet {
   name = 'Queen Bee';
@@ -30,5 +31,72 @@ export class QueenBee extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class QueenBeeAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Queen Bee Ability',
+      owner: owner,
+      triggers: ['BeeSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon, triggerPet } = context;
+    const owner = this.owner;
+    const bee = triggerPet;
+
+    if (!bee || bee.name !== 'Bee') {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = this.level * 3;
+    bee.increaseAttack(buff);
+    bee.increaseHealth(buff);
+
+    const removedCount = this.removeOtherQueenBees(owner);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${bee.name} +${buff}/+${buff} and removed ${removedCount} other Queen Bees.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  private removeOtherQueenBees(owner: Pet): number {
+    const toProcess = [owner.parent, owner.parent.opponent];
+    let removed = 0;
+
+    for (const player of toProcess) {
+      for (const pet of [...player.petArray]) {
+        if (pet !== owner && pet.alive && pet.name === 'Queen Bee') {
+          pet.health = 0;
+          player.handleDeath(pet);
+          removed++;
+        }
+      }
+      player.removeDeadPets();
+    }
+
+    return removed;
+  }
+
+  override copy(newOwner: Pet): QueenBeeAbility {
+    return new QueenBeeAbility(newOwner, this.logService);
   }
 }

@@ -1,10 +1,12 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { HareAbility } from '../../../abilities/pets/puppy/tier-3/hare-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { EquipmentService } from 'app/services/equipment/equipment.service';
+import { InjectorService } from 'app/services/injector.service';
+
 
 export class Hare extends Pet {
   name = 'Hare';
@@ -29,5 +31,79 @@ export class Hare extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class HareAbility extends Ability {
+  private logService: LogService;
+
+  reset(): void {
+    this.maxUses = this.level;
+    super.reset();
+  }
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'HareAbility',
+      owner: owner,
+      triggers: ['BeforeThisAttacks'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // get all equipment from enemy pets
+    let enemyPets = owner.parent.opponent.petArray;
+    let equipmentPets: Pet[] = [];
+    for (let pet of enemyPets) {
+      if (pet.equipment) {
+        if (
+          InjectorService.getInjector()
+            .get(EquipmentService)
+            .isUsefulPerk(pet.equipment.name)
+        ) {
+          equipmentPets.push(pet);
+        }
+      }
+    }
+    if (equipmentPets.length == 0) {
+      return;
+    }
+    // get random equipment
+    let randomEquipmentPet =
+      equipmentPets[Math.floor(Math.random() * equipmentPets.length)];
+    let equipment = randomEquipmentPet.equipment;
+
+    let targetResp = owner.parent.getThis(owner);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    owner.givePetEquipment(equipment);
+    this.logService.createLog({
+      message: `${owner.name} copied ${equipment.name} to ${target.name} from ${randomEquipmentPet.name}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: equipmentPets.length > 0,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): HareAbility {
+    return new HareAbility(newOwner, this.logService);
   }
 }

@@ -1,7 +1,8 @@
 import type { Player } from '../player.class';
 import { Pet } from '../pet.class';
-import { LogService } from '../../services/log.service';
-import { AbilityService } from '../../services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+
 
 export const alive = (player: Player): boolean => {
   return player.petArray.length > 0;

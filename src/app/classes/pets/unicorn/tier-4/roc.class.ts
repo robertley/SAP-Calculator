@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { RocAbility } from '../../../abilities/pets/unicorn/tier-4/roc-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Roc extends Pet {
   name = 'Roc';
@@ -29,5 +29,69 @@ export class Roc extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RocAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'RocAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const petsAheadResp = owner.parent.nearestPetsAhead(5, owner);
+    let petsAhead = petsAheadResp.pets;
+    if (petsAhead.length == 0) {
+      return;
+    }
+
+    let excludePets = owner.parent.petArray.filter(
+      (pet) => pet == owner || !petsAhead.includes(pet),
+    );
+    //TO DO: Make it spread evenly
+    for (let i = 0; i < this.level * 3; i++) {
+      let targetResp = owner.parent.getRandomPet(
+        excludePets,
+        true,
+        false,
+        false,
+        owner,
+      );
+      if (targetResp.pet == null) {
+        break;
+      }
+      this.logService.createLog({
+        message: `${owner.name} gave ${targetResp.pet.name} 2 mana.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetResp.random,
+      });
+
+      targetResp.pet.increaseMana(2);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): RocAbility {
+    return new RocAbility(newOwner, this.logService);
   }
 }

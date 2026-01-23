@@ -1,14 +1,15 @@
 import type { Player } from '../player.class';
 import { Equipment } from '../equipment.class';
 import { Pet } from '../pet.class';
-import { LogService } from '../../services/log.service';
-import { AbilityService } from '../../services/ability/ability.service';
-import { GameService } from '../../services/game.service';
-import { AbilityTrigger } from '../ability.class';
-import { GameAPI } from '../../interfaces/gameAPI.interface';
-import { GoldenRetriever } from '../pets/hidden/golden-retriever.class';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { GameService } from 'app/services/game.service';
+import { AbilityTrigger } from 'app/classes/ability.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { GoldenRetriever } from 'app/classes/pets/hidden/golden-retriever.class';
 import { hasSilly } from './player-utils';
 import { summonPet } from './player-summon';
+
 
 export const resolveTrumpetGainTarget = (
   player: Player,

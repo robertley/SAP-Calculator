@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { LionfishAbility } from '../../../abilities/pets/puppy/tier-6/lionfish-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Lionfish extends Pet {
   name = 'Lionfish';
@@ -29,5 +29,54 @@ export class Lionfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class LionfishAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'LionfishAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let opponent = owner.parent.opponent;
+    let snipeAmt = 1 + Math.floor(owner.attack / 10);
+    for (let i = 0; i < snipeAmt; i++) {
+      let targetResp = opponent.getRandomPet([], false, true, false, owner);
+      if (targetResp.pet == null) {
+        return;
+      }
+      let power = this.level * 3;
+      owner.snipePet(
+        targetResp.pet,
+        power,
+        targetResp.random,
+        tiger,
+        pteranodon,
+      );
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): LionfishAbility {
+    return new LionfishAbility(newOwner, this.logService);
   }
 }

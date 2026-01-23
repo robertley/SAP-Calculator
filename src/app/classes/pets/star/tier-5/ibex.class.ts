@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { IbexAbility } from '../../../abilities/pets/star/tier-5/ibex-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Ibex extends Pet {
   name = 'Ibex';
@@ -31,5 +31,77 @@ export class Ibex extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class IbexAbility extends Ability {
+  private logService: LogService;
+  private affectedEnemies: Set<Pet> = new Set();
+  reset(): void {
+    this.maxUses = this.level;
+    this.affectedEnemies = new Set();
+    super.reset();
+  }
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'IbexAbility',
+      owner: owner,
+      triggers: ['EnemyHurt', 'EnemyPushed'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      condition: (context: AbilityContext) => {
+        const { triggerPet, tiger, pteranodon } = context;
+        const owner = this.owner;
+        return (
+          triggerPet &&
+          triggerPet.alive &&
+          !this.affectedEnemies.has(triggerPet)
+        );
+      },
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+
+    // Calculate 70% health reduction
+    let healthReduction = Math.floor(triggerPet.health * 0.7);
+
+    // Apply damage
+    target.increaseHealth(-healthReduction);
+
+    // Track affected enemy
+    this.affectedEnemies.add(target);
+
+    // Log the effect
+    this.logService.createLog({
+      message: `${owner.name} removed ${healthReduction} health from ${triggerPet.name} (70%)`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: targetResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): IbexAbility {
+    return new IbexAbility(newOwner, this.logService);
   }
 }

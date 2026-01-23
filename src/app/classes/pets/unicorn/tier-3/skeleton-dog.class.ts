@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SkeletonDogAbility } from '../../../abilities/pets/unicorn/tier-3/skeleton-dog-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class SkeletonDog extends Pet {
   name = 'Skeleton Dog';
@@ -29,5 +29,59 @@ export class SkeletonDog extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SkeletonDogAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SkeletonDogAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getRandomPets(
+      this.level,
+      [owner],
+      true,
+      false,
+      owner,
+    );
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        this.logService.createLog({
+          message: `${owner.name} gave ${1} attack and ${1} health to ${target.name}.`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          randomEvent: targetsResp.random,
+        });
+
+        target.increaseAttack(1);
+        target.increaseHealth(1);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SkeletonDogAbility {
+    return new SkeletonDogAbility(newOwner, this.logService);
   }
 }

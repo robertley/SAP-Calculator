@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from '../../../player.class';
-import { LampreyAbility } from '../../../abilities/pets/custom/tier-6/lamprey-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Lamprey extends Pet {
   name = 'Lamprey';
@@ -28,5 +29,61 @@ export class Lamprey extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class LampreyAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'LampreyAbility',
+      owner: owner,
+      triggers: ['FriendDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+    if (!triggerPet) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const targetsResp = owner.parent.nearestPetsAhead(this.level, owner);
+    if (targetsResp.pets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const targets = targetsResp.pets;
+    for (const target of targets) {
+      owner.dealDamage(target, 1);
+    }
+
+    const targetNames = targets.map((p) => p.name).join(', ');
+    this.logService.createLog({
+      message: `${owner.name} dealt 1 damage to ${targetNames} when ${triggerPet.name} fainted.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger,
+      pteranodon,
+      randomEvent: targetsResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): LampreyAbility {
+    return new LampreyAbility(newOwner, this.logService);
   }
 }

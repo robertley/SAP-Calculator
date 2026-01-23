@@ -1,12 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { Power } from '../../../../interfaces/power.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Groundhog } from '../tier-1/groundhog.class';
-import { OspreyAbility } from '../../../abilities/pets/golden/tier-3/osprey-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Osprey extends Pet {
   name = 'Osprey';
@@ -33,5 +32,72 @@ export class Osprey extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class OspreyAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'OspreyAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    for (let i = 0; i < owner.level; i++) {
+      let groundhog = new Groundhog(
+        this.logService,
+        this.abilityService,
+        owner.parent,
+        null,
+        null,
+        0,
+        0,
+      );
+
+      let summonResult = owner.parent.summonPet(
+        groundhog,
+        owner.savedPosition,
+        false,
+        owner,
+      );
+      if (summonResult.success) {
+        this.logService.createLog({
+          message: `${owner.name} summoned a 2/1 Groundhog`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          pteranodon: pteranodon,
+          randomEvent: summonResult.randomEvent,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): OspreyAbility {
+    return new OspreyAbility(newOwner, this.logService, this.abilityService);
   }
 }

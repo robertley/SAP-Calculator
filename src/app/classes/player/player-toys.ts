@@ -1,10 +1,11 @@
 import type { Player } from '../player.class';
-import { AbilityEvent } from '../../interfaces/ability-event.interface';
-import { Puma } from '../pets/puppy/tier-6/puma.class';
-import { LogService } from '../../services/log.service';
-import { AbilityService } from '../../services/ability/ability.service';
-import { GameService } from '../../services/game.service';
+import { AbilityEvent } from 'app/interfaces/ability-event.interface';
+import { Puma } from 'app/classes/pets/puppy/tier-6/puma.class';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { GameService } from 'app/services/game.service';
 import { Toy } from '../toy.class';
+
 
 export const breakToy = (
   player: Player,

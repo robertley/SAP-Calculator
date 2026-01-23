@@ -1,12 +1,12 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { Power } from '../../../../interfaces/power.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { Power } from 'app/interfaces/power.interface';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TurkeyAbility } from '../../../abilities/pets/turtle/tier-5/turkey-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { logAbility, resolveFriendSummonedTarget } from 'app/classes/ability-helpers';
+
 
 export class Turkey extends Pet {
   name = 'Turkey';
@@ -33,3 +33,58 @@ export class Turkey extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 }
+
+
+export class TurkeyAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'TurkeyAbility',
+      owner: owner,
+      triggers: ['FriendSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const power: Power = {
+      attack: 3 * this.level,
+      health: 1 * this.level,
+    };
+
+    const targetResp = resolveFriendSummonedTarget(owner, triggerPet);
+    if (!targetResp.pet) {
+      return;
+    }
+
+    const target = targetResp.pet;
+    target.increaseAttack(power.attack);
+    target.increaseHealth(power.health);
+    logAbility(
+      this.logService,
+      owner,
+      `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
+      tiger,
+      pteranodon,
+      { randomEvent: targetResp.random },
+    );
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TurkeyAbility {
+    return new TurkeyAbility(newOwner, this.logService);
+  }
+}
+

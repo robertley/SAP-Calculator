@@ -1,6 +1,7 @@
-import { GameAPI } from '../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Pet } from './pet.class';
-import { minExpForLevel } from '../util/leveling';
+import { minExpForLevel } from 'app/util/leveling';
+
 
 export type AbilityType = 'Pet' | 'Equipment';
 

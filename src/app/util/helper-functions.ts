@@ -6,7 +6,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { GameAPI } from 'app/interfaces/gameAPI.interface';
 

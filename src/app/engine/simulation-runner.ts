@@ -289,13 +289,15 @@ export class SimulationRunner {
 
   protected createPets(player: Player, petsConfig: (PetConfig | null)[]) {
     const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
+    const ailmentMap = this.equipmentService.getInstanceOfAllAilments();
 
     for (let i = 0; i < 5; i++) {
       const petConfig = petsConfig[i];
       if (!petConfig || !petConfig.name) continue;
 
       let equipment = petConfig.equipment?.name
-        ? equipmentMap.get(petConfig.equipment.name)
+        ? equipmentMap.get(petConfig.equipment.name) ??
+          ailmentMap.get(petConfig.equipment.name)
         : undefined;
 
       if (equipment) {

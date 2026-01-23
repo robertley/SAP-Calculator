@@ -1,7 +1,8 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
-import { Cold } from '../../equipment/ailments/cold.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { Cold } from 'app/classes/equipment/ailments/cold.class';
 import { Toy } from '../../toy.class';
 import { Pet } from '../../pet.class';
+
 
 export class Onesie extends Toy {
   name = 'Onesie';

@@ -1,10 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BatAbility } from '../../../abilities/pets/puppy/tier-2/bat-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Weak } from 'app/classes/equipment/ailments/weak.class';
+
 
 export class Bat extends Pet {
   name = 'Bat';
@@ -29,5 +30,66 @@ export class Bat extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BatAbility extends Ability {
+  private logService: LogService;
+
+  reset(): void {
+    this.maxUses = this.level;
+    super.reset();
+  }
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BatAbility',
+      owner: owner,
+      triggers: ['BeforeThisAttacks'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Weak',
+      owner,
+    );
+    let targetsResp = owner.parent.opponent.getRandomPet(
+      excludePets,
+      null,
+      true,
+      null,
+      owner,
+    );
+    let target = targetsResp.pet;
+    if (target != null) {
+      target.givePetEquipment(new Weak());
+      this.logService.createLog({
+        message: `${owner.name} made ${target.name} weak.`,
+        type: 'ability',
+        player: owner.parent,
+        randomEvent: targetsResp.random,
+        tiger: tiger,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BatAbility {
+    return new BatAbility(newOwner, this.logService);
   }
 }

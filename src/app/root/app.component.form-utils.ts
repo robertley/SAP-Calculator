@@ -32,7 +32,7 @@ export function initPetForms(
       attack: new FormControl(pet?.attack ?? 0),
       health: new FormControl(pet?.health ?? 0),
       exp: new FormControl(pet?.exp ?? 0),
-      equipment: new FormControl(pet?.equipment),
+      equipment: new FormControl(pet?.equipment?.name ?? null),
       equipmentUses: new FormControl(pet?.equipment?.uses ?? null),
       belugaSwallowedPet: new FormControl(pet?.belugaSwallowedPet),
       parrotCopyPet: new FormControl(pet?.parrotCopyPet ?? null),

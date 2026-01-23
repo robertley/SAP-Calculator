@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CraneAbility } from '../../../abilities/pets/golden/tier-5/crane-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Melon } from 'app/classes/equipment/turtle/melon.class';
+
 
 export class Crane extends Pet {
   name = 'Crane';
@@ -28,5 +30,73 @@ export class Crane extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CraneAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CraneAbility',
+      owner: owner,
+      triggers: ['FriendAheadHurt'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let attackTargetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
+    if (attackTargetsAheadResp.pets.length == 0) {
+      return;
+    }
+    let attackTarget = attackTargetsAheadResp.pets[0];
+    attackTarget.increaseAttack(5);
+    this.logService.createLog({
+      message: `${owner.name} gave ${attackTarget.name} 5 attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+      randomEvent: attackTargetsAheadResp.random,
+    });
+
+    let equipmentTargetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
+    if (equipmentTargetsAheadResp.pets.length == 0) {
+      return;
+    }
+    let equipmentTarget = equipmentTargetsAheadResp.pets[0];
+    equipmentTarget.givePetEquipment(new Melon());
+    this.logService.createLog({
+      message: `${owner.name} gave ${equipmentTarget.name} Melon.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+      randomEvent: equipmentTargetsAheadResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  reset(): void {
+    super.reset();
+    this.maxUses = this.level;
+  }
+
+  copy(newOwner: Pet): CraneAbility {
+    return new CraneAbility(newOwner, this.logService);
   }
 }

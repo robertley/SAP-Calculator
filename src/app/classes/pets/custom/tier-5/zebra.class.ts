@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { ZebraAbility } from '../../../abilities/pets/custom/tier-5/zebra-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Zebra extends Pet {
   name = 'Zebra';
@@ -29,5 +29,60 @@ export class Zebra extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class ZebraAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Zebra Ability',
+      owner: owner,
+      triggers: ['ThisBought', 'ThisSold'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const targetResp = owner.parent.getRandomPets(
+      1,
+      [owner],
+      false,
+      false,
+      owner,
+    );
+    const target = targetResp.pets[0];
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = 2 * this.level;
+    target.increaseAttack(buff);
+    target.increaseHealth(buff);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): ZebraAbility {
+    return new ZebraAbility(newOwner, this.logService);
   }
 }

@@ -1,9 +1,12 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { AmalgamationAbility } from '../../../abilities/pets/unicorn/tier-5/amalgamation-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Spooked } from 'app/classes/equipment/ailments/spooked.class';
+import { logAbility, resolveFriendSummonedTarget } from 'app/classes/ability-helpers';
+
 
 export class Amalgamation extends Pet {
   name = 'Amalgamation';
@@ -31,3 +34,67 @@ export class Amalgamation extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 }
+
+
+export class AmalgamationAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'AmalgamationAbility',
+      owner: owner,
+      triggers: ['FriendSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 2,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    if (!triggerPet) {
+      return;
+    }
+
+    const targetResp = resolveFriendSummonedTarget(
+      owner,
+      triggerPet,
+      (o, pet) => o.parent.getSpecificPet(o, pet),
+    );
+    if (!targetResp.pet) {
+      return;
+    }
+
+    const target = targetResp.pet;
+    const attackAmount = this.level * 3;
+    const manaAmount = this.level * 4;
+
+    logAbility(
+      this.logService,
+      owner,
+      `${owner.name} gave ${target.name} +${attackAmount} attack, +${manaAmount} mana, and Spooked.`,
+      tiger,
+      pteranodon,
+      { randomEvent: targetResp.random },
+    );
+
+    target.increaseAttack(attackAmount);
+    target.increaseMana(manaAmount);
+    target.givePetEquipment(new Spooked());
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): AmalgamationAbility {
+    return new AmalgamationAbility(newOwner, this.logService);
+  }
+}
+

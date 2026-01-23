@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CrocodileAbility } from '../../../abilities/pets/turtle/tier-5/crocodile-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Crocodile extends Pet {
   name = 'Crocodile';
@@ -30,5 +29,45 @@ export class Crocodile extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CrocodileAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CrocodileAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    for (let i = 0; i < this.level; i++) {
+      let targetResp = owner.parent.opponent.getLastPet(undefined, owner);
+      let targetPet = targetResp.pet;
+      if (targetPet) {
+        owner.snipePet(targetPet, 8, targetResp.random, tiger);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): CrocodileAbility {
+    return new CrocodileAbility(newOwner, this.logService);
   }
 }

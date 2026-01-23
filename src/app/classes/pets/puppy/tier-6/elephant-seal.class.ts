@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { ElephantSealAbility } from '../../../abilities/pets/puppy/tier-6/elephant-seal-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class ElephantSeal extends Pet {
   name = 'Elephant Seal';
@@ -29,5 +30,60 @@ export class ElephantSeal extends Pet {
   initAbilities(): void {
     this.addAbility(new ElephantSealAbility(this, this.logService));
     super.initAbilities();
+  }
+}
+
+
+export class ElephantSealAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'ElephantSealAbility',
+      owner: owner,
+      triggers: ['ThisGainedPerk'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 1,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 4;
+    let targetsResp = owner.parent.getRandomPets(
+      3,
+      [owner],
+      true,
+      false,
+      owner,
+    );
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        target.increaseAttack(power);
+        target.increaseHealth(power);
+        this.logService.createLog({
+          message: `${owner.name} gave ${target.name} ${power} attack and ${power} health.`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          randomEvent: targetsResp.random,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): ElephantSealAbility {
+    return new ElephantSealAbility(newOwner, this.logService);
   }
 }

@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { HawaiianMonkSealAbility } from '../../../abilities/pets/danger/tier-5/hawaiian-monk-seal-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class HawaiianMonkSeal extends Pet {
   name = 'Hawaiian Monk Seal';
@@ -28,5 +29,61 @@ export class HawaiianMonkSeal extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class HawaiianMonkSealAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'HawaiianMonkSealAbility',
+      owner: owner,
+      triggers: ['FriendAttacked'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let attackingFriend = targetResp.pet;
+
+    if (!attackingFriend || owner.targettedFriends.has(attackingFriend)) {
+      return;
+    }
+
+    // If still standing, give it +2 health per level. Works on three friends per turn.
+    if (owner.targettedFriends.size < 3) {
+      if (attackingFriend.alive) {
+        let healthBonus = 2 * owner.level;
+        attackingFriend.increaseHealth(healthBonus);
+        owner.targettedFriends.add(attackingFriend);
+
+        this.logService.createLog({
+          message: `${owner.name} gave ${attackingFriend.name} ${healthBonus} health`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          randomEvent: targetResp.random,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): HawaiianMonkSealAbility {
+    return new HawaiianMonkSealAbility(newOwner, this.logService);
   }
 }

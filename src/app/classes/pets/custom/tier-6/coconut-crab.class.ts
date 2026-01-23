@@ -1,10 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { CoconutCrabAbility } from '../../../abilities/pets/custom/tier-6/coconut-crab-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Coconut } from 'app/classes/equipment/turtle/coconut.class';
+
 
 export class CoconutCrab extends Pet {
   name = 'Coconut Crab';
@@ -29,5 +30,57 @@ export class CoconutCrab extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CoconutCrabAbility extends Ability {
+  private logService: LogService;
+  private hasCoconut = false;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Coconut Crab Ability',
+      owner: owner,
+      triggers: ['Eat2', 'StartTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+
+    if (context.trigger === 'StartTurn') {
+      if (this.hasCoconut) {
+        owner.removePerk(true);
+        this.hasCoconut = false;
+      }
+      return;
+    }
+
+    if (context.trigger === 'Eat2') {
+      const coconut = new Coconut();
+      coconut.uses = this.level;
+      coconut.originalUses = this.level;
+      owner.givePetEquipment(coconut);
+      this.hasCoconut = true;
+
+      this.logService.createLog({
+        message: `${owner.name} gained Coconut perk that works ${this.level === 1 ? 'once' : this.level === 2 ? 'twice' : 'thrice'} until next turn.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+      this.triggerTigerExecution(context);
+    }
+  }
+
+  copy(newOwner: Pet): CoconutCrabAbility {
+    return new CoconutCrabAbility(newOwner, this.logService);
   }
 }

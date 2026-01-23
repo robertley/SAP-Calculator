@@ -1,4 +1,3 @@
-import { Pet } from '../classes/pet.class';
 import { Player } from '../classes/player.class';
 
 export interface GameAPI {

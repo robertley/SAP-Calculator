@@ -1,5 +1,6 @@
 import { Equipment, EquipmentClass } from '../../equipment.class';
 
+
 export class Potato extends Equipment {
   name = 'Potato';
   equipmentClass = 'shield-snipe' as EquipmentClass;

@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SeaCucumberAbility } from '../../../abilities/pets/custom/tier-5/sea-cucumber-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Tasty } from 'app/classes/equipment/ailments/tasty.class';
+
 
 export class SeaCucumber extends Pet {
   name = 'Sea Cucumber';
@@ -32,5 +34,75 @@ export class SeaCucumber extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SeaCucumberAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'SeaCucumberAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Tasty',
+      owner,
+    );
+    let targetResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
+      this.level,
+      excludePets,
+      false,
+      true,
+      owner,
+    );
+    let targets = targetResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+    for (let target of targets) {
+      let tasty = new Tasty(this.logService);
+      target.givePetEquipment(tasty);
+      this.logService.createLog({
+        message: `${owner.name} made ${target.name} Tasty`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SeaCucumberAbility {
+    return new SeaCucumberAbility(
+      newOwner,
+      this.logService,
+      this.abilityService,
+    );
   }
 }

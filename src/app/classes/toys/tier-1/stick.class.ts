@@ -1,8 +1,11 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Toy } from '../../toy.class';
-import { Walnut } from '../../equipment/puppy/walnut.class';
-import { LogService } from '../../../services/log.service';
-import { PetService } from '../../../services/pet/pet.service';
+import { Walnut } from 'app/classes/equipment/puppy/walnut.class';
+import { LogService } from 'app/services/log.service';
+import { PetService } from 'app/services/pet/pet.service';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Pet } from '../../pet.class';
+
 
 export class Stick extends Toy {
   name = 'Stick';
@@ -35,3 +38,33 @@ export class Stick extends Toy {
     }
   }
 }
+
+
+export class StickAbility extends Ability {
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'StickAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      abilityFunction: (context: AbilityContext) => {
+        const { gameApi } = context;
+        // Give Walnut perk to the friend on the middle space.
+        const friendResp = owner.parent.getMiddleFriend(owner);
+        if (friendResp.pet && friendResp.pet.alive) {
+          const walnut = new Walnut();
+          walnut.power = 2 * this.abilityLevel;
+          walnut.originalPower = walnut.power;
+          friendResp.pet.givePetEquipment(walnut);
+          logService.createLog({
+            message: `${owner.name} gave Walnut to ${friendResp.pet.name} (Stick)`,
+            type: 'ability',
+            player: owner.parent,
+            randomEvent: friendResp.random,
+          });
+        }
+      },
+    });
+  }
+}
+

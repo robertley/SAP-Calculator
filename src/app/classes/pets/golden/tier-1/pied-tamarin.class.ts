@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { PiedTamarinAbility } from '../../../abilities/pets/golden/tier-1/pied-tamarin-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class PiedTamarin extends Pet {
   name = 'Pied Tamarin';
@@ -29,5 +29,58 @@ export class PiedTamarin extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class PiedTamarinAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'PiedTamarinAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      condition: (context: AbilityContext) => {
+        const { triggerPet, tiger, pteranodon } = context;
+        const owner = this.owner;
+        return owner.parent.trumpets >= 1;
+      },
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
+      this.level,
+      null,
+      null,
+      true,
+      owner,
+    );
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        owner.snipePet(target, 3, targetsResp.random, tiger, pteranodon);
+      }
+    }
+    if (targetsResp.pets.length > 0) {
+      owner.parent.spendTrumpets(1, owner, pteranodon);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): PiedTamarinAbility {
+    return new PiedTamarinAbility(newOwner, this.logService);
   }
 }

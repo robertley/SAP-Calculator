@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CassowaryAbility } from '../../../abilities/pets/star/tier-3/cassowary-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Cassowary extends Pet {
   name = 'Cassowary';
@@ -31,5 +31,59 @@ export class Cassowary extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CassowaryAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CassowaryAbility',
+      owner: owner,
+      triggers: ['FriendGainsPerk'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      condition: (context: AbilityContext) => {
+        const { triggerPet, tiger, pteranodon } = context;
+        const owner = this.owner;
+        return triggerPet && triggerPet.equipment?.name === 'Strawberry';
+      },
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const buffAmount = this.level;
+    let targetResp = owner.parent.getThis(owner);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buffAmount} permanent health and +${buffAmount} attack for this battle.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+    });
+
+    target.increaseHealth(buffAmount);
+    target.increaseAttack(buffAmount);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): CassowaryAbility {
+    return new CassowaryAbility(newOwner, this.logService);
   }
 }

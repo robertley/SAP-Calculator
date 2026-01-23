@@ -1,11 +1,10 @@
-import { GameAPI } from 'app/interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { getOpponent } from 'app/util/helper-functions';
-import { SnakeAbility } from '../../../abilities/pets/turtle/tier-6/snake-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Snake extends Pet {
   name = 'Snake';
@@ -30,5 +29,52 @@ export class Snake extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+// Friend ahead attacks: Deal 5 damage to one random enemy. Works 5 times per battle.
+export class SnakeAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SnakeAbility',
+      owner: owner,
+      triggers: ['FriendAheadAttacked'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 5,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 5;
+    let targetResp = owner.parent.opponent.getRandomPet(
+      [],
+      false,
+      true,
+      false,
+      owner,
+    );
+    if (!targetResp.pet) {
+      return;
+    }
+    owner.snipePet(targetResp.pet, power, targetResp.random, tiger);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SnakeAbility {
+    return new SnakeAbility(newOwner, this.logService);
   }
 }

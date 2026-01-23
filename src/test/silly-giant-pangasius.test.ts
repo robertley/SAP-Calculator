@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { Silly } from '../app/classes/equipment/ailments/silly.class';
 import { runSimulation, SimulationConfig } from '../../simulation/simulate';
 
 describe('Silly Giant Pangasius', () => {
@@ -17,7 +18,7 @@ describe('Silly Giant Pangasius', () => {
             attack: 4,
             health: 5,
             exp: 0,
-            equipment: { name: 'Silly' },
+            equipment: new Silly(),
             belugaSwallowedPet: null,
             mana: 0,
             triggersConsumed: 0,

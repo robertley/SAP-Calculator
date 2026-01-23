@@ -1,5 +1,9 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Toy } from '../../toy.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Pet } from '../../pet.class';
+import { LogService } from 'app/services/log.service';
+
 
 export class CashRegister extends Toy {
   name = 'Cash Register';
@@ -8,3 +12,19 @@ export class CashRegister extends Toy {
     // doesn't need to be programmed
   }
 }
+
+
+export class CashRegisterAbility extends Ability {
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CashRegisterAbility',
+      triggers: [],
+      owner: owner,
+      abilityType: 'Pet',
+      abilityFunction: (context: AbilityContext) => {
+        // Placeholder for Cash Register ability
+      },
+    });
+  }
+}
+

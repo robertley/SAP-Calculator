@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BlackNeckedStiltAbility } from '../../../abilities/pets/golden/tier-2/black-necked-stilt-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class BlackNeckedStilt extends Pet {
   name = 'Black Necked Stilt';
@@ -29,5 +29,48 @@ export class BlackNeckedStilt extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BlackNeckedStiltAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BlackNeckedStiltAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 2;
+    const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+    trumpetTargetResp.player.gainTrumpets(
+      power,
+      owner,
+      pteranodon,
+      undefined,
+      undefined,
+      trumpetTargetResp.random,
+    );
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BlackNeckedStiltAbility {
+    return new BlackNeckedStiltAbility(newOwner, this.logService);
   }
 }

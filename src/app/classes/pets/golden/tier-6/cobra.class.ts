@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CobraAbility } from '../../../abilities/pets/golden/tier-6/cobra-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Cobra extends Pet {
   name = 'Cobra';
@@ -28,5 +29,50 @@ export class Cobra extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CobraAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CobraAbility',
+      owner: owner,
+      triggers: ['FriendAheadAttacked'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.opponent.getRandomPet(
+      [],
+      false,
+      true,
+      false,
+      owner,
+    );
+    if (targetResp.pet == null) {
+      return;
+    }
+    let power = Math.floor(owner.attack * 0.2 * owner.level);
+    owner.snipePet(targetResp.pet, power, targetResp.random, tiger);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): CobraAbility {
+    return new CobraAbility(newOwner, this.logService);
   }
 }

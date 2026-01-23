@@ -1,15 +1,12 @@
 import type { Player } from '../player.class';
 import { Pet } from '../pet.class';
-import { LogService } from '../../services/log.service';
-import { AbilityService } from '../../services/ability/ability.service';
-import { GameService } from '../../services/game.service';
-import { getRandomInt } from '../../util/helper-functions';
+import { LogService } from 'app/services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { GameService } from 'app/services/game.service';
+import { getRandomInt } from 'app/util/helper-functions';
 import { hasSilly } from './player-utils';
-import {
-  makeRoomForSlot,
-  pushBackwardFromSlot,
-  pushForwardFromSlot,
-} from './player-movement';
+import { makeRoomForSlot, pushBackwardFromSlot, pushForwardFromSlot } from './player-movement';
+
 
 export const summonPet = (
   player: Player,

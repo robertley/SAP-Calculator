@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { NudibranchAbility } from '../../../abilities/pets/custom/tier-1/nudibranch-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Nudibranch extends Pet {
   name = 'Nudibranch';
@@ -29,5 +29,61 @@ export class Nudibranch extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class NudibranchAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'NudibranchAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      condition: (context: AbilityContext) => {
+        const owner = this.owner;
+        let petSet: Set<string> = new Set();
+        for (const pet of owner.parent.petArray) {
+          if (petSet.has(pet.name)) {
+            return false;
+          }
+          petSet.add(pet.name);
+        }
+        return true;
+      },
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const attackGain = this.level * 3;
+    const healthGain = this.level;
+    owner.increaseAttack(attackGain);
+    owner.increaseHealth(healthGain);
+
+    this.logService.createLog({
+      message: `${owner.name} gained +${attackGain} attack and +${healthGain} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): NudibranchAbility {
+    return new NudibranchAbility(newOwner, this.logService);
   }
 }

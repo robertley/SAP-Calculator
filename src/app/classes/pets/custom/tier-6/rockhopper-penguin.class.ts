@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { RockhopperPenguinAbility } from '../../../abilities/pets/custom/tier-6/rockhopper-penguin-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class RockhopperPenguin extends Pet {
   name = 'Rockhopper Penguin';
@@ -30,5 +31,67 @@ export class RockhopperPenguin extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RockhopperPenguinAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'RockhopperPenguinAbility',
+      owner: owner,
+      triggers: ['ClearFront'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 1,
+      condition: () => {
+        return owner.parent.pet0 == null;
+      },
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const targetResp = owner.parent.getThis(owner);
+    const target = targetResp.pet;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    owner.parent.pushPetToFront(target, true);
+
+    const trumpetsGained = this.level * 12;
+    const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+    trumpetTargetResp.player.gainTrumpets(
+      trumpetsGained,
+      owner,
+      pteranodon,
+      undefined,
+      undefined,
+      trumpetTargetResp.random,
+    );
+
+    this.logService.createLog({
+      message: `${owner.name} jumped to the front and gained +${trumpetsGained} trumpets.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger,
+      pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): RockhopperPenguinAbility {
+    return new RockhopperPenguinAbility(newOwner, this.logService);
   }
 }

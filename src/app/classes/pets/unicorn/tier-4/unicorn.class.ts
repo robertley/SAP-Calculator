@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { UnicornAbility } from '../../../abilities/pets/unicorn/tier-4/unicorn-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Unicorn extends Pet {
   name = 'Unicorn';
@@ -30,5 +31,63 @@ export class Unicorn extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class UnicornAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'UnicornAbility',
+      owner: owner,
+      triggers: ['FriendGainsAilment'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+    let power = this.level * 2;
+    if (!triggerPet) {
+      return;
+    }
+    this.logService.createLog({
+      message: `${owner.name} removed ailment from ${triggerPet.name}.`,
+      type: 'ability',
+      player: owner.parent,
+    });
+    triggerPet.removePerk();
+
+    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} ${power} attack and ${power} health.`,
+      type: 'ability',
+      player: owner.parent,
+      randomEvent: targetResp.random,
+    });
+
+    target.increaseAttack(power);
+    target.increaseHealth(power);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): UnicornAbility {
+    return new UnicornAbility(newOwner, this.logService);
   }
 }

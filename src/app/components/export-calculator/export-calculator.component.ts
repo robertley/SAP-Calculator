@@ -42,7 +42,11 @@ export class ExportCalculatorComponent implements OnInit {
           delete pet.petService; // If it exists on the pet
 
           if (pet.equipment) {
-            pet.equipment = { name: pet.equipment.name };
+            const equipmentName =
+              typeof pet.equipment === 'string'
+                ? pet.equipment
+                : pet.equipment.name;
+            pet.equipment = equipmentName ? { name: equipmentName } : null;
           }
         }
       }

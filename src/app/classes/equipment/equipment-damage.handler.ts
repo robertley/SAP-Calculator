@@ -2,6 +2,7 @@ import { LogService } from 'app/services/log.service';
 import type { Pet } from '../pet.class';
 import type { Equipment } from '../equipment.class';
 
+
 export interface EquipmentDamageOptions {
   pet: Pet;
   baseDamage: number;

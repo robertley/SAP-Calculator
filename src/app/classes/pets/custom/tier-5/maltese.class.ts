@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { MalteseAbility } from '../../../abilities/pets/custom/tier-5/maltese-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Maltese extends Pet {
   name = 'Maltese';
@@ -29,5 +29,57 @@ export class Maltese extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class MalteseAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Maltese Ability',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const player = owner.parent;
+    const targetFriend = owner.petBehind();
+    if (!targetFriend) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const trumpetsAvailable = player.trumpets;
+    if (trumpetsAvailable > 0) {
+      player.spendTrumpets(trumpetsAvailable, owner, context.pteranodon);
+    }
+
+    const baseMana = 3 * this.level;
+    const perTrumpet = this.level;
+    const totalMana = baseMana + trumpetsAvailable * perTrumpet;
+    targetFriend.increaseMana(totalMana);
+
+    this.logService.createLog({
+      message: `${owner.name} spent ${trumpetsAvailable} trumpets to give ${targetFriend.name} +${totalMana} mana.`,
+      type: 'ability',
+      player: player,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): MalteseAbility {
+    return new MalteseAbility(newOwner, this.logService);
   }
 }

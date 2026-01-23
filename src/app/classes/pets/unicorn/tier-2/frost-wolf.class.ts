@@ -1,11 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
-import { Cold } from '../../../equipment/ailments/cold.class';
+import { Cold } from 'app/classes/equipment/ailments/cold.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { FrostWolfAbility } from '../../../abilities/pets/unicorn/tier-2/frost-wolf-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class FrostWolf extends Pet {
   name = 'Frost Wolf';
@@ -30,5 +30,68 @@ export class FrostWolf extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class FrostWolfAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'FrostWolfAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Cold',
+      owner,
+    );
+    let targetResp = owner.parent.opponent.getFurthestUpPet(owner, excludePets);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+
+    const coldAilment = new Cold();
+    coldAilment.multiplier += this.level - 1;
+
+    let effectMessage = '.';
+    if (this.level === 2) {
+      effectMessage = ' twice for double effect.';
+    } else if (this.level === 3) {
+      effectMessage = ' thrice for triple effect.';
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} made ${target.name} Cold ${effectMessage}`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    target.givePetEquipment(coldAilment);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): FrostWolfAbility {
+    return new FrostWolfAbility(newOwner, this.logService);
   }
 }

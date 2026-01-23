@@ -1,10 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { PetService } from '../../../../services/pet/pet.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { PetService } from 'app/services/pet/pet.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { HarpyEagleAbility } from '../../../abilities/pets/custom/tier-6/harpy-eagle-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class HarpyEagle extends Pet {
   name = 'Harpy Eagle';
@@ -32,5 +33,92 @@ export class HarpyEagle extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class HarpyEagleAbility extends Ability {
+  private logService: LogService;
+  private petService: PetService;
+  private usesThisTurn = 0;
+
+  constructor(owner: Pet, logService: LogService, petService: PetService) {
+    super({
+      name: 'HarpyEagleAbility',
+      owner: owner,
+      triggers: ['ThisHurt', 'StartTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.petService = petService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    if (context.trigger === 'StartTurn') {
+      this.usesThisTurn = 0;
+      return;
+    }
+
+    if (context.trigger !== 'ThisHurt') {
+      return;
+    }
+
+    if (this.usesThisTurn >= 3) {
+      return;
+    }
+
+    this.usesThisTurn++;
+
+    const { gameApi, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 5;
+    let petPool: string[];
+    if (owner.parent === gameApi.player) {
+      petPool = gameApi.playerPetPool.get(1);
+    } else {
+      petPool = gameApi.opponentPetPool.get(1);
+    }
+
+    let petName = petPool[Math.floor(Math.random() * petPool.length)];
+    let summonPet = this.petService.createPet(
+      {
+        name: petName,
+        attack: power,
+        health: power,
+        equipment: null,
+        mana: 0,
+        exp: 0,
+      },
+      owner.parent,
+    );
+
+    let summonResult = owner.parent.summonPet(
+      summonPet,
+      owner.savedPosition,
+      false,
+      owner,
+    );
+    if (summonResult.success) {
+      this.logService.createLog({
+        message: `${owner.name} spawned ${summonPet.name} (${power}/${power}).`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: true,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): HarpyEagleAbility {
+    return new HarpyEagleAbility(newOwner, this.logService, this.petService);
   }
 }

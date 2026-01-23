@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { EagleOwlAbility } from '../../../abilities/pets/custom/tier-6/eagle-owl-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class EagleOwl extends Pet {
   name = 'Eagle Owl';
@@ -29,5 +29,67 @@ export class EagleOwl extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class EagleOwlAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Eagle Owl Ability',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const battles = Math.max(0, owner.battlesFought ?? 0);
+    if (battles <= 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buffPerBattle = this.level;
+    const totalBuff = battles * buffPerBattle;
+    const targetResp = owner.parent.getRandomPets(
+      3,
+      [owner],
+      true,
+      false,
+      owner,
+    );
+    const targets = targetResp.pets;
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    for (const target of targets) {
+      target.increaseAttack(totalBuff);
+      target.increaseHealth(totalBuff);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${targets.map((pet) => pet.name).join(', ')} +${totalBuff}/+${totalBuff} after fighting ${battles} battle${battles === 1 ? '' : 's'}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): EagleOwlAbility {
+    return new EagleOwlAbility(newOwner, this.logService);
   }
 }

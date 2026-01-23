@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TeamSpiritAbility } from '../../../abilities/pets/unicorn/tier-6/team-spirit-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Power } from 'app/interfaces/power.interface';
+
 
 export class TeamSpirit extends Pet {
   name = 'Team Spirit';
@@ -28,5 +30,58 @@ export class TeamSpirit extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class TeamSpiritAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'TeamSpiritAbility',
+      owner: owner,
+      triggers: ['FriendLeveledUp'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.getAll(false, owner, true);
+    let targets = targetResp.pets;
+
+    let power: Power = {
+      attack: owner.level,
+      health: owner.level,
+    };
+
+    for (let target of targets) {
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetResp.random,
+      });
+
+      target.increaseAttack(power.attack);
+      target.increaseHealth(power.health);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TeamSpiritAbility {
+    return new TeamSpiritAbility(newOwner, this.logService);
   }
 }

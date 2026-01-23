@@ -1,6 +1,6 @@
-import * as petsJson from '../files/pets.json';
-import * as toysJson from '../files/toys.json';
-import * as perksJson from '../files/perks.json';
+import * as petsJson from 'assets/data/pets.json';
+import * as toysJson from 'assets/data/toys.json';
+import * as perksJson from 'assets/data/perks.json';
 
 interface NameIdEntry {
   Name?: string;

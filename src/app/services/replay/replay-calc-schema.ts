@@ -1,6 +1,6 @@
-import * as perks from '../../files/perks.json';
-import * as toys from '../../files/toys.json';
-import * as petsByTier from '../../files/pets.json';
+import * as perks from 'assets/data/perks.json';
+import * as toys from 'assets/data/toys.json';
+import * as petsByTier from 'assets/data/pets.json';
 
 export const PETS_BY_ID = new Map<string, string>();
 export const PETS_META_BY_ID = new Map<

@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../equipment.class';
 import { Pack, Pet } from '../../pet.class';
 import { Player } from '../../player.class';
-import { SalmonAbility } from '../../abilities/pets/hidden/salmon-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Salmon extends Pet {
   name = 'Salmon';
@@ -31,5 +32,55 @@ export class Salmon extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SalmonAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SalmonAbility',
+      owner: owner,
+      triggers: ['ThisSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Calculate number of attacks based on health (every 25 health)
+    let attacks = 1 + Math.floor(owner.health / 25);
+
+    let damage = this.level * 5;
+
+    for (let i = 0; i < attacks; i++) {
+      let targetResp = owner.parent.opponent.getRandomPet(
+        [],
+        false,
+        true,
+        false,
+        owner,
+      );
+      if (targetResp.pet) {
+        owner.snipePet(targetResp.pet, damage, targetResp.random, tiger);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SalmonAbility {
+    return new SalmonAbility(newOwner, this.logService);
   }
 }

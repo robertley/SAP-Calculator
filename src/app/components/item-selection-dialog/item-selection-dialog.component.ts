@@ -10,7 +10,6 @@ import {
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { PetService } from '../../services/pet/pet.service';
 import { EquipmentService } from '../../services/equipment/equipment.service';
-import { Equipment } from '../../classes/equipment.class';
 import {
   getPetAbilityText,
   getPetIconPath,

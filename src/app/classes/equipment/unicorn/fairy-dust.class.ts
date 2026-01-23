@@ -1,7 +1,8 @@
-import { LogService } from '../../../services/log.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment, EquipmentClass } from '../../equipment.class';
 import { Pet } from '../../pet.class';
-import { FairyDustAbility } from '../../abilities/equipment/unicorn/fairy-dust-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class FairyDust extends Equipment {
   name = 'Fairy Dust';
@@ -11,5 +12,51 @@ export class FairyDust extends Equipment {
   };
   constructor(protected logService: LogService) {
     super();
+  }
+}
+
+
+// NOTE: This ability uses a special 'EmptyFrontSpace' trigger that may not be implemented yet
+// The original equipment uses pet.emptyFrontSpace callback which is different from standard triggers
+export class FairyDustAbility extends Ability {
+  private equipment: Equipment;
+  private logService: LogService;
+
+  constructor(owner: Pet, equipment: Equipment, logService: LogService) {
+    super({
+      name: 'FairyDustAbility',
+      owner: owner,
+      triggers: ['ClearFront'], // This trigger may need to be implemented
+      abilityType: 'Equipment',
+      native: true,
+      maxUses: 1, // Fairy Dust is removed after one use
+      abilitylevel: 1,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.equipment = equipment;
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+
+    if (owner.parent.pet0 != null) {
+      return;
+    }
+
+    let multiplier = this.equipment.multiplier;
+    let manaAmmt = 2 * multiplier;
+
+    this.logService.createLog({
+      message: `${owner.name} pushed itself to the front and gained ${manaAmmt} mana(Fairy Dust)${this.equipment.multiplierMessage}.`,
+      type: 'ability',
+      player: owner.parent,
+    });
+
+    owner.parent.pushPetToFront(owner, true);
+    owner.increaseMana(manaAmmt);
+    owner.removePerk();
   }
 }

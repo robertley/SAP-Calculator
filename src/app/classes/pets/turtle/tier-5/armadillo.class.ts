@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { ArmadilloAbility } from '../../../abilities/pets/turtle/tier-5/armadillo-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Armadillo extends Pet {
   name = 'Armadillo';
@@ -30,5 +29,58 @@ export class Armadillo extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class ArmadilloAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'ArmadilloAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getAll(true, owner);
+    let targets = targetsResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+
+    for (let pet of targets) {
+      if (!pet.alive) {
+        continue;
+      }
+      let power = 8 * this.level;
+      pet.increaseHealth(power);
+      this.logService.createLog({
+        message: `${owner.name} increased health of ${pet.name} by ${power}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetsResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): ArmadilloAbility {
+    return new ArmadilloAbility(newOwner, this.logService);
   }
 }

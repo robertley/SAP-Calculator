@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BlackRhinoAbility } from '../../../abilities/pets/danger/tier-6/black-rhino-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class BlackRhino extends Pet {
   name = 'Black Rhino';
@@ -29,5 +30,50 @@ export class BlackRhino extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BlackRhinoAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BlackRhinoAbility',
+      owner: owner,
+      triggers: ['EnemyAttacked7'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let damage = 30; // Fixed 30 damage
+
+    // Get all alive enemies and shuffle for random selection
+    let targetsResp = owner.parent.opponent.getHighestHealthPets(
+      owner.level,
+      [],
+      owner,
+    );
+    let targets = targetsResp.pets;
+    for (let target of targets) {
+      owner.snipePet(target, damage, targetsResp.random, tiger);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BlackRhinoAbility {
+    return new BlackRhinoAbility(newOwner, this.logService);
   }
 }

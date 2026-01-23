@@ -1,7 +1,8 @@
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
-import { getOpponent } from '../../../util/helper-functions';
-import { Coconut } from '../../equipment/turtle/coconut.class';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { getOpponent } from 'app/util/helper-functions';
+import { Coconut } from 'app/classes/equipment/turtle/coconut.class';
 import { Toy } from '../../toy.class';
+
 
 export class ActionFigure extends Toy {
   name = 'Action Figure';

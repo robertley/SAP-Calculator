@@ -10,7 +10,6 @@ import { ToyEventService } from './toy-event.service';
 import { AbilityQueueService } from './ability-queue.service';
 import { AttackEventService } from './attack-event.service';
 import { FaintEventService } from './faint-event.service';
-import { shuffle } from 'lodash-es';
 
 @Injectable({
   providedIn: 'root',

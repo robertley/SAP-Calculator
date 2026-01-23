@@ -5,13 +5,12 @@ import { Pet } from '../../classes/pet.class';
 import { Equipment } from '../../classes/equipment.class';
 import { AbilityService } from '../ability/ability.service';
 import { AbilityEvent } from '../../interfaces/ability-event.interface';
-import { cloneDeep, shuffle } from 'lodash-es';
+import { shuffle } from 'lodash-es';
 import { GameService } from '../game.service';
 import { PetService } from '../pet/pet.service';
 import { EquipmentService } from '../equipment/equipment.service';
 import { ToyFactoryService } from './toy-factory.service';
-import { Toy } from '../../classes/toy.class';
-import * as toysJson from '../../files/toys.json';
+import * as toysJson from 'assets/data/toys.json';
 
 interface ToyJsonEntry {
   Name: string;

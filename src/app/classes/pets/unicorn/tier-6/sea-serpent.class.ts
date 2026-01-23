@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { SeaSerpentAbility } from '../../../abilities/pets/unicorn/tier-6/sea-serpent-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class SeaSerpent extends Pet {
   name = 'Sea Serpent';
@@ -29,5 +29,93 @@ export class SeaSerpent extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SeaSerpentAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SeaSerpentAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const contextState = context as any;
+    const manaSpent = contextState.seaSerpentMana ?? owner.mana;
+    if (manaSpent == 0) {
+      return;
+    }
+
+    if (contextState.seaSerpentMana == null) {
+      contextState.seaSerpentMana = manaSpent;
+      owner.mana = 0;
+    }
+
+    let power = manaSpent;
+    let mana = manaSpent;
+    this.logService.createLog({
+      message: `${owner.name} spent ${mana} mana.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    // First, snipe the most healthy enemy
+    let highestHealthResult = owner.parent.opponent.getHighestHealthPet(
+      undefined,
+      owner,
+    );
+    if (highestHealthResult.pet != null) {
+      owner.snipePet(
+        highestHealthResult.pet,
+        power,
+        highestHealthResult.random,
+        tiger,
+        pteranodon,
+      );
+    }
+
+    // Then snipe level number of random enemies (excluding the first target)
+    let randomTargetsResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
+      this.level,
+      [highestHealthResult.pet],
+      null,
+      true,
+      owner,
+    );
+    for (let target of randomTargetsResp.pets) {
+      if (target != null) {
+        owner.snipePet(
+          target,
+          power,
+          randomTargetsResp.random,
+          tiger,
+          pteranodon,
+        );
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SeaSerpentAbility {
+    return new SeaSerpentAbility(newOwner, this.logService);
   }
 }

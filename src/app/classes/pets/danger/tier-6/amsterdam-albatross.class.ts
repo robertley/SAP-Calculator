@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { AmsterdamAlbatrossAbility } from '../../../abilities/pets/danger/tier-6/amsterdam-albatross-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class AmsterdamAlbatross extends Pet {
   name = 'Amsterdam Albatross';
@@ -30,5 +31,55 @@ export class AmsterdamAlbatross extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class AmsterdamAlbatrossAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'AmsterdamAlbatrossAbility',
+      owner: owner,
+      triggers: ['FriendTransformed'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 2,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let attackGain = 2 * owner.level;
+    let healthGain = 2 * owner.level;
+    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    target.increaseAttack(attackGain);
+    target.increaseHealth(healthGain);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${attackGain} attack and +${healthGain} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): AmsterdamAlbatrossAbility {
+    return new AmsterdamAlbatrossAbility(newOwner, this.logService);
   }
 }

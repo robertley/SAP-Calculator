@@ -1,9 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class RuspolisTuraco extends Pet {
   name = 'Ruspolis Turaco';
@@ -24,5 +25,58 @@ export class RuspolisTuraco extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RuspolisTuracoAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: "Ruspoli's Turaco Ability",
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const manaGain = [4, 8, 12][Math.min(this.level - 1, 2)];
+
+    const transformed: string[] = [];
+    owner.parent.petArray.forEach((friend) => {
+      if (!friend || !friend.alive || !friend.equipment) {
+        return;
+      }
+
+      if (friend.equipment.name === 'Strawberry') {
+        friend.removePerk();
+        friend.increaseMana(manaGain);
+        transformed.push(friend.name);
+      }
+    });
+
+    if (transformed.length > 0) {
+      this.logService.createLog({
+        message: `${owner.name} replaced Strawberries on ${transformed.join(', ')} with +${manaGain} mana.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger,
+        pteranodon,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): RuspolisTuracoAbility {
+    return new RuspolisTuracoAbility(newOwner, this.logService);
   }
 }

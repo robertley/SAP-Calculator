@@ -41,7 +41,11 @@ export function buildShareableLink(
       delete pet.petService;
 
       if (pet.equipment) {
-        pet.equipment = { name: pet.equipment.name };
+        const equipmentName =
+          typeof pet.equipment === 'string'
+            ? pet.equipment
+            : pet.equipment.name;
+        pet.equipment = equipmentName ? { name: equipmentName } : null;
       }
     }
   }

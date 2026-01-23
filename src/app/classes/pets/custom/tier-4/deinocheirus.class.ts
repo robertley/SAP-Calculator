@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { DeinocheirusAbility } from '../../../abilities/pets/custom/tier-4/deinocheirus-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Deinocheirus extends Pet {
   name = 'Deinocheirus';
@@ -30,5 +30,60 @@ export class Deinocheirus extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class DeinocheirusAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Deinocheirus Ability',
+      owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const equipment = owner.equipment;
+
+    if (!equipment) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const eqClass = equipment.equipmentClass;
+    if (!eqClass?.startsWith('ailment')) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const multiplier = this.level;
+    const attackBuff = multiplier;
+    const healthBuff = multiplier * 2;
+    owner.increaseAttack(attackBuff);
+    owner.increaseHealth(healthBuff);
+
+    this.logService.createLog({
+      message: `${owner.name} reversed ${equipment.name} and gained +${attackBuff}/+${healthBuff} (x${multiplier}).`,
+      type: 'ability',
+      player: owner.parent,
+      tiger,
+      pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): DeinocheirusAbility {
+    return new DeinocheirusAbility(newOwner, this.logService);
   }
 }

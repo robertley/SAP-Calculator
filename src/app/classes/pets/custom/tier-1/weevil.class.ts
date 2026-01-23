@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { WeevilAbility } from '../../../abilities/pets/custom/tier-1/weevil-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Weevil extends Pet {
   name = 'Weevil';
@@ -29,5 +29,53 @@ export class Weevil extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class WeevilAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'WeevilAbility',
+      owner: owner,
+      triggers: ['FoodEatenByFriendly'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 3,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    const target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    target.increaseAttack(this.level);
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${this.level} attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+      randomEvent: targetResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): WeevilAbility {
+    return new WeevilAbility(newOwner, this.logService);
   }
 }

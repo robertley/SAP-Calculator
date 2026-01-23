@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { GuineafowlAbility } from '../../../abilities/pets/golden/tier-3/guineafowl-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Guineafowl extends Pet {
   name = 'Guineafowl';
@@ -28,5 +29,48 @@ export class Guineafowl extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class GuineafowlAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'GuineafowlAbility',
+      owner: owner,
+      triggers: ['ThisHurt'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 2;
+    const trumpetTargetResp = owner.parent.resolveTrumpetGainTarget(owner);
+    trumpetTargetResp.player.gainTrumpets(
+      power,
+      owner,
+      pteranodon,
+      undefined,
+      undefined,
+      trumpetTargetResp.random,
+    );
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): GuineafowlAbility {
+    return new GuineafowlAbility(newOwner, this.logService);
   }
 }

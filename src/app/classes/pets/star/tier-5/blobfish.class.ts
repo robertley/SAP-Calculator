@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { BlobfishAbility } from '../../../abilities/pets/star/tier-5/blobfish-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Blobfish extends Pet {
   name = 'Blobfish';
@@ -30,5 +30,51 @@ export class Blobfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class BlobfishAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'BlobfishAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.nearestPetsBehind(2, owner);
+    let targets = targetsResp.pets;
+    for (let target of targets) {
+      let power = this.level;
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} ${power} exp.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetsResp.random,
+      });
+      target.increaseExp(power);
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): BlobfishAbility {
+    return new BlobfishAbility(newOwner, this.logService);
   }
 }

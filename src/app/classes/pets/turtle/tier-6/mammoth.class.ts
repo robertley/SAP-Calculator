@@ -1,10 +1,10 @@
-import { GameAPI } from 'app/interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { MammothAbility } from '../../../abilities/pets/turtle/tier-6/mammoth-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Mammoth extends Pet {
   name = 'Mammoth';
@@ -29,5 +29,57 @@ export class Mammoth extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class MammothAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'MammothAbility',
+      owner: owner,
+      triggers: ['BeforeThisDies'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let power = this.level * 2;
+    let targetResp = owner.parent.getAll(false, owner);
+    let targets = targetResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+
+    for (let pet of targets) {
+      pet.increaseAttack(power);
+      pet.increaseHealth(power);
+      this.logService.createLog({
+        message: `${owner.name} gave ${pet.name} ${power} attack and ${power} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): MammothAbility {
+    return new MammothAbility(newOwner, this.logService);
   }
 }

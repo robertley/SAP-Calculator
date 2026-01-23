@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TabbyCatAbility } from '../../../abilities/pets/puppy/tier-2/tabby-cat-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class TabbyCat extends Pet {
   name = 'Tabby Cat';
@@ -29,5 +29,60 @@ export class TabbyCat extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class TabbyCatAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'TabbyCatAbility',
+      owner: owner,
+      triggers: ['FriendlyGainsPerk'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.getRandomPets(
+      2,
+      [owner],
+      true,
+      false,
+      owner,
+    );
+    if (targetsResp.pets.length == 0) {
+      return;
+    }
+    for (let target of targetsResp.pets) {
+      if (target != null) {
+        this.logService.createLog({
+          message: `${owner.name} increased ${target.name}'s health by ${this.level}.`,
+          type: 'ability',
+          player: owner.parent,
+          randomEvent: targetsResp.random,
+          tiger: tiger,
+        });
+        target.increaseHealth(this.level);
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TabbyCatAbility {
+    return new TabbyCatAbility(newOwner, this.logService);
   }
 }

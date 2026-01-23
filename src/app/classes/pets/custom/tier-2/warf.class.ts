@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { WarfAbility } from '../../../abilities/pets/custom/tier-2/warf-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Warf extends Pet {
   name = 'Warf';
@@ -30,5 +31,57 @@ export class Warf extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class WarfAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'Warf Ability',
+      owner: owner,
+      triggers: ['ThisGainedMana'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    const targetResp = owner.parent.opponent.getRandomPet(
+      [],
+      false,
+      false,
+      false,
+      owner,
+    );
+    if (targetResp.pet) {
+      const target = targetResp.pet;
+      const damage = this.level;
+
+      owner.snipePet(target, damage, targetResp.random, tiger, pteranodon);
+
+      this.logService.createLog({
+        message: `${owner.name} gained mana and dealt ${damage} damage to ${target.name}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetResp.random,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): WarfAbility {
+    return new WarfAbility(newOwner, this.logService);
   }
 }

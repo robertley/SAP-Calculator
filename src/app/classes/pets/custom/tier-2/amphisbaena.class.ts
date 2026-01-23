@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { AmphisbaenaAbility } from '../../../abilities/pets/custom/tier-2/amphisbaena-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Amphisbaena extends Pet {
   name = 'Amphisbaena';
@@ -28,5 +29,66 @@ export class Amphisbaena extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class AmphisbaenaAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'AmphisbaenaAbility',
+      owner: owner,
+      triggers: ['EndTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
+    if (targetsAheadResp.pets.length === 0) {
+      return;
+    }
+    let target = targetsAheadResp.pets[0];
+
+    const turnNumber = gameApi?.turnNumber ?? 1;
+    if (turnNumber % 2 === 1) {
+      target.increaseAttack(this.level);
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} ${this.level} attack.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetsAheadResp.random,
+      });
+    } else {
+      target.increaseHealth(this.level);
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} ${this.level} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetsAheadResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): AmphisbaenaAbility {
+    return new AmphisbaenaAbility(newOwner, this.logService);
   }
 }

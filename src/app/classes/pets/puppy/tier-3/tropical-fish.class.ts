@@ -1,11 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { TropicalFishAbility } from '../../../abilities/pets/puppy/tier-3/tropical-fish-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAdjacentAlivePets, logAbility } from 'app/classes/ability-helpers';
+
 
 export class TropicalFish extends Pet {
   name = 'Tropical Fish';
@@ -34,3 +34,59 @@ export class TropicalFish extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 }
+
+
+export class TropicalFishAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'TropicalFishAbility',
+      owner: owner,
+      triggers: ['StartTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const targets = getAdjacentAlivePets(owner);
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    for (const target of targets) {
+      target.increaseHealth(this.level);
+      logAbility(
+        this.logService,
+        owner,
+        `${owner.name} gave ${target.name} +${this.level} health.`,
+        context.tiger,
+        context.pteranodon,
+      );
+    }
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): TropicalFishAbility {
+    return new TropicalFishAbility(
+      newOwner,
+      this.logService,
+      this.abilityService,
+    );
+  }
+}
+

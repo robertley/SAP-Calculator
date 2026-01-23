@@ -1,5 +1,6 @@
 import { Pet } from './pet.class';
 
+
 export class Equipment {
   equipmentClass: EquipmentClass;
   name: string;

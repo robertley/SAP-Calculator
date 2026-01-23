@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { SmallOneAbility } from '../../../abilities/pets/custom/tier-6/small-one-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class SmallOne extends Pet {
   name = 'Small One';
@@ -29,5 +29,60 @@ export class SmallOne extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SmallOneAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'SmallOneAbility',
+      owner: owner,
+      triggers: ['ThisSummoned'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const { tiger, pteranodon } = context;
+    const allPets = owner.parent
+      .getAll(true, owner)
+      .pets.filter((pet) => pet && pet !== owner);
+
+    if (allPets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const damagePerFriendly = 2;
+    const damagePerEnemy = damagePerFriendly * 2;
+    for (let i = 0; i < this.level; i++) {
+      for (const pet of allPets) {
+        const damage =
+          pet.parent === owner.parent ? damagePerFriendly : damagePerEnemy;
+        owner.dealDamage(pet, damage);
+      }
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} dealt ${damagePerFriendly} (${damagePerEnemy} vs enemies) damage ${this.level}x to all other pets.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger,
+      pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SmallOneAbility {
+    return new SmallOneAbility(newOwner, this.logService);
   }
 }

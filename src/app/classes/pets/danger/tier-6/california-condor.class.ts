@@ -1,10 +1,12 @@
-import { PetService } from '../../../../services/pet/pet.service';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { PetService } from 'app/services/pet/pet.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { CaliforniaCondorAbility } from '../../../abilities/pets/danger/tier-6/california-condor-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
+
 export class CaliforniaCondor extends Pet {
   name = 'California Condor';
   tier = 6;
@@ -31,5 +33,50 @@ export class CaliforniaCondor extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class CaliforniaCondorAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'CaliforniaCondorAbility',
+      owner: owner,
+      triggers: ['FriendTransformed'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: 2,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+    let copyPet = triggerPet;
+
+    if (!copyPet) {
+      return;
+    }
+
+    this.logService.createLog({
+      message: `California Condor copied ${copyPet.name}'s level ${owner.level} ability`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+    });
+    owner.gainAbilities(copyPet, 'Pet');
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): CaliforniaCondorAbility {
+    return new CaliforniaCondorAbility(newOwner, this.logService);
   }
 }

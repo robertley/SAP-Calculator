@@ -1,10 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { PetService } from '../../../../services/pet/pet.service';
-import { RedLippedBatfishAbility } from '../../../abilities/pets/custom/tier-4/red-lipped-batfish-ability.class';
+import { PetService } from 'app/services/pet/pet.service';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class RedLippedBatfish extends Pet {
   name = 'Red Lipped Batfish';
@@ -34,5 +35,63 @@ export class RedLippedBatfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RedLippedBatfishAbility extends Ability {
+  private logService: LogService;
+  private petService: PetService;
+
+  constructor(owner: Pet, logService: LogService, petService: PetService) {
+    super({
+      name: 'Red Lipped Batfish Ability',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.logService = logService;
+    this.petService = petService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+    const opponent = owner.parent.opponent;
+    if (!opponent) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const target = opponent.getPetAtPosition(owner.position);
+    if (!target || !target.alive) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const targetTier = Math.max(1, 4 - this.level);
+    const newPet = this.petService.getRandomFaintPet(opponent, targetTier);
+    opponent.transformPet(target, newPet);
+
+    this.logService.createLog({
+      message: `${owner.name} transformed ${target.name} into ${newPet.name} (tier ${targetTier}).`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      pteranodon: pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  override copy(newOwner: Pet): RedLippedBatfishAbility {
+    return new RedLippedBatfishAbility(
+      newOwner,
+      this.logService,
+      this.petService,
+    );
   }
 }

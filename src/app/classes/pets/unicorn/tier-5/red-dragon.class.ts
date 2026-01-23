@@ -1,11 +1,11 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
-import { Crisp } from '../../../equipment/ailments/crisp.class';
+import { Crisp } from 'app/classes/equipment/ailments/crisp.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { RedDragonAbility } from '../../../abilities/pets/unicorn/tier-5/red-dragon-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class RedDragon extends Pet {
   name = 'Red Dragon';
@@ -31,5 +31,61 @@ export class RedDragon extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class RedDragonAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'RedDragonAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.getPetsWithEquipmentWithSillyFallback(
+      'Crisp',
+      owner,
+    );
+    let targetsResp = owner.parent.opponent.getLastPets(
+      this.level,
+      excludePets,
+      owner,
+    );
+    let targets = targetsResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+    for (let target of targets) {
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} Crisp.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: targetsResp.random,
+      });
+      target.givePetEquipment(new Crisp());
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): RedDragonAbility {
+    return new RedDragonAbility(newOwner, this.logService);
   }
 }

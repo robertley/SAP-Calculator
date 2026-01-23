@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../equipment.class';
 import { Pack, Pet } from '../../pet.class';
 import { Player } from '../../player.class';
-import { SmallerSlugAbility } from '../../abilities/pets/hidden/smaller-slug-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { SmallestSlug } from 'app/classes/pets/hidden/smallest-slug.class';
+
 
 export class SmallerSlug extends Pet {
   name = 'Smaller Slug';
@@ -31,5 +33,74 @@ export class SmallerSlug extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SmallerSlugAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'SmallerSlugAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let slug = new SmallestSlug(
+      this.logService,
+      this.abilityService,
+      owner.parent,
+      null,
+      null,
+      0,
+      owner.minExpForLevel,
+    );
+
+    let summonResult = owner.parent.summonPet(
+      slug,
+      owner.savedPosition,
+      false,
+      owner,
+    );
+    if (summonResult.success) {
+      this.logService.createLog({
+        message: `${owner.name} spawned Smallest Slug Level ${owner.level}`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: summonResult.randomEvent,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SmallerSlugAbility {
+    return new SmallerSlugAbility(
+      newOwner,
+      this.logService,
+      this.abilityService,
+    );
   }
 }

@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { AlchemedesAbility } from '../../../abilities/pets/unicorn/tier-1/alchemedes-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Alchemedes extends Pet {
   name = 'Alchemedes';
@@ -29,5 +29,53 @@ export class Alchemedes extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class AlchemedesAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'AlchemedesAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
+    if (targetsAheadResp.pets.length === 0) {
+      return;
+    }
+    let target = targetsAheadResp.pets[0];
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} ${this.level} mana.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: targetsAheadResp.random,
+    });
+
+    target.increaseMana(this.level);
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): AlchemedesAbility {
+    return new AlchemedesAbility(newOwner, this.logService);
   }
 }

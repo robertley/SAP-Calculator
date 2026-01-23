@@ -1,9 +1,10 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { KiwiAbility } from '../../../abilities/pets/star/tier-1/kiwi-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Kiwi extends Pet {
   name = 'Kiwi';
@@ -28,5 +29,58 @@ export class Kiwi extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class KiwiAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'KiwiAbility',
+      owner: owner,
+      triggers: ['ThisHurt', 'ThisSold'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let excludePets = owner.parent.petArray.filter(
+      (pet) => pet.equipment?.name != 'Strawberry' || pet == owner,
+    );
+
+    // Get the backmost (last position) Strawberry pet
+    let targetResp = owner.parent.getLastPet(excludePets, owner);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    let attackBoost = this.level;
+    target.increaseAttack(attackBoost);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${attackBoost} attack`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: targetResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): KiwiAbility {
+    return new KiwiAbility(newOwner, this.logService);
   }
 }

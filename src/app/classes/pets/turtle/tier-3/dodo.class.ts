@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { DodoAbility } from '../../../abilities/pets/turtle/tier-3/dodo-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Dodo extends Pet {
   name = 'Dodo';
@@ -29,5 +29,53 @@ export class Dodo extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class DodoAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'DodoAbility',
+      owner: owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
+    if (targetsAheadResp.pets.length === 0) {
+      return;
+    }
+
+    let boostPet = targetsAheadResp.pets[0];
+    let boostAmt = Math.floor(owner.attack * (this.level * 0.5));
+    boostPet.increaseAttack(boostAmt);
+    this.logService.createLog({
+      message: `${owner.name} gave ${boostPet.name} ${boostAmt} attack.`,
+      player: owner.parent,
+      type: 'ability',
+      tiger: tiger,
+      randomEvent: targetsAheadResp.random,
+    });
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): DodoAbility {
+    return new DodoAbility(newOwner, this.logService);
   }
 }

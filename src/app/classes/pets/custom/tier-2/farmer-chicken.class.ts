@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { FarmerChickenAbility } from '../../../abilities/pets/custom/tier-2/farmer-chicken-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Corncob } from 'app/classes/equipment/custom/corncob.class';
+
 
 export class FarmerChicken extends Pet {
   name = 'Farmer Chicken';
@@ -28,5 +30,54 @@ export class FarmerChicken extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class FarmerChickenAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'FarmerChickenAbility',
+      owner: owner,
+      triggers: ['EndTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetsResp = owner.parent.nearestPetsAhead(this.level, owner);
+    if (targetsResp.pets.length === 0) {
+      return;
+    }
+
+    for (let target of targetsResp.pets) {
+      target.givePetEquipment(new Corncob());
+      this.logService.createLog({
+        message: `${owner.name} fed ${target.name} a Corncob.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+        randomEvent: targetsResp.random,
+      });
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): FarmerChickenAbility {
+    return new FarmerChickenAbility(newOwner, this.logService);
   }
 }

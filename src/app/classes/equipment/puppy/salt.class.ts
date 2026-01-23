@@ -1,6 +1,5 @@
-import { AbilityService } from '../../../services/ability/ability.service';
-import { LogService } from '../../../services/log.service';
 import { Equipment, EquipmentClass } from '../../equipment.class';
+
 
 export class Salt extends Equipment {
   name = 'Salt';

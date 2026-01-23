@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { MarkhorAbility } from '../../../abilities/pets/custom/tier-6/markhor-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Markhor extends Pet {
   name = 'Markhor';
@@ -29,5 +29,74 @@ export class Markhor extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class MarkhorAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'MarkhorAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const { tiger, pteranodon } = context;
+
+    const player = owner.parent;
+    if (player.trumpets < 4) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const targets = player.petArray.filter(
+      (pet) => pet && pet !== owner && pet.alive,
+    );
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    player.trumpets -= 4;
+    const totalAttack = this.level * 4;
+    const totalHealth = this.level * 4;
+    const attackPerPet = Math.floor(totalAttack / targets.length);
+    const healthPerPet = Math.floor(totalHealth / targets.length);
+    const attackRemainder = totalAttack - attackPerPet * targets.length;
+    const healthRemainder = totalHealth - healthPerPet * targets.length;
+
+    for (let i = 0; i < targets.length; i++) {
+      const pet = targets[i];
+      const extraAttack = i < attackRemainder ? 1 : 0;
+      const extraHealth = i < healthRemainder ? 1 : 0;
+      pet.increaseAttack(attackPerPet + extraAttack);
+      pet.increaseHealth(healthPerPet + extraHealth);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} spent 4 trumpets to grant ${totalAttack}/${totalHealth} evenly among ${targets.length} friends.`,
+      type: 'ability',
+      player: player,
+      tiger,
+      pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): MarkhorAbility {
+    return new MarkhorAbility(newOwner, this.logService);
   }
 }

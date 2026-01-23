@@ -1,10 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { Equipment } from '../../../../classes/equipment.class';
-import { Pack, Pet } from '../../../../classes/pet.class';
-import { Player } from '../../../../classes/player.class';
-import { PacificFanfishAbility } from '../../../abilities/pets/custom/tier-5/pacific-fanfish-ability.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
+import { Equipment } from 'app/classes/equipment.class';
+import { Pack, Pet } from 'app/classes/pet.class';
+import { Player } from 'app/classes/player.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class PacificFanfish extends Pet {
   name = 'Pacific Fanfish';
@@ -29,5 +29,54 @@ export class PacificFanfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class PacificFanfishAbility extends Ability {
+  constructor(
+    owner: Pet,
+    private logService: LogService,
+  ) {
+    super({
+      name: 'Pacific Fanfish Ability',
+      owner,
+      triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const buffPerFriend = 4 * this.level;
+    const eligibleFriends = owner.parent.petArray.filter(
+      (friend) =>
+        friend && friend !== owner && friend.alive && friend.sellValue >= 3,
+    );
+    if (eligibleFriends.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const totalBuff = buffPerFriend * eligibleFriends.length;
+    owner.increaseAttack(totalBuff);
+    owner.increaseHealth(totalBuff);
+
+    this.logService.createLog({
+      message: `${owner.name} gained +${totalBuff}/+${totalBuff} from ${eligibleFriends.length} friend(s) with ≥3 sell value.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): PacificFanfishAbility {
+    return new PacificFanfishAbility(newOwner, this.logService);
   }
 }

@@ -1,6 +1,9 @@
 import { Equipment, EquipmentClass } from '../../equipment.class';
 import { Pet } from '../../pet.class';
-import { ManaPotionAbility } from '../../abilities/equipment/custom/mana-potion-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { InjectorService } from 'app/services/injector.service';
+import { LogService } from 'app/services/log.service';
+
 
 export class ManaPotion extends Equipment {
   name = 'Mana Potion';
@@ -8,4 +11,36 @@ export class ManaPotion extends Equipment {
   callback = (pet: Pet) => {
     pet.addAbility(new ManaPotionAbility(pet, this));
   };
+}
+
+
+export class ManaPotionAbility extends Ability {
+  private equipment: Equipment;
+  private logService: LogService;
+
+  constructor(owner: Pet, equipment: Equipment) {
+    super({
+      name: 'ManaPotionAbility',
+      owner: owner,
+      triggers: ['BeforeStartBattle'],
+      abilityType: 'Equipment',
+      native: true,
+      abilitylevel: 1,
+      abilityFunction: (context) => this.executeAbility(context),
+    });
+    this.equipment = equipment;
+    this.logService = InjectorService.getInjector().get(LogService);
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    const manaGain = 6 * this.equipment.multiplier;
+    owner.increaseMana(manaGain);
+
+    this.logService.createLog({
+      message: `${owner.name} gained ${manaGain} mana. (Mana Potion)${this.equipment.multiplierMessage}`,
+      type: 'equipment',
+      player: owner.parent,
+    });
+  }
 }

@@ -1,6 +1,7 @@
 import { shuffle } from 'lodash-es';
-import { GameAPI } from '../../../interfaces/gameAPI.interface';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { Toy } from '../../toy.class';
+
 
 export class DiceCup extends Toy {
   name = 'Dice Cup';

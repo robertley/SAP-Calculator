@@ -1,10 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ram } from '../../hidden/ram.class';
-import { SheepAbility } from '../../../abilities/pets/turtle/tier-3/sheep-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Sheep extends Pet {
   name = 'Sheep';
@@ -31,5 +32,73 @@ export class Sheep extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class SheepAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'SheepAbility',
+      owner: owner,
+      triggers: ['ThisDied'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    for (let i = 0; i < 2; i++) {
+      let ram = new Ram(
+        this.logService,
+        this.abilityService,
+        owner.parent,
+        null,
+        null,
+        0,
+        this.minExpForLevel,
+      );
+
+      let summonResult = owner.parent.summonPet(
+        ram,
+        owner.savedPosition,
+        false,
+        owner,
+      );
+
+      if (summonResult.success) {
+        this.logService.createLog({
+          message: `${owner.name} spawned Ram (${ram.attack}/${ram.health}).`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          pteranodon: pteranodon,
+          randomEvent: summonResult.randomEvent,
+        });
+      }
+    }
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): SheepAbility {
+    return new SheepAbility(newOwner, this.logService, this.abilityService);
   }
 }

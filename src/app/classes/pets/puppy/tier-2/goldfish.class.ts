@@ -1,11 +1,10 @@
-import { GameAPI } from '../../../../interfaces/gameAPI.interface';
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
-import { getOpponent } from '../../../../util/helper-functions';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { GoldfishAbility } from '../../../abilities/pets/puppy/tier-2/goldfish-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+
 
 export class Goldfish extends Pet {
   name = 'Goldfish';
@@ -32,5 +31,47 @@ export class Goldfish extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class GoldfishAbility extends Ability {
+  private logService: LogService;
+  private abilityService: AbilityService;
+
+  constructor(
+    owner: Pet,
+    logService: LogService,
+    abilityService: AbilityService,
+  ) {
+    super({
+      name: 'GoldfishAbility',
+      owner: owner,
+      triggers: ['StartTurn'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+    this.abilityService = abilityService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const owner = this.owner;
+    owner.increaseSellValue(this.level);
+    this.logService.createLog({
+      message: `${owner.name} increased its sell value by ${this.level}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+    });
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): GoldfishAbility {
+    return new GoldfishAbility(newOwner, this.logService, this.abilityService);
   }
 }

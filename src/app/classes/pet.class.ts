@@ -1,30 +1,24 @@
-import { GameAPI } from '../interfaces/gameAPI.interface';
-import { LogService } from '../services/log.service';
+import { GameAPI } from 'app/interfaces/gameAPI.interface';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from './equipment.class';
 import { Player } from './player.class';
-import { Corncob } from './equipment/custom/corncob.class';
-import { AbilityService } from '../services/ability/ability.service';
-import { Panther } from './pets/puppy/tier-5/panther.class';
-import { Dazed } from './equipment/ailments/dazed.class';
-import { Icky } from './equipment/ailments/icky.class';
-import { Crisp } from './equipment/ailments/crisp.class';
-import { Toasty } from './equipment/ailments/toasty.class';
-import { Blackberry } from './equipment/puppy/blackberry.class';
-import { WhiteOkra } from './equipment/danger/white-okra.class';
-import { Ambrosia } from './equipment/unicorn/ambrosia.class';
-import { Ability, AbilityTrigger, AbilityType } from './ability.class';
-import { minExpForLevel } from '../util/leveling';
-import { EquipmentDamageHandler } from './equipment/equipment-damage.handler';
-import {
-  attackPet as attackPetImpl,
-  calculateDamage as calculateDamageImpl,
-  dealDamage as dealDamageImpl,
-  jumpAttack as jumpAttackImpl,
-  snipePet as snipePetImpl,
-} from './pet/pet-combat';
+import { Corncob } from 'app/classes/equipment/custom/corncob.class';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { Dazed } from 'app/classes/equipment/ailments/dazed.class';
+import { Crisp } from 'app/classes/equipment/ailments/crisp.class';
+import { Toasty } from 'app/classes/equipment/ailments/toasty.class';
+import { Blackberry } from 'app/classes/equipment/puppy/blackberry.class';
+import { WhiteOkra } from 'app/classes/equipment/danger/white-okra.class';
+import { Ambrosia } from 'app/classes/equipment/unicorn/ambrosia.class';
+import { Ability, AbilityTrigger, AbilityType } from 'app/classes/ability.class';
+import { minExpForLevel } from 'app/util/leveling';
+import { EquipmentDamageHandler } from 'app/classes/equipment/equipment-damage.handler';
+import { getRandomInt } from 'app/util/helper-functions';
 import { resetPetState } from './pet/pet-state';
-import { Log } from '../interfaces/log.interface';
-import { Strawberry } from './equipment/star/strawberry.class';
+import { Log } from 'app/interfaces/log.interface';
+import { Strawberry } from 'app/classes/equipment/star/strawberry.class';
+import { attackPet as attackPetImpl, calculateDamage as calculateDamageImpl, dealDamage as dealDamageImpl, jumpAttack as jumpAttackImpl, snipePet as snipePetImpl } from './pet/pet-combat';
+
 
 export type Pack =
   | 'Turtle'
@@ -992,48 +986,48 @@ export abstract class Pet {
     return highestLevel;
   }
 
-  getPetsAhead(
-    amt: number,
-    includeOpponent = false,
-    excludeEquipment?: string,
-  ): Pet[] {
-    let targetsAhead = [];
-    let petAhead = this.petAhead;
-    while (petAhead) {
-      if (targetsAhead.length >= amt) {
-        break;
-      }
-      // Skip pets that already have the excluded equipment
-      if (excludeEquipment && petAhead.equipment?.name === excludeEquipment) {
-        petAhead = petAhead.petAhead;
-        continue;
-      }
-      targetsAhead.push(petAhead);
-      petAhead = petAhead.petAhead;
+  private getSillyRandomTargets(amt: number, excludeEquipment?: string): Pet[] {
+    if (!this.parent?.opponent) {
+      return [];
+    }
+    const equipment = this.equipment as unknown;
+    const sillyActive =
+      (typeof equipment === 'string' && equipment === 'Silly') ||
+      (equipment &&
+        typeof (equipment as { name?: string }).name === 'string' &&
+        (equipment as { name?: string }).name === 'Silly');
+    if (!sillyActive) {
+      return [];
     }
 
-    // get opponent pets
-    if (targetsAhead.length < amt && includeOpponent == true) {
-      let opponent = this.parent.opponent;
-      let petAhead = opponent.furthestUpPet;
-      while (petAhead) {
-        if (targetsAhead.length >= amt) {
-          break;
-        }
-        // Skip pets that already have the excluded equipment
-        if (excludeEquipment && petAhead.equipment?.name === excludeEquipment) {
-          petAhead = petAhead.petBehind();
-          continue;
-        }
-        targetsAhead.push(petAhead);
-        petAhead = petAhead.petBehind();
+    const candidates = [
+      ...this.parent.petArray,
+      ...this.parent.opponent.petArray,
+    ].filter((pet) => {
+      if (!pet.alive || pet === this) {
+        return false;
       }
-    }
+      if (excludeEquipment && pet.equipment?.name === excludeEquipment) {
+        return false;
+      }
+      return true;
+    });
 
-    return targetsAhead;
+    const targets: Pet[] = [];
+    const pool = [...candidates];
+    while (targets.length < amt && pool.length > 0) {
+      const index = getRandomInt(0, pool.length - 1);
+      targets.push(pool.splice(index, 1)[0]);
+    }
+    return targets;
   }
 
   getPetsBehind(amt: number, excludeEquipment?: string): Pet[] {
+    const sillyTargets = this.getSillyRandomTargets(amt, excludeEquipment);
+    if (sillyTargets.length > 0) {
+      return sillyTargets;
+    }
+
     let targetsBehind = [];
     let petBehind = this.petBehind();
     // Skip pets that already have the excluded equipment

@@ -1,9 +1,11 @@
-import { AbilityService } from '../../../../services/ability/ability.service';
-import { LogService } from '../../../../services/log.service';
+import { AbilityService } from 'app/services/ability/ability.service';
+import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { KoalaAbility } from '../../../abilities/pets/star/tier-2/koala-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Eucalyptus } from 'app/classes/equipment/puppy/eucalyptus.class';
+
 
 export class Koala extends Pet {
   name = 'Koala';
@@ -29,5 +31,54 @@ export class Koala extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
+  }
+}
+
+
+export class KoalaAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'KoalaAbility',
+      owner: owner,
+      triggers: ['FriendHurt'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      maxUses: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let target = targetResp.pet;
+    if (!target) {
+      return;
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} Eucalyptus perk.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: targetResp.random,
+    });
+
+    target.givePetEquipment(new Eucalyptus());
+
+    // Tiger system: trigger Tiger execution at the end
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): KoalaAbility {
+    return new KoalaAbility(newOwner, this.logService);
   }
 }

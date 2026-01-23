@@ -1,4 +1,4 @@
-import * as foodJson from '../../files/food.json';
+import * as foodJson from 'assets/data/food.json';
 
 interface FoodJsonEntry {
   Name?: string;
