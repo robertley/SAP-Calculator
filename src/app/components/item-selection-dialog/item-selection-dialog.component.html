@@ -33,7 +33,7 @@
           placeholder="Search..."
           [(ngModel)]="searchQuery"
           (ngModelChange)="onSearchChange()"
-          autoFocus
+          #searchInput
         />
       </div>
 
@@ -56,7 +56,7 @@
         <div
           class="item-card none-card"
           *ngIf="type !== 'swallowed-pet' && type !== 'pack'"
-          (click)="onItemClick({ name: null, item: null })"
+          (click)="onItemClick(null)"
         >
           <div class="item-icon-container">
             <span class="none-icon">None</span>

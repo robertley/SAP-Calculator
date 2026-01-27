@@ -406,13 +406,6 @@
     "NameId": "MagicBeans"
   },
   {
-    "Ability": "Before battle: Gain +6 mana.",
-    "Positive": true,
-    "Id": "61",
-    "Name": "Mana Potion",
-    "NameId": "ManaPotion"
-  },
-  {
     "Ability": "Attack for 50% damage and block 50% damage, thrice.",
     "Positive": true,
     "Id": "93",

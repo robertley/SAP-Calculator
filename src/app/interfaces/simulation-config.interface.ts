@@ -250,6 +250,7 @@ export interface SimulationConfig {
   komodoShuffle?: boolean;
   mana?: boolean;
   simulationCount?: number;
+  logsEnabled?: boolean;
 }
 
 export interface SimulationResult {

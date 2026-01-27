@@ -3,6 +3,7 @@ import { Player } from '../classes/player.class';
 import { Battle } from '../interfaces/battle.interface';
 import { Log } from '../interfaces/log.interface';
 import { LocalStorageService } from '../services/local-storage.service';
+import { LogService } from '../services/log.service';
 import { SimulationService } from '../services/simulation/simulation.service';
 import { money_round } from '../util/helper-functions';
 import { buildApiResponse as buildApiResponsePayload } from './app.component.share-utils';
@@ -11,6 +12,7 @@ export interface AppSimulationContext {
   formGroup: FormGroup;
   localStorageService: LocalStorageService;
   simulationService: SimulationService;
+  logService: LogService;
   player: Player;
   opponent: Player;
   simulationBattleAmt: number;
@@ -25,6 +27,28 @@ export interface AppSimulationContext {
   viewBattleLogRows: Array<{ parts: LogMessagePart[]; classes: string[] }>;
   simulated: boolean;
   apiResponse: string | null;
+}
+
+const logPartsCache = new WeakMap<
+  Log,
+  { message: string; parts: LogMessagePart[] }
+>();
+
+function getLogMessageParts(
+  log: Log,
+  logService: LogService | null,
+): LogMessagePart[] {
+  if (logService) {
+    logService.decorateLogIfNeeded(log);
+  }
+  const message = log.message + (log.count > 1 ? ` (x${log.count})` : '');
+  const cached = logPartsCache.get(log);
+  if (cached && cached.message === message) {
+    return cached.parts;
+  }
+  const parts = parseLogMessage(message);
+  logPartsCache.set(log, { message, parts });
+  return parts;
 }
 
 export function buildApiResponse(ctx: AppSimulationContext): void {
@@ -63,7 +87,7 @@ export function runSimulation(
   ctx.draw = result.draws;
   ctx.battles = result.battles || [];
   ctx.battleRandomEvents = ctx.battles.map((battle) =>
-    formatRandomEvents(battle),
+    formatRandomEvents(battle, ctx.logService),
   );
   refreshFilteredBattles(ctx);
   ctx.viewBattle = result.battles[0] || null;
@@ -80,9 +104,7 @@ export function setViewBattle(ctx: AppSimulationContext, battle: Battle): void {
 
 export function refreshViewBattleLogRows(ctx: AppSimulationContext): void {
   ctx.viewBattleLogRows = ctx.viewBattleLogs.map((log) => ({
-    parts: parseLogMessage(
-      log.message + (log.count > 1 ? ` (x${log.count})` : ''),
-    ),
+    parts: getLogMessageParts(log, ctx.logService),
     classes: [
       getPlayerClass(log),
       log.randomEvent ? 'random-event' : '',
@@ -99,13 +121,14 @@ export function refreshFilteredBattles(ctx: AppSimulationContext): void {
       : ctx.battles.filter((battle) => battle.winner === filter);
 }
 
-export function formatRandomEvents(battle: Battle): LogMessagePart[] {
+export function formatRandomEvents(
+  battle: Battle,
+  logService: LogService | null,
+): LogMessagePart[] {
   const randomLogs = battle.logs.filter((log) => log.randomEvent === true);
   const parts: LogMessagePart[] = [];
   randomLogs.forEach((log, index) => {
-    parts.push(
-      ...parseLogMessage(log.message + (log.count > 1 ? ` (x${log.count})` : '')),
-    );
+    parts.push(...getLogMessageParts(log, logService));
     if (index < randomLogs.length - 1) {
       parts.push({ type: 'br' });
     }

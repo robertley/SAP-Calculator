@@ -21,6 +21,8 @@ export class LogService {
   private toyNameRegex: RegExp;
   private equipmentNameRegex: RegExp;
   private ailmentNames: Set<string>;
+  private enabled = true;
+  private deferDecorations = false;
   constructor() {
     this.petNameRegex = this.buildNameRegex(getAllPetNames());
     this.toyNameRegex = this.buildNameRegex(getAllToyNames());
@@ -30,7 +32,42 @@ export class LogService {
     );
   }
 
+  setEnabled(enabled: boolean) {
+    this.enabled = Boolean(enabled);
+    if (!this.enabled) {
+      this.logs = [];
+    }
+  }
+
+  isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  setDeferDecorations(enabled: boolean) {
+    this.deferDecorations = Boolean(enabled);
+  }
+
+  isDeferDecorations(): boolean {
+    return this.deferDecorations;
+  }
+
+  decorateLogIfNeeded(log: Log) {
+    if (!log || log.decorated || !log.rawMessage) {
+      return;
+    }
+    const message = this.decorateMessageWithNames(
+      log.rawMessage,
+      log.sourcePet,
+      log.targetPet,
+    );
+    log.message = this.decorateInlineIcons(message);
+    log.decorated = true;
+  }
+
   createLog(log: Log) {
+    if (!this.enabled) {
+      return;
+    }
     if (log.message?.startsWith('Phase ')) {
       log.bold = true;
     }
@@ -44,31 +81,37 @@ export class LogService {
       }
     }
 
-    if (log.sourcePet && log.targetPet) {
-      log.message = this.decorateAttackMessage(
-        log.message,
+    let message = log.message ?? '';
+    if (!this.deferDecorations) {
+      message = this.decorateMessageWithNames(
+        message,
         log.sourcePet,
         log.targetPet,
       );
-    } else if (log.sourcePet) {
-      log.message = this.decorateMessage(log.message, log.sourcePet);
     }
 
     if (log.tiger) {
-      log.message += ' (Tiger)';
+      message += ' (Tiger)';
     }
     if (log.puma) {
-      log.message += ' (Puma)';
+      message += ' (Puma)';
     }
     if (log.pteranodon) {
-      log.message += ' (Pteranodon)';
+      message += ' (Pteranodon)';
     }
     if (log.pantherMultiplier != null && log.pantherMultiplier > 1) {
-      log.message += ` x${log.pantherMultiplier} (Panther)`;
+      message += ` x${log.pantherMultiplier} (Panther)`;
     }
 
-    if (log.message) {
-      log.message = this.decorateInlineIcons(log.message);
+    if (message) {
+      if (this.deferDecorations) {
+        log.rawMessage = message;
+        log.message = message;
+        log.decorated = false;
+      } else {
+        log.message = this.decorateInlineIcons(message);
+        log.decorated = true;
+      }
     }
 
     const lastLog = this.logs[this.logs.length - 1];
@@ -152,6 +195,23 @@ export class LogService {
     updated = updated.replace(TARGET_HOLDER, targetFullLabel);
 
     return updated;
+  }
+
+  private decorateMessageWithNames(
+    message: string,
+    sourcePet?: Pet,
+    targetPet?: Pet,
+  ): string {
+    if (!message) {
+      return message;
+    }
+    if (sourcePet && targetPet) {
+      return this.decorateAttackMessage(message, sourcePet, targetPet);
+    }
+    if (sourcePet) {
+      return this.decorateMessage(message, sourcePet);
+    }
+    return message;
   }
 
   private replaceFirst(
@@ -256,6 +316,9 @@ export class LogService {
   }
 
   printState(player: Player, opponent: Player, message?: string) {
+    if (!this.enabled) {
+      return;
+    }
     if (message) {
       this.createLog({
         message: message,

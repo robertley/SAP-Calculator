@@ -87,7 +87,6 @@ export const EQUIPMENT_CATEGORIES: { [key: string]: string[] } = {
     'Kiwano',
     'Kiwifruit',
     'Macaron',
-    'Mana Potion',
     'Melon Slice',
     'Nachos',
     'Oyster Mushroom',

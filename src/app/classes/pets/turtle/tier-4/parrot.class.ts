@@ -6,6 +6,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 
+const PARROT_COPY_ABOMINATION_SLOTS = [1, 2, 3] as const;
 
 export class Parrot extends Pet {
   name = 'Parrot';
@@ -66,7 +67,6 @@ export class ParrotAbility extends Ability {
     const belugaSwallowedPet = useSavedCopy
       ? owner.parrotCopyPetBelugaSwallowedPet
       : null;
-    const slots = [1, 2, 3] as const;
     const getOwnerValue = <T>(prop: string, fallback: T): T => {
       const value = (owner as unknown as Record<string, T | null | undefined>)[
         prop
@@ -75,7 +75,7 @@ export class ParrotAbility extends Ability {
     };
     const buildAbominationSwallowFields = () => {
       const fields: Record<string, string | number | null | undefined> = {};
-      for (const slot of slots) {
+      for (const slot of PARROT_COPY_ABOMINATION_SLOTS) {
         const base = `parrotCopyPetAbominationSwallowedPet${slot}`;
         fields[`abominationSwallowedPet${slot}`] = getOwnerValue<string | null>(
           base,
@@ -98,7 +98,7 @@ export class ParrotAbility extends Ability {
           `${base}ParrotCopyPetBelugaSwallowedPet`,
           null,
         );
-        for (const nestedSlot of slots) {
+        for (const nestedSlot of PARROT_COPY_ABOMINATION_SLOTS) {
           const nestedBase = `${base}ParrotCopyPetAbominationSwallowedPet${nestedSlot}`;
           fields[
             `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${nestedSlot}`

@@ -203,6 +203,147 @@ export interface PetForm {
   equipmentUses?: number;
 }
 
+
+const PET_INDEXES = [1, 2, 3] as const;
+
+type PetFormField = keyof PetForm;
+
+const buildParrotFormFields = (): ReadonlyArray<PetFormField> => {
+  const fields: PetFormField[] = [
+    'parrotCopyPet',
+    'parrotCopyPetBelugaSwallowedPet',
+  ];
+
+  for (const i of PET_INDEXES) {
+    fields.push(`parrotCopyPetAbominationSwallowedPet${i}` as PetFormField);
+    fields.push(
+      `parrotCopyPetAbominationSwallowedPet${i}BelugaSwallowedPet` as PetFormField,
+    );
+    fields.push(
+      `parrotCopyPetAbominationSwallowedPet${i}Level` as PetFormField,
+    );
+    fields.push(
+      `parrotCopyPetAbominationSwallowedPet${i}TimesHurt` as PetFormField,
+    );
+    fields.push(
+      `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPet` as PetFormField,
+    );
+    fields.push(
+      `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetBelugaSwallowedPet` as PetFormField,
+    );
+
+    for (const j of PET_INDEXES) {
+      fields.push(
+        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}` as PetFormField,
+      );
+      fields.push(
+        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}BelugaSwallowedPet` as PetFormField,
+      );
+      fields.push(
+        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}Level` as PetFormField,
+      );
+      fields.push(
+        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}TimesHurt` as PetFormField,
+      );
+    }
+  }
+
+  return fields;
+};
+
+const buildAbominationFormFields = (): ReadonlyArray<PetFormField> => {
+  const fields: PetFormField[] = [];
+
+  for (const i of PET_INDEXES) {
+    fields.push(
+      `abominationSwallowedPet${i}BelugaSwallowedPet` as PetFormField,
+    );
+    fields.push(`abominationSwallowedPet${i}ParrotCopyPet` as PetFormField);
+    fields.push(
+      `abominationSwallowedPet${i}ParrotCopyPetBelugaSwallowedPet` as PetFormField,
+    );
+
+    for (const j of PET_INDEXES) {
+      fields.push(
+        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}` as PetFormField,
+      );
+      fields.push(
+        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}BelugaSwallowedPet` as PetFormField,
+      );
+      fields.push(
+        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}Level` as PetFormField,
+      );
+      fields.push(
+        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}TimesHurt` as PetFormField,
+      );
+    }
+  }
+
+  return fields;
+};
+
+const PARROT_FORM_FIELDS = buildParrotFormFields();
+const ABOMINATION_FORM_FIELDS = buildAbominationFormFields();
+
+const isNonDefaultPetFormValue = (
+  field: keyof PetForm,
+  value: unknown,
+): boolean => {
+  if (value == null) {
+    return false;
+  }
+  if (typeof value === 'string' && value.trim() === '') {
+    return false;
+  }
+  const fieldName = String(field);
+  if (fieldName.endsWith('Level')) {
+    const numeric = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(numeric) ? numeric !== 1 : false;
+  }
+  if (fieldName.endsWith('TimesHurt')) {
+    const numeric = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(numeric) ? numeric !== 0 : false;
+  }
+  return true;
+};
+
+function hasNonDefaultFormValue(
+  petForm: PetForm,
+  fields: ReadonlyArray<keyof PetForm>,
+): boolean {
+  for (const field of fields) {
+    const value = (petForm as any)[field];
+    if (isNonDefaultPetFormValue(field, value)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function copyPetFormFields(
+  target: Pet,
+  petForm: PetForm,
+  fields: ReadonlyArray<keyof PetForm>,
+): void {
+  for (const field of fields) {
+    const value = (petForm as any)[field];
+    if (value != null) {
+      (target as any)[field] = value;
+      continue;
+    }
+    const fieldName = String(field);
+    if (fieldName.endsWith('Level')) {
+      (target as any)[field] = 1;
+      continue;
+    }
+    if (fieldName.endsWith('TimesHurt')) {
+      (target as any)[field] = 0;
+      continue;
+    }
+    (target as any)[field] = null;
+  }
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -292,6 +433,26 @@ export class PetFactoryService {
       gameService: this.gameService,
     };
 
+    const hasEquipmentUses = petForm.equipmentUses != null;
+    const hasParrotData = hasNonDefaultFormValue(
+      petForm,
+      PARROT_FORM_FIELDS,
+    );
+    const hasAbominationData = hasNonDefaultFormValue(
+      petForm,
+      ABOMINATION_FORM_FIELDS,
+    );
+    const hasSarcastic = petForm.sarcasticFringeheadSwallowedPet != null;
+    const hasFriendsDied = (petForm.friendsDiedBeforeBattle ?? 0) > 0;
+    const hasTimesHurt = (petForm.timesHurt ?? 0) > 0;
+    const needsPostInit =
+      hasEquipmentUses ||
+      hasParrotData ||
+      hasAbominationData ||
+      hasSarcastic ||
+      hasFriendsDied ||
+      hasTimesHurt;
+
     const applySarcasticSetting = (pet: Pet) => {
       if (pet) {
         pet.sarcasticFringeheadSwallowedPet =
@@ -314,292 +475,21 @@ export class PetFactoryService {
       if (petInstance?.name !== 'Abomination') {
         return petInstance;
       }
-      petInstance.abominationSwallowedPet1BelugaSwallowedPet =
-        petForm.abominationSwallowedPet1BelugaSwallowedPet ?? null;
-      petInstance.abominationSwallowedPet2BelugaSwallowedPet =
-        petForm.abominationSwallowedPet2BelugaSwallowedPet ?? null;
-      petInstance.abominationSwallowedPet3BelugaSwallowedPet =
-        petForm.abominationSwallowedPet3BelugaSwallowedPet ?? null;
-      petInstance.abominationSwallowedPet1ParrotCopyPet =
-        petForm.abominationSwallowedPet1ParrotCopyPet ?? null;
-      petInstance.abominationSwallowedPet2ParrotCopyPet =
-        petForm.abominationSwallowedPet2ParrotCopyPet ?? null;
-      petInstance.abominationSwallowedPet3ParrotCopyPet =
-        petForm.abominationSwallowedPet3ParrotCopyPet ?? null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet =
-        petForm.abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ?? null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet =
-        petForm.abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ?? null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet =
-        petForm.abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ?? null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ??
-        null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 ??
-        null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 ??
-        null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 ??
-        null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 ??
-        null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 ??
-        null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 ??
-        null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 ??
-        null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 ??
-        null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-        null;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level ??
-        1;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level ??
-        1;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level ??
-        1;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level ??
-        1;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level ??
-        1;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level ??
-        1;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level ??
-        1;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level ??
-        1;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level ??
-        1;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt ??
-        0;
-      petInstance.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
-        0;
+      copyPetFormFields(petInstance, petForm, ABOMINATION_FORM_FIELDS);
       return petInstance;
     };
     const applyParrotCopyPet = (petInstance: Pet) => {
       if (petInstance?.name !== 'Parrot') {
         return petInstance;
       }
-      petInstance.parrotCopyPet = petForm.parrotCopyPet ?? null;
-      petInstance.parrotCopyPetBelugaSwallowedPet =
-        petForm.parrotCopyPetBelugaSwallowedPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1 =
-        petForm.parrotCopyPetAbominationSwallowedPet1 ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2 =
-        petForm.parrotCopyPetAbominationSwallowedPet2 ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3 =
-        petForm.parrotCopyPetAbominationSwallowedPet3 ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1Level =
-        petForm.parrotCopyPetAbominationSwallowedPet1Level ?? 1;
-      petInstance.parrotCopyPetAbominationSwallowedPet2Level =
-        petForm.parrotCopyPetAbominationSwallowedPet2Level ?? 1;
-      petInstance.parrotCopyPetAbominationSwallowedPet3Level =
-        petForm.parrotCopyPetAbominationSwallowedPet3Level ?? 1;
-      petInstance.parrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0;
-      petInstance.parrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0;
-      petInstance.parrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPet =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPet =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPet =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPet ?? null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3 ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-        null;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level ??
-        1;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt ??
-        0;
-      petInstance.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt =
-        petForm.parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
-        0;
+      copyPetFormFields(petInstance, petForm, PARROT_FORM_FIELDS);
       return petInstance;
     };
     const buildPetInstance = (petInstance: Pet) => {
       if (!petInstance) {
+        return petInstance;
+      }
+      if (!needsPostInit) {
         return petInstance;
       }
       const withEquipment = this.applyEquipmentUsesOverride(

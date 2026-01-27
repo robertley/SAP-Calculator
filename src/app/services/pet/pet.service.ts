@@ -111,15 +111,23 @@ export class PetService {
       if (!Number.isFinite(tier) || tier < 1 || tier > 6) {
         continue;
       }
+      const hasNoAbility =
+        Array.isArray(pet.Abilities) &&
+        pet.Abilities.length > 0 &&
+        pet.Abilities.every((ability) => ability?.About === 'No ability.');
+      const isToken = pet.Rollable !== true || hasNoAbility;
+
+      if (isToken) {
+        this.tokenPetsMap.get(tier)?.push(pet.Name);
+        continue;
+      }
+
       for (const packName of this.getPackNamesFromEntry(pet)) {
         const tierMap = this.basePackPetsByName[packName];
         const tierPets = tierMap?.get(tier);
         if (tierPets) {
           tierPets.push(pet.Name);
         }
-      }
-      if (pet.Rollable === false || pet.Rollable === undefined) {
-        this.tokenPetsMap.get(tier)?.push(pet.Name);
       }
     }
     for (const tierMap of Object.values(this.basePackPetsByName)) {
@@ -130,14 +138,22 @@ export class PetService {
 
   private getPackNamesFromEntry(pet: PetJsonEntry): PackName[] {
     const codes = new Set<string>();
+    const packCodes = new Set<string>();
     if (Array.isArray(pet.Packs)) {
       pet.Packs.forEach((code) => {
         if (code) {
-          codes.add(code.trim());
+          const trimmed = code.trim();
+          codes.add(trimmed);
+          packCodes.add(trimmed);
         }
       });
     }
-    if (Array.isArray(pet.PacksRequired)) {
+    const hasCustomPack =
+      packCodes.has('Custom') ||
+      packCodes.has('MiniPack1') ||
+      packCodes.has('MiniPack2') ||
+      packCodes.has('MiniPack3');
+    if (!hasCustomPack && Array.isArray(pet.PacksRequired)) {
       pet.PacksRequired.forEach((code) => {
         if (code) {
           codes.add(code.trim());

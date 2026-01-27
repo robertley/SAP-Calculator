@@ -45,11 +45,13 @@ export class TooltipPositionDirective {
     const padding = 12;
     const arrowSize = 8;
     const gap = 12;
-    const maxTooltipWidth = Math.min(200, viewportWidth - padding * 2);
+    const maxTooltipWidth = Math.min(170, viewportWidth - padding * 2);
+    const maxTooltipHeight = Math.min(140, viewportHeight - padding * 2);
 
     const { width: tooltipWidth, height: tooltipHeight } = this.measureTooltip(
       text,
       maxTooltipWidth,
+      maxTooltipHeight,
     );
 
     const centerX = rect.left + rect.width / 2;
@@ -150,6 +152,11 @@ export class TooltipPositionDirective {
       '--tooltip-max-width',
       `${maxTooltipWidth}px`,
     );
+    this.renderer.setStyle(
+      this.el.nativeElement,
+      '--tooltip-max-height',
+      `${maxTooltipHeight}px`,
+    );
     this.renderer.setAttribute(
       this.el.nativeElement,
       'data-tooltip-placement',
@@ -160,18 +167,24 @@ export class TooltipPositionDirective {
   private measureTooltip(
     text: string,
     maxWidth: number,
+    maxHeight: number,
   ): { width: number; height: number } {
     const measure = document.createElement('div');
     measure.textContent = text;
     measure.style.position = 'fixed';
     measure.style.visibility = 'hidden';
     measure.style.pointerEvents = 'none';
-    measure.style.fontSize = '0.78rem';
-    measure.style.lineHeight = '1.3';
-    measure.style.padding = '0.55rem 0.7rem';
+    measure.style.fontSize = '0.72rem';
+    measure.style.lineHeight = '1.2';
+    measure.style.padding = '0.45rem 0.6rem';
     measure.style.borderRadius = '8px';
     measure.style.maxWidth = `${maxWidth}px`;
+    measure.style.maxHeight = `${maxHeight}px`;
     measure.style.whiteSpace = 'pre-wrap';
+    measure.style.overflow = 'hidden';
+    measure.style.display = '-webkit-box';
+    measure.style.webkitBoxOrient = 'vertical';
+    measure.style.webkitLineClamp = '6';
     measure.style.boxSizing = 'border-box';
     measure.style.width = 'max-content';
     document.body.appendChild(measure);

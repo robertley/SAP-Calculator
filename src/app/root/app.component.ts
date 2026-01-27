@@ -216,7 +216,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly trackByLogTab = trackByLogTabImpl;
 
   constructor(
-    private logService: LogService,
+    public logService: LogService,
     private injector: Injector,
     private abilityService: AbilityService,
     public gameService: GameService,
@@ -327,8 +327,10 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.refreshFilteredBattles();
     });
     this.formGroup.get('simulations')?.valueChanges.subscribe((val) => {
-      if (val > 1000) {
-        this.formGroup.get('simulations')?.setValue(1000, { emitEvent: false });
+      if (val > 10000) {
+        this.formGroup
+          .get('simulations')
+          ?.setValue(10000, { emitEvent: false });
       }
     });
   }
