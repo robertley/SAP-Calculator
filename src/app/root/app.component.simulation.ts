@@ -33,6 +33,26 @@ const logPartsCache = new WeakMap<
   Log,
   { message: string; parts: LogMessagePart[] }
 >();
+const parsedMessageCache = new Map<string, LogMessagePart[]>();
+const viewBattleLogRowsCache = new WeakMap<
+  Battle,
+  {
+    logs: Log[];
+    rows: Array<{ parts: LogMessagePart[]; classes: string[] }>;
+  }
+>();
+const PARSED_MESSAGE_CACHE_MAX = 1000;
+
+function cacheParsedMessage(message: string, parts: LogMessagePart[]): void {
+  parsedMessageCache.set(message, parts);
+  if (parsedMessageCache.size <= PARSED_MESSAGE_CACHE_MAX) {
+    return;
+  }
+  const oldestKey = parsedMessageCache.keys().next().value;
+  if (oldestKey) {
+    parsedMessageCache.delete(oldestKey);
+  }
+}
 
 function getLogMessageParts(
   log: Log,
@@ -46,8 +66,14 @@ function getLogMessageParts(
   if (cached && cached.message === message) {
     return cached.parts;
   }
+  const cachedByMessage = parsedMessageCache.get(message);
+  if (cachedByMessage) {
+    logPartsCache.set(log, { message, parts: cachedByMessage });
+    return cachedByMessage;
+  }
   const parts = parseLogMessage(message);
   logPartsCache.set(log, { message, parts });
+  cacheParsedMessage(message, parts);
   return parts;
 }
 
@@ -103,7 +129,14 @@ export function setViewBattle(ctx: AppSimulationContext, battle: Battle): void {
 }
 
 export function refreshViewBattleLogRows(ctx: AppSimulationContext): void {
-  ctx.viewBattleLogRows = ctx.viewBattleLogs.map((log) => ({
+  if (ctx.viewBattle) {
+    const cached = viewBattleLogRowsCache.get(ctx.viewBattle);
+    if (cached && cached.logs === ctx.viewBattleLogs) {
+      ctx.viewBattleLogRows = cached.rows;
+      return;
+    }
+  }
+  const rows = ctx.viewBattleLogs.map((log) => ({
     parts: getLogMessageParts(log, ctx.logService),
     classes: [
       getPlayerClass(log),
@@ -111,6 +144,13 @@ export function refreshViewBattleLogRows(ctx: AppSimulationContext): void {
       log.bold ? 'bold' : '',
     ].filter(Boolean),
   }));
+  ctx.viewBattleLogRows = rows;
+  if (ctx.viewBattle) {
+    viewBattleLogRowsCache.set(ctx.viewBattle, {
+      logs: ctx.viewBattleLogs,
+      rows,
+    });
+  }
 }
 
 export function refreshFilteredBattles(ctx: AppSimulationContext): void {
