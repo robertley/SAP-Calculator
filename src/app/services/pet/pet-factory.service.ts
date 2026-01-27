@@ -8,6 +8,7 @@ import { GameService } from '../game.service';
 import { levelToExp } from '../../util/leveling';
 import { EquipmentService } from '../equipment/equipment.service';
 import { cloneEquipment } from '../../util/equipment-utils';
+import { InjectorService } from '../injector.service';
 import {
   PetFactoryDeps,
   PETS_NEEDING_PETSERVICE,
@@ -615,8 +616,15 @@ export class PetFactoryService {
     if (!equipmentName) {
       return null;
     }
-    const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
-    const ailmentMap = this.equipmentService.getInstanceOfAllAilments();
+    const injector = InjectorService.getInjector();
+    const equipmentService =
+      this.equipmentService ??
+      (injector ? injector.get(EquipmentService) : null);
+    if (!equipmentService) {
+      return null;
+    }
+    const equipmentMap = equipmentService.getInstanceOfAllEquipment();
+    const ailmentMap = equipmentService.getInstanceOfAllAilments();
     const baseEquipment =
       equipmentMap.get(equipmentName) ?? ailmentMap.get(equipmentName);
     if (!baseEquipment) {
