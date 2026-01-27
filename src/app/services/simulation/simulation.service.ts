@@ -33,6 +33,10 @@ export class SimulationService {
     opponent: Player,
   ): SimulationResult {
     const config = this.buildConfig(formGroup, count);
+    const wasLoggingEnabled = this.logService.isEnabled();
+    const wasDeferDecorations = this.logService.isDeferDecorations();
+    this.logService.setEnabled(config.logsEnabled !== false);
+    this.logService.setDeferDecorations(true);
 
     const runner = new SimulationRunner(
       this.logService,
@@ -48,6 +52,8 @@ export class SimulationService {
     // Restore GameService to UI players
     this.gameService.init(player, opponent);
     this.syncGameApiFromForm(formGroup);
+    this.logService.setEnabled(wasLoggingEnabled);
+    this.logService.setDeferDecorations(wasDeferDecorations);
 
     return result;
   }
@@ -118,6 +124,7 @@ export class SimulationService {
       komodoShuffle: formGroup.get('komodoShuffle').value,
       mana: formGroup.get('mana').value,
       simulationCount: count,
+      logsEnabled: formGroup.get('logsEnabled')?.value ?? true,
     };
   }
 

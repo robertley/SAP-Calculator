@@ -1,5 +1,29 @@
 import { Injectable } from '@angular/core';
 
+const PARROT_COPY_PET_ABOMINATION_REVERSE_KEY_MAP: Record<string, string> =
+  (() => {
+    const map: Record<string, string> = {};
+    for (let outer = 1; outer <= 3; outer++) {
+      const base = `parrotCopyPetAbominationSwallowedPet${outer}`;
+      const outerPrefix = `pCPAS${outer}`;
+      map[outerPrefix] = base;
+      map[`${outerPrefix}B`] = `${base}BelugaSwallowedPet`;
+      map[`${outerPrefix}L`] = `${base}Level`;
+      map[`${outerPrefix}T`] = `${base}TimesHurt`;
+      map[`${outerPrefix}PCP`] = `${base}ParrotCopyPet`;
+      map[`${outerPrefix}PCPB`] = `${base}ParrotCopyPetBelugaSwallowedPet`;
+      for (let inner = 1; inner <= 3; inner++) {
+        const innerBase = `${base}ParrotCopyPetAbominationSwallowedPet${inner}`;
+        const innerPrefix = `${outerPrefix}PCPAS${inner}`;
+        map[innerPrefix] = innerBase;
+        map[`${innerPrefix}B`] = `${innerBase}BelugaSwallowedPet`;
+        map[`${innerPrefix}L`] = `${innerBase}Level`;
+        map[`${innerPrefix}T`] = `${innerBase}TimesHurt`;
+      }
+    }
+    return map;
+  })();
+
 const REVERSE_KEY_MAP = {
   pP: 'playerPack',
   oP: 'opponentPack',
@@ -44,99 +68,7 @@ const REVERSE_KEY_MAP = {
   bSP: 'belugaSwallowedPet',
   pCP: 'parrotCopyPet',
   pCPB: 'parrotCopyPetBelugaSwallowedPet',
-  pCPAS1: 'parrotCopyPetAbominationSwallowedPet1',
-  pCPAS2: 'parrotCopyPetAbominationSwallowedPet2',
-  pCPAS3: 'parrotCopyPetAbominationSwallowedPet3',
-  pCPAS1B: 'parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
-  pCPAS2B: 'parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
-  pCPAS3B: 'parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
-  pCPAS1L: 'parrotCopyPetAbominationSwallowedPet1Level',
-  pCPAS2L: 'parrotCopyPetAbominationSwallowedPet2Level',
-  pCPAS3L: 'parrotCopyPetAbominationSwallowedPet3Level',
-  pCPAS1T: 'parrotCopyPetAbominationSwallowedPet1TimesHurt',
-  pCPAS2T: 'parrotCopyPetAbominationSwallowedPet2TimesHurt',
-  pCPAS3T: 'parrotCopyPetAbominationSwallowedPet3TimesHurt',
-  pCPAS1PCP: 'parrotCopyPetAbominationSwallowedPet1ParrotCopyPet',
-  pCPAS2PCP: 'parrotCopyPetAbominationSwallowedPet2ParrotCopyPet',
-  pCPAS3PCP: 'parrotCopyPetAbominationSwallowedPet3ParrotCopyPet',
-  pCPAS1PCPB:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet',
-  pCPAS2PCPB:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet',
-  pCPAS3PCPB:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet',
-  pCPAS1PCPAS1:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1',
-  pCPAS1PCPAS2:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2',
-  pCPAS1PCPAS3:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3',
-  pCPAS2PCPAS1:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1',
-  pCPAS2PCPAS2:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2',
-  pCPAS2PCPAS3:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3',
-  pCPAS3PCPAS1:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1',
-  pCPAS3PCPAS2:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2',
-  pCPAS3PCPAS3:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3',
-  pCPAS1PCPAS1B:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
-  pCPAS1PCPAS2B:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
-  pCPAS1PCPAS3B:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
-  pCPAS2PCPAS1B:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
-  pCPAS2PCPAS2B:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
-  pCPAS2PCPAS3B:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
-  pCPAS3PCPAS1B:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
-  pCPAS3PCPAS2B:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
-  pCPAS3PCPAS3B:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
-  pCPAS1PCPAS1L:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level',
-  pCPAS1PCPAS2L:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level',
-  pCPAS1PCPAS3L:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level',
-  pCPAS2PCPAS1L:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level',
-  pCPAS2PCPAS2L:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level',
-  pCPAS2PCPAS3L:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level',
-  pCPAS3PCPAS1L:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level',
-  pCPAS3PCPAS2L:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level',
-  pCPAS3PCPAS3L:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level',
-  pCPAS1PCPAS1T:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt',
-  pCPAS1PCPAS2T:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt',
-  pCPAS1PCPAS3T:
-    'parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt',
-  pCPAS2PCPAS1T:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt',
-  pCPAS2PCPAS2T:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt',
-  pCPAS2PCPAS3T:
-    'parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt',
-  pCPAS3PCPAS1T:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt',
-  pCPAS3PCPAS2T:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt',
-  pCPAS3PCPAS3T:
-    'parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt',
+  ...PARROT_COPY_PET_ABOMINATION_REVERSE_KEY_MAP,
   aSP1PCP: 'abominationSwallowedPet1ParrotCopyPet',
   aSP2PCP: 'abominationSwallowedPet2ParrotCopyPet',
   aSP3PCP: 'abominationSwallowedPet3ParrotCopyPet',

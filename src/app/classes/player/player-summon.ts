@@ -47,6 +47,10 @@ export const summonPet = (
     return { success: false, randomEvent: false };
   }
 
+  if (fly && player.getPet(position) != null) {
+    return { success: false, randomEvent: false };
+  }
+
   if (player.petArray.length === 5) {
     if (!fly) {
       logService.createLog({

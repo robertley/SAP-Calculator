@@ -137,6 +137,17 @@ function postJson(hostname, path, body, headers = {}) {
   });
 }
 
+function safeParseBattle(battleJson) {
+  if (!battleJson) {
+    return null;
+  }
+  try {
+    return JSON.parse(battleJson);
+  } catch (error) {
+    return null;
+  }
+}
+
 async function login(email, password) {
   if (!email || !password) {
     throw makeError(
@@ -262,9 +273,9 @@ const server = http.createServer(async (req, res) => {
       }
 
       const replay = await fetchReplay(participationId, sapEmail, sapPassword);
-      const battles = replay.Actions.filter((action) => action?.Type === 0).map(
-        (action) => JSON.parse(action.Battle),
-      );
+      const battles = replay.Actions.filter((action) => action?.Type === 0)
+        .map((action) => safeParseBattle(action.Battle))
+        .filter(Boolean);
 
       const battle = battles[turnNumber - 1];
       if (!battle) {
@@ -328,7 +339,9 @@ const server = http.createServer(async (req, res) => {
       if (Number.isFinite(turnNumber) && turnNumber > 0) {
         const battles = replay.Actions.filter(
           (action) => action?.Type === 0,
-        ).map((action) => JSON.parse(action.Battle));
+        )
+          .map((action) => safeParseBattle(action.Battle))
+          .filter(Boolean);
         battle = battles[turnNumber - 1] || null;
       }
 

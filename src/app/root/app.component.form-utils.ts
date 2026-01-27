@@ -583,6 +583,7 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     showAdvanced: new FormControl(false),
     ailmentEquipment: new FormControl(true),
     changeEquipmentUses: new FormControl(false),
+    logsEnabled: new FormControl(true),
     simulations: new FormControl(100),
   });
 

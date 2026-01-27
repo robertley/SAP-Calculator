@@ -21,4 +21,6 @@ export interface Log {
   pantherMultiplier?: number;
   count?: number;
   bold?: boolean;
+  rawMessage?: string;
+  decorated?: boolean;
 }

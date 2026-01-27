@@ -132,7 +132,7 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
   ClearFront: 25,
 
   // Post-removal Death events (User list 11/12, but must be after ClearFront 25)
-  ThisDied: 26,
+  ThisDied: 25.6,
   FriendDied: 26,
   AdjacentFriendsDie: 26,
   EnemyDied: 26,

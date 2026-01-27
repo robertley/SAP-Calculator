@@ -502,6 +502,11 @@ export function openSelectionDialog(
 }
 
 export function onItemSelected(ctx: AppUiContext, item: any): void {
+  if (item instanceof Event) {
+    ctx.showSelectionDialog = false;
+    ctx.selectionSide = 'none';
+    return;
+  }
   if (!ctx.selectionSide || ctx.selectionSide === 'none') {
     if (ctx.selectionType === 'team') {
       ctx.selectedTeamId =

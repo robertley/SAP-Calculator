@@ -9,6 +9,9 @@ import { EquipmentFactoryService } from './equipment-factory.service';
   providedIn: 'root',
 })
 export class EquipmentService {
+  private cachedEquipment: Map<string, Equipment> | null = null;
+  private cachedAilments: Map<string, Equipment> | null = null;
+
   constructor(
     private logService: LogService,
     private abilityService: AbilityService,
@@ -17,11 +20,17 @@ export class EquipmentService {
   ) {}
 
   getInstanceOfAllEquipment() {
-    return this.equipmentFactory.getAllEquipment();
+    if (!this.cachedEquipment) {
+      this.cachedEquipment = this.equipmentFactory.getAllEquipment();
+    }
+    return this.cachedEquipment;
   }
 
   getInstanceOfAllAilments() {
-    return this.equipmentFactory.getAllAilments();
+    if (!this.cachedAilments) {
+      this.cachedAilments = this.equipmentFactory.getAllAilments();
+    }
+    return this.cachedAilments;
   }
 
   private static readonly USEFUL_PERKS: Map<string, number> = new Map([

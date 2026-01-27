@@ -6,6 +6,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 
+const PARROT_COPY_ABOMINATION_SLOTS = [1, 2, 3] as const;
 
 export class Abomination extends Pet {
   name = 'Abomination';
@@ -111,6 +112,48 @@ export class AbominationAbility extends Ability {
       return value ?? fallback;
     };
 
+    const buildParrotCopyAbominationConfig = (
+      base: string,
+    ): Partial<SwallowedPetConfig> => {
+      const config: Partial<SwallowedPetConfig> = {};
+      for (const slot of PARROT_COPY_ABOMINATION_SLOTS) {
+        const slotBase = `parrotCopyPetAbominationSwallowedPet${slot}` as const;
+        (config as any)[slotBase] = getOwnerValue<string | null>(
+          `${base}ParrotCopyPetAbominationSwallowedPet${slot}`,
+          null,
+        );
+        (config as any)[`${slotBase}BelugaSwallowedPet`] = getOwnerValue<
+          string | null
+        >(`${base}ParrotCopyPetAbominationSwallowedPet${slot}BelugaSwallowedPet`, null);
+        (config as any)[`${slotBase}Level`] = getOwnerValue<number>(
+          `${base}ParrotCopyPetAbominationSwallowedPet${slot}Level`,
+          1,
+        );
+        (config as any)[`${slotBase}TimesHurt`] = getOwnerValue<number>(
+          `${base}ParrotCopyPetAbominationSwallowedPet${slot}TimesHurt`,
+          0,
+        );
+      }
+      return config;
+    };
+
+    const buildParrotCopyAbominationCreateConfig = (
+      source: SwallowedPetConfig,
+    ): Record<string, string | number | undefined> => {
+      const config: Record<string, string | number | undefined> = {};
+      for (const slot of PARROT_COPY_ABOMINATION_SLOTS) {
+        const slotBase = `parrotCopyPetAbominationSwallowedPet${slot}`;
+        config[slotBase] = source[slotBase as keyof SwallowedPetConfig] ?? undefined;
+        config[`${slotBase}BelugaSwallowedPet`] =
+          source[`${slotBase}BelugaSwallowedPet` as keyof SwallowedPetConfig] ?? undefined;
+        config[`${slotBase}Level`] =
+          source[`${slotBase}Level` as keyof SwallowedPetConfig] ?? undefined;
+        config[`${slotBase}TimesHurt`] =
+          source[`${slotBase}TimesHurt` as keyof SwallowedPetConfig] ?? undefined;
+      }
+      return config;
+    };
+
     const buildSwallowedPetConfig = (slot: 1 | 2 | 3): SwallowedPetConfig => {
       const base = `abominationSwallowedPet${slot}`;
       return {
@@ -129,60 +172,7 @@ export class AbominationAbility extends Ability {
           `${base}ParrotCopyPetBelugaSwallowedPet`,
           null,
         ),
-        parrotCopyPetAbominationSwallowedPet1: getOwnerValue<string | null>(
-          `${base}ParrotCopyPetAbominationSwallowedPet1`,
-          null,
-        ),
-        parrotCopyPetAbominationSwallowedPet2: getOwnerValue<string | null>(
-          `${base}ParrotCopyPetAbominationSwallowedPet2`,
-          null,
-        ),
-        parrotCopyPetAbominationSwallowedPet3: getOwnerValue<string | null>(
-          `${base}ParrotCopyPetAbominationSwallowedPet3`,
-          null,
-        ),
-        parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: getOwnerValue<
-          string | null
-        >(
-          `${base}ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet`,
-          null,
-        ),
-        parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: getOwnerValue<
-          string | null
-        >(
-          `${base}ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet`,
-          null,
-        ),
-        parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: getOwnerValue<
-          string | null
-        >(
-          `${base}ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet`,
-          null,
-        ),
-        parrotCopyPetAbominationSwallowedPet1Level: getOwnerValue<number>(
-          `${base}ParrotCopyPetAbominationSwallowedPet1Level`,
-          1,
-        ),
-        parrotCopyPetAbominationSwallowedPet2Level: getOwnerValue<number>(
-          `${base}ParrotCopyPetAbominationSwallowedPet2Level`,
-          1,
-        ),
-        parrotCopyPetAbominationSwallowedPet3Level: getOwnerValue<number>(
-          `${base}ParrotCopyPetAbominationSwallowedPet3Level`,
-          1,
-        ),
-        parrotCopyPetAbominationSwallowedPet1TimesHurt: getOwnerValue<number>(
-          `${base}ParrotCopyPetAbominationSwallowedPet1TimesHurt`,
-          0,
-        ),
-        parrotCopyPetAbominationSwallowedPet2TimesHurt: getOwnerValue<number>(
-          `${base}ParrotCopyPetAbominationSwallowedPet2TimesHurt`,
-          0,
-        ),
-        parrotCopyPetAbominationSwallowedPet3TimesHurt: getOwnerValue<number>(
-          `${base}ParrotCopyPetAbominationSwallowedPet3TimesHurt`,
-          0,
-        ),
+        ...buildParrotCopyAbominationConfig(base),
       };
     };
 
@@ -190,30 +180,18 @@ export class AbominationAbility extends Ability {
       owner.parrotCopyPet = source.parrotCopyPet ?? null;
       owner.parrotCopyPetBelugaSwallowedPet =
         source.parrotCopyPetBelugaSwallowedPet ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet1 =
-        source.parrotCopyPetAbominationSwallowedPet1 ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet2 =
-        source.parrotCopyPetAbominationSwallowedPet2 ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet3 =
-        source.parrotCopyPetAbominationSwallowedPet3 ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-        source.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-        source.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-        source.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? null;
-      owner.parrotCopyPetAbominationSwallowedPet1Level =
-        source.parrotCopyPetAbominationSwallowedPet1Level ?? 1;
-      owner.parrotCopyPetAbominationSwallowedPet2Level =
-        source.parrotCopyPetAbominationSwallowedPet2Level ?? 1;
-      owner.parrotCopyPetAbominationSwallowedPet3Level =
-        source.parrotCopyPetAbominationSwallowedPet3Level ?? 1;
-      owner.parrotCopyPetAbominationSwallowedPet1TimesHurt =
-        source.parrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0;
-      owner.parrotCopyPetAbominationSwallowedPet2TimesHurt =
-        source.parrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0;
-      owner.parrotCopyPetAbominationSwallowedPet3TimesHurt =
-        source.parrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0;
+      for (const slot of PARROT_COPY_ABOMINATION_SLOTS) {
+        const slotBase = `parrotCopyPetAbominationSwallowedPet${slot}`;
+        (owner as any)[slotBase] =
+          source[slotBase as keyof SwallowedPetConfig] ?? null;
+        (owner as any)[`${slotBase}BelugaSwallowedPet`] =
+          source[`${slotBase}BelugaSwallowedPet` as keyof SwallowedPetConfig] ??
+          null;
+        (owner as any)[`${slotBase}Level`] =
+          source[`${slotBase}Level` as keyof SwallowedPetConfig] ?? 1;
+        (owner as any)[`${slotBase}TimesHurt`] =
+          source[`${slotBase}TimesHurt` as keyof SwallowedPetConfig] ?? 0;
+      }
     };
 
     const orderedSwallowedPets: SwallowedPetConfig[] = [
@@ -234,6 +212,10 @@ export class AbominationAbility extends Ability {
         continue;
       }
       const swallowedName = swallowedPet.name;
+      const parrotCopyAbominationConfig =
+        swallowedName === 'Parrot'
+          ? buildParrotCopyAbominationCreateConfig(swallowedPet)
+          : {};
       let copyPet = this.petService.createPet(
         {
           attack: 0,
@@ -255,66 +237,7 @@ export class AbominationAbility extends Ability {
             swallowedName === 'Parrot'
               ? (swallowedPet.parrotCopyPetBelugaSwallowedPet ?? undefined)
               : undefined,
-          parrotCopyPetAbominationSwallowedPet1:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet1 ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet2:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet2 ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet3:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet3 ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet1Level:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet1Level ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet2Level:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet2Level ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet3Level:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet3Level ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet1TimesHurt:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet1TimesHurt ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet2TimesHurt:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet2TimesHurt ??
-                undefined)
-              : undefined,
-          parrotCopyPetAbominationSwallowedPet3TimesHurt:
-            swallowedName === 'Parrot'
-              ? (swallowedPet.parrotCopyPetAbominationSwallowedPet3TimesHurt ??
-                undefined)
-              : undefined,
+          ...parrotCopyAbominationConfig,
         },
         owner.parent,
       );

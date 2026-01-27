@@ -293,17 +293,6 @@
     "CustomArchetypes": []
   },
   {
-    "Ability": "Give one pet +3 mana.",
-    "Id": "157",
-    "Name": "Mana Potion",
-    "NameId": "ManaPotion",
-    "Tier": 1,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
-    "Rollable": true,
-    "CustomArchetypes": []
-  },
-  {
     "Ability": "Give one pet +1 attack and +2 health.",
     "Id": "49",
     "Name": "Milk",

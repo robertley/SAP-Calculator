@@ -14,7 +14,7 @@
     <div class="col-12">
       <h3>Custom Packs</h3>
       <table>
-        <tr *ngFor="let pack of customPacks.controls">
+        <tr *ngFor="let pack of customPacks.controls; trackBy: trackByPackName">
           <td class="text">{{ pack.get("name").value }}</td>
           <td class="text">
             <span *ngIf="pack.valid" class="valid">Valid</span>

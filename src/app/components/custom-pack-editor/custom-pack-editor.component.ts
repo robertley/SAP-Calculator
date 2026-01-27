@@ -142,6 +142,10 @@ export class CustomPackEditorComponent implements OnInit {
     }
   }
 
+  trackByPackName(index: number, pack: AbstractControl): string {
+    return pack?.get('name')?.value ?? String(index);
+  }
+
   forbiddenNameValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       let forbiddenNames = ['custom'];

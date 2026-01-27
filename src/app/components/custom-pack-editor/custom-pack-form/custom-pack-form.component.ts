@@ -146,6 +146,10 @@ export class CustomPackFormComponent implements OnInit {
     target.src = this.fallbackIcon;
   }
 
+  trackByPetName(index: number, pet: string): string {
+    return pet ?? String(index);
+  }
+
   submit() {
     this.submitEvent.emit(this.formGroup);
   }

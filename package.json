@@ -6,13 +6,13 @@
   "scripts": {
     "prepare": "node simulation/build.js",
     "ng": "ng",
-    "start": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng serve --proxy-config config/proxy.conf.json",
+    "start": "node ./node_modules/@angular/cli/bin/ng serve --proxy-config config/proxy.conf.json",
     "start:server": "node server/index.js",
-    "build": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build",
+    "build": "node ./node_modules/@angular/cli/bin/ng build",
     "lint": "eslint \"src/**/*.{ts,html}\"",
     "bundle-simulation": "node simulation/build.js",
-    "watch": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng build --watch --configuration development",
-    "test": "node --openssl-legacy-provider ./node_modules/@angular/cli/bin/ng test",
+    "watch": "node ./node_modules/@angular/cli/bin/ng build --watch --configuration development",
+    "test": "node ./node_modules/@angular/cli/bin/ng test",
     "test:vitest": "vitest run --config config/vitest.config.ts"
   },
   "engines": {
