@@ -57,14 +57,8 @@ export class MonkeyFacedBatAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
-    // Get 2 random friends (excluding self)
-    let targetsResp = owner.parent.getRandomPets(
-      2,
-      [owner],
-      true,
-      false,
-      owner,
-    );
+    // Get 2 random friendly pets (can include self)
+    let targetsResp = owner.parent.getRandomPets(2, [], true, false, owner);
 
     for (let target of targetsResp.pets) {
       if (target != null) {

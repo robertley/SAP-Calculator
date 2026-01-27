@@ -14,6 +14,8 @@ export interface Log {
   player?: Player;
   sourcePet?: Pet;
   targetPet?: Pet;
+  sourceIndex?: number;
+  targetIndex?: number;
   randomEvent?: boolean; // assumed false if undefined
   tiger?: boolean;
   puma?: boolean;

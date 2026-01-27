@@ -49,7 +49,7 @@ export class HummingbirdAbility extends Ability {
     super({
       name: 'HummingbirdAbility',
       owner: owner,
-      triggers: ['StartBattle'],
+      triggers: ['ThisDied'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

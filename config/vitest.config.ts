@@ -6,21 +6,26 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     deps: {
-      inline: ['@angular/core', 'rxjs'],
+      inline: ['@angular/core', '@angular/forms', 'rxjs'],
     },
   },
   ssr: {
-    noExternal: ['@angular/core', 'rxjs'],
+    noExternal: ['@angular/core', '@angular/forms', 'rxjs'],
   },
   resolve: {
     alias: [
       { find: 'app', replacement: path.resolve(__dirname, '../src/app') },
       {
+        find: 'assets',
+        replacement: path.resolve(__dirname, '../src/assets'),
+      },
+      {
         find: '@angular/core',
-        replacement: path.resolve(
-          __dirname,
-          '../src/test/angular-core-shim.ts',
-        ),
+        replacement: path.resolve(__dirname, '../simulation/shims.ts'),
+      },
+      {
+        find: '@angular/forms',
+        replacement: path.resolve(__dirname, '../simulation/shims.ts'),
       },
       {
         find: /^rxjs\/operators$/,
