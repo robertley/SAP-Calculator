@@ -34,7 +34,7 @@ export const getRandomPet = (
 
   let pets: Pet[] = [];
   if (includeOpponent) {
-    pets = [...player.petArray, ...player.opponent.petArray];
+    pets = [...player.opponent.petArray, ...player.petArray];
   } else {
     pets = player.petArray;
   }
@@ -943,7 +943,7 @@ export const getRandomLivingPet = (
   excludePets?: Pet[],
   ignoreEquipmentPriority = false,
 ): PetRandomResult => {
-  let pets = [...player.petArray, ...player.opponent.petArray];
+  let pets = [...player.opponent.petArray, ...player.petArray];
 
   if (!ignoreEquipmentPriority) {
     const donutPets = getPetsWithEquipment(player, 'Donut').filter(
@@ -968,10 +968,10 @@ export const getRandomLivingPet = (
       opponentBlueberryPets.length > 0
     ) {
       pets = [
-        ...donutPets,
-        ...blueberryPets,
         ...opponentDonutPets,
         ...opponentBlueberryPets,
+        ...donutPets,
+        ...blueberryPets,
       ];
     }
   }

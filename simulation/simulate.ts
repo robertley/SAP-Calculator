@@ -47,24 +47,6 @@ export function runSimulation(config: SimulationConfig): SimulationResult {
     faintEventService,
   );
 
-  // Pet Logic
-  const petFactory = new PetFactoryService(
-    logService,
-    abilityService,
-    gameService,
-  );
-  const petService = new PetService(
-    logService,
-    abilityService,
-    gameService,
-    petFactory,
-  );
-
-  // Setup Injector for EquipmentFactory
-  const injector = new NodeInjector();
-  injector.register(PetService, petService);
-  InjectorService.setInjector(injector as any);
-
   // Equipment Logic
   const equipmentFactory = new EquipmentFactoryService(
     logService,
@@ -77,6 +59,26 @@ export function runSimulation(config: SimulationConfig): SimulationResult {
     gameService,
     equipmentFactory,
   );
+
+  // Pet Logic
+  const petFactory = new PetFactoryService(
+    logService,
+    abilityService,
+    gameService,
+    equipmentService,
+  );
+  const petService = new PetService(
+    logService,
+    abilityService,
+    gameService,
+    petFactory,
+  );
+
+  // Setup Injector for EquipmentFactory/EquipmentService
+  const injector = new NodeInjector();
+  injector.register(PetService, petService);
+  injector.register(EquipmentService, equipmentService);
+  InjectorService.setInjector(injector as any);
 
   // Toy Logic
   const toyFactory = new ToyFactoryService(logService, abilityService);

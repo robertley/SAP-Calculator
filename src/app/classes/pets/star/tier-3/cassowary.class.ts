@@ -42,15 +42,10 @@ export class CassowaryAbility extends Ability {
     super({
       name: 'CassowaryAbility',
       owner: owner,
-      triggers: ['FriendGainsPerk'],
+      triggers: ['FriendlyGainedStrawberry'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
-      condition: (context: AbilityContext) => {
-        const { triggerPet, tiger, pteranodon } = context;
-        const owner = this.owner;
-        return triggerPet && triggerPet.equipment?.name === 'Strawberry';
-      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },

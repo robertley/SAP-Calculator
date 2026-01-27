@@ -177,8 +177,10 @@ export function parseLogMessage(message: string): LogMessagePart[] {
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
-  while ((match = imgRegex.exec(message))) {
-    const before = message.slice(lastIndex, match.index);
+  const normalizedMessage = injectStatIcons(message);
+
+  while ((match = imgRegex.exec(normalizedMessage))) {
+    const before = normalizedMessage.slice(lastIndex, match.index);
     pushTextParts(parts, before);
 
     const imgTag = match[0];
@@ -193,7 +195,7 @@ export function parseLogMessage(message: string): LogMessagePart[] {
     lastIndex = match.index + imgTag.length;
   }
 
-  pushTextParts(parts, message.slice(lastIndex));
+  pushTextParts(parts, normalizedMessage.slice(lastIndex));
   return parts;
 }
 
@@ -213,4 +215,35 @@ function pushTextParts(parts: LogMessagePart[], text: string): void {
       parts.push({ type: 'br' });
     }
   });
+}
+
+const ATTACK_ICON_SRC =
+  'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/fist.png';
+const HEALTH_ICON_SRC =
+  'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/heart.png';
+const ATTACK_ICON_TAG = `<img src="${ATTACK_ICON_SRC}" alt="Attack" />`;
+const HEALTH_ICON_TAG = `<img src="${HEALTH_ICON_SRC}" alt="Health" />`;
+const ATTACK_REGEX = /\battack(?:s|ed|ing)?\b/gi;
+const HEALTH_REGEX = /\bhealth\b/gi;
+
+function injectStatIcons(message: string): string {
+  return message
+    .split(/(<[^>]+>)/g)
+    .map((segment) => {
+      if (segment.startsWith('<')) {
+        return segment;
+      }
+      const withAttackIcons = segment.replace(ATTACK_REGEX, (match, offset) => {
+        const before = segment.slice(0, offset);
+        if (/\bjump[-\s]?$/i.test(before)) {
+          return match;
+        }
+        return `${ATTACK_ICON_TAG} ${match}`;
+      });
+      return withAttackIcons.replace(
+        HEALTH_REGEX,
+        `${HEALTH_ICON_TAG} $&`,
+      );
+    })
+    .join('');
 }

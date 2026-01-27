@@ -59,6 +59,8 @@ export class LogService {
       log.rawMessage,
       log.sourcePet,
       log.targetPet,
+      log.sourceIndex,
+      log.targetIndex,
     );
     log.message = this.decorateInlineIcons(message);
     log.decorated = true;
@@ -80,6 +82,15 @@ export class LogService {
         log.sourcePet = possiblePets[0] as Pet;
       }
     }
+    if (log.type === 'attack' && log.player && log.message) {
+      this.resolveAttackPetsFromMessage(log);
+    }
+    if (log.sourcePet && log.sourceIndex == null) {
+      log.sourceIndex = this.getFrontIndex(log.sourcePet) ?? undefined;
+    }
+    if (log.targetPet && log.targetIndex == null) {
+      log.targetIndex = this.getFrontIndex(log.targetPet) ?? undefined;
+    }
 
     let message = log.message ?? '';
     if (!this.deferDecorations) {
@@ -87,6 +98,8 @@ export class LogService {
         message,
         log.sourcePet,
         log.targetPet,
+        log.sourceIndex,
+        log.targetIndex,
       );
     }
 
@@ -118,8 +131,25 @@ export class LogService {
     const samePlayer = lastLog?.player === log.player;
     const sameMessage = lastLog?.message?.trim() === log.message?.trim();
     const sameRandom = lastLog?.randomEvent === log.randomEvent;
+    const sameSource =
+      lastLog?.sourcePet === log.sourcePet &&
+      lastLog?.sourceIndex === log.sourceIndex;
+    const sameTarget =
+      lastLog?.targetPet === log.targetPet &&
+      lastLog?.targetIndex === log.targetIndex;
+    const hasSourceOrTarget =
+      log.sourcePet != null ||
+      log.targetPet != null ||
+      log.sourceIndex != null ||
+      log.targetIndex != null;
 
-    if (lastLog && sameMessage && samePlayer && sameRandom) {
+    if (
+      lastLog &&
+      sameMessage &&
+      samePlayer &&
+      sameRandom &&
+      (!hasSourceOrTarget || (sameSource && sameTarget))
+    ) {
       lastLog.count = (lastLog.count ?? 1) + 1;
     } else {
       this.logs.push(log);
@@ -171,9 +201,13 @@ export class LogService {
     message: string,
     sourcePet: Pet,
     targetPet: Pet,
+    sourceIndexOverride?: number,
+    targetIndexOverride?: number,
   ): string {
-    const sourceIndex = this.getFrontIndex(sourcePet);
-    const targetIndex = this.getFrontIndex(targetPet);
+    const sourceIndex =
+      sourceIndexOverride ?? this.getFrontIndex(sourcePet);
+    const targetIndex =
+      targetIndexOverride ?? this.getFrontIndex(targetPet);
     if (sourceIndex == null || targetIndex == null) {
       return message;
     }
@@ -201,14 +235,27 @@ export class LogService {
     message: string,
     sourcePet?: Pet,
     targetPet?: Pet,
+    sourceIndex?: number,
+    targetIndex?: number,
   ): string {
     if (!message) {
       return message;
     }
     if (sourcePet && targetPet) {
-      return this.decorateAttackMessage(message, sourcePet, targetPet);
+      return this.decorateAttackMessage(
+        message,
+        sourcePet,
+        targetPet,
+        sourceIndex,
+        targetIndex,
+      );
     }
     if (sourcePet) {
+      if (sourceIndex != null) {
+        const label = sourcePet.parent?.isOpponent ? 'O' : 'P';
+        const fullLabel = `${label}${sourceIndex} ${sourcePet.name}`;
+        return this.replaceFirst(message, sourcePet.name, fullLabel);
+      }
       return this.decorateMessage(message, sourcePet);
     }
     return message;
@@ -267,6 +314,38 @@ export class LogService {
     const manaRegex = /(?<![A-Za-z0-9])mana(?![A-Za-z0-9])(?!\s+Potion)/gi;
     updated = this.replaceMatchesWithIcons(updated, manaRegex, () => manaIcon);
     return updated;
+  }
+
+  private resolveAttackPetsFromMessage(log: Log): void {
+    if (!log?.message || !log.player) {
+      return;
+    }
+    if (log.sourcePet && log.targetPet) {
+      return;
+    }
+    const message = log.message;
+    const snipedMatch = /^(.+?)\s+sniped\s+(.+?)\s+for\s+/i.exec(message);
+    const attackMatch =
+      /^(.+?)\s+(?:jump-)?attacks?\s+(.+?)\s+for\s+/i.exec(message);
+    const match = snipedMatch ?? attackMatch;
+    if (!match) {
+      return;
+    }
+    const sourceName = match[1].trim();
+    const targetName = match[2].trim();
+    const playerPets = log.player.petArray ?? [];
+    const opponentPets = log.player.opponent?.petArray ?? [];
+
+    if (!log.sourcePet) {
+      log.sourcePet =
+        playerPets.find((pet) => pet?.name === sourceName) ?? null;
+    }
+    if (!log.targetPet) {
+      log.targetPet =
+        opponentPets.find((pet) => pet?.name === targetName) ??
+        playerPets.find((pet) => pet?.name === targetName) ??
+        null;
+    }
   }
 
   private isAilmentName(name: string): boolean {
@@ -348,11 +427,34 @@ export class LogService {
     if (pet == null) {
       return '___ (-/-) ';
     }
+    const index = this.getFrontIndex(pet);
+    const label =
+      index != null ? `${pet.parent?.isOpponent ? 'O' : 'P'}${index} ` : '';
     const iconPath = getPetIconPath(pet.name);
     const petDisplay = iconPath
       ? `<img src="${iconPath}" class="log-pet-icon" alt="${pet.name}">`
       : '';
+    const equipmentName =
+      typeof (pet.equipment as { name?: string })?.name === 'string'
+        ? (pet.equipment as { name?: string }).name
+        : null;
+    const equipmentDisplay = equipmentName
+      ? (() => {
+          const isAilment = this.isAilmentName(equipmentName);
+          const primary =
+            getEquipmentIconPath(equipmentName, isAilment) ??
+            getEquipmentIconPath(equipmentName, !isAilment);
+          if (!primary) {
+            return '';
+          }
+          const secondary = getEquipmentIconPath(equipmentName, !isAilment);
+          const secondaryAttr = secondary
+            ? `this.dataset.step='1';this.src='${secondary}';`
+            : `this.dataset.step='1';`;
+          return `<img src="${primary}" class="log-inline-icon" alt="${equipmentName}" onerror="if(!this.dataset.step){${secondaryAttr}return;}this.remove()">`;
+        })()
+      : '';
 
-    return `${petDisplay}(${pet.attack}/${pet.health}) `;
+    return `${label}${petDisplay}${equipmentDisplay}(${pet.attack}/${pet.health}) `;
   }
 }
