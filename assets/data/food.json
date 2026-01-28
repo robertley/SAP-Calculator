@@ -5,8 +5,16 @@
     "Name": "Apple",
     "NameId": "Apple",
     "Tier": 1,
-    "Packs": ["Pack1", "Pack2", "Pack4"],
-    "PacksRequired": ["Pack1", "Pack2", "Pack4"],
+    "Packs": [
+      "Pack1",
+      "Pack2",
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack2",
+      "Pack4"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -16,8 +24,12 @@
     "Name": "Asparagus",
     "NameId": "Asparagus",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -27,8 +39,12 @@
     "Name": "Bacon",
     "NameId": "Bacon",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -78,11 +94,16 @@
     "Name": "Blueberry",
     "NameId": "BlueBerries",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Prioritize this for enemy random abilities.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet +1 attack.",
@@ -110,8 +131,12 @@
     "Name": "Canned Ailment",
     "NameId": "CannedAilment",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["MiniPack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "MiniPack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -143,8 +168,12 @@
     "Name": "Cashew Nut",
     "NameId": "CashewNut",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Deal 1 damage to the second nearest pet ahead. Double against enemies.",
     "CustomArchetypes": []
@@ -155,8 +184,12 @@
     "Name": "Cookie",
     "NameId": "Cookie",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -166,8 +199,12 @@
     "Name": "Corncob",
     "NameId": "Corn",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "CustomArchetypes": []
   },
   {
@@ -176,8 +213,14 @@
     "Name": "Egg",
     "NameId": "Egg",
     "Tier": 1,
-    "Packs": ["Pack2", "Pack4"],
-    "PacksRequired": ["Pack2", "Pack4"],
+    "Packs": [
+      "Pack2",
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack2",
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Deal 2 damage to target, once.",
     "CustomArchetypes": []
@@ -218,8 +261,12 @@
     "Name": "Fresh Water",
     "NameId": "FreshWater",
     "Tier": 1,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -229,8 +276,12 @@
     "Name": "Golden Egg",
     "NameId": "GoldenEgg",
     "Tier": 1,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "PerkNote": "Before attack: Deal 6 damage to target, once.",
     "CustomArchetypes": []
   },
@@ -240,8 +291,12 @@
     "Name": "Gros Michel Banana",
     "NameId": "GrosMichelBanana",
     "Tier": 1,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Transform into an Ant.",
     "CustomArchetypes": []
@@ -252,8 +307,12 @@
     "Name": "Health Potion",
     "NameId": "HealthPotion",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Give the front-most friendly pet +2 health.",
     "CustomArchetypes": []
@@ -264,8 +323,12 @@
     "Name": "Holy Water",
     "NameId": "HolyWater",
     "Tier": 1,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "CustomArchetypes": []
   },
   {
@@ -274,8 +337,12 @@
     "Name": "Honey",
     "NameId": "Honey",
     "Tier": 1,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon one 1/1 Bee.",
     "CustomArchetypes": []
@@ -286,8 +353,12 @@
     "Name": "Macaron",
     "NameId": "Macaron",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Activate ability after other pets with the same trigger.",
     "CustomArchetypes": []
@@ -308,8 +379,12 @@
     "Name": "Nachos",
     "NameId": "Nachos",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Convert up to 3 health into attack.",
     "CustomArchetypes": []
@@ -320,8 +395,12 @@
     "Name": "Peach",
     "NameId": "Plumb",
     "Tier": 1,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -331,8 +410,12 @@
     "Name": "Pumpkin",
     "NameId": "Pumpkin",
     "Tier": 1,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -352,8 +435,12 @@
     "Name": "Strawberry",
     "NameId": "Strawberry",
     "Tier": 1,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Give the back-most friend +1 attack and +1 health.",
     "CustomArchetypes": []
@@ -364,11 +451,16 @@
     "Name": "Unagi",
     "NameId": "Unagi",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Start of battle: Deal 2 damage to a random enemy.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet the Walnut perk.",
@@ -376,8 +468,12 @@
     "Name": "Walnut",
     "NameId": "Walnut",
     "Tier": 1,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Block 2 damage, once.",
     "CustomArchetypes": []
@@ -388,8 +484,12 @@
     "Name": "Antarctic Krill",
     "NameId": "AntarcticKrill",
     "Tier": 2,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -399,8 +499,12 @@
     "Name": "Bok Choy",
     "NameId": "BokChoy",
     "Tier": 2,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Gain +3 health when this would faint, once.",
     "CustomArchetypes": []
@@ -411,8 +515,12 @@
     "Name": "Broccoli",
     "NameId": "Broccoli",
     "Tier": 2,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -455,8 +563,12 @@
     "Name": "Caramel",
     "NameId": "Caramel",
     "Tier": 2,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Combine friendly Caramels to deal 3 damage each to the most healthy enemy, once.",
     "CustomArchetypes": []
@@ -467,8 +579,12 @@
     "Name": "Cherries",
     "NameId": "Cherries",
     "Tier": 2,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Gain 2 trumpets and remove perk.",
     "CustomArchetypes": []
@@ -479,8 +595,12 @@
     "Name": "Chocolate Cake",
     "NameId": "ChocolateCake",
     "Tier": 2,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Gain +3 experience and faint.",
     "CustomArchetypes": []
@@ -491,8 +611,12 @@
     "Name": "Churros",
     "NameId": "Churros",
     "Tier": 2,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Activate ability before other pets with the same trigger.",
     "CustomArchetypes": []
@@ -503,8 +627,12 @@
     "Name": "Cloudberry",
     "NameId": "Cloudberries",
     "Tier": 2,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -514,8 +642,12 @@
     "Name": "Cod Roe",
     "NameId": "CodRoe",
     "Tier": 2,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon one 2/3 Fish.",
     "CustomArchetypes": []
@@ -526,8 +658,12 @@
     "Name": "Cupcake",
     "NameId": "Muffin",
     "Tier": 2,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -548,8 +684,12 @@
     "Name": "Faint Bread",
     "NameId": "DeadBread",
     "Tier": 2,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon ANY one tier 1 <b>Faint</b> pet.",
     "CustomArchetypes": []
@@ -560,8 +700,12 @@
     "Name": "Fairy Dust",
     "NameId": "FairyDust",
     "Tier": 2,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Empty front space: Jump to the front and gain +2 mana, once.",
     "CustomArchetypes": []
@@ -572,8 +716,12 @@
     "Name": "Fried Shrimp",
     "NameId": "FriedShrimp",
     "Tier": 2,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -583,10 +731,15 @@
     "Name": "Kiwifruit",
     "NameId": "Kiwi",
     "Tier": 2,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Choose one level 1 Lemur toy.",
@@ -624,8 +777,12 @@
     "Name": "Lime",
     "NameId": "Lime",
     "Tier": 2,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Takes 1 less damage.",
     "CustomArchetypes": []
@@ -636,8 +793,12 @@
     "Name": "Meat Bone",
     "NameId": "MeatBone",
     "Tier": 2,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "PerkNote": "Attack with +3 damage.",
     "CustomArchetypes": []
@@ -648,8 +809,12 @@
     "Name": "Radish",
     "NameId": "Radish",
     "Tier": 2,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Gain ANY useful perk from the pet's tier.",
     "CustomArchetypes": []
@@ -660,8 +825,12 @@
     "Name": "Rice",
     "NameId": "RiceBall",
     "Tier": 2,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Sell for +2 gold.",
     "CustomArchetypes": []
@@ -672,8 +841,14 @@
     "Name": "Sleeping Pill",
     "NameId": "Pill",
     "Tier": 2,
-    "Packs": ["Pack1", "Pack2"],
-    "PacksRequired": ["Pack1", "Pack2"],
+    "Packs": [
+      "Pack1",
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack2"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -683,8 +858,12 @@
     "Name": "Sudduth Tomato",
     "NameId": "SudduthTomato",
     "Tier": 2,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Hurt: If still standing, gain permanent +1 health, once.",
     "CustomArchetypes": []
@@ -695,8 +874,12 @@
     "Name": "Wall Chicken",
     "NameId": "WallChicken",
     "Tier": 2,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -706,8 +889,12 @@
     "Name": "Avocado",
     "NameId": "Avocado",
     "Tier": 3,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -717,8 +904,12 @@
     "Name": "Blackberry",
     "NameId": "Blackberry",
     "Tier": 3,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Gain +1 attack and +2 health.",
     "CustomArchetypes": []
@@ -729,8 +920,12 @@
     "Name": "Brussels Sprout",
     "NameId": "BrusselsSprout",
     "Tier": 3,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Block being pushed or 5 damage, once.",
     "CustomArchetypes": []
@@ -741,8 +936,12 @@
     "Name": "Bubble Tea",
     "NameId": "BubbleTea",
     "Tier": 3,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -752,8 +951,12 @@
     "Name": "Cake",
     "NameId": "BirthdayCake",
     "Tier": 3,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "PerkNote": "End turn: Increase sell value by 1 gold.",
     "CustomArchetypes": []
@@ -778,7 +981,8 @@
     "Packs": [],
     "PacksRequired": [],
     "PerkNote": "Ability has random targets in battle.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Make one pet Webbed without triggering abilities.",
@@ -797,8 +1001,12 @@
     "Name": "Carrot Parisier",
     "NameId": "CarrotParisier",
     "Tier": 3,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -808,8 +1016,14 @@
     "Name": "Croissant",
     "NameId": "Croissant",
     "Tier": 3,
-    "Packs": ["Pack2", "Custom"],
-    "PacksRequired": ["Pack2", "Custom"],
+    "Packs": [
+      "Pack2",
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack2",
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "End turn: Gain +1 attack.",
     "CustomArchetypes": []
@@ -820,8 +1034,12 @@
     "Name": "Cucumber",
     "NameId": "Cucumber",
     "Tier": 3,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "End turn: Gain +1 health.",
     "CustomArchetypes": []
@@ -832,8 +1050,12 @@
     "Name": "Fig",
     "NameId": "Fig",
     "Tier": 3,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Deal 4 damage to the lowest health enemy, once.",
     "CustomArchetypes": []
@@ -844,8 +1066,12 @@
     "Name": "Garlic",
     "NameId": "Garlic",
     "Tier": 3,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "PerkNote": "Takes 2 less damage.",
     "PerkFinePrint": "Damage can't be reduced to less than 2.",
@@ -857,8 +1083,12 @@
     "Name": "Geechee Red Pea",
     "NameId": "GeecheeRedPea",
     "Tier": 3,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -898,8 +1128,12 @@
     "Name": "Gingerbread Man",
     "NameId": "GingerbreadMan",
     "Tier": 3,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Gain +1 experience.",
     "CustomArchetypes": []
@@ -921,8 +1155,12 @@
     "Name": "Just-Right Porridge",
     "NameId": "JustRightPorridge",
     "Tier": 3,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -932,8 +1170,12 @@
     "Name": "Lettuce",
     "NameId": "Salad",
     "Tier": 3,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -943,8 +1185,12 @@
     "Name": "Lollipop",
     "NameId": "Lollipop",
     "Tier": 3,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -954,8 +1200,12 @@
     "Name": "Pineapple",
     "NameId": "Pineapple",
     "Tier": 3,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Ability deals +2 damage, thrice.",
     "CustomArchetypes": []
@@ -977,8 +1227,12 @@
     "Name": "Ravioli",
     "NameId": "Ravioli",
     "Tier": 3,
-    "Packs": ["Custom"],
-    "PacksRequired": ["MiniPack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "MiniPack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -988,10 +1242,15 @@
     "Name": "Salad Bowl",
     "NameId": "SaladBowl",
     "Tier": 3,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Balance out attack and health. Always on sale!",
@@ -999,8 +1258,12 @@
     "Name": "Sandwich",
     "NameId": "Sandwich",
     "Tier": 3,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1010,11 +1273,16 @@
     "Name": "Sausage",
     "NameId": "Sausage",
     "Tier": 3,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Start of turn: Gain one free roll.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet the Seaweed perk.",
@@ -1022,8 +1290,12 @@
     "Name": "Seaweed",
     "NameId": "Seaweed",
     "Tier": 3,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Transform into a Baby Urchin.",
     "CustomArchetypes": []
@@ -1034,8 +1306,12 @@
     "Name": "Squash",
     "NameId": "Squash",
     "Tier": 3,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Remove 6 health from target, once.",
     "CustomArchetypes": []
@@ -1046,8 +1322,12 @@
     "Name": "Water of Youth",
     "NameId": "YouthWater",
     "Tier": 3,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1057,8 +1337,12 @@
     "Name": "White Truffle",
     "NameId": "WhiteTruffle",
     "Tier": 3,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Friend faints: Gain +4 attack and jump-attack the highest attack enemy, once.",
     "CustomArchetypes": []
@@ -1069,8 +1353,12 @@
     "Name": "Ambrosia",
     "NameId": "Ambrosia",
     "Tier": 4,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Block ailment or 8 damage, once.",
     "CustomArchetypes": []
@@ -1081,8 +1369,12 @@
     "Name": "Baguette",
     "NameId": "Baguette",
     "Tier": 4,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Remove the front-most enemy perk, once.",
     "CustomArchetypes": []
@@ -1093,8 +1385,12 @@
     "Name": "Banana",
     "NameId": "Banana",
     "Tier": 4,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon one 4/4 Monkey.",
     "CustomArchetypes": []
@@ -1127,8 +1423,14 @@
     "Name": "Canned Food",
     "NameId": "CannedFood",
     "Tier": 4,
-    "Packs": ["Pack1", "Pack2"],
-    "PacksRequired": ["Pack1", "Pack2"],
+    "Packs": [
+      "Pack1",
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack2"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1141,7 +1443,8 @@
     "Packs": [],
     "PacksRequired": [],
     "PerkNote": "Faint: Give one random enemy permanent +2 attack and +2 health.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet the Cauliflower perk.",
@@ -1149,8 +1452,12 @@
     "Name": "Cauliflower",
     "NameId": "Cauliflower",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["MiniPack2"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "MiniPack2"
+    ],
     "Rollable": true,
     "PerkNote": "Knock out: If still standing, gain permanent +1 attack and +1 health, once.",
     "CustomArchetypes": []
@@ -1161,8 +1468,12 @@
     "Name": "Cheese",
     "NameId": "Cheese",
     "Tier": 4,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Attack with at least 15 attack, once.",
     "CustomArchetypes": []
@@ -1173,8 +1484,12 @@
     "Name": "Chickpea",
     "NameId": "Chickpea",
     "Tier": 4,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1184,11 +1499,16 @@
     "Name": "Donut",
     "NameId": "Doughnut",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Prioritize this for friendly random abilities.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet +3 health. Also convert 2 attack into health.",
@@ -1196,8 +1516,12 @@
     "Name": "Drink-Me Liquid",
     "NameId": "DrinkMeLiquid",
     "Tier": 4,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1207,8 +1531,12 @@
     "Name": "Eat-Me Cake",
     "NameId": "EatMeCake",
     "Tier": 4,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1218,11 +1546,16 @@
     "Name": "Fortune Cookie",
     "NameId": "FortuneCookie",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Attack has 50% chance to deal double damage.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet the Grapes perk.",
@@ -1230,8 +1563,12 @@
     "Name": "Grapes",
     "NameId": "Grapes",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Start of turn: Gain +1 gold.",
     "CustomArchetypes": []
@@ -1242,8 +1579,12 @@
     "Name": "Maple Syrup",
     "NameId": "MapleSyrup",
     "Tier": 4,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Attack for 50% damage and block 50% damage, thrice.",
     "CustomArchetypes": []
@@ -1276,8 +1617,12 @@
     "Name": "Onion",
     "NameId": "Onion",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Move to the back, once.",
     "CustomArchetypes": []
@@ -1288,8 +1633,12 @@
     "Name": "Oyster Mushroom",
     "NameId": "OysterMushroom",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Set attack and health to at least 9, once.",
     "CustomArchetypes": []
@@ -1300,8 +1649,14 @@
     "Name": "Pear",
     "NameId": "Pear",
     "Tier": 4,
-    "Packs": ["Pack1", "Pack3"],
-    "PacksRequired": ["Pack1", "Pack3"],
+    "Packs": [
+      "Pack1",
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1311,8 +1666,12 @@
     "Name": "Pie",
     "NameId": "Pie",
     "Tier": 4,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Gain +4 attack and +3 health.",
     "CustomArchetypes": []
@@ -1323,8 +1682,12 @@
     "Name": "Potato",
     "NameId": "Potato",
     "Tier": 4,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Block 10 damage from abilities and perks, twice.",
     "CustomArchetypes": []
@@ -1365,8 +1728,12 @@
     "Name": "Salt",
     "NameId": "Salt",
     "Tier": 4,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Attack for double damage, once.",
     "CustomArchetypes": []
@@ -1377,8 +1744,12 @@
     "Name": "Soup",
     "NameId": "Soup",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1388,8 +1759,12 @@
     "Name": "Stronger Canned Ailment",
     "NameId": "CannedAilment2",
     "Tier": 4,
-    "Packs": ["Custom"],
-    "PacksRequired": ["MiniPack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "MiniPack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1399,8 +1774,12 @@
     "Name": "Vanilla Bean",
     "NameId": "VanillaBean",
     "Tier": 4,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1410,8 +1789,12 @@
     "Name": "Waffle",
     "NameId": "Waffle",
     "Tier": 4,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1441,8 +1824,12 @@
     "Name": "Big Mana Potion",
     "NameId": "ManaPotion2",
     "Tier": 5,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1474,8 +1861,12 @@
     "Name": "Carrot",
     "NameId": "Carrot",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "End turn: Gain +1 attack and +1 health.",
     "CustomArchetypes": []
@@ -1486,8 +1877,12 @@
     "Name": "Chili",
     "NameId": "Chili",
     "Tier": 5,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "PerkNote": "Attack second enemy for 5 damage.",
     "CustomArchetypes": []
@@ -1498,8 +1893,22 @@
     "Name": "Chocolate",
     "NameId": "Chocolate",
     "Tier": 5,
-    "Packs": ["Pack1", "Pack2", "Pack3", "Pack4", "Pack5", "Danger"],
-    "PacksRequired": ["Pack1", "Pack2", "Pack3", "Pack4", "Pack5", "Danger"],
+    "Packs": [
+      "Pack1",
+      "Pack2",
+      "Pack3",
+      "Pack4",
+      "Pack5",
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack2",
+      "Pack3",
+      "Pack4",
+      "Pack5",
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1509,11 +1918,16 @@
     "Name": "Cocoa Bean",
     "NameId": "CocoaBean",
     "Tier": 5,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Transform into an exact copy of a random enemy, once.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet +3 attack and +2 health.",
@@ -1521,8 +1935,12 @@
     "Name": "Cotton Candy",
     "NameId": "CottonCandy",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1532,8 +1950,12 @@
     "Name": "Durian",
     "NameId": "Durian",
     "Tier": 5,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Reduce the most healthy enemy by 33% health, once.",
     "CustomArchetypes": []
@@ -1544,8 +1966,12 @@
     "Name": "Easter Egg",
     "NameId": "EasterEgg",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon one 3/3 Bunny that attacks for double damage.",
     "CustomArchetypes": []
@@ -1556,8 +1982,12 @@
     "Name": "Eggplant",
     "NameId": "EggPlant",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Push opposite enemy 1 space forward.",
     "CustomArchetypes": []
@@ -1568,8 +1998,12 @@
     "Name": "Flodebolle",
     "NameId": "Flodeboller",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1579,8 +2013,12 @@
     "Name": "Honeydew Melon",
     "NameId": "HoneydewMelon",
     "Tier": 5,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Block 10 damage, and attack for +5 damage, once.",
     "CustomArchetypes": []
@@ -1591,8 +2029,12 @@
     "Name": "Kiwano",
     "NameId": "Kiwano",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["MiniPack2"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "MiniPack2"
+    ],
     "Rollable": true,
     "PerkNote": "Ability deals +8 damage, once.",
     "CustomArchetypes": []
@@ -1603,8 +2045,12 @@
     "Name": "Lasagna",
     "NameId": "Lasagne",
     "Tier": 5,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1614,8 +2060,12 @@
     "Name": "Lemon",
     "NameId": "Lemon",
     "Tier": 5,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Block 7 damage, twice.",
     "CustomArchetypes": []
@@ -1626,8 +2076,12 @@
     "Name": "Love Potion",
     "NameId": "LovePotion",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Summon one 5/5 pet like this.",
     "CustomArchetypes": []
@@ -1638,8 +2092,12 @@
     "Name": "Magic Beans",
     "NameId": "MagicBeans",
     "Tier": 5,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Start of turn: Gain the Golden Egg perk and increase sell value by 4 gold.",
     "CustomArchetypes": []
@@ -1650,8 +2108,12 @@
     "Name": "Oblonot",
     "NameId": "Oblonot",
     "Tier": 5,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1661,8 +2123,12 @@
     "Name": "Pepper",
     "NameId": "Pepper",
     "Tier": 5,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Health does not go under 1. Removed after taking damage.",
     "CustomArchetypes": []
@@ -1684,10 +2150,15 @@
     "Name": "Stew",
     "NameId": "Stew",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Choose one level 1 Sting Ray toy.",
@@ -1725,8 +2196,12 @@
     "Name": "Strawberry Jam",
     "NameId": "StrawberryJar",
     "Tier": 5,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Give the back-most friend +1 attack and +1 health.",
     "CustomArchetypes": []
@@ -1737,10 +2212,15 @@
     "Name": "Sushi",
     "NameId": "Sushi",
     "Tier": 5,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give three random pets +2 attack.",
@@ -1748,10 +2228,15 @@
     "Name": "Taco",
     "NameId": "Taco",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Stock one 2-gold copy of the last non-Tofu food bought this turn.",
@@ -1759,8 +2244,12 @@
     "Name": "Tofu",
     "NameId": "Tofu",
     "Tier": 5,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1773,7 +2262,8 @@
     "Packs": [],
     "PacksRequired": [],
     "PerkNote": "Faint: Make one random friend Cursed.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Make one pet Icky without triggering abilities.",
@@ -1792,8 +2282,12 @@
     "Name": "Celery",
     "NameId": "Celery",
     "Tier": 6,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1803,8 +2297,12 @@
     "Name": "Chicken Leg",
     "NameId": "ChickenLeg",
     "Tier": 6,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1814,8 +2312,12 @@
     "Name": "Coffee Bean",
     "NameId": "CoffeeBean",
     "Tier": 6,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "CustomArchetypes": []
   },
   {
@@ -1824,8 +2326,12 @@
     "Name": "Cornucopia",
     "NameId": "Cornucopia",
     "Tier": 6,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1835,10 +2341,15 @@
     "Name": "Hot Dog",
     "NameId": "HotDog",
     "Tier": 6,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Stock one 2-gold Melon and one 2-gold Steak.",
@@ -1846,8 +2357,12 @@
     "Name": "Judean Date",
     "NameId": "Date",
     "Tier": 6,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1857,10 +2372,16 @@
     "Name": "Konpeito",
     "NameId": "Kompeito",
     "Tier": 6,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
-    "CustomArchetypes": ["Mvp"]
+    "CustomArchetypes": [
+      "Mvp"
+    ]
   },
   {
     "Ability": "Give one pet the Melon perk.",
@@ -1868,8 +2389,14 @@
     "Name": "Melon",
     "NameId": "Melon",
     "Tier": 6,
-    "Packs": ["Pack1", "Pack2"],
-    "PacksRequired": ["Pack1", "Pack2"],
+    "Packs": [
+      "Pack1",
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Block 20 damage, once.",
     "CustomArchetypes": []
@@ -1910,11 +2437,17 @@
     "Name": "Mushroom",
     "NameId": "Mushroom",
     "Tier": 6,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Come back as a 1/1.",
-    "CustomArchetypes": ["Mvp"]
+    "CustomArchetypes": [
+      "Mvp"
+    ]
   },
   {
     "Ability": "Give two random pets +4 health.",
@@ -1922,10 +2455,15 @@
     "Name": "Orange",
     "NameId": "Orange",
     "Tier": 6,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet the Pancakes perk.",
@@ -1933,8 +2471,12 @@
     "Name": "Pancakes",
     "NameId": "Pancakes",
     "Tier": 6,
-    "Packs": ["Pack2"],
-    "PacksRequired": ["Pack2"],
+    "Packs": [
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Before battle: Give friends +2 attack and +2 health.",
     "CustomArchetypes": []
@@ -1945,8 +2487,12 @@
     "Name": "Peach of Immortality",
     "NameId": "ImmortalPeach",
     "Tier": 6,
-    "Packs": ["Pack5"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Pack5"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -1956,8 +2502,12 @@
     "Name": "Pita Bread",
     "NameId": "PitaBread",
     "Tier": 6,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Hurt: Gain +15 health, once.",
     "CustomArchetypes": []
@@ -1968,10 +2518,15 @@
     "Name": "Pizza",
     "NameId": "Pizza",
     "Tier": 6,
-    "Packs": ["Pack1"],
-    "PacksRequired": ["Pack1"],
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet the Popcorn perk.",
@@ -1979,11 +2534,16 @@
     "Name": "Popcorn",
     "NameId": "Popcorn",
     "Tier": 6,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon one random pet from the same tier.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Ability": "Give one pet +2 attack and +2 health. Double if all pets are tier 4 or higher.",
@@ -1991,8 +2551,12 @@
     "Name": "Pretzel",
     "NameId": "Pretzel",
     "Tier": 6,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -2002,8 +2566,12 @@
     "Name": "Rainbow Jelly",
     "NameId": "RainbowJelly",
     "Tier": 6,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -2013,8 +2581,12 @@
     "Name": "Sardinian Currant",
     "NameId": "SardinianCurrant",
     "Tier": 6,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Start of turn: Gain +2 gold.",
     "CustomArchetypes": []
@@ -2025,8 +2597,12 @@
     "Name": "Soft Ice",
     "NameId": "SoftIce",
     "Tier": 6,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Custom"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -2036,8 +2612,12 @@
     "Name": "Starfruit",
     "NameId": "Starfruit",
     "Tier": 6,
-    "Packs": ["Pack3"],
-    "PacksRequired": ["Pack3"],
+    "Packs": [
+      "Pack3"
+    ],
+    "PacksRequired": [
+      "Pack3"
+    ],
     "Rollable": true,
     "CustomArchetypes": []
   },
@@ -2047,8 +2627,14 @@
     "Name": "Steak",
     "NameId": "Steak",
     "Tier": 6,
-    "Packs": ["Pack1", "Pack2"],
-    "PacksRequired": ["Pack1", "Pack2"],
+    "Packs": [
+      "Pack1",
+      "Pack2"
+    ],
+    "PacksRequired": [
+      "Pack1",
+      "Pack2"
+    ],
     "Rollable": true,
     "PerkNote": "Attack with +20 damage, once.",
     "CustomArchetypes": []
@@ -2059,8 +2645,12 @@
     "Name": "Tomato",
     "NameId": "Tomato",
     "Tier": 6,
-    "Packs": ["Pack4"],
-    "PacksRequired": ["Pack4"],
+    "Packs": [
+      "Pack4"
+    ],
+    "PacksRequired": [
+      "Pack4"
+    ],
     "Rollable": true,
     "PerkNote": "Before attack: Deal 10 damage to the last enemy, once.",
     "CustomArchetypes": []
@@ -2071,8 +2661,12 @@
     "Name": "White Okra",
     "NameId": "WhiteOkra",
     "Tier": 6,
-    "Packs": ["Danger"],
-    "PacksRequired": ["Danger"],
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
     "Rollable": true,
     "PerkNote": "Block 10 damage twice or ailment once.",
     "CustomArchetypes": []
@@ -2083,8 +2677,12 @@
     "Name": "Yggdrasil Fruit",
     "NameId": "YggdrasilFruit",
     "Tier": 6,
-    "Packs": ["Custom"],
-    "PacksRequired": ["Pack5"],
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Pack5"
+    ],
     "Rollable": true,
     "PerkNote": "Faint: Summon two 5/5 Nordic Goats.",
     "CustomArchetypes": []
