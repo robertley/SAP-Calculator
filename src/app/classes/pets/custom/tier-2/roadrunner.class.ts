@@ -4,6 +4,7 @@ import { Equipment } from 'app/classes/equipment.class';
 import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Strawberry } from 'app/classes/equipment/star/strawberry.class';
 
 
 export class Roadrunner extends Pet {
@@ -28,14 +29,16 @@ export class Roadrunner extends Pet {
   }
 
   override initAbilities(): void {
-    this.addAbility(new RoadrunnerAbility(this));
+    this.addAbility(new RoadrunnerAbility(this, this.logService));
     super.initAbilities();
   }
 }
 
 
 export class RoadrunnerAbility extends Ability {
-  constructor(owner: Pet) {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'Roadrunner Ability',
       owner: owner,
@@ -44,6 +47,7 @@ export class RoadrunnerAbility extends Ability {
       abilitylevel: owner.level,
       abilityFunction: (context) => this.executeAbility(context),
     });
+    this.logService = logService;
   }
 
   private executeAbility(context: AbilityContext): void {
@@ -60,10 +64,7 @@ export class RoadrunnerAbility extends Ability {
 
     for (const target of targets) {
       // Give Strawberry perk
-      const strawberry = (gameApi as any).equipmentService.createEquipment(
-        'Strawberry',
-        target,
-      );
+      const strawberry = new Strawberry(this.logService);
       if (strawberry) {
         target.applyEquipment(strawberry);
       }
@@ -71,7 +72,7 @@ export class RoadrunnerAbility extends Ability {
       // Give +2 attack
       target.attack += 2;
 
-      (gameApi as any).logService.createLog({
+      this.logService.createLog({
         message: `${owner.name} gave Strawberry and +2 attack to ${target.name}.`,
         type: 'ability',
         player: owner.parent,
@@ -82,6 +83,6 @@ export class RoadrunnerAbility extends Ability {
   }
 
   override copy(newOwner: Pet): RoadrunnerAbility {
-    return new RoadrunnerAbility(newOwner);
+    return new RoadrunnerAbility(newOwner, this.logService);
   }
 }

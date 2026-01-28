@@ -3,8 +3,7 @@ import { PetService } from 'app/services/pet/pet.service';
 import { Equipment, EquipmentClass } from '../../equipment.class';
 import { Pet } from '../../pet.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
-import { EquipmentService } from 'app/services/equipment/equipment.service';
-import { InjectorService } from 'app/services/injector.service';
+import { cloneEquipment } from 'app/util/equipment-utils';
 
 
 export class CocoaBean extends Equipment {
@@ -61,8 +60,6 @@ export class CocoaBeanAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
-    const equipmentService =
-      InjectorService.getInjector().get(EquipmentService);
 
     for (let i = 0; i < this.equipment.multiplier; i++) {
       // Get random enemy
@@ -78,15 +75,7 @@ export class CocoaBeanAbility extends Ability {
 
       let equipmentInstance: Equipment = null;
       if (randomEnemy.equipment) {
-        if (randomEnemy.equipment.equipmentClass?.startsWith('ailment')) {
-          equipmentInstance = equipmentService
-            .getInstanceOfAllAilments()
-            .get(randomEnemy.equipment.name);
-        } else {
-          equipmentInstance = equipmentService
-            .getInstanceOfAllEquipment()
-            .get(randomEnemy.equipment.name);
-        }
+        equipmentInstance = cloneEquipment(randomEnemy.equipment);
       }
 
       // Create proper Pet instance

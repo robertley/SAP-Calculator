@@ -17,13 +17,14 @@ export class Tadpole extends Pet {
   health = 2;
 
   override initAbilities(): void {
-    this.addAbility(new TadpoleAbility(this));
+    this.addAbility(new TadpoleAbility(this, this.logService, this.petService));
     super.initAbilities();
   }
 
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
+    protected petService: PetService,
     parent: Player,
     health?: number,
     attack?: number,
@@ -39,7 +40,10 @@ export class Tadpole extends Pet {
 
 
 export class TadpoleAbility extends Ability {
-  constructor(owner: Pet) {
+  private logService: LogService;
+  private petService: PetService;
+
+  constructor(owner: Pet, logService: LogService, petService: PetService) {
     super({
       name: 'Tadpole Ability',
       owner: owner,
@@ -48,16 +52,16 @@ export class TadpoleAbility extends Ability {
       abilitylevel: owner.level,
       abilityFunction: (context) => this.executeAbility(context),
     });
+    this.logService = logService;
+    this.petService = petService;
   }
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
     const level = owner.level;
 
-    const petService = InjectorService.getInjector().get(PetService);
-    const logService = InjectorService.getInjector().get(LogService);
     // Create a new Frog
-    const frog = petService.createPet(
+    const frog = this.petService.createPet(
       {
         name: 'Frog',
         attack: null,
@@ -73,7 +77,7 @@ export class TadpoleAbility extends Ability {
       // Transformation
       owner.parent.transformPet(owner, frog);
 
-      logService.createLog({
+      this.logService.createLog({
         message: `${owner.name} transformed into a level ${level} Frog.`,
         type: 'ability',
         player: owner.parent,
@@ -84,6 +88,6 @@ export class TadpoleAbility extends Ability {
   }
 
   override copy(newOwner: Pet): TadpoleAbility {
-    return new TadpoleAbility(newOwner);
+    return new TadpoleAbility(newOwner, this.logService, this.petService);
   }
 }
