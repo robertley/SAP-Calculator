@@ -37,6 +37,7 @@ import { Slime } from '../../classes/pets/custom/tier-3/slime.class';
 import { SarcasticFringehead } from '../../classes/pets/custom/tier-3/sarcastic-fringehead.class';
 import { Hippogriff } from '../../classes/pets/custom/tier-5/hippogriff.class';
 import { Leviathan } from '../../classes/pets/custom/tier-6/leviathan.class';
+import { Tadpole } from '../../classes/pets/custom/tier-2/tadpole.class';
 
 export interface PetFactoryDeps {
   logService: LogService;
@@ -76,6 +77,7 @@ export const PETS_NEEDING_PETSERVICE: { [key: string]: any } = {
   Abomination: Abomination,
   'Sarcastic Fringehead': SarcasticFringehead,
   Leviathan: Leviathan,
+  Tadpole: Tadpole,
 };
 
 // Registry: Pet names -> Classes that need PetService AND GameService
@@ -115,6 +117,7 @@ export const PETS_NEEDING_PETSERVICE_TYPES: any[] = [
   SarcasticFringehead,
   Hippogriff,
   Leviathan,
+  Tadpole,
 ];
 
 export const PETS_NEEDING_GAMESERVICE_TYPES: any[] = [Seagull, GoodDog];
