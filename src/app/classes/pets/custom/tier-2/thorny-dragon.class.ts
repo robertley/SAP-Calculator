@@ -4,6 +4,7 @@ import { Equipment } from 'app/classes/equipment.class';
 import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getRandomInt } from 'app/util/helper-functions';
 
 
 export class ThornyDragon extends Pet {
@@ -12,6 +13,7 @@ export class ThornyDragon extends Pet {
   pack: Pack = 'Custom';
   attack = 3;
   health = 3;
+  hasRandomEvents = true;
 
   override initAbilities(): void {
     this.addAbility(new ThornyDragonAbility(this, this.logService));
@@ -71,10 +73,11 @@ export class ThornyDragonAbility extends Ability {
 
     const targetPool =
       petsWithAilments.length > 0 ? petsWithAilments : opponentPets;
-    const target = targetPool[Math.floor(Math.random() * targetPool.length)];
+    const isRandom = targetPool.length > 1;
+    const target = targetPool[getRandomInt(0, targetPool.length - 1)];
 
     if (target) {
-      owner.snipePet(target, damage, true, tiger, pteranodon);
+      owner.snipePet(target, damage, isRandom, tiger, pteranodon);
 
       this.logService.createLog({
         message: `${owner.name} fainted and dealt ${damage} damage to ${target.name} (prioritizing ailments).`,
@@ -82,7 +85,7 @@ export class ThornyDragonAbility extends Ability {
         player: owner.parent,
         tiger: tiger,
         pteranodon: pteranodon,
-        randomEvent: true,
+        randomEvent: isRandom,
       });
     }
 

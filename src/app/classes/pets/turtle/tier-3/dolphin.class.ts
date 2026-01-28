@@ -12,6 +12,7 @@ export class Dolphin extends Pet {
   pack: Pack = 'Turtle';
   health = 3;
   attack = 4;
+  hasRandomEvents = true;
   initAbilities(): void {
     this.addAbility(new DolphinAbility(this, this.logService));
     super.initAbilities();

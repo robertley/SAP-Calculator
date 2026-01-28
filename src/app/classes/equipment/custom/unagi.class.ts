@@ -6,6 +6,7 @@ import { Ability, AbilityContext } from 'app/classes/ability.class';
 export class Unagi extends Equipment {
   name = 'Unagi';
   equipmentClass = 'startOfBattle' as EquipmentClass;
+  hasRandomEvents = true;
   callback = (pet: Pet) => {
     // Add Unagi ability using dedicated ability class
     pet.addAbility(new UnagiAbility(pet, this));
@@ -48,7 +49,15 @@ export class UnagiAbility extends Ability {
       );
       if (targetResp.pet) {
         let damage = 2;
-        owner.snipePet(targetResp.pet, damage, true, false, false, true, false);
+        owner.snipePet(
+          targetResp.pet,
+          damage,
+          targetResp.random,
+          false,
+          false,
+          true,
+          false,
+        );
       }
     }
   }
