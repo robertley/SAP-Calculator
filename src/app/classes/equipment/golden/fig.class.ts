@@ -7,6 +7,7 @@ import { Ability, AbilityContext } from 'app/classes/ability.class';
 export class Fig extends Equipment {
   name = 'Fig';
   equipmentClass: EquipmentClass = 'beforeAttack';
+  hasRandomEvents = true;
   callback = (pet: Pet) => {
     pet.addAbility(new FigAbility(pet, this));
   };
@@ -42,13 +43,22 @@ export class FigAbility extends Ability {
     let multiplier = this.equipment.multiplier;
 
     for (let i = 0; i < multiplier; i++) {
-      let attackPet = owner.parent.opponent.getLowestHealthPet().pet;
+      let attackPetResp = owner.parent.opponent.getLowestHealthPet();
+      let attackPet = attackPetResp.pet;
       if (attackPet == null) {
         return;
       }
 
-      // Use proper snipePet method with equipment=true flag
-      owner.snipePet(attackPet, 4, true, false, false, true, false);
+      // Use proper snipePet method with equipment=true flag and correct randomness
+      owner.snipePet(
+        attackPet,
+        4,
+        attackPetResp.random,
+        false,
+        false,
+        true,
+        false,
+      );
     }
 
     // Remove equipment after use

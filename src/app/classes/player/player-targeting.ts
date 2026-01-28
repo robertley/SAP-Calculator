@@ -299,9 +299,11 @@ export const getMiddleFriend = (
   if (callingPet && hasSilly(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
-
-  const pet = player.getPet(2) ?? null;
-  return { pet, random: false };
+  const pet = player.getPet(2);
+  if (pet && !pet.alive) {
+    return { pet: null, random: false };
+  }
+  return { pet: pet ?? null, random: false };
 };
 
 export const getLastPet = (
@@ -353,17 +355,12 @@ export const getHighestHealthPet = (
   if (callingPet && hasSilly(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
-  const targets = player.petArray.filter(
-    (pet) => pet !== excludePet && pet.alive,
-  );
-  if (targets.length === 0) {
-    return { pet: null, random: false };
-  }
+
+  const pets = player.petArray;
   let highestHealthPets: Pet[] = [];
-  for (let i in player.petArray) {
-    const index = +i;
-    const pet = player.petArray[index];
-    if (pet === excludePet) {
+
+  for (const pet of pets) {
+    if (pet === excludePet || !pet.alive) {
       continue;
     }
     if (highestHealthPets.length === 0) {
@@ -378,9 +375,11 @@ export const getHighestHealthPet = (
       highestHealthPets = [pet];
     }
   }
+
   if (highestHealthPets.length === 0) {
     return { pet: null, random: false };
   }
+
   return {
     pet: highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)],
     random: highestHealthPets.length > 1,
@@ -395,14 +394,12 @@ export const getHighestAttackPet = (
   if (callingPet && hasSilly(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
+
+  const pets = player.petArray;
   let highestAttackPets: Pet[] = [];
-  for (let i in player.petArray) {
-    const index = +i;
-    const pet = player.petArray[index];
-    if (pet === excludePet) {
-      continue;
-    }
-    if (!pet.alive) {
+
+  for (const pet of pets) {
+    if (pet === excludePet || !pet.alive) {
       continue;
     }
     if (highestAttackPets.length === 0) {
@@ -500,14 +497,12 @@ export const getLowestAttackPet = (
   if (callingPet && hasSilly(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
+
+  const pets = player.petArray;
   let lowestAttackPets: Pet[] = [];
-  for (let i in player.petArray) {
-    const index = +i;
-    const pet = player.petArray[index];
-    if (pet === excludePet) {
-      continue;
-    }
-    if (!pet.alive) {
+
+  for (const pet of pets) {
+    if (pet === excludePet || !pet.alive) {
       continue;
     }
     if (lowestAttackPets.length === 0) {
@@ -541,14 +536,12 @@ export const getLowestHealthPet = (
   if (callingPet && hasSilly(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
+
+  const pets = player.petArray;
   let lowestHealthPets: Pet[] = [];
-  for (let i in player.petArray) {
-    const index = +i;
-    const pet = player.petArray[index];
-    if (pet === excludePet) {
-      continue;
-    }
-    if (!pet.alive) {
+
+  for (const pet of pets) {
+    if (pet === excludePet || !pet.alive) {
       continue;
     }
     if (lowestHealthPets.length === 0) {
