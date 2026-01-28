@@ -91,13 +91,17 @@ export class SimulationRunner {
   }
 
   public run(config: SimulationConfig): SimulationResult {
-    const battleCount = config.simulationCount || 1000;
+    let battleCount = config.simulationCount || 1000;
 
     // Setup initial simulation state from config
     this.logService.setEnabled(config.logsEnabled !== false);
     this.logService.setDeferDecorations(true);
     this.resetSimulation();
     this.setupGameEnvironment(config);
+
+    if (this.isBattleDeterministic(config)) {
+      battleCount = 1;
+    }
 
     for (let i = 0; i < battleCount; i++) {
       this.initBattle(config);
@@ -403,5 +407,64 @@ export class SimulationRunner {
   }
   protected resetClearFrontFlags() {
     this.abilityEngine.resetClearFrontFlags();
+  }
+
+  private isBattleDeterministic(config: SimulationConfig): boolean {
+    if (config.komodoShuffle || config.oldStork) {
+      return false;
+    }
+
+    // Check toys
+    if (config.playerToy && this.toyService.isToyRandom(config.playerToy)) {
+      return false;
+    }
+    if (config.opponentToy && this.toyService.isToyRandom(config.opponentToy)) {
+      return false;
+    }
+
+    // Check hard toys (images mostly, but if they have logic? Hard toys are usually cosmetic or simple, but verify)
+    // Hard toys usually don't have logic in this calc, they are treated as backgrounds/cosmetic or simple state?
+    // Actually gameApi has playerHardToy.
+    // If hard mode toys have effects (like in the game), they might be random. 
+    // Assuming hard toys are deterministic for now unless they are in 'toys.json' and handled.
+    // Logic usually handled by 'Toy' class if passed.
+
+    const checkPets = (pets: (PetConfig | null)[]) => {
+      if (!pets) return true; // Empty is deterministic
+      for (let i = 0; i < pets.length; i++) {
+        const pet = pets[i];
+        if (!pet || !pet.name) continue;
+
+        const petRandom = this.petService.isPetRandom(pet.name);
+        if (petRandom) {
+          return false;
+        }
+
+        // Equipment
+        let equipmentName: string | null = null;
+        if (typeof pet.equipment === 'string') {
+          equipmentName = pet.equipment;
+        } else if (pet.equipment && typeof pet.equipment === 'object') {
+          equipmentName = pet.equipment.name;
+        }
+
+        if (equipmentName) {
+          const equipRandom = this.equipmentService.isEquipmentRandom(equipmentName);
+          if (equipRandom) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
+    if (!checkPets(config.playerPets)) {
+      return false;
+    }
+    if (!checkPets(config.opponentPets)) {
+      return false;
+    }
+
+    return true;
   }
 }

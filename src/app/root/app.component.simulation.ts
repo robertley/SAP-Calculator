@@ -187,15 +187,21 @@ export function getPlayerClass(log: Log): string {
 }
 
 export function getWinPercent(ctx: AppSimulationContext): number {
-  return money_round((ctx.playerWinner / ctx.simulationBattleAmt) * 100);
+  const totalBattles = ctx.playerWinner + ctx.opponentWinner + ctx.draw;
+  if (totalBattles === 0) return 0;
+  return money_round((ctx.playerWinner / totalBattles) * 100);
 }
 
 export function getDrawPercent(ctx: AppSimulationContext): number {
-  return money_round((ctx.draw / ctx.simulationBattleAmt) * 100);
+  const totalBattles = ctx.playerWinner + ctx.opponentWinner + ctx.draw;
+  if (totalBattles === 0) return 0;
+  return money_round((ctx.draw / totalBattles) * 100);
 }
 
 export function getLosePercent(ctx: AppSimulationContext): number {
-  return money_round((ctx.opponentWinner / ctx.simulationBattleAmt) * 100);
+  const totalBattles = ctx.playerWinner + ctx.opponentWinner + ctx.draw;
+  if (totalBattles === 0) return 0;
+  return money_round((ctx.opponentWinner / totalBattles) * 100);
 }
 
 export function getDrawWidth(ctx: AppSimulationContext): string {

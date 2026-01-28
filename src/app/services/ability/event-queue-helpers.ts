@@ -24,27 +24,42 @@ export function executeEventWithTransform(
 ): void {
   const executingPet = event.pet;
 
-  if (
-    executingPet &&
-    executingPet.transformed &&
-    executingPet.transformedInto &&
-    event.abilityType
-  ) {
-    const transformedPet = executingPet.transformedInto;
-    // Replace the callback with the transformed pet's method
-    event.callback = (trigger: AbilityTrigger, api: GameAPI) => {
-      transformedPet.executeAbilities(
-        trigger,
-        api,
-        event.triggerPet,
-        undefined,
-        undefined,
-        customParams,
-      );
-    };
+  if (event.callback) {
+    if (
+      executingPet &&
+      executingPet.transformed &&
+      executingPet.transformedInto &&
+      event.abilityType
+    ) {
+      const transformedPet = executingPet.transformedInto;
+      // Replace the callback with the transformed pet's method
+      event.callback = (trigger: AbilityTrigger, api: GameAPI) => {
+        transformedPet.executeAbilities(
+          trigger,
+          api,
+          event.triggerPet,
+          undefined,
+          undefined,
+          customParams,
+        );
+      };
+    }
+    event.callback(event.abilityType, gameApi, event.triggerPet);
+  } else if (executingPet && event.abilityType) {
+    // New optimize path
+    let targetPet = executingPet;
+    if (executingPet.transformed && executingPet.transformedInto) {
+      targetPet = executingPet.transformedInto;
+    }
+    targetPet.executeAbilities(
+      event.abilityType,
+      gameApi,
+      event.triggerPet,
+      undefined,
+      undefined,
+      event.customParams || customParams,
+    );
   }
-
-  event.callback(event.abilityType, gameApi, event.triggerPet);
 }
 
 /**

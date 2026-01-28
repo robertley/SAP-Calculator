@@ -111,11 +111,14 @@ import {
   trackByLogTab as trackByLogTabImpl,
   trackByTeamId as trackByTeamIdImpl,
   updateGoldSpent as updateGoldSpentImpl,
+  undoRandomize as undoRandomizeImpl,
   updatePlayerPack as updatePlayerPackImpl,
   updatePlayerToy as updatePlayerToyImpl,
   updatePreviousShopTier as updatePreviousShopTierImpl,
   updateToyLevel as updateToyLevelImpl,
 } from './app.component.ui-helpers';
+
+
 
 @Component({
   selector: 'app-root',
@@ -208,6 +211,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   playerPackImageBroken = false;
   opponentPackImageBroken = false;
+  undoState: any = null;
 
   private isLoadedFromUrl = false;
 
@@ -413,6 +417,7 @@ export class AppComponent implements OnInit, AfterViewInit {
    * @param player
    */
   readonly randomize = (player?: Player) => randomizeImpl(this, player);
+  readonly undoRandomize = () => undoRandomizeImpl(this);
   readonly clearCache = () => clearCacheImpl(this);
   readonly initModals = () => initModalsImpl(this);
   readonly openCustomPackEditor = () => openCustomPackEditorImpl(this);

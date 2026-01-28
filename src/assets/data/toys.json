@@ -7,8 +7,14 @@
         "Level": 1,
         "About": "Start of battle: Give Coconut perk to two first enemies."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -60,8 +66,14 @@
         "Level": 1,
         "About": "End turn: Deal 50 damage to the front-most friend."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -83,8 +95,14 @@
         "Level": 1,
         "About": "End turn: If you rolled less than 6 times this turn, deal the turn number as damage to friends."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -96,15 +114,25 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
     "Health": 1,
     "Abilities": [
-      { "Level": 1, "About": "Start of turn: Lose 3 gold." },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 1,
+        "About": "Start of turn: Lose 3 gold."
+      },
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -126,8 +154,14 @@
         "Level": 1,
         "About": "Start of turn: Sell the two front-most friends."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -149,8 +183,14 @@
         "Level": 1,
         "About": "Start of battle: Give +1 experience to friends and +2 experience to enemies."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -172,8 +212,14 @@
         "Level": 1,
         "About": "Summoned: Replace this with another random toy."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -185,7 +231,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -224,8 +271,14 @@
         "Level": 1,
         "About": "Friend bought: Transform it into ANY random pet from the same tier with new base stats."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -243,9 +296,18 @@
     "Attack": 1000,
     "Health": 1,
     "Abilities": [
-      { "Level": 1, "About": "Roll: Lose 1 gold." },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 1,
+        "About": "Roll: Lose 1 gold."
+      },
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -257,7 +319,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -267,8 +330,14 @@
         "Level": 1,
         "About": "Start of battle: Shuffle positions of all friends."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -280,7 +349,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -290,8 +360,14 @@
         "Level": 1,
         "About": "End turn: If you did not buy any tier 1 food this turn, make friends Dazed until next turn."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -313,8 +389,14 @@
         "Level": 1,
         "About": "Start of battle: Make the two front-most friends Weak."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -337,8 +419,14 @@
         "Level": 1,
         "About": "Empty front space: Remove 20% attack from the back-most friend and move it to the front."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -360,8 +448,14 @@
         "Level": 1,
         "About": "Start of battle: Remove 20% attack and 20% health from friends."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -383,8 +477,14 @@
         "Level": 1,
         "About": "Start of battle: Feed Apples to random pets for each turn number. Double their power on enemies."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -396,7 +496,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -431,9 +532,18 @@
     "Attack": 1000,
     "Health": 1,
     "Abilities": [
-      { "Level": 1, "About": "Start of battle: Make two random friends Cold." },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 1,
+        "About": "Start of battle: Make two random friends Cold."
+      },
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -445,15 +555,25 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
     "Health": 1,
     "Abilities": [
-      { "Level": 1, "About": "Friend summoned: Knock it out." },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 1,
+        "About": "Friend summoned: Knock it out."
+      },
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -475,8 +595,14 @@
         "Level": 1,
         "About": "Start of battle: Make the two front-most friends Inked."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -499,8 +625,14 @@
         "Level": 1,
         "About": "Start of battle: Knock out the two front-most friends and the front-most enemy."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -522,8 +654,14 @@
         "Level": 1,
         "About": "Start of battle: Push the last enemy up front and give it +100% attack and +100% health."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -545,8 +683,14 @@
         "Level": 1,
         "About": "Start of battle: Give enemies +20% attack and +20% health."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -568,8 +712,14 @@
         "Level": 1,
         "About": "End turn: If you spent less than 13 gold this turn, remove 20% health from friends."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -591,8 +741,14 @@
         "Level": 1,
         "About": "Start of battle: Knock out friends from the previous tier."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -614,8 +770,14 @@
         "Level": 1,
         "About": "End turn: Deal 1 damage to the three front-most friends. Multiply damage with their tiers."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -637,8 +799,14 @@
         "Level": 1,
         "About": "All enemies fainted: Summon one 50/1 enemy Duck. Works 1 time per battle."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -660,8 +828,14 @@
         "Level": 1,
         "About": "Start of battle: Set attack and health of all friends to the turn number."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -683,8 +857,14 @@
         "Level": 1,
         "About": "Start of battle: Knock out friends from the current tier."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -736,8 +916,14 @@
         "Level": 1,
         "About": "Start of battle: Make the two back-most friends Icky."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -760,8 +946,14 @@
         "Level": 1,
         "About": "Three friends faint: Summon one exact enemy copy of the back-most friend."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -783,8 +975,14 @@
         "Level": 1,
         "About": "End turn: Remove the lowest tier perks from two friends."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -826,7 +1024,8 @@
     "PacksRequired": [],
     "Rollable": true,
     "PerkNote": "Take +3 damage.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -862,9 +1061,18 @@
     "Attack": 1000,
     "Health": 5,
     "Abilities": [
-      { "Level": 1, "About": "Friend summoned: Give it +1 attack." },
-      { "Level": 2, "About": "Friend summoned: Give it +2 attack." },
-      { "Level": 3, "About": "Friend summoned: Give it +3 attack." }
+      {
+        "Level": 1,
+        "About": "Friend summoned: Give it +1 attack."
+      },
+      {
+        "Level": 2,
+        "About": "Friend summoned: Give it +2 attack."
+      },
+      {
+        "Level": 3,
+        "About": "Friend summoned: Give it +3 attack."
+      }
     ],
     "Type": 1,
     "ToyType": 0,
@@ -935,7 +1143,8 @@
     "PacksRequired": [],
     "Rollable": true,
     "PerkNote": "Faint: Summon one random pet from the same tier.",
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -971,9 +1180,18 @@
     "Attack": 1000,
     "Health": 5,
     "Abilities": [
-      { "Level": 1, "About": "Break: Give friends +1 health." },
-      { "Level": 2, "About": "Break: Give friends +2 health." },
-      { "Level": 3, "About": "Break: Give friends +3 health." }
+      {
+        "Level": 1,
+        "About": "Break: Give friends +1 health."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Give friends +2 health."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Give friends +3 health."
+      }
     ],
     "Type": 1,
     "ToyType": 0,
@@ -1014,7 +1232,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -1194,7 +1413,10 @@
     "Attack": 1000,
     "Health": 7,
     "Abilities": [
-      { "Level": 1, "About": "Break: Give the front-most friend Melon perk." },
+      {
+        "Level": 1,
+        "About": "Break: Give the front-most friend Melon perk."
+      },
       {
         "Level": 2,
         "About": "Break: Give the two front-most friends Melon perk."
@@ -1244,7 +1466,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -1312,8 +1535,14 @@
         "Level": 1,
         "About": "End turn: Transform front-most friend into another random pet from 2 tiers below."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -1325,7 +1554,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -1364,8 +1594,14 @@
         "Level": 1,
         "About": "Start of battle: Transform all friends to level 1."
       },
-      { "Level": 2, "About": "No ability." },
-      { "Level": 3, "About": "No ability." }
+      {
+        "Level": 2,
+        "About": "No ability."
+      },
+      {
+        "Level": 3,
+        "About": "No ability."
+      }
     ],
     "Type": 1,
     "ToyType": 1,
@@ -1412,9 +1648,18 @@
     "Attack": 1000,
     "Health": 7,
     "Abilities": [
-      { "Level": 1, "About": "Break: Summon a level 1 Treasure Chest." },
-      { "Level": 2, "About": "Break: Summon a level 2 Treasure Chest." },
-      { "Level": 3, "About": "Break: Summon a level 3 Treasure Chest." }
+      {
+        "Level": 1,
+        "About": "Break: Summon a level 1 Treasure Chest."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Summon a level 2 Treasure Chest."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Summon a level 3 Treasure Chest."
+      }
     ],
     "Type": 1,
     "ToyType": 0,
@@ -1432,9 +1677,18 @@
     "Attack": 1000,
     "Health": 7,
     "Abilities": [
-      { "Level": 1, "About": "End turn: Gain one free roll next turn." },
-      { "Level": 2, "About": "End turn: Gain two free rolls next turn." },
-      { "Level": 3, "About": "End turn: Gain three free rolls next turn." }
+      {
+        "Level": 1,
+        "About": "End turn: Gain one free roll next turn."
+      },
+      {
+        "Level": 2,
+        "About": "End turn: Gain two free rolls next turn."
+      },
+      {
+        "Level": 3,
+        "About": "End turn: Gain three free rolls next turn."
+      }
     ],
     "Type": 1,
     "ToyType": 0,
@@ -1446,7 +1700,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -1539,9 +1794,18 @@
     "Attack": 1000,
     "Health": 9,
     "Abilities": [
-      { "Level": 1, "About": "Break: Stock one free Chicken Leg." },
-      { "Level": 2, "About": "Break: Stock two free Chicken Legs." },
-      { "Level": 3, "About": "Break: Stock three free Chicken Legs." }
+      {
+        "Level": 1,
+        "About": "Break: Stock one free Chicken Leg."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Stock two free Chicken Legs."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Stock three free Chicken Legs."
+      }
     ],
     "Type": 1,
     "ToyType": 0,
@@ -1582,7 +1846,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -1617,7 +1882,10 @@
     "Attack": 1000,
     "Health": 9,
     "Abilities": [
-      { "Level": 1, "About": "Start of battle: Make the first enemy Weak." },
+      {
+        "Level": 1,
+        "About": "Start of battle: Make the first enemy Weak."
+      },
       {
         "Level": 2,
         "About": "Start of battle: Make the first two enemies Weak."
@@ -1754,7 +2022,8 @@
     "Packs": [],
     "PacksRequired": [],
     "Rollable": true,
-    "CustomArchetypes": []
+    "CustomArchetypes": [],
+    "Random": true
   },
   {
     "Attack": 1000,
@@ -1848,9 +2117,18 @@
     "Attack": 1000,
     "Health": 13,
     "Abilities": [
-      { "Level": 1, "About": "Break: Stock one free Holy Water." },
-      { "Level": 2, "About": "Break: Stock two free Holy Waters." },
-      { "Level": 3, "About": "Break: Stock three free Holy Waters." }
+      {
+        "Level": 1,
+        "About": "Break: Stock one free Holy Water."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Stock two free Holy Waters."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Stock three free Holy Waters."
+      }
     ],
     "Type": 1,
     "ToyType": 0,
@@ -1898,9 +2176,18 @@
     "Attack": 1000,
     "Health": 13,
     "Abilities": [
-      { "Level": 1, "About": "Break: Give friends +2 attack and +2 health." },
-      { "Level": 2, "About": "Break: Give friends +4 attack and +4 health." },
-      { "Level": 3, "About": "Break: Give friends +6 attack and +6 health." }
+      {
+        "Level": 1,
+        "About": "Break: Give friends +2 attack and +2 health."
+      },
+      {
+        "Level": 2,
+        "About": "Break: Give friends +4 attack and +4 health."
+      },
+      {
+        "Level": 3,
+        "About": "Break: Give friends +6 attack and +6 health."
+      }
     ],
     "Type": 1,
     "ToyType": 0,

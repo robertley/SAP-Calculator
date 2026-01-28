@@ -61,6 +61,7 @@ export interface AppUiContext {
   opponentHardToyImageUrl: string;
   playerPetsControls: AbstractControl[];
   opponentPetsControls: AbstractControl[];
+  undoState?: any;
 }
 
 export function trackByIndex(index: number): number {
@@ -614,10 +615,13 @@ export function getToyIconPathValue(toyName?: string): string | null {
 }
 
 export function randomize(ctx: AppUiContext, player?: Player): void {
-  if (player == null) {
-    if (!confirm('Are you sure you want to randomize?')) {
-      return;
-    }
+  // Check if we need to snapshot for undo. 
+  // We snapshot if we are about to change state.
+  // Using JSON strinigify/parse for deep copy of the form value.
+  try {
+    ctx.undoState = JSON.parse(JSON.stringify(ctx.formGroup.getRawValue()));
+  } catch (e) {
+    console.error('Failed to create undo snapshot', e);
   }
 
   if (player) {
@@ -639,6 +643,30 @@ export function randomize(ctx: AppUiContext, player?: Player): void {
     ctx.petSelectors.forEach((selector) => {
       selector.initSelector();
     });
+  });
+}
+
+export function undoRandomize(ctx: AppUiContext): void {
+  if (!ctx.undoState) {
+    return;
+  }
+
+  // Restore state
+  applyCalculatorState(ctx, ctx.undoState);
+
+  // Re-init logic similar to importCalculator/initApp
+  // We need to ensure models are updated from the restored form state
+  initApp(ctx);
+
+  // Clear undo state after undoing (single level undo)
+  ctx.undoState = null;
+
+  setTimeout(() => {
+    if (ctx.petSelectors) {
+      ctx.petSelectors.forEach((selector) => {
+        selector.fixLoadEquipment();
+      });
+    }
   });
 }
 

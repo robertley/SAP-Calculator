@@ -19,6 +19,7 @@ interface PetJsonEntry {
   PacksRequired?: string[];
   Abilities?: Array<{ Level?: number; About?: string }>;
   Rollable?: boolean;
+  Random?: boolean;
 }
 
 const PACK_CODE_TO_NAME: Record<string, PackName> = {
@@ -105,8 +106,18 @@ export class PetService {
     return entries.filter((pet) => Boolean(pet?.Name));
   }
 
+
+  isPetRandom(name: string): boolean {
+    return this.petDataMap.get(name)?.Random === true;
+  }
+
+  private petDataMap: Map<string, PetJsonEntry> = new Map();
+
   private populatePackMaps(pets: PetJsonEntry[]) {
     for (const pet of pets) {
+      if (pet.Name) {
+        this.petDataMap.set(pet.Name, pet);
+      }
       const tier = Number(pet.Tier);
       if (!Number.isFinite(tier) || tier < 1 || tier > 6) {
         continue;

@@ -25,6 +25,7 @@ export interface PetForm {
   mana?: number | null;
   triggersConsumed?: number;
   exp: number;
+  hasRandomEvents?: boolean;
   equipment?: string | Equipment | { name?: string } | null;
   belugaSwallowedPet?: string;
   parrotCopyPet?: string;
@@ -45,68 +46,68 @@ export interface PetForm {
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPet?: string | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPet?: string | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level?: number;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level?: number;
   parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level?: number;
@@ -148,32 +149,32 @@ export interface PetForm {
   abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2?: string | null;
   abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3?: string | null;
   abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
+  | string
+  | null;
   abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level?: number;
   abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level?: number;
   abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level?: number;
@@ -349,12 +350,15 @@ function copyPetFormFields(
   providedIn: 'root',
 })
 export class PetFactoryService {
+
+  private equipmentCache = new Map<string, Equipment>();
+
   constructor(
     private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
     private equipmentService: EquipmentService,
-  ) {}
+  ) { }
 
   /**
    * Creates a pet from a Pet instance (cloning). Used by createDefaultVersionOfPet.
@@ -421,41 +425,19 @@ export class PetFactoryService {
     petService: any,
     registry: { [key: string]: any },
   ): Pet {
+    const plan = this.getPetBuildPlan(petForm, registry);
     const equipment = this.resolveEquipment(
-      petForm.equipment,
-      petForm.equipmentUses,
+      plan.equipmentValue,
+      plan.equipmentUses,
     );
-    const petFormWithEquipment = { ...petForm, equipment };
-    const { name, health, attack, mana, exp, triggersConsumed } =
-      petFormWithEquipment;
-    const deps: PetFactoryDeps = {
-      logService: this.logService,
-      abilityService: this.abilityService,
-      gameService: this.gameService,
-    };
-
-    const hasEquipmentUses = petForm.equipmentUses != null;
-    const hasParrotData = hasNonDefaultFormValue(
-      petForm,
-      PARROT_FORM_FIELDS,
-    );
-    const hasAbominationData = hasNonDefaultFormValue(
-      petForm,
-      ABOMINATION_FORM_FIELDS,
-    );
-    const hasSarcastic = petForm.sarcasticFringeheadSwallowedPet != null;
-    const hasFriendsDied = (petForm.friendsDiedBeforeBattle ?? 0) > 0;
-    const hasTimesHurt = (petForm.timesHurt ?? 0) > 0;
-    const needsPostInit =
-      hasEquipmentUses ||
-      hasParrotData ||
-      hasAbominationData ||
-      hasSarcastic ||
-      hasFriendsDied ||
-      hasTimesHurt;
+    const { name, health, attack, mana, exp, triggersConsumed } = petForm;
+    let hasRandomEvents = petForm.hasRandomEvents;
+    if (hasRandomEvents === undefined && petService && typeof petService.isPetRandom === 'function') {
+      hasRandomEvents = petService.isPetRandom(name);
+    }
 
     const applySarcasticSetting = (pet: Pet) => {
-      if (pet) {
+      if (pet && (plan.hasSarcastic || plan.hasFriendsDied)) {
         pet.sarcasticFringeheadSwallowedPet =
           petForm.sarcasticFringeheadSwallowedPet ?? null;
         pet.friendsDiedBeforeBattle = petForm.friendsDiedBeforeBattle ?? 0;
@@ -466,21 +448,24 @@ export class PetFactoryService {
       if (!pet) {
         return pet;
       }
-      if (petForm.timesHurt != null) {
+      if (plan.hasTimesHurt && petForm.timesHurt != null) {
         pet.timesHurt = petForm.timesHurt;
         pet.originalTimesHurt = petForm.timesHurt;
+      }
+      if (hasRandomEvents) {
+        pet.hasRandomEvents = true;
       }
       return pet;
     };
     const applyAbominationBelugaSwallows = (petInstance: Pet) => {
-      if (petInstance?.name !== 'Abomination') {
+      if (!plan.hasAbominationData || petInstance?.name !== 'Abomination') {
         return petInstance;
       }
       copyPetFormFields(petInstance, petForm, ABOMINATION_FORM_FIELDS);
       return petInstance;
     };
     const applyParrotCopyPet = (petInstance: Pet) => {
-      if (petInstance?.name !== 'Parrot') {
+      if (!plan.hasParrotData || petInstance?.name !== 'Parrot') {
         return petInstance;
       }
       copyPetFormFields(petInstance, petForm, PARROT_FORM_FIELDS);
@@ -490,13 +475,12 @@ export class PetFactoryService {
       if (!petInstance) {
         return petInstance;
       }
-      if (!needsPostInit) {
+      if (!plan.needsPostInit) {
         return petInstance;
       }
-      const withEquipment = this.applyEquipmentUsesOverride(
-        petInstance,
-        petForm,
-      );
+      const withEquipment = plan.hasEquipmentUses
+        ? this.applyEquipmentUsesOverride(petInstance, petForm)
+        : petInstance;
       return finalizePet(
         applyParrotCopyPet(
           applySarcasticSetting(applyAbominationBelugaSwallows(withEquipment)),
@@ -505,9 +489,8 @@ export class PetFactoryService {
     };
 
     // Check if pet needs GameService (highest priority)
-    if (PETS_NEEDING_GAMESERVICE[name]) {
-      const PetClass = PETS_NEEDING_GAMESERVICE[name];
-      const petInstance = new PetClass(
+    if (plan.builderKind === 'gameservice' && plan.PetClass) {
+      const petInstance = new plan.PetClass(
         this.logService,
         this.abilityService,
         petService,
@@ -523,10 +506,14 @@ export class PetFactoryService {
       return buildPetInstance(petInstance);
     }
 
-    // Special handling for pets with extra parameters
-    const specialBuilder = SPECIAL_FORM_PET_BUILDERS[name];
-    if (specialBuilder) {
-      const petInstance = specialBuilder(
+    if (plan.builderKind === 'special' && plan.specialBuilder) {
+      const deps: PetFactoryDeps = {
+        logService: this.logService,
+        abilityService: this.abilityService,
+        gameService: this.gameService,
+      };
+      const petFormWithEquipment = { ...petForm, equipment };
+      const petInstance = plan.specialBuilder(
         deps,
         petFormWithEquipment,
         parent,
@@ -535,10 +522,8 @@ export class PetFactoryService {
       return buildPetInstance(petInstance);
     }
 
-    // Check if pet needs PetService
-    if (PETS_NEEDING_PETSERVICE[name]) {
-      const PetClass = PETS_NEEDING_PETSERVICE[name];
-      const petInstance = new PetClass(
+    if (plan.builderKind === 'petservice' && plan.PetClass) {
+      const petInstance = new plan.PetClass(
         this.logService,
         this.abilityService,
         petService,
@@ -553,10 +538,8 @@ export class PetFactoryService {
       return buildPetInstance(petInstance);
     }
 
-    // Generic case using registry
-    const PetClass = registry[name];
-    if (PetClass) {
-      const petInstance = new PetClass(
+    if (plan.builderKind === 'registry' && plan.PetClass) {
+      const petInstance = new plan.PetClass(
         this.logService,
         this.abilityService,
         parent,
@@ -656,4 +639,85 @@ export class PetFactoryService {
         : null;
     return name || null;
   }
+
+  private getPetBuildPlan(
+    petForm: PetForm,
+    registry: { [key: string]: any },
+  ): PetBuildPlan {
+
+
+    const name = petForm.name;
+    const hasEquipmentUses = petForm.equipmentUses != null;
+    const hasParrotData =
+      petForm.name === 'Parrot' &&
+      hasNonDefaultFormValue(petForm, PARROT_FORM_FIELDS);
+    const hasAbominationData =
+      petForm.name === 'Abomination' &&
+      hasNonDefaultFormValue(petForm, ABOMINATION_FORM_FIELDS);
+    const hasSarcastic = petForm.sarcasticFringeheadSwallowedPet != null;
+    const hasFriendsDied = (petForm.friendsDiedBeforeBattle ?? 0) > 0;
+    const hasTimesHurt = (petForm.timesHurt ?? 0) > 0;
+    const needsPostInit =
+      hasEquipmentUses ||
+      hasParrotData ||
+      hasAbominationData ||
+      hasSarcastic ||
+      hasFriendsDied ||
+      hasTimesHurt;
+
+    let builderKind: PetBuildPlan['builderKind'] = 'missing';
+    let PetClass: PetBuildPlan['PetClass'];
+    let specialBuilder: PetBuildPlan['specialBuilder'];
+
+    if (PETS_NEEDING_GAMESERVICE[name]) {
+      builderKind = 'gameservice';
+      PetClass = PETS_NEEDING_GAMESERVICE[name];
+    } else if (SPECIAL_FORM_PET_BUILDERS[name]) {
+      builderKind = 'special';
+      specialBuilder = SPECIAL_FORM_PET_BUILDERS[name];
+    } else if (PETS_NEEDING_PETSERVICE[name]) {
+      builderKind = 'petservice';
+      PetClass = PETS_NEEDING_PETSERVICE[name];
+    } else if (registry[name]) {
+      builderKind = 'registry';
+      PetClass = registry[name];
+    }
+
+    const plan: PetBuildPlan = {
+      name,
+      builderKind,
+      PetClass,
+      specialBuilder,
+      needsPostInit,
+      hasParrotData,
+      hasAbominationData,
+      hasSarcastic,
+      hasFriendsDied,
+      hasTimesHurt,
+      hasEquipmentUses,
+      equipmentValue: petForm.equipment ?? null,
+      equipmentUses: petForm.equipmentUses ?? null,
+    };
+
+
+    return plan;
+  }
+
+
 }
+
+type PetBuildPlan = {
+  name: string;
+  builderKind: 'gameservice' | 'special' | 'petservice' | 'registry' | 'missing';
+  PetClass?: any;
+  specialBuilder?: any;
+  needsPostInit: boolean;
+  hasParrotData: boolean;
+  hasAbominationData: boolean;
+  hasSarcastic: boolean;
+  hasFriendsDied: boolean;
+  hasTimesHurt: boolean;
+  hasEquipmentUses: boolean;
+  equipmentValue: PetForm['equipment'] | null;
+  equipmentUses: number | null;
+};

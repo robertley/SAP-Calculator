@@ -14,8 +14,17 @@ import {
 })
 export class AbilityQueueService {
   public globalEventQueue: AbilityEvent[] = [];
+  private numberedTriggerCache = new WeakMap<
+    Pet,
+    {
+      listRef: Pet['abilityList'];
+      listLength: number;
+      prefixMap: Map<string, AbilityTrigger[]>;
+    }
+  >();
+  private numberedTriggerRegexCache = new Map<string, RegExp>();
 
-  constructor() {}
+  constructor() { }
 
   // --- Queue Management ---
 
@@ -137,20 +146,7 @@ export class AbilityQueueService {
       };
 
       const abilityEvent: AbilityEvent = {
-        callback: (
-          trigger: AbilityTrigger,
-          gameApi: GameAPI,
-          triggerPet: Pet,
-        ) => {
-          pet.executeAbilities(
-            trigger,
-            gameApi,
-            triggerPet,
-            undefined,
-            undefined,
-            eventCustomParams,
-          );
-        },
+        // callback: Removed for performance
         priority: this.getPetEventPriority(pet),
         pet: pet,
         triggerPet: triggerPet,
@@ -224,18 +220,44 @@ export class AbilityQueueService {
   }
 
   getNumberedTriggersForPet(pet: Pet, prefix: string): AbilityTrigger[] {
-    const triggers = new Set<AbilityTrigger>();
-    const numberedTriggerRegex = new RegExp(`^${prefix}\\d+$`);
+    const abilityList = pet.abilityList;
+    let cache = this.numberedTriggerCache.get(pet);
+    if (
+      !cache ||
+      cache.listRef !== abilityList ||
+      cache.listLength !== abilityList.length
+    ) {
+      cache = {
+        listRef: abilityList,
+        listLength: abilityList.length,
+        prefixMap: new Map(),
+      };
+      this.numberedTriggerCache.set(pet, cache);
+    }
 
-    for (const ability of pet.getAbilities()) {
-      for (const trigger of ability.triggers) {
+    const cached = cache.prefixMap.get(prefix);
+    if (cached) {
+      return cached;
+    }
+
+    const triggers = new Set<AbilityTrigger>();
+    let numberedTriggerRegex = this.numberedTriggerRegexCache.get(prefix);
+    if (!numberedTriggerRegex) {
+      numberedTriggerRegex = new RegExp(`^${prefix}\\d+$`);
+      this.numberedTriggerRegexCache.set(prefix, numberedTriggerRegex);
+    }
+
+    for (const ability of abilityList) {
+      for (const trigger of ability.triggers ?? []) {
         if (numberedTriggerRegex.test(trigger)) {
           triggers.add(trigger);
         }
       }
     }
 
-    return Array.from(triggers);
+    const result = Array.from(triggers);
+    cache.prefixMap.set(prefix, result);
+    return result;
   }
 
   public getTeam(petOrPlayer: any): Pet[] {
