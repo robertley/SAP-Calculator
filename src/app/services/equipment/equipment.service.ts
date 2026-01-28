@@ -17,7 +17,7 @@ export class EquipmentService {
     private abilityService: AbilityService,
     private gameService: GameService,
     private equipmentFactory: EquipmentFactoryService,
-  ) {}
+  ) { }
 
   getInstanceOfAllEquipment() {
     if (!this.cachedEquipment) {
@@ -31,6 +31,12 @@ export class EquipmentService {
       this.cachedAilments = this.equipmentFactory.getAllAilments();
     }
     return this.cachedAilments;
+  }
+
+  isEquipmentRandom(name: string): boolean {
+    const all = this.getInstanceOfAllEquipment();
+    const ailment = this.getInstanceOfAllAilments();
+    return (all.get(name)?.hasRandomEvents ?? false) || (ailment.get(name)?.hasRandomEvents ?? false);
   }
 
   private static readonly USEFUL_PERKS: Map<string, number> = new Map([

@@ -18,6 +18,7 @@ export class Equipment {
 
   // Optional minimum damage this equipment can reduce attacks to
   minimumDamage?: number;
+  hasRandomEvents: boolean = false;
 
   constructor() {
     this.originalPower = this.power;

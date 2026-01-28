@@ -17,6 +17,7 @@ interface ToyJsonEntry {
   Tier: number | string;
   NameId?: string;
   ToyType?: number | string;
+  Random?: boolean;
 }
 
 @Injectable({
@@ -104,11 +105,22 @@ export class ToyService {
     );
   }
 
+  isToyRandom(name: string): boolean {
+    return this.toyDataMap.get(name)?.Random === true;
+  }
+
+  private toyDataMap: Map<string, ToyJsonEntry> = new Map();
+
   private getToyEntriesFromJson(): ToyJsonEntry[] {
     const entries =
       (toysJson as unknown as { default?: ToyJsonEntry[] }).default ??
       (toysJson as unknown as ToyJsonEntry[]) ??
       [];
+    entries.forEach((toy) => {
+      if (toy.Name) {
+        this.toyDataMap.set(toy.Name, toy);
+      }
+    });
     return entries.filter((toy) => Boolean(toy?.Name));
   }
 
@@ -221,9 +233,9 @@ export class ToyService {
     const isGuavaDefense = pet.equipment?.name === 'Guava';
     let defenseEquipment: Equipment =
       pet.equipment?.equipmentClass == 'defense' ||
-      pet.equipment?.equipmentClass == 'shield' ||
-      pet.equipment?.equipmentClass == 'ailment-defense' ||
-      pet.equipment?.equipmentClass == 'shield-snipe'
+        pet.equipment?.equipmentClass == 'shield' ||
+        pet.equipment?.equipmentClass == 'ailment-defense' ||
+        pet.equipment?.equipmentClass == 'shield-snipe'
         ? pet.equipment
         : null;
     if (defenseEquipment == null && isGuavaDefense) {
@@ -259,7 +271,7 @@ export class ToyService {
     }
     let min =
       defenseEquipment?.equipmentClass == 'shield' ||
-      defenseEquipment?.equipmentClass == 'shield-snipe'
+        defenseEquipment?.equipmentClass == 'shield-snipe'
         ? 0
         : 1;
     //check garlic

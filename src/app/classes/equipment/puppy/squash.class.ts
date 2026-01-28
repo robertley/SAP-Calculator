@@ -46,7 +46,6 @@ export class SquashAbility extends Ability {
       // Squash targets the pet being attacked, need to get front pet from opponent
       let targetPet = owner.parent.opponent.pet0;
       if (targetPet == null || !targetPet.alive) {
-        console.warn("squash didn't find target");
         return;
       }
 

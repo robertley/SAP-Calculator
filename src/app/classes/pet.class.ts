@@ -263,6 +263,7 @@ export abstract class Pet {
 
   savedPosition: 0 | 1 | 2 | 3 | 4;
   originalSavedPosition?: 0 | 1 | 2 | 3 | 4;
+  hasRandomEvents: boolean = false;
 
   constructor(
     protected logService: LogService,

@@ -16,67 +16,84 @@ import {
 } from './equipment-registry';
 
 const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
-    ['Blueberry', 1],
-    ['Golden Egg', 1],
-    ['Gros Michel Banana', 1],
-    ['Health Potion', 1],
-    ['Honey', 1],
-    ['Macaron', 1],
-    ['Unagi', 1],
-    ['Caramel', 2],
-    ['Cherry', 2],
-    ['Chocolate Cake', 2],
-    ['Churros', 2],
-    ['Cod Roe', 2],
-    ['Eucalyptus', 2],
-    ['Faint Bread', 2],
-    ['Fairy Dust', 2],
-    ['Meat Bone', 2],
-    ['Radish', 2],
-    ['Sudduth Tomato', 2],
-    ['Brussels Sprout', 3],
-    ['Cucumber', 3],
-    ['Fig', 3],
-    ['Gingerbread Man', 3],
-    ['Pineapple', 3],
-    ['Rambutan', 3],
-    ['Sausage', 3],
-    ['Seaweed', 3],
-    ['White Truffle', 3],
-    ['Baguette', 4],
-    ['Banana', 4],
-    ['Cauliflower', 4],
-    ['Cheese', 4],
-    ['Donut', 4],
-    ['Fortune Cookie', 4],
-    ['Grapes', 4],
-    ['Melon Slice', 4],
-    ['Oyster Mushroom', 4],
-    ['Potato', 4],
-    ['Carrot', 5],
-    ['Chili', 5],
-    ['Durian', 5],
-    ['Easter Egg', 5],
-    ['Eggplant', 5],
-    ['Kiwano', 5],
-    ['Magic Beans', 5],
-    ['Onion', 5],
-    ['Pepper', 5],
-    ['Mild Chili', 4],
-    ['Popcorn', 6],
-    ['Sardinian Currant', 6],
-    ['Yggdrasil Fruit', 6]
+  ['Blueberry', 1],
+  ['Golden Egg', 1],
+  ['Gros Michel Banana', 1],
+  ['Health Potion', 1],
+  ['Honey', 1],
+  ['Macaron', 1],
+  ['Unagi', 1],
+  ['Caramel', 2],
+  ['Cherry', 2],
+  ['Chocolate Cake', 2],
+  ['Churros', 2],
+  ['Cod Roe', 2],
+  ['Eucalyptus', 2],
+  ['Faint Bread', 2],
+  ['Fairy Dust', 2],
+  ['Meat Bone', 2],
+  ['Radish', 2],
+  ['Sudduth Tomato', 2],
+  ['Brussels Sprout', 3],
+  ['Cucumber', 3],
+  ['Fig', 3],
+  ['Gingerbread Man', 3],
+  ['Pineapple', 3],
+  ['Rambutan', 3],
+  ['Sausage', 3],
+  ['Seaweed', 3],
+  ['White Truffle', 3],
+  ['Baguette', 4],
+  ['Banana', 4],
+  ['Cauliflower', 4],
+  ['Cheese', 4],
+  ['Donut', 4],
+  ['Fortune Cookie', 4],
+  ['Grapes', 4],
+  ['Melon Slice', 4],
+  ['Oyster Mushroom', 4],
+  ['Potato', 4],
+  ['Carrot', 5],
+  ['Chili', 5],
+  ['Durian', 5],
+  ['Easter Egg', 5],
+  ['Eggplant', 5],
+  ['Kiwano', 5],
+  ['Magic Beans', 5],
+  ['Onion', 5],
+  ['Pepper', 5],
+  ['Mild Chili', 4],
+  ['Popcorn', 6],
+  ['Sardinian Currant', 6],
+  ['Yggdrasil Fruit', 6]
 ]);
+
+import * as foodJson from 'assets/data/food.json';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EquipmentFactoryService {
+  private randomEquipmentSet: Set<string> = new Set();
+
   constructor(
     private logService: LogService,
     private abilityService: AbilityService,
     private gameService: GameService,
-  ) {}
+  ) {
+    this.initRandomEquipment();
+  }
+
+  private initRandomEquipment() {
+    const foods = (foodJson as any).default || foodJson;
+    if (Array.isArray(foods)) {
+      for (const food of foods) {
+        if (food.Random) {
+          this.randomEquipmentSet.add(food.Name);
+        }
+      }
+    }
+  }
 
   getAllEquipment(): Map<string, Equipment> {
     const petService = InjectorService.getInjector().get(PetService);
@@ -90,22 +107,38 @@ export class EquipmentFactoryService {
 
     // No-arg equipment
     for (const [name, EquipClass] of Object.entries(NO_ARG_EQUIPMENT)) {
-      map.set(name, new EquipClass());
+      const equip = new EquipClass();
+      if (this.randomEquipmentSet.has(name)) {
+        equip.hasRandomEvents = true;
+      }
+      map.set(name, equip);
     }
 
     // LogService-only equipment
     for (const [name, EquipClass] of Object.entries(LOG_ONLY_EQUIPMENT)) {
-      map.set(name, new EquipClass(this.logService));
+      const equip = new EquipClass(this.logService);
+      if (this.randomEquipmentSet.has(name)) {
+        equip.hasRandomEvents = true;
+      }
+      map.set(name, equip);
     }
 
     // LogService + AbilityService equipment
     for (const [name, EquipClass] of Object.entries(LOG_ABILITY_EQUIPMENT)) {
-      map.set(name, new EquipClass(this.logService, this.abilityService));
+      const equip = new EquipClass(this.logService, this.abilityService);
+      if (this.randomEquipmentSet.has(name)) {
+        equip.hasRandomEvents = true;
+      }
+      map.set(name, equip);
     }
 
     // Special cases with unique constructors
     for (const [name, builder] of Object.entries(SPECIAL_EQUIPMENT_BUILDERS)) {
-      map.set(name, builder(deps));
+      const equip = builder(deps);
+      if (this.randomEquipmentSet.has(name)) {
+        equip.hasRandomEvents = true;
+      }
+      map.set(name, equip);
     }
 
     for (const [name, equipment] of map.entries()) {
@@ -131,12 +164,20 @@ export class EquipmentFactoryService {
 
     // No-arg ailments
     for (const [name, AilmentClass] of Object.entries(NO_ARG_AILMENTS)) {
-      map.set(name, new AilmentClass());
+      const equip = new AilmentClass();
+      if (this.randomEquipmentSet.has(name)) { // In case ailments have Random tag (unlikely but safe)
+        equip.hasRandomEvents = true;
+      }
+      map.set(name, equip);
     }
 
     // Special case
     for (const [name, builder] of Object.entries(SPECIAL_AILMENT_BUILDERS)) {
-      map.set(name, builder(deps));
+      const equip = builder(deps);
+      if (this.randomEquipmentSet.has(name)) {
+        equip.hasRandomEvents = true;
+      }
+      map.set(name, equip);
     }
 
     return map;

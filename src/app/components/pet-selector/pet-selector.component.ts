@@ -205,7 +205,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   constructor(
     private petService: PetService,
     private equipmentService: EquipmentService,
-  ) {}
+  ) { }
 
   trackByIndex(index: number): number {
     return index;
@@ -477,7 +477,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     //   belugaSwallowedPet: new FormControl(this.pet?.belugaSwallowedPet)
     // })
 
-    const inputDebounceMs = 50;
+    const inputDebounceMs = 0;
 
     this.formGroup
       .get('name')
@@ -1344,15 +1344,15 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       )?.value ?? null;
     const level1 = Number(
       this.formGroup.get('parrotCopyPetAbominationSwallowedPet1Level')?.value ??
-        1,
+      1,
     );
     const level2 = Number(
       this.formGroup.get('parrotCopyPetAbominationSwallowedPet2Level')?.value ??
-        1,
+      1,
     );
     const level3 = Number(
       this.formGroup.get('parrotCopyPetAbominationSwallowedPet3Level')?.value ??
-        1,
+      1,
     );
 
     pet.parrotCopyPetAbominationSwallowedPet1 = pet1 ?? null;

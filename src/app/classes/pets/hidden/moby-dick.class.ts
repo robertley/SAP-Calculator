@@ -69,6 +69,13 @@ export class MobyDickAbility extends Ability {
     return triggers;
   }
 
+  public override set triggers(value: AbilityTrigger[]) {
+    // No-op or update internal _triggers if needed, but our getter logic is dynamic.
+    // This setter is required to prevent "Cannot set property triggers of [object Object] which has only a getter"
+    // when the super() constructor tries to initialize it.
+    this._triggers = value;
+  }
+
   private executeAbility(context: AbilityContext): void {
     this.logService.createLog({
       message: `${this.owner.name} removed itself.`,
