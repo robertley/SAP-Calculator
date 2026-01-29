@@ -99,7 +99,7 @@ export class SimulationRunner {
     this.resetSimulation();
     this.setupGameEnvironment(config);
 
-    if (this.isBattleDeterministic(config)) {
+    if (config.optimizeDeterministicSimulations && this.isBattleDeterministic(config)) {
       battleCount = 1;
     }
 

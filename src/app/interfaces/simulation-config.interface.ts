@@ -249,6 +249,7 @@ export interface SimulationConfig {
   tokenPets?: boolean;
   komodoShuffle?: boolean;
   mana?: boolean;
+  optimizeDeterministicSimulations?: boolean;
   simulationCount?: number;
   logsEnabled?: boolean;
 }
