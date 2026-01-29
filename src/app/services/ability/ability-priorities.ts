@@ -126,7 +126,7 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
   AnyoneFlung: 21,
 
   // Mana snipe (after post-removal faint abilities)
-  manaSnipe: 24.5,
+  ManaSnipe: 24.5,
 
   // Space/positioning events
   ClearFront: 25,
@@ -140,7 +140,7 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
   FriendlyToyBroke: 26,
 
   // Special summons
-  goldenRetrieverSummons: 27,
+  GoldenRetrieverSummons: 27,
 
   // Composite/unused categories kept for reference
   // "Composite": 99,

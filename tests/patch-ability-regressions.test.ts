@@ -278,8 +278,7 @@ describe('Pet Ability Patch Regressions', () => {
         logService.decorateLogIfNeeded(manaLog);
         const parts = parseLogMessage(manaLog.message ?? '');
         const text = parts
-            .filter((part) => part.type === 'text')
-            .map((part) => part.text)
+            .map((part) => (part.type === 'text' ? part.text : part.alt || ''))
             .join(' ')
             .toLowerCase();
 
