@@ -5,7 +5,6 @@ import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { PetService } from 'app/services/pet/pet.service';
-import { InjectorService } from 'app/services/injector.service';
 import { levelToExp } from 'app/util/leveling';
 
 

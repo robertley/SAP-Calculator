@@ -19,14 +19,14 @@
 
     <!-- Swallowed Pet Settings -->
     <app-swallowed-pet-selector [formGroup]="formGroup" [pet]="pet" [showSwallowedLevels]="showSwallowedLevels"
-      (onOpenSelection)="openSelectionDialog($event.type, $event.index, $event.target, $event.parentIndex)">
+      (openSelection)="openSelectionDialog($event.type, $event.index, $event.target, $event.parentIndex)">
     </app-swallowed-pet-selector>
 
     <!-- Equipment Selector -->
     <app-pet-equipment-selector [formGroup]="formGroup" [equipmentImageSrc]="equipmentImageSrc"
       [ailmentImageSrc]="ailmentImageSrc" [allowEquipmentUseOverrides]="allowEquipmentUseOverrides"
       [equipmentUsesAvailable]="equipmentUsesAvailable" [equipmentUsesInputId]="equipmentUsesInputId"
-      (onOpenSelection)="openSelectionDialog('equipment')">
+      (openSelection)="openSelectionDialog('equipment')">
     </app-pet-equipment-selector>
 
     <!-- Pet Art -->
