@@ -12,6 +12,10 @@ export class Elk extends Pet {
   pack: Pack = 'Star';
   attack = 2;
   health = 6;
+  initAbilities(): void {
+    this.addAbility(new ElkAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
 
   constructor(
     protected logService: LogService,
@@ -42,7 +46,7 @@ export class ElkAbility extends Ability {
     super({
       name: 'ElkAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,7 +59,26 @@ export class ElkAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const candidates = owner.parent.petArray.filter(
+      (pet) => pet.alive && pet.isSellPet(),
+    );
+    if (candidates.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const target = candidates[Math.floor(Math.random() * candidates.length)];
+    const sellValueGain = this.level * 2;
+    target.increaseSellValue(sellValueGain);
+    this.logService.createLog({
+      message: `${owner.name} increased ${target.name}'s sell value by ${sellValueGain}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: candidates.length > 1,
+    });
     this.triggerTigerExecution(context);
   }
 

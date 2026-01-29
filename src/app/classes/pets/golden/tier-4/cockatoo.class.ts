@@ -47,7 +47,7 @@ export class CockatooAbility extends Ability {
     super({
       name: 'CockatooAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,30 @@ export class CockatooAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const friends = owner.parent.petArray.filter(
+      (pet) => pet.alive && pet !== owner,
+    );
+    if (friends.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    let maxTier = Math.max(...friends.map((pet) => pet.tier));
+    const candidates = friends.filter((pet) => pet.tier === maxTier);
+    const target = candidates[Math.floor(Math.random() * candidates.length)];
+    const buff = this.level * 2;
+    target.increaseAttack(buff);
+    target.increaseHealth(buff);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: candidates.length > 1,
+    });
     this.triggerTigerExecution(context);
   }
 

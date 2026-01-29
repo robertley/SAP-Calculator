@@ -12,6 +12,12 @@ export class Starfish extends Pet {
   pack: Pack = 'Star';
   attack = 3;
   health = 7;
+  initAbilities(): void {
+    this.addAbility(
+      new StarfishAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class StarfishAbility extends Ability {
     super({
       name: 'StarfishAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['FriendSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,28 @@ export class StarfishAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const soldPet = context.triggerPet;
+    if (!soldPet || soldPet.level !== 3) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const multiplier = soldPet.attack >= 10 ? 3 : 1;
+    const buff = this.level * multiplier;
+    const targets = owner.parent.petArray.filter((pet) => pet.alive);
+    for (const target of targets) {
+      target.increaseAttack(buff);
+      target.increaseHealth(buff);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave friends +${buff}/+${buff}${multiplier > 1 ? ' (triple bonus)' : ''}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

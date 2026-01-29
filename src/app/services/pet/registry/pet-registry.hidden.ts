@@ -21,7 +21,6 @@ import { GoodDog } from '../../../classes/pets/hidden/good-dog.class';
 import { Head } from '../../../classes/pets/hidden/head.class';
 import { LizardTail } from '../../../classes/pets/hidden/lizard-tail.class';
 import { LoyalChinchilla } from '../../../classes/pets/hidden/loyal-chinchilla.class';
-import { Mantis } from '../../../classes/pets/hidden/mantis.class';
 import { MimicOctopus } from '../../../classes/pets/hidden/mimic-octopus.class';
 import { MobyDick } from '../../../classes/pets/hidden/moby-dick.class';
 import { Monty } from '../../../classes/pets/hidden/monty.class';
@@ -53,7 +52,7 @@ export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
   'Chimera Lion': ChimeraLion,
   'Chimera Snake': ChimeraSnake,
   'Cooked Roach': CookedRoach,
-  CrackedEgg: CrackedEgg,
+  'Cracked Egg': CrackedEgg,
   Daycrawler: Daycrawler,
   'Dirty Rat': DirtyRat,
   'Fairy Ball': FairyBall,
@@ -65,7 +64,6 @@ export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
   Head: Head,
   'Lizard Tail': LizardTail,
   'Loyal Chinchilla': LoyalChinchilla,
-  Mantis: Mantis,
   'Mimic Octopus': MimicOctopus,
   'Moby Dick': MobyDick,
   Monty: Monty,

@@ -12,6 +12,10 @@ export class Okapi extends Pet {
   pack: Pack = 'Star';
   attack = 2;
   health = 3;
+  initAbilities(): void {
+    this.addAbility(new OkapiAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -32,6 +36,10 @@ export class Okapi extends Pet {
 export class OkapiAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
+  private usesThisTurn = 0;
+  private pendingAttack = 0;
+  private pendingHealth = 0;
+  private readonly maxUsesPerTurn = 5;
 
   constructor(
     owner: Pet,
@@ -41,7 +49,7 @@ export class OkapiAbility extends Ability {
     super({
       name: 'OkapiAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['Roll1', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +62,38 @@ export class OkapiAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    if (context.trigger === 'StartTurn') {
+      if (this.pendingAttack || this.pendingHealth) {
+        owner.increaseAttack(-this.pendingAttack);
+        owner.increaseHealth(-this.pendingHealth);
+      }
+      this.pendingAttack = 0;
+      this.pendingHealth = 0;
+      this.usesThisTurn = 0;
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    if (this.usesThisTurn >= this.maxUsesPerTurn) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = this.level;
+    owner.increaseAttack(buff);
+    owner.increaseHealth(buff);
+    this.pendingAttack += buff;
+    this.pendingHealth += buff;
+    this.usesThisTurn++;
+
+    this.logService.createLog({
+      message: `${owner.name} gained +${buff}/+${buff} until next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

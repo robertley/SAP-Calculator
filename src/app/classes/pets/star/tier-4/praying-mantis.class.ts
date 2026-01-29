@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAdjacentAlivePets } from 'app/classes/ability-helpers';
 
 
 export class PrayingMantis extends Pet {
@@ -12,6 +13,12 @@ export class PrayingMantis extends Pet {
   pack: Pack = 'Star';
   attack = 7;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(
+      new PrayingMantisAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +48,7 @@ export class PrayingMantisAbility extends Ability {
     super({
       name: 'PrayingMantisAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +61,25 @@ export class PrayingMantisAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const damage = 50;
+    const adjacentPets = getAdjacentAlivePets(owner);
+    for (const target of adjacentPets) {
+      owner.dealDamage(target, damage);
+    }
+
+    const buff = this.level * 2;
+    owner.increaseAttack(buff);
+    owner.increaseHealth(buff);
+
+    this.logService.createLog({
+      message: `${owner.name} dealt ${damage} damage to adjacent friends and gained +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: adjacentPets.length > 1,
+    });
     this.triggerTigerExecution(context);
   }
 

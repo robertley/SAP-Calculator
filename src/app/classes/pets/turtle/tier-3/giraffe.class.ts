@@ -12,6 +12,10 @@ export class Giraffe extends Pet {
   pack: Pack = 'Turtle';
   attack = 1;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(new GiraffeAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Giraffe extends Pet {
 
 export class GiraffeAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'GiraffeAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,36 @@ export class GiraffeAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const count = this.level;
+    const targetsResp = owner.parent.nearestPetsAhead(count, owner);
+    if (targetsResp.pets.length === 0) {
+      return;
+    }
+
+    for (const target of targetsResp.pets) {
+      target.increaseAttack(1);
+      target.increaseHealth(1);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${targetsResp.pets
+        .map((pet) => pet.name)
+        .join(', ')} +1 attack and +1 health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetsResp.random,
+    });
+
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): GiraffeAbility {
-    return new GiraffeAbility(newOwner, this.logService, this.abilityService);
+    return new GiraffeAbility(newOwner, this.logService);
   }
 }

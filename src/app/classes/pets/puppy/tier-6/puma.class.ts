@@ -54,7 +54,7 @@ export class PumaAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    // Passive handled by ToyEventService (Puma repeats friendly toy triggers).
     this.triggerTigerExecution(context);
   }
 

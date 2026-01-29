@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { LoyalChinchilla } from 'app/classes/pets/hidden/loyal-chinchilla.class';
 
 
 export class Chinchilla extends Pet {
@@ -47,7 +48,7 @@ export class ChinchillaAbility extends Ability {
     super({
       name: 'ChinchillaAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +61,38 @@ export class ChinchillaAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const level = this.level;
+    const exp = this.minExpForLevel;
+    const power = 2 * level;
+
+    const loyalChinchilla = new LoyalChinchilla(
+      this.logService,
+      this.abilityService,
+      owner.parent,
+      power,
+      power,
+      null,
+      exp,
+    );
+
+    const summonResult = owner.parent.summonPet(
+      loyalChinchilla,
+      owner.savedPosition,
+      false,
+      owner,
+    );
+
+    if (summonResult.success) {
+      this.logService.createLog({
+        message: `${owner.name} summoned a ${power}/${power} Loyal Chinchilla (level ${level}).`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+        randomEvent: summonResult.randomEvent,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

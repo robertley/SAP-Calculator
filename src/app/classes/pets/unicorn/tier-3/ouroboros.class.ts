@@ -12,6 +12,12 @@ export class Ouroboros extends Pet {
   pack: Pack = 'Unicorn';
   attack = 2;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new OuroborosAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -32,6 +38,8 @@ export class Ouroboros extends Pet {
 export class OuroborosAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
+  private usesThisTurn = 0;
+  private readonly maxUsesPerTurn = 5;
 
   constructor(
     owner: Pet,
@@ -41,7 +49,7 @@ export class OuroborosAbility extends Ability {
     super({
       name: 'OuroborosAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['Roll1', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +62,27 @@ export class OuroborosAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    if (context.trigger === 'StartTurn') {
+      this.usesThisTurn = 0;
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    if (this.usesThisTurn >= this.maxUsesPerTurn) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const owner = this.owner;
+    const buff = this.level;
+    this.usesThisTurn++;
+    this.logService.createLog({
+      message: `${owner.name} gave newly rolled shop pets +${buff}/+${buff} until next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

@@ -312,7 +312,11 @@ export class LogService {
     );
     const manaIcon = 'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/mana.png';
     const manaRegex = /(?<![A-Za-z0-9])mana(?![A-Za-z0-9])(?!\s+Potion)/gi;
-    updated = this.replaceMatchesWithIcons(updated, manaRegex, () => manaIcon);
+    updated = this.replaceMatchesWithIconsOutsideTags(
+      updated,
+      manaRegex,
+      () => manaIcon,
+    );
     return updated;
   }
 
@@ -374,6 +378,21 @@ export class LogService {
       }
       return `<img src="${icon}" class="log-inline-icon" alt="${match}" onerror="this.remove()"> ${match}`;
     });
+  }
+
+  private replaceMatchesWithIconsOutsideTags(
+    message: string,
+    regex: RegExp,
+    getIcon: (name: string) => string | null,
+  ): string {
+    return message
+      .split(/(<[^>]+>)/g)
+      .map((segment) =>
+        segment.startsWith('<')
+          ? segment
+          : this.replaceMatchesWithIcons(segment, regex, getIcon),
+      )
+      .join('');
   }
 
   private buildNameRegex(names: string[]): RegExp {

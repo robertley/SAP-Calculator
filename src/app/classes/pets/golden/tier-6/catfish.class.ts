@@ -47,7 +47,7 @@ export class CatfishAbility extends Ability {
     super({
       name: 'CatfishAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,44 @@ export class CatfishAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const target = owner.petAhead;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const times = this.level;
+    const hasBuyAbility = target.hasTrigger('ThisBought');
+    if (hasBuyAbility) {
+      for (let i = 0; i < times; i++) {
+        target.executeAbilities(
+          'ThisBought',
+          context.gameApi,
+          target,
+          undefined,
+          undefined,
+          { trigger: 'ThisBought' },
+        );
+      }
+      this.logService.createLog({
+        message: `${owner.name} activated ${target.name}'s buy ability ${times} time${times === 1 ? '' : 's'}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+    } else {
+      const healthGain = this.level * 4;
+      target.increaseHealth(healthGain);
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} +${healthGain} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

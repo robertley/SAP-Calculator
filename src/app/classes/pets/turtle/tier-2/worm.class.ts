@@ -12,6 +12,10 @@ export class Worm extends Pet {
   pack: Pack = 'Turtle';
   health = 4;
   attack = 1;
+  initAbilities(): void {
+    this.addAbility(new WormAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Worm extends Pet {
 
 export class WormAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'WormAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,27 @@ export class WormAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const foodName =
+      this.level === 1
+        ? 'Apple'
+        : this.level === 2
+          ? 'Better Apple'
+          : 'Best Apple';
+    this.logService.createLog({
+      message: `${owner.name} stocked one 2-gold ${foodName}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): WormAbility {
-    return new WormAbility(newOwner, this.logService, this.abilityService);
+    return new WormAbility(newOwner, this.logService);
   }
 }

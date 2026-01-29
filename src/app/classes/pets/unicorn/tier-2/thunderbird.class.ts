@@ -57,10 +57,10 @@ export class ThunderbirdAbility extends Ability {
 
     let targetsResp = owner.parent.nearestPetsAhead(2, owner);
     let targets = targetsResp.pets;
-    if (targets.length < 2) {
+    if (targets.length < 1) {
       return;
     }
-    let target = targetsResp.pets[1];
+    let target = targetsResp.pets[1] ?? targetsResp.pets[0];
     if (target == null) {
       return;
     }

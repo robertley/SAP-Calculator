@@ -2,6 +2,7 @@ import { Basilisk } from '../../../classes/pets/custom/tier-1/basilisk.class';
 import { Budgie } from '../../../classes/pets/custom/tier-1/budgie.class';
 import { Duckling } from '../../../classes/pets/custom/tier-1/duckling.class';
 import { FarmerMouse } from '../../../classes/pets/custom/tier-1/farmer-mouse.class';
+import { FrilledDragon } from '../../../classes/pets/custom/tier-1/frilled-dragon';
 import { Gibbon } from '../../../classes/pets/custom/tier-1/gibbon.class';
 import { Mouse } from '../../../classes/pets/custom/tier-1/mouse.class';
 import { Nudibranch } from '../../../classes/pets/custom/tier-1/nudibranch.class';
@@ -49,6 +50,7 @@ import { Bear } from '../../../classes/pets/custom/tier-3/bear.class';
 import { BlueDragon } from '../../../classes/pets/custom/tier-3/blue-dragon.class';
 import { BrazillianTreehopper } from '../../../classes/pets/custom/tier-3/brazillian-treehopper.class';
 import { Caladrius } from '../../../classes/pets/custom/tier-3/caladrius.class';
+import { Centipede } from '../../../classes/pets/custom/tier-3/centipede.class';
 import { DeerLord } from '../../../classes/pets/custom/tier-3/deer-lord.class';
 import { Dimetrodon } from '../../../classes/pets/custom/tier-3/dimetrodon.class';
 import { Dugong } from '../../../classes/pets/custom/tier-3/dugong.class';
@@ -117,6 +119,7 @@ import { BrahmaChicken } from '../../../classes/pets/custom/tier-5/brahma-chicke
 import { Cuckoo } from '../../../classes/pets/custom/tier-5/cuckoo.class';
 import { Estemmenosuchus } from '../../../classes/pets/custom/tier-5/estemmenosuchus.class';
 import { FarmerCrow } from '../../../classes/pets/custom/tier-5/farmer-crow.class';
+import { FarmerDog } from '../../../classes/pets/custom/tier-6/farmer-dog';
 import { Flounder } from '../../../classes/pets/custom/tier-5/flounder.class';
 import { Fox } from '../../../classes/pets/custom/tier-5/fox.class';
 import { GiantIsopod } from '../../../classes/pets/custom/tier-5/giant-isopod.class';
@@ -183,6 +186,7 @@ export const CUSTOM_PET_REGISTRY: { [key: string]: any } = {
   Budgie: Budgie,
   Duckling: Duckling,
   'Farmer Mouse': FarmerMouse,
+  'Frilled Dragon': FrilledDragon,
   Gibbon: Gibbon,
   Mouse: Mouse,
   Nudibranch: Nudibranch,
@@ -230,6 +234,7 @@ export const CUSTOM_PET_REGISTRY: { [key: string]: any } = {
   'Blue Dragon': BlueDragon,
   'Brazillian Treehopper': BrazillianTreehopper,
   Caladrius: Caladrius,
+  Centipede: Centipede,
   'Deer Lord': DeerLord,
   Dimetrodon: Dimetrodon,
   Dugong: Dugong,
@@ -283,7 +288,7 @@ export const CUSTOM_PET_REGISTRY: { [key: string]: any } = {
   'Racket Tail': RacketTail,
   'Red Lipped Batfish': RedLippedBatfish,
   Rootling: Rootling,
-  'Ruspolis Turaco': RuspolisTuraco,
+  "Ruspoli's Turaco": RuspolisTuraco,
   'Sea Anemone': SeaAnemone,
   Seagull: Seagull,
   'Spider Crab': SpiderCrab,
@@ -298,6 +303,7 @@ export const CUSTOM_PET_REGISTRY: { [key: string]: any } = {
   Cuckoo: Cuckoo,
   Estemmenosuchus: Estemmenosuchus,
   'Farmer Crow': FarmerCrow,
+  'Farmer Dog': FarmerDog,
   Flounder: Flounder,
   Fox: Fox,
   'Giant Isopod': GiantIsopod,

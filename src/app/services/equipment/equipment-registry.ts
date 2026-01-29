@@ -68,7 +68,6 @@ import { Cauliflower } from '../../classes/equipment/custom/cauliflower.class';
 import { Churros } from '../../classes/equipment/custom/churros.class';
 import { Kiwano } from '../../classes/equipment/custom/kiwano.class';
 import { Macaron } from '../../classes/equipment/custom/macaron.class';
-import { ManaPotion } from '../../classes/equipment/custom/mana-potion.class';
 import { MelonSlice } from '../../classes/equipment/custom/melon-slice.class';
 import { OysterMushroom } from '../../classes/equipment/custom/oyster-mushroom.class';
 import { Radish } from '../../classes/equipment/custom/radish.class';
@@ -154,7 +153,6 @@ export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
   Churros: Churros,
   Kiwano: Kiwano,
   Macaron: Macaron,
-  'Mana Potion': ManaPotion,
   'Melon Slice': MelonSlice,
   'Oyster Mushroom': OysterMushroom,
   'Sardinian Currant': SardinianCurrant,

@@ -38,6 +38,8 @@ export class BirdOfParadise extends Pet {
 export class BirdOfParadiseAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
+  private usesThisTurn = 0;
+  private readonly maxUsesPerTurn = 3;
 
   constructor(
     owner: Pet,
@@ -47,7 +49,7 @@ export class BirdOfParadiseAbility extends Ability {
     super({
       name: 'BirdOfParadiseAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['SpendGold7', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +62,40 @@ export class BirdOfParadiseAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    if (context.trigger === 'StartTurn') {
+      this.usesThisTurn = 0;
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    if (this.usesThisTurn >= this.maxUsesPerTurn) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const owner = this.owner;
+    const targetsResp = owner.parent.getRandomPets(3, [owner]);
+    const targets = targetsResp.pets;
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = this.level;
+    for (const target of targets) {
+      target.increaseAttack(buff);
+      target.increaseHealth(buff);
+    }
+    this.usesThisTurn++;
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${targets.map((pet) => pet.name).join(', ')} +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetsResp.random,
+    });
     this.triggerTigerExecution(context);
   }
 

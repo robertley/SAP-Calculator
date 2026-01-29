@@ -12,6 +12,12 @@ export class Wyvern extends Pet {
   pack: Pack = 'Unicorn';
   attack = 3;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new WyvernAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class WyvernAbility extends Ability {
     super({
       name: 'WyvernAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['FriendlyLeveledUp'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,15 @@ export class WyvernAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const rewards = this.level;
+    this.logService.createLog({
+      message: `${owner.name} will grant ${rewards} extra shop reward${rewards === 1 ? '' : 's'}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

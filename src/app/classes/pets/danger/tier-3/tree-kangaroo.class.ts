@@ -96,7 +96,9 @@ export class TreeKangarooAbility extends Ability {
           player: owner.parent,
           randomEvent: targetResp.random,
         });
-        activationTarget.activateAbilities(undefined, gameApi, 'Pet');
+        for (const ability of activationTarget.abilityList) {
+          ability.execute(gameApi, activationTarget, tiger, pteranodon);
+        }
       }
     }
 

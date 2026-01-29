@@ -47,7 +47,7 @@ export class BlueRingedOctopusAbility extends Ability {
     super({
       name: 'BlueRingedOctopusAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,28 @@ export class BlueRingedOctopusAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const buff = this.level;
+    const friends = owner.parent.petArray.filter(
+      (pet) => pet.alive && pet !== owner,
+    );
+    if (friends.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    for (const friend of friends) {
+      friend.increaseAttack(buff);
+      friend.increaseHealth(buff);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave friends +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

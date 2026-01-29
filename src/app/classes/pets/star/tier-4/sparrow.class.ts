@@ -12,6 +12,10 @@ export class Sparrow extends Pet {
   pack: Pack = 'Star';
   attack = 3;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(new SparrowAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
 
   constructor(
     protected logService: LogService,
@@ -57,7 +61,7 @@ export class SparrowAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    // Passive handled in pet combat calculations (Strawberry + Sparrow scaling).
     this.triggerTigerExecution(context);
   }
 

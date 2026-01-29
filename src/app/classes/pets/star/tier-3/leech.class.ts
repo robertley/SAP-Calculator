@@ -12,6 +12,10 @@ export class Leech extends Pet {
   pack: Pack = 'Star';
   attack = 4;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(new LeechAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +45,7 @@ export class LeechAbility extends Ability {
     super({
       name: 'LeechAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +58,25 @@ export class LeechAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const target = owner.petAhead;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const damage = this.level;
+    const actualDamage = Math.min(damage, target.health);
+    owner.dealDamage(target, damage);
+    owner.increaseHealth(actualDamage);
+
+    this.logService.createLog({
+      message: `${owner.name} dealt ${damage} damage to ${target.name} and gained ${actualDamage} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

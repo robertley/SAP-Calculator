@@ -12,6 +12,12 @@ export class Bigfoot extends Pet {
   pack: Pack = 'Unicorn';
   attack = 2;
   health = 3;
+  initAbilities(): void {
+    this.addAbility(
+      new BigfootAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   //TO DO: This needs to be marked as faintPet
   constructor(
     protected logService: LogService,
@@ -42,7 +48,7 @@ export class BigfootAbility extends Ability {
     super({
       name: 'BigfootAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisDied'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,7 +61,16 @@ export class BigfootAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const rolls = this.level;
+    const rollsText = rolls === 1 ? 'roll' : 'rolls';
+    this.logService.createLog({
+      message: `${owner.name} will gain ${rolls} free ${rollsText} next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

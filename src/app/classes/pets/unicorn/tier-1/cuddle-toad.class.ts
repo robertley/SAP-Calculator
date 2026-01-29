@@ -12,6 +12,12 @@ export class CuddleToad extends Pet {
   pack: Pack = 'Unicorn';
   attack = 2;
   health = 3;
+  initAbilities(): void {
+    this.addAbility(
+      new CuddleToadAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class CuddleToadAbility extends Ability {
     super({
       name: 'CuddleToadAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,15 @@ export class CuddleToadAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const turns = this.level * 2;
+    this.logService.createLog({
+      message: `${owner.name} stocked a witch toy that breaks after ${turns} turns.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

@@ -47,7 +47,7 @@ export class PillbugAbility extends Ability {
     super({
       name: 'PillbugAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,16 @@ export class PillbugAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const count = this.level;
+    const plural = count === 1 ? '' : 's';
+    this.logService.createLog({
+      message: `${owner.name} stocked ${count} free Sleeping Pill${plural}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

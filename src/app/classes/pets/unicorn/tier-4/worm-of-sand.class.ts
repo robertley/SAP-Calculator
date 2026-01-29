@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAdjacentAlivePets } from 'app/classes/ability-helpers';
 
 
 export class WormOfSand extends Pet {
@@ -12,6 +13,12 @@ export class WormOfSand extends Pet {
   pack: Pack = 'Unicorn';
   attack = 4;
   health = 1;
+  initAbilities(): void {
+    this.addAbility(
+      new WormOfSandAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +48,7 @@ export class WormOfSandAbility extends Ability {
     super({
       name: 'WormOfSandAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +61,35 @@ export class WormOfSandAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const rolls =
+      owner.parent === context.gameApi.player
+        ? context.gameApi.playerRollAmount
+        : context.gameApi.opponentRollAmount;
+    const rollCount = Math.min(Math.max(rolls ?? 0, 0), 8);
+    const stacks = Math.floor(rollCount / 4);
+    if (stacks <= 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = this.level * stacks;
+    const targets = getAdjacentAlivePets(owner);
+    for (const target of targets) {
+      target.increaseAttack(buff);
+      target.increaseHealth(buff);
+    }
+
+    if (targets.length > 0) {
+      this.logService.createLog({
+        message: `${owner.name} gave adjacent friends +${buff}/+${buff}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+        randomEvent: targets.length > 1,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

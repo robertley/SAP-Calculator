@@ -12,6 +12,12 @@ export class Shoebill extends Pet {
   pack: Pack = 'Star';
   attack = 2;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new ShoebillAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class ShoebillAbility extends Ability {
     super({
       name: 'ShoebillAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,25 @@ export class ShoebillAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    let target = owner.petAhead;
+    while (target) {
+      if (target.equipment?.name === 'Strawberry') {
+        const buff = this.level * 4;
+        target.removePerk();
+        target.increaseAttack(buff);
+        target.increaseHealth(buff);
+        this.logService.createLog({
+          message: `${owner.name} replaced Strawberry on ${target.name} with +${buff}/+${buff}.`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: context.tiger,
+          pteranodon: context.pteranodon,
+        });
+        break;
+      }
+      target = target.petAhead;
+    }
     this.triggerTigerExecution(context);
   }
 

@@ -12,6 +12,12 @@ export class Quetzalcoatl extends Pet {
   pack: Pack = 'Unicorn';
   attack = 4;
   health = 8;
+  initAbilities(): void {
+    this.addAbility(
+      new QuetzalcoatlAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class QuetzalcoatlAbility extends Ability {
     super({
       name: 'QuetzalcoatlAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,29 @@ export class QuetzalcoatlAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const candidates = owner.parent.petArray.filter(
+      (pet) => pet.alive && pet !== owner && pet.tier <= 3,
+    );
+    if (candidates.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const triggers = this.level;
+    for (let i = 0; i < triggers; i++) {
+      const target =
+        candidates[Math.floor(Math.random() * candidates.length)];
+      target.increaseExp(2);
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} +2 experience.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+        randomEvent: candidates.length > 1,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

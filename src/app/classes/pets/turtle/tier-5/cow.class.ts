@@ -12,6 +12,10 @@ export class Cow extends Pet {
   pack: Pack = 'Turtle';
   attack = 4;
   health = 6;
+  initAbilities(): void {
+    this.addAbility(new CowAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Cow extends Pet {
 
 export class CowAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'CowAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,23 @@ export class CowAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const milkName =
+      this.level === 1 ? 'Milk' : this.level === 2 ? 'Better Milk' : 'Best Milk';
+    this.logService.createLog({
+      message: `${owner.name} replaced shop food with two free ${milkName}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): CowAbility {
-    return new CowAbility(newOwner, this.logService, this.abilityService);
+    return new CowAbility(newOwner, this.logService);
   }
 }

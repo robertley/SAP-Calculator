@@ -47,7 +47,7 @@ export class CrowAbility extends Ability {
     super({
       name: 'CrowAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,20 @@ export class CrowAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const foodName =
+      this.level === 1
+        ? 'Chocolate'
+        : this.level === 2
+          ? 'Better Chocolate'
+          : 'Best Chocolate';
+    this.logService.createLog({
+      message: `${owner.name} stocked one ${foodName}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

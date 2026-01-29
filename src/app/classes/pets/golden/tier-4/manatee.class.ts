@@ -47,7 +47,7 @@ export class ManateeAbility extends Ability {
     super({
       name: 'ManateeAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,31 @@ export class ManateeAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const target = owner.petAhead;
+    const attackGain = this.level * 2;
+    const healthGain = this.level;
+
+    owner.dealDamage(owner, 5);
+    if (target) {
+      target.increaseAttack(attackGain);
+      target.increaseHealth(healthGain);
+      this.logService.createLog({
+        message: `${owner.name} took 5 damage and gave ${target.name} +${attackGain}/+${healthGain}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+    } else {
+      this.logService.createLog({
+        message: `${owner.name} took 5 damage.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

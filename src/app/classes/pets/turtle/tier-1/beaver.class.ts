@@ -12,6 +12,10 @@ export class Beaver extends Pet {
   pack: Pack = 'Turtle';
   health = 2;
   attack = 3;
+  initAbilities(): void {
+    this.addAbility(new BeaverAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Beaver extends Pet {
 
 export class BeaverAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'BeaverAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,41 @@ export class BeaverAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const power = this.level;
+    const targetsResp = owner.parent.getRandomPets(
+      2,
+      [owner],
+      false,
+      false,
+      owner,
+    );
+    if (targetsResp.pets.length === 0) {
+      return;
+    }
+
+    for (const target of targetsResp.pets) {
+      target.increaseAttack(power);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${targetsResp.pets
+        .map((pet) => pet.name)
+        .join(', ')} ${power} attack.`,
+      type: 'ability',
+      player: owner.parent,
+      randomEvent: targetsResp.random,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): BeaverAbility {
-    return new BeaverAbility(newOwner, this.logService, this.abilityService);
+    return new BeaverAbility(newOwner, this.logService);
   }
 }

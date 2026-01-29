@@ -47,7 +47,7 @@ export class BaboonAbility extends Ability {
     super({
       name: 'BaboonAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,30 @@ export class BaboonAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const { gameApi } = context;
+    const currentTier = Math.max(1, gameApi.previousShopTier ?? owner.tier);
+    const candidates = owner.parent.petArray.filter(
+      (pet) => pet.alive && pet.tier >= currentTier,
+    );
+    if (candidates.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const target = candidates[Math.floor(Math.random() * candidates.length)];
+    const buff = this.level;
+    target.increaseAttack(buff);
+    target.increaseHealth(buff);
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: candidates.length > 1,
+    });
     this.triggerTigerExecution(context);
   }
 

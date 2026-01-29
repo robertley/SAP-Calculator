@@ -47,7 +47,7 @@ export class SealionAbility extends Ability {
     super({
       name: 'SealionAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,41 @@ export class SealionAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const attackGain = this.level;
+    const healthGain = this.level;
+
+    const friendsBehind: Pet[] = [];
+    let petBehind = owner.petBehind();
+    while (petBehind) {
+      friendsBehind.push(petBehind);
+      petBehind = petBehind.petBehind();
+    }
+
+    const friendsAhead: Pet[] = [];
+    let petAhead = owner.petAhead;
+    while (petAhead) {
+      friendsAhead.push(petAhead);
+      petAhead = petAhead.petAhead;
+    }
+
+    for (const friend of friendsBehind) {
+      friend.increaseAttack(attackGain);
+    }
+    for (const friend of friendsAhead) {
+      friend.increaseHealth(healthGain);
+    }
+
+    if (friendsBehind.length > 0 || friendsAhead.length > 0) {
+      this.logService.createLog({
+        message: `${owner.name} gave friends behind +${attackGain} attack and friends ahead +${healthGain} health.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+        randomEvent: friendsBehind.length + friendsAhead.length > 1,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

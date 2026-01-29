@@ -13,6 +13,12 @@ export class Lobster extends Pet {
   pack: Pack = 'Puppy';
   attack = 3;
   health = 3;
+  initAbilities(): void {
+    this.addAbility(
+      new LobsterAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

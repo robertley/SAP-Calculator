@@ -4,6 +4,8 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Spooked } from 'app/classes/equipment/ailments/spooked.class';
+import { canApplyAilment } from 'app/classes/ability-helpers';
 
 
 export class QuestionMarks extends Pet {
@@ -12,6 +14,12 @@ export class QuestionMarks extends Pet {
   pack: Pack = 'Unicorn';
   attack = 3;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(
+      new QuestionMarksAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
 
   constructor(
     protected logService: LogService,
@@ -42,7 +50,7 @@ export class QuestionMarksAbility extends Ability {
     super({
       name: 'QuestionMarksAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,7 +63,29 @@ export class QuestionMarksAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const target = owner.petAhead;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const attackGain = this.level;
+    target.increaseAttack(attackGain);
+    if (canApplyAilment(target, 'Spooked')) {
+      const spooked = new Spooked();
+      spooked.power = -1;
+      spooked.originalPower = -1;
+      target.givePetEquipment(spooked);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${attackGain} attack and Spooked until next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

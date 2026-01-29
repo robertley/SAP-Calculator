@@ -12,6 +12,10 @@ export class Pigeon extends Pet {
   pack: Pack = 'Turtle';
   attack = 3;
   health = 1;
+  initAbilities(): void {
+    this.addAbility(new PigeonAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Pigeon extends Pet {
 
 export class PigeonAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'PigeonAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,22 @@ export class PigeonAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const count = this.level;
+    this.logService.createLog({
+      message: `${owner.name} stocked ${count} free Bread Crumbs.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): PigeonAbility {
-    return new PigeonAbility(newOwner, this.logService, this.abilityService);
+    return new PigeonAbility(newOwner, this.logService);
   }
 }

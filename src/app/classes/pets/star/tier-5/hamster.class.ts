@@ -12,6 +12,12 @@ export class Hamster extends Pet {
   pack: Pack = 'Star';
   attack = 4;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new HamsterAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -32,6 +38,7 @@ export class Hamster extends Pet {
 export class HamsterAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
+  private usesThisTurn = 0;
 
   constructor(
     owner: Pet,
@@ -41,7 +48,7 @@ export class HamsterAbility extends Ability {
     super({
       name: 'HamsterAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['Roll1', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +61,27 @@ export class HamsterAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    if (context.trigger === 'StartTurn') {
+      this.usesThisTurn = 0;
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const maxUses = this.level * 2;
+    if (this.usesThisTurn >= maxUses) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    this.usesThisTurn++;
+    const owner = this.owner;
+    this.logService.createLog({
+      message: `${owner.name} gained a free roll.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

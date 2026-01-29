@@ -12,6 +12,10 @@ export class Snail extends Pet {
   pack: Pack = 'Turtle';
   health = 2;
   attack = 2;
+  initAbilities(): void {
+    this.addAbility(new SnailAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Snail extends Pet {
 
 export class SnailAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'SnailAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,44 @@ export class SnailAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const gameApi = context.gameApi as any;
+    const isPlayer = owner.parent === gameApi?.player;
+    const lostLastBattle = isPlayer
+      ? Boolean(gameApi?.playerLostLastBattle)
+      : Boolean(gameApi?.opponentLostLastBattle);
+    if (!lostLastBattle) {
+      return;
+    }
+
+    const power = this.level;
+    const targetsResp = owner.parent.nearestPetsAhead(3, owner);
+    if (targetsResp.pets.length === 0) {
+      return;
+    }
+
+    for (const target of targetsResp.pets) {
+      target.increaseAttack(power);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${targetsResp.pets
+        .map((pet) => pet.name)
+        .join(', ')} +${power} attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetsResp.random,
+    });
+
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): SnailAbility {
-    return new SnailAbility(newOwner, this.logService, this.abilityService);
+    return new SnailAbility(newOwner, this.logService);
   }
 }

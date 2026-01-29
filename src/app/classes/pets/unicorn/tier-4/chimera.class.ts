@@ -67,12 +67,9 @@ export class ChimeraAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
     const manaSpent = owner.mana;
-    const buffMultiplier = Math.floor(manaSpent / 2);
-    const bonusAttack = buffMultiplier * 1;
-    const bonusHealth = buffMultiplier * 2;
-
-    const finalAttack = 3 + bonusAttack;
-    const finalHealth = 3 + bonusHealth;
+    const rawMultiplier = manaSpent / 2;
+    const finalAttack = Math.floor(3 + rawMultiplier * 1);
+    const finalHealth = Math.floor(3 + rawMultiplier * 2);
 
     if (manaSpent > 0) {
       this.logService.createLog({
