@@ -3,7 +3,10 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  OnChanges,
+  SimpleChanges,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
@@ -22,8 +25,8 @@ import {
   AILMENT_CATEGORIES,
   EQUIPMENT_CATEGORIES,
 } from '../../services/equipment/equipment-categories';
-import { Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { BASE_PACK_NAMES, PACK_NAMES } from '../../util/pack-names';
 import {
   getPetIconPath,
@@ -31,6 +34,10 @@ import {
   getPetIconFileName,
 } from '../../util/asset-utils';
 import { ItemSelectionDialogComponent } from '../item-selection-dialog/item-selection-dialog.component';
+import { PetLevelSelectorComponent } from './sub-components/pet-level-selector.component';
+import { PetStatsSelectorComponent } from './sub-components/pet-stats-selector.component';
+import { PetEquipmentSelectorComponent } from './sub-components/pet-equipment-selector.component';
+import { SwallowedPetSelectorComponent } from './sub-components/swallowed-pet-selector.component';
 
 const PARROT_COPY_ABOMINATION_SWALLOWED_FIELDS: string[] = (() => {
   const fields: string[] = [];
@@ -70,12 +77,16 @@ const PARROT_COPY_ABOMINATION_PARROT_FIELDS: string[] = (() => {
     ReactiveFormsModule,
     FormsModule,
     ItemSelectionDialogComponent,
+    PetLevelSelectorComponent,
+    PetStatsSelectorComponent,
+    PetEquipmentSelectorComponent,
+    SwallowedPetSelectorComponent,
   ],
   templateUrl: './pet-selector.component.html',
   styleUrls: ['./pet-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PetSelectorComponent implements OnInit, OnDestroy {
+export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
   @Input()
   pet: Pet;
   @Input()
@@ -131,6 +142,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   private cachedPlayerPackSet: Set<string> | null = null;
   private cachedOpponentPackSet: Set<string> | null = null;
   private customPackSubscription: Subscription | null = null;
+  private destroy$ = new Subject<void>();
 
   @Input()
   showTokenPets = false;
@@ -205,6 +217,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   constructor(
     private petService: PetService,
     private equipmentService: EquipmentService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   trackByIndex(index: number): number {
@@ -212,8 +225,29 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initSelector();
     this.initPackSets();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['formGroup'] || changes['pet'] || changes['index'] || changes['player']) {
+      this.initSelector();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    if (this.customPackSubscription) {
+      this.customPackSubscription.unsubscribe();
+    }
+  }
+
+  initSelector() {
+    this.destroy$.next(); // Clean up old subscriptions if re-initializing
+    this.initPets();
+    this.initEquipment();
+    this.initForm();
+    this.customPackSubscription?.unsubscribe();
     this.customPackSubscription =
       (this.customPacks as FormArray)?.valueChanges?.subscribe(() => {
         this.invalidatePackCaches();
@@ -392,11 +426,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     ].includes(target);
   }
 
-  initSelector() {
-    this.initPets();
-    this.initEquipment();
-    this.initForm();
-  }
 
   initPets() {
     this.pets = new Map();
@@ -432,9 +461,6 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.customPackSubscription?.unsubscribe();
-  }
 
   initEquipment() {
     this.equipment = this.equipmentService.getInstanceOfAllEquipment();
@@ -481,7 +507,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
     this.formGroup
       .get('name')
-      .valueChanges.pipe(distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), distinctUntilChanged())
       .subscribe((value) => {
         this.petImageBroken = false;
         if (value == null) {
@@ -492,26 +518,26 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
       });
     this.formGroup
       .get('attack')
-      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => {
         this.clampControl('attack', 0, 100);
         this.substitutePet(false);
       });
     this.formGroup
       .get('health')
-      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => {
         this.clampControl('health', 0, 100);
         this.substitutePet(false);
       });
     this.formGroup
       .get('exp')
-      .valueChanges.pipe(distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), distinctUntilChanged())
       .subscribe(() => {
         this.substitutePet(false);
       });
     const equipmentUsesControl = this.formGroup.get('equipmentUses');
-    this.formGroup.get('equipment').valueChanges.subscribe((value) => {
+    this.formGroup.get('equipment').valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       this.equipmentImageBroken = false;
       const equipmentName = this.normalizeEquipmentValue(value);
       if (equipmentName !== value) {
@@ -526,370 +552,370 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
     });
     this.formGroup
       .get('equipmentUses')
-      ?.valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      ?.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => this.substitutePet(false));
-    this.formGroup.get('belugaSwallowedPet').valueChanges.subscribe((value) => {
+    this.formGroup.get('belugaSwallowedPet').valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       this.setBelugaSwallow(value);
     });
-    this.formGroup.get('parrotCopyPet')?.valueChanges.subscribe((value) => {
+    this.formGroup.get('parrotCopyPet')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       this.setParrotCopyPet(value);
     });
     this.formGroup
       .get('parrotCopyPetBelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setParrotCopyPetBelugaSwallowedPet(value);
       });
     for (const field of PARROT_COPY_ABOMINATION_SWALLOWED_FIELDS) {
-      this.formGroup.get(field)?.valueChanges.subscribe((value) => {
+      this.formGroup.get(field)?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setParrotCopyPetAbominationSwallowedPets(value);
       });
     }
     for (const field of PARROT_COPY_ABOMINATION_PARROT_FIELDS) {
-      this.formGroup.get(field)?.valueChanges.subscribe((value) => {
+      this.formGroup.get(field)?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setParrotCopyPetAbominationParrotSettings(value);
       });
     }
     this.formGroup
       .get('sarcasticFringeheadSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSarcasticFringeheadSwallowedPet(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1')
-      .valueChanges.subscribe((value) => {
+      .valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2')
-      .valueChanges.subscribe((value) => {
+      .valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3')
-      .valueChanges.subscribe((value) => {
+      .valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1BelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2BelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3BelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get(
         'abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt',
       )
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setAbominationParrotCopySettings(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1Level')
-      .valueChanges.subscribe((value) => {
+      .valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2Level')
-      .valueChanges.subscribe((value) => {
+      .valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3Level')
-      .valueChanges.subscribe((value) => {
+      .valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet1TimesHurt')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet2TimesHurt')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('abominationSwallowedPet3TimesHurt')
-      ?.valueChanges.subscribe((value) => {
+      ?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
         this.setSwallowedPets(value);
       });
     this.formGroup
       .get('mana')
-      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => {
         this.clampControl('mana', 0, 50);
         this.substitutePet(false);
       });
     this.formGroup
       .get('triggersConsumed')
-      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => {
         this.clampControl('triggersConsumed', 0, 10);
         this.substitutePet(false);
       });
     this.formGroup
       .get('friendsDiedBeforeBattle')
-      ?.valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      ?.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => {
         this.clampFriendsDiedBeforeBattle();
         this.substitutePet(false);
       });
     this.formGroup
       .get('battlesFought')
-      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe((value) => {
         this.setBattlesFought(value);
       });
     this.formGroup
       .get('timesHurt')
-      .valueChanges.pipe(debounceTime(inputDebounceMs), distinctUntilChanged())
+      .valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe((value) => {
         this.setTimesHurt(value);
       });
@@ -909,18 +935,21 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
 
   substitutePet(nameChange = false) {
     setTimeout(() => {
-      let formValue = this.formGroup.value;
+      let formValue = this.formGroup.getRawValue();
       if (nameChange) {
-        formValue.attack = null;
-        formValue.health = null;
-        formValue.mana = null;
-        formValue.triggersConsumed = null;
+        this.formGroup.get('attack').setValue(null, { emitEvent: false });
+        this.formGroup.get('health').setValue(null, { emitEvent: false });
+        this.formGroup.get('mana').setValue(null, { emitEvent: false });
+        this.formGroup.get('triggersConsumed').setValue(null, { emitEvent: false });
+        formValue = this.formGroup.getRawValue();
       }
       this.applyStatCaps(formValue);
       formValue.equipment = this.normalizeEquipmentValue(formValue.equipment);
 
       let pet = this.petService.createPet(formValue, this.player);
       this.player.setPet(this.index, pet, true);
+      this.pet = pet;
+      this.cdr.markForCheck();
 
       // console.log('pet substituted', this.player);
       if (nameChange) {
@@ -930,6 +959,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
         this.formGroup
           .get('triggersConsumed')
           .setValue(pet.triggersConsumed, { emitEvent: false });
+        this.cdr.markForCheck();
       }
     });
   }
@@ -1185,6 +1215,17 @@ export class PetSelectorComponent implements OnInit, OnDestroy {
   }
 
   getParrotCopyAbominationSlotCount(): number {
+    const exp = Number(this.formGroup.get('exp')?.value ?? 0);
+    if (exp < 2) {
+      return 1;
+    }
+    if (exp < 5) {
+      return 2;
+    }
+    return 3;
+  }
+
+  getAbominationSwallowedSlotCount(): number {
     const exp = Number(this.formGroup.get('exp')?.value ?? 0);
     if (exp < 2) {
       return 1;
