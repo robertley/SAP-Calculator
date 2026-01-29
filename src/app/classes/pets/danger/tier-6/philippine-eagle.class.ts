@@ -66,17 +66,9 @@ export class PhilippineEagleAbility extends Ability {
     let buffAmount = this.level * 4;
 
     target.increaseAttack(buffAmount);
-    this.logService.createLog({
-      message: `${owner.name} gave ${target.name} +${buffAmount} attack`,
-      type: 'ability',
-      player: owner.parent,
-      tiger: tiger,
-      randomEvent: targetResp.random,
-    });
-
     target.increaseHealth(buffAmount);
     this.logService.createLog({
-      message: `${owner.name} gave ${target.name} +${buffAmount} health`,
+      message: `${owner.name} gave ${target.name} +${buffAmount} attack and +${buffAmount} health`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

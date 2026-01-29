@@ -85,6 +85,9 @@ export class LogService {
     if (log.type === 'attack' && log.player && log.message) {
       this.resolveAttackPetsFromMessage(log);
     }
+    if (log.player && log.message) {
+      this.resolveSourceTargetFromMessage(log);
+    }
     if (log.sourcePet && log.sourceIndex == null) {
       log.sourceIndex = this.getFrontIndex(log.sourcePet) ?? undefined;
     }
@@ -128,6 +131,9 @@ export class LogService {
     }
 
     const lastLog = this.logs[this.logs.length - 1];
+    if (this.tryMergeAttackHealthLogs(lastLog, log)) {
+      return;
+    }
     const samePlayer = lastLog?.player === log.player;
     const sameMessage = lastLog?.message?.trim() === log.message?.trim();
     const sameRandom = lastLog?.randomEvent === log.randomEvent;
@@ -378,6 +384,221 @@ export class LogService {
       }
       return `<img src="${icon}" class="log-inline-icon" alt="${match}" onerror="this.remove()"> ${match}`;
     });
+  }
+
+  private resolveSourceTargetFromMessage(log: Log): void {
+    if (log.sourcePet && log.targetPet) {
+      return;
+    }
+    const message = log.message;
+    if (!message) {
+      return;
+    }
+    const names = this.extractPetNames(message);
+    if (names.length < 2) {
+      return;
+    }
+
+    const playerPets = log.player?.petArray ?? [];
+    const opponentPets = log.player?.opponent?.petArray ?? [];
+
+    const findPet = (
+      pets: Pet[],
+      name: string,
+      exclude?: Pet | null,
+    ): Pet | null =>
+      pets.find((pet) => pet?.name === name && pet !== exclude) ?? null;
+
+    if (!log.sourcePet) {
+      log.sourcePet =
+        findPet(playerPets, names[0]) ?? findPet(opponentPets, names[0]);
+    }
+
+    if (!log.targetPet) {
+      if (names[1] === names[0]) {
+        const messageStartsWithSource =
+          log.sourcePet && message.startsWith(log.sourcePet.name);
+        if (messageStartsWithSource && log.sourcePet) {
+          // Prefer self-target when the message begins with the source name and the names match.
+          log.targetPet = log.sourcePet;
+        } else {
+          log.targetPet =
+            findPet(playerPets, names[1], log.sourcePet) ??
+            findPet(opponentPets, names[1], log.sourcePet) ??
+            log.sourcePet ??
+            null;
+        }
+      } else {
+        log.targetPet =
+          findPet(opponentPets, names[1]) ?? findPet(playerPets, names[1]);
+      }
+    }
+  }
+
+  private extractPetNames(message: string): string[] {
+    if (!this.petNameRegex || !message) {
+      return [];
+    }
+    const matches = message.match(this.petNameRegex);
+    return matches ?? [];
+  }
+
+  private tryMergeAttackHealthLogs(
+    lastLog: Log | undefined,
+    nextLog: Log,
+  ): boolean {
+    if (!lastLog || !nextLog) {
+      return false;
+    }
+    if (lastLog.player !== nextLog.player) {
+      return false;
+    }
+    if (lastLog.type !== nextLog.type) {
+      return false;
+    }
+    if (lastLog.randomEvent !== nextLog.randomEvent) {
+      return false;
+    }
+    if (
+      lastLog.sourcePet !== nextLog.sourcePet ||
+      lastLog.sourceIndex !== nextLog.sourceIndex
+    ) {
+      return false;
+    }
+    if (
+      lastLog.targetPet !== nextLog.targetPet ||
+      lastLog.targetIndex !== nextLog.targetIndex
+    ) {
+      return false;
+    }
+    if (lastLog.tiger !== nextLog.tiger) {
+      return false;
+    }
+    if (lastLog.puma !== nextLog.puma) {
+      return false;
+    }
+    if (lastLog.pteranodon !== nextLog.pteranodon) {
+      return false;
+    }
+    const lastPanther = lastLog.pantherMultiplier ?? null;
+    const nextPanther = nextLog.pantherMultiplier ?? null;
+    if (lastPanther !== nextPanther) {
+      return false;
+    }
+
+    const lastText = this.stripTags(
+      lastLog.rawMessage ?? lastLog.message ?? '',
+    );
+    const nextText = this.stripTags(
+      nextLog.rawMessage ?? nextLog.message ?? '',
+    );
+    if (!lastText || !nextText) {
+      return false;
+    }
+    if (
+      lastText.includes(' attack and ') ||
+      lastText.includes(' health and ') ||
+      nextText.includes(' attack and ') ||
+      nextText.includes(' health and ')
+    ) {
+      return false;
+    }
+
+    const combined =
+      this.combineAttackHealthLogs(lastText, nextText) ??
+      this.combineAttackHealthLogs(nextText, lastText);
+    if (!combined) {
+      return false;
+    }
+
+    if (this.deferDecorations) {
+      lastLog.rawMessage = combined;
+      lastLog.message = combined;
+      lastLog.decorated = false;
+    } else {
+      const decorated = this.decorateMessageWithNames(
+        combined,
+        lastLog.sourcePet,
+        lastLog.targetPet,
+        lastLog.sourceIndex,
+        lastLog.targetIndex,
+      );
+      lastLog.message = this.decorateInlineIcons(decorated);
+      lastLog.decorated = true;
+    }
+
+    return true;
+  }
+
+  private combineAttackHealthLogs(
+    attackLog: string,
+    healthLog: string,
+  ): string | null {
+    const lossAttack = this.parseStatLog(attackLog, 'lost', 'attack');
+    const lossHealth = this.parseStatLog(healthLog, 'lost', 'health');
+    if (lossAttack && lossHealth) {
+      if (
+        lossAttack.prefix === lossHealth.prefix &&
+        lossAttack.suffix === lossHealth.suffix
+      ) {
+        return `${lossAttack.prefix}${lossAttack.value} attack and ${lossHealth.value} health${lossAttack.suffix}`;
+      }
+    }
+
+    const gainAttack = this.parseStatLog(attackLog, 'gave', 'attack');
+    const gainHealth = this.parseStatLog(healthLog, 'gave', 'health');
+    if (gainAttack && gainHealth) {
+      if (
+        gainAttack.prefix === gainHealth.prefix &&
+        gainAttack.suffix === gainHealth.suffix
+      ) {
+        return `${gainAttack.prefix}${gainAttack.plus}${gainAttack.value} attack and ${gainHealth.plus}${gainHealth.value} health${gainAttack.suffix}`;
+      }
+    }
+
+    return null;
+  }
+
+  private parseStatLog(
+    message: string,
+    verb: 'lost' | 'gave',
+    stat: 'attack' | 'health',
+  ): { prefix: string; plus: string; value: string; suffix: string } | null {
+    if (verb === 'lost') {
+      const regex = new RegExp(
+        `^(.*\\\\blost\\\\s+)(\\\\d+)\\\\s+${stat}\\\\b(.*)$`,
+        'i',
+      );
+      const match = message.match(regex);
+      if (!match) {
+        return null;
+      }
+      return {
+        prefix: match[1],
+        plus: '',
+        value: match[2],
+        suffix: match[3],
+      };
+    }
+
+    const regex = new RegExp(
+      `^(.*\\\\b(?:gave|give|gives)\\\\b.*?\\\\s+)(\\\\+?)(\\\\d+)\\\\s+${stat}\\\\b(.*)$`,
+      'i',
+    );
+    const match = message.match(regex);
+    if (!match) {
+      return null;
+    }
+    return {
+      prefix: match[1],
+      plus: match[2] ?? '',
+      value: match[3],
+      suffix: match[4],
+    };
+  }
+
+  private stripTags(message: string): string {
+    return message.replace(/<[^>]+>/g, '').trim();
   }
 
   private replaceMatchesWithIconsOutsideTags(

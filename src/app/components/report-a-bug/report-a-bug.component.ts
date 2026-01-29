@@ -26,6 +26,7 @@ export class ReportABugComponent implements OnInit {
 
   reported = false;
   submitted = false;
+  errorMessage = '';
 
   constructor(private http: HttpClient) {}
 
@@ -33,6 +34,7 @@ export class ReportABugComponent implements OnInit {
 
   submit() {
     this.submitted = true;
+    this.errorMessage = '';
     if (this.formGroup.invalid) {
       return;
     }
@@ -99,9 +101,8 @@ export class ReportABugComponent implements OnInit {
         },
         (error) => {
           console.error('Error submitting bug report:', error);
-          alert(
-            'Failed to submit bug report. Please try again or contact the developer directly.',
-          );
+          this.errorMessage =
+            'Failed to submit bug report. Please try again or contact the developer directly.';
         },
       );
   }
@@ -110,5 +111,6 @@ export class ReportABugComponent implements OnInit {
     this.formGroup.reset();
     this.submitted = false;
     this.reported = false;
+    this.errorMessage = '';
   }
 }

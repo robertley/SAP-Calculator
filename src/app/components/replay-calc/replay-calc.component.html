@@ -53,6 +53,13 @@
   </div>
 
   <div *ngIf="errorMessage" class="text-danger mb-2">{{ errorMessage }}</div>
+  <div
+    *ngIf="statusMessage"
+    class="mb-2"
+    [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'"
+  >
+    {{ statusMessage }}
+  </div>
 
   <div *ngIf="calculatorLink">
     <label for="calcLink" class="form-label">Calculator Link</label>

@@ -71,6 +71,8 @@ export class MalayTapirAbility extends Ability {
       message: `${owner.name} gave ${target.name} ${healthGain} health`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: tiger,
       randomEvent: targetResp.random,
     });

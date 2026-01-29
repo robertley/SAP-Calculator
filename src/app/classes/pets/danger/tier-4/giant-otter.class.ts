@@ -14,7 +14,7 @@ export class GiantOtter extends Pet {
   attack = 4;
   health = 3;
 
-  // Track which friends received buffs and how much
+  // Track total temporary buffs applied per friend
   private buffedFriends: Map<Pet, { attack: number; health: number }> =
     new Map();
   initAbilities(): void {
@@ -48,7 +48,7 @@ export class GiantOtterAbility extends Ability {
     super({
       name: 'GiantOtterAbility',
       owner: owner,
-      triggers: ['BeforeStartBattle', 'AnyoneAttack'],
+      triggers: ['BeforeStartBattle', 'AnyoneAttack', 'ThisDied'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -65,26 +65,35 @@ export class GiantOtterAbility extends Ability {
   }
 
   removeConditionalBuffs(): void {
+    if (this.buffedFriends.size > 0) {
+      this.logService.createLog({
+        message: `${this.owner.name} removed its temporary buffs after the first non-jump attack`,
+        type: 'ability',
+        player: this.owner.parent,
+      });
+    }
     for (let [originalFriend, stats] of this.buffedFriends) {
       let currentFriend = originalFriend;
       if (currentFriend.transformed && currentFriend.transformedInto) {
         currentFriend = currentFriend.transformedInto;
       }
       if (currentFriend && currentFriend.alive) {
-        if (currentFriend.attack > stats.attack) {
-          const debuffAmt = currentFriend.attack - stats.attack;
-          currentFriend.increaseAttack(-debuffAmt);
-          this.logService.createLog({
-            message: `${currentFriend.name} lost ${debuffAmt} attack (Giant Otter Buffs removed)`,
-            type: 'ability',
-            player: this.owner.parent,
-          });
+        if (stats.attack > 0) {
+          currentFriend.increaseAttack(-stats.attack);
         }
-        if (currentFriend.health > stats.health) {
-          const debuffAmt = currentFriend.health - stats.health;
-          currentFriend.increaseHealth(-debuffAmt);
+        if (stats.health > 0) {
+          currentFriend.increaseHealth(-stats.health);
+        }
+        if (stats.attack > 0 || stats.health > 0) {
+          const parts: string[] = [];
+          if (stats.attack > 0) {
+            parts.push(`${stats.attack} attack`);
+          }
+          if (stats.health > 0) {
+            parts.push(`${stats.health} health`);
+          }
           this.logService.createLog({
-            message: `${currentFriend.name} lost ${debuffAmt} health (Giant Otter Buffs removed)`,
+            message: `${currentFriend.name} lost ${parts.join(' and ')} (Giant Otter Buffs removed)`,
             type: 'ability',
             player: this.owner.parent,
           });
@@ -96,8 +105,13 @@ export class GiantOtterAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { gameApi, triggerPet, tiger, pteranodon, trigger } = context as any;
     const owner = this.owner;
+
+    if (trigger === 'ThisDied') {
+      this.removeConditionalBuffs();
+      return;
+    }
 
     // Inferred Trigger: AnyoneAttack
     // We know triggers are limited to 'BeforeStartBattle' and 'AnyoneAttack'.
@@ -122,10 +136,14 @@ export class GiantOtterAbility extends Ability {
     let friends = targetResp.pets;
 
     for (let friend of friends) {
-      if (!this.buffedFriends.has(friend)) {
+      const existing = this.buffedFriends.get(friend);
+      if (existing) {
+        existing.attack += statBonus.attack;
+        existing.health += statBonus.health;
+      } else {
         this.buffedFriends.set(friend, {
-          attack: friend.attack,
-          health: friend.health,
+          attack: statBonus.attack,
+          health: statBonus.health,
         });
       }
 

@@ -236,6 +236,14 @@
         </div>
       </div>
 
+      <div
+        *ngIf="statusMessage"
+        class="px-3 pb-2"
+        [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'"
+      >
+        {{ statusMessage }}
+      </div>
+
       <div class="top-controls-body">
         <div class="controls-grid">
           <div class="controls-section teams-section">

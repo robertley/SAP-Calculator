@@ -27,6 +27,7 @@ export interface AppSimulationContext {
   viewBattleLogRows: Array<{ parts: LogMessagePart[]; classes: string[] }>;
   simulated: boolean;
   apiResponse: string | null;
+  setStatus?: (message: string, tone?: 'success' | 'error') => void;
 }
 
 const logPartsCache = new WeakMap<
@@ -90,7 +91,7 @@ export function simulate(ctx: AppSimulationContext, count: number = 1000): void 
     runSimulation(ctx, count);
   } catch (error) {
     console.error(error);
-    window.alert('Something went wrong, please send a bug report.');
+    ctx.setStatus?.('Something went wrong, please send a bug report.', 'error');
   }
 }
 

@@ -62,6 +62,7 @@ export interface AppUiContext {
   playerPetsControls: AbstractControl[];
   opponentPetsControls: AbstractControl[];
   undoState?: any;
+  setStatus?: (message: string, tone?: 'success' | 'error') => void;
 }
 
 export function trackByIndex(index: number): number {
@@ -122,8 +123,9 @@ export function loadStateFromUrl(
   if (!parsedState.state) {
     if (parsedState.error) {
       console.error(parsedState.error);
-      alert(
+      ctx.setStatus?.(
         'Could not load the shared calculator link. The data may be corrupted.',
+        'error',
       );
     }
     return false;
@@ -672,7 +674,7 @@ export function undoRandomize(ctx: AppUiContext): void {
 
 export function clearCache(ctx: AppUiContext): void {
   ctx.localStorageService.clearStorage();
-  alert('Cache cleared. Refresh page to see changes.');
+  ctx.setStatus?.('Cache cleared. Refresh page to see changes.', 'success');
 }
 
 export function initModals(ctx: AppUiContext): void {
@@ -747,9 +749,15 @@ export function resetPlayer(
 export function exportCalculator(ctx: AppUiContext): void {
   ctx.localStorageService.setFormStorage(ctx.formGroup);
   const calc = buildExportPayload(ctx.formGroup);
-  navigator.clipboard.writeText(calc).then(() => {
-    alert('Copied to clipboard');
-  });
+  navigator.clipboard
+    .writeText(calc)
+    .then(() => {
+      ctx.setStatus?.('Copied to clipboard.', 'success');
+    })
+    .catch((error) => {
+      console.error('Clipboard error:', error);
+      ctx.setStatus?.('Failed to copy to clipboard.', 'error');
+    });
 }
 
 export function importCalculator(
@@ -787,10 +795,10 @@ export function generateShareLink(ctx: AppUiContext): void {
   navigator.clipboard
     .writeText(shareableLink)
     .then(() => {
-      alert('Shareable link copied to clipboard!');
+      ctx.setStatus?.('Shareable link copied to clipboard!', 'success');
     })
     .catch((err) => {
       console.error('Failed to copy link: ', err);
-      alert('Failed to copy link. See console for details.');
+      ctx.setStatus?.('Failed to copy link. See console for details.', 'error');
     });
 }

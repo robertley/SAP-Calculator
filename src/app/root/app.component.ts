@@ -214,6 +214,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   undoState: any = null;
 
   private isLoadedFromUrl = false;
+  private statusTimer: ReturnType<typeof setTimeout> | null = null;
+
+  statusMessage = '';
+  statusTone: 'success' | 'error' = 'success';
 
   readonly trackByIndex = trackByIndexImpl;
   readonly trackByTeamId = trackByTeamIdImpl;
@@ -480,4 +484,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly removeHardToy = (side: 'player' | 'opponent') =>
     removeHardToyImpl(this, side);
   readonly getToyIconPath = getToyIconPathValueImpl;
+
+  setStatus(message: string, tone: 'success' | 'error' = 'success') {
+    this.statusMessage = message;
+    this.statusTone = tone;
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+    }
+    this.statusTimer = setTimeout(() => {
+      this.statusMessage = '';
+      this.statusTimer = null;
+    }, 3000);
+  }
+
+  clearStatus() {
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
+    this.statusMessage = '';
+  }
 }

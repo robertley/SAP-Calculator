@@ -27,8 +27,11 @@ export class ReplayCalcComponent implements OnInit {
   });
 
   errorMessage = '';
+  statusMessage = '';
+  statusTone: 'success' | 'error' = 'success';
   calculatorLink = '';
   loading = false;
+  private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private replayCalcService: ReplayCalcService,
@@ -47,6 +50,7 @@ export class ReplayCalcComponent implements OnInit {
 
   generate() {
     this.errorMessage = '';
+    this.clearStatus();
     this.calculatorLink = '';
     this.loading = false;
 
@@ -160,10 +164,13 @@ export class ReplayCalcComponent implements OnInit {
     navigator.clipboard
       .writeText(this.calculatorLink)
       .then(() => {
-        alert('Replay calculator link copied to clipboard!');
+        this.setStatus('Replay calculator link copied to clipboard!', 'success');
       })
       .catch(() => {
-        alert('Failed to copy link. Please copy it manually.');
+        this.setStatus(
+          'Failed to copy link. Please copy it manually.',
+          'error',
+        );
       });
   }
 
@@ -187,5 +194,25 @@ export class ReplayCalcComponent implements OnInit {
     } catch {
       return null;
     }
+  }
+
+  private clearStatus() {
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
+    this.statusMessage = '';
+  }
+
+  private setStatus(message: string, tone: 'success' | 'error') {
+    this.statusMessage = message;
+    this.statusTone = tone;
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+    }
+    this.statusTimer = setTimeout(() => {
+      this.statusMessage = '';
+      this.statusTimer = null;
+    }, 3000);
   }
 }

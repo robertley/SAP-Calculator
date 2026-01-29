@@ -15,6 +15,10 @@ export class ExportCalculatorComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
+  statusMessage = '';
+  statusTone: 'success' | 'error' = 'success';
+  private statusTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(private localStorageService: LocalStorageService) {}
 
   ngOnInit(): void {}
@@ -60,13 +64,14 @@ export class ExportCalculatorComponent implements OnInit {
 
   copyToClipboard() {
     this.localStorageService.setFormStorage(this.formGroup);
+    this.clearStatus();
 
     // Use the cleaned data instead of raw form value to avoid circular references
     const calc = this.formGroupValueString();
 
     // Check if the data generation failed
     if (calc.startsWith('Error:')) {
-      alert('Failed to export');
+      this.setStatus('Failed to export.', 'error');
       return;
     }
 
@@ -74,11 +79,31 @@ export class ExportCalculatorComponent implements OnInit {
     navigator.clipboard
       .writeText(calc)
       .then(() => {
-        alert('Copied to clipboard');
+        this.setStatus('Copied to clipboard.', 'success');
       })
       .catch((error) => {
         console.error('Clipboard error:', error);
-        alert('Failed to copy to clipboard.');
+        this.setStatus('Failed to copy to clipboard.', 'error');
       });
+  }
+
+  private clearStatus() {
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
+    this.statusMessage = '';
+  }
+
+  private setStatus(message: string, tone: 'success' | 'error') {
+    this.statusMessage = message;
+    this.statusTone = tone;
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+    }
+    this.statusTimer = setTimeout(() => {
+      this.statusMessage = '';
+      this.statusTimer = null;
+    }, 3000);
   }
 }
