@@ -12,7 +12,7 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
         <button
           type="button"
           class="btn selection-btn w-100 d-flex align-items-center"
-          (click)="onOpenSelection.emit()"
+          (click)="openSelection.emit()"
         >
           <img
             *ngIf="equipmentImageSrc"
@@ -65,5 +65,5 @@ export class PetEquipmentSelectorComponent {
   @Input() equipmentUsesAvailable = false;
   @Input() equipmentUsesInputId = '';
 
-  @Output() onOpenSelection = new EventEmitter<void>();
+  @Output() openSelection = new EventEmitter<void>();
 }

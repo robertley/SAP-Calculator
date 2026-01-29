@@ -16,7 +16,7 @@ export class SwallowedPetSelectorComponent {
     @Input() pet: any;
     @Input() showSwallowedLevels = false;
 
-    @Output() onOpenSelection = new EventEmitter<{
+    @Output() openSelection = new EventEmitter<{
         type: 'pet' | 'equipment' | 'swallowed-pet',
         index?: number,
         target:
@@ -94,6 +94,6 @@ export class SwallowedPetSelectorComponent {
             | 'parrot-abomination-parrot-abomination-beluga' = 'pet',
         parentIndex?: number
     ) {
-        this.onOpenSelection.emit({ type, index, target, parentIndex });
+        this.openSelection.emit({ type, index, target, parentIndex });
     }
 }
