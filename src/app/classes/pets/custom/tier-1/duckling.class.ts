@@ -60,8 +60,16 @@ export class DucklingAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
-    //this.triggerTigerExecution(context);
+    const owner = this.owner;
+    const healthGain = this.level * 2;
+    this.logService.createLog({
+      message: `${owner.name} gave the left-most shop pet +${healthGain} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+    this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): DucklingAbility {

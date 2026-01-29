@@ -12,6 +12,10 @@ export class Yeti extends Pet {
   pack: Pack = 'Unicorn';
   attack = 5;
   health = 9;
+  initAbilities(): void {
+    this.addAbility(new YetiAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +45,7 @@ export class YetiAbility extends Ability {
     super({
       name: 'YetiAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +58,15 @@ export class YetiAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const rolls = this.level * 4;
+    this.logService.createLog({
+      message: `${owner.name} rolled ${rolls} times while freezing pet copies and tier 6 food.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

@@ -47,7 +47,7 @@ export class TermiteAbility extends Ability {
     super({
       name: 'TermiteAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,17 @@ export class TermiteAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const tier = Math.max(1, context.gameApi.previousShopTier ?? 1);
+    const newAttack = tier + this.level;
+    owner.attack = Math.max(1, newAttack);
+    this.logService.createLog({
+      message: `${owner.name} set its attack to ${owner.attack}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

@@ -12,6 +12,12 @@ export class Griffin extends Pet {
   pack: Pack = 'Unicorn';
   attack = 5;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new GriffinAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class GriffinAbility extends Ability {
     super({
       name: 'GriffinAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,14 @@ export class GriffinAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    this.logService.createLog({
+      message: `${owner.name} chose a level ${this.level} toy from Griffin's collection.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

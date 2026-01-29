@@ -47,7 +47,7 @@ export class BluebirdAbility extends Ability {
     super({
       name: 'BluebirdAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,23 @@ export class BluebirdAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const targetResp = owner.parent.getRandomPet([owner]);
+    const target = targetResp.pet;
+    if (!target) {
+      return;
+    }
+
+    const attackGain = this.level;
+    target.increaseAttack(attackGain);
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${attackGain} attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
     this.triggerTigerExecution(context);
   }
 

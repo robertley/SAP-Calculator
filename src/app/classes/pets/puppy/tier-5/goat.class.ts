@@ -54,7 +54,7 @@ export class GoatAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    // No ability (vanilla goat).
     this.triggerTigerExecution(context);
   }
 

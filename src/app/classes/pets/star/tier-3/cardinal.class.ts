@@ -12,6 +12,12 @@ export class Cardinal extends Pet {
   pack: Pack = 'Star';
   health = 3;
   attack = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new CardinalAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
 
   constructor(
     protected logService: LogService,
@@ -42,7 +48,7 @@ export class CardinalAbility extends Ability {
     super({
       name: 'CardinalAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,7 +61,23 @@ export class CardinalAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    let target = owner.petAhead;
+    while (target) {
+      const perk = target.equipment;
+      if (perk && !perk.equipmentClass?.startsWith('ailment')) {
+        const discount = this.level;
+        this.logService.createLog({
+          message: `${owner.name} stocked a discounted copy of ${perk.name} (-${discount} gold).`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: context.tiger,
+          pteranodon: context.pteranodon,
+        });
+        break;
+      }
+      target = target.petAhead;
+    }
     this.triggerTigerExecution(context);
   }
 

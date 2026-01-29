@@ -47,7 +47,7 @@ export class AfricanPenguinAbility extends Ability {
     super({
       name: 'AfricanPenguinAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,25 @@ export class AfricanPenguinAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const targetsResp = owner.parent.getRandomPets(3, [owner]);
+    const targets = targetsResp.pets;
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+    const attackGain = this.level;
+    for (const target of targets) {
+      target.increaseAttack(attackGain);
+    }
+    this.logService.createLog({
+      message: `${owner.name} gave ${targets.map((pet) => pet.name).join(', ')} +${attackGain} attack.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetsResp.random,
+    });
     this.triggerTigerExecution(context);
   }
 

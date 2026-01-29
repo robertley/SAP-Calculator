@@ -4,6 +4,7 @@ import { Player } from '../../../player.class';
 import { Pet, Pack } from '../../../pet.class';
 import { Equipment } from '../../../equipment.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAdjacentAlivePets } from 'app/classes/ability-helpers';
 
 
 export class Siamese extends Pet {
@@ -12,6 +13,12 @@ export class Siamese extends Pet {
   pack: Pack = 'Star';
   health = 4;
   attack = 1;
+  initAbilities(): void {
+    this.addAbility(
+      new SiameseAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
 
   constructor(
     protected logService: LogService,
@@ -42,7 +49,7 @@ export class SiameseAbility extends Ability {
     super({
       name: 'SiameseAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,7 +62,34 @@ export class SiameseAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const adjacentPets = getAdjacentAlivePets(owner);
+    if (adjacentPets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const hasDiscountedFood =
+      (context as { discountedFood?: boolean }).discountedFood === true ||
+      (context as { shopDiscountedFood?: boolean }).shopDiscountedFood === true;
+    const attackGain = this.level;
+    const healthGain = hasDiscountedFood ? this.level : 0;
+
+    for (const target of adjacentPets) {
+      target.increaseAttack(attackGain);
+      if (healthGain > 0) {
+        target.increaseHealth(healthGain);
+      }
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave adjacent friends +${attackGain} attack${healthGain > 0 ? ` and +${healthGain} health` : ''}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: adjacentPets.length > 1,
+    });
     this.triggerTigerExecution(context);
   }
 

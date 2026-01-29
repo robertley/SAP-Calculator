@@ -75,7 +75,7 @@ export const PUPPY_PET_REGISTRY: { [key: string]: any } = {
   'Tabby Cat': TabbyCat,
   Mandrill: Mandrill,
   Lemur: Lemur,
-  Goldfish: Goldfish,
+  'Gold Fish': Goldfish,
   'Hoopoe Bird': HoopoeBird,
   'Tropical Fish': TropicalFish,
   'Hatching Chick': HatchingChick,

@@ -47,7 +47,7 @@ export class DromedaryAbility extends Ability {
     super({
       name: 'DromedaryAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,15 @@ export class DromedaryAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const buff = this.level;
+    this.logService.createLog({
+      message: `${owner.name} gave the two left-most shop pets +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

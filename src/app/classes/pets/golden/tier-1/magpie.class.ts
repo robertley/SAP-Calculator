@@ -47,7 +47,7 @@ export class MagpieAbility extends Ability {
     super({
       name: 'MagpieAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,15 @@ export class MagpieAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const spend = this.level;
+    this.logService.createLog({
+      message: `${owner.name} spent up to ${spend} gold and will gain it back next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

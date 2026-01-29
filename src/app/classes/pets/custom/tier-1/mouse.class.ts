@@ -47,7 +47,7 @@ export class MouseAbility extends Ability {
     super({
       name: 'MouseAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,20 @@ export class MouseAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const foodName =
+      this.level === 1
+        ? 'Apple'
+        : this.level === 2
+          ? 'Better Apple'
+          : 'Best Apple';
+    this.logService.createLog({
+      message: `${owner.name} replaced shop food with one free ${foodName}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

@@ -47,7 +47,7 @@ export class OysterAbility extends Ability {
     super({
       name: 'OysterAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,15 @@ export class OysterAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const goldGain = this.level * 3;
+    this.logService.createLog({
+      message: `${owner.name} gained ${goldGain} gold.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

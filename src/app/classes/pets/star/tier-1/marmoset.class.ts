@@ -47,7 +47,7 @@ export class MarmosetAbility extends Ability {
     super({
       name: 'MarmosetAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,17 @@ export class MarmosetAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const count = this.level;
+    const rollsText =
+      count === 1 ? 'next roll is' : `next ${count} rolls are`;
+    this.logService.createLog({
+      message: `${owner.name} was sold and your ${rollsText} free.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

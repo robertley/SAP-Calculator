@@ -12,6 +12,12 @@ export class BadDog extends Pet {
   pack: Pack = 'Unicorn';
   attack = 3;
   health = 3;
+  initAbilities(): void {
+    this.addAbility(
+      new BadDogAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class BadDogAbility extends Ability {
     super({
       name: 'BadDogAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,14 @@ export class BadDogAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    this.logService.createLog({
+      message: `${owner.name} chose a level ${this.level} toy that brings doom and chaos!`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

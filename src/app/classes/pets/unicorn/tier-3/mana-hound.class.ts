@@ -63,7 +63,10 @@ export class ManaHoundAbility extends Ability {
       rollAmount = gameApi.opponentRollAmount;
     }
 
-    rollAmount = Math.min(rollAmount, 3);
+    rollAmount = Math.max(0, Math.min(rollAmount ?? 0, 3));
+    if (rollAmount === 0) {
+      return;
+    }
 
     let targetsAheadResp = owner.parent.nearestPetsAhead(1, owner);
     if (targetsAheadResp.pets.length === 0) {

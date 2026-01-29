@@ -1,11 +1,10 @@
-import { GameAPI } from 'app/interfaces/gameAPI.interface';
-import { Power } from 'app/interfaces/power.interface';
 import { AbilityService } from 'app/services/ability/ability.service';
 import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAdjacentAlivePets } from 'app/classes/ability-helpers';
 
 
 export class Mosasaurus extends Pet {
@@ -14,42 +13,11 @@ export class Mosasaurus extends Pet {
   pack: Pack = 'Puppy';
   attack = 5;
   health = 6;
-  friendlyToyBroke(gameApi: GameAPI, tiger?: boolean): void {
-    let targets = [];
-    let randomEvent = false;
-
-    // Target ahead with Silly-aware targeting
-    let targetsAheadResp = this.parent.nearestPetsAhead(1, this);
-    if (targetsAheadResp.pets.length > 0) {
-      targets.push(targetsAheadResp.pets[0]);
-      randomEvent = targetsAheadResp.random;
-    }
-
-    // Target behind with Silly-aware targeting
-    let targetsBehindResp = this.parent.nearestPetsBehind(1, this);
-    if (targetsBehindResp.pets.length > 0) {
-      targets.push(targetsBehindResp.pets[0]);
-      randomEvent = randomEvent || targetsBehindResp.random;
-    }
-
-    if (targets.length == 0) {
-      return;
-    }
-    let power: Power = {
-      attack: 2,
-      health: 3,
-    };
-    for (let target of targets) {
-      this.logService.createLog({
-        message: `${this.name} gave ${target.name} ${power.attack} attach and ${power.health} health.`,
-        type: 'ability',
-        player: this.parent,
-        randomEvent: randomEvent,
-        tiger: tiger,
-      });
-      target.increaseHealth(power.health);
-      target.increaseAttack(power.attack);
-    }
+  initAbilities(): void {
+    this.addAbility(
+      new MosasaurusAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
   }
   constructor(
     protected logService: LogService,
@@ -80,7 +48,7 @@ export class MosasaurusAbility extends Ability {
     super({
       name: 'MosasaurusAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['FriendlyToyBroke'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -93,7 +61,26 @@ export class MosasaurusAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const targets = getAdjacentAlivePets(owner);
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const attackGain = this.level * 2;
+    const healthGain = this.level * 3;
+    for (const target of targets) {
+      target.increaseAttack(attackGain);
+      target.increaseHealth(healthGain);
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} +${attackGain}/+${healthGain}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

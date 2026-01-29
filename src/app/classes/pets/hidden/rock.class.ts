@@ -61,7 +61,7 @@ export class RockAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    // No ability (vanilla rock).
     this.triggerTigerExecution(context);
   }
 

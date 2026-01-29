@@ -12,6 +12,12 @@ export class Buffalo extends Pet {
   pack: Pack = 'Puppy';
   attack = 4;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new BuffaloAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -32,6 +38,8 @@ export class Buffalo extends Pet {
 export class BuffaloAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
+  private pendingAttack = 0;
+  private pendingHealth = 0;
 
   constructor(
     owner: Pet,
@@ -41,7 +49,7 @@ export class BuffaloAbility extends Ability {
     super({
       name: 'BuffaloAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['FriendSold', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +62,37 @@ export class BuffaloAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    if (context.trigger === 'StartTurn') {
+      if (this.pendingAttack || this.pendingHealth) {
+        owner.increaseAttack(-this.pendingAttack);
+        owner.increaseHealth(-this.pendingHealth);
+      }
+      this.pendingAttack = 0;
+      this.pendingHealth = 0;
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const soldPet = context.triggerPet;
+    if (!soldPet || !soldPet.isSellPet()) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buff = this.level * 2;
+    owner.increaseAttack(buff);
+    owner.increaseHealth(buff);
+    this.pendingAttack += buff;
+    this.pendingHealth += buff;
+
+    this.logService.createLog({
+      message: `${owner.name} gained +${buff}/+${buff} until next turn after ${soldPet.name} was sold.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

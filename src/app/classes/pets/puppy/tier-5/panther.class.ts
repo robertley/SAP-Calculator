@@ -54,7 +54,7 @@ export class PantherAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    // Passive handled by Pet.setEquipmentMultiplier (Panther equipment scaling).
     this.triggerTigerExecution(context);
   }
 

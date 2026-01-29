@@ -12,6 +12,10 @@ export class Otter extends Pet {
   pack: Pack = 'Turtle';
   health = 4;
   attack = 1;
+  initAbilities(): void {
+    this.addAbility(new OtterAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Otter extends Pet {
 
 export class OtterAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'OtterAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,41 @@ export class OtterAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const count = this.level;
+    const targetsResp = owner.parent.getRandomPets(
+      count,
+      [owner],
+      false,
+      false,
+      owner,
+    );
+    if (targetsResp.pets.length === 0) {
+      return;
+    }
+
+    for (const target of targetsResp.pets) {
+      target.increaseHealth(1);
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave ${targetsResp.pets
+        .map((pet) => pet.name)
+        .join(', ')} +1 health.`,
+      type: 'ability',
+      player: owner.parent,
+      randomEvent: targetsResp.random,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): OtterAbility {
-    return new OtterAbility(newOwner, this.logService, this.abilityService);
+    return new OtterAbility(newOwner, this.logService);
   }
 }

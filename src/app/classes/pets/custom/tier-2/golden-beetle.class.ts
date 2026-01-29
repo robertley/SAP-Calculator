@@ -47,7 +47,7 @@ export class GoldenBeetleAbility extends Ability {
     super({
       name: 'GoldenBeetleAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,16 @@ export class GoldenBeetleAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const multiplier = owner.attack >= 10 ? 3 : 1;
+    const goldGain = this.level * multiplier;
+    this.logService.createLog({
+      message: `${owner.name} gained ${goldGain} gold.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

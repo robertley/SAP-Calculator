@@ -12,6 +12,12 @@ export class DumboOctopus extends Pet {
   pack: Pack = 'Star';
   health = 5;
   attack = 2;
+  initAbilities(): void {
+    this.addAbility(
+      new DumboOctopusAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
 
   constructor(
     protected logService: LogService,
@@ -42,7 +48,7 @@ export class DumboOctopusAbility extends Ability {
     super({
       name: 'DumboOctopusAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['Roll3'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,7 +61,15 @@ export class DumboOctopusAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const discount = this.level;
+    this.logService.createLog({
+      message: `${owner.name} stocked a discounted food from the last 3 tiers (-${discount} gold).`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

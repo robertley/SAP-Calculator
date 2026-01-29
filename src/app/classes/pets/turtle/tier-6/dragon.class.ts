@@ -12,6 +12,10 @@ export class Dragon extends Pet {
   pack: Pack = 'Turtle';
   attack = 3;
   health = 8;
+  initAbilities(): void {
+    this.addAbility(new DragonAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Mouse } from 'app/classes/pets/custom/tier-1/mouse.class';
 
 
 export class Owl extends Pet {
@@ -12,6 +13,10 @@ export class Owl extends Pet {
   pack: Pack = 'Puppy';
   attack = 3;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(new OwlAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +46,7 @@ export class OwlAbility extends Ability {
     super({
       name: 'OwlAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +59,34 @@ export class OwlAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const exp = this.minExpForLevel;
+    const mouse = new Mouse(
+      this.logService,
+      this.abilityService,
+      owner.parent,
+      null,
+      null,
+      null,
+      exp,
+    );
+
+    const summonResult = owner.parent.summonPet(
+      mouse,
+      owner.savedPosition,
+      false,
+      owner,
+    );
+    if (summonResult.success) {
+      this.logService.createLog({
+        message: `${owner.name} summoned a level ${this.level} Mouse.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+        randomEvent: summonResult.randomEvent,
+      });
+    }
     this.triggerTigerExecution(context);
   }
 

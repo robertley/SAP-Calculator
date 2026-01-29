@@ -55,6 +55,8 @@ export class HatchingChick extends Pet {
 export class HatchingChickAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
+  private pendingBuffs: Map<Pet, { attack: number; health: number }> =
+    new Map();
 
   constructor(
     owner: Pet,
@@ -64,7 +66,7 @@ export class HatchingChickAbility extends Ability {
     super({
       name: 'HatchingChickAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -77,7 +79,65 @@ export class HatchingChickAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    if (context.trigger === 'StartTurn') {
+      for (const [pet, buff] of this.pendingBuffs) {
+        if (pet) {
+          pet.increaseAttack(-buff.attack);
+          pet.increaseHealth(-buff.health);
+        }
+      }
+      this.pendingBuffs.clear();
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const target = owner.petAhead;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    if (this.level === 1) {
+      const attackGain = 3;
+      const healthGain = 3;
+      target.increaseAttack(attackGain);
+      target.increaseHealth(healthGain);
+      this.pendingBuffs.set(target, { attack: attackGain, health: healthGain });
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} +${attackGain}/+${healthGain} until next turn.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    if (this.level === 2) {
+      const buff = 2;
+      target.increaseAttack(buff);
+      target.increaseHealth(buff);
+      this.logService.createLog({
+        message: `${owner.name} gave ${target.name} +${buff}/+${buff}.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    target.increaseExp(1);
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +1 experience.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

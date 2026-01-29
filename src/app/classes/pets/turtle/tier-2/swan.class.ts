@@ -12,6 +12,10 @@ export class Swan extends Pet {
   pack: Pack = 'Turtle';
   health = 2;
   attack = 1;
+  initAbilities(): void {
+    this.addAbility(new SwanAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Swan extends Pet {
 
 export class SwanAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'SwanAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,22 @@ export class SwanAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const gold = this.level;
+    this.logService.createLog({
+      message: `${owner.name} gained ${gold} gold.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): SwanAbility {
-    return new SwanAbility(newOwner, this.logService, this.abilityService);
+    return new SwanAbility(newOwner, this.logService);
   }
 }

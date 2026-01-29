@@ -128,7 +128,7 @@ export const STANDARD_TOYS: { [key: string]: any } = {
   'Magic Mirror': MagicMirror,
   Pickaxe: Pickaxe,
   'Red Cape': RedCape,
-  'Rose Bud': Rosebud,
+  Rosebud: Rosebud,
   Excalibur: Excalibur,
   'Holy Grail': HolyGrail,
 };

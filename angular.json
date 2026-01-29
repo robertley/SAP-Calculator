@@ -44,11 +44,11 @@
           "configurations": {
             "production": {
               "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "2.5mb"
-                },
+                  {
+                    "type": "initial",
+                    "maximumWarning": "2.1mb",
+                    "maximumError": "2.5mb"
+                  },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "16kb",

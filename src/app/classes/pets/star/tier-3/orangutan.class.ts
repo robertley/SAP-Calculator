@@ -12,6 +12,12 @@ export class Orangutan extends Pet {
   pack: Pack = 'Star';
   attack = 1;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new OrangutanAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class OrangutanAbility extends Ability {
     super({
       name: 'OrangutanAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,24 @@ export class OrangutanAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const targetResp = owner.parent.getLowestHealthPet(owner);
+    const target = targetResp.pet;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const healthGain = this.level * 3;
+    target.increaseHealth(healthGain);
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${healthGain} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
     this.triggerTigerExecution(context);
   }
 

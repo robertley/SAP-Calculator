@@ -12,6 +12,12 @@ export class Capybara extends Pet {
   pack: Pack = 'Star';
   attack = 2;
   health = 5;
+  initAbilities(): void {
+    this.addAbility(
+      new CapybaraAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class CapybaraAbility extends Ability {
     super({
       name: 'CapybaraAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['Roll1', 'FriendSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,15 @@ export class CapybaraAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const buff = this.level;
+    this.logService.createLog({
+      message: `${owner.name} gave newly rolled shop pets +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { runSimulation, SimulationConfig } from '../simulation/simulate';
+import { LogService } from '../src/app/services/log.service';
+import { parseLogMessage } from '../src/app/root/app.component.simulation';
 
 describe('Pet Ability Patch Regressions', () => {
     const baseConfig: SimulationConfig = {
@@ -211,5 +213,248 @@ describe('Pet Ability Patch Regressions', () => {
         );
 
         expect(cocoaBeanLog).toBeDefined();
+    });
+
+    it('Mana Hound logs should not leak onerror text when decorated', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerPets: [
+                {
+                    name: 'Mana Hound',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const manaLog = logs.find(
+            (log: any) =>
+                typeof log.message === 'string' &&
+                log.message.includes('Mana Hound'),
+        );
+
+        expect(manaLog).toBeDefined();
+
+        const logService = new LogService();
+        logService.decorateLogIfNeeded(manaLog);
+        const parts = parseLogMessage(manaLog.message ?? '');
+        const text = parts
+            .filter((part) => part.type === 'text')
+            .map((part) => part.text)
+            .join(' ')
+            .toLowerCase();
+
+        expect(text).toContain('mana hound');
+        expect(text).not.toContain('onerror');
+        expect(text).not.toContain('this.remove()');
+    });
+
+    it('Thunderbird should target the nearest pet ahead if the second is missing', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Thunderbird',
+                    attack: 2,
+                    health: 3,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [null, null, null, null, null],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const thunderbirdLog = logs.find((log: any) =>
+            log.type === 'ability' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Thunderbird gave Ant 3 mana.')
+        );
+
+        expect(thunderbirdLog).toBeDefined();
+    });
+
+    it('Mana Hound should give nearest friend ahead mana per roll (up to 3)', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerRollAmount: 2,
+            opponentRollAmount: 0,
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Mana Hound',
+                    attack: 4,
+                    health: 3,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [null, null, null, null, null],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const manaHoundLog = logs.find((log: any) =>
+            log.type === 'ability' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Mana Hound gave Ant 4 mana.')
+        );
+
+        expect(manaHoundLog).toBeDefined();
+    });
+
+    it('Chimera should round down after stat calculation', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerPets: [
+                {
+                    name: 'Chimera',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 1,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Elephant',
+                    attack: 10,
+                    health: 10,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const chimeraLog = logs.find((log: any) =>
+            log.type === 'ability' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Chimera Lion 3/4')
+        );
+
+        expect(chimeraLog).toBeDefined();
     });
 });

@@ -47,7 +47,7 @@ export class MantaRayAbility extends Ability {
     super({
       name: 'MantaRayAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,27 @@ export class MantaRayAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    let hasEmptySpace = false;
+    for (let i = 0; i < 5; i++) {
+      if (owner.parent.getPetAtPosition(i) == null) {
+        hasEmptySpace = true;
+        break;
+      }
+    }
+    if (!hasEmptySpace) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const goldGain = this.level * 2;
+    this.logService.createLog({
+      message: `${owner.name} will give +${goldGain} gold next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

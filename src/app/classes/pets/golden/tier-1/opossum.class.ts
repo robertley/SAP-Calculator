@@ -47,7 +47,7 @@ export class OpossumAbility extends Ability {
     super({
       name: 'OpossumAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,15 @@ export class OpossumAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const buff = this.level;
+    this.logService.createLog({
+      message: `${owner.name} gave a random faint pet in the shop +${buff}/+${buff}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

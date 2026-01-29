@@ -12,6 +12,12 @@ export class Anglerfish extends Pet {
   pack: Pack = 'Puppy';
   attack = 7;
   health = 4;
+  initAbilities(): void {
+    this.addAbility(
+      new AnglerfishAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +47,7 @@ export class AnglerfishAbility extends Ability {
     super({
       name: 'AnglerfishAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisBought'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +60,16 @@ export class AnglerfishAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const count = this.level;
+    const times = count === 1 ? 'once' : count === 2 ? 'twice' : 'thrice';
+    this.logService.createLog({
+      message: `${owner.name} stocked a free pet from the last opponent ${times}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

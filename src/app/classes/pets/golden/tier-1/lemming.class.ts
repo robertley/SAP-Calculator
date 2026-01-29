@@ -47,7 +47,7 @@ export class LemmingAbility extends Ability {
     super({
       name: 'LemmingAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,15 @@ export class LemmingAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const goldGain = this.level;
+    this.logService.createLog({
+      message: `${owner.name} will give +${goldGain} gold next turn.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

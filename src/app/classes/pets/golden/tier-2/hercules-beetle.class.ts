@@ -47,7 +47,7 @@ export class HerculesBeetleAbility extends Ability {
     super({
       name: 'HerculesBeetleAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,37 @@ export class HerculesBeetleAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const battles = Math.max(0, owner.battlesFought ?? 0);
+    const totalBuff = battles * this.level;
+    const friends = owner.parent.petArray.filter((pet) => pet.alive);
+    if (totalBuff <= 0 || friends.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const perFriend = Math.floor(totalBuff / friends.length);
+    let remainder = totalBuff % friends.length;
+    for (const friend of friends) {
+      if (perFriend > 0) {
+        friend.increaseAttack(perFriend);
+      }
+    }
+    if (remainder > 0) {
+      const shuffled = [...friends].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < remainder && i < shuffled.length; i++) {
+        shuffled[i].increaseAttack(1);
+      }
+    }
+
+    this.logService.createLog({
+      message: `${owner.name} gave friends +${totalBuff} attack split evenly after ${battles} battle${battles === 1 ? '' : 's'}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: friends.length > 1,
+    });
     this.triggerTigerExecution(context);
   }
 

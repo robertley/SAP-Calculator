@@ -12,6 +12,10 @@ export class Llama extends Pet {
   pack: Pack = 'Puppy';
   attack = 3;
   health = 5;
+  initAbilities(): void {
+    this.addAbility(new LlamaAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -41,7 +45,7 @@ export class LlamaAbility extends Ability {
     super({
       name: 'LlamaAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -54,7 +58,31 @@ export class LlamaAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    let hasEmptySpace = false;
+    for (let i = 0; i < 5; i++) {
+      if (owner.parent.getPetAtPosition(i) == null) {
+        hasEmptySpace = true;
+        break;
+      }
+    }
+    if (!hasEmptySpace) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const attackGain = this.level;
+    const healthGain = this.level * 2;
+    owner.increaseAttack(attackGain);
+    owner.increaseHealth(healthGain);
+
+    this.logService.createLog({
+      message: `${owner.name} gained +${attackGain}/+${healthGain} because there was an empty space.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 

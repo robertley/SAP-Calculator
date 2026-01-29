@@ -12,6 +12,10 @@ export class Cat extends Pet {
   pack: Pack = 'Turtle';
   attack = 4;
   health = 5;
+  initAbilities(): void {
+    this.addAbility(new CatAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,13 @@ export class Cat extends Pet {
 
 export class CatAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
+  private usesThisTurn = 0;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'CatAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['FoodEatenByFriendly', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +50,38 @@ export class CatAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const { trigger, triggerPet } = context as AbilityContext & {
+      trigger?: string;
+      triggerPet?: Pet;
+    };
+
+    if (trigger === 'StartTurn') {
+      this.usesThisTurn = 0;
+      return;
+    }
+
+    if (this.usesThisTurn >= 2) {
+      return;
+    }
+    this.usesThisTurn++;
+
+    const multiplier = this.level + 1;
+    this.logService.createLog({
+      message: `${owner.name} boosted ${triggerPet?.name ?? 'a friend'}'s shop food by ${multiplier}x.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
+
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): CatAbility {
-    return new CatAbility(newOwner, this.logService, this.abilityService);
+    return new CatAbility(newOwner, this.logService);
   }
 }

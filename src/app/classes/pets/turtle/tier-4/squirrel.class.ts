@@ -12,6 +12,10 @@ export class Squirrel extends Pet {
   pack: Pack = 'Turtle';
   attack = 3;
   health = 5;
+  initAbilities(): void {
+    this.addAbility(new SquirrelAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Squirrel extends Pet {
 
 export class SquirrelAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'SquirrelAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,22 @@ export class SquirrelAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const discount = this.level;
+    this.logService.createLog({
+      message: `${owner.name} discounted all shop food by ${discount} gold.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): SquirrelAbility {
-    return new SquirrelAbility(newOwner, this.logService, this.abilityService);
+    return new SquirrelAbility(newOwner, this.logService);
   }
 }

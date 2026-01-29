@@ -47,7 +47,7 @@ export class ChipmunkAbility extends Ability {
     super({
       name: 'ChipmunkAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -60,7 +60,29 @@ export class ChipmunkAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const perk = owner.equipment;
+    const count = this.level;
+    if (!perk) {
+      this.logService.createLog({
+        message: `${owner.name} had no food perk to stock.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
+      });
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const plural = count === 1 ? '' : 's';
+    this.logService.createLog({
+      message: `${owner.name} stocked ${count} free ${perk.name}${plural}.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+    });
     this.triggerTigerExecution(context);
   }
 
