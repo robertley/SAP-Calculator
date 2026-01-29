@@ -117,8 +117,8 @@ export type AbilityTriggerBase =
   | 'BeforeFriendlyAttack'
   | 'EnemyFaint'
   | 'SpecialEndTurn'
-  | 'manaSnipe'
-  | 'goldenRetrieverSummons'
+  | 'ManaSnipe'
+  | 'GoldenRetrieverSummons'
   | 'KitsuneFriendDies';
 
 export type AbilityTrigger =

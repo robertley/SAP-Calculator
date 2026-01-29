@@ -26,7 +26,10 @@ export class ImportCalculatorComponent implements OnInit {
   });
 
   errorMessage = '';
+  statusMessage = '';
+  statusTone: 'success' | 'error' = 'success';
   loading = false;
+  private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private replayCalcService: ReplayCalcService,
@@ -37,6 +40,7 @@ export class ImportCalculatorComponent implements OnInit {
 
   submit() {
     this.errorMessage = '';
+    this.clearStatus();
     const calcControl = this.formGroup.get('calcCode');
     const rawInput = calcControl?.value?.trim();
     if (!rawInput) {
@@ -136,7 +140,7 @@ export class ImportCalculatorComponent implements OnInit {
     }
 
     if (this.importFunc(rawInput)) {
-      alert('Import successful');
+      this.setStatus('Import successful.', 'success');
     } else {
       this.errorMessage = 'Import failed.';
     }
@@ -153,7 +157,7 @@ export class ImportCalculatorComponent implements OnInit {
       metaBoards,
     );
     if (this.importFunc(JSON.stringify(calculatorState))) {
-      alert('Import successful');
+      this.setStatus('Import successful.', 'success');
       return;
     }
     this.errorMessage = 'Import failed.';
@@ -193,5 +197,25 @@ export class ImportCalculatorComponent implements OnInit {
         },
       });
     return true;
+  }
+
+  private clearStatus() {
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
+    this.statusMessage = '';
+  }
+
+  private setStatus(message: string, tone: 'success' | 'error') {
+    this.statusMessage = message;
+    this.statusTone = tone;
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+    }
+    this.statusTimer = setTimeout(() => {
+      this.statusMessage = '';
+      this.statusTimer = null;
+    }, 3000);
   }
 }

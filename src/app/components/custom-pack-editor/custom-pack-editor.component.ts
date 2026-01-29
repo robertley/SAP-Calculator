@@ -38,6 +38,9 @@ export class CustomPackEditorComponent implements OnInit {
     code: new FormControl(null),
   });
 
+  statusMessage = '';
+  statusTone: 'success' | 'error' = 'success';
+  private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private petService: PetService,
@@ -165,6 +168,7 @@ export class CustomPackEditorComponent implements OnInit {
 
   importCustomPack() {
     let code = this.importFormGroup.get('code').value;
+    this.clearStatus();
     try {
       let jsonString = code;
       const firstBracket = code.indexOf('{');
@@ -188,12 +192,17 @@ export class CustomPackEditorComponent implements OnInit {
       this.createNewPack();
       this.focusedGroup.patchValue(formValue);
       if (parsed.missingMinions.length > 0) {
-        alert(
-          `Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(', ')}`,
+        this.setStatus(
+          `Some minion IDs were not recognized and were skipped: ${parsed.missingMinions.join(
+            ', ',
+          )}`,
+          'error',
         );
+      } else {
+        this.setStatus('Custom pack imported.', 'success');
       }
     } catch (e) {
-      alert('Invalid code');
+      this.setStatus('Invalid code.', 'error');
       console.error(e);
     }
   }
@@ -265,8 +274,18 @@ export class CustomPackEditorComponent implements OnInit {
   }
 
   private copyToClipboard(text: string) {
+    this.clearStatus();
     if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).catch(() => undefined);
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          this.setStatus('Custom pack copied to clipboard.', 'success');
+        })
+        .catch(() => {
+          this.setStatus('Failed to copy custom pack.', 'error');
+        });
+    } else {
+      this.setStatus('Clipboard not available.', 'error');
     }
   }
 
@@ -333,5 +352,25 @@ export class CustomPackEditorComponent implements OnInit {
     }
 
     return { tierMinions, missingMinions };
+  }
+
+  private clearStatus() {
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
+    this.statusMessage = '';
+  }
+
+  private setStatus(message: string, tone: 'success' | 'error') {
+    this.statusMessage = message;
+    this.statusTone = tone;
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+    }
+    this.statusTimer = setTimeout(() => {
+      this.statusMessage = '';
+      this.statusTimer = null;
+    }, 4000);
   }
 }

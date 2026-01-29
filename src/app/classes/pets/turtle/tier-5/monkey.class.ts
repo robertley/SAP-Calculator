@@ -12,6 +12,10 @@ export class Monkey extends Pet {
   pack: Pack = 'Turtle';
   attack = 1;
   health = 2;
+  initAbilities(): void {
+    this.addAbility(new MonkeyAbility(this, this.logService));
+    super.initAbilities();
+  }
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -31,17 +35,12 @@ export class Monkey extends Pet {
 
 export class MonkeyAbility extends Ability {
   private logService: LogService;
-  private abilityService: AbilityService;
 
-  constructor(
-    owner: Pet,
-    logService: LogService,
-    abilityService: AbilityService,
-  ) {
+  constructor(owner: Pet, logService: LogService) {
     super({
       name: 'MonkeyAbility',
       owner: owner,
-      triggers: [],
+      triggers: ['EndTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -50,15 +49,33 @@ export class MonkeyAbility extends Ability {
       },
     });
     this.logService = logService;
-    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    // Empty implementation - to be filled by user
+    const owner = this.owner;
+    const targetResp = owner.parent.getFurthestUpPet(owner);
+    const target = targetResp.pet;
+    if (!target) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const buffAmount = 2 * this.level;
+    target.increaseAttack(buffAmount);
+    target.increaseHealth(buffAmount);
+    this.logService.createLog({
+      message: `${owner.name} gave ${target.name} +${buffAmount} attack and +${buffAmount} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: context.tiger,
+      pteranodon: context.pteranodon,
+      randomEvent: targetResp.random,
+    });
+
     this.triggerTigerExecution(context);
   }
 
   copy(newOwner: Pet): MonkeyAbility {
-    return new MonkeyAbility(newOwner, this.logService, this.abilityService);
+    return new MonkeyAbility(newOwner, this.logService);
   }
 }

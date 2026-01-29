@@ -67,7 +67,7 @@ export class VolcanoSnailAbility extends Ability {
     );
     let excludePets = [...petsWithPerk, ...petsWithToasty];
     let targetResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
-      3,
+      this.level,
       excludePets,
       null,
       null,
@@ -86,6 +86,8 @@ export class VolcanoSnailAbility extends Ability {
         message: `${owner.name} made ${target.name} Toasty`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: tiger,
         randomEvent: targetResp.random,
       });

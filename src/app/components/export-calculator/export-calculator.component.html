@@ -9,4 +9,11 @@
   <button class="btn btn-primary" (click)="copyToClipboard()">
     Copy to Clipboard
   </button>
+  <div
+    *ngIf="statusMessage"
+    class="mt-2"
+    [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'"
+  >
+    {{ statusMessage }}
+  </div>
 </div>

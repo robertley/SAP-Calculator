@@ -711,12 +711,12 @@ export class AbilityService {
   }
 
   setManaEvent(event: AbilityEvent) {
-    event.abilityType = 'manaSnipe';
+    event.abilityType = 'ManaSnipe';
     this.abilityQueueService.addEventToQueue(event);
   }
 
   setgoldenRetrieverSummonsEvent(event: AbilityEvent) {
-    event.abilityType = 'goldenRetrieverSummons';
+    event.abilityType = 'GoldenRetrieverSummons';
     this.abilityQueueService.addEventToQueue(event);
   }
 
