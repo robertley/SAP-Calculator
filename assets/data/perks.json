@@ -343,7 +343,7 @@
     "NameId": "Ink"
   },
   {
-    "Ability": "Ability deals exactly 10 damage, once.",
+    "Ability": "Ability deals +8 damage, once.",
     "Positive": true,
     "Id": "78",
     "Name": "Kiwano",

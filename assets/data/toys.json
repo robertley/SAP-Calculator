@@ -1328,15 +1328,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Spend 12 gold: Break and give all friends permanent +1 attack and +1 health."
+        "About": "Spend 14 gold: Break and give all friends permanent +1 attack and +1 health."
       },
       {
         "Level": 2,
-        "About": "Spend 12 gold: Break and give all friends permanent +2 attack and +2 health."
+        "About": "Spend 14 gold: Break and give all friends permanent +2 attack and +2 health."
       },
       {
         "Level": 3,
-        "About": "Spend 12 gold: Break and give all friends permanent +3 attack and +3 health."
+        "About": "Spend 14 gold: Break and give all friends permanent +3 attack and +3 health."
       }
     ],
     "Type": 1,
@@ -1386,15 +1386,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Three friends sold: Break and give all friends permanent +1 attack and +1 health."
+        "About": "Two friends transformed: Break and give all friends permanent +1 attack and +1 health."
       },
       {
         "Level": 2,
-        "About": "Three friends sold: Break and give all friends permanent +2 attack and +2 health."
+        "About": "Two friends transformed: Break and give all friends permanent +2 attack and +2 health."
       },
       {
         "Level": 3,
-        "About": "Three friends sold: Break and give all friends permanent +3 attack and +3 health."
+        "About": "Two friends transformed: Break and give all friends permanent +3 attack and +3 health."
       }
     ],
     "Type": 1,
