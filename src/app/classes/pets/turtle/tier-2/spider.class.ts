@@ -57,7 +57,7 @@ export class SpiderAbility extends Ability {
     super({
       name: 'SpiderAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -134,3 +134,4 @@ export class SpiderAbility extends Ability {
     );
   }
 }
+

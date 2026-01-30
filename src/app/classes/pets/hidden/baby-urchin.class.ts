@@ -42,7 +42,7 @@ export class BabyUrchinAbility extends Ability {
     super({
       name: 'BabyUrchinAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -105,3 +105,4 @@ export class BabyUrchinAbility extends Ability {
     return new BabyUrchinAbility(newOwner, this.logService);
   }
 }
+

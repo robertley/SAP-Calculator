@@ -21,6 +21,7 @@ export interface AppSimulationContext {
   draw: number;
   battles: Battle[];
   battleRandomEvents: LogMessagePart[][];
+  battleRandomEventsByBattle: Map<Battle, LogMessagePart[]>;
   filteredBattlesCache: Battle[];
   viewBattle: Battle | null;
   viewBattleLogs: Log[];
@@ -113,9 +114,13 @@ export function runSimulation(
   ctx.opponentWinner = result.opponentWins;
   ctx.draw = result.draws;
   ctx.battles = result.battles || [];
-  ctx.battleRandomEvents = ctx.battles.map((battle) =>
-    formatRandomEvents(battle, ctx.logService),
-  );
+  const randomEventsByBattle = new Map<Battle, LogMessagePart[]>();
+  ctx.battleRandomEvents = ctx.battles.map((battle) => {
+    const parts = formatRandomEvents(battle, ctx.logService);
+    randomEventsByBattle.set(battle, parts);
+    return parts;
+  });
+  ctx.battleRandomEventsByBattle = randomEventsByBattle;
   refreshFilteredBattles(ctx);
   ctx.viewBattle = result.battles[0] || null;
   ctx.viewBattleLogs = ctx.viewBattle?.logs ?? [];

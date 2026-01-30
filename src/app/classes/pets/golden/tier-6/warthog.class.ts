@@ -40,7 +40,7 @@ export class WarthogAbility extends Ability {
     super({
       name: 'WarthogAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -83,3 +83,4 @@ export class WarthogAbility extends Ability {
     return new WarthogAbility(newOwner, this.logService);
   }
 }
+

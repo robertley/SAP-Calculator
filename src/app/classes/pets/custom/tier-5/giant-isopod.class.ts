@@ -41,7 +41,7 @@ export class GiantIsopodAbility extends Ability {
     super({
       name: 'Giant Isopod Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -83,3 +83,4 @@ export class GiantIsopodAbility extends Ability {
     return new GiantIsopodAbility(newOwner, this.logService);
   }
 }
+

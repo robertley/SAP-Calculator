@@ -40,7 +40,7 @@ export class HippoAbility extends Ability {
     super({
       name: 'HippoAbility',
       owner: owner,
-      triggers: ['ThisKilledEnemy'],
+      triggers: ['KnockOut'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

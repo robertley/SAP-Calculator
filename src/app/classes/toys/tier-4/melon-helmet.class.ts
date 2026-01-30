@@ -35,7 +35,7 @@ export class MelonHelmetAbility extends Ability {
     super({
       name: 'MelonHelmetAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -76,4 +76,5 @@ export class MelonHelmetAbility extends Ability {
     return new MelonHelmetAbility(newOwner, this.logService);
   }
 }
+
 

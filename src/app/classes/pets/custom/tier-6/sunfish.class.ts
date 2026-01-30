@@ -10,8 +10,8 @@ export class Sunfish extends Pet {
   name = 'Sunfish';
   tier = 6;
   pack: Pack = 'Custom';
-  attack = 5;
-  health = 4;
+  attack = 4;
+  health = 10;
   initAbilities(): void {
     this.addAbility(new SunfishAbility(this, this.logService));
     super.initAbilities();

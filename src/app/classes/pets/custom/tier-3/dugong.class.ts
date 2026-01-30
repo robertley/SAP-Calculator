@@ -13,7 +13,7 @@ export class Dugong extends Pet {
   name = 'Dugong';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 3;
+  attack = 2;
   health = 5;
 
   override initAbilities(): void {
@@ -45,7 +45,7 @@ export class DugongAbility extends Ability {
     super({
       name: 'Dugong Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -57,7 +57,7 @@ export class DugongAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { tiger, pteranodon } = context;
     const owner = this.owner;
-    const atkBuff = this.level;
+    const atkBuff = 2 * this.level;
     const hpBuff = 2 * this.level;
 
     const petService = InjectorService.getInjector().get(PetService);
@@ -117,3 +117,4 @@ export class DugongAbility extends Ability {
     return new DugongAbility(newOwner, this.logService);
   }
 }
+

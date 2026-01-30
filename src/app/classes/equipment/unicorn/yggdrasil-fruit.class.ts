@@ -43,7 +43,7 @@ export class YggdrasilFruitAbility extends Ability {
     super({
       name: 'YggdrasilFruitAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -102,3 +102,4 @@ export class YggdrasilFruitAbility extends Ability {
     }
   }
 }
+

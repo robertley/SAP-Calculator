@@ -40,7 +40,7 @@ export class SurgeonFishAbility extends Ability {
     super({
       name: 'SurgeonFishAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -92,3 +92,4 @@ export class SurgeonFishAbility extends Ability {
     return new SurgeonFishAbility(newOwner, this.logService);
   }
 }
+

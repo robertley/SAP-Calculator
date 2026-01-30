@@ -10,8 +10,9 @@ export class Banana extends Equipment {
   name = 'Banana';
   equipmentClass = 'afterFaint' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     pet.addAbility(
-      new BananaAbility(pet, this, this.logService, this.abilityService),
+      new BananaAbility(pet, equipment, this.logService, this.abilityService),
     );
   };
 
@@ -38,7 +39,7 @@ export class BananaAbility extends Ability {
     super({
       name: 'BananaAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -78,3 +79,4 @@ export class BananaAbility extends Ability {
     }
   }
 }
+

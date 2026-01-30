@@ -40,7 +40,7 @@ export class VaquitaAbility extends Ability {
     super({
       name: 'VaquitaAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -77,3 +77,4 @@ export class VaquitaAbility extends Ability {
     return new VaquitaAbility(newOwner, this.logService);
   }
 }
+

@@ -69,10 +69,7 @@ export class DunkleosteusAbility extends Ability {
     const copiedAilment = cloneDeep(ailment);
     owner.removePerk(true);
 
-    const targets = opponentPets.slice(
-      0,
-      Math.min(this.level, opponentPets.length),
-    );
+    const targets = opponentPets.slice(0, Math.min(2, opponentPets.length));
     for (const target of targets) {
       const ailmentClone = cloneDeep(copiedAilment);
       ailmentClone.multiplier += this.level - 1;
@@ -81,8 +78,8 @@ export class DunkleosteusAbility extends Ability {
 
     const effectNotes = [
       '.',
-      ' twice for double effect.',
-      ' thrice for triple effect.',
+      ' with double effect.',
+      ' with triple effect.',
     ];
     const message = `${owner.name} moved ${copiedAilment.name} to ${targets.map((pet) => pet.name).join(', ')}${effectNotes[Math.min(this.level, effectNotes.length) - 1]}`;
 

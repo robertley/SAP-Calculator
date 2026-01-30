@@ -41,7 +41,7 @@ export class SecretaryBirdAbility extends Ability {
     super({
       name: 'SecretaryBirdAbility',
       owner: owner,
-      triggers: ['FriendDied2'],
+      triggers: ['PostRemovalFriendFaints2'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -89,3 +89,4 @@ export class SecretaryBirdAbility extends Ability {
     return new SecretaryBirdAbility(newOwner, this.logService);
   }
 }
+

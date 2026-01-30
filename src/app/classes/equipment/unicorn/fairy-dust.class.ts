@@ -8,7 +8,8 @@ export class FairyDust extends Equipment {
   name = 'Fairy Dust';
   equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
   callback = (pet: Pet) => {
-    pet.addAbility(new FairyDustAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new FairyDustAbility(pet, equipment, this.logService));
   };
   constructor(protected logService: LogService) {
     super();
@@ -26,7 +27,7 @@ export class FairyDustAbility extends Ability {
     super({
       name: 'FairyDustAbility',
       owner: owner,
-      triggers: ['ClearFront'], // This trigger may need to be implemented
+      triggers: ['EmptyFrontSpace'], // This trigger may need to be implemented
       abilityType: 'Equipment',
       native: true,
       maxUses: 1, // Fairy Dust is removed after one use

@@ -10,7 +10,7 @@ export class Mandarinfish extends Pet {
   tier = 2;
   pack: Pack = 'Custom';
   attack = 2;
-  health = 2;
+  health = 3;
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

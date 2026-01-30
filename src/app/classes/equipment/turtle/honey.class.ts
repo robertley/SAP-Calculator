@@ -12,9 +12,10 @@ export class Honey extends Equipment {
   name = 'Honey';
   equipmentClass = 'afterFaint' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Honey ability using dedicated ability class
     pet.addAbility(
-      new HoneyAbility(pet, this, this.logService, this.abilityService),
+      new HoneyAbility(pet, equipment, this.logService, this.abilityService),
     );
   };
 
@@ -41,7 +42,7 @@ export class HoneyAbility extends Ability {
     super({
       name: 'HoneyAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -80,3 +81,4 @@ export class HoneyAbility extends Ability {
     }
   }
 }
+

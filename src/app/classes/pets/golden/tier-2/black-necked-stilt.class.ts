@@ -40,7 +40,7 @@ export class BlackNeckedStiltAbility extends Ability {
     super({
       name: 'BlackNeckedStiltAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -74,3 +74,4 @@ export class BlackNeckedStiltAbility extends Ability {
     return new BlackNeckedStiltAbility(newOwner, this.logService);
   }
 }
+

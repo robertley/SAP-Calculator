@@ -49,7 +49,7 @@ export class BelugaSturgeonAbility extends Ability {
     super({
       name: 'BelugaSturgeonAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -111,3 +111,4 @@ export class BelugaSturgeonAbility extends Ability {
     );
   }
 }
+

@@ -40,7 +40,7 @@ export class MalteseAbility extends Ability {
     super({
       name: 'Maltese Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -52,24 +52,33 @@ export class MalteseAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
     const player = owner.parent;
-    const targetFriend = owner.petBehind();
-    if (!targetFriend) {
-      this.triggerTigerExecution(context);
-      return;
-    }
-
     const trumpetsAvailable = player.trumpets;
     if (trumpetsAvailable > 0) {
       player.spendTrumpets(trumpetsAvailable, owner, context.pteranodon);
     }
 
-    const baseMana = 3 * this.level;
-    const perTrumpet = this.level;
-    const totalMana = baseMana + trumpetsAvailable * perTrumpet;
-    targetFriend.increaseMana(totalMana);
+    const friends = player.petArray.filter(
+      (pet) => pet.alive && pet !== owner,
+    );
+    if (friends.length === 0 || trumpetsAvailable <= 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
+    const multiplier = this.level + 1;
+    const totalMana = trumpetsAvailable * multiplier;
+    const perFriend = Math.floor(totalMana / friends.length);
+    let remainder = totalMana % friends.length;
+    for (const friend of friends) {
+      const manaGain = perFriend + (remainder > 0 ? 1 : 0);
+      if (manaGain > 0) {
+        friend.increaseMana(manaGain);
+      }
+      remainder = Math.max(0, remainder - 1);
+    }
 
     this.logService.createLog({
-      message: `${owner.name} spent ${trumpetsAvailable} trumpets to give ${targetFriend.name} +${totalMana} mana.`,
+      message: `${owner.name} converted ${trumpetsAvailable} trumpets into ${totalMana} mana and spread it to friends.`,
       type: 'ability',
       player: player,
       tiger: context.tiger,
@@ -83,3 +92,4 @@ export class MalteseAbility extends Ability {
     return new MalteseAbility(newOwner, this.logService);
   }
 }
+

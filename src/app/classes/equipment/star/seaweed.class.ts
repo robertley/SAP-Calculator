@@ -10,9 +10,10 @@ export class Seaweed extends Equipment {
   name = 'Seaweed';
   equipmentClass = 'beforeAttack' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Seaweed ability using dedicated ability class
     pet.addAbility(
-      new SeaweedAbility(pet, this, this.logService, this.petService),
+      new SeaweedAbility(pet, equipment, this.logService, this.petService),
     );
   };
 

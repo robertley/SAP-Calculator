@@ -41,7 +41,7 @@ export class HippocampusAbility extends Ability {
     super({
       name: 'HippocampusAbility',
       owner: owner,
-      triggers: ['FriendAheadDied'],
+      triggers: ['FriendAheadFainted'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

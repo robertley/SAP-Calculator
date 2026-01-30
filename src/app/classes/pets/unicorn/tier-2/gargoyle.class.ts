@@ -40,7 +40,7 @@ export class GargoyleAbility extends Ability {
     super({
       name: 'GargoyleAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -84,3 +84,4 @@ export class GargoyleAbility extends Ability {
     return new GargoyleAbility(newOwner, this.logService);
   }
 }
+

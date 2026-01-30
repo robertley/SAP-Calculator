@@ -41,7 +41,7 @@ export class VisitorAbility extends Ability {
     super({
       name: 'VisitorAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -83,3 +83,4 @@ export class VisitorAbility extends Ability {
     return new VisitorAbility(newOwner, this.logService);
   }
 }
+

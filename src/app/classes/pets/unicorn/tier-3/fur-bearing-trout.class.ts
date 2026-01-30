@@ -41,7 +41,7 @@ export class FurBearingTroutAbility extends Ability {
     super({
       name: 'FurBearingTroutAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -98,3 +98,4 @@ export class FurBearingTroutAbility extends Ability {
     return new FurBearingTroutAbility(newOwner, this.logService);
   }
 }
+

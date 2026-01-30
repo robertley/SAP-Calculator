@@ -11,7 +11,8 @@ export class LovePotion extends Equipment {
   equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
   tier = 5;
   callback = (pet: Pet) => {
-    pet.addAbility(new LovePotionAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new LovePotionAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

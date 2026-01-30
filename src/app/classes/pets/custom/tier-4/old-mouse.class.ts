@@ -6,7 +6,6 @@ import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { InjectorService } from 'app/services/injector.service';
 import { ToyService } from 'app/services/toy/toy.service';
-import { getRandomInt } from 'app/util/helper-functions';
 import { logAbility } from 'app/classes/ability-helpers';
 
 
@@ -75,7 +74,7 @@ export class OldMouseAbility extends Ability {
       return;
     }
 
-    const toyName = availableToys[getRandomInt(0, availableToys.length - 1)];
+    const toyName = availableToys[0];
     const newToy = toyService.createToy(toyName, owner.parent, tier);
     if (!newToy) {
       this.triggerTigerExecution(context);
@@ -89,7 +88,7 @@ export class OldMouseAbility extends Ability {
     logAbility(
       this.logService,
       owner,
-      `${owner.name} summoned a level ${tier} ${toyName} toy.`,
+      `${owner.name} chose a level ${tier} ${toyName} toy.`,
       tiger,
       pteranodon,
     );

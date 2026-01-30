@@ -222,6 +222,8 @@ export function snipePet(
   pteranodon?: boolean,
   equipment?: boolean,
   mana?: boolean,
+  logVerb: 'sniped' | 'attacked' = 'sniped',
+  basePowerForLog?: number,
 ): number {
   let albatross = false;
   if (self.petAhead?.name == 'Albatross' && pet.tier <= 4) {
@@ -244,9 +246,9 @@ export function snipePet(
   let defenseEquipment = damageResp.defenseEquipment;
   let damage = damageResp.damage;
   if (self.equipment?.name === 'Kiwano' && damage > 0) {
-    damage = 10;
+    damage += 8;
     self.createLog({
-      message: `${self.name} set damage to 10. (Kiwano)`,
+      message: `${self.name} added +8 damage. (Kiwano)`,
       type: 'equipment',
       player: self.parent,
     });
@@ -255,7 +257,14 @@ export function snipePet(
 
   dealDamage(self, pet, damage);
 
-  let message = `${self.name} sniped ${pet.name} for ${damage}.`;
+  let message = `${self.name} ${logVerb} ${pet.name} for ${damage}.`;
+  if (
+    basePowerForLog != null &&
+    self.equipment?.multiplier != null &&
+    self.equipment.multiplier > 1
+  ) {
+    message += ` (${basePowerForLog}*${self.equipment.multiplier})`;
+  }
   if (defenseEquipment != null) {
     pet.useDefenseEquipment(true);
     const defensePower = defenseEquipment.power ?? 0;

@@ -41,7 +41,7 @@ export class CuttlefishAbility extends Ability {
     super({
       name: 'CuttlefishAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -113,3 +113,4 @@ export class CuttlefishAbility extends Ability {
     return new CuttlefishAbility(newOwner, this.logService);
   }
 }
+

@@ -8,7 +8,8 @@ export class Rambutan extends Equipment {
   name = 'Rambutan';
   equipmentClass = 'beforeAttack' as EquipmentClass;
   callback = (pet) => {
-    pet.addAbility(new RambutanAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new RambutanAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

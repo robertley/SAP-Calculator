@@ -8,7 +8,8 @@ export class Onion extends Equipment {
   name = 'Onion';
   equipmentClass = 'beforeAttack' as EquipmentClass;
   callback = (pet: Pet) => {
-    pet.addAbility(new OnionAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new OnionAbility(pet, equipment, this.logService));
   };
   constructor(protected logService: LogService) {
     super();

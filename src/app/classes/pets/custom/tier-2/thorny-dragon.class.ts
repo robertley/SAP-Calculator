@@ -44,7 +44,7 @@ export class ThornyDragonAbility extends Ability {
     super({
       name: 'Thorny Dragon Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -96,3 +96,4 @@ export class ThornyDragonAbility extends Ability {
     return new ThornyDragonAbility(newOwner, this.logService);
   }
 }
+

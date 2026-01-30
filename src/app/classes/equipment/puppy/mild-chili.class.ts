@@ -14,7 +14,20 @@ export class MildChili extends Equipment {
     if (attackPet == null) {
       return;
     }
-    pet.snipePet(attackPet, 4, false, null, null, true);
+    const baseDamage = 4;
+    const multiplier = pet.equipment?.multiplier ?? 1;
+    const damage = baseDamage * multiplier;
+    pet.snipePet(
+      attackPet,
+      damage,
+      false,
+      null,
+      null,
+      true,
+      false,
+      'attacked',
+      baseDamage,
+    );
   };
 
   constructor(

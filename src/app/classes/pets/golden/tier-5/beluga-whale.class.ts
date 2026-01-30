@@ -58,7 +58,7 @@ export class BelugaWhaleAbility extends Ability {
     super({
       name: 'BelugaWhaleAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -122,3 +122,4 @@ export class BelugaWhaleAbility extends Ability {
     );
   }
 }
+

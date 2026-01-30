@@ -40,7 +40,7 @@ export class StonefishAbility extends Ability {
     super({
       name: 'StonefishAbility',
       owner: owner,
-      triggers: ['ThisKilled'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -70,3 +70,4 @@ export class StonefishAbility extends Ability {
     return new StonefishAbility(newOwner, this.logService);
   }
 }
+

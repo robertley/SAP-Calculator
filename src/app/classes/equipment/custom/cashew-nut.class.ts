@@ -9,8 +9,9 @@ export class CashewNut extends Equipment {
   tier = 1;
   equipmentClass: EquipmentClass = 'beforeStartOfBattle';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Cashew Nut ability using dedicated ability class
-    pet.addAbility(new CashewNutAbility(pet, this));
+    pet.addAbility(new CashewNutAbility(pet, equipment));
   };
 
   constructor(protected logService: LogService) {

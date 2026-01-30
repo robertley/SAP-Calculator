@@ -23,7 +23,19 @@ export class Skewer extends Equipment {
       return;
     }
 
-    const damage = 3 * (pet.equipment?.multiplier ?? 1);
-    pet.snipePet(attackPet, damage, false, null, null, true);
+    const baseDamage = 3;
+    const multiplier = pet.equipment?.multiplier ?? 1;
+    const damage = baseDamage * multiplier;
+    pet.snipePet(
+      attackPet,
+      damage,
+      false,
+      null,
+      null,
+      true,
+      false,
+      'attacked',
+      baseDamage,
+    );
   }
 }

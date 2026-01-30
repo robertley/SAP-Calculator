@@ -171,6 +171,7 @@ import { SmallOne } from '../../../classes/pets/custom/tier-6/small-one.class';
 import { Stegosaurus } from '../../../classes/pets/custom/tier-6/stegosaurus.class';
 import { Sunfish } from '../../../classes/pets/custom/tier-6/sunfish.class';
 import { Tapir } from '../../../classes/pets/custom/tier-6/tapir.class';
+import { Tanystropheus } from '../../../classes/pets/custom/tier-6/tanystropheus.class';
 import { TarantulaHawk } from '../../../classes/pets/custom/tier-6/tarantula-hawk.class';
 import { TerrorBird } from '../../../classes/pets/custom/tier-6/terror-bird.class';
 import { Therizinosaurus } from '../../../classes/pets/custom/tier-6/therizinosaurus.class';
@@ -355,6 +356,7 @@ export const CUSTOM_PET_REGISTRY: { [key: string]: any } = {
   Stegosaurus: Stegosaurus,
   Sunfish: Sunfish,
   Tapir: Tapir,
+  Tanystropheus: Tanystropheus,
   'Tarantula Hawk': TarantulaHawk,
   'Terror Bird': TerrorBird,
   Therizinosaurus: Therizinosaurus,

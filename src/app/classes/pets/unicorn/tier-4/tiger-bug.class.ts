@@ -40,7 +40,7 @@ export class TigerBugAbility extends Ability {
     super({
       name: 'TigerBugAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

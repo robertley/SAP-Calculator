@@ -41,7 +41,7 @@ export class FireflyAbility extends Ability {
     super({
       name: 'FireflyAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -74,3 +74,4 @@ export class FireflyAbility extends Ability {
     return new FireflyAbility(newOwner, this.logService);
   }
 }
+

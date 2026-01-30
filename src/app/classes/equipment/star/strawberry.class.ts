@@ -12,8 +12,9 @@ export class Strawberry extends Equipment {
   originalUses = 2;
 
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Strawberry ability using dedicated ability class
-    pet.addAbility(new StrawberryAbility(pet, this, this.logService));
+    pet.addAbility(new StrawberryAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {
@@ -30,7 +31,7 @@ export class StrawberryAbility extends Ability {
     super({
       name: 'StrawberryAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       maxUses: equipment.originalUses,
@@ -63,3 +64,4 @@ export class StrawberryAbility extends Ability {
     }
   }
 }
+

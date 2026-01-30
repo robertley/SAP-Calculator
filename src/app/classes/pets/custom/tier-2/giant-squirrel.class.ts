@@ -10,7 +10,7 @@ export class GiantSquirrel extends Pet {
   tier = 2;
   pack: Pack = 'Custom';
   attack = 2;
-  health = 4;
+  health = 5;
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

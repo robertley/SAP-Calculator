@@ -40,7 +40,7 @@ export class DoorHeadAntAbility extends Ability {
     super({
       name: 'DoorHeadAntAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

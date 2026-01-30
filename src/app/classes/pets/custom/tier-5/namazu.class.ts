@@ -40,7 +40,7 @@ export class NamazuAbility extends Ability {
     super({
       name: 'Namazu Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -57,12 +57,7 @@ export class NamazuAbility extends Ability {
       return;
     }
 
-    const basePerLevel = [3, 6, 9];
-    const perManaBonus = [1, 2, 3];
-    const levelIndex = Math.min(Math.max(this.level - 1, 0), 2);
-    const base = basePerLevel[levelIndex];
-    const bonusPerMana = perManaBonus[levelIndex];
-    const total = base + manaSpent * bonusPerMana;
+    const total = manaSpent * this.level;
 
     owner.parent.gainTrumpets(total, owner, context.pteranodon);
     owner.mana = 0;
@@ -82,3 +77,4 @@ export class NamazuAbility extends Ability {
     return new NamazuAbility(newOwner, this.logService);
   }
 }
+

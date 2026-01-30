@@ -42,7 +42,7 @@ export class VervetAbility extends Ability {
     super({
       name: 'Vervet Ability',
       owner: owner,
-      triggers: ['ThisBought'],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -67,7 +67,7 @@ export class VervetAbility extends Ability {
       owner.parent.toy = toy;
 
       this.logService.createLog({
-        message: `${owner.name} was bought and summoned a level ${level} ${toyName}.`,
+        message: `${owner.name} summoned a level ${level} ${toyName}.`,
         type: 'ability',
         player: owner.parent,
       });

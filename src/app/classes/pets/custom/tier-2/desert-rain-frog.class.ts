@@ -13,7 +13,7 @@ export class DesertRainFrog extends Pet {
   tier = 2;
   pack: Pack = 'Custom';
   attack = 2;
-  health = 3;
+  health = 4;
   initAbilities(): void {
     this.addAbility(new DesertRainFrogAbility(this, this.logService));
     super.initAbilities();

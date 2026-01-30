@@ -37,7 +37,7 @@ export function resetPetState(self: Pet): void {
     // window.alert("You found a rare bug! Please report this bug using the Report A Bug feature and say in this message that you found the rare bug. Thank you!")
   }
   if (self.equipment) {
-    self.equipment.multiplier = 1;
+    self.equipment.multiplier = self.equipment.baseMultiplier ?? 1;
     self.equipment.multiplierMessage = '';
   }
 }

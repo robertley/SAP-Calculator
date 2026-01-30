@@ -40,7 +40,7 @@ export class MarkhorAbility extends Ability {
     super({
       name: 'MarkhorAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -100,3 +100,4 @@ export class MarkhorAbility extends Ability {
     return new MarkhorAbility(newOwner, this.logService);
   }
 }
+

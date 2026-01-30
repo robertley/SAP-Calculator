@@ -15,6 +15,7 @@ export class Equipment {
   // Multiplier properties set when equipment is equipped
   multiplier: number = 1;
   multiplierMessage: string = '';
+  baseMultiplier: number = 1;
 
   // Optional minimum damage this equipment can reduce attacks to
   minimumDamage?: number;
@@ -22,6 +23,7 @@ export class Equipment {
 
   constructor() {
     this.originalPower = this.power;
+    this.baseMultiplier = this.multiplier;
   }
 
   reset() {

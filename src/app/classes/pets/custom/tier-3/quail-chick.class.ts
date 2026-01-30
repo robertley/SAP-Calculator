@@ -11,8 +11,8 @@ export class QuailChick extends Pet {
   name = 'Quail Chick';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 3;
-  health = 2;
+  attack = 2;
+  health = 4;
 
   override initAbilities(): void {
     this.addAbility(

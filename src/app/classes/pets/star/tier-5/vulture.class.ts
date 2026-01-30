@@ -48,7 +48,7 @@ export class VultureAbility extends Ability {
     super({
       name: 'VultureAbility',
       owner: owner,
-      triggers: ['FriendDied2'],
+      triggers: ['PostRemovalFriendFaints2'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -85,3 +85,4 @@ export class VultureAbility extends Ability {
     return new VultureAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

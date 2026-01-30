@@ -57,10 +57,8 @@ export class TarantulaHawkAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    // Calculate damage per enemy: level * health removed per 10 attack
-    let damagePerEnemy = Math.floor(owner.attack / 10) * this.level;
-
-    if (damagePerEnemy <= 0) {
+    const repeats = Math.floor(owner.attack / 10);
+    if (repeats <= 0) {
       return;
     }
 
@@ -72,16 +70,18 @@ export class TarantulaHawkAbility extends Ability {
       return;
     }
 
-    // Apply damage to all enemies
-    for (let enemy of enemies) {
-      enemy.increaseHealth(-damagePerEnemy);
-      this.logService.createLog({
-        message: `${owner.name} removed ${damagePerEnemy} health from ${enemy.name}`,
-        type: 'ability',
-        player: owner.parent,
-        tiger: tiger,
-        pteranodon: pteranodon,
-      });
+    // Apply damage to all enemies, repeated per 10 attack
+    for (let i = 0; i < repeats; i++) {
+      for (let enemy of enemies) {
+        enemy.increaseHealth(-this.level);
+        this.logService.createLog({
+          message: `${owner.name} removed ${this.level} health from ${enemy.name}`,
+          type: 'ability',
+          player: owner.parent,
+          tiger: tiger,
+          pteranodon: pteranodon,
+        });
+      }
     }
 
     // Tiger system: trigger Tiger execution at the end

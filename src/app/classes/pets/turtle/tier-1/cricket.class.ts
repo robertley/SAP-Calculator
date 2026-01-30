@@ -48,7 +48,7 @@ export class CricketAbility extends Ability {
     super({
       name: 'CricketAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -104,3 +104,4 @@ export class CricketAbility extends Ability {
     return new CricketAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

@@ -54,7 +54,7 @@ export class GoblinSharkFaintAbility extends Ability {
     super({
       name: 'GoblinSharkFaintAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -183,3 +183,4 @@ export class GoblinSharkStartAbility extends Ability {
     );
   }
 }
+

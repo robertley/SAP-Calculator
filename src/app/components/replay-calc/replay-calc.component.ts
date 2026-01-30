@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   FormControl,
@@ -7,6 +7,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { of } from 'rxjs';
+import { catchError, finalize, timeout } from 'rxjs/operators';
 import { ReplayCalcService } from '../../services/replay/replay-calc.service';
 
 @Component({
@@ -31,11 +33,14 @@ export class ReplayCalcComponent implements OnInit {
   statusTone: 'success' | 'error' = 'success';
   calculatorLink = '';
   loading = false;
+  private readonly replayTimeoutMs = 10000;
+  private readonly replayHealthTimeoutMs = 2500;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private replayCalcService: ReplayCalcService,
     private http: HttpClient,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -79,38 +84,65 @@ export class ReplayCalcComponent implements OnInit {
         this.errorMessage = 'Enter a valid turn number.';
         return;
       }
-      this.loading = true;
+      this.setLoading(true);
       this.saveSapCredentials();
       const sapEmail = this.formGroup.get('sapEmail').value?.trim();
       const sapPassword = this.formGroup.get('sapPassword').value;
-      this.http
-        .post('/api/replay-battle', {
-          Pid: parsedInput.Pid,
-          T: turnNumber,
-          SapEmail: sapEmail || undefined,
-          SapPassword: sapPassword || undefined,
+      this.checkReplayApiReachable()
+        .then((reachable) => {
+          if (!reachable) {
+            this.setLoading(false);
+            return;
+          }
+          console.info('[replay] health check ok, requesting battle');
+          this.http
+            .post('/api/replay-battle', {
+              Pid: parsedInput.Pid,
+              T: turnNumber,
+              SapEmail: sapEmail || undefined,
+              SapPassword: sapPassword || undefined,
+            })
+            .pipe(
+              timeout(this.replayTimeoutMs),
+              finalize(() => {
+                this.setLoading(false);
+                console.info('[replay] replay-battle request finalized');
+              }),
+            )
+            .subscribe({
+              next: (response: any) => {
+                battleJson = response?.battle;
+                if (!battleJson) {
+                  this.errorMessage = 'Replay lookup failed to return a battle.';
+                  return;
+                }
+                const calculatorState =
+                  this.replayCalcService.parseReplayForCalculator(
+                    battleJson,
+                    response?.genesisBuildModel,
+                  );
+                this.calculatorLink =
+                  this.replayCalcService.generateCalculatorLink(
+                    calculatorState,
+                  );
+              },
+              error: (error) => {
+                if (error?.name === 'TimeoutError') {
+                  this.errorMessage =
+                    'Replay lookup timed out. Ensure the replay server is running.';
+                  this.cdr.markForCheck();
+                  return;
+                }
+                this.errorMessage =
+                  error?.error?.error || 'Failed to fetch replay data.';
+                this.cdr.markForCheck();
+              },
+            });
         })
-        .subscribe({
-          next: (response: any) => {
-            this.loading = false;
-            battleJson = response?.battle;
-            if (!battleJson) {
-              this.errorMessage = 'Replay lookup failed to return a battle.';
-              return;
-            }
-            const calculatorState =
-              this.replayCalcService.parseReplayForCalculator(
-                battleJson,
-                response?.genesisBuildModel,
-              );
-            this.calculatorLink =
-              this.replayCalcService.generateCalculatorLink(calculatorState);
-          },
-          error: (error) => {
-            this.loading = false;
-            this.errorMessage =
-              error?.error?.error || 'Failed to fetch replay data.';
-          },
+        .catch(() => {
+          this.setLoading(false);
+          this.errorMessage = 'Failed to reach the replay API.';
+          this.cdr.markForCheck();
         });
       return;
     } else if (parsedInput?.UserBoard && parsedInput?.OpponentBoard) {
@@ -214,5 +246,43 @@ export class ReplayCalcComponent implements OnInit {
       this.statusMessage = '';
       this.statusTimer = null;
     }, 3000);
+  }
+
+  private async checkReplayApiReachable(): Promise<boolean> {
+    return new Promise((resolve) => {
+      console.info('[replay] health check start');
+      this.http
+        .get('/api/health')
+        .pipe(
+          timeout(this.replayHealthTimeoutMs),
+          catchError(() => of(null)),
+        )
+        .subscribe({
+          next: (value) => {
+            if (!value) {
+              this.errorMessage =
+                'Replay API is not reachable. Ensure the replay server is running.';
+              console.info('[replay] health check failed');
+              this.cdr.markForCheck();
+              resolve(false);
+              return;
+            }
+            console.info('[replay] health check success');
+            resolve(true);
+          },
+          error: () => {
+            this.errorMessage =
+              'Replay API is not reachable. Ensure the replay server is running.';
+            console.info('[replay] health check error');
+            this.cdr.markForCheck();
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  private setLoading(value: boolean) {
+    this.loading = value;
+    this.cdr.markForCheck();
   }
 }

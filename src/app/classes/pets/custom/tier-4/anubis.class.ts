@@ -79,7 +79,7 @@ export class AnubisAbility extends Ability {
         pteranodon: pteranodon,
       });
 
-      friend.activateAbilities('ThisDied', gameApi, 'Pet' as AbilityType);
+      friend.activateAbilities('PostRemovalFaint', gameApi, 'Pet' as AbilityType);
     }
 
     this.triggerTigerExecution(context);
@@ -89,3 +89,4 @@ export class AnubisAbility extends Ability {
     return new AnubisAbility(newOwner, this.logService);
   }
 }
+

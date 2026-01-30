@@ -12,6 +12,19 @@ export class CuckooChick extends Pet {
   hidden: boolean = true;
   attack = 1;
   health = 1;
+  override increaseAttack(amt) {
+    if (amt <= 0 || !this.alive) {
+      return;
+    }
+    this.attack = Math.min(this.attack + amt, 1);
+  }
+
+  override increaseHealth(amt) {
+    if (amt <= 0 || !this.alive) {
+      return;
+    }
+    this.health = Math.min(this.health + amt, 1);
+  }
 
   constructor(
     protected logService: LogService,

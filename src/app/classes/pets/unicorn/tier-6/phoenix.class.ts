@@ -50,7 +50,7 @@ export class PhoenixAfterFaintAbility extends Ability {
     super({
       name: 'PhoenixAfterFaintAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -115,7 +115,7 @@ export class PhoenixFaintAbility extends Ability {
     super({
       name: 'PhoenixFaintAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -167,3 +167,4 @@ export class PhoenixFaintAbility extends Ability {
     return new PhoenixFaintAbility(newOwner, this.logService);
   }
 }
+

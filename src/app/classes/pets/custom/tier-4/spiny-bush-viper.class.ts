@@ -41,7 +41,7 @@ export class SpinyBushViperAbility extends Ability {
     super({
       name: 'Spiny Bush Viper Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -92,3 +92,4 @@ export class SpinyBushViperAbility extends Ability {
     return new SpinyBushViperAbility(newOwner, this.logService);
   }
 }
+

@@ -167,6 +167,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   draw = 0;
   battles: Battle[] = [];
   battleRandomEvents: LogMessagePart[][] = [];
+  battleRandomEventsByBattle = new Map<Battle, LogMessagePart[]>();
   filteredBattlesCache: Battle[] = [];
   currBattle: Battle;
   viewBattle: Battle;
@@ -433,7 +434,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly import = (
     importVal: string,
     isInitialLoad: boolean = false,
-  ): boolean => importCalculatorImpl(this, importVal, isInitialLoad);
+    options?: { resetBattle?: boolean },
+  ): boolean => importCalculatorImpl(this, importVal, isInitialLoad, options);
   readonly generateShareLink = () => generateShareLinkImpl(this);
   readonly refreshFilteredBattles = () => refreshFilteredBattlesImpl(this);
 

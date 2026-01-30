@@ -11,7 +11,7 @@ export class EmperorTamarin extends Pet {
   tier = 3;
   pack: Pack = 'Custom';
   attack = 3;
-  health = 3;
+  health = 6;
 
   override initAbilities(): void {
     this.addAbility(new EmperorTamarinAbility(this, this.logService));

@@ -57,7 +57,7 @@ export class OrcaAbility extends Ability {
     super({
       name: 'OrcaAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -114,3 +114,4 @@ export class OrcaAbility extends Ability {
     );
   }
 }
+

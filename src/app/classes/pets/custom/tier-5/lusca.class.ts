@@ -40,7 +40,7 @@ export class LuscaAbility extends Ability {
     super({
       name: 'Lusca Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -93,3 +93,4 @@ export class LuscaAbility extends Ability {
     return new LuscaAbility(newOwner, this.logService);
   }
 }
+

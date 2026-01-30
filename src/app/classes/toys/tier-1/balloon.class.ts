@@ -35,7 +35,7 @@ export class BalloonAbility extends Ability {
     super({
       name: 'BalloonAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -76,4 +76,5 @@ export class BalloonAbility extends Ability {
     return new BalloonAbility(newOwner, this.logService);
   }
 }
+
 

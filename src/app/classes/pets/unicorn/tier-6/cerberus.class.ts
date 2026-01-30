@@ -48,7 +48,7 @@ export class CerberusAbility extends Ability {
     super({
       name: 'CerberusAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

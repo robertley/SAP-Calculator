@@ -47,7 +47,7 @@ export class MoleAbility extends Ability {
     super({
       name: 'MoleAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -126,3 +126,4 @@ export class MoleAbility extends Ability {
     return new MoleAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

@@ -11,8 +11,8 @@ export class Cockatrice extends Pet {
   name = 'Cockatrice';
   tier = 6;
   pack: Pack = 'Custom';
-  attack = 5;
-  health = 7;
+  attack = 6;
+  health = 8;
   initAbilities(): void {
     this.addAbility(
       new CockatriceAbility(this, this.logService, this.abilityService),

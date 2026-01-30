@@ -396,6 +396,8 @@ export abstract class Pet {
     pteranodon?: boolean,
     equipment?: boolean,
     mana?: boolean,
+    logVerb?: 'sniped' | 'attacked',
+    basePowerForLog?: number,
   ) {
     return snipePetImpl(
       this,
@@ -406,6 +408,8 @@ export abstract class Pet {
       pteranodon,
       equipment,
       mana,
+      logVerb,
+      basePowerForLog,
     );
   }
 
@@ -620,9 +624,9 @@ export abstract class Pet {
 
   dealDamage(pet: Pet, damage: number) {
     if (damage > 0 && this.equipment?.name === 'Kiwano') {
-      damage = 10;
+      damage += 8;
       this.logService.createLog({
-        message: `${this.name} set damage to 10. (Kiwano)`,
+        message: `${this.name} added +8 damage. (Kiwano)`,
         type: 'equipment',
         player: this.parent,
       });
@@ -867,7 +871,10 @@ export abstract class Pet {
       return;
     }
 
-    let multiplier = this.equipment?.multiplier || 1;
+    const baseMultiplier =
+      this.equipment.baseMultiplier ?? this.equipment.multiplier ?? 1;
+    this.equipment.baseMultiplier = baseMultiplier;
+    let multiplier = baseMultiplier;
     let messages: string[] = [];
 
     // Panther multiplies equipment effects based on level
@@ -1094,6 +1101,11 @@ export abstract class Pet {
     }
   }
 
+
+
+  getEquippedEquipmentInstance<T extends Equipment>(fallback: T): T {
+    return ((this.equipment as T) ?? fallback);
+  }
   // New Ability System Methods
 
   addAbility(ability: Ability): void {
@@ -1322,9 +1334,8 @@ export abstract class Pet {
     if (
       this.originalAbilityList.filter((ability) => {
         return (
-          (ability.matchesTrigger('ThisDied') ||
-            ability.matchesTrigger('BeforeThisDies') ||
-            ability.matchesTrigger('ThisKilled')) &&
+          (ability.matchesTrigger('PostRemovalFaint') ||
+            ability.matchesTrigger('Faint')) &&
           ability.abilityType == 'Pet'
         );
       }).length > 0
@@ -1334,3 +1345,4 @@ export abstract class Pet {
     return false;
   }
 }
+

@@ -11,7 +11,7 @@ export class VampireParrot extends Pet {
   tier = 3;
   pack: Pack = 'Custom';
   attack = 4;
-  health = 3;
+  health = 4;
   override initAbilities(): void {
     this.addAbility(new VampireParrotAbility(this, this.logService));
     super.initAbilities();

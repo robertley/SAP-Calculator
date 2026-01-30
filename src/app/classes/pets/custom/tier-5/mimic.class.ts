@@ -11,7 +11,7 @@ export class Mimic extends Pet {
   tier = 5;
   pack: Pack = 'Custom';
   attack = 3;
-  health = 6;
+  health = 8;
   initAbilities(): void {
     this.addAbility(
       new MimicAbility(this, this.logService, this.abilityService),
@@ -47,7 +47,7 @@ export class MimicAbility extends Ability {
     super({
       name: 'Mimic Ability',
       owner: owner,
-      triggers: ['StartBattle', 'FriendDied'],
+      triggers: ['StartBattle', 'PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -74,7 +74,7 @@ export class MimicAbility extends Ability {
       return;
     }
 
-    if (context.trigger === 'FriendDied') {
+    if (context.trigger === 'PostRemovalFriendFaints') {
       ownerData.mimicFaintCount = (ownerData.mimicFaintCount ?? 0) + 1;
       const triggeredThreshold = Math.floor(
         (ownerData.mimicFaintCount ?? 0) / 3,
@@ -105,3 +105,4 @@ export class MimicAbility extends Ability {
     return new MimicAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

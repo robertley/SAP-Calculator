@@ -42,7 +42,7 @@ export class RockhopperPenguinAbility extends Ability {
     super({
       name: 'RockhopperPenguinAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

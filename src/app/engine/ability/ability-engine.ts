@@ -20,7 +20,7 @@ export class AbilityEngine {
     for (const team of teams) {
       for (const pet of team.petArray) {
         if (pet?.friendsDiedBeforeBattle) {
-          this.abilityService.simulateFriendDiedCounters(
+          this.abilityService.simulatePostRemovalFriendFaintsCounters(
             pet,
             pet.friendsDiedBeforeBattle,
           );
@@ -37,7 +37,7 @@ export class AbilityEngine {
 
         if (
           nextEvent &&
-          this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 25
+          this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 24
         ) {
           this.checkPetsAlive();
           const petsWereRemoved = this.removeDeadPets();
@@ -179,3 +179,4 @@ export class AbilityEngine {
     }
   }
 }
+

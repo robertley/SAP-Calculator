@@ -46,7 +46,7 @@ export class DonkeyAbility extends Ability {
     super({
       name: 'DonkeyAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class DonkeyAbility extends Ability {
     return new DonkeyAbility(newOwner, this.logService);
   }
 }
+

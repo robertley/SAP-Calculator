@@ -19,32 +19,32 @@ export class FaintEventService {
       if (pet == faintedPet) {
         this.abilityQueueService.triggerAbility(
           pet,
-          'BeforeThisDies',
+          'Faint',
           faintedPet,
         );
       } else {
         this.abilityQueueService.triggerAbility(
           pet,
-          'KitsuneFriendDies',
+          'FriendFaints',
           faintedPet,
         );
       }
-      // Check for FriendAheadDied (pet ahead of the dying pet)
+      // Check for FriendAheadFainted (pet ahead of the dying pet)
       if (pet == faintedPet.petBehind(null, true)) {
         this.abilityQueueService.triggerAbility(
           pet,
-          'FriendAheadDied',
+          'FriendAheadFainted',
           faintedPet,
         );
       }
-      // Check for AdjacentFriendsDie
+      // Check for AdjacentFriendsFaint
       if (
         pet == faintedPet.petBehind(null, true) ||
         pet.petBehind(null, true) == faintedPet
       ) {
         this.abilityQueueService.triggerAbility(
           pet,
-          'AdjacentFriendsDie',
+          'AdjacentFriendsFaint',
           faintedPet,
         );
       }
@@ -63,28 +63,28 @@ export class FaintEventService {
       );
     }
 
-    // Trigger ThisDied/PetDied for the fainted pet explicitly (it may already be removed from the team list)
+    // Trigger PostRemovalFaint/PetFainted for the fainted pet explicitly (it may already be removed from the team list)
     this.abilityQueueService.triggerAbility(
       faintedPet,
-      'PetDied',
+      'PetFainted',
       faintedPet,
     );
     this.abilityQueueService.triggerAbility(
       faintedPet,
-      'ThisDied',
+      'PostRemovalFaint',
       faintedPet,
     );
 
     // Check friends (remaining team)
     const team = this.abilityQueueService.getTeam(faintedPet);
     for (let pet of team) {
-      this.abilityQueueService.triggerAbility(pet, 'PetDied', faintedPet);
-      this.abilityQueueService.triggerAbility(pet, 'FriendDied', faintedPet);
+      this.abilityQueueService.triggerAbility(pet, 'PetFainted', faintedPet);
+      this.abilityQueueService.triggerAbility(pet, 'PostRemovalFriendFaints', faintedPet);
       this.abilityQueueService.handleNumberedCounterTriggers(
         pet,
         faintedPet,
         undefined,
-        this.abilityQueueService.getNumberedTriggersForPet(pet, 'FriendDied'),
+        this.abilityQueueService.getNumberedTriggersForPet(pet, 'PostRemovalFriendFaints'),
       );
     }
 
@@ -93,8 +93,8 @@ export class FaintEventService {
       .getTeam(faintedPet.parent?.opponent)
       .filter((p) => p.alive);
     for (let pet of enemyTeam) {
-      this.abilityQueueService.triggerAbility(pet, 'EnemyDied', faintedPet);
-      this.abilityQueueService.triggerAbility(pet, 'PetDied', faintedPet);
+      this.abilityQueueService.triggerAbility(pet, 'EnemyFainted', faintedPet);
+      this.abilityQueueService.triggerAbility(pet, 'PetFainted', faintedPet);
       this.abilityQueueService.handleNumberedCounterTriggers(
         pet,
         faintedPet,
@@ -106,3 +106,5 @@ export class FaintEventService {
     this.toyEventService.executeFriendFaintsToyEvents();
   }
 }
+
+

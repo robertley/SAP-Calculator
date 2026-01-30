@@ -8,7 +8,8 @@ export class GoldenEgg extends Equipment {
   name = 'Golden Egg';
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
-    pet.addAbility(new GoldenEggAbility(pet, this));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new GoldenEggAbility(pet, equipment));
   };
 
   constructor(protected logService: LogService) {

@@ -48,7 +48,7 @@ export class NightcrawlerAbility extends Ability {
     super({
       name: 'NightcrawlerAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -115,3 +115,4 @@ export class NightcrawlerAbility extends Ability {
     );
   }
 }
+

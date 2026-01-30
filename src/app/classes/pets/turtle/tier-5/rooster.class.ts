@@ -48,7 +48,7 @@ export class RoosterAbility extends Ability {
     super({
       name: 'RoosterAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -103,3 +103,4 @@ export class RoosterAbility extends Ability {
     return new RoosterAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

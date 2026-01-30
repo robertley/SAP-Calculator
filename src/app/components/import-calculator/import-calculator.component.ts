@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
   FormControl,
@@ -7,6 +7,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { of } from 'rxjs';
+import { catchError, finalize, timeout } from 'rxjs/operators';
 import { ReplayCalcService } from '../../services/replay/replay-calc.service';
 
 @Component({
@@ -18,7 +20,7 @@ import { ReplayCalcService } from '../../services/replay/replay-calc.service';
 })
 export class ImportCalculatorComponent implements OnInit {
   @Input()
-  importFunc: (importVal: string) => boolean;
+  importFunc: (importVal: string, options?: { resetBattle?: boolean }) => boolean;
 
   formGroup: FormGroup = new FormGroup({
     calcCode: new FormControl(null, Validators.required),
@@ -29,11 +31,14 @@ export class ImportCalculatorComponent implements OnInit {
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
   loading = false;
+  private readonly replayTimeoutMs = 10000;
+  private readonly replayHealthTimeoutMs = 2500;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private replayCalcService: ReplayCalcService,
     private http: HttpClient,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {}
@@ -73,24 +78,54 @@ export class ImportCalculatorComponent implements OnInit {
         this.errorMessage = 'Enter a valid turn number.';
         return;
       }
-      this.loading = true;
-      this.http
-        .post('/api/replay-battle', { Pid: pidValue, T: turnNumber })
-        .subscribe({
-          next: (response: any) => {
-            this.loading = false;
-            const battleJson = response?.battle;
-            if (!battleJson) {
-              this.errorMessage = 'Replay lookup failed to return a battle.';
-              return;
-            }
-            this.importReplayBattle(battleJson, response?.genesisBuildModel);
-          },
-          error: (error) => {
-            this.loading = false;
-            this.errorMessage =
-              error?.error?.error || 'Failed to fetch replay data.';
-          },
+      this.setLoading(true);
+      this.checkReplayApiReachable()
+        .then((reachable) => {
+          if (!reachable) {
+            this.setLoading(false);
+            return;
+          }
+          console.info('[replay] health check ok, requesting battle');
+          this.http
+            .post('/api/replay-battle', { Pid: pidValue, T: turnNumber })
+            .pipe(
+              timeout(this.replayTimeoutMs),
+              finalize(() => {
+                this.setLoading(false);
+                console.info('[replay] replay-battle request finalized');
+              }),
+            )
+            .subscribe({
+              next: (response: any) => {
+                const battleJson = response?.battle;
+                if (!battleJson) {
+                  this.errorMessage = 'Replay lookup failed to return a battle.';
+                  return;
+                }
+                this.importReplayBattle(
+                  battleJson,
+                  response?.genesisBuildModel,
+                  undefined,
+                  { resetBattle: true },
+                );
+              },
+              error: (error) => {
+                if (error?.name === 'TimeoutError') {
+                  this.errorMessage =
+                    'Replay lookup timed out. Ensure the replay server is running.';
+                  this.cdr.markForCheck();
+                  return;
+                }
+                this.errorMessage =
+                  error?.error?.error || 'Failed to fetch replay data.';
+                this.cdr.markForCheck();
+              },
+            });
+        })
+        .catch(() => {
+          this.setLoading(false);
+          this.errorMessage = 'Failed to reach the replay API.';
+          this.cdr.markForCheck();
         });
       return;
     }
@@ -150,13 +185,14 @@ export class ImportCalculatorComponent implements OnInit {
     battleJson: any,
     buildModel?: any,
     metaBoards?: { userBoard?: any; opponentBoard?: any },
+    options?: { resetBattle?: boolean },
   ) {
     const calculatorState = this.replayCalcService.parseReplayForCalculator(
       battleJson,
       buildModel,
       metaBoards,
     );
-    if (this.importFunc(JSON.stringify(calculatorState))) {
+    if (this.importFunc(JSON.stringify(calculatorState), options)) {
       this.setStatus('Import successful.', 'success');
       return;
     }
@@ -177,26 +213,94 @@ export class ImportCalculatorComponent implements OnInit {
       this.errorMessage = 'Enter a valid turn number.';
       return true;
     }
-    this.loading = true;
-    this.http
-      .post('/api/replay-battle', { Pid: pid, T: turnNumber })
-      .subscribe({
-        next: (response: any) => {
-          this.loading = false;
-          const battleJson = response?.battle;
-          if (!battleJson) {
-            this.errorMessage = 'Replay lookup failed to return a battle.';
-            return;
-          }
-          this.importReplayBattle(battleJson, response?.genesisBuildModel);
-        },
-        error: (error) => {
-          this.loading = false;
-          this.errorMessage =
-            error?.error?.error || 'Failed to fetch replay data.';
-        },
+    this.setLoading(true);
+    this.checkReplayApiReachable()
+      .then((reachable) => {
+        if (!reachable) {
+          this.setLoading(false);
+          return;
+        }
+        console.info('[replay] health check ok, requesting battle');
+        this.http
+          .post('/api/replay-battle', { Pid: pid, T: turnNumber })
+          .pipe(
+            timeout(this.replayTimeoutMs),
+            finalize(() => {
+              this.setLoading(false);
+              console.info('[replay] replay-battle request finalized');
+            }),
+          )
+          .subscribe({
+            next: (response: any) => {
+              const battleJson = response?.battle;
+              if (!battleJson) {
+                this.errorMessage = 'Replay lookup failed to return a battle.';
+                return;
+              }
+              this.importReplayBattle(
+                battleJson,
+                response?.genesisBuildModel,
+                undefined,
+                { resetBattle: true },
+              );
+            },
+            error: (error) => {
+              if (error?.name === 'TimeoutError') {
+                this.errorMessage =
+                  'Replay lookup timed out. Ensure the replay server is running.';
+                this.cdr.markForCheck();
+                return;
+              }
+              this.errorMessage =
+                error?.error?.error || 'Failed to fetch replay data.';
+              this.cdr.markForCheck();
+            },
+          });
+      })
+      .catch(() => {
+        this.setLoading(false);
+        this.errorMessage = 'Failed to reach the replay API.';
+        this.cdr.markForCheck();
       });
     return true;
+  }
+
+  private async checkReplayApiReachable(): Promise<boolean> {
+    return new Promise((resolve) => {
+      console.info('[replay] health check start');
+      this.http
+        .get('/api/health')
+        .pipe(
+          timeout(this.replayHealthTimeoutMs),
+          catchError(() => of(null)),
+        )
+        .subscribe({
+          next: (value) => {
+            if (!value) {
+              this.errorMessage =
+                'Replay API is not reachable. Ensure the replay server is running.';
+              console.info('[replay] health check failed');
+              this.cdr.markForCheck();
+              resolve(false);
+              return;
+            }
+            console.info('[replay] health check success');
+            resolve(true);
+          },
+          error: () => {
+            this.errorMessage =
+              'Replay API is not reachable. Ensure the replay server is running.';
+            console.info('[replay] health check error');
+            this.cdr.markForCheck();
+            resolve(false);
+          },
+        });
+    });
+  }
+
+  private setLoading(value: boolean) {
+    this.loading = value;
+    this.cdr.markForCheck();
   }
 
   private clearStatus() {

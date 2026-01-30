@@ -49,7 +49,7 @@ export class OuroborosAbility extends Ability {
     super({
       name: 'OuroborosAbility',
       owner: owner,
-      triggers: ['Roll1', 'StartTurn'],
+      triggers: ['Roll', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

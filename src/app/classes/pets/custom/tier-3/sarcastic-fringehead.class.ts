@@ -47,7 +47,7 @@ export class SarcasticFringeheadAbility extends Ability {
     super({
       name: 'SarcasticFringeheadAbility',
       owner: owner,
-      triggers: ['FoodEatenByThis', 'ThisDied'],
+      triggers: ['FoodEatenByThis', 'PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -120,7 +120,7 @@ export class SarcasticFringeheadAbility extends Ability {
     const trigger = context.trigger;
     if (trigger === 'FoodEatenByThis') {
       this.swallowFood(context);
-    } else if (trigger === 'ThisDied') {
+    } else if (trigger === 'PostRemovalFaint') {
       this.spawnForOpponent(context);
     }
     this.triggerTigerExecution(context);
@@ -134,3 +134,4 @@ export class SarcasticFringeheadAbility extends Ability {
     );
   }
 }
+

@@ -40,7 +40,7 @@ export class BadgerAbility extends Ability {
     super({
       name: 'BadgerAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -96,3 +96,4 @@ export class BadgerAbility extends Ability {
     return new BadgerAbility(newOwner, this.logService);
   }
 }
+

@@ -41,7 +41,7 @@ export class FlamingoAbility extends Ability {
     super({
       name: 'FlamingoAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -82,3 +82,4 @@ export class FlamingoAbility extends Ability {
     return new FlamingoAbility(newOwner, this.logService);
   }
 }
+

@@ -9,8 +9,9 @@ export class Pancakes extends Equipment {
   tier = 6;
   equipmentClass: EquipmentClass = 'beforeStartOfBattle';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Pancakes ability using dedicated ability class
-    pet.addAbility(new PancakesAbility(pet, this, this.logService));
+    pet.addAbility(new PancakesAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

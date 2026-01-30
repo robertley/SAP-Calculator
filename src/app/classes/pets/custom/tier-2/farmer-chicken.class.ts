@@ -11,8 +11,8 @@ export class FarmerChicken extends Pet {
   name = 'Farmer Chicken';
   tier = 2;
   pack: Pack = 'Custom';
-  attack = 3;
-  health = 3;
+  attack = 2;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new FarmerChickenAbility(this, this.logService));
     super.initAbilities();

@@ -48,7 +48,7 @@ export class OspreyAbility extends Ability {
     super({
       name: 'OspreyAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -101,3 +101,4 @@ export class OspreyAbility extends Ability {
     return new OspreyAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

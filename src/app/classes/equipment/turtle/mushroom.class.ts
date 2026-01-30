@@ -10,9 +10,10 @@ export class Mushroom extends Equipment {
   tier = 6;
   equipmentClass = 'afterFaint' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Mushroom ability using dedicated ability class
     pet.addAbility(
-      new MushroomAbility(pet, this, this.logService, this.petService),
+      new MushroomAbility(pet, equipment, this.logService, this.petService),
     );
   };
 
@@ -39,7 +40,7 @@ export class MushroomAbility extends Ability {
     super({
       name: 'MushroomAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -74,3 +75,4 @@ export class MushroomAbility extends Ability {
     }
   }
 }
+

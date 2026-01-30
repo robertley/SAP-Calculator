@@ -57,7 +57,7 @@ export class WolfAbility extends Ability {
     super({
       name: 'WolfAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -124,3 +124,4 @@ export class WolfAbility extends Ability {
     );
   }
 }
+

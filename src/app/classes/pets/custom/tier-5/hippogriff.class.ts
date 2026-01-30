@@ -59,7 +59,7 @@ export class HippogriffAbility extends Ability {
     super({
       name: 'Hippogriff Ability',
       owner: owner,
-      triggers: ['FriendSummoned', 'EndTurn', 'ThisDied'],
+      triggers: ['FriendSummoned', 'EndTurn', 'PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -81,7 +81,7 @@ export class HippogriffAbility extends Ability {
       }
     } else if (trigger === 'EndTurn') {
       this.resetBuffs();
-    } else if (trigger === 'ThisDied') {
+    } else if (trigger === 'PostRemovalFaint') {
       this.summonNextTierPet(gameApi, context);
     }
 
@@ -194,4 +194,5 @@ export class HippogriffAbility extends Ability {
     );
   }
 }
+
 

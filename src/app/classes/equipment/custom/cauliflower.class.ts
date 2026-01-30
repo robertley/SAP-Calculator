@@ -9,7 +9,8 @@ export class Cauliflower extends Equipment {
   name = 'Cauliflower';
   equipmentClass: EquipmentClass = 'shop';
   callback = (pet: Pet) => {
-    pet.addAbility(new CauliflowerAbility(pet, this));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new CauliflowerAbility(pet, equipment));
   };
 }
 
@@ -22,7 +23,7 @@ export class CauliflowerAbility extends Ability {
     super({
       name: 'CauliflowerAbility',
       owner: owner,
-      triggers: ['ThisKilled'],
+      triggers: ['KnockOut'],
       abilityType: 'Equipment',
       native: true,
       maxUses: 1,

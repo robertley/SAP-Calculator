@@ -9,8 +9,9 @@ export class ChocolateCake extends Equipment {
   name = 'Chocolate Cake';
   equipmentClass = 'beforeAttack' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     pet.addAbility(
-      new ChocolateCakeAbility(pet, this, this.logService, this.abilityService),
+      new ChocolateCakeAbility(pet, equipment, this.logService, this.abilityService),
     );
   };
 

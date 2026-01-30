@@ -40,7 +40,7 @@ export class EgyptianVultureAbility extends Ability {
     super({
       name: 'EgyptianVultureAbility',
       owner: owner,
-      triggers: ['ThisKilledEnemy'],
+      triggers: ['KnockOut'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

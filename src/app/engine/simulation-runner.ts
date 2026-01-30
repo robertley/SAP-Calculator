@@ -243,10 +243,10 @@ export class SimulationRunner {
 
     this.startBattle();
     this.initToys();
-    this.gameService.gameApi.FirstNonJumpAttackHappened = false;
-
     this.abilityService.initSpecialEndTurnAbility(this.player);
     this.abilityService.initSpecialEndTurnAbility(this.opponent);
+    this.gameService.gameApi.FirstNonJumpAttackHappened = false;
+
 
     // Initialize equipment multipliers
     this.initializeEquipmentMultipliers();

@@ -27,7 +27,7 @@ describe('Pet Ability Patch Regressions', () => {
         opponentPets: [null, null, null, null, null],
     };
 
-    it('Tadpole should transform into a Frog upon fainted (ThisDied trigger)', () => {
+    it('Tadpole should transform into a Frog upon fainted (PostRemovalFaint trigger)', () => {
         const config: SimulationConfig = {
             ...baseConfig,
             playerPets: [
@@ -278,7 +278,15 @@ describe('Pet Ability Patch Regressions', () => {
         logService.decorateLogIfNeeded(manaLog);
         const parts = parseLogMessage(manaLog.message ?? '');
         const text = parts
-            .map((part) => (part.type === 'text' ? part.text : part.alt || ''))
+            .map((part) => {
+                if (part.type === 'text') {
+                    return part.text;
+                }
+                if (part.type === 'img') {
+                    return part.alt || '';
+                }
+                return '';
+            })
             .join(' ')
             .toLowerCase();
 
@@ -456,4 +464,79 @@ describe('Pet Ability Patch Regressions', () => {
 
         expect(chimeraLog).toBeDefined();
     });
+
+    it('Panther should multiply Pancakes buffs by level', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Puppy',
+            opponentPack: 'Puppy',
+            playerPets: [
+                {
+                    name: 'Panther',
+                    attack: 3,
+                    health: 5,
+                    exp: 2,
+                    equipment: { name: 'Pancakes' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Fish',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const pancakesLog = logs.find((log: any) =>
+            log.type === 'equipment' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Ant gained 6 attack and 6 health (Pancakes) x3 (Panther)')
+        );
+
+        expect(pancakesLog).toBeDefined();
+    });
 });
+

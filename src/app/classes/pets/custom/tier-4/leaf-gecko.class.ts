@@ -8,6 +8,7 @@ import { EquipmentService } from 'app/services/equipment/equipment.service';
 import { InjectorService } from 'app/services/injector.service';
 import { getRandomInt } from 'app/util/helper-functions';
 import { canApplyAilment, logAbility } from 'app/classes/ability-helpers';
+import { cloneEquipment } from 'app/util/equipment-utils';
 
 
 export class LeafGecko extends Pet {
@@ -45,7 +46,7 @@ export class LeafGeckoAbility extends Ability {
     super({
       name: 'Leaf Gecko Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -94,7 +95,16 @@ export class LeafGeckoAbility extends Ability {
         continue;
       }
 
-      target.givePetEquipment(ailmentInstance);
+      const ailmentClone = cloneEquipment(ailmentInstance);
+      if (!ailmentClone) {
+        attempts++;
+        continue;
+      }
+      if (target.parent !== owner.parent) {
+        ailmentClone.multiplier = 2;
+        ailmentClone.multiplierMessage = ' x2 (Leaf Gecko)';
+      }
+      target.givePetEquipment(ailmentClone);
       appliedCount++;
       attempts++;
     }
@@ -112,4 +122,5 @@ export class LeafGeckoAbility extends Ability {
     return new LeafGeckoAbility(newOwner, this.logService);
   }
 }
+
 

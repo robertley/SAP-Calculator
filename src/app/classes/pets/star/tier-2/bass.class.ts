@@ -42,7 +42,7 @@ export class BassAbility extends Ability {
     super({
       name: 'BassAbility',
       owner: owner,
-      triggers: ['BeforeThisDies', 'ThisSold'],
+      triggers: ['Faint', 'ThisSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -94,3 +94,4 @@ export class BassAbility extends Ability {
     return new BassAbility(newOwner, this.logService);
   }
 }
+

@@ -42,7 +42,7 @@ export class TucuxiAbility extends Ability {
     super({
       name: 'TucuxiAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -100,3 +100,4 @@ export class TucuxiAbility extends Ability {
     return new TucuxiAbility(newOwner, this.logService);
   }
 }
+

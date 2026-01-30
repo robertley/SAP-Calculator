@@ -10,9 +10,10 @@ export class CodRoe extends Equipment {
   name = 'Cod Roe';
   equipmentClass = 'afterFaint' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Cod Roe ability using dedicated ability class
     pet.addAbility(
-      new CodRoeAbility(pet, this, this.logService, this.abilityService),
+      new CodRoeAbility(pet, equipment, this.logService, this.abilityService),
     );
   };
 
@@ -39,7 +40,7 @@ export class CodRoeAbility extends Ability {
     super({
       name: 'CodRoeAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       maxUses: 1, // Equipment is removed after one use
@@ -80,3 +81,4 @@ export class CodRoeAbility extends Ability {
     }
   }
 }
+

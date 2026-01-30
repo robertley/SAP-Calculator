@@ -41,7 +41,7 @@ export class SharkAbility extends Ability {
     super({
       name: 'SharkAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class SharkAbility extends Ability {
     return new SharkAbility(newOwner, this.logService);
   }
 }
+

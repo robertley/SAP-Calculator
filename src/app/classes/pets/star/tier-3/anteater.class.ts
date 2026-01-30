@@ -49,7 +49,7 @@ export class AnteaterAbility extends Ability {
     super({
       name: 'AnteaterAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -102,3 +102,4 @@ export class AnteaterAbility extends Ability {
     return new AnteaterAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

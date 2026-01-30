@@ -40,7 +40,7 @@ export class SkeletonDogAbility extends Ability {
     super({
       name: 'SkeletonDogAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -85,3 +85,4 @@ export class SkeletonDogAbility extends Ability {
     return new SkeletonDogAbility(newOwner, this.logService);
   }
 }
+

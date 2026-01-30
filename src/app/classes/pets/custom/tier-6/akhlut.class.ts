@@ -40,7 +40,7 @@ export class AkhlutAbility extends Ability {
     super({
       name: 'Akhlut Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -84,3 +84,4 @@ export class AkhlutAbility extends Ability {
     return new AkhlutAbility(newOwner, this.logService);
   }
 }
+
