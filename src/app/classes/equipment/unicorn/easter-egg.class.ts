@@ -10,8 +10,9 @@ export class EasterEgg extends Equipment {
   name = 'Easter Egg';
   equipmentClass = 'afterFaint' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     pet.addAbility(
-      new EasterEggAbility(pet, this, this.logService, this.abilityService),
+      new EasterEggAbility(pet, equipment, this.logService, this.abilityService),
     );
   };
 
@@ -38,7 +39,7 @@ export class EasterEggAbility extends Ability {
     super({
       name: 'EasterEggAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -78,3 +79,4 @@ export class EasterEggAbility extends Ability {
     }
   }
 }
+

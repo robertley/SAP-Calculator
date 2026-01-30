@@ -20,7 +20,7 @@ export class AttackEventService {
         this.abilityQueueService.triggerAbility(
           pet,
           'BeforeFriendlyAttack',
-          undefined,
+          attackingPet,
           undefined,
         );
         // Note: Legacy passed priority=pet.attack.
@@ -41,22 +41,20 @@ export class AttackEventService {
         }
       } else {
         if (pet.hasTrigger('BeforeFriendAttacks')) {
-          this.abilityQueueService.triggerAbility(pet, 'BeforeFriendAttacks');
+          this.abilityQueueService.triggerAbility(
+            pet,
+            'BeforeFriendAttacks',
+            attackingPet,
+          );
         }
       }
 
       if (pet == attackingPet.petAhead || pet == attackingPet.petBehind()) {
         if (pet.hasTrigger('BeforeAdjacentFriendAttacked')) {
-          // Wait, original code said 'BeforeAdjacentFriendAttacked' in triggerBeforeAttackEvent?
-          // Line 393: if (pet.hasTrigger('BeforeAdjacentFriendAttacked'))
-          // But the context is "Before ATTACK". 'BeforeAdjacentFriendAttacked' sounds wrong?
-          // Let's assume the original code was correct in using that trigger name here,
-          // maybe it implies "Before Adjacent Friend [initiates] Attack"?
-          // Actually, looking at docs/code, usually it's "BeforeAdjacentFriendAttacks"?
-          // The legacy code used 'BeforeAdjacentFriendAttacked'. I will preserve it.
           this.abilityQueueService.triggerAbility(
             pet,
             'BeforeAdjacentFriendAttacked',
+            attackingPet,
           );
         }
       }
@@ -105,7 +103,11 @@ export class AttackEventService {
       } else {
         if (pet.hasTrigger('FriendAttacked')) {
           // "FriendAttacked" = Friend Attacked (Active voice)
-          this.abilityQueueService.triggerAbility(pet, 'FriendAttacked');
+          this.abilityQueueService.triggerAbility(
+            pet,
+            'FriendAttacked',
+            attackingPet,
+          );
         }
         this.abilityQueueService.handleNumberedCounterTriggers(
           pet,

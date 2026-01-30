@@ -41,7 +41,7 @@ export class SpinosaurusAbility extends Ability {
     super({
       name: 'SpinosaurusAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -88,3 +88,4 @@ export class SpinosaurusAbility extends Ability {
     return new SpinosaurusAbility(newOwner, this.logService);
   }
 }
+

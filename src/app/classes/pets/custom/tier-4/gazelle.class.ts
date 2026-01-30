@@ -8,7 +8,7 @@ import { Ability, AbilityContext } from 'app/classes/ability.class';
 
 export class Gazelle extends Pet {
   name = 'Gazelle';
-  tier = 4;
+  tier = 3;
   pack: Pack = 'Custom';
   attack = 2;
   health = 3;

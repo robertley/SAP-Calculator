@@ -47,7 +47,7 @@ export class CapybaraAbility extends Ability {
     super({
       name: 'CapybaraAbility',
       owner: owner,
-      triggers: ['Roll1', 'FriendSold'],
+      triggers: ['Roll', 'FriendSold'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

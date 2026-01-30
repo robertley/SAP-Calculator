@@ -40,7 +40,7 @@ export class PangolinAbility extends Ability {
     super({
       name: 'PangolinAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -84,3 +84,4 @@ export class PangolinAbility extends Ability {
     return new PangolinAbility(newOwner, this.logService);
   }
 }
+

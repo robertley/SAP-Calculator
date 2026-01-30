@@ -8,7 +8,8 @@ export class Eggplant extends Equipment {
   name = 'Eggplant';
   equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
   callback = (pet: Pet) => {
-    pet.addAbility(new EggplantAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new EggplantAbility(pet, equipment, this.logService));
   };
   constructor(protected logService: LogService) {
     super();

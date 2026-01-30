@@ -42,7 +42,7 @@ export class BrahmaChickenAbility extends Ability {
     super({
       name: 'Brahma Chicken Ability',
       owner: owner,
-      triggers: ['FriendAttacked', 'ThisDied', 'StartBattle'],
+      triggers: ['FriendAttacked', 'PostRemovalFaint', 'StartBattle'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -69,7 +69,7 @@ export class BrahmaChickenAbility extends Ability {
       return;
     }
 
-    if (context.trigger === 'ThisDied') {
+    if (context.trigger === 'PostRemovalFaint') {
       const eligible = shuffle(
         Array.from(this.attackers).filter((pet) => pet && pet.alive),
       );
@@ -100,3 +100,4 @@ export class BrahmaChickenAbility extends Ability {
     return new BrahmaChickenAbility(newOwner, this.logService);
   }
 }
+

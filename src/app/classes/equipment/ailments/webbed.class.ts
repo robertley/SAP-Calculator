@@ -23,7 +23,7 @@ export class WebbedAbility extends Ability {
     super({
       name: 'WebbedAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -60,3 +60,4 @@ export class WebbedAbility extends Ability {
     }
   }
 }
+

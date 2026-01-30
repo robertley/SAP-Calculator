@@ -10,8 +10,9 @@ export class FaintBread extends Equipment {
   name = 'Faint Bread';
   equipmentClass: EquipmentClass = 'afterFaint';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     pet.addAbility(
-      new FaintBreadAbility(pet, this, this.petService, this.logService),
+      new FaintBreadAbility(pet, equipment, this.petService, this.logService),
     );
   };
 
@@ -38,7 +39,7 @@ export class FaintBreadAbility extends Ability {
     super({
       name: 'FaintBreadAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -71,3 +72,4 @@ export class FaintBreadAbility extends Ability {
     }
   }
 }
+

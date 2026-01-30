@@ -48,7 +48,7 @@ export class BearAbility extends Ability {
     super({
       name: 'BearAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -106,3 +106,4 @@ export class BearAbility extends Ability {
     return new BearAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

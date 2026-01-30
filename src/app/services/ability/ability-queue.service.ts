@@ -111,7 +111,7 @@ export class AbilityQueueService {
       return direct;
     }
     if (/\d+$/.test(trigger)) {
-      return (ABILITY_PRIORITIES as any).counter ?? 999;
+      return (ABILITY_PRIORITIES as any).CounterEvent ?? 999;
     }
     return 999;
   }
@@ -159,11 +159,11 @@ export class AbilityQueueService {
     }
   }
 
-  simulateFriendDiedCounters(pet: Pet, count: number) {
+  simulatePostRemovalFriendFaintsCounters(pet: Pet, count: number) {
     if (!pet || count <= 0) {
       return;
     }
-    const triggers = this.getNumberedTriggersForPet(pet, 'FriendDied');
+    const triggers = this.getNumberedTriggersForPet(pet, 'PostRemovalFriendFaints');
     for (let i = 0; i < count; i++) {
       this.handleNumberedCounterTriggers(pet, undefined, undefined, triggers);
     }
@@ -266,3 +266,4 @@ export class AbilityQueueService {
     return Array.isArray(arr) ? arr : [];
   }
 }
+

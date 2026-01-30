@@ -8,8 +8,9 @@ export class Baguette extends Equipment {
   name = 'Baguette';
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Baguette ability using dedicated ability class
-    pet.addAbility(new BaguetteAbility(pet, this, this.logService));
+    pet.addAbility(new BaguetteAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

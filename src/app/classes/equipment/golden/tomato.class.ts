@@ -9,7 +9,8 @@ export class Tomato extends Equipment {
   tier = 6;
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
-    pet.addAbility(new TomatoAbility(pet, this));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new TomatoAbility(pet, equipment));
   };
 
   constructor(protected logService: LogService) {

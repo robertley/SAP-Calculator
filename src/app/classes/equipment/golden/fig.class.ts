@@ -9,7 +9,8 @@ export class Fig extends Equipment {
   equipmentClass: EquipmentClass = 'beforeAttack';
   hasRandomEvents = true;
   callback = (pet: Pet) => {
-    pet.addAbility(new FigAbility(pet, this));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new FigAbility(pet, equipment));
   };
 
   constructor(protected logService: LogService) {

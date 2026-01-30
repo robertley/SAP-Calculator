@@ -40,7 +40,7 @@ export class HoopoeBirdAbility extends Ability {
     super({
       name: 'HoopoeBirdAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -94,3 +94,4 @@ export class HoopoeBirdAbility extends Ability {
     return new HoopoeBirdAbility(newOwner, this.logService);
   }
 }
+

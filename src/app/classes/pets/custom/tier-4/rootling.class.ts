@@ -11,7 +11,7 @@ export class Rootling extends Pet {
   tier = 4;
   pack: Pack = 'Custom';
   attack = 1;
-  health = 5;
+  health = 8;
   initAbilities(): void {
     this.addAbility(new RootlingAbility(this, this.logService));
     super.initAbilities();

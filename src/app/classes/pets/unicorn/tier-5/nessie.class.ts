@@ -49,7 +49,7 @@ export class NessieAbility extends Ability {
     super({
       name: 'NessieAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -120,3 +120,4 @@ export class NessieAbility extends Ability {
     return new NessieAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

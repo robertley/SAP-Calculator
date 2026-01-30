@@ -10,7 +10,7 @@ export class Wasp extends Pet {
   name = 'Wasp';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 2;
+  attack = 3;
   health = 3;
   initAbilities(): void {
     this.addAbility(new WaspAbility(this, this.logService));

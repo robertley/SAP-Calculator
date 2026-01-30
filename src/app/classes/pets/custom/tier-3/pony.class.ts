@@ -42,7 +42,7 @@ export class PonyAbility extends Ability {
     super({
       name: 'Pony Ability',
       owner: owner,
-      triggers: ['ThisKilledEnemy'],
+      triggers: ['KnockOut'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -56,7 +56,7 @@ export class PonyAbility extends Ability {
     const owner = this.owner;
     const player = owner.parent;
     const apples = this.level;
-    const target = this.getBackMostFriend(player);
+    const target = owner.petBehind();
 
     if (!target) {
       this.triggerTigerExecution(context);
@@ -66,11 +66,11 @@ export class PonyAbility extends Ability {
     const abilityService = (player as any).abilityService as AbilityService;
 
     for (let i = 0; i < apples; i++) {
-      this.applyApple(target, abilityService);
+      this.applyBetterApple(target, abilityService);
     }
 
     this.logService.createLog({
-      message: `${owner.name} fed ${target.name} ${apples} apple${apples === 1 ? '' : 's'} after knocking out an enemy.`,
+      message: `${owner.name} fed ${target.name} ${apples} Better Apple${apples === 1 ? '' : 's'} after knocking out an enemy.`,
       type: 'ability',
       player: player,
       tiger: tiger,
@@ -80,20 +80,10 @@ export class PonyAbility extends Ability {
     this.triggerTigerExecution(context);
   }
 
-  private applyApple(target: Pet, abilityService?: AbilityService): void {
-    target.increaseAttack(1);
-    target.increaseHealth(1);
-    abilityService?.triggerFoodEvents(target, 'apple');
-  }
-
-  private getBackMostFriend(player: Player): Pet | null {
-    for (let i = player.petArray.length - 1; i >= 0; i--) {
-      const friend = player.petArray[i];
-      if (friend && friend.alive && friend !== this.owner) {
-        return friend;
-      }
-    }
-    return null;
+  private applyBetterApple(target: Pet, abilityService?: AbilityService): void {
+    target.increaseAttack(2);
+    target.increaseHealth(2);
+    abilityService?.triggerFoodEvents(target, 'better apple');
   }
 
   override copy(newOwner: Pet): PonyAbility {

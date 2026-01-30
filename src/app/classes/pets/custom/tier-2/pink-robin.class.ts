@@ -10,7 +10,7 @@ import { InjectorService } from 'app/services/injector.service';
 
 export class PinkRobin extends Pet {
   name = 'Pink Robin';
-  tier = 2;
+  tier = 1;
   pack: Pack = 'Custom';
   attack = 3;
   health = 2;
@@ -41,7 +41,7 @@ export class PinkRobinAbility extends Ability {
     super({
       name: 'Pink Robin Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       abilitylevel: owner.level,
       abilityFunction: (context) => this.executeAbility(context),
@@ -83,3 +83,4 @@ export class PinkRobinAbility extends Ability {
     return new PinkRobinAbility(newOwner);
   }
 }
+

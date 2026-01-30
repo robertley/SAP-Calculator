@@ -50,7 +50,7 @@ export class PlatypusAbility extends Ability {
     super({
       name: 'PlatypusAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -130,3 +130,4 @@ export class PlatypusAbility extends Ability {
     return new PlatypusAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

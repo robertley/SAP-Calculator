@@ -40,7 +40,7 @@ export class DropBearAbility extends Ability {
     super({
       name: 'DropBearAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

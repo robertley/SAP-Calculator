@@ -8,8 +8,9 @@ export class SudduthTomato extends Equipment {
   name = 'Sudduth Tomato';
   equipmentClass = 'hurt' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Sudduth Tomato ability using dedicated ability class
-    pet.addAbility(new SudduthTomatoAbility(pet, this, this.logService));
+    pet.addAbility(new SudduthTomatoAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

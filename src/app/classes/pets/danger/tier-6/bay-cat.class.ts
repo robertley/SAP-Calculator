@@ -59,7 +59,7 @@ export class BayCatAbility extends Ability {
     super({
       name: 'BayCatAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -135,3 +135,4 @@ export class BayCatAbility extends Ability {
     );
   }
 }
+

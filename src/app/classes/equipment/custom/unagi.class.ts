@@ -8,8 +8,9 @@ export class Unagi extends Equipment {
   equipmentClass = 'startOfBattle' as EquipmentClass;
   hasRandomEvents = true;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Unagi ability using dedicated ability class
-    pet.addAbility(new UnagiAbility(pet, this));
+    pet.addAbility(new UnagiAbility(pet, equipment));
   };
 
   constructor() {

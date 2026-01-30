@@ -54,7 +54,7 @@ export class PelicanFaintAbility extends Ability {
     super({
       name: 'PelicanFaintAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -174,3 +174,4 @@ export class PelicanStartAbility extends Ability {
     return new PelicanStartAbility(newOwner, this.logService, this.petService);
   }
 }
+

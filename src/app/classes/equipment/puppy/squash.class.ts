@@ -9,8 +9,9 @@ export class Squash extends Equipment {
   tier = 3;
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Squash ability using dedicated ability class
-    pet.addAbility(new SquashAbility(pet, this, this.logService));
+    pet.addAbility(new SquashAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

@@ -56,7 +56,7 @@ export class EagleAbility extends Ability {
     super({
       name: 'EagleAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -149,3 +149,4 @@ export class EagleAbility extends Ability {
     );
   }
 }
+

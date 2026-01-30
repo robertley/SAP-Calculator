@@ -41,7 +41,7 @@ export class WalrusAbility extends Ability {
     super({
       name: 'WalrusAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -89,3 +89,4 @@ export class WalrusAbility extends Ability {
     return new WalrusAbility(newOwner, this.logService);
   }
 }
+

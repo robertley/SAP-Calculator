@@ -55,7 +55,7 @@ export class PteranodonAbility extends Ability {
     super({
       name: 'PteranodonAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -122,3 +122,4 @@ export class PteranodonAbility extends Ability {
     );
   }
 }
+

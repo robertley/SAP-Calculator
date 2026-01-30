@@ -9,8 +9,9 @@ export class WhiteTruffle extends Equipment {
   equipmentClass = 'faint' as EquipmentClass;
 
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add White Truffle ability using dedicated ability class
-    pet.addAbility(new WhiteTruffleAbility(pet, this, this.logService));
+    pet.addAbility(new WhiteTruffleAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {
@@ -26,7 +27,7 @@ export class WhiteTruffleAbility extends Ability {
     super({
       name: 'WhiteTruffleAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Equipment',
       native: true,
       maxUses: 1, // Equipment is removed after one use
@@ -56,3 +57,4 @@ export class WhiteTruffleAbility extends Ability {
     owner.removePerk();
   }
 }
+

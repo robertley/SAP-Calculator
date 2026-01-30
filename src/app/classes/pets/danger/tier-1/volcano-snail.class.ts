@@ -42,7 +42,7 @@ export class VolcanoSnailAbility extends Ability {
     super({
       name: 'VolcanoSnailAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -101,3 +101,4 @@ export class VolcanoSnailAbility extends Ability {
     return new VolcanoSnailAbility(newOwner, this.logService);
   }
 }
+

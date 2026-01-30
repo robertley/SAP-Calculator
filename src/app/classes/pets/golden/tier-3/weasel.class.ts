@@ -40,7 +40,7 @@ export class WeaselAbility extends Ability {
     super({
       name: 'WeaselAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -71,3 +71,4 @@ export class WeaselAbility extends Ability {
     return new WeaselAbility(newOwner, this.logService);
   }
 }
+

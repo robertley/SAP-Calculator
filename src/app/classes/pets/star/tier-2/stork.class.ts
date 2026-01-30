@@ -56,7 +56,7 @@ export class StorkAbility extends Ability {
     super({
       name: 'StorkAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -137,3 +137,4 @@ export class StorkAbility extends Ability {
     );
   }
 }
+

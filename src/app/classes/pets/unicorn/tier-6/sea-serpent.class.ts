@@ -40,7 +40,7 @@ export class SeaSerpentAbility extends Ability {
     super({
       name: 'SeaSerpentAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -119,3 +119,4 @@ export class SeaSerpentAbility extends Ability {
     return new SeaSerpentAbility(newOwner, this.logService);
   }
 }
+

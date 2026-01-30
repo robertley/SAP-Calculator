@@ -49,7 +49,7 @@ export class AmmoniteAbility extends PetAbility {
     super({
       owner,
       name: 'AmmoniteAbility',
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
     });
     this.logService = logService;
     this.petService = petService;
@@ -114,4 +114,5 @@ export class AmmoniteAbility extends PetAbility {
     return new AmmoniteAbility(newOwner, this.logService, this.petService);
   }
 }
+
 

@@ -40,7 +40,7 @@ export class RhinoAbility extends Ability {
     super({
       name: 'RhinoAbility',
       owner: owner,
-      triggers: ['ThisKilledEnemy'],
+      triggers: ['KnockOut'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

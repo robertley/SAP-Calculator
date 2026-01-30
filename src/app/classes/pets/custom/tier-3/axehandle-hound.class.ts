@@ -13,7 +13,7 @@ export class AxehandleHound extends Pet {
   ) {
     super(logService, abilityService, parent);
     this.name = 'Axehandle Hound';
-    this.attack = 4;
+    this.attack = 5;
     this.health = 3;
     this.tier = 3;
     this.pack = 'Custom';
@@ -34,7 +34,7 @@ export class AxehandleHoundAbility extends Ability {
     super({
       name: 'Axehandle Hound Ability',
       owner: owner,
-      triggers: ['BeforeThisAttacks'],
+      triggers: ['BeforeFriendlyAttack', 'StartBattle'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -45,6 +45,11 @@ export class AxehandleHoundAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const { gameApi, tiger, pteranodon } = context;
+    if (context.trigger === 'StartBattle') {
+      this.hasUsed = false;
+      this.triggerTigerExecution(context);
+      return;
+    }
     if (this.hasUsed) {
       return;
     }

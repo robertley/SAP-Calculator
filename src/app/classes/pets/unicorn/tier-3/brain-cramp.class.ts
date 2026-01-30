@@ -41,7 +41,7 @@ export class BrainCrampAbility extends Ability {
     super({
       name: 'BrainCrampAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

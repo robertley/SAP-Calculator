@@ -46,7 +46,7 @@ export class RatAbility extends Ability {
     super({
       name: 'RatAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -97,3 +97,4 @@ export class RatAbility extends Ability {
     return new RatAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

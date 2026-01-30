@@ -10,7 +10,8 @@ export class PitaBread extends Equipment {
   power = 0;
   equipmentClass = 'hurt' as EquipmentClass;
   callback = (pet: Pet) => {
-    pet.addAbility(new PitaBreadAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new PitaBreadAbility(pet, equipment, this.logService));
   };
   constructor(protected logService: LogService) {
     super();

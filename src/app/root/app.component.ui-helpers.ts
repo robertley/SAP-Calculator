@@ -4,6 +4,9 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Modal } from 'bootstrap';
 import { Player } from '../classes/player.class';
 import { TeamPreset } from '../services/team-presets.service';
+import { Battle } from '../interfaces/battle.interface';
+import { Log } from '../interfaces/log.interface';
+import { LogMessagePart } from './app.component.simulation';
 import { LocalStorageService } from '../services/local-storage.service';
 import { UrlStateService } from '../services/url-state.service';
 import { CalculatorStateService } from '../services/calculator-state.service';
@@ -27,6 +30,7 @@ import {
 import {
   buildExportPayload,
   buildShareableLink,
+  expandCompactCalculatorState,
 } from './app.component.share-utils';
 
 export interface AppUiContext {
@@ -62,6 +66,20 @@ export interface AppUiContext {
   playerPetsControls: AbstractControl[];
   opponentPetsControls: AbstractControl[];
   undoState?: any;
+  simulated?: boolean;
+  battles?: Battle[];
+  battleRandomEvents?: LogMessagePart[][];
+  battleRandomEventsByBattle?: Map<Battle, LogMessagePart[]>;
+  filteredBattlesCache?: Battle[];
+  viewBattle?: Battle | null;
+  viewBattleLogs?: Log[];
+  viewBattleLogRows?: Array<{ parts: LogMessagePart[]; classes: string[] }>;
+  playerWinner?: number;
+  opponentWinner?: number;
+  draw?: number;
+  apiResponse?: string | null;
+  battleStarted?: boolean;
+  currBattle?: Battle | null;
   setStatus?: (message: string, tone?: 'success' | 'error') => void;
 }
 
@@ -724,9 +742,6 @@ export function resetPlayer(
   ctx: AppUiContext,
   player: 'player' | 'opponent',
 ): void {
-  if (!confirm(`Are you sure you want to reset ${player}?`)) {
-    return;
-  }
   const petSelectors = ctx.petSelectors
     .toArray()
     .slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
@@ -764,10 +779,19 @@ export function importCalculator(
   ctx: AppUiContext,
   importVal: string,
   isInitialLoad: boolean = false,
+  options?: { resetBattle?: boolean },
 ): boolean {
   let success = false;
   try {
-    const calculator = JSON.parse(importVal);
+    const calculator = expandCompactCalculatorState(JSON.parse(importVal));
+
+    if (options?.resetBattle) {
+      resetSimulationState(ctx);
+    }
+    if (ctx.petSelectors?.length) {
+      resetPlayer(ctx, 'player');
+      resetPlayer(ctx, 'opponent');
+    }
 
     applyCalculatorState(ctx, calculator);
     initApp(ctx);
@@ -785,6 +809,23 @@ export function importCalculator(
     console.error(e);
   }
   return success;
+}
+
+function resetSimulationState(ctx: AppUiContext): void {
+  ctx.simulated = false;
+  ctx.battles = [];
+  ctx.battleRandomEvents = [];
+  ctx.battleRandomEventsByBattle = new Map();
+  ctx.filteredBattlesCache = [];
+  ctx.viewBattle = null;
+  ctx.viewBattleLogs = [];
+  ctx.viewBattleLogRows = [];
+  ctx.playerWinner = 0;
+  ctx.opponentWinner = 0;
+  ctx.draw = 0;
+  ctx.apiResponse = null;
+  ctx.battleStarted = false;
+  ctx.currBattle = null;
 }
 
 export function generateShareLink(ctx: AppUiContext): void {

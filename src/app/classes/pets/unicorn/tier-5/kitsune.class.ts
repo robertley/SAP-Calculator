@@ -41,7 +41,7 @@ export class KitsuneAbility extends Ability {
     super({
       name: 'KitsuneAbility',
       owner: owner,
-      triggers: ['KitsuneFriendDies'],
+      triggers: ['FriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

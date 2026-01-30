@@ -46,7 +46,7 @@ export class TunaAbility extends Ability {
     super({
       name: 'TunaAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -102,3 +102,4 @@ export class TunaAbility extends Ability {
     );
   }
 }
+

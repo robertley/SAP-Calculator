@@ -40,7 +40,7 @@ export class GroundhogAbility extends Ability {
     super({
       name: 'GroundhogAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -73,3 +73,4 @@ export class GroundhogAbility extends Ability {
     return new GroundhogAbility(newOwner, this.logService);
   }
 }
+

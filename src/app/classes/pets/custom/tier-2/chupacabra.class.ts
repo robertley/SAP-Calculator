@@ -40,7 +40,7 @@ export class ChupacabraAbility extends Ability {
     super({
       name: 'ChupacabraAbility',
       owner: owner,
-      triggers: ['ThisKilledEnemy'],
+      triggers: ['KnockOut'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

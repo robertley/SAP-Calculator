@@ -505,7 +505,7 @@
                 <td>{{ battle.winner }}</td>
                 <td class="pre">
                   <ng-container *ngFor="
-                      let part of battleRandomEvents[i];
+                      let part of (battleRandomEventsByBattle.get(battle) || []);
                       trackBy: trackByIndex
                     ">
                     <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"

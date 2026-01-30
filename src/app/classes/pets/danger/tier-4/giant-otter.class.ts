@@ -48,7 +48,7 @@ export class GiantOtterAbility extends Ability {
     super({
       name: 'GiantOtterAbility',
       owner: owner,
-      triggers: ['BeforeStartBattle', 'AnyoneAttack', 'ThisDied'],
+      triggers: ['BeforeStartBattle', 'AnyoneAttack', 'PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -108,7 +108,7 @@ export class GiantOtterAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon, trigger } = context as any;
     const owner = this.owner;
 
-    if (trigger === 'ThisDied') {
+    if (trigger === 'PostRemovalFaint') {
       this.removeConditionalBuffs();
       return;
     }
@@ -167,3 +167,4 @@ export class GiantOtterAbility extends Ability {
     return new GiantOtterAbility(newOwner, this.logService);
   }
 }
+

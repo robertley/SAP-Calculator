@@ -41,7 +41,7 @@ export class FarmerMouseAbility extends Ability {
     super({
       name: 'FarmerMouseAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -81,3 +81,4 @@ export class FarmerMouseAbility extends Ability {
     return new FarmerMouseAbility(newOwner, this.logService);
   }
 }
+

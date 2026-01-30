@@ -42,7 +42,7 @@ export class MuskOxAbility extends Ability {
     super({
       name: 'MuskOxAbility',
       owner: owner,
-      triggers: ['FriendAheadDied'],
+      triggers: ['FriendAheadFainted'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

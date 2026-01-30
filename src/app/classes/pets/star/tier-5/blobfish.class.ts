@@ -41,7 +41,7 @@ export class BlobfishAbility extends Ability {
     super({
       name: 'BlobfishAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -78,3 +78,4 @@ export class BlobfishAbility extends Ability {
     return new BlobfishAbility(newOwner, this.logService);
   }
 }
+

@@ -82,8 +82,8 @@ export class AbilityService {
     });
   }
 
-  simulateFriendDiedCounters(pet: Pet, count: number) {
-    this.abilityQueueService.simulateFriendDiedCounters(pet, count);
+  simulatePostRemovalFriendFaintsCounters(pet: Pet, count: number) {
+    this.abilityQueueService.simulatePostRemovalFriendFaintsCounters(pet, count);
   }
 
   // --- Event Triggering & Execution ---
@@ -118,7 +118,7 @@ export class AbilityService {
   }
 
   executeBeforeStartOfBattleEvents() {
-    this.abilityQueueService.processQueue(this.gameService.gameApi);
+    this.processPhaseWithInterleaving(new Set(['BeforeStartBattle']));
   }
 
   // Counter
@@ -142,7 +142,7 @@ export class AbilityService {
   }
 
   executeStartBattleEvents() {
-    this.abilityQueueService.processQueue(this.gameService.gameApi);
+    this.processPhaseWithInterleaving(new Set(['StartBattle']));
   }
 
   // Before Attack
@@ -162,6 +162,9 @@ export class AbilityService {
       filter: (event) => beforeAttackTriggers.has(event.abilityType as string),
       onExecute: (event) => this.logTriggerHeader(event),
     });
+    this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      onExecute: (event) => this.logTriggerHeader(event),
+    });
     this.lastLoggedTrigger = undefined;
   }
 
@@ -171,7 +174,52 @@ export class AbilityService {
   }
 
   executeAfterAttackEvents() {
-    this.abilityQueueService.processQueue(this.gameService.gameApi);
+    const afterAttackTriggers = new Set([
+      'FriendlyAttacked',
+      'FriendAttacked',
+      'FriendAheadAttacked',
+      'AdjacentFriendAttacked',
+      'AnyoneAttack',
+      'EnemyAttacked',
+      'ThisAttacked',
+      'ThisFirstAttack',
+    ]);
+    this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      filter: (event) => {
+        const trigger = event.abilityType as string;
+        if (afterAttackTriggers.has(trigger)) {
+          return true;
+        }
+        return /^(FriendlyAttacked|FriendAttacked|EnemyAttacked)\d+$/.test(
+          trigger,
+        );
+      },
+      onExecute: (event) => this.logTriggerHeader(event),
+    });
+    this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      onExecute: (event) => this.logTriggerHeader(event),
+    });
+    this.lastLoggedTrigger = undefined;
+  }
+
+  private processPhaseWithInterleaving(allowedTriggers: Set<string>) {
+    const queue = this.abilityQueueService.globalEventQueue;
+    while (true) {
+      const nextIdx = queue.findIndex((event) =>
+        allowedTriggers.has(event.abilityType as string),
+      );
+      if (nextIdx === -1) {
+        break;
+      }
+      const [event] = queue.splice(nextIdx, 1);
+      this.logTriggerHeader(event);
+      this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
+      this.abilityQueueService.processQueue(this.gameService.gameApi, {
+        filter: (evt) => !allowedTriggers.has(evt.abilityType as string),
+        onExecute: (evt) => this.logTriggerHeader(evt),
+      });
+    }
+    this.lastLoggedTrigger = undefined;
   }
 
   // Summon events
@@ -505,14 +553,11 @@ export class AbilityService {
 
   // Kill events handler
   triggerKillEvents(killerPet: Pet, killedPet: Pet) {
-    // Handle ThisKilled for the killer pet
-    this.abilityQueueService.triggerAbility(killedPet, 'ThisKilled', killerPet);
-
     // Check if killed pet was an enemy
     if (killedPet.parent !== killerPet.parent) {
       this.abilityQueueService.triggerAbility(
         killerPet,
-        'ThisKilledEnemy',
+        'KnockOut',
         killedPet,
       );
     }
@@ -661,7 +706,7 @@ export class AbilityService {
       if (pet.clearFrontTriggered) {
         continue;
       }
-      this.abilityQueueService.triggerAbility(pet, 'ClearFront');
+      this.abilityQueueService.triggerAbility(pet, 'EmptyFrontSpace');
       pet.clearFrontTriggered = true;
     }
   }
@@ -778,3 +823,4 @@ export class AbilityService {
     this.toyEventService.executeFriendJumpedToyEvents();
   }
 }
+

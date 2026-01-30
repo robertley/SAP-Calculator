@@ -65,7 +65,7 @@ export class SabertoothTigerAbility extends Ability {
     super({
       name: 'SabertoothTigerAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -135,3 +135,4 @@ export class SabertoothTigerAbility extends Ability {
     );
   }
 }
+

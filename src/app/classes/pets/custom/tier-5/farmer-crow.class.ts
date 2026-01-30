@@ -41,7 +41,7 @@ export class FarmerCrowAbility extends Ability {
     super({
       name: 'Farmer Crow Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -83,3 +83,4 @@ export class FarmerCrowAbility extends Ability {
     return new FarmerCrowAbility(newOwner, this.logService);
   }
 }
+

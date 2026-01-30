@@ -41,7 +41,7 @@ export class PoisonDartFrogAbility extends Ability {
     super({
       name: 'PoisonDartFrogAbility',
       owner: owner,
-      triggers: ['FriendAheadDied'],
+      triggers: ['FriendAheadFainted'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

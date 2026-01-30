@@ -8,7 +8,8 @@ export class HealthPotion extends Equipment {
   name = 'Health Potion';
   equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
   callback = (pet: Pet) => {
-    pet.addAbility(new HealthPotionAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new HealthPotionAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

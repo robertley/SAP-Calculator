@@ -10,9 +10,10 @@ export class Popcorn extends Equipment {
   name = 'Popcorn';
   equipmentClass: EquipmentClass = 'afterFaint';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Popcorn ability using dedicated ability class
     pet.addAbility(
-      new PopcornAbility(pet, this, this.logService, this.petService),
+      new PopcornAbility(pet, equipment, this.logService, this.petService),
     );
   };
 
@@ -40,7 +41,7 @@ export class PopcornAbility extends Ability {
     super({
       name: 'PopcornAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       maxUses: 1, // Popcorn equipment doesn't have uses, but this should be 1 for afterFaint
@@ -95,3 +96,4 @@ export class PopcornAbility extends Ability {
     }
   }
 }
+

@@ -5,13 +5,13 @@ import { ABILITY_PRIORITIES } from '../src/app/services/ability/ability-prioriti
 describe('Ability Priority Order', () => {
     const queueService = new AbilityQueueService();
 
-    it('ManaSnipe should have higher priority (lower number) than ThisDied', () => {
+    it('ManaSnipe should have higher priority (lower number) than PostRemovalFaint', () => {
         const manaSnipePriority = queueService.getAbilityPriority('ManaSnipe' as any);
-        const thisDiedPriority = queueService.getAbilityPriority('ThisDied' as any);
+        const postRemovalPriority = queueService.getAbilityPriority('PostRemovalFaint' as any);
 
-        expect(manaSnipePriority).toBe(24.5);
-        expect(thisDiedPriority).toBe(25.6);
-        expect(manaSnipePriority).toBeLessThan(thisDiedPriority);
+        expect(manaSnipePriority).toBe(23);
+        expect(postRemovalPriority).toBe(25);
+        expect(manaSnipePriority).toBeLessThan(postRemovalPriority);
     });
 
     it('GoldenRetrieverSummons should have expected priority', () => {
@@ -24,3 +24,4 @@ describe('Ability Priority Order', () => {
         expect(queueService.getAbilityPriority('GoldenRetrieverSummons' as any)).not.toBe(999);
     });
 });
+

@@ -4,14 +4,16 @@ import { Equipment } from 'app/classes/equipment.class';
 import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { hasSilly } from 'app/classes/player/player-utils';
+import { getRandomInt } from 'app/util/helper-functions';
 
 
 export class SpiderCrab extends Pet {
   name = 'Spider Crab';
-  tier = 4;
+  tier = 2;
   pack: Pack = 'Custom';
-  attack = 3;
-  health = 6;
+  attack = 1;
+  health = 5;
   initAbilities(): void {
     this.addAbility(new SpiderCrabAbility(this, this.logService));
     super.initAbilities();
@@ -41,7 +43,7 @@ export class SpiderCrabAbility extends Ability {
     super({
       name: 'Spider Crab Ability',
       owner: owner,
-      triggers: ['BeforeFriendAttacks', 'StartTurn'],
+      triggers: ['FriendAttacked', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -65,6 +67,11 @@ export class SpiderCrabAbility extends Ability {
       return;
     }
 
+    if (!triggerPet.alive) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
     if (this.affectedPets.has(triggerPet)) {
       this.triggerTigerExecution(context);
       return;
@@ -75,12 +82,22 @@ export class SpiderCrabAbility extends Ability {
       return;
     }
 
-    triggerPet.increaseHealth(4);
-    triggerPet.parent.pushPetToBack(triggerPet);
+    let target = triggerPet;
+    if (hasSilly(owner)) {
+      const candidates = owner.parent.petArray.filter((pet) => pet.alive);
+      if (candidates.length === 0) {
+        this.triggerTigerExecution(context);
+        return;
+      }
+      target = candidates[getRandomInt(0, candidates.length - 1)];
+    }
+
+    target.increaseHealth(4);
+    target.parent.pushPetToBack(target);
     this.affectedPets.add(triggerPet);
 
     this.logService.createLog({
-      message: `${owner.name} moved ${triggerPet.name} to the back and gave it +4 health.`,
+      message: `${owner.name} moved ${target.name} to the back and gave it +4 health.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

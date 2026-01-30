@@ -48,7 +48,7 @@ export class SaigaAntelopeAbility extends Ability {
     super({
       name: 'SaigaAntelopeAbility',
       owner: owner,
-      triggers: ['FriendDied2'],
+      triggers: ['PostRemovalFriendFaints2'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -92,3 +92,4 @@ export class SaigaAntelopeAbility extends Ability {
     );
   }
 }
+

@@ -40,7 +40,7 @@ export class PiedTamarinAbility extends Ability {
     super({
       name: 'PiedTamarinAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -84,3 +84,4 @@ export class PiedTamarinAbility extends Ability {
     return new PiedTamarinAbility(newOwner, this.logService);
   }
 }
+

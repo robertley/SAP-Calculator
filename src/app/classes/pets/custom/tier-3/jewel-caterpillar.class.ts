@@ -10,8 +10,8 @@ export class JewelCaterpillar extends Pet {
   name = 'Jewel Caterpillar';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 2;
-  health = 5;
+  attack = 3;
+  health = 2;
 
   override initAbilities(): void {
     this.addAbility(new JewelCaterpillarAbility(this, this.logService));
@@ -42,7 +42,7 @@ export class JewelCaterpillarAbility extends Ability {
     super({
       name: 'Jewel Caterpillar Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -104,3 +104,4 @@ export class JewelCaterpillarAbility extends Ability {
     return new JewelCaterpillarAbility(newOwner, this.logService);
   }
 }
+

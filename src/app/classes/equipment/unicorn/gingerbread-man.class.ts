@@ -8,7 +8,8 @@ export class GingerbreadMan extends Equipment {
   name = 'Gingerbread Man';
   equipmentClass = 'beforeStartOfBattle' as EquipmentClass;
   callback = (pet: Pet) => {
-    pet.addAbility(new GingerbreadManAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new GingerbreadManAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

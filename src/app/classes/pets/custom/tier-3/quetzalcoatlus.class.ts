@@ -42,7 +42,7 @@ export class QuetzalcoatlusAbility extends Ability {
     super({
       name: 'Quetzalcoatlus Ability',
       owner: owner,
-      triggers: ['ThisKilled'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -83,3 +83,4 @@ export class QuetzalcoatlusAbility extends Ability {
     return new QuetzalcoatlusAbility(newOwner, this.logService);
   }
 }
+

@@ -44,7 +44,7 @@ export class PatagonianMaraAbility extends Ability {
     super({
       name: 'Patagonian Mara Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class PatagonianMaraAbility extends Ability {
     return new PatagonianMaraAbility(newOwner, this.logService);
   }
 }
+

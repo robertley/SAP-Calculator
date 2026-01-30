@@ -43,7 +43,7 @@ export class GiantPangasiusAbility extends Ability {
     super({
       name: 'GiantPangasiusAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -93,3 +93,4 @@ export class GiantPangasiusAbility extends Ability {
     return new GiantPangasiusAbility(newOwner, this.logService);
   }
 }
+

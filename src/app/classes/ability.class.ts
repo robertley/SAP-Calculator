@@ -7,7 +7,7 @@ export type AbilityType = 'Pet' | 'Equipment';
 
 export type NumberedTriggerBase =
   | 'SpendGold'
-  | 'FriendDied'
+  | 'PostRemovalFriendFaints'
   | 'FriendSummoned'
   | 'FriendlyAttacked'
   | 'FriendAttacked'
@@ -28,7 +28,7 @@ export type NumberedTriggerBase =
   | 'Eat'
   | 'AppleEatenByThis'
   | 'FriendlyAbilityActivated'
-  | 'FriendFainted';
+  | 'PostRemovalFriendFaints';
 
 export type AbilityTriggerBase =
   | 'None'
@@ -46,16 +46,15 @@ export type AbilityTriggerBase =
   | 'EnemyPushed'
   | 'BeforeThisAttacks'
   | 'BeforeFriendAttacks'
-  | 'ThisDied'
-  | 'BeforeThisDies'
-  | 'FriendDied'
-  | 'ThisKilled'
+  | 'PostRemovalFaint'
+  | 'Faint'
+  | 'PostRemovalFriendFaints'
   | 'ThisHurt'
   | 'EnemyHurt'
   | 'ThisLeveledUp'
   | 'FriendLeveledUp'
   | 'AnyLeveledUp'
-  | 'FriendAheadDied'
+  | 'FriendAheadFainted'
   | 'Tier1FriendBought'
   | 'FoodEatenByThis'
   | 'FriendSold'
@@ -64,13 +63,13 @@ export type AbilityTriggerBase =
   | 'FriendHurt'
   | 'FriendlyLeveledUp'
   | 'AppleEatenByThis'
-  | 'AdjacentFriendsDie'
-  | 'EnemyDied'
+  | 'AdjacentFriendsFaint'
+  | 'EnemyFainted'
   | 'FriendAheadHurt'
   | 'ThisGainedPerk'
   | 'ThisLostPerk'
   | 'ThisAttacked'
-  | 'ClearFront'
+  | 'EmptyFrontSpace'
   | 'FriendAttacked'
   | 'FriendGainsAilment'
   | 'FriendGainsPerk'
@@ -83,7 +82,7 @@ export type AbilityTriggerBase =
   | 'ThisGainedAilment'
   | 'ThisGainedStrawberry'
   | 'AnyoneAttack'
-  | 'ThisKilledEnemy'
+  | 'KnockOut'
   | 'FriendTransformed'
   | 'FriendLostPerk'
   | 'LostStrawberry'
@@ -102,7 +101,7 @@ export type AbilityTriggerBase =
   | 'AnyoneHurt'
   | 'FriendlyAttacked'
   | 'FriendlyGainedExp'
-  | 'PetDied'
+  | 'PetFainted'
   | 'FriendlyAbilityActivated'
   | 'AdjacentFriendAttacked'
   | 'BeforeAdjacentFriendAttacked'
@@ -119,10 +118,11 @@ export type AbilityTriggerBase =
   | 'SpecialEndTurn'
   | 'ManaSnipe'
   | 'GoldenRetrieverSummons'
-  | 'KitsuneFriendDies';
+  | 'FriendFaints';
 
 export type AbilityTrigger =
   | AbilityTriggerBase
+  | NumberedTriggerBase
   | `${NumberedTriggerBase}${number}`;
 
 export interface AbilityContext {
@@ -211,7 +211,7 @@ export class Ability {
     customParams?: any,
   ): boolean {
     //Check if pet is removed
-    if (this.owner.removed && !this.matchesTrigger('ThisDied')) {
+    if (this.owner.removed && !this.matchesTrigger('PostRemovalFaint')) {
       return false;
     }
     // Check if pet is disabled (Dazed)
@@ -331,3 +331,5 @@ export class Ability {
     return minExpForLevel(this.level);
   }
 }
+
+

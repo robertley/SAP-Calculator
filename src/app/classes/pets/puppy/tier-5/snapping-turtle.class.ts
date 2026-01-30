@@ -41,7 +41,7 @@ export class SnappingTurtleAbility extends Ability {
     super({
       name: 'SnappingTurtleAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class SnappingTurtleAbility extends Ability {
     return new SnappingTurtleAbility(newOwner, this.logService);
   }
 }
+

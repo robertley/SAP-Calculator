@@ -40,7 +40,7 @@ export class YellowBoxfishAbility extends Ability {
     super({
       name: 'YellowBoxfishAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -93,3 +93,4 @@ export class YellowBoxfishAbility extends Ability {
     return new YellowBoxfishAbility(newOwner, this.logService);
   }
 }
+

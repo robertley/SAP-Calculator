@@ -8,7 +8,8 @@ export class Durian extends Equipment {
   name = 'Durian';
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
-    pet.addAbility(new DurianAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new DurianAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

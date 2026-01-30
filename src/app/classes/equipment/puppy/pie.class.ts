@@ -9,8 +9,9 @@ export class Pie extends Equipment {
   tier = 4;
   equipmentClass: EquipmentClass = 'beforeStartOfBattle';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Pie ability using dedicated ability class
-    pet.addAbility(new PieAbility(pet, this, this.logService));
+    pet.addAbility(new PieAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

@@ -9,8 +9,9 @@ export class Nachos extends Equipment {
   tier = 1;
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Nachos ability using dedicated ability class
-    pet.addAbility(new NachosAbility(pet, this, this.logService));
+    pet.addAbility(new NachosAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

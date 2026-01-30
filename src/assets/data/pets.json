@@ -778,15 +778,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "No ability."
+        "About": "Attack and health can't go over 1."
       },
       {
         "Level": 2,
-        "About": "No ability."
+        "About": "Attack and health can't go over 1."
       },
       {
         "Level": 3,
-        "About": "No ability."
+        "About": "Attack and health can't go over 1."
       }
     ],
     "Id": "788",
@@ -2644,21 +2644,21 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Sell: Sells for +2 gold extra, but lose 2 next turn."
+        "About": "Sell: Sells for +2 gold extra, but lose 1 next turn."
       },
       {
         "Level": 2,
-        "About": "Sell: Sells for +4 gold extra, but lose 4 next turn."
+        "About": "Sell: Sells for +4 gold extra, but lose 2 next turn."
       },
       {
         "Level": 3,
-        "About": "Sell: Sells for +6 gold extra, but lose 6 next turn."
+        "About": "Sell: Sells for +6 gold extra, but lose 3 next turn."
       }
     ],
     "Id": "566",
     "Name": "Silverfish",
     "NameId": "Silverfish",
-    "Tier": 1,
+    "Tier": 2,
     "TierMax": 2147483647,
     "Packs": [
       "Custom"
@@ -3653,7 +3653,7 @@
   },
   {
     "Attack": 2,
-    "Health": 3,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
@@ -3919,20 +3919,20 @@
     ]
   },
   {
-    "Attack": 3,
-    "Health": 3,
+    "Attack": 2,
+    "Health": 2,
     "Abilities": [
       {
         "Level": 1,
-        "About": "End turn: Spend 1 gold to feed one Corncob to the nearest friend ahead."
+        "About": "End turn: Feed one Corncob to the nearest friend ahead."
       },
       {
         "Level": 2,
-        "About": "End turn: Spend 1 gold to feed one Corncob to the nearest two friends ahead."
+        "About": "End turn: Feed one Corncob to the nearest two friends ahead."
       },
       {
         "Level": 3,
-        "About": "End turn: Spend 1 gold to feed one Corncob to the nearest three friends ahead."
+        "About": "End turn: Feed one Corncob to the nearest three friends ahead."
       }
     ],
     "Id": "690",
@@ -4149,7 +4149,7 @@
   },
   {
     "Attack": 2,
-    "Health": 4,
+    "Health": 5,
     "Abilities": [
       {
         "Level": 1,
@@ -4348,7 +4348,7 @@
   },
   {
     "Attack": 1,
-    "Health": 5,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
@@ -4366,7 +4366,7 @@
     "Id": "783",
     "Name": "Hermit Crab",
     "NameId": "HermitCrab",
-    "Tier": 2,
+    "Tier": 1,
     "TierMax": 2147483647,
     "Packs": [
       "Custom"
@@ -4646,7 +4646,7 @@
   },
   {
     "Attack": 2,
-    "Health": 2,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -4995,7 +4995,7 @@
     "Id": "732",
     "Name": "Pink Robin",
     "NameId": "PinkRobin",
-    "Tier": 2,
+    "Tier": 1,
     "TierMax": 2147483647,
     "Packs": [
       "Custom"
@@ -5919,15 +5919,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Buy: Summon one level 1 Microwave Oven."
+        "About": "Start of turn: Summon one level 1 Microwave Oven."
       },
       {
         "Level": 2,
-        "About": "Buy: Summon one level 2 Microwave Oven."
+        "About": "Start of turn: Summon one level 2 Microwave Oven."
       },
       {
         "Level": 3,
-        "About": "Buy: Summon one level 3 Microwave Oven."
+        "About": "Start of turn: Summon one level 3 Microwave Oven."
       }
     ],
     "Id": "707",
@@ -5953,15 +5953,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Gains mana: Deal 1 damage to one random enemy."
+        "About": "Gains mana: Deal 1 damage to one random enemy. Triple on the first trigger each battle."
       },
       {
         "Level": 2,
-        "About": "Gains mana: Deal 2 damage to one random enemy."
+        "About": "Gains mana: Deal 2 damage to one random enemy. Triple on the first trigger each battle."
       },
       {
         "Level": 3,
-        "About": "Gains mana: Deal 3 damage to one random enemy."
+        "About": "Gains mana: Deal 3 damage to one random enemy. Triple on the first trigger each battle."
       }
     ],
     "Id": "382",
@@ -6020,15 +6020,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Before attack: Copy ability from the first <b>Faint</b> enemy as level 1."
+        "About": "Before attack: Transform into the first <b>Faint</b> enemy at level 1."
       },
       {
         "Level": 2,
-        "About": "Before attack: Copy ability from the first <b>Faint</b> enemy as level 2."
+        "About": "Before attack: Transform into the first <b>Faint</b> enemy at level 2."
       },
       {
         "Level": 3,
-        "About": "Before attack: Copy ability from the first <b>Faint</b> enemy as level 3."
+        "About": "Before attack: Transform into the first <b>Faint</b> enemy at level 3."
       }
     ],
     "Id": "207",
@@ -6150,15 +6150,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Enemy summoned: Gain +2 attack and +2 health."
+        "About": "Enemy summoned: Gain +1 attack and +3 health."
       },
       {
         "Level": 2,
-        "About": "Enemy summoned: Gain +4 attack and +4 health."
+        "About": "Enemy summoned: Gain +2 attack and +6 health."
       },
       {
         "Level": 3,
-        "About": "Enemy summoned: Gain +6 attack and +6 health."
+        "About": "Enemy summoned: Gain +3 attack and +9 health."
       }
     ],
     "Id": "193",
@@ -6242,20 +6242,20 @@
     ]
   },
   {
-    "Attack": 4,
+    "Attack": 5,
     "Health": 3,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Before attack: If opponent has duplicates, deal 2 damage to all enemies. Works 1 time per battle."
+        "About": "Before any attack: If opponent has duplicates, deal 2 damage to all enemies. Works 1 time per battle."
       },
       {
         "Level": 2,
-        "About": "Before attack: If opponent has duplicates, deal 4 damage to all enemies. Works 1 time per battle."
+        "About": "Before any attack: If opponent has duplicates, deal 4 damage to all enemies. Works 1 time per battle."
       },
       {
         "Level": 3,
-        "About": "Before attack: If opponent has duplicates, deal 6 damage to all enemies. Works 1 time per battle."
+        "About": "Before any attack: If opponent has duplicates, deal 6 damage to all enemies. Works 1 time per battle."
       }
     ],
     "Id": "377",
@@ -7035,20 +7035,20 @@
     ]
   },
   {
-    "Attack": 3,
+    "Attack": 2,
     "Health": 5,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Give friends that aren't from your pack +1 attack and +2 health."
+        "About": "Faint: Give friends that aren't from your pack +2 attack and +2 health."
       },
       {
         "Level": 2,
-        "About": "Faint: Give friends that aren't from your pack +2 attack and +4 health."
+        "About": "Faint: Give friends that aren't from your pack +4 attack and +4 health."
       },
       {
         "Level": 3,
-        "About": "Faint: Give friends that aren't from your pack +3 attack and +6 health."
+        "About": "Faint: Give friends that aren't from your pack +6 attack and +6 health."
       }
     ],
     "Id": "544",
@@ -7133,7 +7133,7 @@
   },
   {
     "Attack": 3,
-    "Health": 3,
+    "Health": 6,
     "Abilities": [
       {
         "Level": 1,
@@ -7170,15 +7170,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Feed adjacent friends one Corncob."
+        "About": "Start of battle: Feed adjacent friends one Corncob with double effect."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Feed adjacent friends two Corncobs."
+        "About": "Start of battle: Feed adjacent friends two Corncobs with double effect."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Feed adjacent friends three Corncobs."
+        "About": "Start of battle: Feed adjacent friends three Corncobs with double effect."
       }
     ],
     "Id": "694",
@@ -7705,8 +7705,8 @@
     ]
   },
   {
-    "Attack": 1,
-    "Health": 1,
+    "Attack": 3,
+    "Health": 2,
     "Abilities": [
       {
         "Level": 1,
@@ -8180,19 +8180,19 @@
   },
   {
     "Attack": 3,
-    "Health": 3,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Copy ailment to the first enemy."
+        "About": "Start of battle: Copy ailment (or Spooked) to the first enemy."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Copy ailment to the first enemy with double effect."
+        "About": "Start of battle: Copy ailment (or Spooked) to the first enemy with double effect."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Copy ailment to the first enemy with triple effect."
+        "About": "Start of battle: Copy ailment (or Spooked) to the first enemy with triple effect."
       }
     ],
     "Id": "701",
@@ -8284,15 +8284,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Knock out: Feed the back-most friend with one apple."
+        "About": "Knock out: Feed the nearest friend behind with one Better Apple."
       },
       {
         "Level": 2,
-        "About": "Knock out: Feed the back-most friend with two apples."
+        "About": "Knock out: Feed the nearest friend behind with two Better Apples."
       },
       {
         "Level": 3,
-        "About": "Knock out: Feed the back-most friend with three apples."
+        "About": "Knock out: Feed the nearest friend behind with three Better Apples."
       }
     ],
     "Id": "560",
@@ -8470,8 +8470,8 @@
     "CustomArchetypes": []
   },
   {
-    "Attack": 1,
-    "Health": 1,
+    "Attack": 2,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
@@ -8505,7 +8505,7 @@
   },
   {
     "Attack": 2,
-    "Health": 4,
+    "Health": 6,
     "Abilities": [
       {
         "Level": 1,
@@ -9103,8 +9103,8 @@
     ]
   },
   {
-    "Attack": 2,
-    "Health": 5,
+    "Attack": 3,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
@@ -9271,7 +9271,7 @@
     "Random": true
   },
   {
-    "Attack": 2,
+    "Attack": 4,
     "Health": 4,
     "Abilities": [
       {
@@ -9304,8 +9304,8 @@
     ]
   },
   {
-    "Attack": 2,
-    "Health": 2,
+    "Attack": 3,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -9465,20 +9465,20 @@
     ]
   },
   {
-    "Attack": 6,
-    "Health": 2,
+    "Attack": 5,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
-        "About": "End turn: Remove the shop pet below and gain 50% of its attack and health until next turn."
+        "About": "End turn: Remove the most healthy unfrozen shop pet to gain 50% of its stats until next turn."
       },
       {
         "Level": 2,
-        "About": "End turn: Remove the shop pet below and gain 100% of its attack and health until next turn."
+        "About": "End turn: Remove the most healthy unfrozen shop pet to gain 100% of its stats until next turn."
       },
       {
         "Level": 3,
-        "About": "End turn: Remove the shop pet below and gain 150% of its attack and health until next turn."
+        "About": "End turn: Remove the most healthy unfrozen shop pet to gain 150% of its stats until next turn."
       }
     ],
     "Id": "730",
@@ -10485,7 +10485,7 @@
     "Id": "185",
     "Name": "Gazelle",
     "NameId": "Gazelle",
-    "Tier": 4,
+    "Tier": 3,
     "TierMax": 2147483647,
     "Packs": [
       "Custom"
@@ -10900,15 +10900,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Give random ailments to ANY three random pets."
+        "About": "Faint: Give random ailments to ANY three random pets. Double the effect on enemies."
       },
       {
         "Level": 2,
-        "About": "Faint: Give random ailments to ANY six random pets."
+        "About": "Faint: Give random ailments to ANY six random pets. Double the effect on enemies."
       },
       {
         "Level": 3,
-        "About": "Faint: Give random ailments to ANY nine random pets."
+        "About": "Faint: Give random ailments to ANY nine random pets. Double the effect on enemies."
       }
     ],
     "Id": "750",
@@ -11034,15 +11034,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Summon one 3/3 plain Locust for each food eaten this turn."
+        "About": "Faint: Summon one friend and feed it with random food for every food eaten this turn."
       },
       {
         "Level": 2,
-        "About": "Faint: Summon one 6/6 plain Locust for each food eaten this turn."
+        "About": "Faint: Summon two friends and feed them with random food for every food eaten this turn."
       },
       {
         "Level": 3,
-        "About": "Faint: Summon one 9/9 plain Locust for each food eaten this turn."
+        "About": "Faint: Summon three friends and feed them with random food for every food eaten this turn."
       }
     ],
     "Id": "698",
@@ -11233,7 +11233,7 @@
   },
   {
     "Attack": 3,
-    "Health": 6,
+    "Health": 8,
     "Abilities": [
       {
         "Level": 1,
@@ -11304,15 +11304,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of turn: Summon one random level 1 nostalgic toy."
+        "About": "Start of turn: Choose one level 1 nostalgic toy."
       },
       {
         "Level": 2,
-        "About": "Start of turn: Summon one random level 2 nostalgic toy."
+        "About": "Start of turn: Choose one level 2 nostalgic toy."
       },
       {
         "Level": 3,
-        "About": "Start of turn: Summon one random level 3 nostalgic toy."
+        "About": "Start of turn: Choose one level 3 nostalgic toy."
       }
     ],
     "Id": "612",
@@ -11738,7 +11738,7 @@
   },
   {
     "Attack": 1,
-    "Health": 5,
+    "Health": 8,
     "Abilities": [
       {
         "Level": 1,
@@ -12102,8 +12102,8 @@
     ]
   },
   {
-    "Attack": 3,
-    "Health": 6,
+    "Attack": 1,
+    "Health": 5,
     "Abilities": [
       {
         "Level": 1,
@@ -12121,7 +12121,7 @@
     "Id": "727",
     "Name": "Spider Crab",
     "NameId": "SpiderCrab",
-    "Tier": 4,
+    "Tier": 2,
     "TierMax": 2147483647,
     "Packs": [
       "Custom"
@@ -12370,15 +12370,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Make the lowest attack enemy 5x Spooked and jump-attack it."
+        "About": "Start of battle: Make the lowest attack enemy 5x\u00a0Spooked and jump-attack it."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Make the lowest attack enemy 10x Spooked and jump-attack it."
+        "About": "Start of battle: Make the lowest attack enemy 10x\u00a0Spooked and jump-attack it."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Make the lowest attack enemy 15x Spooked and jump-attack it."
+        "About": "Start of battle: Make the lowest attack enemy 15x\u00a0Spooked and jump-attack it."
       }
     ],
     "Id": "437",
@@ -13436,15 +13436,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "After first attack: Summon one friend with +1 attack and +1 health for each ailment gained."
+        "About": "Faint: Summon one 3/3 friend with +1 attack and +1 health for each ailment gained."
       },
       {
         "Level": 2,
-        "About": "After first attack: Summon two friends with +1 attack and +1 health for each ailment gained."
+        "About": "Faint: Summon two 3/3 friends with +1 attack and +1 health for each ailment gained."
       },
       {
         "Level": 3,
-        "About": "After first attack: Summon three friends with +1 attack and +1 health for each ailment gained."
+        "About": "Faint: Summon three 3/3 friends with +1 attack and +1 health for each ailment gained."
       }
     ],
     "Id": "770",
@@ -14107,15 +14107,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Spend trumpets to give 3 mana + 1 for each trumpet to the nearest friend behind."
+        "About": "Faint: Convert trumpets into double mana and spread it evenly to friends."
       },
       {
         "Level": 2,
-        "About": "Faint: Spend trumpets to give 6 mana + 2 for each trumpet to the nearest friend behind."
+        "About": "Faint: Convert trumpets into triple mana and spread it evenly to friends."
       },
       {
         "Level": 3,
-        "About": "Faint: Spend trumpets to give 9 mana + 3 for each trumpet to the nearest friend behind."
+        "About": "Faint: Convert trumpets into quadruple mana and spread it evenly to friends."
       }
     ],
     "Id": "556",
@@ -14275,15 +14275,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Spend mana to gain 3 trumpets + 1 for each mana."
+        "About": "Faint: Spend mana to gain 1 trumpet for each mana."
       },
       {
         "Level": 2,
-        "About": "Faint: Spend mana to gain 6 trumpets + 2 for each mana."
+        "About": "Faint: Spend mana to gain 2 trumpets for each mana."
       },
       {
         "Level": 3,
-        "About": "Faint: Spend mana to gain 9 trumpets + 3 for each mana."
+        "About": "Faint: Spend mana to gain 3 trumpets for each mana."
       }
     ],
     "Id": "784",
@@ -15432,15 +15432,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Remove 1 health from all enemies for every 10 attack this has."
+        "About": "Start of battle: Remove 1 health from all enemies. Repeat for every 10 attack this has."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Remove 2 health from all enemies for every 10 attack this has."
+        "About": "Start of battle: Remove 2 health from all enemies. Repeat for every 10 attack this has."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Remove 3 health from all enemies for every 10 attack this has."
+        "About": "Start of battle: Remove 3 health from all enemies. Repeat for every 10 attack this has."
       }
     ],
     "Id": "569",
@@ -15767,15 +15767,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Deal 3 damage for each different friendly ailment to the first enemy."
+        "About": "Start of battle: Deal 4 damage for each different friendly ailment to the first enemy."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Deal 3 damage for each different friendly ailment to the first two enemies."
+        "About": "Start of battle: Deal 4 damage for each different friendly ailment to the first two enemies."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Deal 3 damage for each different friendly ailment to the first three enemies."
+        "About": "Start of battle: Deal 4 damage for each different friendly ailment to the first three enemies."
       }
     ],
     "Id": "807",
@@ -16542,8 +16542,8 @@
     "Random": true
   },
   {
-    "Attack": 5,
-    "Health": 7,
+    "Attack": 6,
+    "Health": 8,
     "Abilities": [
       {
         "Level": 1,
@@ -16650,15 +16650,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Before attack: Move ailment to the first enemy with double effect."
+        "About": "Before attack: Move ailment to the first two enemies."
       },
       {
         "Level": 2,
-        "About": "Before attack: Move ailment to the first two enemies with double effects."
+        "About": "Before attack: Move ailment to the first two enemies with double effect."
       },
       {
         "Level": 3,
-        "About": "Before attack: Move ailment to the first three enemies with double effects."
+        "About": "Before attack: Move ailment to the first two enemies with triple effect."
       }
     ],
     "Id": "769",
@@ -16745,8 +16745,8 @@
     ]
   },
   {
-    "Attack": 3,
-    "Health": 4,
+    "Attack": 5,
+    "Health": 6,
     "Abilities": [
       {
         "Level": 1,
@@ -17216,7 +17216,7 @@
   },
   {
     "Attack": 3,
-    "Health": 2,
+    "Health": 8,
     "Abilities": [
       {
         "Level": 1,
@@ -17282,8 +17282,8 @@
     "Random": true
   },
   {
-    "Attack": 4,
-    "Health": 8,
+    "Attack": 6,
+    "Health": 10,
     "Abilities": [
       {
         "Level": 1,
@@ -18452,8 +18452,8 @@
     ]
   },
   {
-    "Attack": 5,
-    "Health": 4,
+    "Attack": 4,
+    "Health": 10,
     "Abilities": [
       {
         "Level": 1,
@@ -19147,6 +19147,37 @@
     "TierMax": 2147483647,
     "Packs": [],
     "PacksRequired": [],
+    "CustomArchetypes": []
+  },
+  {
+    "Attack": 6,
+    "Health": 6,
+    "Abilities": [
+      {
+        "Level": 1,
+        "About": "Before battle: If pack has no pets/food from the tab, remove 1 XP from three random enemies."
+      },
+      {
+        "Level": 2,
+        "About": "Before battle: If pack has no pets/food from the tab, remove 2 XP from three random enemies."
+      },
+      {
+        "Level": 3,
+        "About": "Before battle: If pack has no pets/food from the tab, remove 3 XP from three random enemies."
+      }
+    ],
+    "Id": "824",
+    "Name": "Tanystropheus",
+    "NameId": "Tanystropheus",
+    "Tier": 6,
+    "TierMax": 2147483647,
+    "Packs": [
+      "Custom"
+    ],
+    "PacksRequired": [
+      "Custom"
+    ],
+    "Rollable": true,
     "CustomArchetypes": []
   }
 ]

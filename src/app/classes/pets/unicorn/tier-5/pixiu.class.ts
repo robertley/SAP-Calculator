@@ -40,7 +40,7 @@ export class PixiuAbility extends Ability {
     super({
       name: 'PixiuAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -77,3 +77,4 @@ export class PixiuAbility extends Ability {
     return new PixiuAbility(newOwner, this.logService);
   }
 }
+

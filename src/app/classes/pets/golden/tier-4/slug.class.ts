@@ -48,7 +48,7 @@ export class SlugAbility extends Ability {
     super({
       name: 'SlugAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -99,3 +99,4 @@ export class SlugAbility extends Ability {
     return new SlugAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

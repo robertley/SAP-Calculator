@@ -41,7 +41,7 @@ export class DoveAbility extends Ability {
     super({
       name: 'DoveAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -106,3 +106,4 @@ export class DoveAbility extends Ability {
     return new DoveAbility(newOwner, this.logService);
   }
 }
+

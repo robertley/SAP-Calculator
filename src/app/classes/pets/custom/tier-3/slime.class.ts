@@ -43,7 +43,7 @@ export class SlimeAbility extends Ability {
     super({
       name: 'Slime Ability',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -100,3 +100,4 @@ export class SlimeAbility extends Ability {
     return new SlimeAbility(newOwner, this.logService);
   }
 }
+

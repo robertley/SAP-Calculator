@@ -42,7 +42,7 @@ export class BlueJayAbility extends Ability {
     super({
       name: 'Blue Jay Ability',
       owner: owner,
-      triggers: ['FoodEatenByThis', 'StartTurn', 'ThisDied'],
+      triggers: ['FoodEatenByThis', 'StartTurn', 'PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -64,7 +64,7 @@ export class BlueJayAbility extends Ability {
       return;
     }
 
-    if (context.trigger === 'ThisDied') {
+    if (context.trigger === 'PostRemovalFaint') {
       const buffPerFood = this.level;
       const totalBuff = buffPerFood * this.foodsEatenThisTurn;
       if (totalBuff <= 0) {
@@ -104,3 +104,4 @@ export class BlueJayAbility extends Ability {
     return new BlueJayAbility(newOwner, this.logService);
   }
 }
+

@@ -14,7 +14,20 @@ export class Chili extends Equipment {
     if (attackPet == null) {
       return;
     }
-    pet.snipePet(attackPet, 5, false, null, null, true);
+    const baseDamage = 5;
+    const multiplier = pet.equipment?.multiplier ?? 1;
+    const damage = baseDamage * multiplier;
+    pet.snipePet(
+      attackPet,
+      damage,
+      false,
+      null,
+      null,
+      true,
+      false,
+      'attacked',
+      baseDamage,
+    );
   };
 
   constructor(

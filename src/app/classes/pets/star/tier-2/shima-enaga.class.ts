@@ -58,7 +58,7 @@ export class ShimaEnagaAbility extends Ability {
     super({
       name: 'ShimaEnagaAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -124,3 +124,4 @@ export class ShimaEnagaAbility extends Ability {
     );
   }
 }
+

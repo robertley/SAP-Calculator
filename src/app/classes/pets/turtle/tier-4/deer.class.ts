@@ -51,7 +51,7 @@ export class DeerAbility extends Ability {
     super({
       name: 'DeerAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -103,3 +103,4 @@ export class DeerAbility extends Ability {
     return new DeerAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

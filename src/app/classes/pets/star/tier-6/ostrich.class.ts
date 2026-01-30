@@ -49,7 +49,7 @@ export class OstrichAbility extends Ability {
     super({
       name: 'OstrichAbility',
       owner: owner,
-      triggers: ['Roll1', 'StartTurn'],
+      triggers: ['Roll', 'StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

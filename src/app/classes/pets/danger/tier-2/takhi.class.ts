@@ -57,7 +57,7 @@ export class TakhiAbility extends Ability {
     super({
       name: 'TakhiAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -122,3 +122,4 @@ export class TakhiAbility extends Ability {
     );
   }
 }
+

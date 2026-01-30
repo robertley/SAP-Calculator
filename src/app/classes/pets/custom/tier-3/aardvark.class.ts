@@ -46,12 +46,13 @@ export class AardvarkAbility extends Ability {
     const { tiger, pteranodon } = context;
     const owner = this.owner;
 
-    const buff = 2 * this.level;
-    owner.increaseAttack(buff);
-    owner.increaseHealth(buff);
+    const attackBuff = this.level;
+    const healthBuff = 3 * this.level;
+    owner.increaseAttack(attackBuff);
+    owner.increaseHealth(healthBuff);
 
     this.logService.createLog({
-      message: `${owner.name} gained +${buff}/+${buff} from EnemySummoned.`,
+      message: `${owner.name} gained +${attackBuff}/+${healthBuff} from EnemySummoned.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

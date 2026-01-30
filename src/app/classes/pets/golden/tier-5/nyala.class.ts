@@ -40,7 +40,7 @@ export class NyalaAbility extends Ability {
     super({
       name: 'NyalaAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -73,3 +73,4 @@ export class NyalaAbility extends Ability {
     return new NyalaAbility(newOwner, this.logService);
   }
 }
+

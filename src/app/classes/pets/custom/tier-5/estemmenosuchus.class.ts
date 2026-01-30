@@ -61,7 +61,6 @@ class EstemmenosuchusFriend extends Pet {
 export class EstemmenosuchusAbility extends Ability {
   private logService: LogService;
   private abilityService: AbilityService;
-  private triggered = false;
 
   constructor(
     owner: Pet,
@@ -71,7 +70,7 @@ export class EstemmenosuchusAbility extends Ability {
     super({
       name: 'Estemmenosuchus Ability',
       owner: owner,
-      triggers: ['ThisAttacked'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -90,14 +89,9 @@ export class EstemmenosuchusAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    if (this.triggered) {
-      this.triggerTigerExecution(context);
-      return;
-    }
-
     const owner = this.owner;
     const ailmentCount = Math.max(0, this.countAilments());
-    const buff = Math.max(1, ailmentCount + 1);
+    const buff = 3 + ailmentCount;
     const summonCount = Math.min(this.level, 3);
     const spawnIndex = owner.position ?? owner.savedPosition ?? 0;
     let summoned = 0;
@@ -120,7 +114,7 @@ export class EstemmenosuchusAbility extends Ability {
 
     if (summoned > 0) {
       this.logService.createLog({
-        message: `${owner.name} summoned ${summoned} ally${summoned === 1 ? '' : 'ies'} with +${buff}/+${buff} after its first attack.`,
+        message: `${owner.name} summoned ${summoned} 3/3 friend${summoned === 1 ? '' : 's'} with +${ailmentCount}/+${ailmentCount}.`,
         type: 'ability',
         player: owner.parent,
         tiger: context.tiger,
@@ -128,7 +122,6 @@ export class EstemmenosuchusAbility extends Ability {
       });
     }
 
-    this.triggered = true;
     this.triggerTigerExecution(context);
   }
 
@@ -140,3 +133,4 @@ export class EstemmenosuchusAbility extends Ability {
     );
   }
 }
+

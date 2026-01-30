@@ -34,7 +34,7 @@ export class TelevisionAbility extends Ability {
     super({
       name: 'TelevisionAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -75,4 +75,5 @@ export class TelevisionAbility extends Ability {
     return new TelevisionAbility(newOwner, this.logService);
   }
 }
+
 

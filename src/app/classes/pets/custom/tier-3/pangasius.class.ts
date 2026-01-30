@@ -3,8 +3,9 @@ import { LogService } from 'app/services/log.service';
 import { Equipment } from 'app/classes/equipment.class';
 import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
-import { cloneDeep } from 'lodash-es';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Spooked } from 'app/classes/equipment/ailments/spooked.class';
+import { cloneEquipment } from 'app/util/equipment-utils';
 
 
 export class Pangasius extends Pet {
@@ -58,21 +59,23 @@ export class PangasiusAbility extends Ability {
     const source = this.getFriendWithAilment(owner.parent);
     const target = this.getFirstEnemy(owner.parent.opponent);
 
-    if (!source || !target) {
+    if (!target) {
       this.triggerTigerExecution(context);
       return;
     }
 
     const copies = this.level;
-    const sourceEquipment = source.equipment;
-    if (!sourceEquipment) {
+    const sourceEquipment = source?.equipment ?? new Spooked();
+    const ailmentClone = cloneEquipment(sourceEquipment);
+    if (!ailmentClone) {
       this.triggerTigerExecution(context);
       return;
     }
-    for (let i = 0; i < copies; i++) {
-      const ailmentClone = cloneDeep(sourceEquipment);
-      target.givePetEquipment(ailmentClone);
+    if (copies > 1) {
+      ailmentClone.multiplier = copies;
+      ailmentClone.multiplierMessage = ` x${copies} (Pangasius)`;
     }
+    target.givePetEquipment(ailmentClone);
 
     const effectDescriptions = [
       'copied',
@@ -83,7 +86,7 @@ export class PangasiusAbility extends Ability {
       effectDescriptions[Math.min(copies, effectDescriptions.length) - 1];
 
     this.logService.createLog({
-      message: `${owner.name} ${effectNote} ${source.name}'s ${sourceEquipment?.name ?? 'ailment'} onto ${target.name}.`,
+      message: `${owner.name} ${effectNote} ${source ? `${source.name}'s ${sourceEquipment?.name}` : sourceEquipment?.name} onto ${target.name}.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

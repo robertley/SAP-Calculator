@@ -51,7 +51,7 @@ export class ChimeraAbility extends Ability {
     super({
       name: 'ChimeraAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -170,3 +170,4 @@ export class ChimeraAbility extends Ability {
     return new ChimeraAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

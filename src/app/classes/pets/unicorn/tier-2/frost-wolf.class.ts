@@ -41,7 +41,7 @@ export class FrostWolfAbility extends Ability {
     super({
       name: 'FrostWolfAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -95,3 +95,4 @@ export class FrostWolfAbility extends Ability {
     return new FrostWolfAbility(newOwner, this.logService);
   }
 }
+

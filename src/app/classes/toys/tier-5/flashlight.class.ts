@@ -33,7 +33,7 @@ export class FlashlightAbility extends Ability {
     super({
       name: 'FlashlightAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -72,4 +72,5 @@ export class FlashlightAbility extends Ability {
     return new FlashlightAbility(newOwner, this.logService);
   }
 }
+
 

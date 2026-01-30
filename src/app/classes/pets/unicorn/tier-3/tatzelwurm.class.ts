@@ -41,7 +41,7 @@ export class TatzelwurmAbility extends Ability {
     super({
       name: 'TatzelwurmAbility',
       owner: owner,
-      triggers: ['FriendAheadDied'],
+      triggers: ['FriendAheadFainted'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

@@ -52,7 +52,7 @@ export class WhaleSummonAbility extends Ability {
     super({
       name: 'WhaleSummonAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -163,3 +163,4 @@ export class WhaleSwallowAbility extends Ability {
     return new WhaleSwallowAbility(newOwner, this.logService, this.petService);
   }
 }
+

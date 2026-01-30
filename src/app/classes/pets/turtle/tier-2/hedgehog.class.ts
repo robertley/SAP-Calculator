@@ -40,7 +40,7 @@ export class HedgehogAbility extends Ability {
     super({
       name: 'HedgehogAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -74,3 +74,4 @@ export class HedgehogAbility extends Ability {
     return new HedgehogAbility(newOwner, this.logService);
   }
 }
+

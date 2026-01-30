@@ -49,7 +49,7 @@ export class SmallerSlugAbility extends Ability {
     super({
       name: 'SmallerSlugAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -104,3 +104,4 @@ export class SmallerSlugAbility extends Ability {
     );
   }
 }
+

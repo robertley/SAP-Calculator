@@ -33,7 +33,7 @@ export class RadioAbility extends Ability {
     super({
       name: 'RadioAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -72,4 +72,5 @@ export class RadioAbility extends Ability {
     return new RadioAbility(newOwner, this.logService);
   }
 }
+
 

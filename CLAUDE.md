@@ -118,7 +118,7 @@ The ability system uses a flexible `Ability` class with `AbilityContext` objects
 
 Key components:
 
-- **AbilityTrigger** - 150+ trigger types (ThisHurt, FriendDied, StartBattle, etc.)
+- **AbilityTrigger** - 150+ trigger types (ThisHurt, FriendFainted, StartBattle, etc.)
 - **AbilityContext** - Parameter object containing gameApi, triggerPet, tiger, pteranodon, and custom params
 - **Ability class** - Encapsulates triggers, conditions, execution logic, max uses, Tiger synergy
 
@@ -130,7 +130,7 @@ export class MyPetAbility extends Ability {
     super({
       name: "MyPetAbility",
       owner: owner,
-      triggers: ["ThisHurt", "FriendDied"],
+      triggers: ["ThisHurt", "FriendFainted"],
       abilityType: "Pet",
       maxUses: owner.level,
       condition: (context: AbilityContext) => {

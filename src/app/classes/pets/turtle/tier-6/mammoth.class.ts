@@ -40,7 +40,7 @@ export class MammothAbility extends Ability {
     super({
       name: 'MammothAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -83,3 +83,4 @@ export class MammothAbility extends Ability {
     return new MammothAbility(newOwner, this.logService);
   }
 }
+

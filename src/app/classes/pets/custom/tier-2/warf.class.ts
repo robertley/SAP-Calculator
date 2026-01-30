@@ -37,12 +37,13 @@ export class Warf extends Pet {
 
 export class WarfAbility extends Ability {
   private logService: LogService;
+  private usedFirstTrigger = false;
 
   constructor(owner: Pet, logService: LogService) {
     super({
       name: 'Warf Ability',
       owner: owner,
-      triggers: ['ThisGainedMana'],
+      triggers: ['ThisGainedMana', 'StartBattle'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,6 +56,12 @@ export class WarfAbility extends Ability {
     const { tiger, pteranodon } = context;
     const owner = this.owner;
 
+    if (context.trigger === 'StartBattle') {
+      this.usedFirstTrigger = false;
+      this.triggerTigerExecution(context);
+      return;
+    }
+
     const targetResp = owner.parent.opponent.getRandomPet(
       [],
       false,
@@ -64,7 +71,8 @@ export class WarfAbility extends Ability {
     );
     if (targetResp.pet) {
       const target = targetResp.pet;
-      const damage = this.level;
+      const baseDamage = this.level;
+      const damage = this.usedFirstTrigger ? baseDamage : baseDamage * 3;
 
       owner.snipePet(target, damage, targetResp.random, tiger, pteranodon);
 
@@ -76,6 +84,8 @@ export class WarfAbility extends Ability {
         pteranodon: pteranodon,
         randomEvent: targetResp.random,
       });
+
+      this.usedFirstTrigger = true;
     }
 
     this.triggerTigerExecution(context);

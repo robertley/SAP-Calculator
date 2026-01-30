@@ -41,7 +41,7 @@ export class EthiopianWolfAbility extends Ability {
     super({
       name: 'EthiopianWolfAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -84,3 +84,4 @@ export class EthiopianWolfAbility extends Ability {
     return new EthiopianWolfAbility(newOwner, this.logService);
   }
 }
+

@@ -40,7 +40,7 @@ export class CalygreyhoundAbility extends Ability {
     super({
       name: 'CalygreyhoundAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -87,3 +87,4 @@ export class CalygreyhoundAbility extends Ability {
     return new CalygreyhoundAbility(newOwner, this.logService);
   }
 }
+

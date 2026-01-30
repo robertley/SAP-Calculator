@@ -48,7 +48,7 @@ export class AntAbility extends Ability {
     super({
       name: 'AntAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true, // Pet abilities are native
       abilitylevel: owner.level,
@@ -97,3 +97,4 @@ export class AntAbility extends Ability {
     return new AntAbility(newOwner, this.logService);
   }
 }
+

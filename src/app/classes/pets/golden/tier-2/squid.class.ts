@@ -41,7 +41,7 @@ export class SquidAbility extends Ability {
     super({
       name: 'SquidAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -104,3 +104,4 @@ export class SquidAbility extends Ability {
     return new SquidAbility(newOwner, this.logService);
   }
 }
+

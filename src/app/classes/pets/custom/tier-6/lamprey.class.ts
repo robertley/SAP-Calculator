@@ -11,7 +11,7 @@ export class Lamprey extends Pet {
   tier = 6;
   pack: Pack = 'Custom';
   attack = 3;
-  health = 2;
+  health = 8;
   initAbilities(): void {
     this.addAbility(new LampreyAbility(this, this.logService));
     super.initAbilities();
@@ -40,7 +40,7 @@ export class LampreyAbility extends Ability {
     super({
       name: 'LampreyAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -87,3 +87,4 @@ export class LampreyAbility extends Ability {
     return new LampreyAbility(newOwner, this.logService);
   }
 }
+

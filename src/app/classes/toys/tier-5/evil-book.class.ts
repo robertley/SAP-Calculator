@@ -69,7 +69,7 @@ export class EvilBookAbility extends Ability {
     super({
       name: 'EvilBookAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

@@ -12,7 +12,8 @@ export class Radish extends Equipment {
   name = 'Radish';
   equipmentClass: EquipmentClass = 'beforeStartOfBattle';
   callback = (pet: Pet) => {
-    pet.addAbility(new RadishAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new RadishAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

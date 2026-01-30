@@ -47,7 +47,7 @@ export class MandrillAbility extends Ability {
     super({
       name: 'MandrillAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -77,3 +77,4 @@ export class MandrillAbility extends Ability {
     return new MandrillAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

@@ -46,7 +46,7 @@ export class FlyAbility extends Ability {
     super({
       name: 'FlyAbility',
       owner: owner,
-      triggers: ['FriendDied'],
+      triggers: ['PostRemovalFriendFaints'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -109,3 +109,4 @@ export class FlyAbility extends Ability {
     return new FlyAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

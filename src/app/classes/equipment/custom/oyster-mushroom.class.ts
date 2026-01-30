@@ -9,7 +9,8 @@ export class OysterMushroom extends Equipment {
   name = 'Oyster Mushroom';
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
-    pet.addAbility(new OysterMushroomAbility(pet, this));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new OysterMushroomAbility(pet, equipment));
   };
 }
 

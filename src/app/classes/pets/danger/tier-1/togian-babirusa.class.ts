@@ -42,7 +42,7 @@ export class TogianBabirusaAbility extends Ability {
     super({
       name: 'TogianBabirusaAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class TogianBabirusaAbility extends Ability {
     return new TogianBabirusaAbility(newOwner, this.logService);
   }
 }
+

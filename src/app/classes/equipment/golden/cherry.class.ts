@@ -7,7 +7,8 @@ export class Cherry extends Equipment {
   name = 'Cherry';
   equipmentClass: EquipmentClass = 'beforeStartOfBattle';
   callback = (pet: Pet) => {
-    pet.addAbility(new CherryAbility(pet, this));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new CherryAbility(pet, equipment));
   };
 }
 

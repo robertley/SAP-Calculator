@@ -7,10 +7,10 @@ import { Player } from 'app/classes/player.class';
 
 export class HermitCrab extends Pet {
   name = 'Hermit Crab';
-  tier = 2;
+  tier = 1;
   pack: Pack = 'Custom';
   attack = 1;
-  health = 5;
+  health = 4;
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

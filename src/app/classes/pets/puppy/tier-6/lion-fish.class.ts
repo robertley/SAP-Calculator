@@ -40,7 +40,7 @@ export class LionfishAbility extends Ability {
     super({
       name: 'LionfishAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -80,3 +80,4 @@ export class LionfishAbility extends Ability {
     return new LionfishAbility(newOwner, this.logService);
   }
 }
+

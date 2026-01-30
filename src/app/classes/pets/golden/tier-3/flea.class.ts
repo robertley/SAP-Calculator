@@ -41,7 +41,7 @@ export class FleaAbility extends Ability {
     super({
       name: 'FleaAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class FleaAbility extends Ability {
     return new FleaAbility(newOwner, this.logService);
   }
 }
+

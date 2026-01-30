@@ -4,6 +4,9 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { InjectorService } from 'app/services/injector.service';
+import { PetService } from 'app/services/pet/pet.service';
+import { levelToExp } from 'app/util/leveling';
 
 
 export class Wombat extends Pet {
@@ -58,26 +61,28 @@ export class WombatAbility extends Ability {
     const target = opponentPets.find((p) => p.alive && p.isFaintPet());
 
     if (target) {
-      // Copy its faint abilities
-      const faintAbilities = target
-        .getAbilities()
-        .filter(
-          (a) =>
-            a.matchesTrigger('ThisDied') || a.matchesTrigger('BeforeThisDies'),
-        );
-
-      for (const abilityToCopy of faintAbilities) {
-        const copiedAbility = abilityToCopy.copy(owner);
-        if (copiedAbility) {
-          copiedAbility.abilityLevel = this.level;
-          copiedAbility.alwaysIgnorePetLevel = true;
-          copiedAbility.reset();
-          owner.addAbility(copiedAbility);
-        }
+      const petService = InjectorService.getInjector().get(PetService);
+      if (!petService) {
+        this.triggerTigerExecution(context);
+        return;
       }
 
+      const transformedPet = petService.createPet(
+        {
+          name: target.name,
+          attack: null,
+          health: null,
+          exp: levelToExp(this.level),
+          equipment: null,
+          mana: null,
+        },
+        owner.parent,
+      );
+
+      owner.parent.transformPet(owner, transformedPet);
+
       this.logService.createLog({
-        message: `${owner.name} copied ${target.name}'s faint abilities as level ${this.level}.`,
+        message: `${owner.name} transformed into level ${this.level} ${target.name}.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,

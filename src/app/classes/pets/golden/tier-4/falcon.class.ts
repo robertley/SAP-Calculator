@@ -56,7 +56,7 @@ export class FalconAbility extends Ability {
     super({
       name: 'FalconAbility',
       owner: owner,
-      triggers: ['ThisKilledEnemy'],
+      triggers: ['KnockOut'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

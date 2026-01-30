@@ -21,7 +21,7 @@ export class CursedAbility extends Ability {
     super({
       name: 'CursedAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -54,3 +54,4 @@ export class CursedAbility extends Ability {
     });
   }
 }
+

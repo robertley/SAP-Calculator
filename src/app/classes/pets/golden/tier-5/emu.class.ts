@@ -40,7 +40,7 @@ export class EmuAbility extends Ability {
     super({
       name: 'EmuAbility',
       owner: owner,
-      triggers: ['ClearFront'],
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

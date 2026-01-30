@@ -10,8 +10,9 @@ export class Egg extends Equipment {
   tier = 1;
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Egg ability using dedicated ability class
-    pet.addAbility(new EggAbility(pet, this));
+    pet.addAbility(new EggAbility(pet, equipment));
   };
 
   constructor(protected logService: LogService) {

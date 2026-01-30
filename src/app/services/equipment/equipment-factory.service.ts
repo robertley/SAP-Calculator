@@ -60,7 +60,7 @@ const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
   ['Eggplant', 5],
   ['Kiwano', 5],
   ['Magic Beans', 5],
-  ['Onion', 5],
+  ['Onion', 4],
   ['Pepper', 5],
   ['Mild Chili', 4],
   ['Popcorn', 6],

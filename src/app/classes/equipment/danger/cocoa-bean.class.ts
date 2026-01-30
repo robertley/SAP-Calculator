@@ -15,9 +15,10 @@ export class CocoaBean extends Equipment {
   uses = 1;
   originalUses = 1;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Cocoa Bean ability using dedicated ability class
     pet.addAbility(
-      new CocoaBeanAbility(pet, this, this.logService, this.petService),
+      new CocoaBeanAbility(pet, equipment, this.logService, this.petService),
     );
   };
 

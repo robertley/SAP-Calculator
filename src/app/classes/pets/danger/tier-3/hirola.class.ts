@@ -49,7 +49,7 @@ export class HirolaAbility extends Ability {
     super({
       name: 'HirolaAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -102,3 +102,4 @@ export class HirolaAbility extends Ability {
     return new HirolaAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

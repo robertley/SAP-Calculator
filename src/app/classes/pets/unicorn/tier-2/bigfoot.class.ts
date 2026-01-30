@@ -48,7 +48,7 @@ export class BigfootAbility extends Ability {
     super({
       name: 'BigfootAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -78,3 +78,4 @@ export class BigfootAbility extends Ability {
     return new BigfootAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

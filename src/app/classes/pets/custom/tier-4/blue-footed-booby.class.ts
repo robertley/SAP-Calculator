@@ -42,7 +42,7 @@ export class BlueFootedBoobyAbility extends Ability {
     super({
       name: 'Blue-Footed Booby Ability',
       owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -91,3 +91,4 @@ export class BlueFootedBoobyAbility extends Ability {
     return new BlueFootedBoobyAbility(newOwner, this.logService);
   }
 }
+

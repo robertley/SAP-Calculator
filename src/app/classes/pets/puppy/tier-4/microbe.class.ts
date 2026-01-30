@@ -41,7 +41,7 @@ export class MicrobeAbility extends Ability {
     super({
       name: 'MicrobeAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class MicrobeAbility extends Ability {
     return new MicrobeAbility(newOwner, this.logService);
   }
 }
+

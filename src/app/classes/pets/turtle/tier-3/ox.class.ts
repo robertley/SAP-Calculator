@@ -42,7 +42,7 @@ export class OxAbility extends Ability {
     super({
       name: 'OxAbility',
       owner: owner,
-      triggers: ['FriendAheadDied'],
+      triggers: ['FriendAheadFainted'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

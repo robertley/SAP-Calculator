@@ -43,7 +43,7 @@ export class PaintedTerrapinAbility extends Ability {
     super({
       name: 'PaintedTerrapinAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -86,3 +86,4 @@ export class PaintedTerrapinAbility extends Ability {
     return new PaintedTerrapinAbility(newOwner, this.logService);
   }
 }
+

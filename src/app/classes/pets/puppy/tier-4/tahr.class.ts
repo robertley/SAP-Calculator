@@ -48,7 +48,7 @@ export class TahrAbility extends Ability {
     super({
       name: 'TahrAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -93,3 +93,4 @@ export class TahrAbility extends Ability {
     return new TahrAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

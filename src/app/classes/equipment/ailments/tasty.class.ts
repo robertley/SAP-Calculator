@@ -8,8 +8,9 @@ export class Tasty extends Equipment {
   name = 'Tasty';
   equipmentClass = 'faint' as EquipmentClass;
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Tasty ability using dedicated ability class
-    pet.addAbility(new TastyAbility(pet, this, this.logService));
+    pet.addAbility(new TastyAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {
@@ -25,7 +26,7 @@ export class TastyAbility extends Ability {
     super({
       name: 'TastyAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Equipment',
       native: true,
       abilitylevel: 1,
@@ -60,3 +61,4 @@ export class TastyAbility extends Ability {
     });
   }
 }
+

@@ -10,8 +10,8 @@ export class QueenBee extends Pet {
   name = 'Queen Bee';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 3;
-  health = 3;
+  attack = 2;
+  health = 6;
 
   override initAbilities(): void {
     this.addAbility(new QueenBeeAbility(this, this.logService));

@@ -9,7 +9,8 @@ export class Cake extends Equipment {
   equipmentClass: EquipmentClass = 'shop';
   tier = 3;
   callback = (pet: Pet) => {
-    pet.addAbility(new CakeAbility(pet, this, this.logService));
+    const equipment = pet.getEquippedEquipmentInstance(this);
+    pet.addAbility(new CakeAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

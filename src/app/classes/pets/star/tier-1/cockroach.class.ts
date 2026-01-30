@@ -49,7 +49,7 @@ export class CockroachAbility extends Ability {
     super({
       name: 'CockroachAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -112,3 +112,4 @@ export class CockroachAbility extends Ability {
     return new CockroachAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

@@ -61,12 +61,16 @@ export class FarmerPigAbility extends Ability {
     );
 
     for (const friend of friends) {
-      friend.applyEquipment(new Corncob());
+      for (let i = 0; i < this.level; i++) {
+        const cob = new Corncob();
+        cob.effectMultiplier = 2;
+        friend.givePetEquipment(cob);
+      }
     }
 
     if (friends.length > 0) {
       this.logService.createLog({
-        message: `${owner.name} fed adjacent friends Corncob.`,
+        message: `${owner.name} fed adjacent friends ${this.level} Corncob${this.level === 1 ? '' : 's'} with double effect.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,

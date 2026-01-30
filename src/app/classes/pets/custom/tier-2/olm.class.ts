@@ -42,7 +42,7 @@ export class OlmAbility extends Ability {
     super({
       name: 'OlmAbility',
       owner: owner,
-      triggers: ['BeforeThisDies'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -99,3 +99,4 @@ export class OlmAbility extends Ability {
     return new OlmAbility(newOwner, this.logService);
   }
 }
+

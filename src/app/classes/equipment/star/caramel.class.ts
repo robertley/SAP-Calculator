@@ -8,8 +8,9 @@ export class Caramel extends Equipment {
   name = 'Caramel';
   equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
+    const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Caramel ability using dedicated ability class
-    pet.addAbility(new CaramelAbility(pet, this, this.logService));
+    pet.addAbility(new CaramelAbility(pet, equipment, this.logService));
   };
 
   constructor(protected logService: LogService) {

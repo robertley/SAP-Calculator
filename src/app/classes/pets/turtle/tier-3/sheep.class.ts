@@ -48,7 +48,7 @@ export class SheepAbility extends Ability {
     super({
       name: 'SheepAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -102,3 +102,4 @@ export class SheepAbility extends Ability {
     return new SheepAbility(newOwner, this.logService, this.abilityService);
   }
 }
+

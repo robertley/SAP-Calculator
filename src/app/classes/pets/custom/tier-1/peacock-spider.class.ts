@@ -42,7 +42,7 @@ export class PeacockSpiderAbility extends Ability {
     super({
       name: 'PeacockSpiderAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -87,4 +87,5 @@ export class PeacockSpiderAbility extends Ability {
     return new PeacockSpiderAbility(newOwner, this.logService);
   }
 }
+
 

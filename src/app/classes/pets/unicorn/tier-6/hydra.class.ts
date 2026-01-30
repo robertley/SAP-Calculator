@@ -48,7 +48,7 @@ export class HydraAbility extends Ability {
     super({
       name: 'HydraAbility',
       owner: owner,
-      triggers: ['ThisDied'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -102,3 +102,4 @@ export class HydraAbility extends Ability {
     return new HydraAbility(newOwner, this.logService, this.abilityService);
   }
 }
+
