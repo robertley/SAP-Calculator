@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Equipment } from '../../classes/equipment.class';
+import { AbilityTrigger } from '../../classes/ability.class';
 import { LogService } from '../log.service';
 import { AbilityService } from '../ability/ability.service';
 import { GameService } from '../game.service';
@@ -69,6 +70,57 @@ const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
 ]);
 
 import * as foodJson from 'assets/data/food.json';
+import * as perksJson from 'assets/data/perks.json';
+
+const PERK_TRIGGER_PATTERNS: Array<{
+  pattern: RegExp;
+  trigger: AbilityTrigger;
+}> = [
+  { pattern: /^Start of turn:/i, trigger: 'StartTurn' },
+  { pattern: /^End turn:/i, trigger: 'EndTurn' },
+  { pattern: /^Before battle:/i, trigger: 'BeforeStartBattle' },
+  { pattern: /^Start of battle:/i, trigger: 'StartBattle' },
+  { pattern: /^Before attack:/i, trigger: 'BeforeThisAttacks' },
+  { pattern: /^Faint:/i, trigger: 'Faint' },
+  { pattern: /^Hurt:/i, trigger: 'ThisHurt' },
+  { pattern: /^Anyone attacks:/i, trigger: 'AnyoneAttack' },
+  { pattern: /^Empty front space:/i, trigger: 'EmptyFrontSpace' },
+  { pattern: /^Knock out:/i, trigger: 'KnockOut' },
+];
+
+const perkAbilityEntries =
+  (perksJson as unknown as { default?: Array<{ Name?: string; Ability?: string }> })
+    .default ??
+  (perksJson as unknown as Array<{ Name?: string; Ability?: string }>);
+
+const PERK_TRIGGERS_BY_NAME = new Map<string, AbilityTrigger[]>(
+  (perkAbilityEntries ?? [])
+    .filter((entry) => entry?.Name)
+    .map((entry) => {
+      const abilityText = entry.Ability ?? '';
+      const triggers: AbilityTrigger[] = [];
+      const trimmed = abilityText.trim();
+      for (const { pattern, trigger } of PERK_TRIGGER_PATTERNS) {
+        if (pattern.test(trimmed) && !triggers.includes(trigger)) {
+          triggers.push(trigger);
+        }
+      }
+      return [entry.Name, triggers];
+    }),
+);
+
+function applyPerkTriggers(
+  equipment: Equipment | undefined,
+  name: string,
+): void {
+  if (!equipment) {
+    return;
+  }
+  const triggers = PERK_TRIGGERS_BY_NAME.get(name);
+  if (triggers && triggers.length) {
+    equipment.triggers = [...triggers];
+  }
+}
 
 @Injectable({
   providedIn: 'root',
@@ -111,6 +163,7 @@ export class EquipmentFactoryService {
       if (this.randomEquipmentSet.has(name)) {
         equip.hasRandomEvents = true;
       }
+      applyPerkTriggers(equip, name);
       map.set(name, equip);
     }
 
@@ -120,6 +173,7 @@ export class EquipmentFactoryService {
       if (this.randomEquipmentSet.has(name)) {
         equip.hasRandomEvents = true;
       }
+      applyPerkTriggers(equip, name);
       map.set(name, equip);
     }
 
@@ -129,6 +183,7 @@ export class EquipmentFactoryService {
       if (this.randomEquipmentSet.has(name)) {
         equip.hasRandomEvents = true;
       }
+      applyPerkTriggers(equip, name);
       map.set(name, equip);
     }
 
@@ -138,6 +193,7 @@ export class EquipmentFactoryService {
       if (this.randomEquipmentSet.has(name)) {
         equip.hasRandomEvents = true;
       }
+      applyPerkTriggers(equip, name);
       map.set(name, equip);
     }
 
@@ -168,6 +224,7 @@ export class EquipmentFactoryService {
       if (this.randomEquipmentSet.has(name)) { // In case ailments have Random tag (unlikely but safe)
         equip.hasRandomEvents = true;
       }
+      applyPerkTriggers(equip, name);
       map.set(name, equip);
     }
 
@@ -177,6 +234,7 @@ export class EquipmentFactoryService {
       if (this.randomEquipmentSet.has(name)) {
         equip.hasRandomEvents = true;
       }
+      applyPerkTriggers(equip, name);
       map.set(name, equip);
     }
 

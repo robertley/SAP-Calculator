@@ -22,6 +22,44 @@ Open `http://localhost:4200/`.
 ng build
 ```
 
+## Headless Simulation (Library + CLI)
+This repo ships a Node-friendly simulation bundle for automated odds tools.
+
+Build the headless bundle:
+```bash
+npm run bundle-simulation
+```
+
+Library usage (Node):
+```js
+const { runHeadlessSimulation } = require('sap-calculator/simulation/dist/index.js');
+
+const result = runHeadlessSimulation(config);
+// result: { playerWins, opponentWins, draws, battles? }
+```
+
+CLI usage (JSON in/out):
+```bash
+sap-calculator-sim battle.json
+cat battle.json | sap-calculator-sim --stdin --pretty
+```
+
+Options:
+- `--include-battles` to include battle logs in the response
+- `--logs` to enable log generation
+
+Minimal JSON payload example:
+```json
+{
+  "playerPack": "Turtle",
+  "opponentPack": "Turtle",
+  "turn": 1,
+  "playerPets": [null, null, null, null, null],
+  "opponentPets": [null, null, null, null, null],
+  "simulationCount": 250
+}
+```
+
 ## Tests
 ```bash
 npx vitest run <file_path>

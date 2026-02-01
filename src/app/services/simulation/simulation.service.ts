@@ -12,6 +12,7 @@ import { LogService } from '../log.service';
 import { PetService } from '../pet/pet.service';
 import { ToyService } from '../toy/toy.service';
 import { Player } from '../../classes/player.class';
+import { AUTO_DISABLE_LOGS_SIMULATION_COUNT } from './simulation.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -91,6 +92,10 @@ export class SimulationService {
   }
 
   private buildConfig(formGroup: FormGroup, count: number): SimulationConfig {
+    const logsEnabled = formGroup.get('logsEnabled')?.value ?? true;
+    const shouldAutoDisableLogs =
+      Number(count) >= AUTO_DISABLE_LOGS_SIMULATION_COUNT;
+
     return {
       playerPack: formGroup.get('playerPack').value,
       opponentPack: formGroup.get('opponentPack').value,
@@ -124,7 +129,7 @@ export class SimulationService {
       komodoShuffle: formGroup.get('komodoShuffle').value,
       mana: formGroup.get('mana').value,
       simulationCount: count,
-      logsEnabled: formGroup.get('logsEnabled')?.value ?? true,
+      logsEnabled: shouldAutoDisableLogs ? false : logsEnabled,
     };
   }
 

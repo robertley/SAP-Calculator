@@ -1,4 +1,5 @@
 import { Pet } from './pet.class';
+import { AbilityTrigger } from './ability.class';
 
 
 export class Equipment {
@@ -20,6 +21,7 @@ export class Equipment {
   // Optional minimum damage this equipment can reduce attacks to
   minimumDamage?: number;
   hasRandomEvents: boolean = false;
+  triggers?: AbilityTrigger[];
 
   constructor() {
     this.originalPower = this.power;
