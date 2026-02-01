@@ -348,8 +348,13 @@ export abstract class Pet {
   }
 
   applyCrisp() {
-    const manticoreMult = this.parent.opponent.getManticoreMult();
-    for (let pet of this.parent.petArray) {
+    const parent = this.parent;
+    const opponent = parent?.opponent;
+    if (!parent || !opponent) {
+      return;
+    }
+    const manticoreMult = opponent.getManticoreMult();
+    for (let pet of parent.petArray) {
       if (pet.equipment instanceof Crisp) {
         EquipmentDamageHandler.applyDamage({
           pet,

@@ -5,7 +5,7 @@
     "sap-calculator-sim": "simulation/dist/cli.js"
   },
   "name": "sap-calculator",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "prepare": "node simulation/build.js",
     "ng": "ng",
