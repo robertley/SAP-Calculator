@@ -84,6 +84,18 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
         </ng-container>
       </ng-container>
 
+      <!-- Foods Eaten -->
+      <div class="col-12 mb-2" *ngIf="shouldShowFoodsEatenInput()">
+        <label class="swallowed-label" for="foodsEaten">Foods Eaten</label>
+        <input
+          class="form-control select-foods-eaten"
+          formControlName="foodsEaten"
+          type="number"
+          min="0"
+          max="99"
+        />
+      </div>
+
       <!-- Attack and Health -->
       <div class="col-6">
         <div class="stat-tile stat-attack">
@@ -125,9 +137,22 @@ export class PetStatsSelectorComponent {
     ['Secretary Bird', 1],
     ['Mimic', 2],
   ]);
+  private foodsEatenPets = new Set<string>([
+    'Black Bear',
+    'Blue Jay',
+    'Dung Beetle',
+    'Locust',
+  ]);
 
   shouldShowFriendsDiedInput(): boolean {
     return this.petName ? this.friendsDiedCaps.has(this.petName) : false;
+  }
+
+  shouldShowFoodsEatenInput(): boolean {
+    if (!this.petName) {
+      return false;
+    }
+    return this.foodsEatenPets.has(this.petName);
   }
 
   getFriendsDiedMax(): number {

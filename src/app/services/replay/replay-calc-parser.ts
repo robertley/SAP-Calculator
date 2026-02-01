@@ -339,6 +339,7 @@ export class ReplayCalcParser {
     if (state.komodoShuffle) strippedState.komodoShuffle = true;
     if (state.mana) strippedState.mana = true;
     if (state.triggersConsumed) strippedState.triggersConsumed = true;
+    if (state.foodsEaten) strippedState.foodsEaten = true;
     if (state.showAdvanced) strippedState.showAdvanced = true;
     if (state.showSwallowedLevels) strippedState.showSwallowedLevels = true;
     if (state.ailmentEquipment) strippedState.ailmentEquipment = true;
@@ -360,6 +361,7 @@ export class ReplayCalcParser {
       if (pet.mana !== 0) newPet.mana = pet.mana;
       if (pet.equipment) newPet.equipment = pet.equipment;
       if (pet.triggersConsumed) newPet.triggersConsumed = pet.triggersConsumed;
+      if (pet.foodsEaten) newPet.foodsEaten = pet.foodsEaten;
       if (pet.belugaSwallowedPet !== null)
         newPet.belugaSwallowedPet = pet.belugaSwallowedPet;
       if (pet.timesHurt) newPet.timesHurt = pet.timesHurt;

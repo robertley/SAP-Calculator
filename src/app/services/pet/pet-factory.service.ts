@@ -24,6 +24,7 @@ export interface PetForm {
   health?: number | null;
   mana?: number | null;
   triggersConsumed?: number;
+  foodsEaten?: number;
   exp: number;
   hasRandomEvents?: boolean;
   equipment?: string | Equipment | { name?: string } | null;
@@ -430,7 +431,7 @@ export class PetFactoryService {
       plan.equipmentValue,
       plan.equipmentUses,
     );
-    const { name, health, attack, mana, exp, triggersConsumed } = petForm;
+    const { name, health, attack, mana, exp, triggersConsumed, foodsEaten } = petForm;
     let hasRandomEvents = petForm.hasRandomEvents;
     if (hasRandomEvents === undefined && petService && typeof petService.isPetRandom === 'function') {
       hasRandomEvents = petService.isPetRandom(name);
@@ -447,6 +448,13 @@ export class PetFactoryService {
     const finalizePet = (pet: Pet) => {
       if (!pet) {
         return pet;
+      }
+      if (foodsEaten != null) {
+        const value = Number(foodsEaten);
+        if (Number.isFinite(value)) {
+          pet.foodsEaten = value;
+          pet.originalFoodsEaten = value;
+        }
       }
       if (plan.hasTimesHurt && petForm.timesHurt != null) {
         pet.timesHurt = petForm.timesHurt;
@@ -657,13 +665,15 @@ export class PetFactoryService {
     const hasSarcastic = petForm.sarcasticFringeheadSwallowedPet != null;
     const hasFriendsDied = (petForm.friendsDiedBeforeBattle ?? 0) > 0;
     const hasTimesHurt = (petForm.timesHurt ?? 0) > 0;
+    const hasFoodsEaten = petForm.foodsEaten != null;
     const needsPostInit =
       hasEquipmentUses ||
       hasParrotData ||
       hasAbominationData ||
       hasSarcastic ||
       hasFriendsDied ||
-      hasTimesHurt;
+      hasTimesHurt ||
+      hasFoodsEaten;
 
     let builderKind: PetBuildPlan['builderKind'] = 'missing';
     let PetClass: PetBuildPlan['PetClass'];

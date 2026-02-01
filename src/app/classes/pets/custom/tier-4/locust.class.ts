@@ -119,12 +119,23 @@ export class LocustAbility extends Ability {
     const ownerData = owner as {
       locustFoodEaten?: number;
       locustFoodTurn?: number;
+      locustFoodSeededTurn?: number;
     };
 
     const turnNumber = gameApi?.turnNumber ?? 0;
     if (ownerData.locustFoodTurn !== turnNumber) {
       ownerData.locustFoodTurn = turnNumber;
       ownerData.locustFoodEaten = 0;
+    }
+    if (ownerData.locustFoodSeededTurn !== turnNumber) {
+      ownerData.locustFoodSeededTurn = turnNumber;
+      const foods = owner.foodsEaten ?? 0;
+      if (foods > 0) {
+        ownerData.locustFoodEaten = Math.max(
+          ownerData.locustFoodEaten ?? 0,
+          foods,
+        );
+      }
     }
 
     if (context.trigger === 'FoodEatenByThis' && owner.alive) {

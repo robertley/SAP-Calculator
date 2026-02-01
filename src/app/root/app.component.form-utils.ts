@@ -284,6 +284,7 @@ export function initPetForms(
       ),
       mana: new FormControl(pet?.mana ?? 0),
       triggersConsumed: new FormControl(pet?.triggersConsumed ?? 0),
+      foodsEaten: new FormControl(pet?.foodsEaten ?? 0),
       abominationSwallowedPet1: new FormControl(pet?.abominationSwallowedPet1),
       abominationSwallowedPet2: new FormControl(pet?.abominationSwallowedPet2),
       abominationSwallowedPet3: new FormControl(pet?.abominationSwallowedPet3),

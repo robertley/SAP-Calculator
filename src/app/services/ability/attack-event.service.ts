@@ -131,7 +131,11 @@ export class AttackEventService {
       }
       if (pet == attackingPet.petBehind(null, true)) {
         if (pet.hasTrigger('FriendAheadAttacked')) {
-          this.abilityQueueService.triggerAbility(pet, 'FriendAheadAttacked');
+          this.abilityQueueService.triggerAbility(
+            pet,
+            'FriendAheadAttacked',
+            attackingPet,
+          );
         }
       }
     }
