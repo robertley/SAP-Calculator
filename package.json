@@ -1,6 +1,9 @@
 {
   "main": "simulation/dist/index.js",
   "types": "simulation/simulate.ts",
+  "bin": {
+    "sap-calculator-sim": "simulation/dist/cli.js"
+  },
   "name": "sap-calculator",
   "version": "0.0.0",
   "scripts": {

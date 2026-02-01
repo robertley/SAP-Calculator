@@ -4,12 +4,16 @@ const path = require("path");
 async function build() {
   try {
     await esbuild.build({
-      entryPoints: [path.resolve(__dirname, "simulate.ts")],
+      entryPoints: {
+        index: path.resolve(__dirname, "simulate.ts"),
+        cli: path.resolve(__dirname, "cli.ts"),
+      },
       bundle: true,
-      outfile: path.resolve(__dirname, "dist/index.js"),
+      outdir: path.resolve(__dirname, "dist"),
+      entryNames: "[name]",
       platform: "node",
       target: "es2015",
-      format: "esm",
+      format: "cjs",
       tsconfig: path.resolve(__dirname, "tsconfig.json"),
       sourcemap: "inline",
     });

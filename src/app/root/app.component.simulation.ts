@@ -5,6 +5,7 @@ import { Log } from '../interfaces/log.interface';
 import { LocalStorageService } from '../services/local-storage.service';
 import { LogService } from '../services/log.service';
 import { SimulationService } from '../services/simulation/simulation.service';
+import { AUTO_DISABLE_LOGS_SIMULATION_COUNT } from '../services/simulation/simulation.constants';
 import { money_round } from '../util/helper-functions';
 import { buildApiResponse as buildApiResponsePayload } from './app.component.share-utils';
 
@@ -100,6 +101,18 @@ export function runSimulation(
   ctx: AppSimulationContext,
   count: number = 1000,
 ): void {
+  const logsEnabledControl = ctx.formGroup.get('logsEnabled');
+  const wantsLogs = logsEnabledControl?.value ?? true;
+  if (
+    wantsLogs &&
+    Number(count) >= AUTO_DISABLE_LOGS_SIMULATION_COUNT
+  ) {
+    ctx.setStatus?.(
+      `Logs auto-disabled for ${AUTO_DISABLE_LOGS_SIMULATION_COUNT}+ simulations to reduce memory use.`,
+      'success',
+    );
+  }
+
   ctx.simulationBattleAmt = count;
   ctx.localStorageService.setFormStorage(ctx.formGroup);
 

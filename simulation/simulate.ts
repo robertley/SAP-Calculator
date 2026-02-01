@@ -28,8 +28,7 @@ class NodeInjector {
   }
 }
 
-export function runSimulation(config: SimulationConfig): SimulationResult {
-  const logService = new LogService();
+function createSimulationRunner(logService: LogService): SimulationRunner {
   const gameService = new GameService();
   const abilityQueueService = new AbilityQueueService();
   const toyEventService = new ToyEventService(gameService, logService);
@@ -103,7 +102,35 @@ export function runSimulation(config: SimulationConfig): SimulationResult {
     toyService,
   );
 
+  return runner;
+}
+
+export function runSimulation(config: SimulationConfig): SimulationResult {
+  const logService = new LogService();
+  const runner = createSimulationRunner(logService);
   return runner.run(config);
+}
+
+export interface HeadlessSimulationOptions {
+  enableLogs?: boolean;
+  includeBattles?: boolean;
+}
+
+export function runHeadlessSimulation(
+  config: SimulationConfig,
+  options: HeadlessSimulationOptions = {},
+): SimulationResult {
+  const logService = new LogService();
+  const logsEnabled = options.enableLogs ?? config.logsEnabled ?? false;
+  const runner = createSimulationRunner(logService);
+  const result = runner.run({
+    ...config,
+    logsEnabled,
+  });
+  if (!options.includeBattles) {
+    delete result.battles;
+  }
+  return result;
 }
 
 export * from '../src/app/services/injector.service';

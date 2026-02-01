@@ -2,17 +2,11 @@ import { GameAPI } from 'app/interfaces/gameAPI.interface';
 import { EquipmentService } from 'app/services/equipment/equipment.service';
 import { LogService } from 'app/services/log.service';
 import { ToyService } from 'app/services/toy/toy.service';
-import { Cold } from 'app/classes/equipment/ailments/cold.class';
-import { Crisp } from 'app/classes/equipment/ailments/crisp.class';
-import { Dazed } from 'app/classes/equipment/ailments/dazed.class';
-import { Icky } from 'app/classes/equipment/ailments/icky.class';
-import { Spooked } from 'app/classes/equipment/ailments/spooked.class';
-import { Toasty } from 'app/classes/equipment/ailments/toasty.class';
-import { Weak } from 'app/classes/equipment/ailments/weak.class';
 import { Player } from '../../player.class';
 import { Toy } from '../../toy.class';
 import { isRollablePerk } from 'app/services/equipment/unrollable-perks';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { Equipment } from 'app/classes/equipment.class';
 import { Pet } from '../../pet.class';
 import { AbilityService } from 'app/services/ability/ability.service';
 import { getOpponent } from 'app/util/helper-functions';
@@ -25,63 +19,17 @@ export class PandorasBox extends Toy {
   name = 'Pandoras Box';
   tier = 5;
   startOfBattle(gameApi?: GameAPI, puma?: boolean) {
-    let equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
-    let ailments = [
-      new Cold(),
-      new Crisp(),
-      new Dazed(),
-      new Icky(),
-      // new Ink(), // excluded
-      new Spooked(),
-      new Toasty(),
-      new Weak(),
-    ];
-
-    // https://superautopets.wiki.gg/wiki/Pandoras_Box
-    const excludedPerks = new Set<string>([
-      'Cake Slice',
-      'Carrot',
-      'Cherry',
-      'Chocolate Cake',
-      'Coconut',
-      'Croissant',
-      'Cucumber',
-      'Eggplant',
-      'Fig',
-      'Gingerbread Man',
-      'Grapes',
-      'Golden Egg',
-      'Health Potion',
-      'Love Potion',
-      'Magic Beans',
-      'Peanut',
-      'Pie',
-      'Rambutan',
-      'Rice',
-      'Skewer',
-    ]);
-    let pets = [...gameApi.player.petArray, ...gameApi.opponent.petArray];
-
-    let equipments = Array.from(equipmentMap.values());
-    equipments = equipments.filter(
-      (equipment) => !excludedPerks.has(equipment.name) && isRollablePerk(equipment),
-    );
-
-    for (let pet of pets) {
-      // 50% chance for pool to be ailments
-      let perkPool = ailments;
-      if (Math.random() < 0.5) {
-        perkPool = equipments;
-      }
-      let equipment = perkPool[Math.floor(Math.random() * perkPool.length)];
-      this.logService.createLog({
-        message: `${this.name} gave ${pet.name} ${equipment.name}`,
-        type: 'ability',
-        player: this.parent,
-        randomEvent: true,
-      });
-      pet.givePetEquipment(equipment, this.level);
-    }
+    PandorasBoxAbility.applyPandorasBoxEffect({
+      logService: this.logService,
+      equipmentService: this.equipmentService,
+      level: this.level,
+      pets: [...gameApi.player.petArray, ...gameApi.opponent.petArray],
+      useClones: false,
+      logPlayer: this.parent,
+      logMeta: { randomEvent: true },
+      logMessage: (pet, equipment) =>
+        `${this.name} gave ${pet.name} ${equipment.name}`,
+    });
   }
 
   constructor(
@@ -124,43 +72,23 @@ export class PandorasBoxAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { gameApi, tiger, pteranodon } = context;
     const owner = this.owner;
-    const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
-    const ailments = Array.from(
-      this.equipmentService.getInstanceOfAllAilments().values(),
-    );
-    const perks = Array.from(equipmentMap.values()).filter(
-      (equipment) => equipment,
-    );
     const opponent = getOpponent(gameApi, owner.parent);
     const pets = [...owner.parent.petArray, ...opponent.petArray].filter(
       (pet) => pet?.alive,
     );
-    for (const pet of pets) {
-      const useAilment = Math.random() < 0.5;
-      const pool = useAilment ? ailments : perks;
-      if (!pool.length) {
-        continue;
-      }
-      const baseEquipment = pool[Math.floor(Math.random() * pool.length)];
-      if (!baseEquipment) {
-        continue;
-      }
-      const perkClone = cloneEquipment(baseEquipment);
-      if (!perkClone) {
-        continue;
-      }
-      pet.givePetEquipment(perkClone, this.level);
-      this.logService.createLog({
-        message: `Pandoras Box Ability gave ${pet.name} ${perkClone.name}`,
-        type: 'ability',
-        player: owner.parent,
-        tiger,
-        pteranodon,
-        randomEvent: true,
-      });
-    }
+    PandorasBoxAbility.applyPandorasBoxEffect({
+      logService: this.logService,
+      equipmentService: this.equipmentService,
+      level: this.level,
+      pets,
+      useClones: true,
+      logPlayer: owner.parent,
+      logMeta: { tiger, pteranodon, randomEvent: true },
+      logMessage: (pet, equipment) =>
+        `Pandoras Box Ability gave ${pet.name} ${equipment.name}`,
+    });
 
     this.triggerTigerExecution(context);
   }
@@ -172,6 +100,81 @@ export class PandorasBoxAbility extends Ability {
       this.abilityService,
       this.equipmentService,
     );
+  }
+
+  static applyPandorasBoxEffect(params: {
+    logService: LogService;
+    equipmentService: EquipmentService;
+    level: number;
+    pets: Pet[];
+    useClones: boolean;
+    logPlayer: Player;
+    logMeta?: { tiger?: boolean; pteranodon?: boolean; randomEvent?: boolean };
+    logMessage: (pet: Pet, equipment: Equipment) => string;
+  }): void {
+    const {
+      logService,
+      equipmentService,
+      level,
+      pets,
+      useClones,
+      logPlayer,
+      logMeta,
+      logMessage,
+    } = params;
+
+    const ailments = Array.from(
+      equipmentService.getInstanceOfAllAilments().values(),
+    );
+    const excludedPerks = new Set<string>(['Chocolate Cake']);
+    const equipments = Array.from(
+      equipmentService.getInstanceOfAllEquipment().values(),
+    ).filter((equipment) => {
+      if (!equipment) {
+        return false;
+      }
+      if (excludedPerks.has(equipment.name)) {
+        return false;
+      }
+      if (!isRollablePerk(equipment)) {
+        return false;
+      }
+      const triggers = equipment.triggers ?? [];
+      if (
+        triggers.includes('StartTurn') ||
+        triggers.includes('EndTurn') ||
+        triggers.includes('BeforeStartBattle')
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    for (const pet of pets) {
+      const pool = Math.random() < 0.5 ? ailments : equipments;
+      if (!pool.length) {
+        continue;
+      }
+      const baseEquipment = pool[Math.floor(Math.random() * pool.length)];
+      if (!baseEquipment) {
+        continue;
+      }
+      const equipment = useClones
+        ? cloneEquipment(baseEquipment)
+        : baseEquipment;
+      if (!equipment) {
+        continue;
+      }
+      pet.givePetEquipment(equipment, level);
+      logService.createLog({
+        message: logMessage(pet, equipment),
+        type: 'ability',
+        player: logPlayer,
+        tiger: logMeta?.tiger,
+        pteranodon: logMeta?.pteranodon,
+        randomEvent: logMeta?.randomEvent,
+      });
+    }
   }
 }
 
