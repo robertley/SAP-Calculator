@@ -328,6 +328,7 @@ export class SimulationRunner {
       exp: petConfig.exp ?? 0,
       mana: petConfig.mana ?? 0,
       triggersConsumed: petConfig.triggersConsumed ?? 0,
+      foodsEaten: petConfig.foodsEaten ?? 0,
       equipment,
       equipmentUses:
         petConfig.equipmentUses ??

@@ -8,6 +8,7 @@ export interface PetConfig {
   belugaSwallowedPet?: string | null;
   mana?: number;
   triggersConsumed?: number;
+  foodsEaten?: number;
   abominationSwallowedPet1?: string | null;
   abominationSwallowedPet2?: string | null;
   abominationSwallowedPet3?: string | null;

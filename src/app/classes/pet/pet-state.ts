@@ -8,6 +8,7 @@ export function resetPetState(self: Pet): void {
   self.lastLostEquipment = null;
   self.mana = self.originalMana;
   self.triggersConsumed = self.originalTriggersConsumed;
+  self.foodsEaten = self.originalFoodsEaten;
   self.exp = self.originalExp;
   //clear memories
   self.timesHurt = self.originalTimesHurt;

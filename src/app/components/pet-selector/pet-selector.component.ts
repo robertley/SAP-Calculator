@@ -901,6 +901,13 @@ export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
         this.substitutePet(false);
       });
     this.formGroup
+      .get('foodsEaten')
+      ?.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
+      .subscribe(() => {
+        this.clampControl('foodsEaten', 0, 99);
+        this.substitutePet(false);
+      });
+    this.formGroup
       .get('friendsDiedBeforeBattle')
       ?.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(inputDebounceMs), distinctUntilChanged())
       .subscribe(() => {
@@ -941,6 +948,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
         this.formGroup.get('health').setValue(null, { emitEvent: false });
         this.formGroup.get('mana').setValue(null, { emitEvent: false });
         this.formGroup.get('triggersConsumed').setValue(null, { emitEvent: false });
+        this.formGroup.get('foodsEaten').setValue(null, { emitEvent: false });
         formValue = this.formGroup.getRawValue();
       }
       this.applyStatCaps(formValue);
@@ -959,6 +967,9 @@ export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
         this.formGroup
           .get('triggersConsumed')
           .setValue(pet.triggersConsumed, { emitEvent: false });
+        this.formGroup
+          .get('foodsEaten')
+          .setValue(pet.foodsEaten ?? 0, { emitEvent: false });
         this.cdr.markForCheck();
       }
     });
@@ -1134,6 +1145,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
     const health = this.clampValue(formValue.health, 0, 100);
     const mana = this.clampValue(formValue.mana, 0, 50);
     const triggers = this.clampValue(formValue.triggersConsumed, 0, 10);
+    const foodsEaten = this.clampValue(formValue.foodsEaten, 0, 99);
 
     if (attack !== formValue.attack && formValue.attack != null) {
       this.formGroup.get('attack').setValue(attack, { emitEvent: false });
@@ -1155,6 +1167,15 @@ export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
         .get('triggersConsumed')
         .setValue(triggers, { emitEvent: false });
       formValue.triggersConsumed = triggers;
+    }
+    if (
+      foodsEaten !== formValue.foodsEaten &&
+      formValue.foodsEaten != null
+    ) {
+      this.formGroup
+        .get('foodsEaten')
+        .setValue(foodsEaten, { emitEvent: false });
+      formValue.foodsEaten = foodsEaten;
     }
   }
 
@@ -1693,6 +1714,7 @@ export class PetSelectorComponent implements OnInit, OnDestroy, OnChanges {
     this.formGroup.get('equipmentUses').setValue(null, { emitEvent: false });
     this.formGroup.get('mana').setValue(0, { emitEvent: false });
     this.formGroup.get('triggersConsumed').setValue(0, { emitEvent: false });
+    this.formGroup.get('foodsEaten').setValue(0, { emitEvent: false });
   }
 
   optionHidden(option: string) {

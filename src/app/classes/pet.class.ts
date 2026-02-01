@@ -43,6 +43,7 @@ export abstract class Pet {
   mana: number = 0;
   suppressManaSnipeOnFaint: boolean = false;
   triggersConsumed: number = 0;
+  foodsEaten: number = 0;
   sellValue: number = 1;
   baseSellValue: number = 1;
   //memories
@@ -235,6 +236,7 @@ export abstract class Pet {
   originalAttack: number;
   originalMana: number;
   originalTriggersConsumed: number;
+  originalFoodsEaten: number;
   originalEquipment?: Equipment;
   originalExp?: number = 0;
   originalTimesHurt: number = 0;
@@ -291,6 +293,7 @@ export abstract class Pet {
     this.originalAttack = this.attack;
     this.originalMana = this.mana;
     this.originalTriggersConsumed = this.triggersConsumed;
+    this.originalFoodsEaten = this.foodsEaten;
     this.equipment = equipment;
     this.originalEquipment = equipment;
     this.originalExp = this.exp;

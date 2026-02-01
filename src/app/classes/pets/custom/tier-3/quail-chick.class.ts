@@ -63,7 +63,7 @@ export class QuailChickAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { tiger, pteranodon } = context;
     const owner = this.owner;
-    const buffAmount = 2 * this.level;
+    const buffAmount = 2 * this.level * 2;
     const frontFriend = owner.petAhead;
 
     if (frontFriend && frontFriend.alive) {

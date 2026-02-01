@@ -36,6 +36,7 @@ export class BlackBear extends Pet {
 export class BlackBearAbility extends Ability {
   private logService: LogService;
   private foodsEatenThisTurn = 0;
+  private seededFromShop = false;
 
   constructor(owner: Pet, logService: LogService) {
     super({
@@ -55,7 +56,16 @@ export class BlackBearAbility extends Ability {
 
     if (context.trigger === 'StartTurn') {
       this.foodsEatenThisTurn = 0;
+      this.seededFromShop = false;
       return;
+    }
+
+    if (!this.seededFromShop) {
+      const foods = owner.foodsEaten ?? 0;
+      if (foods > 0) {
+        this.foodsEatenThisTurn = Math.max(this.foodsEatenThisTurn, foods);
+      }
+      this.seededFromShop = true;
     }
 
     if (context.trigger === 'FoodEatenByThis') {

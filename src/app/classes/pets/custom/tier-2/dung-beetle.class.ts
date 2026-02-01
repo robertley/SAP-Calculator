@@ -57,12 +57,23 @@ export class DungBeetleAbility extends Ability {
     const ownerData = owner as unknown as {
       dungBeetleFoodEaten?: number;
       dungBeetleFoodTurn?: number;
+      dungBeetleFoodSeededTurn?: number;
     };
 
     const turnNumber = gameApi?.turnNumber ?? 0;
     if (ownerData.dungBeetleFoodTurn !== turnNumber) {
       ownerData.dungBeetleFoodTurn = turnNumber;
       ownerData.dungBeetleFoodEaten = 0;
+    }
+    if (ownerData.dungBeetleFoodSeededTurn !== turnNumber) {
+      ownerData.dungBeetleFoodSeededTurn = turnNumber;
+      const foods = owner.foodsEaten ?? 0;
+      if (foods > 0) {
+        ownerData.dungBeetleFoodEaten = Math.min(
+          3,
+          Math.max(ownerData.dungBeetleFoodEaten ?? 0, foods),
+        );
+      }
     }
 
     if (triggerPet && owner.alive) {
