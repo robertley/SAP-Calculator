@@ -4,8 +4,7 @@ import { PetService } from 'app/services/pet/pet.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { AbilityContext } from 'app/classes/ability.class';
-import { PetAbility } from 'app/classes/pet-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { awardExperienceWithLog, transformPetWithLog } from 'app/classes/ability-effects';
 
 
@@ -41,15 +40,19 @@ export class Ammonite extends Pet {
 }
 
 
-export class AmmoniteAbility extends PetAbility {
+export class AmmoniteAbility extends Ability {
   private logService: LogService;
   private petService: PetService;
 
   constructor(owner: Pet, logService: LogService, petService: PetService) {
     super({
-      owner,
       name: 'AmmoniteAbility',
+      owner,
       triggers: ['Faint'],
+      abilityType: 'Pet',
+      abilityFunction: (context: AbilityContext) => {
+        this.executeAbility(context);
+      },
     });
     this.logService = logService;
     this.petService = petService;

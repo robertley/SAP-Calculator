@@ -3,8 +3,7 @@ import { LogService } from 'app/services/log.service';
 import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
-import { AbilityContext } from 'app/classes/ability.class';
-import { PetAbility } from 'app/classes/pet-ability.class';
+import { Ability, AbilityContext } from 'app/classes/ability.class';
 
 
 export class SumatranTiger extends Pet {
@@ -36,14 +35,18 @@ export class SumatranTiger extends Pet {
 }
 
 
-export class SumatranTigerAbility extends PetAbility {
+export class SumatranTigerAbility extends Ability {
   private logService: LogService;
 
   constructor(owner: Pet, logService: LogService) {
     super({
-      owner,
       name: 'SumatranTigerAbility',
+      owner,
       triggers: ['StartBattle'],
+      abilityType: 'Pet',
+      abilityFunction: (context: AbilityContext) => {
+        this.executeAbility(context);
+      },
     });
     this.logService = logService;
   }
