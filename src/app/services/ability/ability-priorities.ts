@@ -79,14 +79,14 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
   // Normal Order (Post-removal)
   // These are only processed after fainted pets are removed.
   PostRemovalFaint: 25, // e.g., pets/hidden/smaller-slug.class
-  PostRemovalFriendFaints: 25, // e.g., pets/turtle/tier-5/shark.class
-  FriendlyToyBroke: 25, // e.g., pets/puppy/tier-5/mosasaurus.class
+  PostRemovalFriendFaints: 26, // e.g., pets/turtle/tier-5/shark.class
+  FriendlyToyBroke: 26, // e.g., pets/puppy/tier-5/mosasaurus.class
 
   // Post-removal board cleanup
-  EmptyFrontSpace: 26, // e.g., pets/unicorn/tier-2/drop-bear.class
+  EmptyFrontSpace: 27, // e.g., pets/unicorn/tier-2/drop-bear.class
 
   // Special summons
-  GoldenRetrieverSummons: 27, // e.g., no pet/toy/equipment uses this trigger yet
+  GoldenRetrieverSummons: 28, // e.g., no pet/toy/equipment uses this trigger yet
 };
 
 // Phase triggers (handled by explicit phase filters in AbilityService).

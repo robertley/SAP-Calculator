@@ -37,7 +37,7 @@ export class AbilityEngine {
 
         if (
           nextEvent &&
-          this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 24
+          this.abilityService.getPriorityNumber(nextEvent.abilityType) >= 27
         ) {
           this.checkPetsAlive();
           const petsWereRemoved = this.removeDeadPets();
