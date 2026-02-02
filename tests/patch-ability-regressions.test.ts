@@ -538,5 +538,139 @@ describe('Pet Ability Patch Regressions', () => {
 
         expect(pancakesLog).toBeDefined();
     });
+
+    it('Donkey should push the last enemy to the enemy front', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Star',
+            opponentPack: 'Star',
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Donkey',
+                    attack: 4,
+                    health: 6,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Fish',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Camel',
+                    attack: 3,
+                    health: 5,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Pig',
+                    attack: 4,
+                    health: 4,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const donkeyLogIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('Donkey pushed'),
+        );
+
+        expect(donkeyLogIndex).toBeGreaterThan(-1);
+
+        const boardLog = logs
+            .slice(donkeyLogIndex + 1)
+            .find(
+                (log: any) =>
+                    log.type === 'board' &&
+                    typeof log.message === 'string' &&
+                    log.message.includes('|'),
+            );
+
+        expect(boardLog).toBeDefined();
+
+        const parts = parseLogMessage(boardLog?.message ?? '');
+        const text = parts
+            .map((part) => {
+                if (part.type === 'text') {
+                    return part.text;
+                }
+                if (part.type === 'img') {
+                    return part.alt || '';
+                }
+                return '';
+            })
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        const [playerSide, opponentSide] = text.split('|').map((side) => side.trim());
+
+        expect(playerSide).not.toMatch(/O1\s+Pig/);
+        expect(opponentSide).toMatch(/O1\s+Pig/);
+        expect(opponentSide).not.toMatch(/O1\s+Camel/);
+    });
 });
 
