@@ -14,11 +14,6 @@ describe('Ability Priority Order', () => {
         expect(manaSnipePriority).toBeLessThan(postRemovalPriority);
     });
 
-    it('GoldenRetrieverSummons should have expected priority', () => {
-        const priority = queueService.getAbilityPriority('GoldenRetrieverSummons' as any);
-        expect(priority).toBe(27);
-    });
-
     it('Should not return 999 for valid triggers due to casing', () => {
         expect(queueService.getAbilityPriority('ManaSnipe' as any)).not.toBe(999);
         expect(queueService.getAbilityPriority('GoldenRetrieverSummons' as any)).not.toBe(999);

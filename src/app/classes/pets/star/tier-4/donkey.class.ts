@@ -67,7 +67,7 @@ export class DonkeyAbility extends Ability {
     if (targetResp.pet == null) {
       return;
     }
-    owner.parent.pushPet(targetResp.pet, targetResp.pet.position);
+    opponent.pushPet(targetResp.pet, targetResp.pet.position);
 
     targetResp.pet.increaseAttack(-3);
 
