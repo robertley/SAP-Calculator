@@ -10,8 +10,8 @@ export class Leech extends Pet {
   name = 'Leech';
   tier = 3;
   pack: Pack = 'Star';
-  attack = 4;
-  health = 2;
+  attack = 2;
+  health = 3;
   initAbilities(): void {
     this.addAbility(new LeechAbility(this, this.logService, this.abilityService));
     super.initAbilities();

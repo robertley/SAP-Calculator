@@ -10,8 +10,8 @@ export class Snake extends Pet {
   name = 'Snake';
   tier = 6;
   pack: Pack = 'Turtle';
-  attack = 6;
-  health = 6;
+  attack = 8;
+  health = 3;
   initAbilities(): void {
     this.addAbility(new SnakeAbility(this, this.logService));
     super.initAbilities();

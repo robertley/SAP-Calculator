@@ -582,6 +582,7 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     playerTransformationAmount: new FormControl(0),
     opponentTransformationAmount: new FormControl(0),
     showAdvanced: new FormControl(false),
+    showTriggerNamesInLogs: new FormControl(false),
     ailmentEquipment: new FormControl(true),
     changeEquipmentUses: new FormControl(false),
     logsEnabled: new FormControl(true),

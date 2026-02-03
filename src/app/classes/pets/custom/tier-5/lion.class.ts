@@ -10,8 +10,8 @@ export class Lion extends Pet {
   name = 'Lion';
   tier = 5;
   pack: Pack = 'Custom';
-  attack = 6;
-  health = 6;
+  attack = 7;
+  health = 7;
   initAbilities(): void {
     this.addAbility(new LionAbility(this, this.logService));
     super.initAbilities();

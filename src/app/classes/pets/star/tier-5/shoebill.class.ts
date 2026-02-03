@@ -10,8 +10,8 @@ export class Shoebill extends Pet {
   name = 'Shoebill';
   tier = 5;
   pack: Pack = 'Star';
-  attack = 2;
-  health = 4;
+  attack = 3;
+  health = 6;
   initAbilities(): void {
     this.addAbility(
       new ShoebillAbility(this, this.logService, this.abilityService),

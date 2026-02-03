@@ -10,8 +10,8 @@ export class AraripeManakin extends Pet {
   name = 'Araripe Manakin';
   tier = 2;
   pack: Pack = 'Danger';
-  attack = 2;
-  health = 3;
+  attack = 3;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new AraripeManakinAbility(this, this.logService));
     super.initAbilities();

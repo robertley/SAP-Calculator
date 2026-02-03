@@ -12,7 +12,7 @@ export class Boitata extends Pet {
   tier = 5;
   pack: Pack = 'Custom';
   attack = 2;
-  health = 9;
+  health = 12;
   initAbilities(): void {
     this.addAbility(
       new BoitataAbility(this, this.logService, this.abilityService),

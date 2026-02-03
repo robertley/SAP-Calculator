@@ -11,7 +11,7 @@ export class Anteater extends Pet {
   name = 'Anteater';
   tier = 3;
   pack: Pack = 'Star';
-  attack = 3;
+  attack = 2;
   health = 2;
 
   initAbilities(): void {

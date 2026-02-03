@@ -12,8 +12,8 @@ export class PatagonianMara extends Pet {
   name = 'Patagonian Mara';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 4;
-  health = 3;
+  attack = 2;
+  health = 4;
 
   override initAbilities(): void {
     this.addAbility(new PatagonianMaraAbility(this, this.logService));

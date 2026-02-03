@@ -295,6 +295,163 @@ describe('Pet Ability Patch Regressions', () => {
         expect(text).not.toContain('this.remove()');
     });
 
+    it('Sea Cucumber logs should not leak onerror text when decorated', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPets: [
+                {
+                    name: 'Sea Cucumber',
+                    attack: 3,
+                    health: 5,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const seaCucumberLog = logs.find(
+            (log: any) =>
+                typeof log.message === 'string' &&
+                log.message.includes('Sea Cucumber made') &&
+                log.message.includes('Tasty'),
+        );
+
+        expect(seaCucumberLog).toBeDefined();
+
+        const logService = new LogService();
+        logService.decorateLogIfNeeded(seaCucumberLog);
+        const parts = parseLogMessage(seaCucumberLog.message ?? '');
+        const text = parts
+            .map((part) => {
+                if (part.type === 'text') {
+                    return part.text;
+                }
+                if (part.type === 'img') {
+                    return part.alt || '';
+                }
+                return '';
+            })
+            .join(' ')
+            .toLowerCase();
+
+        expect(text).toContain('sea cucumber');
+        expect(text).not.toContain('onerror');
+        expect(text).not.toContain('this.remove()');
+    });
+
+    it('Caramel logs should not leak onerror text when decorated', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: { name: 'Caramel' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Pig',
+                    attack: 2,
+                    health: 5,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const caramelLog = logs.find(
+            (log: any) =>
+                typeof log.message === 'string' &&
+                log.message.includes('lost Caramel equipment'),
+        );
+
+        expect(caramelLog).toBeDefined();
+
+        const logService = new LogService();
+        logService.decorateLogIfNeeded(caramelLog);
+        const parts = parseLogMessage(caramelLog.message ?? '');
+        const text = parts
+            .map((part) => {
+                if (part.type === 'text') {
+                    return part.text;
+                }
+                if (part.type === 'img') {
+                    return part.alt || '';
+                }
+                return '';
+            })
+            .join(' ')
+            .toLowerCase();
+
+        expect(text).toContain('caramel');
+        expect(text).not.toContain('onerror');
+        expect(text).not.toContain('this.remove()');
+    });
+
     it('Thunderbird should target the nearest pet ahead if the second is missing', () => {
         const config: SimulationConfig = {
             ...baseConfig,

@@ -38,7 +38,7 @@ export function attackPet(
   if (jumpAttack) {
     message = `${self.name} jump-attacks ${pet.name} for ${damage}.`;
     if (self.equipment instanceof WhiteTruffle) {
-      message += `(White Truffle)`;
+      message += ' (White Truffle)';
     }
   } else {
     message = `${self.name} attacks ${pet.name} for ${damage}.`;

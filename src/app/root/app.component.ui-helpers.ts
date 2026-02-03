@@ -11,6 +11,7 @@ import { LocalStorageService } from '../services/local-storage.service';
 import { UrlStateService } from '../services/url-state.service';
 import { CalculatorStateService } from '../services/calculator-state.service';
 import { PetService } from '../services/pet/pet.service';
+import { LogService } from '../services/log.service';
 import { EquipmentService } from '../services/equipment/equipment.service';
 import { GameService } from '../services/game.service';
 import { ToyService } from '../services/toy/toy.service';
@@ -23,6 +24,7 @@ import {
 } from '../util/asset-utils';
 import { shouldShowRollInputs } from './app.component.roll-utils';
 import { BATTLE_BACKGROUND_BASE, TOY_ART_BASE } from './app.constants';
+import * as foodJson from 'assets/data/food.json';
 import {
   createAppFormGroup,
   initPetForms as initPetFormsForm,
@@ -37,6 +39,7 @@ export interface AppUiContext {
   formGroup: FormGroup;
   player: Player;
   opponent: Player;
+  logService: LogService;
   petSelectors: QueryList<PetSelectorComponent>;
   selectionType: SelectionType;
   selectionSide: 'player' | 'opponent' | 'none';
@@ -81,6 +84,76 @@ export interface AppUiContext {
   battleStarted?: boolean;
   currBattle?: Battle | null;
   setStatus?: (message: string, tone?: 'success' | 'error') => void;
+}
+
+const FOOD_PACK_CODE_TO_NAME: Record<string, string> = {
+  Pack1: 'Turtle',
+  Pack2: 'Puppy',
+  Pack3: 'Star',
+  Pack4: 'Golden',
+  Pack5: 'Unicorn',
+  Danger: 'Danger',
+  Custom: 'Custom',
+  MiniPack1: 'Custom',
+  MiniPack2: 'Custom',
+  MiniPack3: 'Custom',
+};
+
+let equipmentNamesByPack: Map<string, Set<string>> | null = null;
+
+function buildEquipmentNamesByPack(): Map<string, Set<string>> {
+  const map = new Map<string, Set<string>>();
+  const foods =
+    (foodJson as unknown as { default?: Array<{ Name?: string; Packs?: string[]; PacksRequired?: string[] }> })
+      .default ??
+    (foodJson as unknown as Array<{ Name?: string; Packs?: string[]; PacksRequired?: string[] }>) ??
+    [];
+  for (const entry of foods) {
+    const name = entry?.Name;
+    if (!name) {
+      continue;
+    }
+    const packCodes = new Set<string>();
+    const packs = entry?.Packs ?? [];
+    for (const code of packs) {
+      if (code) {
+        packCodes.add(String(code).trim());
+      }
+    }
+    const hasCustomPack =
+      packCodes.has('Custom') ||
+      packCodes.has('MiniPack1') ||
+      packCodes.has('MiniPack2') ||
+      packCodes.has('MiniPack3');
+    if (!hasCustomPack) {
+      for (const code of entry?.PacksRequired ?? []) {
+        if (code) {
+          packCodes.add(String(code).trim());
+        }
+      }
+    }
+    for (const code of packCodes) {
+      const packName = FOOD_PACK_CODE_TO_NAME[code];
+      if (!packName) {
+        continue;
+      }
+      if (!map.has(packName)) {
+        map.set(packName, new Set());
+      }
+      map.get(packName)?.add(name);
+    }
+  }
+  return map;
+}
+
+function getEquipmentNamesForPack(packName: string | null | undefined): Set<string> | null {
+  if (!packName) {
+    return null;
+  }
+  if (!equipmentNamesByPack) {
+    equipmentNamesByPack = buildEquipmentNamesByPack();
+  }
+  return equipmentNamesByPack.get(packName) ?? null;
 }
 
 export function trackByIndex(index: number): number {
@@ -184,6 +257,9 @@ export function applyCalculatorState(
     ctx.dayNight,
     () => fixCustomPackSelect(ctx),
   );
+  ctx.logService.setShowTriggerNamesInLogs(
+    ctx.formGroup.get('showTriggerNamesInLogs')?.value,
+  );
 }
 
 export function setDayNight(ctx: AppUiContext): void {
@@ -213,6 +289,14 @@ export function initFormGroup(ctx: AppUiContext): void {
     setHardToyImage: (player, toyName) =>
       setHardToyImage(ctx, player, toyName),
   });
+  ctx.logService.setShowTriggerNamesInLogs(
+    ctx.formGroup.get('showTriggerNamesInLogs')?.value,
+  );
+  ctx.formGroup
+    .get('showTriggerNamesInLogs')
+    ?.valueChanges.subscribe((value: boolean) => {
+      ctx.logService.setShowTriggerNamesInLogs(value);
+    });
   refreshPetFormArrays(ctx);
 }
 
@@ -313,9 +397,24 @@ export function initPlayerPets(ctx: AppUiContext): void {
 export function randomizePlayerPets(ctx: AppUiContext, player: Player): void {
   for (let i = 0; i < 5; i++) {
     const pet = ctx.petService.getRandomPet(player);
-    pet.equipment = getRandomEquipment(ctx);
+    pet.equipment = getRandomEquipment(ctx, player);
     player.setPet(i, pet, true);
   }
+}
+
+export function randomizePlayerToy(ctx: AppUiContext, player: Player): void {
+  const toyName = getRandomToyName(ctx);
+  const isPlayer = player === ctx.player;
+  const controlName = isPlayer ? 'playerToy' : 'opponentToy';
+  if (!toyName) {
+    ctx.formGroup.get(controlName).setValue(null);
+    player.toy = null;
+    player.originalToy = null;
+    setToyImage(ctx, player, null);
+    return;
+  }
+  ctx.formGroup.get(controlName).setValue(toyName);
+  updatePlayerToy(ctx, player, toyName);
 }
 
 export function updatePlayerPack(
@@ -325,6 +424,10 @@ export function updatePlayerPack(
   randomize: boolean = true,
 ): void {
   player.pack = pack as Player['pack'];
+  const allPetsSelected = ctx.formGroup.get('allPets').value;
+  if (randomize && !allPetsSelected) {
+    clearPlayerToy(ctx, player);
+  }
   let petPool;
   switch (pack) {
     case 'Turtle':
@@ -382,6 +485,15 @@ export function updatePlayerToy(
   player.toy = ctx.toyService.createToy(toy, player, level);
   player.originalToy = player.toy;
   setToyImage(ctx, player, toy);
+}
+
+export function clearPlayerToy(ctx: AppUiContext, player: Player): void {
+  const isPlayer = player === ctx.player;
+  const controlName = isPlayer ? 'playerToy' : 'opponentToy';
+  ctx.formGroup.get(controlName).setValue(null);
+  player.toy = null;
+  player.originalToy = null;
+  setToyImage(ctx, player, null);
 }
 
 export function setToyImage(
@@ -451,16 +563,48 @@ export function updateToyLevel(
   }
 }
 
-export function getRandomEquipment(ctx: AppUiContext) {
+export function getRandomEquipment(
+  ctx: AppUiContext,
+  player?: Player,
+) {
   const equipment = Array.from(
     ctx.equipmentService.getInstanceOfAllEquipment().values(),
   ).filter((equip) => equip?.name !== 'Corncob');
+  const allPetsSelected = ctx.formGroup?.get('allPets')?.value;
+  let filteredEquipment = equipment;
+  if (!allPetsSelected) {
+    const packName = player?.pack ?? ctx.player?.pack ?? null;
+    const equipmentNames = getEquipmentNamesForPack(packName);
+    if (equipmentNames && equipmentNames.size > 0) {
+      filteredEquipment = equipment.filter((equip) =>
+        equipmentNames.has(equip?.name),
+      );
+    }
+  }
   const allowAilments = ctx.formGroup?.get('ailmentEquipment')?.value;
   const ailments = allowAilments
     ? Array.from(ctx.equipmentService.getInstanceOfAllAilments().values())
     : [];
-  const options = equipment.concat(ailments);
+  const options = filteredEquipment.concat(ailments);
   if (options.length === 0) {
+    return null;
+  }
+  const idx = Math.floor(Math.random() * options.length);
+  return options[idx];
+}
+
+export function getRandomToyName(ctx: AppUiContext): string | null {
+  const toyMap = ctx.toyService.getToysByType(0);
+  const options: Array<string | null> = [];
+  toyMap.forEach((toyNames) => {
+    toyNames.forEach((name) => {
+      if (name) {
+        options.push(name);
+      }
+    });
+  });
+  options.push(null);
+  if (!options.length) {
     return null;
   }
   const idx = Math.floor(Math.random() * options.length);
@@ -644,10 +788,16 @@ export function randomize(ctx: AppUiContext, player?: Player): void {
     console.error('Failed to create undo snapshot', e);
   }
 
+  const allPetsSelected = ctx.formGroup.get('allPets').value;
   if (player) {
     player.allPets = ctx.formGroup.get('allPets').value;
     player.tokenPets = ctx.formGroup.get('tokenPets').value;
     randomizePlayerPets(ctx, player);
+    if (allPetsSelected) {
+      randomizePlayerToy(ctx, player);
+    } else {
+      clearPlayerToy(ctx, player);
+    }
   } else {
     ctx.player.allPets = ctx.formGroup.get('allPets').value;
     ctx.player.tokenPets = ctx.formGroup.get('tokenPets').value;
@@ -655,6 +805,13 @@ export function randomize(ctx: AppUiContext, player?: Player): void {
     ctx.opponent.tokenPets = ctx.formGroup.get('tokenPets').value;
     randomizePlayerPets(ctx, ctx.player);
     randomizePlayerPets(ctx, ctx.opponent);
+    if (allPetsSelected) {
+      randomizePlayerToy(ctx, ctx.player);
+      randomizePlayerToy(ctx, ctx.opponent);
+    } else {
+      clearPlayerToy(ctx, ctx.player);
+      clearPlayerToy(ctx, ctx.opponent);
+    }
   }
   if (ctx.formGroup) {
     initPetForms(ctx);

@@ -11,7 +11,7 @@ export class Daycrawler extends Pet {
   pack: Pack = 'Custom';
   hidden: boolean = true;
   health = 1;
-  attack = 3;
+  attack = 1;
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

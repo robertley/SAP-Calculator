@@ -10,8 +10,8 @@ export class Dragonfly extends Pet {
   name = 'Dragonfly';
   tier = 4;
   pack: Pack = 'Custom';
-  attack = 1;
-  health = 1;
+  attack = 4;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new DragonflyAbility(this, this.logService));
     super.initAbilities();

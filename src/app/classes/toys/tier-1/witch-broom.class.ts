@@ -28,6 +28,16 @@ export class WitchBroom extends Toy {
       excludePets.push(targetResp.pet);
       targets.push(targetResp.pet);
     }
+    if (targets.length === 0) {
+      this.logService.createLog({
+        message: `Player's Witch Broom found no targets`,
+        type: 'ability',
+        player: this.parent,
+        puma: puma,
+        randomEvent: true,
+      });
+      return;
+    }
     for (let target of targets) {
       this.logService.createLog({
         message: `${this.name} gave ${target.name} Weak.`,

@@ -11,7 +11,7 @@ export class Stork extends Pet {
   name = 'Stork';
   tier = 2;
   pack: Pack = 'Star';
-  attack = 2;
+  attack = 3;
   health = 1;
   initAbilities(): void {
     this.addAbility(

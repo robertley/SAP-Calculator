@@ -11,8 +11,8 @@ export class Siamese extends Pet {
   name = 'Siamese';
   tier = 4;
   pack: Pack = 'Star';
-  health = 4;
-  attack = 1;
+  health = 5;
+  attack = 2;
   initAbilities(): void {
     this.addAbility(
       new SiameseAbility(this, this.logService, this.abilityService),

@@ -10,7 +10,7 @@ export class GoldenBeetle extends Pet {
   name = 'Golden Beetle';
   tier = 2;
   pack: Pack = 'Custom';
-  attack = 2;
+  attack = 4;
   health = 3;
   initAbilities(): void {
     this.addAbility(

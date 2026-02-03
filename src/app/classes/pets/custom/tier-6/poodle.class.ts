@@ -11,7 +11,7 @@ export class Poodle extends Pet {
   tier = 6;
   pack: Pack = 'Custom';
   attack = 3;
-  health = 3;
+  health = 2;
 
   initAbilities(): void {
     this.addAbility(new PoodleAbility(this, this.logService));

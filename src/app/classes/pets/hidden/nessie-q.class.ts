@@ -10,7 +10,7 @@ export class NessieQ extends Pet {
   tier = 1;
   pack: Pack = 'Unicorn';
   hidden: boolean = true;
-  health = 1;
+  health = 2;
   attack = 1;
   constructor(
     protected logService: LogService,

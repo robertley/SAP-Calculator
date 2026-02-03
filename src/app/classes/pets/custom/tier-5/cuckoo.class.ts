@@ -11,7 +11,7 @@ export class Cuckoo extends Pet {
   name = 'Cuckoo';
   tier = 5;
   pack: Pack = 'Custom';
-  attack = 4;
+  attack = 5;
   health = 4;
   override initAbilities(): void {
     this.addAbility(

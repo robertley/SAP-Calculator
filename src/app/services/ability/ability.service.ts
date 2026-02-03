@@ -66,6 +66,10 @@ export class AbilityService {
   }
 
   private logTriggerHeader(event: AbilityEvent) {
+    if (!this.logService.isShowTriggerNamesInLogs()) {
+      this.lastLoggedTrigger = undefined;
+      return;
+    }
     const trigger = event?.abilityType;
     if (!trigger) {
       return;

@@ -12,7 +12,7 @@ export class Rooster extends Pet {
   tier = 5;
   pack: Pack = 'Turtle';
   attack = 6;
-  health = 4;
+  health = 5;
   initAbilities(): void {
     this.addAbility(
       new RoosterAbility(this, this.logService, this.abilityService),

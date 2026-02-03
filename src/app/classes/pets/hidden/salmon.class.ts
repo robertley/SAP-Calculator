@@ -10,8 +10,8 @@ export class Salmon extends Pet {
   name = 'Salmon';
   tier = 1;
   pack: Pack = 'Star';
-  attack = 1;
-  health = 1;
+  attack = 5;
+  health = 5;
   hidden = true;
 
   initAbilities(): void {

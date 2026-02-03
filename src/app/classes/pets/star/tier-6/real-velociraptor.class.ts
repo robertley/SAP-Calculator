@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { cloneEquipment } from 'app/util/equipment-utils';
 
 
 export class RealVelociraptor extends Pet {
@@ -103,18 +104,10 @@ export class RealVelociraptorAbility extends Ability {
    * Creates a new instance of equipment based on the equipment class
    */
   private createEquipmentInstance(equipment: Equipment): Equipment | null {
-    try {
-      // Get the constructor of the equipment
-      const EquipmentClass = equipment.constructor as new () => Equipment;
-      return new EquipmentClass();
-    } catch (error) {
-      console.warn(
-        'Failed to create equipment instance:',
-        equipment.name,
-        error,
-      );
+    if (!equipment) {
       return null;
     }
+    return cloneEquipment(equipment);
   }
 
   copy(newOwner: Pet): RealVelociraptorAbility {

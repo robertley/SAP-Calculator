@@ -11,8 +11,8 @@ export class SugarGlider extends Pet {
   name = 'Sugar Glider';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 3;
-  health = 2;
+  attack = 1;
+  health = 3;
 
   override initAbilities(): void {
     this.addAbility(new SugarGliderAbility(this, this.logService));

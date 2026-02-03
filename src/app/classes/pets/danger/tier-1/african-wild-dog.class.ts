@@ -10,8 +10,8 @@ export class AfricanWildDog extends Pet {
   name = 'African Wild Dog';
   tier = 1;
   pack: Pack = 'Danger';
-  attack = 2;
-  health = 1;
+  attack = 3;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new AfricanWildDogAbility(this, this.logService));
     super.initAbilities();
