@@ -10,7 +10,7 @@ export class AtlanticPuffin extends Pet {
   name = 'Atlantic Puffin';
   tier = 2;
   pack: Pack = 'Custom';
-  attack = 2;
+  attack = 4;
   health = 3;
   initAbilities(): void {
     this.addAbility(new AtlanticPuffinAbility(this, this.logService));

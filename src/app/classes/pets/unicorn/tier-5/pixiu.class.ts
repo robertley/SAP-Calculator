@@ -10,8 +10,8 @@ export class Pixiu extends Pet {
   name = 'Pixiu';
   tier = 5;
   pack: Pack = 'Unicorn';
-  attack = 4;
-  health = 5;
+  attack = 5;
+  health = 6;
   initAbilities(): void {
     this.addAbility(new PixiuAbility(this, this.logService));
     super.initAbilities();

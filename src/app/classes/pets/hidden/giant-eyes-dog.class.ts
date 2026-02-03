@@ -10,8 +10,8 @@ export class GiantEyesDog extends Pet {
   tier = 1;
   pack: Pack = 'Unicorn';
   hidden: boolean = true;
-  health = 6;
-  attack = 6;
+  health = 1;
+  attack = 1;
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

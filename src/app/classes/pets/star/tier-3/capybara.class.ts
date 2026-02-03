@@ -11,7 +11,7 @@ export class Capybara extends Pet {
   tier = 3;
   pack: Pack = 'Star';
   attack = 2;
-  health = 5;
+  health = 6;
   initAbilities(): void {
     this.addAbility(
       new CapybaraAbility(this, this.logService, this.abilityService),

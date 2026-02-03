@@ -284,9 +284,10 @@ export abstract class Pet {
     triggersConsumed?: number,
   ) {
     this.baseName = this.baseName ?? this.name;
-    this.exp = exp ?? this.exp;
-    this.health = health ?? this.health * this.level;
-    this.attack = attack ?? this.attack * this.level;
+    const expValue = exp ?? this.exp ?? 0;
+    this.exp = expValue;
+    this.health = health ?? this.health + expValue;
+    this.attack = attack ?? this.attack + expValue;
     this.mana = mana ?? this.mana;
     this.triggersConsumed = triggersConsumed ?? this.triggersConsumed;
     this.originalHealth = this.health;

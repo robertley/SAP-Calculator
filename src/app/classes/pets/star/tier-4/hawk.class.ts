@@ -10,8 +10,8 @@ export class Hawk extends Pet {
   name = 'Hawk';
   tier = 4;
   pack: Pack = 'Star';
-  attack = 4;
-  health = 3;
+  attack = 5;
+  health = 4;
 
   initAbilities(): void {
     this.addAbility(new HawkAbility(this, this.logService));

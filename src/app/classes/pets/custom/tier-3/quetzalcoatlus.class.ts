@@ -10,8 +10,8 @@ export class Quetzalcoatlus extends Pet {
   name = 'Quetzalcoatlus';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 2;
-  health = 3;
+  attack = 4;
+  health = 6;
 
   override initAbilities(): void {
     this.addAbility(new QuetzalcoatlusAbility(this, this.logService));

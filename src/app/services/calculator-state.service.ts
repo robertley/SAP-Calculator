@@ -109,6 +109,7 @@ export class CalculatorStateService {
       komodoShuffle: false,
       mana: false,
       showAdvanced: false,
+      showTriggerNamesInLogs: false,
       showSwallowedLevels: false,
       ailmentEquipment: false,
     };

@@ -10,8 +10,8 @@ export class Kiwi extends Pet {
   name = 'Kiwi';
   tier = 1;
   pack: Pack = 'Star';
-  attack = 2;
-  health = 2;
+  attack = 1;
+  health = 4;
   initAbilities(): void {
     this.addAbility(new KiwiAbility(this, this.logService));
     super.initAbilities();

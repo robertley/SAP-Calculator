@@ -10,8 +10,8 @@ export class BabyUrchin extends Pet {
   name = 'Baby Urchin';
   tier = 2;
   pack: Pack = 'Star';
-  attack = 2;
-  health = 1;
+  attack = 3;
+  health = 2;
 
   initAbilities(): void {
     this.addAbility(new BabyUrchinAbility(this, this.logService));

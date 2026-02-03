@@ -10,8 +10,8 @@ export class Baboon extends Pet {
   name = 'Baboon';
   tier = 3;
   pack: Pack = 'Golden';
-  attack = 1;
-  health = 2;
+  attack = 2;
+  health = 3;
   initAbilities(): void {
     this.addAbility(
       new BaboonAbility(this, this.logService, this.abilityService),

@@ -11,8 +11,8 @@ export class Hummingbird extends Pet {
   name = 'Hummingbird';
   tier = 1;
   pack: Pack = 'Star';
-  attack = 2;
-  health = 2;
+  attack = 3;
+  health = 1;
 
   initAbilities(): void {
     this.addAbility(

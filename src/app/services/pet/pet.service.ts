@@ -320,7 +320,7 @@ export class PetService {
       pets = [...(this.playerCustomPackPets.get(parent.pack)?.get(tier) || [])];
     }
 
-    if (parent.tokenPets) {
+    if (parent.allPets && parent.tokenPets) {
       const tokens = this.tokenPetsMap.get(tier) || [];
       pets.push(...tokens);
       // Deduplicate in case some tokens are also in the pack (though unlikely)

@@ -12,7 +12,7 @@ export class Frigatebird extends Pet {
   tier = 2;
   pack: Pack = 'Custom';
   attack = 2;
-  health = 1;
+  health = 5;
 
   initAbilities(): void {
     this.addAbility(new FrigatebirdAbility(this, this.logService));

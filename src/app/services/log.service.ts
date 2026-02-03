@@ -20,13 +20,29 @@ export class LogService {
   private petNameRegex: RegExp;
   private toyNameRegex: RegExp;
   private equipmentNameRegex: RegExp;
+  private inlineNameRegex: RegExp;
+  private inlineNameTypeMap: Map<string, 'pet' | 'toy' | 'equipment'>;
   private ailmentNames: Set<string>;
   private enabled = true;
   private deferDecorations = false;
+  private showTriggerNamesInLogs = false;
   constructor() {
-    this.petNameRegex = this.buildNameRegex(getAllPetNames());
-    this.toyNameRegex = this.buildNameRegex(getAllToyNames());
-    this.equipmentNameRegex = this.buildNameRegex(getAllEquipmentNames());
+    const petNames = getAllPetNames();
+    const toyNames = getAllToyNames();
+    const equipmentNames = getAllEquipmentNames();
+    this.petNameRegex = this.buildNameRegex(petNames);
+    this.toyNameRegex = this.buildNameRegex(toyNames);
+    this.equipmentNameRegex = this.buildNameRegex(equipmentNames);
+    this.inlineNameTypeMap = this.buildInlineNameTypeMap(
+      petNames,
+      toyNames,
+      equipmentNames,
+    );
+    this.inlineNameRegex = this.buildInlineNameRegex(
+      petNames,
+      toyNames,
+      equipmentNames,
+    );
     this.ailmentNames = new Set(
       Object.values(AILMENT_CATEGORIES).flat().filter(Boolean),
     );
@@ -49,6 +65,14 @@ export class LogService {
 
   isDeferDecorations(): boolean {
     return this.deferDecorations;
+  }
+
+  setShowTriggerNamesInLogs(enabled: boolean) {
+    this.showTriggerNamesInLogs = Boolean(enabled);
+  }
+
+  isShowTriggerNamesInLogs(): boolean {
+    return this.showTriggerNamesInLogs;
   }
 
   decorateLogIfNeeded(log: Log) {
@@ -285,36 +309,11 @@ export class LogService {
     if (!message || message.includes('<img')) {
       return message;
     }
-    let updated = this.replaceMatchesWithIcons(
+    let updated = this.replaceMatchesWithIconsOutsideTags(
       message,
-      this.petNameRegex,
-      (name) => getPetIconPath(name),
-    );
-    updated = this.replaceMatchesWithIcons(updated, this.toyNameRegex, (name) =>
-      getToyIconPath(name),
-    );
-    updated = this.replaceMatchesWithIcons(
-      updated,
-      this.equipmentNameRegex,
-      (name) => {
-        const isAilment = this.isAilmentName(name);
-        return (
-          getEquipmentIconPath(name, isAilment) ??
-          getEquipmentIconPath(name, !isAilment)
-        );
-      },
-      (name) => {
-        const isAilment = this.isAilmentName(name);
-        const primary = getEquipmentIconPath(name, isAilment);
-        if (!primary) {
-          return null;
-        }
-        const secondary = getEquipmentIconPath(name, !isAilment);
-        const secondaryAttr = secondary
-          ? `this.dataset.step='1';this.src='${secondary}';`
-          : `this.dataset.step='1';`;
-        return `<img src="${primary}" class="log-inline-icon" alt="${name}" onerror="if(!this.dataset.step){${secondaryAttr}return;}this.remove();"> ${name}`;
-      },
+      this.inlineNameRegex,
+      (name) => this.getInlineIconPath(name),
+      (name) => this.getInlineIconHtml(name),
     );
     const manaIcon = 'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/mana.png';
     const manaRegex = /(?<![A-Za-z0-9])mana(?![A-Za-z0-9])(?!\s+Potion)/gi;
@@ -322,6 +321,13 @@ export class LogService {
       updated,
       manaRegex,
       () => manaIcon,
+    );
+    const expIcon = 'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/xp.png';
+    const expRegex = /(?<![A-Za-z0-9])(?:xp|exp)(?![A-Za-z0-9])/gi;
+    updated = this.replaceMatchesWithIconsOutsideTags(
+      updated,
+      expRegex,
+      () => expIcon,
     );
     return updated;
   }
@@ -605,13 +611,14 @@ export class LogService {
     message: string,
     regex: RegExp,
     getIcon: (name: string) => string | null,
+    getHtml?: (name: string, icon: string | null) => string | null,
   ): string {
     return message
       .split(/(<[^>]+>)/g)
       .map((segment) =>
         segment.startsWith('<')
           ? segment
-          : this.replaceMatchesWithIcons(segment, regex, getIcon),
+          : this.replaceMatchesWithIcons(segment, regex, getIcon, getHtml),
       )
       .join('');
   }
@@ -628,6 +635,81 @@ export class LogService {
       `(?<![A-Za-z0-9])(${escaped.join('|')})(?![A-Za-z0-9])`,
       'g',
     );
+  }
+
+  private buildInlineNameTypeMap(
+    petNames: string[],
+    toyNames: string[],
+    equipmentNames: string[],
+  ): Map<string, 'pet' | 'toy' | 'equipment'> {
+    const map = new Map<string, 'pet' | 'toy' | 'equipment'>();
+    for (const name of equipmentNames) {
+      if (name) {
+        map.set(name, 'equipment');
+      }
+    }
+    for (const name of toyNames) {
+      if (name) {
+        map.set(name, 'toy');
+      }
+    }
+    for (const name of petNames) {
+      if (name) {
+        map.set(name, 'pet');
+      }
+    }
+    return map;
+  }
+
+  private buildInlineNameRegex(
+    petNames: string[],
+    toyNames: string[],
+    equipmentNames: string[],
+  ): RegExp {
+    const combined = new Set<string>();
+    petNames.forEach((name) => name && combined.add(name));
+    toyNames.forEach((name) => name && combined.add(name));
+    equipmentNames.forEach((name) => name && combined.add(name));
+    return this.buildNameRegex(Array.from(combined));
+  }
+
+  private getInlineIconType(name: string): 'pet' | 'toy' | 'equipment' | null {
+    return this.inlineNameTypeMap.get(name) ?? null;
+  }
+
+  private getInlineIconPath(name: string): string | null {
+    const type = this.getInlineIconType(name);
+    if (type === 'pet') {
+      return getPetIconPath(name);
+    }
+    if (type === 'toy') {
+      return getToyIconPath(name);
+    }
+    if (type === 'equipment') {
+      const isAilment = this.isAilmentName(name);
+      return (
+        getEquipmentIconPath(name, isAilment) ??
+        getEquipmentIconPath(name, !isAilment)
+      );
+    }
+    return null;
+  }
+
+  private getInlineIconHtml(name: string): string | null {
+    const type = this.getInlineIconType(name);
+    if (type !== 'equipment') {
+      return null;
+    }
+    const isAilment = this.isAilmentName(name);
+    const primary = getEquipmentIconPath(name, isAilment);
+    if (!primary) {
+      return null;
+    }
+    const secondary = getEquipmentIconPath(name, !isAilment);
+    const secondaryAttr = secondary
+      ? `this.dataset.step='1';this.src='${secondary}';`
+      : `this.dataset.step='1';`;
+    return `<img src="${primary}" class="log-inline-icon" alt="${name}" onerror="if(!this.dataset.step){${secondaryAttr}return;}this.remove();"> ${name}`;
   }
 
   private escapeRegExp(value: string): string {

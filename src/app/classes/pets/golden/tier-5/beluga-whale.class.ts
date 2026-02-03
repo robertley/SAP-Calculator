@@ -11,8 +11,8 @@ export class BelugaWhale extends Pet {
   name = 'Beluga Whale';
   tier = 5;
   pack: Pack = 'Golden';
-  attack = 3;
-  health = 8;
+  attack = 2;
+  health = 5;
   initAbilities(): void {
     this.addAbility(
       new BelugaWhaleAbility(

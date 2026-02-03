@@ -15,8 +15,8 @@ export class GoodDog extends Pet {
   name = 'Good Dog';
   tier = 5;
   pack: Pack = 'Unicorn';
-  attack = 3;
-  health = 3;
+  attack = 1;
+  health = 1;
   hidden: boolean = true;
   initAbilities(): void {
     this.addAbility(new GoodDogAbility(this, this.logService));

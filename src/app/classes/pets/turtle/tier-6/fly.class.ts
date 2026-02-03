@@ -11,8 +11,8 @@ export class Fly extends Pet {
   name = 'Fly';
   tier = 6;
   pack: Pack = 'Turtle';
-  attack = 5;
-  health = 5;
+  attack = 4;
+  health = 4;
   initAbilities(): void {
     this.addAbility(new FlyAbility(this, this.logService, this.abilityService));
     super.initAbilities();

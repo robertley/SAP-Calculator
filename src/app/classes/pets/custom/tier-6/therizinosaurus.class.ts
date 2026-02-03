@@ -12,7 +12,7 @@ export class Therizinosaurus extends Pet {
   tier = 6;
   pack: Pack = 'Custom';
   attack = 3;
-  health = 2;
+  health = 8;
   initAbilities(): void {
     this.addAbility(new TherizinosaurusAbility(this, this.logService));
     super.initAbilities();

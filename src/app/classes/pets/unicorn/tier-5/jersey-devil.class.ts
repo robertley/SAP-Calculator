@@ -11,8 +11,8 @@ export class JerseyDevil extends Pet {
   name = 'Jersey Devil';
   tier = 5;
   pack: Pack = 'Unicorn';
-  attack = 5;
-  health = 4;
+  attack = 3;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new JerseyDevilAbility(this, this.logService));
     super.initAbilities();

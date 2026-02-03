@@ -11,8 +11,8 @@ export class Tandgnost extends Pet {
   name = 'Tandgnost';
   tier = 4;
   pack: Pack = 'Custom';
-  attack = 5;
-  health = 5;
+  attack = 6;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new TandgnostAbility(this, this.logService));
     super.initAbilities();

@@ -96,13 +96,6 @@ export class FairyArmadilloAbility extends Ability {
       transformTarget.exp,
       transformTarget.equipment,
     );
-    this.logService.createLog({
-      message: `${owner.name} transformed ${transformTarget.name} into a protected ball!`,
-      type: 'ability',
-      player: owner.parent,
-      tiger: tiger,
-      randomEvent: transformTargetResp.random,
-    });
     transformTarget.parent.transformPet(transformTarget, fairyBall);
 
     // Tiger system: trigger Tiger execution at the end

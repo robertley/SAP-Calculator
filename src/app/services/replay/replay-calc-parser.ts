@@ -167,6 +167,7 @@ export class ReplayCalcParser {
       mana: true,
       triggersConsumed: true,
       showAdvanced: true,
+      showTriggerNamesInLogs: false,
       showSwallowedLevels: false,
       ailmentEquipment: false,
     };
@@ -341,6 +342,8 @@ export class ReplayCalcParser {
     if (state.triggersConsumed) strippedState.triggersConsumed = true;
     if (state.foodsEaten) strippedState.foodsEaten = true;
     if (state.showAdvanced) strippedState.showAdvanced = true;
+    if (state.showTriggerNamesInLogs)
+      strippedState.showTriggerNamesInLogs = true;
     if (state.showSwallowedLevels) strippedState.showSwallowedLevels = true;
     if (state.ailmentEquipment) strippedState.ailmentEquipment = true;
 

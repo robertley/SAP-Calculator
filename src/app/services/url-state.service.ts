@@ -55,6 +55,7 @@ const REVERSE_KEY_MAP = {
   m: 'mana',
   tc: 'triggersConsumed',
   sa: 'showAdvanced',
+  stn: 'showTriggerNamesInLogs',
   swl: 'showSwallowedLevels',
   ae: 'ailmentEquipment',
   pTA: 'playerTransformationAmount',

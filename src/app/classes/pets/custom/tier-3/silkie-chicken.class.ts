@@ -13,8 +13,8 @@ export class SilkieChicken extends Pet {
   name = 'Silkie Chicken';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 1;
-  health = 4;
+  attack = 2;
+  health = 6;
 
   override initAbilities(): void {
     this.addAbility(new SilkieChickenAbility(this, this.logService));

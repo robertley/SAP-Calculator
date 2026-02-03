@@ -11,8 +11,8 @@ export class Hippocampus extends Pet {
   name = 'Hippocampus';
   tier = 4;
   pack: Pack = 'Custom';
-  attack = 2;
-  health = 4;
+  attack = 4;
+  health = 6;
   initAbilities(): void {
     this.addAbility(new HippocampusAbility(this, this.logService));
     super.initAbilities();

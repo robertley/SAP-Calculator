@@ -10,8 +10,8 @@ export class Gerenuk extends Pet {
   name = 'Gerenuk';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 4;
-  health = 3;
+  attack = 3;
+  health = 4;
 
   override initAbilities(): void {
     this.addAbility(new GerenukAbility(this, this.logService));

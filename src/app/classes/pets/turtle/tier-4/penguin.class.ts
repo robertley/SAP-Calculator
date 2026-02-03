@@ -11,7 +11,7 @@ export class Penguin extends Pet {
   tier = 4;
   pack: Pack = 'Turtle';
   attack = 2;
-  health = 4;
+  health = 3;
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

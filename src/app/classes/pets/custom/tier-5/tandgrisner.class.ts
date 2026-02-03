@@ -11,8 +11,8 @@ export class Tandgrisner extends Pet {
   name = 'Tandgrisner';
   tier = 5;
   pack: Pack = 'Custom';
-  attack = 5;
-  health = 5;
+  attack = 2;
+  health = 6;
   initAbilities(): void {
     this.addAbility(new TandgrisnerAbility(this, this.logService));
     super.initAbilities();

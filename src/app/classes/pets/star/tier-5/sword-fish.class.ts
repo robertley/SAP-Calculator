@@ -10,8 +10,8 @@ export class SwordFish extends Pet {
   name = 'Swordfish';
   tier = 5;
   pack: Pack = 'Star';
-  attack = 5;
-  health = 5;
+  attack = 6;
+  health = 9;
 
   initAbilities(): void {
     this.addAbility(new SwordFishAbility(this, this.logService));

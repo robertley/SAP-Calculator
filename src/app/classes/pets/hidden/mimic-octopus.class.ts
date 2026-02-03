@@ -10,8 +10,8 @@ export class MimicOctopus extends Pet {
   name = 'Mimic Octopus';
   tier = 6;
   pack: Pack = 'Star';
-  attack = 3;
-  health = 6;
+  attack = 4;
+  health = 7;
 
   initAbilities(): void {
     this.addAbility(new MimicOctopusAbility(this, this.logService));

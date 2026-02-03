@@ -10,7 +10,7 @@ export class SageGrouse extends Pet {
   name = 'Sage-Grouse';
   tier = 3;
   pack: Pack = 'Custom';
-  attack = 3;
+  attack = 2;
   health = 4;
 
   override initAbilities(): void {
