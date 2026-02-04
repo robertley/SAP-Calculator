@@ -19,12 +19,14 @@ import { ToyFactoryService } from '../src/app/services/toy/toy-factory.service';
 import { InjectorService } from '../src/app/services/injector.service';
 
 class NodeInjector {
-  private map = new Map<any, any>();
+  private map = new Map<string | any, any>();
   register(token: any, instance: any) {
-    this.map.set(token, instance);
+    const key = token.name || token;
+    this.map.set(key, instance);
   }
   get(token: any) {
-    return this.map.get(token);
+    const key = token.name || token;
+    return this.map.get(key);
   }
 }
 
