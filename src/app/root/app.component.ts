@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Injector,
@@ -60,6 +61,7 @@ import {
   refreshFilteredBattles as refreshFilteredBattlesImpl,
   refreshViewBattleLogRows as refreshViewBattleLogRowsImpl,
   runSimulation as runSimulationImpl,
+  cancelSimulation as cancelSimulationImpl,
   setViewBattle as setViewBattleImpl,
   simulate as simulateImpl,
 } from './app.component.simulation';
@@ -165,6 +167,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   playerWinner = 0;
   opponentWinner = 0;
   draw = 0;
+  simulationInProgress = false;
+  simulationProgress = 0;
+  simulationProgressLabel = '';
+  simulationCancelRequested = false;
+  simulationWorker: Worker | null = null;
   battles: Battle[] = [];
   battleRandomEvents: LogMessagePart[][] = [];
   battleRandomEventsByBattle = new Map<Battle, LogMessagePart[]>();
@@ -227,6 +234,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(
     public logService: LogService,
     private injector: Injector,
+    private cdr: ChangeDetectorRef,
     private abilityService: AbilityService,
     public gameService: GameService,
     public petService: PetService,
@@ -370,6 +378,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly simulate = (count: number = 1000) => simulateImpl(this, count);
   readonly runSimulation = (count: number = 1000) =>
     runSimulationImpl(this, count);
+  readonly cancelSimulation = () => cancelSimulationImpl(this);
+  readonly markForCheck = () => this.cdr.markForCheck();
 
   get logs() {
     return this.logService.getLogs();

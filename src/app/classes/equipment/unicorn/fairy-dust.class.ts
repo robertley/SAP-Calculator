@@ -16,9 +16,6 @@ export class FairyDust extends Equipment {
   }
 }
 
-
-// NOTE: This ability uses a special 'EmptyFrontSpace' trigger that may not be implemented yet
-// The original equipment uses pet.emptyFrontSpace callback which is different from standard triggers
 export class FairyDustAbility extends Ability {
   private equipment: Equipment;
   private logService: LogService;
@@ -27,7 +24,7 @@ export class FairyDustAbility extends Ability {
     super({
       name: 'FairyDustAbility',
       owner: owner,
-      triggers: ['EmptyFrontSpace'], // This trigger may need to be implemented
+      triggers: ['EmptyFrontSpace'], 
       abilityType: 'Equipment',
       native: true,
       maxUses: 1, // Fairy Dust is removed after one use

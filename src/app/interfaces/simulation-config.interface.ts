@@ -253,6 +253,7 @@ export interface SimulationConfig {
   optimizeDeterministicSimulations?: boolean;
   simulationCount?: number;
   logsEnabled?: boolean;
+  maxLoggedBattles?: number;
 }
 
 export interface SimulationResult {

@@ -12,7 +12,7 @@ import { LogService } from '../log.service';
 import { PetService } from '../pet/pet.service';
 import { ToyService } from '../toy/toy.service';
 import { Player } from '../../classes/player.class';
-import { AUTO_DISABLE_LOGS_SIMULATION_COUNT } from './simulation.constants';
+import { MAX_LOGGED_BATTLES } from './simulation.constants';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +26,82 @@ export class SimulationService {
     private equipmentService: EquipmentService,
     private toyService: ToyService,
   ) {}
+
+  runSimulationInWorker(
+    formGroup: FormGroup,
+    count: number,
+    player: Player,
+    opponent: Player,
+    callbacks: {
+      onProgress?: (progress: {
+        completed: number;
+        total: number;
+        playerWins: number;
+        opponentWins: number;
+        draws: number;
+        loggedBattles: number;
+      }) => void;
+      onResult?: (result: SimulationResult) => void;
+      onAborted?: (result: SimulationResult) => void;
+      onError?: (message: string) => void;
+    },
+    options?: { progressInterval?: number },
+  ): Worker | null {
+    if (typeof Worker === 'undefined') {
+      const result = this.runSimulation(formGroup, count, player, opponent);
+      callbacks.onResult?.(result);
+      return null;
+    }
+
+    const config = this.buildConfig(formGroup, count);
+    const showTriggerNamesInLogs =
+      formGroup.get('showTriggerNamesInLogs')?.value ?? false;
+    const progressInterval = options?.progressInterval ?? 50;
+
+    const worker = new Worker(
+      new URL('./simulation.worker', import.meta.url),
+      { type: 'module' },
+    );
+
+    worker.onmessage = ({ data }) => {
+      if (!data || !data.type) {
+        return;
+      }
+      if (data.type === 'progress') {
+        callbacks.onProgress?.(data);
+      } else if (data.type === 'result') {
+        callbacks.onResult?.(data.result as SimulationResult);
+      } else if (data.type === 'aborted') {
+        callbacks.onAborted?.(data.result as SimulationResult);
+      } else if (data.type === 'error') {
+        callbacks.onError?.(data.message || 'Worker simulation failed.');
+      }
+    };
+
+    worker.onerror = (event) => {
+      callbacks.onError?.(event.message || 'Worker simulation failed.');
+    };
+
+    worker.postMessage({
+      type: 'start',
+      config,
+      progressInterval,
+      showTriggerNamesInLogs,
+    });
+
+    return worker;
+  }
+
+  requestWorkerCancel(worker: Worker | null): void {
+    if (!worker) {
+      return;
+    }
+    try {
+      worker.postMessage({ type: 'cancel' });
+    } catch (error) {
+      // ignore
+    }
+  }
 
   runSimulation(
     formGroup: FormGroup,
@@ -93,9 +169,6 @@ export class SimulationService {
 
   private buildConfig(formGroup: FormGroup, count: number): SimulationConfig {
     const logsEnabled = formGroup.get('logsEnabled')?.value ?? true;
-    const shouldAutoDisableLogs =
-      Number(count) >= AUTO_DISABLE_LOGS_SIMULATION_COUNT;
-
     return {
       playerPack: formGroup.get('playerPack').value,
       opponentPack: formGroup.get('opponentPack').value,
@@ -129,7 +202,8 @@ export class SimulationService {
       komodoShuffle: formGroup.get('komodoShuffle').value,
       mana: formGroup.get('mana').value,
       simulationCount: count,
-      logsEnabled: shouldAutoDisableLogs ? false : logsEnabled,
+      logsEnabled,
+      maxLoggedBattles: MAX_LOGGED_BATTLES,
     };
   }
 

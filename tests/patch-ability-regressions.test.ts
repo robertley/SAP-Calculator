@@ -829,5 +829,219 @@ describe('Pet Ability Patch Regressions', () => {
         expect(opponentSide).toMatch(/O1\s+Pig/);
         expect(opponentSide).not.toMatch(/O1\s+Camel/);
     });
+
+    it('Onion push should trigger Fairy Dust when the front becomes empty', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 3,
+                    exp: 0,
+                    equipment: { name: 'Onion' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: { name: 'Fairy Dust' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const onionIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'equipment' &&
+                typeof log.message === 'string' &&
+                log.message.includes('(Onion)'),
+        );
+        const fairyDustIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('Fairy Dust'),
+        );
+
+        expect(onionIndex).toBeGreaterThan(-1);
+        expect(fairyDustIndex).toBeGreaterThan(-1);
+        expect(onionIndex).toBeLessThan(fairyDustIndex);
+    });
+
+    it('Sneaky Egg should faint before spawning a Cracked Egg', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerPets: [
+                {
+                    name: 'Sneaky Egg',
+                    attack: 1,
+                    health: 4,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+            ],
+            opponentPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const faintIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'death' &&
+                typeof log.message === 'string' &&
+                log.message.includes('Sneaky Egg fainted.'),
+        );
+        const spawnIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('Cracked Egg'),
+        );
+        const noRoomLog = logs.find(
+            (log: any) =>
+                typeof log.message === 'string' &&
+                log.message.includes('No room to spawn CrackedEgg!'),
+        );
+
+        expect(faintIndex).toBeGreaterThan(-1);
+        expect(spawnIndex).toBeGreaterThan(-1);
+        expect(faintIndex).toBeLessThan(spawnIndex);
+        expect(noRoomLog).toBeUndefined();
+    });
 });
 

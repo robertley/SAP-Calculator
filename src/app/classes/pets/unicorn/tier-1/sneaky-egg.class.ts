@@ -71,6 +71,8 @@ export class SneakyEggAbility extends Ability {
     };
 
     owner.health = 0;
+    owner.parent.handleDeath(owner);
+    owner.parent.removeDeadPets();
 
     let egg = new CrackedEgg(
       this.logService,

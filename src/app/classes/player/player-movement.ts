@@ -234,6 +234,17 @@ export const pushPet = (
   } else {
     abilityService.triggerPushedEvents(pet);
   }
+
+  if (player.pet0 == null) {
+    abilityService.triggerEmptyFrontSpaceEvents(player);
+    abilityService.executeEmptyFrontSpaceEvents();
+    abilityService.triggerEmptyFrontSpaceToyEvents(player);
+    abilityService.executeEmptyFrontSpaceToyEvents();
+  } else {
+    for (const teammate of player.petArray) {
+      teammate.clearFrontTriggered = false;
+    }
+  }
 };
 
 export const pushPetToFront = (

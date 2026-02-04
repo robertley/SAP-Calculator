@@ -14,7 +14,7 @@ async function build() {
       platform: "node",
       target: "es2015",
       format: "cjs",
-      tsconfig: path.resolve(__dirname, "tsconfig.json"),
+      tsconfig: path.resolve(__dirname, "tsconfig.simulation.json"),
       sourcemap: "inline",
     });
     console.log("Build successful");

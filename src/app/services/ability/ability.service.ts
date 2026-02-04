@@ -715,6 +715,14 @@ export class AbilityService {
     }
   }
 
+  executeEmptyFrontSpaceEvents(): void {
+    this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      filter: (event) => event.abilityType === 'EmptyFrontSpace',
+      onExecute: (event) => this.logTriggerHeader(event),
+    });
+    this.lastLoggedTrigger = undefined;
+  }
+
   triggerToyBrokeEvents(player: Player) {
     for (let pet of player.petArray) {
       this.abilityQueueService.triggerAbility(pet, 'FriendlyToyBroke');
