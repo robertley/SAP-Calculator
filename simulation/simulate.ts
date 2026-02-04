@@ -79,6 +79,8 @@ function createSimulationRunner(logService: LogService): SimulationRunner {
   const injector = new NodeInjector();
   injector.register(PetService, petService);
   injector.register(EquipmentService, equipmentService);
+  injector.register(AbilityService, abilityService);
+  injector.register(LogService, logService);
   InjectorService.setInjector(injector as any);
 
   // Toy Logic
