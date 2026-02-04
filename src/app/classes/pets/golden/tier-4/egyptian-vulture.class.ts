@@ -65,6 +65,10 @@ export class EgyptianVultureAbility extends Ability {
     );
     let friendBehind = targetsBehindResp.pets[0];
 
+    if (friendBehind == null) {
+      return;
+    }
+
     this.logService.createLog({
       message: `${owner.name} activated ${friendBehind.name}'s ability.`,
       type: 'ability',
