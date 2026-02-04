@@ -1,0 +1,22 @@
+{
+  "playerPack": "Unicorn",
+  "opponentPack": "Unicorn",
+  "turn": 5,
+  "playerPets": [
+    null,
+    {"name": "Ant", "attack": 2, "health": 2, "equipment": {"name": "Fairy Dust"}},
+    null,
+    null,
+    null
+  ],
+  "opponentPets": [
+    {"name": "Ant", "attack": 1, "health": 1},
+    null,
+    null,
+    null,
+    null
+  ],
+  "simulationCount": 1,
+  "logsEnabled": true,
+  "maxLoggedBattles": 1
+}

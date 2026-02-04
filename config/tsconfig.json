@@ -20,6 +20,8 @@
     "module": "es2020",
     "lib": ["ES2022", "dom"],
     "paths": {
+      "@angular/core": ["../node_modules/@angular/core"],
+      "@angular/forms": ["../node_modules/@angular/forms"],
       "app/*": ["app/*"],
       "assets/*": ["assets/*"],
       "src/*": ["*"]

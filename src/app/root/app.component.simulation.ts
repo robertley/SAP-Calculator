@@ -5,7 +5,6 @@ import { Log } from '../interfaces/log.interface';
 import { LocalStorageService } from '../services/local-storage.service';
 import { LogService } from '../services/log.service';
 import { SimulationService } from '../services/simulation/simulation.service';
-import { AUTO_DISABLE_LOGS_SIMULATION_COUNT } from '../services/simulation/simulation.constants';
 import { money_round } from '../util/helper-functions';
 import { buildApiResponse as buildApiResponsePayload } from './app.component.share-utils';
 
@@ -29,6 +28,13 @@ export interface AppSimulationContext {
   viewBattleLogRows: Array<{ parts: LogMessagePart[]; classes: string[] }>;
   simulated: boolean;
   apiResponse: string | null;
+  api?: boolean;
+  simulationInProgress?: boolean;
+  simulationProgress?: number;
+  simulationProgressLabel?: string;
+  simulationWorker?: Worker | null;
+  simulationCancelRequested?: boolean;
+  markForCheck?: () => void;
   setStatus?: (message: string, tone?: 'success' | 'error') => void;
 }
 
@@ -90,7 +96,11 @@ export function buildApiResponse(ctx: AppSimulationContext): void {
 
 export function simulate(ctx: AppSimulationContext, count: number = 1000): void {
   try {
-    runSimulation(ctx, count);
+    if (ctx.api) {
+      runSimulation(ctx, count);
+      return;
+    }
+    runSimulationAsync(ctx, count);
   } catch (error) {
     console.error(error);
     ctx.setStatus?.('Something went wrong, please send a bug report.', 'error');
@@ -103,16 +113,6 @@ export function runSimulation(
 ): void {
   const logsEnabledControl = ctx.formGroup.get('logsEnabled');
   const wantsLogs = logsEnabledControl?.value ?? true;
-  if (
-    wantsLogs &&
-    Number(count) >= AUTO_DISABLE_LOGS_SIMULATION_COUNT
-  ) {
-    ctx.setStatus?.(
-      `Logs auto-disabled for ${AUTO_DISABLE_LOGS_SIMULATION_COUNT}+ simulations to reduce memory use.`,
-      'success',
-    );
-  }
-
   ctx.simulationBattleAmt = count;
   ctx.localStorageService.setFormStorage(ctx.formGroup);
 
@@ -123,6 +123,95 @@ export function runSimulation(
     ctx.opponent,
   );
 
+  applySimulationResult(ctx, result);
+}
+
+export function runSimulationAsync(
+  ctx: AppSimulationContext,
+  count: number = 1000,
+): void {
+  if (ctx.simulationInProgress) {
+    return;
+  }
+
+  ctx.simulationBattleAmt = count;
+  ctx.localStorageService.setFormStorage(ctx.formGroup);
+  ctx.simulationInProgress = true;
+  ctx.simulationCancelRequested = false;
+  ctx.simulationProgress = 0;
+  ctx.simulationProgressLabel = `0 / ${count}`;
+  ctx.setStatus?.('Simulation started...', 'success');
+  ctx.markForCheck?.();
+
+  const worker = ctx.simulationService.runSimulationInWorker(
+    ctx.formGroup,
+    count,
+    ctx.player,
+    ctx.opponent,
+    {
+      onProgress: (progress) => {
+        const percent = progress.total
+          ? Math.floor((progress.completed / progress.total) * 100)
+          : 0;
+        ctx.simulationProgress = percent;
+        ctx.simulationProgressLabel = `${progress.completed} / ${progress.total}`;
+        ctx.playerWinner = progress.playerWins;
+        ctx.opponentWinner = progress.opponentWins;
+        ctx.draw = progress.draws;
+        ctx.markForCheck?.();
+      },
+      onResult: (result) => {
+        cleanupWorker(ctx);
+        applySimulationResult(ctx, result);
+        ctx.simulationProgress = 100;
+        ctx.simulationProgressLabel = `${count} / ${count}`;
+        ctx.simulationInProgress = false;
+        ctx.simulationCancelRequested = false;
+        ctx.markForCheck?.();
+      },
+      onAborted: (result) => {
+        cleanupWorker(ctx);
+        applySimulationResult(ctx, result);
+        ctx.simulationInProgress = false;
+        ctx.simulationCancelRequested = false;
+        ctx.setStatus?.('Simulation cancelled.', 'error');
+        ctx.markForCheck?.();
+      },
+      onError: (message) => {
+        cleanupWorker(ctx);
+        ctx.simulationInProgress = false;
+        ctx.simulationCancelRequested = false;
+        ctx.setStatus?.(message || 'Simulation failed.', 'error');
+        ctx.markForCheck?.();
+      },
+    },
+    { progressInterval: 50 },
+  );
+
+  ctx.simulationWorker = worker;
+}
+
+export function cancelSimulation(ctx: AppSimulationContext): void {
+  if (!ctx.simulationWorker || !ctx.simulationInProgress) {
+    return;
+  }
+  ctx.simulationCancelRequested = true;
+  ctx.setStatus?.('Cancelling simulation...', 'error');
+  ctx.simulationService.requestWorkerCancel(ctx.simulationWorker);
+  ctx.markForCheck?.();
+}
+
+function cleanupWorker(ctx: AppSimulationContext): void {
+  if (ctx.simulationWorker) {
+    ctx.simulationWorker.terminate();
+  }
+  ctx.simulationWorker = null;
+}
+
+function applySimulationResult(
+  ctx: AppSimulationContext,
+  result: { playerWins: number; opponentWins: number; draws: number; battles?: Battle[] },
+): void {
   ctx.playerWinner = result.playerWins;
   ctx.opponentWinner = result.opponentWins;
   ctx.draw = result.draws;
@@ -135,7 +224,7 @@ export function runSimulation(
   });
   ctx.battleRandomEventsByBattle = randomEventsByBattle;
   refreshFilteredBattles(ctx);
-  ctx.viewBattle = result.battles[0] || null;
+  ctx.viewBattle = result.battles?.[0] || null;
   ctx.viewBattleLogs = ctx.viewBattle?.logs ?? [];
   refreshViewBattleLogRows(ctx);
   ctx.simulated = true;
@@ -197,6 +286,12 @@ export function formatRandomEvents(
 
 export function getPlayerClass(log: Log): string {
   if (log.player == null) {
+    if (log.playerIsOpponent === true) {
+      return 'log-opponent';
+    }
+    if (log.playerIsOpponent === false) {
+      return 'log-player';
+    }
     return 'log';
   }
   if (!log.player.isOpponent) {

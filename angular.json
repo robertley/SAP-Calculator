@@ -25,6 +25,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "config/tsconfig.app.json",
+            "webWorkerTsConfig": "config/tsconfig.worker.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",

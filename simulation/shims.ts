@@ -1,5 +1,5 @@
 // Mock Angular Decorators
-export function Injectable() {
+export function Injectable(_args?: any) {
   return function (target: any) {};
 }
 
@@ -21,7 +21,7 @@ export class AbstractControl {
 }
 
 export class FormControl extends AbstractControl {
-  constructor(value: any) {
+  constructor(value: any, _validatorOrOpts?: any) {
     super(value);
   }
 }

@@ -18,6 +18,19 @@ import {
   EventProcessorContext,
 } from './processor/event-processor';
 
+export interface SimulationRunHooks {
+  shouldAbort?: () => boolean;
+  onProgress?: (progress: {
+    completed: number;
+    total: number;
+    playerWins: number;
+    opponentWins: number;
+    draws: number;
+    loggedBattles: number;
+  }) => void;
+  progressInterval?: number;
+}
+
 export class SimulationRunner {
   protected player: Player;
   protected opponent: Player;
@@ -90,11 +103,20 @@ export class SimulationRunner {
     this.eventProcessor = new EventProcessor(context);
   }
 
-  public run(config: SimulationConfig): SimulationResult {
+  public run(
+    config: SimulationConfig,
+    hooks?: SimulationRunHooks,
+  ): SimulationResult {
     let battleCount = config.simulationCount || 1000;
+    const logsEnabled = config.logsEnabled !== false;
+    let loggedBattleCount = 0;
+    const progressInterval =
+      hooks?.onProgress && hooks.progressInterval != null
+        ? Math.max(1, hooks.progressInterval)
+        : null;
 
     // Setup initial simulation state from config
-    this.logService.setEnabled(config.logsEnabled !== false);
+    this.logService.setEnabled(logsEnabled);
     this.logService.setDeferDecorations(true);
     this.resetSimulation();
     this.setupGameEnvironment(config);
@@ -103,11 +125,47 @@ export class SimulationRunner {
       battleCount = 1;
     }
 
+    let maxLoggedBattles =
+      config.maxLoggedBattles == null
+        ? logsEnabled
+          ? battleCount
+          : 0
+        : Math.max(0, config.maxLoggedBattles);
+    if (maxLoggedBattles > battleCount) {
+      maxLoggedBattles = battleCount;
+    }
+
     for (let i = 0; i < battleCount; i++) {
-      this.initBattle(config);
+      if (hooks?.shouldAbort?.()) {
+        break;
+      }
+      const shouldLog =
+        logsEnabled && maxLoggedBattles > 0 && loggedBattleCount < maxLoggedBattles;
+      this.logService.setEnabled(shouldLog);
+      this.initBattle(config, shouldLog);
+      if (shouldLog) {
+        loggedBattleCount += 1;
+      }
       this.prepareBattle(config);
       this.executeBattleLoop();
       this.reset();
+
+      if (hooks?.onProgress && progressInterval != null) {
+        const completed = i + 1;
+        if (completed % progressInterval === 0 || completed === battleCount) {
+          hooks.onProgress({
+            completed,
+            total: battleCount,
+            playerWins: this.playerWinner,
+            opponentWins: this.opponentWinner,
+            draws: this.draw,
+            loggedBattles: this.battles.length,
+          });
+        }
+      }
+      if (hooks?.shouldAbort?.()) {
+        break;
+      }
     }
 
     return {
@@ -182,14 +240,18 @@ export class SimulationRunner {
     this.gameService.setTierGroupPets(playerPool, opponentPool);
   }
 
-  protected initBattle(config: SimulationConfig) {
+  protected initBattle(config: SimulationConfig, recordBattle: boolean = true) {
     this.logService.reset();
     this.abilityService.clearGlobalEventQueue();
-    this.currBattle = {
-      winner: 'draw',
-      logs: this.logService.getLogs(),
-    };
-    this.battles.push(this.currBattle);
+    if (recordBattle) {
+      this.currBattle = {
+        winner: 'draw',
+        logs: this.logService.getLogs(),
+      };
+      this.battles.push(this.currBattle);
+    } else {
+      this.currBattle = null;
+    }
 
     this.gameService.gameApi.opponentSummonedAmount =
       config.opponentSummonedAmount ?? 0;

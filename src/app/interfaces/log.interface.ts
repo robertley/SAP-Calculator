@@ -12,6 +12,7 @@ export interface Log {
     | 'equipment'
     | 'trumpets';
   player?: Player;
+  playerIsOpponent?: boolean;
   sourcePet?: Pet;
   targetPet?: Pet;
   sourceIndex?: number;

@@ -164,8 +164,13 @@
         <div class="top-controls-left">
           <div class="simulate-controls">
             <div class="simulate-input-group">
-              <button class="btn btn-primary" (click)="simulate(formGroup.get('simulations').value)">
-                Simulate
+              <button class="btn btn-primary" (click)="simulate(formGroup.get('simulations').value)"
+                [disabled]="simulationInProgress">
+                {{ simulationInProgress ? "Simulating..." : "Simulate" }}
+              </button>
+              <button class="btn btn-outline-danger ms-1" *ngIf="simulationInProgress"
+                (click)="cancelSimulation()">
+                Cancel
               </button>
               <input class="form-control simulate-input" type="number" formControlName="simulations" min="1"
                 max="10000" />
@@ -242,6 +247,14 @@
         [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'"
       >
         {{ statusMessage }}
+      </div>
+      <div *ngIf="simulationInProgress" class="simulation-progress px-3 pb-2">
+        <div class="progress flex-1">
+          <div class="progress-bar" role="progressbar" [style.width]="simulationProgress + '%'"></div>
+        </div>
+        <div class="progress-text">
+          {{ simulationCancelRequested ? "Cancelling..." : simulationProgressLabel }}
+        </div>
       </div>
 
       <div class="top-controls-body">
