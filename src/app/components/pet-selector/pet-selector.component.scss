@@ -118,6 +118,34 @@
   font-size: 0.7rem;
 }
 
+.swallowed-label-small,
+.swallowed-label-tiny {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.swallowed-label-small {
+  font-size: 0.68rem;
+}
+
+.swallowed-label-tiny {
+  font-size: 0.62rem;
+}
+
+.swallowed-nested {
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 10px;
+  padding: 0.5rem 0.6rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.swallowed-nested .border-start,
+.swallowed-slot .border-start {
+  border-left-color: rgba(255, 255, 255, 0.2) !important;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;

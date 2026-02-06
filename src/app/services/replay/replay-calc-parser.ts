@@ -165,6 +165,7 @@ export class ReplayCalcParser {
       tokenPets: false,
       komodoShuffle: false,
       mana: true,
+      seed: null,
       triggersConsumed: true,
       showAdvanced: true,
       showTriggerNamesInLogs: false,
@@ -339,6 +340,7 @@ export class ReplayCalcParser {
     if (state.tokenPets) strippedState.tokenPets = true;
     if (state.komodoShuffle) strippedState.komodoShuffle = true;
     if (state.mana) strippedState.mana = true;
+    if (state.seed != null) strippedState.seed = state.seed;
     if (state.triggersConsumed) strippedState.triggersConsumed = true;
     if (state.foodsEaten) strippedState.foodsEaten = true;
     if (state.showAdvanced) strippedState.showAdvanced = true;

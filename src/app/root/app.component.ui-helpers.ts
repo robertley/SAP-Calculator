@@ -472,8 +472,14 @@ export function updatePlayerPack(
 export function updatePlayerToy(
   ctx: AppUiContext,
   player: Player,
-  toy: string,
+  toy: string | null,
 ): void {
+  if (!toy) {
+    player.toy = null;
+    player.originalToy = null;
+    setToyImage(ctx, player, null);
+    return;
+  }
   let levelControlName;
   if (player == ctx.player) {
     levelControlName = 'playerToyLevel';
@@ -693,14 +699,24 @@ export function onItemSelected(ctx: AppUiContext, item: any): void {
       ctx.formGroup.get('opponentPack').setValue(packName);
     }
   } else if (type === 'toy') {
-    const toyName = item?.name || item || null;
+    const rawToyName = item?.name || item || null;
+    const toyName =
+      typeof rawToyName === 'string' &&
+      rawToyName.trim().toLowerCase() === 'none'
+        ? null
+        : rawToyName;
     if (side === 'player') {
       ctx.formGroup.get('playerToy').setValue(toyName);
     } else {
       ctx.formGroup.get('opponentToy').setValue(toyName);
     }
   } else if (type === 'hard-toy') {
-    const toyName = item?.name || item || null;
+    const rawToyName = item?.name || item || null;
+    const toyName =
+      typeof rawToyName === 'string' &&
+      rawToyName.trim().toLowerCase() === 'none'
+        ? null
+        : rawToyName;
     if (side === 'player') {
       ctx.formGroup.get('playerHardToy').setValue(toyName);
     } else {

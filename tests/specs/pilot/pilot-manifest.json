@@ -1,0 +1,194 @@
+{
+  "generatedAt": "2026-02-06T16:13:28.016Z",
+  "counts": {
+    "pets": 20,
+    "toys": 10,
+    "equipment": 10
+  },
+  "pets": [
+    {
+      "name": "Aardvark",
+      "pack": "Custom",
+      "behavior": "Enemy summoned: Gain +1 attack and +3 health."
+    },
+    {
+      "name": "Adult Flounder",
+      "pack": "Custom",
+      "behavior": "Transformed: Give two back-most friends 1 experience."
+    },
+    {
+      "name": "Ahuizotl",
+      "pack": "Custom",
+      "behavior": "End turn: Summon one level 1 Ocarina."
+    },
+    {
+      "name": "Akhlut",
+      "pack": "Custom",
+      "behavior": "Faint: Spend 2 mana to give the nearest friend behind permanent +3 attack and +3 health."
+    },
+    {
+      "name": "Albatross",
+      "pack": "Custom",
+      "behavior": "Adjacent tier 4 or lower friends deals 3 ability damage extra."
+    },
+    {
+      "name": "Albino Squirrel",
+      "pack": "Custom",
+      "behavior": "Sell: Replace shop food with three random food and discount them by 1 gold."
+    },
+    {
+      "name": "Amargasaurus",
+      "pack": "Custom",
+      "behavior": "Friend hurt: Restore its health. Can restore up to 15 health per turn."
+    },
+    {
+      "name": "Amphisbaena",
+      "pack": "Custom",
+      "behavior": "End turn: Give the nearest friend ahead +1 attack on odd turns and +1 health on even."
+    },
+    {
+      "name": "Andrewsarchus",
+      "pack": "Custom",
+      "behavior": "End turn: Remove the most healthy unfrozen shop pet to gain 50% of its stats until next turn."
+    },
+    {
+      "name": "Angry Pygmy Hog",
+      "pack": "Custom",
+      "behavior": "Really angry!"
+    },
+    {
+      "name": "Anubis",
+      "pack": "Custom",
+      "behavior": "Start of battle: Activate two Faint friends from tier 2 or lower front-to-back."
+    },
+    {
+      "name": "Atlantic Puffin",
+      "pack": "Custom",
+      "behavior": "Friendly attacked: Remove its Strawberry perk to deal 2 damage to the last enemy."
+    },
+    {
+      "name": "Axehandle Hound",
+      "pack": "Custom",
+      "behavior": "Before any attack: If opponent has duplicates, deal 2 damage to all enemies. Works 1 time per battle."
+    },
+    {
+      "name": "Baby Urchin",
+      "pack": "Custom",
+      "behavior": "Faint: Remove 4 health from the first enemy."
+    },
+    {
+      "name": "Bakunawa",
+      "pack": "Custom",
+      "behavior": "Start of battle: Make the highest attack enemy Sleepy."
+    },
+    {
+      "name": "Barnacle",
+      "pack": "Custom",
+      "behavior": "End turn: If you did not roll this turn, gain +1 experience."
+    },
+    {
+      "name": "Basilisk",
+      "pack": "Custom",
+      "behavior": "Start of battle: Transform the nearest pet ahead to Rock with +5 health."
+    },
+    {
+      "name": "Bear",
+      "pack": "Custom",
+      "behavior": "Faint: Give Honey perk to all pets within one space."
+    },
+    {
+      "name": "Black Bear",
+      "pack": "Custom",
+      "behavior": "Faint: Remove 4 health from one random enemy for each food this has eaten this turn."
+    },
+    {
+      "name": "Bloodhound",
+      "pack": "Custom",
+      "behavior": "Friend sold: Stock one copy of it. Works 1 time per turn."
+    }
+  ],
+  "toys": [
+    {
+      "name": "Action Figure",
+      "behavior": "Start of battle: Give Coconut perk to two first enemies."
+    },
+    {
+      "name": "Air Palm Tree",
+      "behavior": "Start of battle: Give Coconut perk to the highest attack friend."
+    },
+    {
+      "name": "Balloon",
+      "behavior": "Break: Give the front-most friend +1 attack and +1 health."
+    },
+    {
+      "name": "Camera",
+      "behavior": "Start of battle: Remove 30% attack from the highest attack enemy."
+    },
+    {
+      "name": "Candelabra",
+      "behavior": "Three friends bought: Break and give all friends permanent +1 attack and +1 health."
+    },
+    {
+      "name": "Cash Register",
+      "behavior": "Break: Summon one 6/6 friend that sells for 3 gold."
+    },
+    {
+      "name": "Chocolate Box",
+      "behavior": "Start of battle: Give +1 experience to friends and +2 experience to enemies."
+    },
+    {
+      "name": "Crystal Ball",
+      "behavior": "Start of battle: Give the front-most friend +2 mana."
+    },
+    {
+      "name": "Dice Cup",
+      "behavior": "Start of battle: Shuffle positions of all friends."
+    },
+    {
+      "name": "Evil Book",
+      "behavior": "Empty front space: Summon one 6/6 Great One in battle that deals 5 damage to ALL other pets."
+    }
+  ],
+  "equipment": [
+    {
+      "name": "Ambrosia",
+      "behavior": "Block ailment or 8 damage, once."
+    },
+    {
+      "name": "Baguette",
+      "behavior": "Before attack: Remove the front-most enemy perk, once."
+    },
+    {
+      "name": "Banana",
+      "behavior": "Faint: Summon one 4/4 Monkey."
+    },
+    {
+      "name": "Blackberry",
+      "behavior": "Gain +1 attack and +2 health."
+    },
+    {
+      "name": "Bloated",
+      "behavior": "Can't gain perk, once."
+    },
+    {
+      "name": "Blueberry",
+      "behavior": "Prioritize this for enemy random abilities."
+    },
+    {
+      "name": "Bok Choy",
+      "behavior": "Gain +3 health when this would faint, once."
+    },
+    {
+      "name": "Brussels Sprout",
+      "behavior": "Block being pushed or 5 damage, once."
+    },
+    {
+      "name": "Cake",
+      "behavior": "End turn: Increase sell value by 1 gold."
+    },
+    {
+      "name": "Cake Slice",
+      "behavior": "Give one pet +2 attack and +2 health until next turn."
+    }
+  ]
+}

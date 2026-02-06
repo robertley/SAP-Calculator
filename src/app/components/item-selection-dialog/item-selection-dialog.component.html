@@ -98,7 +98,7 @@
                   [alt]="item.name"
                   class="item-icon"
                 />
-                <div *ngIf="item.tier > 0" class="tier-badge">
+                <div *ngIf="item.tier > 0 && type !== 'hard-toy'" class="tier-badge">
                   {{ item.tier }}
                 </div>
               </ng-container>

@@ -46,7 +46,7 @@ export class HarpyEagleAbility extends Ability {
     super({
       name: 'HarpyEagleAbility',
       owner: owner,
-      triggers: ['ThisHurt', 'StartTurn'],
+      triggers: ['ThisHurt'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -59,11 +59,6 @@ export class HarpyEagleAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    if (context.trigger === 'StartTurn') {
-      this.usesThisTurn = 0;
-      return;
-    }
-
     if (context.trigger !== 'ThisHurt') {
       return;
     }
@@ -78,14 +73,27 @@ export class HarpyEagleAbility extends Ability {
     const owner = this.owner;
 
     let power = this.level * 5;
-    let petPool: string[];
-    if (owner.parent === gameApi.player) {
-      petPool = gameApi.playerPetPool.get(1);
-    } else {
-      petPool = gameApi.opponentPetPool.get(1);
+    const normalizePool = (pool?: string[]) =>
+      (pool ?? []).filter(
+        (petName) =>
+          petName &&
+          owner.name &&
+          petName.toLowerCase() !== owner.name.toLowerCase(),
+      );
+
+    const activePool =
+      owner.parent === gameApi.player
+        ? gameApi.playerPetPool
+        : gameApi.opponentPetPool;
+    let tierOnePool = normalizePool(activePool?.get(1));
+    if (!tierOnePool.length) {
+      tierOnePool = normalizePool(this.petService.allPets.get(1));
+    }
+    if (!tierOnePool.length) {
+      return;
     }
 
-    let petName = petPool[Math.floor(Math.random() * petPool.length)];
+    let petName = tierOnePool[Math.floor(Math.random() * tierOnePool.length)];
     let summonPet = this.petService.createPet(
       {
         name: petName,

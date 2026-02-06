@@ -106,6 +106,7 @@ export const KEY_MAP: Record<string, string> = {
   tokenPets: 'tp',
   komodoShuffle: 'ks',
   mana: 'm',
+  seed: 'sd',
   triggersConsumed: 'tc',
   showAdvanced: 'sa',
   showTriggerNamesInLogs: 'stn',

@@ -108,6 +108,7 @@ export class CalculatorStateService {
       tokenPets: true,
       komodoShuffle: false,
       mana: false,
+      seed: null,
       showAdvanced: false,
       showTriggerNamesInLogs: false,
       showSwallowedLevels: false,

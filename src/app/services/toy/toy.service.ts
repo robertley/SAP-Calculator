@@ -10,6 +10,7 @@ import { GameService } from '../game.service';
 import { PetService } from '../pet/pet.service';
 import { EquipmentService } from '../equipment/equipment.service';
 import { ToyFactoryService } from './toy-factory.service';
+import { RandomEventReason } from '../../interfaces/log.interface';
 import * as toysJson from 'assets/data/toys.json';
 
 interface ToyJsonEntry {
@@ -377,25 +378,48 @@ export class ToyService {
   }
 
   executeStartOfBattleEvents() {
-    // shuffle, so that same priority events are in random order
+    // Shuffle first to preserve random ordering only for exact ties.
     this.startOfBattleEvents = shuffle(this.startOfBattleEvents);
-
-    // Randomize order without tier priority.
     this.startOfBattleEvents.sort((a, b) => {
-      return (a.tieBreaker ?? Math.random()) > (b.tieBreaker ?? Math.random())
-        ? -1
-        : 1;
+      if (a.priority !== b.priority) {
+        return b.priority - a.priority;
+      }
+      const aTie = a.tieBreaker ?? 0;
+      const bTie = b.tieBreaker ?? 0;
+      return bTie - aTie;
     });
 
+    const priorityCounts = new Map<number, number>();
+    for (const event of this.startOfBattleEvents) {
+      priorityCounts.set(
+        event.priority,
+        (priorityCounts.get(event.priority) ?? 0) + 1,
+      );
+    }
+
     for (let event of this.startOfBattleEvents) {
-      this.logToyEvent(event, 'activated at start of battle');
+      const isRandomOrder = (priorityCounts.get(event.priority) ?? 0) > 1;
+      const randomEventReason: RandomEventReason = isRandomOrder
+        ? 'tie-broken'
+        : 'deterministic';
+      this.logToyEvent(
+        event,
+        'activated at start of battle',
+        isRandomOrder,
+        randomEventReason,
+      );
       event.callback(this.gameService.gameApi);
     }
 
     this.resetStartOfBattleEvents();
   }
 
-  private logToyEvent(event: AbilityEvent, label: string) {
+  private logToyEvent(
+    event: AbilityEvent,
+    label: string,
+    randomEvent: boolean,
+    randomEventReason: RandomEventReason,
+  ) {
     const toyName = event.player?.toy?.name;
     if (!toyName) {
       return;
@@ -408,7 +432,8 @@ export class ToyService {
       message: `${ownerLabel} ${toyName} ${label}${triggerPetName}`,
       type: 'ability',
       player: event.player,
-      randomEvent: true,
+      randomEvent,
+      randomEventReason,
     });
   }
 }

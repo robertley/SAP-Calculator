@@ -169,6 +169,12 @@ export class SimulationService {
 
   private buildConfig(formGroup: FormGroup, count: number): SimulationConfig {
     const logsEnabled = formGroup.get('logsEnabled')?.value ?? true;
+    const rawSeed = formGroup.get('seed')?.value;
+    const parsedSeed = Number(rawSeed);
+    const seed =
+      rawSeed === '' || rawSeed == null || !Number.isFinite(parsedSeed)
+        ? null
+        : Math.trunc(parsedSeed);
     return {
       playerPack: formGroup.get('playerPack').value,
       opponentPack: formGroup.get('opponentPack').value,
@@ -201,6 +207,7 @@ export class SimulationService {
       tokenPets: formGroup.get('tokenPets').value,
       komodoShuffle: formGroup.get('komodoShuffle').value,
       mana: formGroup.get('mana').value,
+      seed,
       simulationCount: count,
       logsEnabled,
       maxLoggedBattles: MAX_LOGGED_BATTLES,

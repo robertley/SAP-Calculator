@@ -51,7 +51,12 @@ import { BATTLE_BACKGROUNDS, LOG_FILTER_TABS } from './app.constants';
 import { loadTeamPreset, saveTeamPreset } from './app.component.team-utils';
 import { InjectorService } from '../services/injector.service';
 import {
+  BattleDiffScope,
+  BattleDiffRow,
+  BattleDiffSummary,
+  BattleTimelineRow,
   buildApiResponse as buildApiResponseImpl,
+  refreshBattleDiff as refreshBattleDiffImpl,
   getDrawPercent as getDrawPercentImpl,
   getDrawWidth as getDrawWidthImpl,
   getLosePercent as getLosePercentImpl,
@@ -59,9 +64,14 @@ import {
   getWinPercent as getWinPercentImpl,
   LogMessagePart,
   refreshFilteredBattles as refreshFilteredBattlesImpl,
+  refreshViewBattleTimeline as refreshViewBattleTimelineImpl,
   refreshViewBattleLogRows as refreshViewBattleLogRowsImpl,
   runSimulation as runSimulationImpl,
   cancelSimulation as cancelSimulationImpl,
+  setBattleDiffLeft as setBattleDiffLeftImpl,
+  setBattleDiffLeftScope as setBattleDiffLeftScopeImpl,
+  setBattleDiffRight as setBattleDiffRightImpl,
+  setBattleDiffRightScope as setBattleDiffRightScopeImpl,
   setViewBattle as setViewBattleImpl,
   simulate as simulateImpl,
 } from './app.component.simulation';
@@ -172,6 +182,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   simulationProgressLabel = '';
   simulationCancelRequested = false;
   simulationWorker: Worker | null = null;
+  simulationRunId = 0;
   battles: Battle[] = [];
   battleRandomEvents: LogMessagePart[][] = [];
   battleRandomEventsByBattle = new Map<Battle, LogMessagePart[]>();
@@ -211,11 +222,24 @@ export class AppComponent implements OnInit, AfterViewInit {
   showImport = false;
   showExport = false;
   showReportABug = false;
+  showBattleAnalysis = false;
 
   playerPetsControls: AbstractControl[] = [];
   opponentPetsControls: AbstractControl[] = [];
   viewBattleLogs: Log[] = [];
   viewBattleLogRows: Array<{ parts: LogMessagePart[]; classes: string[] }> = [];
+  viewBattleTimelineRows: BattleTimelineRow[] = [];
+  diffBattleLeftIndex = 0;
+  diffBattleRightIndex = 0;
+  diffBattleLeftScope: BattleDiffScope = 'all';
+  diffBattleRightScope: BattleDiffScope = 'all';
+  battleDiffRows: BattleDiffRow[] = [];
+  battleDiffSummary: BattleDiffSummary = {
+    equalSteps: 0,
+    changedSteps: 0,
+    leftOnly: 0,
+    rightOnly: 0,
+  };
 
   playerPackImageBroken = false;
   opponentPackImageBroken = false;
@@ -230,6 +254,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly trackByIndex = trackByIndexImpl;
   readonly trackByTeamId = trackByTeamIdImpl;
   readonly trackByLogTab = trackByLogTabImpl;
+  readonly toggleBattleAnalysis = () => {
+    this.showBattleAnalysis = !this.showBattleAnalysis;
+  };
 
   constructor(
     public logService: LogService,
@@ -350,6 +377,20 @@ export class AppComponent implements OnInit, AfterViewInit {
           ?.setValue(10000, { emitEvent: false });
       }
     });
+    this.formGroup.get('seed')?.valueChanges.subscribe((val) => {
+      if (val === '' || val == null) {
+        return;
+      }
+      const parsed = Number(val);
+      if (!Number.isFinite(parsed)) {
+        this.formGroup.get('seed')?.setValue(null, { emitEvent: false });
+        return;
+      }
+      const normalized = Math.trunc(parsed);
+      if (normalized !== parsed) {
+        this.formGroup.get('seed')?.setValue(normalized, { emitEvent: false });
+      }
+    });
   }
 
   readonly toggleAdvanced = () => toggleAdvancedImpl(this);
@@ -360,7 +401,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     pack: string,
     randomize: boolean = true,
   ) => updatePlayerPackImpl(this, player, pack, randomize);
-  readonly updatePlayerToy = (player: Player, toy: string) =>
+  readonly updatePlayerToy = (player: Player, toy: string | null) =>
     updatePlayerToyImpl(this, player, toy);
   readonly setToyImage = (player: Player, toyName: string | null) =>
     setToyImageImpl(this, player, toyName);
@@ -386,6 +427,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   readonly setViewBattle = (battle: Battle) => setViewBattleImpl(this, battle);
+  readonly refreshViewBattleTimeline = () =>
+    refreshViewBattleTimelineImpl(this);
+  readonly refreshBattleDiff = () => refreshBattleDiffImpl(this);
+  readonly setBattleDiffLeft = (index: number) =>
+    setBattleDiffLeftImpl(this, index);
+  readonly setBattleDiffRight = (index: number) =>
+    setBattleDiffRightImpl(this, index);
+  readonly setBattleDiffLeftScope = (scope: BattleDiffScope) =>
+    setBattleDiffLeftScopeImpl(this, scope);
+  readonly setBattleDiffRightScope = (scope: BattleDiffScope) =>
+    setBattleDiffRightScopeImpl(this, scope);
   readonly refreshViewBattleLogRows = () =>
     refreshViewBattleLogRowsImpl(this);
   get drawWidth() {
@@ -500,12 +552,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   setStatus(message: string, tone: 'success' | 'error' = 'success') {
     this.statusMessage = message;
     this.statusTone = tone;
+    this.cdr.markForCheck();
     if (this.statusTimer) {
       clearTimeout(this.statusTimer);
     }
     this.statusTimer = setTimeout(() => {
       this.statusMessage = '';
       this.statusTimer = null;
+      this.cdr.markForCheck();
     }, 3000);
   }
 
@@ -515,5 +569,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.statusTimer = null;
     }
     this.statusMessage = '';
+    this.cdr.markForCheck();
   }
 }

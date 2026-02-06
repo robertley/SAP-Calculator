@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Dazed } from 'app/classes/equipment/ailments/dazed.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getRandomInt } from 'app/util/helper-functions';
 
 
 export class Mandrake extends Pet {
@@ -60,11 +61,7 @@ export class MandrakeAbility extends Ability {
       'Dazed',
       owner,
     );
-    let targetResp = owner.parent.opponent.getTierXOrLowerPet(
-      this.level * 2,
-      excludePets,
-      owner,
-    );
+    const targetResp = this.getTargetPrioritizingFaintPets(excludePets, owner);
     let target = targetResp.pet;
     if (target == null) {
       return;
@@ -82,6 +79,30 @@ export class MandrakeAbility extends Ability {
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);
+  }
+
+  private getTargetPrioritizingFaintPets(excludePets: Pet[], owner: Pet): {
+    pet: Pet | null;
+    random: boolean;
+  } {
+    const tierCap = this.level * 2;
+    const faintCandidates = owner.parent.opponent.petArray.filter(
+      (pet) =>
+        pet.alive &&
+        pet.tier <= tierCap &&
+        !excludePets.includes(pet) &&
+        pet.isFaintPet(),
+    );
+
+    if (faintCandidates.length > 0) {
+      const index = getRandomInt(0, faintCandidates.length - 1);
+      return {
+        pet: faintCandidates[index],
+        random: faintCandidates.length > 1,
+      };
+    }
+
+    return owner.parent.opponent.getTierXOrLowerPet(tierCap, excludePets, owner);
   }
 
   copy(newOwner: Pet): MandrakeAbility {

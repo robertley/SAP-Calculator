@@ -17,8 +17,15 @@
                     </button>
                 </div>
 
-                <div class="swallowed-nested mt-2 ps-3 border-start"
-                    *ngIf="formGroup.get('abominationSwallowedPet' + (i + 1))?.value">
+                <div class="swallowed-nested mt-2 ps-3 border-start" *ngIf="
+                    formGroup.get('abominationSwallowedPet' + (i + 1))?.value &&
+                    (
+                      showSwallowedLevels ||
+                      shouldShowAbominationSwallowTimesHurt(i) ||
+                      formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Beluga Whale' ||
+                      formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Parrot'
+                    )
+                  ">
                     <!-- Nested Level for Swallowed Pet -->
                     <div class="form-group small-w-input mb-2" *ngIf="showSwallowedLevels">
                         <label class="swallowed-label-small">Level</label>
