@@ -52,6 +52,9 @@ export function saveTeamPreset(options: {
   const tokenPets = Boolean(options.formGroup.get('tokenPets').value);
   const komodoShuffle = Boolean(options.formGroup.get('komodoShuffle').value);
   const mana = Boolean(options.formGroup.get('mana').value);
+  const seedValue = options.formGroup.get('seed')?.value;
+  const seed =
+    seedValue === '' || seedValue == null ? null : Number(seedValue);
   const triggersConsumed = Boolean(
     options.formGroup.get('triggersConsumed').value,
   );
@@ -107,6 +110,7 @@ export function saveTeamPreset(options: {
     existing.tokenPets = tokenPets;
     existing.komodoShuffle = komodoShuffle;
     existing.mana = mana;
+    existing.seed = Number.isFinite(seed) ? Math.trunc(seed) : null;
     existing.triggersConsumed = triggersConsumed;
     existing.showSwallowedLevels = showSwallowedLevels;
     existing.changeEquipmentUses = changeEquipmentUses;
@@ -140,6 +144,7 @@ export function saveTeamPreset(options: {
       tokenPets,
       komodoShuffle,
       mana,
+      seed: Number.isFinite(seed) ? Math.trunc(seed) : null,
       triggersConsumed,
       showSwallowedLevels,
       changeEquipmentUses,
@@ -199,6 +204,9 @@ export function loadTeamPreset(options: {
   }
   if (team.mana != null) {
     options.formGroup.get('mana').setValue(team.mana);
+  }
+  if (team.seed != null || team.seed === null) {
+    options.formGroup.get('seed')?.setValue(team.seed ?? null);
   }
   if (team.triggersConsumed != null) {
     options.formGroup.get('triggersConsumed').setValue(team.triggersConsumed);

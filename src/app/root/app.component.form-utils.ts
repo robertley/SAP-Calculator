@@ -15,9 +15,9 @@ export interface AppFormInitContext {
   openCustomPackEditor: () => void;
   resetPackImageError: (side: 'player' | 'opponent', packName: string) => void;
   updatePlayerPack: (player: Player, pack: string, randomize?: boolean) => void;
-  updatePlayerToy: (player: Player, toy: string) => void;
+  updatePlayerToy: (player: Player, toy: string | null) => void;
   updateToyLevel: (player: Player, level: number) => void;
-  setHardToyImage: (player: Player, toyName: string) => void;
+  setHardToyImage: (player: Player, toyName: string | null) => void;
 }
 
 export function initPetForms(
@@ -585,6 +585,7 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     showTriggerNamesInLogs: new FormControl(false),
     ailmentEquipment: new FormControl(true),
     changeEquipmentUses: new FormControl(false),
+    seed: new FormControl<number | null>(null),
     logsEnabled: new FormControl(true),
     simulations: new FormControl(100),
   });
@@ -624,19 +625,13 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
   formGroup
     .get('playerToy')!
     .valueChanges.subscribe((value: string | null | undefined) => {
-      if (value == null) {
-        return;
-      }
-      ctx.updatePlayerToy(ctx.player, value);
+      ctx.updatePlayerToy(ctx.player, value ?? null);
     });
 
   formGroup
     .get('opponentToy')!
     .valueChanges.subscribe((value: string | null | undefined) => {
-      if (value == null) {
-        return;
-      }
-      ctx.updatePlayerToy(ctx.opponent, value);
+      ctx.updatePlayerToy(ctx.opponent, value ?? null);
     });
 
   formGroup
@@ -660,11 +655,8 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
   formGroup
     .get('playerHardToy')!
     .valueChanges.subscribe((value: string | null | undefined) => {
-      ctx.gameService.gameApi.playerHardToy = value;
-      if (value == null) {
-        return;
-      }
-      ctx.setHardToyImage(ctx.player, value);
+      ctx.gameService.gameApi.playerHardToy = value ?? null;
+      ctx.setHardToyImage(ctx.player, value ?? null);
     });
 
   formGroup
@@ -679,11 +671,8 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
   formGroup
     .get('opponentHardToy')!
     .valueChanges.subscribe((value: string | null | undefined) => {
-      ctx.gameService.gameApi.opponentHardToy = value;
-      if (value == null) {
-        return;
-      }
-      ctx.setHardToyImage(ctx.opponent, value);
+      ctx.gameService.gameApi.opponentHardToy = value ?? null;
+      ctx.setHardToyImage(ctx.opponent, value ?? null);
     });
 
   formGroup

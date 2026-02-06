@@ -1,6 +1,8 @@
 import { Player } from '../classes/player.class';
 import { Pet } from '../classes/pet.class';
 
+export type RandomEventReason = 'deterministic' | 'tie-broken' | 'true-random';
+
 export interface Log {
   message: string;
   type:
@@ -18,6 +20,7 @@ export interface Log {
   sourceIndex?: number;
   targetIndex?: number;
   randomEvent?: boolean; // assumed false if undefined
+  randomEventReason?: RandomEventReason;
   tiger?: boolean;
   puma?: boolean;
   pteranodon?: boolean;

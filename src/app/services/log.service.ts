@@ -109,6 +109,9 @@ export class LogService {
     if (log.type === 'attack' && log.player && log.message) {
       this.resolveAttackPetsFromMessage(log);
     }
+    if (!log.randomEventReason && log.randomEvent === true) {
+      log.randomEventReason = 'true-random';
+    }
     if (log.player && log.message) {
       this.resolveSourceTargetFromMessage(log);
     }
@@ -161,6 +164,8 @@ export class LogService {
     const samePlayer = lastLog?.player === log.player;
     const sameMessage = lastLog?.message?.trim() === log.message?.trim();
     const sameRandom = lastLog?.randomEvent === log.randomEvent;
+    const sameRandomReason =
+      lastLog?.randomEventReason === log.randomEventReason;
     const sameSource =
       lastLog?.sourcePet === log.sourcePet &&
       lastLog?.sourceIndex === log.sourceIndex;
@@ -178,6 +183,7 @@ export class LogService {
       sameMessage &&
       samePlayer &&
       sameRandom &&
+      sameRandomReason &&
       (!hasSourceOrTarget || (sameSource && sameTarget))
     ) {
       lastLog.count = (lastLog.count ?? 1) + 1;
@@ -463,6 +469,9 @@ export class LogService {
       return false;
     }
     if (lastLog.randomEvent !== nextLog.randomEvent) {
+      return false;
+    }
+    if (lastLog.randomEventReason !== nextLog.randomEventReason) {
       return false;
     }
     if (

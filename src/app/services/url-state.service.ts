@@ -53,6 +53,7 @@ const REVERSE_KEY_MAP = {
   tp: 'tokenPets',
   ks: 'komodoShuffle',
   m: 'mana',
+  sd: 'seed',
   tc: 'triggersConsumed',
   sa: 'showAdvanced',
   stn: 'showTriggerNamesInLogs',

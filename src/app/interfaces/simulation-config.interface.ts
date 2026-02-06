@@ -250,6 +250,7 @@ export interface SimulationConfig {
   tokenPets?: boolean;
   komodoShuffle?: boolean;
   mana?: boolean;
+  seed?: number | null;
   optimizeDeterministicSimulations?: boolean;
   simulationCount?: number;
   logsEnabled?: boolean;

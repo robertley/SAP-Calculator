@@ -87,7 +87,7 @@ export class FlyAbility extends Ability {
     let summonResult = owner.parent.summonPet(
       zombie,
       triggerPet.savedPosition,
-      true,
+      false,
       owner,
     );
 

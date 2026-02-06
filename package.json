@@ -17,7 +17,14 @@
     "bundle-simulation": "node simulation/build.js",
     "watch": "node ./node_modules/@angular/cli/bin/ng build --watch --configuration development",
     "test": "node ./node_modules/@angular/cli/bin/ng test",
-    "test:vitest": "vitest run --config config/vitest.config.ts"
+    "test:vitest": "vitest run --config config/vitest.config.ts",
+    "test:vitest:generated": "vitest run --config config/vitest.config.ts tests/generated",
+    "test:vitest:meta": "vitest run --config config/vitest.config.ts tests/meta",
+    "test:vitest:specs": "vitest run --config config/vitest.config.ts tests --exclude tests/generated/** --exclude tests/meta/**",
+    "generate:entity-tests": "node scripts/generate-entity-tests.mjs",
+    "generate:pilot-specs": "node scripts/generate-pilot-specs.mjs",
+    "test:vitest:specs:pilot": "vitest run --config config/vitest.config.ts tests/specs/pilot",
+    "test:vitest:generated:ci": "npm run generate:entity-tests && npm run test:vitest:meta && npm run test:vitest:generated"
   },
   "engines": {
     "node": ">=20.0.0"

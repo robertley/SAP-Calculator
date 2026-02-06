@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { shuffle } from 'lodash-es';
 import { AbilityEvent } from '../../interfaces/ability-event.interface';
+import { RandomEventReason } from '../../interfaces/log.interface';
 import { Pet } from '../../classes/pet.class';
 import { Player } from '../../classes/player.class';
 import { GameService } from '../game.service';
@@ -63,9 +64,21 @@ export class ToyEventService {
       a.priority > b.priority ? -1 : a.priority < b.priority ? 1 : 0,
     );
 
+    const priorityCounts = new Map<number, number>();
+    for (const event of events) {
+      priorityCounts.set(
+        event.priority,
+        (priorityCounts.get(event.priority) ?? 0) + 1,
+      );
+    }
+
     for (const event of events) {
       if (label && (shouldLog == null || shouldLog(event))) {
-        this.logToyEvent(event, label);
+        const isRandomOrder = (priorityCounts.get(event.priority) ?? 0) > 1;
+        const randomEventReason: RandomEventReason = isRandomOrder
+          ? 'tie-broken'
+          : 'deterministic';
+        this.logToyEvent(event, label, isRandomOrder, randomEventReason);
       }
       executor(event);
     }
@@ -73,7 +86,12 @@ export class ToyEventService {
     queue.length = 0;
   }
 
-  private logToyEvent(event: AbilityEvent, label: string): void {
+  private logToyEvent(
+    event: AbilityEvent,
+    label: string,
+    randomEvent: boolean,
+    randomEventReason: RandomEventReason,
+  ): void {
     const toyName = event.player?.toy?.name;
     if (!toyName) {
       return;
@@ -85,7 +103,8 @@ export class ToyEventService {
       message: `${toyName} ${label}${triggerPetName}`,
       type: 'ability',
       player: event.player,
-      randomEvent: true,
+      randomEvent,
+      randomEventReason,
     });
   }
 

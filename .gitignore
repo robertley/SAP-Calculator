@@ -13,6 +13,7 @@
 
 # Coverage
 /coverage/
+/tests/generated/
 
 # Logs
 npm-debug.log*

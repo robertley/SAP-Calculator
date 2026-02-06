@@ -107,73 +107,83 @@ export class SimulationRunner {
     config: SimulationConfig,
     hooks?: SimulationRunHooks,
   ): SimulationResult {
-    let battleCount = config.simulationCount || 1000;
-    const logsEnabled = config.logsEnabled !== false;
-    let loggedBattleCount = 0;
-    const progressInterval =
-      hooks?.onProgress && hooks.progressInterval != null
-        ? Math.max(1, hooks.progressInterval)
-        : null;
+    const restoreRandom = this.applySeededRandom(config.seed);
+    try {
+      let battleCount = config.simulationCount || 1000;
+      const logsEnabled = config.logsEnabled !== false;
+      let loggedBattleCount = 0;
+      const progressInterval =
+        hooks?.onProgress && hooks.progressInterval != null
+          ? Math.max(1, hooks.progressInterval)
+          : null;
 
-    // Setup initial simulation state from config
-    this.logService.setEnabled(logsEnabled);
-    this.logService.setDeferDecorations(true);
-    this.resetSimulation();
-    this.setupGameEnvironment(config);
+      // Setup initial simulation state from config
+      this.logService.setEnabled(logsEnabled);
+      this.logService.setDeferDecorations(true);
+      this.resetSimulation();
+      this.setupGameEnvironment(config);
 
-    if (config.optimizeDeterministicSimulations && this.isBattleDeterministic(config)) {
-      battleCount = 1;
-    }
-
-    let maxLoggedBattles =
-      config.maxLoggedBattles == null
-        ? logsEnabled
-          ? battleCount
-          : 0
-        : Math.max(0, config.maxLoggedBattles);
-    if (maxLoggedBattles > battleCount) {
-      maxLoggedBattles = battleCount;
-    }
-
-    for (let i = 0; i < battleCount; i++) {
-      if (hooks?.shouldAbort?.()) {
-        break;
+      if (
+        config.optimizeDeterministicSimulations &&
+        this.isBattleDeterministic(config)
+      ) {
+        battleCount = 1;
       }
-      const shouldLog =
-        logsEnabled && maxLoggedBattles > 0 && loggedBattleCount < maxLoggedBattles;
-      this.logService.setEnabled(shouldLog);
-      this.initBattle(config, shouldLog);
-      if (shouldLog) {
-        loggedBattleCount += 1;
-      }
-      this.prepareBattle(config);
-      this.executeBattleLoop();
-      this.reset();
 
-      if (hooks?.onProgress && progressInterval != null) {
-        const completed = i + 1;
-        if (completed % progressInterval === 0 || completed === battleCount) {
-          hooks.onProgress({
-            completed,
-            total: battleCount,
-            playerWins: this.playerWinner,
-            opponentWins: this.opponentWinner,
-            draws: this.draw,
-            loggedBattles: this.battles.length,
-          });
+      let maxLoggedBattles =
+        config.maxLoggedBattles == null
+          ? logsEnabled
+            ? battleCount
+            : 0
+          : Math.max(0, config.maxLoggedBattles);
+      if (maxLoggedBattles > battleCount) {
+        maxLoggedBattles = battleCount;
+      }
+
+      for (let i = 0; i < battleCount; i++) {
+        if (hooks?.shouldAbort?.()) {
+          break;
+        }
+        const shouldLog =
+          logsEnabled &&
+          maxLoggedBattles > 0 &&
+          loggedBattleCount < maxLoggedBattles;
+        this.logService.setEnabled(shouldLog);
+        this.initBattle(config, shouldLog);
+        if (shouldLog) {
+          loggedBattleCount += 1;
+        }
+        this.prepareBattle(config);
+        this.executeBattleLoop();
+        this.reset();
+
+        if (hooks?.onProgress && progressInterval != null) {
+          const completed = i + 1;
+          if (completed % progressInterval === 0 || completed === battleCount) {
+            hooks.onProgress({
+              completed,
+              total: battleCount,
+              playerWins: this.playerWinner,
+              opponentWins: this.opponentWinner,
+              draws: this.draw,
+              loggedBattles: this.battles.length,
+            });
+          }
+        }
+        if (hooks?.shouldAbort?.()) {
+          break;
         }
       }
-      if (hooks?.shouldAbort?.()) {
-        break;
-      }
-    }
 
-    return {
-      playerWins: this.playerWinner,
-      opponentWins: this.opponentWinner,
-      draws: this.draw,
-      battles: this.battles,
-    };
+      return {
+        playerWins: this.playerWinner,
+        opponentWins: this.opponentWinner,
+        draws: this.draw,
+        battles: this.battles,
+      };
+    } finally {
+      restoreRandom();
+    }
   }
 
   protected resetSimulation() {
@@ -529,5 +539,27 @@ export class SimulationRunner {
     }
 
     return true;
+  }
+
+  private applySeededRandom(seed: number | null | undefined): () => void {
+    if (seed == null || !Number.isFinite(seed)) {
+      return () => {};
+    }
+    const random = this.createSeededRandom(Math.trunc(seed));
+    const originalRandom = Math.random;
+    (Math as any).random = random;
+    return () => {
+      (Math as any).random = originalRandom;
+    };
+  }
+
+  private createSeededRandom(seed: number): () => number {
+    let state = seed >>> 0;
+    return () => {
+      state = (state + 0x6d2b79f5) >>> 0;
+      let t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
   }
 }

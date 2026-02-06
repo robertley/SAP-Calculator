@@ -42,6 +42,7 @@ const sanitizeResult = (result: any) => {
           rawMessage: log?.rawMessage,
           type: log?.type,
           randomEvent: log?.randomEvent,
+          randomEventReason: log?.randomEventReason,
           tiger: log?.tiger,
           puma: log?.puma,
           pteranodon: log?.pteranodon,
@@ -124,6 +125,8 @@ const createRunner = () => {
     get: (token: any) => {
       if (token === PetService) return petService;
       if (token === EquipmentService) return equipmentService;
+      if (token === LogService) return logService;
+      if (token === AbilityQueueService) return abilityQueueService;
       if (token === ToyService) return toyService;
       if (token === GameService) return gameService;
       if (token === AbilityService) return abilityService;
