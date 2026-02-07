@@ -139,6 +139,12 @@ export class AbilityQueueService {
     customParams?: any,
   ): void {
     if (pet.hasTrigger(trigger)) {
+      let eventPriority = this.getPetEventPriority(pet);
+      // Perk-self events should resolve before ally perk events for FriendlyGainsPerk users.
+      if (trigger === 'FriendlyGainsPerk' && pet === triggerPet) {
+        eventPriority += 10000;
+      }
+
       const eventCustomParams = {
         ...(customParams ?? {}),
         trigger,
@@ -147,7 +153,7 @@ export class AbilityQueueService {
 
       const abilityEvent: AbilityEvent = {
         // callback: Removed for performance
-        priority: this.getPetEventPriority(pet),
+        priority: eventPriority,
         pet: pet,
         triggerPet: triggerPet,
         abilityType: trigger,
