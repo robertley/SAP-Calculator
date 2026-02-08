@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { Garlic } from 'app/classes/equipment/turtle/garlic.class';
+import { hasAliveTriggerTarget, resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class Bilby extends Pet {
@@ -51,11 +52,10 @@ export class BilbyAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
-      condition: (context: AbilityContext) => {
-        const { triggerPet, tiger, pteranodon } = context;
-        const owner = this.owner;
-        return triggerPet && triggerPet !== owner;
-      },
+      precondition: (context: AbilityContext) =>
+        hasAliveTriggerTarget(this.owner, context.triggerPet, {
+          excludeOwner: true,
+        }),
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -67,7 +67,7 @@ export class BilbyAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
     let target = targetResp.pet;
     if (target == null) {
       return;

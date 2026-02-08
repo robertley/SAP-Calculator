@@ -775,7 +775,11 @@ export const getSpecificPet = (
   target: Pet,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, [callingPet], true);
+    return getRandomLivingPet(player, undefined, true);
+  }
+
+  if (!target || !target.alive) {
+    return { pet: null, random: false };
   }
 
   return { pet: target, random: false };

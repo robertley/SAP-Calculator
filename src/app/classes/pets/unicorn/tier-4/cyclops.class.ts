@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class Cyclops extends Pet {
@@ -44,6 +45,13 @@ export class CyclopsAbility extends Ability {
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -56,7 +64,7 @@ export class CyclopsAbility extends Ability {
     const owner = this.owner;
 
     let manaGain = this.level * 2;
-    let manaTargetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let manaTargetResp = resolveTriggerTargetAlive(owner, triggerPet);
     let manaTarget = manaTargetResp.pet;
     if (manaTarget == null) {
       return;
@@ -72,8 +80,11 @@ export class CyclopsAbility extends Ability {
     manaTarget.increaseMana(manaGain);
 
     if (this.currentUses < this.level) {
-      let expTargetResp = owner.parent.getSpecificPet(owner, triggerPet);
+      let expTargetResp = resolveTriggerTargetAlive(owner, triggerPet);
       let expTarget = expTargetResp.pet;
+      if (expTarget == null) {
+        return;
+      }
       this.logService.createLog({
         message: `${owner.name} gave ${expTarget.name} 1 exp.`,
         type: 'ability',

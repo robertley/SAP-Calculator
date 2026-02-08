@@ -4,6 +4,7 @@ import { Equipment } from 'app/classes/equipment.class';
 import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class Weevil extends Pet {
@@ -45,6 +46,13 @@ export class WeevilAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: 3,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -56,7 +64,7 @@ export class WeevilAbility extends Ability {
     const { triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    const targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
     const target = targetResp.pet;
     if (target == null) {
       return;

@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { getAliveTriggerTarget } from 'app/classes/ability-helpers';
 
 
 export class VampireBat extends Pet {
@@ -46,6 +47,13 @@ export class VampireBatAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: 2,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        const targetResp = getAliveTriggerTarget(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -58,7 +66,7 @@ export class VampireBatAbility extends Ability {
     const owner = this.owner;
 
     let power = this.level * 4;
-    let snipeTargetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let snipeTargetResp = getAliveTriggerTarget(owner, triggerPet);
     let snipeTarget = snipeTargetResp.pet;
     if (snipeTarget == null) {
       return;
@@ -91,3 +99,4 @@ export class VampireBatAbility extends Ability {
     return new VampireBatAbility(newOwner, this.logService);
   }
 }
+
