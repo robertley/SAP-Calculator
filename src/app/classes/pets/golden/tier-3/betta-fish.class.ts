@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { Guava } from 'app/classes/equipment/custom/guava.class';
+import { hasAliveTriggerTarget, resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class BettaFish extends Pet {
@@ -49,6 +50,18 @@ export class BettaFishAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        if (
+          !hasAliveTriggerTarget(owner, triggerPet, { excludeOwner: true })
+        ) {
+          return false;
+        }
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && !this.targetedPets.has(target);
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -66,21 +79,20 @@ export class BettaFishAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    if (!triggerPet || triggerPet == owner) {
+    if (!triggerPet) {
       return;
     }
-
-    // Check if we already targeted this pet this turn (for "different friends" logic)
-    if (this.targetedPets.has(triggerPet)) {
+    const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+    const target = targetResp.pet;
+    if (!target) {
       return;
     }
+    this.targetedPets.add(target);
 
-    this.targetedPets.add(triggerPet);
-
-    triggerPet.givePetEquipment(new Guava());
+    target.givePetEquipment(new Guava());
 
     this.logService.createLog({
-      message: `${owner.name} gave ${triggerPet.name} Guava.`,
+      message: `${owner.name} gave ${target.name} Guava.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

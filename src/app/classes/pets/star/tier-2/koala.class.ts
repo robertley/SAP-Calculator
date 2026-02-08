@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { Eucalyptus } from 'app/classes/equipment/puppy/eucalyptus.class';
+import { hasAliveTriggerTarget, getAliveTriggerTarget } from 'app/classes/ability-helpers';
 
 
 export class Koala extends Pet {
@@ -47,6 +48,8 @@ export class KoalaAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
+      precondition: (context: AbilityContext) =>
+        hasAliveTriggerTarget(this.owner, context.triggerPet),
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -58,11 +61,13 @@ export class KoalaAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let targetResp = getAliveTriggerTarget(owner, triggerPet);
     let target = targetResp.pet;
     if (!target) {
       return;
     }
+
+    target.givePetEquipment(new Eucalyptus());
 
     this.logService.createLog({
       message: `${owner.name} gave ${target.name} Eucalyptus perk.`,
@@ -72,8 +77,6 @@ export class KoalaAbility extends Ability {
       randomEvent: targetResp.random,
     });
 
-    target.givePetEquipment(new Eucalyptus());
-
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);
   }
@@ -82,3 +85,4 @@ export class KoalaAbility extends Ability {
     return new KoalaAbility(newOwner, this.logService);
   }
 }
+

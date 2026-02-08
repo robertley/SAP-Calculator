@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { Power } from 'app/interfaces/power.interface';
+import { resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class LovelandFrogman extends Pet {
@@ -48,6 +49,13 @@ export class LovelandFrogmanAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -62,7 +70,7 @@ export class LovelandFrogmanAbility extends Ability {
       attack: owner.level * 1,
       health: owner.level * 2,
     };
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
     let target = targetResp.pet;
     if (target == null) {
       return;

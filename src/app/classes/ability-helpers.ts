@@ -69,3 +69,39 @@ export function resolveFriendSummonedTarget(
 
   return owner.parent.getSpecificPet(owner, triggerPet);
 }
+
+export function getAliveTriggerTarget(
+  owner: Pet,
+  triggerPet?: Pet,
+): FriendSummonedTargetResult {
+  if (!triggerPet) {
+    return { random: false };
+  }
+
+  const targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+  const target = targetResp.pet;
+  if (!target || !target.alive) {
+    return { random: targetResp.random };
+  }
+
+  return targetResp;
+}
+
+export function canUseAliveTriggerTarget(
+  owner: Pet,
+  triggerPet?: Pet,
+  options?: { excludeOwner?: boolean },
+): boolean {
+  if (!triggerPet) {
+    return false;
+  }
+  if (options?.excludeOwner && triggerPet === owner) {
+    return false;
+  }
+
+  return !!getAliveTriggerTarget(owner, triggerPet).pet;
+}
+
+// Backward-compatible aliases for existing call sites.
+export const resolveTriggerTargetAlive = getAliveTriggerTarget;
+export const hasAliveTriggerTarget = canUseAliveTriggerTarget;

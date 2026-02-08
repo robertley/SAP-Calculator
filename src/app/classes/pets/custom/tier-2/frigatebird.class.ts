@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { Rice } from 'app/classes/equipment/puppy/rice.class';
+import { hasAliveTriggerTarget, resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class Frigatebird extends Pet {
@@ -51,6 +52,8 @@ export class FrigatebirdAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
+      precondition: (context: AbilityContext) =>
+        hasAliveTriggerTarget(this.owner, context.triggerPet),
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -59,19 +62,25 @@ export class FrigatebirdAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { gameApi, tiger, pteranodon } = context;
     const owner = this.owner;
+    const targetResp = resolveTriggerTargetAlive(owner, context.triggerPet);
+    const target = targetResp.pet;
+    if (!target) {
+      return;
+    }
 
-    const equipment = triggerPet?.equipment;
+    const equipment = target.equipment;
     if (!equipment || !equipment.equipmentClass?.startsWith('ailment')) {
       return;
     }
-    triggerPet.removePerk();
-    triggerPet.givePetEquipment(new Rice());
+    target.removePerk();
+    target.givePetEquipment(new Rice());
     this.logService.createLog({
-      message: `${owner.name} removed ${equipment.name} from ${triggerPet.name} and gave ${triggerPet.name} Rice.`,
+      message: `${owner.name} removed ${equipment.name} from ${target.name} and gave ${target.name} Rice.`,
       type: 'ability',
       player: owner.parent,
+      randomEvent: targetResp.random,
     });
 
     // Tiger system: trigger Tiger execution at the end

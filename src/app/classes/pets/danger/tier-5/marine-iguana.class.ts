@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { Melon } from 'app/classes/equipment/turtle/melon.class';
+import { hasAliveTriggerTarget, resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class MarineIguana extends Pet {
@@ -49,10 +50,14 @@ export class MarineIguanaAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
-      condition: (context: AbilityContext): boolean => {
-        const { triggerPet, tiger, pteranodon } = context;
+      precondition: (context: AbilityContext): boolean => {
         const owner = this.owner;
-        return !this.targettedFriends.has(triggerPet);
+        if (!hasAliveTriggerTarget(owner, context.triggerPet)) {
+          return false;
+        }
+        const targetResp = resolveTriggerTargetAlive(owner, context.triggerPet);
+        const attackingFriend = targetResp.pet;
+        return !!attackingFriend && !this.targettedFriends.has(attackingFriend);
       },
       abilityFunction: (context) => {
         this.executeAbility(context);
@@ -70,7 +75,7 @@ export class MarineIguanaAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
     let attackingFriend = targetResp.pet;
 
     if (!attackingFriend) {

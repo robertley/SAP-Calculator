@@ -5,6 +5,7 @@ import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { cloneEquipment } from 'app/util/equipment-utils';
+import { hasAliveTriggerTarget, resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class RealVelociraptor extends Pet {
@@ -53,15 +54,20 @@ export class RealVelociraptorAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
-      condition: (context: AbilityContext) => {
-        const { triggerPet, tiger, pteranodon } = context;
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
         const owner = this.owner;
-        return (
-          triggerPet &&
-          triggerPet !== owner &&
-          triggerPet.lastLostEquipment &&
-          !this.friendAppliedThisTurn.has(triggerPet)
-        );
+        if (!triggerPet || !triggerPet.lastLostEquipment) {
+          return false;
+        }
+        if (
+          !hasAliveTriggerTarget(owner, triggerPet, { excludeOwner: true })
+        ) {
+          return false;
+        }
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && !this.friendAppliedThisTurn.has(target);
       },
       abilityFunction: (context) => {
         this.executeAbility(context);
@@ -79,7 +85,7 @@ export class RealVelociraptorAbility extends Ability {
       triggerPet.lastLostEquipment,
     );
     if (restoredPerk) {
-      let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+      let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
       let target = targetResp.pet;
       if (target == null) {
         return;

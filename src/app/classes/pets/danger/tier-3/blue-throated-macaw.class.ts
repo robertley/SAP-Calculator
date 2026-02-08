@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class BlueThroatedMacaw extends Pet {
@@ -45,6 +46,13 @@ export class BlueThroatedMacawAbility extends Ability {
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -62,7 +70,7 @@ export class BlueThroatedMacawAbility extends Ability {
 
     //ahead
     if (triggerPet.position < owner.position) {
-      let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+      let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
       let target = targetResp.pet;
 
       if (!target) {
@@ -80,7 +88,7 @@ export class BlueThroatedMacawAbility extends Ability {
         randomEvent: targetResp.random,
       });
     } else {
-      let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+      let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
       let target = targetResp.pet;
 
       if (!target) {

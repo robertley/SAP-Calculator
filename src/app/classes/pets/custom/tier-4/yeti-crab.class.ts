@@ -5,6 +5,7 @@ import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
 import { MelonSlice } from 'app/classes/equipment/custom/melon-slice.class';
+import { hasAliveTriggerTarget, resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class YetiCrab extends Pet {
@@ -46,6 +47,17 @@ export class YetiCrabAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        if (!triggerPet) {
+          return false;
+        }
+        if (triggerPet.parent !== owner.parent) {
+          return triggerPet.alive;
+        }
+        return hasAliveTriggerTarget(owner, triggerPet);
+      },
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
@@ -61,11 +73,15 @@ export class YetiCrabAbility extends Ability {
     }
 
     if (triggerPet.parent === owner.parent) {
-      const targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+      const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+      const target = targetResp.pet;
+      if (!target) {
+        return;
+      }
       const melon = new MelonSlice();
-      triggerPet.givePetEquipment(melon);
+      target.givePetEquipment(melon);
       this.logService.createLog({
-        message: `${owner.name} gave ${triggerPet.name} a Melon Slice after losing a perk.`,
+        message: `${owner.name} gave ${target.name} a Melon Slice after losing a perk.`,
         type: 'ability',
         player: owner.parent,
         tiger,

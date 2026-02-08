@@ -4,6 +4,7 @@ import { Equipment } from '../../../equipment.class';
 import { Pack, Pet } from '../../../pet.class';
 import { Player } from '../../../player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class Axolotl extends Pet {
@@ -44,6 +45,13 @@ export class AxolotlAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: 3,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        const owner = this.owner;
+        const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -55,7 +63,7 @@ export class AxolotlAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    let targetResp = resolveTriggerTargetAlive(owner, triggerPet);
     let target = targetResp.pet;
     if (target == null) {
       return;

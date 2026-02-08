@@ -138,6 +138,10 @@ export interface AbilityCondition {
   (context: AbilityContext): boolean;
 }
 
+export interface AbilityPrecondition {
+  (context: AbilityContext): boolean;
+}
+
 export interface AbilityFunction {
   (context: AbilityContext): void;
 }
@@ -157,6 +161,7 @@ export class Ability {
   public currentUses: number;
   public initialCurrentUses: number;
   public abilityLevel: number;
+  public precondition?: AbilityPrecondition;
   public condition?: AbilityCondition;
   public abilityFunction: AbilityFunction;
   public native: boolean;
@@ -171,6 +176,7 @@ export class Ability {
     maxUses?: number;
     abilitylevel?: number;
     initialCurrentUses?: number;
+    precondition?: AbilityPrecondition;
     condition?: AbilityCondition;
     abilityFunction: AbilityFunction;
     native?: boolean;
@@ -188,6 +194,7 @@ export class Ability {
     this.initialCurrentUses = initialUses;
     this.currentUses = initialUses;
     this.abilityLevel = config.abilitylevel ?? 1;
+    this.precondition = config.precondition;
     this.condition = config.condition;
     this.abilityFunction = config.abilityFunction;
     this.native = config.native ?? true;
@@ -228,6 +235,11 @@ export class Ability {
         pteranodon,
         ...customParams, // Spread any additional custom parameters
       };
+
+      // Check precondition before consuming any use
+      if (this.precondition && !this.precondition(context)) {
+        return false;
+      }
 
       // Check custom condition if provided
       if (this.condition && !this.condition(context)) {

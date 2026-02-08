@@ -4,6 +4,7 @@ import { Equipment } from 'app/classes/equipment.class';
 import { Pack, Pet } from 'app/classes/pet.class';
 import { Player } from 'app/classes/player.class';
 import { Ability, AbilityContext } from 'app/classes/ability.class';
+import { resolveTriggerTargetAlive } from 'app/classes/ability-helpers';
 
 
 export class Chimpanzee extends Pet {
@@ -44,6 +45,12 @@ export class ChimpanzeeAbility extends Ability {
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const owner = this.owner;
+        const targetResp = resolveTriggerTargetAlive(owner, context.triggerPet);
+        const target = targetResp.pet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
@@ -51,7 +58,7 @@ export class ChimpanzeeAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
-    const targetResp = owner.parent.getSpecificPet(owner, context.triggerPet);
+    const targetResp = resolveTriggerTargetAlive(owner, context.triggerPet);
     const target = targetResp.pet;
     if (!target) {
       this.triggerTigerExecution(context);
