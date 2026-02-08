@@ -64,7 +64,7 @@ export class CrabAbility extends Ability {
       return;
     }
 
-    let gainAmmt = Math.floor(
+    let gainAmmt = Math.round(
       highestHealthResp.pet.health * (0.25 * this.level),
     );
     let selfTargetResp = owner.parent.getThis(owner);
