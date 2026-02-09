@@ -1,6 +1,6 @@
 import { FormArray } from '@angular/forms';
 import { Player } from 'app/domain/entities/player.class';
-import { getPackIconPath, getPetIconPath, getToyIconPath } from 'app/runtime/asset-catalog';
+import { getPetIconPath, getToyIconPath } from 'app/runtime/asset-catalog';
 import { TOY_ART_BASE } from './app.ui.constants';
 import { AppUiContext, getEquipmentNamesForPack } from './app.component.ui-common';
 

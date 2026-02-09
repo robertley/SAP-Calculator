@@ -8,15 +8,15 @@ const PET_REGISTRY_DIR = path.join(
   ROOT,
   'src',
   'app',
-  'services',
+  'integrations',
   'pet',
-  'registry',
+  'registries',
 );
 const TOY_REGISTRY_FILE = path.join(
   ROOT,
   'src',
   'app',
-  'services',
+  'integrations',
   'toy',
   'toy-registry.ts',
 );
@@ -24,7 +24,7 @@ const EQUIPMENT_REGISTRY_FILE = path.join(
   ROOT,
   'src',
   'app',
-  'services',
+  'integrations',
   'equipment',
   'equipment-registry.ts',
 );
