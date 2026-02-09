@@ -4,8 +4,9 @@ import {
   withInterceptorsFromDi,
 } from '@angular/common/http';
 
-import { AppComponent } from './app/root/app.component';
+import { AppComponent } from './app/ui/shell/app.component';
 
 bootstrapApplication(AppComponent, {
   providers: [provideHttpClient(withInterceptorsFromDi())],
 }).catch((err) => console.error(err));
+

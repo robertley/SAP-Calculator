@@ -8,14 +8,16 @@ const PET_REGISTRY_DIR = path.join(
   ROOT,
   'src',
   'app',
+  'integrations',
   'services',
   'pet',
-  'registry',
+  'registries',
 );
 const TOY_REGISTRY_FILE = path.join(
   ROOT,
   'src',
   'app',
+  'integrations',
   'services',
   'toy',
   'toy-registry.ts',
@@ -24,6 +26,7 @@ const EQUIPMENT_REGISTRY_FILE = path.join(
   ROOT,
   'src',
   'app',
+  'integrations',
   'services',
   'equipment',
   'equipment-registry.ts',
@@ -167,7 +170,7 @@ function writePetTestFile(entry) {
   const filename = `${slugify(entry.pack)}__${slugify(entry.name)}.generated.test.ts`;
   const filePath = path.join(TEST_ROOT, 'pets', filename);
   const content = `import { describe, expect, it } from 'vitest';
-import { runPetSmoke } from '../../helpers/simulation-fixtures';
+import { runPetSmoke } from '../../support/smoke-test-runners';
 
 describe('Generated pet smoke: ${entry.name}', () => {
   it('runs ${entry.name} without crashing', () => {
@@ -187,7 +190,7 @@ function writeToyTestFile(name) {
   const filename = `${slugify(name)}.generated.test.ts`;
   const filePath = path.join(TEST_ROOT, 'toys', filename);
   const content = `import { describe, expect, it } from 'vitest';
-import { runToySmoke } from '../../helpers/simulation-fixtures';
+import { runToySmoke } from '../../support/smoke-test-runners';
 
 describe('Generated toy smoke: ${name}', () => {
   it('runs ${name} without crashing', () => {
@@ -205,7 +208,7 @@ function writeEquipmentTestFile(name) {
   const filename = `${slugify(name)}.generated.test.ts`;
   const filePath = path.join(TEST_ROOT, 'equipment', filename);
   const content = `import { describe, expect, it } from 'vitest';
-import { runEquipmentSmoke } from '../../helpers/simulation-fixtures';
+import { runEquipmentSmoke } from '../../support/smoke-test-runners';
 
 describe('Generated equipment smoke: ${name}', () => {
   it('runs ${name} without crashing', () => {
@@ -265,3 +268,4 @@ function main() {
 }
 
 main();
+

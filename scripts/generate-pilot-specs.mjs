@@ -7,14 +7,16 @@ const PET_REGISTRY_DIR = path.join(
   ROOT,
   'src',
   'app',
+  'integrations',
   'services',
   'pet',
-  'registry',
+  'registries',
 );
 const TOY_REGISTRY_FILE = path.join(
   ROOT,
   'src',
   'app',
+  'integrations',
   'services',
   'toy',
   'toy-registry.ts',
@@ -23,6 +25,7 @@ const EQUIPMENT_REGISTRY_FILE = path.join(
   ROOT,
   'src',
   'app',
+  'integrations',
   'services',
   'equipment',
   'equipment-registry.ts',
@@ -245,7 +248,7 @@ function buildPetsSpec(pets) {
     )
     .join('\n');
   return `import { describe, expect, it } from 'vitest';
-import { runPetSmoke } from '../../helpers/simulation-fixtures';
+import { runPetSmoke } from '../../support/smoke-test-runners';
 
 const PILOT_PETS = [
 ${rows}
@@ -283,7 +286,7 @@ function buildToysSpec(toys) {
     )
     .join('\n');
   return `import { describe, expect, it } from 'vitest';
-import { runToySmoke } from '../../helpers/simulation-fixtures';
+import { runToySmoke } from '../../support/smoke-test-runners';
 
 const PILOT_TOYS = [
 ${rows}
@@ -317,7 +320,7 @@ function buildEquipmentSpec(equipment) {
     )
     .join('\n');
   return `import { describe, expect, it } from 'vitest';
-import { runEquipmentSmoke } from '../../helpers/simulation-fixtures';
+import { runEquipmentSmoke } from '../../support/smoke-test-runners';
 
 const PILOT_EQUIPMENT = [
 ${rows}
@@ -390,3 +393,4 @@ function main() {
 }
 
 main();
+

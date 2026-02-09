@@ -1,0 +1,88 @@
+import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
+import { Toy } from '../../../toy.class';
+import { PeanutButter } from 'app/domain/entities/catalog/equipment/hidden/peanut-butter';
+import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { Pet } from '../../../pet.class';
+import { LogService } from 'app/integrations/log.service';
+
+
+export class PeanutJar extends Toy {
+  name = 'Peanut Jar';
+  tier = 6;
+  startOfBattle(gameApi?: GameAPI, puma?: boolean) {
+    let targetResp = this.parent.getLowestAttackPets(
+      this.level,
+      this.parent.getPetsWithEquipment('Peanut Butter'),
+    );
+    let targets = targetResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+    for (let pet of targets) {
+      pet.givePetEquipment(new PeanutButter());
+      this.logService.createLog({
+        message: `${this.name} gave ${pet.name} PeanutButter.`,
+        type: 'ability',
+        player: this.parent,
+        puma: puma,
+        randomEvent: targetResp.random,
+      });
+    }
+  }
+}
+
+export class PeanutJarAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'PeanutJarAbility',
+      owner: owner,
+      triggers: [],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Mirror Peanut Jar toy behavior
+    let excludePets = owner.parent.getPetsWithEquipment('Peanut Butter');
+    let targetsResp = owner.parent.getLowestAttackPets(
+      this.level,
+      excludePets,
+      owner,
+    );
+    let targets = targetsResp.pets;
+    if (targets.length == 0) {
+      return;
+    }
+    for (let pet of targets) {
+      pet.givePetEquipment(new PeanutButter());
+      this.logService.createLog({
+        message: `Peanut Jar Ability gave ${pet.name} PeanutButter.`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        pteranodon: pteranodon,
+      });
+    }
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): PeanutJarAbility {
+    return new PeanutJarAbility(newOwner, this.logService);
+  }
+}
+
+
+
+

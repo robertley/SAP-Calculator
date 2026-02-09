@@ -1,6 +1,7 @@
 # Compiled output
 /dist
 /tmp
+/artifacts
 /out-tsc
 /bazel-out
 

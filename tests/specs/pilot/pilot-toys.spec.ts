@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { runToySmoke } from '../../helpers/simulation-fixtures';
-import { createBaseConfig, createPet, hasNamedLog, runBattleLogs } from '../../helpers/pilot-runtime';
+import { runToySmoke } from '../../support/smoke-test-runners';
+import { createBaseConfig, createPet, hasNamedLog, runBattleLogs } from '../../support/battle-test-runtime';
 
 const PILOT_TOYS = [
   { name: 'Action Figure', behavior: 'Start of battle: Give Coconut perk to two first enemies.' },
@@ -71,3 +71,4 @@ describe('Pilot Toy Specs (Generated)', () => {
     });
   }
 });
+

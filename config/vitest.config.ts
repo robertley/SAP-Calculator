@@ -5,6 +5,12 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/.tmp-pack-test/**',
+      '**/.tmp-sap-replay-bot-audit/**',
+    ],
     deps: {
       inline: ['@angular/core', '@angular/forms', 'rxjs'],
     },

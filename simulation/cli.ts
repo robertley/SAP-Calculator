@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import { runHeadlessSimulation } from './simulate';
-import { SimulationConfig } from '../src/app/interfaces/simulation-config.interface';
+import { SimulationConfig } from '../src/app/domain/interfaces/simulation-config.interface';
 
 type CliOptions = {
   inputPath?: string;
