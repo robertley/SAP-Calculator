@@ -3,7 +3,6 @@ import { Log } from 'app/domain/interfaces/log.interface';
 import { Dazed } from 'app/domain/entities/catalog/equipment/ailments/dazed.class';
 import { Crisp } from 'app/domain/entities/catalog/equipment/ailments/crisp.class';
 import { Toasty } from 'app/domain/entities/catalog/equipment/ailments/toasty.class';
-import { Strawberry } from 'app/domain/entities/catalog/equipment/star/strawberry.class';
 import { EquipmentDamageHandler } from 'app/domain/entities/combat/equipment-damage.handler';
 import {
   attackPet as attackPetImpl,

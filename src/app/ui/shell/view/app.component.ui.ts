@@ -1,51 +1,19 @@
-import { ElementRef, QueryList } from '@angular/core';
-import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Modal } from 'bootstrap';
-import { Player } from 'app/domain/entities/player.class';
-import { TeamPreset } from 'app/integrations/team-presets.service';
-import { Battle } from 'app/domain/interfaces/battle.interface';
-import { Log } from 'app/domain/interfaces/log.interface';
-import { LogMessagePart } from '../simulation/app.component.simulation';
-import { LocalStorageService } from 'app/runtime/state/local-storage.service';
-import { UrlStateService } from 'app/runtime/state/url-state.service';
-import { CalculatorStateService } from 'app/runtime/state/calculator-state.service';
-import { PetService } from 'app/integrations/pet/pet.service';
-import { LogService } from 'app/integrations/log.service';
-import { EquipmentService } from 'app/integrations/equipment/equipment.service';
-import { GameService } from 'app/runtime/state/game.service';
-import { ToyService } from 'app/integrations/toy/toy.service';
-import { PetSelectorComponent } from 'app/ui/components/pet-selector/pet-selector.component';
-import { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
-import {
-  getPackIconPath,
-  getPetIconPath,
-  getToyIconPath,
-} from 'app/runtime/asset-catalog';
-import { shouldShowRollInputs } from '../state/app.component.rolls';
-import { BATTLE_BACKGROUND_BASE, TOY_ART_BASE } from './app.ui.constants';
-import * as foodJson from 'assets/data/food.json';
+import { FormArray, FormGroup } from '@angular/forms';
+
+
 import {
   createAppFormGroup,
   initPetForms as initPetFormsForm,
 } from '../state/app.component.forms';
-import {
-  buildExportPayload,
-  buildShareableLink,
-  expandCompactCalculatorState,
-} from '../state/app.component.share';
+
+
 
 import {
   AppUiContext,
   fixCustomPackSelect,
-  makeFormGroup,
 } from './app.component.ui-common';
 import {
-  clearPlayerToy,
-  randomizePlayerPets,
-  randomizePlayerToy,
   setHardToyImage,
-  setToyImage,
   updateGoldSpent,
   updatePlayerPack,
   updatePlayerToy,
