@@ -1,0 +1,78 @@
+import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
+import { Toy } from '../../../toy.class';
+import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { Pet } from '../../../pet.class';
+import { LogService } from 'app/integrations/log.service';
+
+
+export class Flashlight extends Toy {
+  name = 'Flashlight';
+  tier = 5;
+  onBreak(gameApi?: GameAPI, puma?: boolean) {
+    let power = this.level * 5;
+    let target = this.parent.furthestUpPet;
+    if (target == null) {
+      return;
+    }
+    target.increaseAttack(power);
+    target.increaseHealth(power);
+    this.logService.createLog({
+      message: `${this.name} gave ${target.name} ${power} attack and ${power} health.`,
+      type: 'ability',
+      player: this.parent,
+      puma: puma,
+    });
+  }
+}
+
+
+export class FlashlightAbility extends Ability {
+  private logService: LogService;
+
+  constructor(owner: Pet, logService: LogService) {
+    super({
+      name: 'FlashlightAbility',
+      owner: owner,
+      triggers: ['Faint'],
+      abilityType: 'Pet',
+      native: true,
+      abilitylevel: owner.level,
+      abilityFunction: (context) => {
+        this.executeAbility(context);
+      },
+    });
+    this.logService = logService;
+  }
+
+  private executeAbility(context: AbilityContext): void {
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const owner = this.owner;
+
+    // Mirror Flashlight toy behavior (onBreak effect)
+    let power = this.level * 5;
+    let targetResp = owner.parent.getFurthestUpPet(owner);
+    let target = targetResp.pet;
+    if (target == null) {
+      return;
+    }
+    target.increaseAttack(power);
+    target.increaseHealth(power);
+    this.logService.createLog({
+      message: `Flashlight Ability gave ${target.name} ${power} attack and ${power} health.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger: tiger,
+      randomEvent: targetResp.random,
+    });
+
+    this.triggerTigerExecution(context);
+  }
+
+  copy(newOwner: Pet): FlashlightAbility {
+    return new FlashlightAbility(newOwner, this.logService);
+  }
+}
+
+
+
+

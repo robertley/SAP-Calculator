@@ -1,0 +1,181 @@
+    <div class="row flex-1 bottom-container" *ngIf="app.simulated">
+      <div class="col-12 col-md-6 border h-100 flex-col pe-0">
+        <h3>Battles</h3>
+        <div class="row">
+          <div class="col-12">
+            <label for="logFilter" class="form-label">Filter Battles By Winner</label>
+          </div>
+          <div class="col-12">
+            <div class="log-filter-tabs" id="logFilter">
+              <button *ngFor="let tab of app.logFilterTabs; trackBy: app.trackByLogTab" type="button" class="log-filter-tab"
+                [class.active]="app.formGroup.get('logFilter').value === tab.value"
+                (click)="app.formGroup.get('logFilter').setValue(tab.value)">
+                {{ tab.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="battle-container flex-1">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="battle-no">Battle No.</th>
+                <th>Winner</th>
+                <th>Random Events</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="
+                  let battle of app.filteredBattlesCache;
+                  index as i;
+                  trackBy: app.trackByIndex
+                " (click)="app.setViewBattle(battle)" class="table-battle-row" [ngClass]="
+                  battle.winner === 'player'
+                    ? 'battle-win'
+                    : battle.winner === 'opponent'
+                      ? 'battle-loss'
+                      : ''
+                " [class.selected-battle]="battle === app.viewBattle">
+                <td>{{ i }}</td>
+                <td>{{ battle.winner }}</td>
+                <td class="pre">
+                  <ng-container *ngFor="
+                      let part of (app.battleRandomEventsByBattle.get(battle) || []);
+                      trackBy: app.trackByIndex
+                    ">
+                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
+                      width="16" height="16" loading="lazy" decoding="async" />
+                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                    <br *ngIf="part.type === 'br'" />
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6 border h-100 flex-col">
+        <div class="d-flex align-items-center justify-content-between">
+          <h3>Logs</h3>
+          <button class="btn btn-sm btn-secondary" (click)="app.toggleBattleAnalysis()">
+            {{ app.showBattleAnalysis ? 'Hide' : 'Show' }} Analysis
+          </button>
+        </div>
+        <div class="row log-container flex-1 scroll" [class.log-container-with-analysis]="app.showBattleAnalysis">
+          <div class="col-12" *ngFor="let log of app.viewBattleLogRows; trackBy: app.trackByIndex">
+            <span [ngClass]="log.classes">
+              <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
+                <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
+                  height="18" loading="lazy" decoding="async" />
+                <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                <br *ngIf="part.type === 'br'" />
+              </ng-container>
+            </span>
+          </div>
+        </div>
+        <div *ngIf="app.showBattleAnalysis" class="analysis-section mt-2">
+          <h4 class="analysis-title">Trigger Timeline</h4>
+          <div class="analysis-table-wrap scroll">
+            <table class="table table-sm analysis-table mb-0">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Source</th>
+                  <th>Target</th>
+                  <th>Reason</th>
+                  <th>Event</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of app.viewBattleTimelineRows; trackBy: app.trackByIndex" [ngClass]="[
+                    row.side === 'player' ? 'timeline-player' : '',
+                    row.side === 'opponent' ? 'timeline-opponent' : '',
+                    row.reason === 'true random' ? 'timeline-random' : '',
+                    row.reason === 'tie-broken' ? 'timeline-tie' : '',
+                    row.reason === 'deterministic' ? 'timeline-deterministic' : ''
+                  ]">
+                  <td>{{ row.step }}</td>
+                  <td>{{ row.source }}</td>
+                  <td>{{ row.target }}</td>
+                  <td>{{ row.reason }}</td>
+                  <td>{{ row.text }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div *ngIf="app.showBattleAnalysis" class="analysis-section mt-2">
+          <h4 class="analysis-title">Battle Diff</h4>
+          <div class="diff-controls">
+            <label class="diff-label">
+              Left
+              <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftIndex"
+                (ngModelChange)="app.setBattleDiffLeft($event)" [ngModelOptions]="{ standalone: true }">
+                <option *ngFor="let battle of app.battles; index as i; trackBy: app.trackByIndex" [ngValue]="i">
+                  {{ i }} ({{ battle.winner }})
+                </option>
+              </select>
+            </label>
+            <label class="diff-label">
+              Left Scope
+              <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftScope"
+                (ngModelChange)="app.setBattleDiffLeftScope($event)" [ngModelOptions]="{ standalone: true }">
+                <option [ngValue]="'all'">All</option>
+                <option [ngValue]="'player'">Player</option>
+                <option [ngValue]="'opponent'">Opponent</option>
+              </select>
+            </label>
+            <label class="diff-label">
+              Right
+              <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightIndex"
+                (ngModelChange)="app.setBattleDiffRight($event)" [ngModelOptions]="{ standalone: true }">
+                <option *ngFor="let battle of app.battles; index as i; trackBy: app.trackByIndex" [ngValue]="i">
+                  {{ i }} ({{ battle.winner }})
+                </option>
+              </select>
+            </label>
+            <label class="diff-label">
+              Right Scope
+              <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightScope"
+                (ngModelChange)="app.setBattleDiffRightScope($event)" [ngModelOptions]="{ standalone: true }">
+                <option [ngValue]="'all'">All</option>
+                <option [ngValue]="'player'">Player</option>
+                <option [ngValue]="'opponent'">Opponent</option>
+              </select>
+            </label>
+          </div>
+          <div class="diff-summary">
+            Equal: {{ app.battleDiffSummary.equalSteps }} |
+            Changed: {{ app.battleDiffSummary.changedSteps }} |
+            Left Only: {{ app.battleDiffSummary.leftOnly }} |
+            Right Only: {{ app.battleDiffSummary.rightOnly }}
+          </div>
+          <div class="analysis-table-wrap scroll">
+            <table class="table table-sm analysis-table mb-0">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Left</th>
+                  <th>Right</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of app.battleDiffRows; trackBy: app.trackByIndex" [ngClass]="{
+                    'diff-same': row.kind === 'same',
+                    'diff-changed': row.kind === 'changed',
+                    'diff-left-only': row.kind === 'left-only',
+                    'diff-right-only': row.kind === 'right-only'
+                  }">
+                  <td>{{ row.step }}</td>
+                  <td>{{ row.left }}</td>
+                  <td>{{ row.right }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
