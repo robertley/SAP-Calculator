@@ -53,7 +53,11 @@ export class TeamPresetsService {
     try {
       const parsed = JSON.parse(raw);
       const existing = Array.isArray(parsed) ? parsed : [];
-      return this.mergeDefaultTeams(existing);
+      const migrated = this.migrateTeams(existing);
+      if (migrated.changed) {
+        this.persistTeams(migrated.teams);
+      }
+      return this.mergeDefaultTeams(migrated.teams);
     } catch {
       return getDefaultTeams();
     }
@@ -73,5 +77,27 @@ export class TeamPresetsService {
       }
     }
     return merged;
+  }
+
+  private migrateTeams(teams: TeamPreset[]): {
+    teams: TeamPreset[];
+    changed: boolean;
+  } {
+    let changed = false;
+    const migrated = teams.map((team) => {
+      if (team?.id !== 'default-ability-removal') {
+        return team;
+      }
+      if (team.showSwallowedLevels != null) {
+        return team;
+      }
+      changed = true;
+      return {
+        ...team,
+        showSwallowedLevels: true,
+      };
+    });
+
+    return { teams: migrated, changed };
   }
 }

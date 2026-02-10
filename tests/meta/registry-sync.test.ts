@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const ROOT = process.cwd();
-const GENERATED_ROOT = path.join(ROOT, 'tests', 'generated');
-const PET_REGISTRY_DIR = path.join(
-  ROOT,
+const WORKSPACE_ROOT = process.cwd();
+const GENERATED_TESTS_ROOT = path.join(WORKSPACE_ROOT, 'tests', 'generated');
+const PET_REGISTRIES_DIR = path.join(
+  WORKSPACE_ROOT,
   'src',
   'app',
   'integrations',
@@ -13,7 +13,7 @@ const PET_REGISTRY_DIR = path.join(
   'registries',
 );
 const TOY_REGISTRY_FILE = path.join(
-  ROOT,
+  WORKSPACE_ROOT,
   'src',
   'app',
   'integrations',
@@ -21,7 +21,7 @@ const TOY_REGISTRY_FILE = path.join(
   'toy-registry.ts',
 );
 const EQUIPMENT_REGISTRY_FILE = path.join(
-  ROOT,
+  WORKSPACE_ROOT,
   'src',
   'app',
   'integrations',
@@ -36,7 +36,10 @@ const slugify = (value: string): string =>
     .replace(/^-+|-+$/g, '')
     .replace(/--+/g, '-');
 
-const extractObjectBody = (source: string, objectName: string): string => {
+const extractExportedObjectBody = (
+  source: string,
+  objectName: string,
+): string => {
   const anchor = `export const ${objectName}`;
   const start = source.indexOf(anchor);
   if (start < 0) {
@@ -65,8 +68,8 @@ const extractObjectBody = (source: string, objectName: string): string => {
   return '';
 };
 
-const parseRegistryKeys = (source: string, objectName: string): string[] => {
-  const body = extractObjectBody(source, objectName);
+const parseRegistryObjectKeys = (source: string, objectName: string): string[] => {
+  const body = extractExportedObjectBody(source, objectName);
   const keys: string[] = [];
   const keyRegex =
     /^\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z][A-Za-z0-9]*))\s*:\s*[^,]+,?\s*$/gm;
@@ -82,47 +85,51 @@ const parseRegistryKeys = (source: string, objectName: string): string[] => {
   return keys;
 };
 
-const parsePetEntries = (): Array<{ name: string; pack: string }> => {
-  const files = fs
-    .readdirSync(PET_REGISTRY_DIR)
+const collectPetRegistryEntries = (): Array<{ name: string; pack: string }> => {
+  const registryFiles = fs
+    .readdirSync(PET_REGISTRIES_DIR)
     .filter((file) => file.startsWith('pet-registry.') && file.endsWith('.ts'));
 
-  const result: Array<{ name: string; pack: string }> = [];
-  for (const file of files) {
-    const fullPath = path.join(PET_REGISTRY_DIR, file);
-    const source = fs.readFileSync(fullPath, 'utf8');
-    const objectMatch = source.match(
+  const entries: Array<{ name: string; pack: string }> = [];
+  for (const file of registryFiles) {
+    const registryFilePath = path.join(PET_REGISTRIES_DIR, file);
+    const source = fs.readFileSync(registryFilePath, 'utf8');
+    const registryObjectMatch = source.match(
       /export const ([A-Z_]+_PET_REGISTRY)\s*:\s*\{[^}]+\}\s*=\s*\{/,
     );
-    if (!objectMatch) {
+    if (!registryObjectMatch) {
       continue;
     }
-    const objectName = objectMatch[1];
-    const suffix = file.replace(/^pet-registry\./, '').replace(/\.ts$/, '');
+    const objectName = registryObjectMatch[1];
+    const registrySuffix = file.replace(/^pet-registry\./, '').replace(/\.ts$/, '');
     const pack =
-      suffix.toLowerCase() === 'hidden'
+      registrySuffix.toLowerCase() === 'hidden'
         ? 'Custom'
-        : `${suffix[0].toUpperCase()}${suffix.slice(1).toLowerCase()}`;
-    for (const name of parseRegistryKeys(source, objectName)) {
-      result.push({ name, pack });
+        : `${registrySuffix[0].toUpperCase()}${registrySuffix.slice(1).toLowerCase()}`;
+    for (const petName of parseRegistryObjectKeys(source, objectName)) {
+      entries.push({ name: petName, pack });
     }
   }
-  return result;
+  return entries;
 };
 
-const parseToyEntries = (): string[] => {
+const collectToyRegistryNames = (): string[] => {
   const source = fs.readFileSync(TOY_REGISTRY_FILE, 'utf8');
-  const objectNames = [
+  const registryObjectNames = [
     'STANDARD_TOYS',
     'TOYS_NEEDING_ABILITY_SERVICE',
     'SPECIAL_TOY_BUILDERS',
   ];
-  return [...new Set(objectNames.flatMap((name) => parseRegistryKeys(source, name)))];
+  return [
+    ...new Set(
+      registryObjectNames.flatMap((name) => parseRegistryObjectKeys(source, name)),
+    ),
+  ];
 };
 
-const parseEquipmentEntries = (): string[] => {
+const collectEquipmentRegistryNames = (): string[] => {
   const source = fs.readFileSync(EQUIPMENT_REGISTRY_FILE, 'utf8');
-  const objectNames = [
+  const registryObjectNames = [
     'NO_ARG_EQUIPMENT',
     'LOG_ONLY_EQUIPMENT',
     'LOG_ABILITY_EQUIPMENT',
@@ -130,15 +137,21 @@ const parseEquipmentEntries = (): string[] => {
     'SPECIAL_EQUIPMENT_BUILDERS',
     'SPECIAL_AILMENT_BUILDERS',
   ];
-  return [...new Set(objectNames.flatMap((name) => parseRegistryKeys(source, name)))];
+  return [
+    ...new Set(
+      registryObjectNames.flatMap((name) =>
+        parseRegistryObjectKeys(source, name),
+      ),
+    ),
+  ];
 };
 
 describe('Generated entity test coverage', () => {
   it('has generated pet tests for all registry pets', () => {
     const missing: string[] = [];
-    for (const entry of parsePetEntries()) {
+    for (const entry of collectPetRegistryEntries()) {
       const filename = `${slugify(entry.pack)}__${slugify(entry.name)}.generated.test.ts`;
-      const testPath = path.join(GENERATED_ROOT, 'pets', filename);
+      const testPath = path.join(GENERATED_TESTS_ROOT, 'pets', filename);
       if (!fs.existsSync(testPath)) {
         missing.push(`${entry.pack}:${entry.name}`);
       }
@@ -151,9 +164,9 @@ describe('Generated entity test coverage', () => {
 
   it('has generated toy tests for all registry toys', () => {
     const missing: string[] = [];
-    for (const name of parseToyEntries()) {
+    for (const name of collectToyRegistryNames()) {
       const filename = `${slugify(name)}.generated.test.ts`;
-      const testPath = path.join(GENERATED_ROOT, 'toys', filename);
+      const testPath = path.join(GENERATED_TESTS_ROOT, 'toys', filename);
       if (!fs.existsSync(testPath)) {
         missing.push(name);
       }
@@ -166,9 +179,9 @@ describe('Generated entity test coverage', () => {
 
   it('has generated equipment tests for all registry equipment', () => {
     const missing: string[] = [];
-    for (const name of parseEquipmentEntries()) {
+    for (const name of collectEquipmentRegistryNames()) {
       const filename = `${slugify(name)}.generated.test.ts`;
-      const testPath = path.join(GENERATED_ROOT, 'equipment', filename);
+      const testPath = path.join(GENERATED_TESTS_ROOT, 'equipment', filename);
       if (!fs.existsSync(testPath)) {
         missing.push(name);
       }

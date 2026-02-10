@@ -163,28 +163,6 @@
 
     <app-shell-battle-results [app]="app"></app-shell-battle-results>
   </div>
-  <!-- Modal -->
-  <div class="modal fade" id="patchNotes" tabindex="-1" aria-labelledby="patchNotesLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="patchNotesLabel">Patch Notes</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          @defer (when showPatchNotes) {
-          <app-patch-notes></app-patch-notes>
-          } @placeholder {
-          <div class="text-muted">Loading patch notes…</div>
-          }
-        </div>
-        <div class="modal-footer">
-          <span class="btn-link" (click)="clearCache()">Clear Cache</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Custom Pack -->
   <div class="modal fade" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true"
     #customPackEditor>
@@ -207,7 +185,7 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Info</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Guide</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -226,7 +204,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="importModalLabel">
-            Import / Replay
+            Import
           </h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -246,7 +224,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exportModalLabel">
-            Export Calculator
+            Export
           </h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -284,3 +262,4 @@
   [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')" [savedTeams]="savedTeams"
   (select)="onItemSelected($event)" (close)="showSelectionDialog = false">
 </app-item-selection-dialog>
+

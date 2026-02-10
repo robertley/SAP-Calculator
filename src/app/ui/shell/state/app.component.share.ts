@@ -202,5 +202,5 @@ export function buildShareableLink(
   const compactValue = compactCalculatorState(cleanValue);
   const calculatorStateString = JSON.stringify(compactValue);
   const encodedData = encodeURIComponent(calculatorStateString);
-  return `${baseUrl}?c=${encodedData}`;
+  return `${baseUrl}#c=${encodedData}`;
 }

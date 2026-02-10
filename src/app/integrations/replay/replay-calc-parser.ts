@@ -218,7 +218,7 @@ export class ReplayCalcParser {
     const truncatedState = this.truncateKeys(strippedState);
     const stateString = JSON.stringify(truncatedState);
     const base64Data = btoa(stateString);
-    return `${baseUrl}?c=${base64Data}`;
+    return `${baseUrl}#c=${base64Data}`;
   }
 
   private buildCustomPackFromDeck(deck: any, usedNames: Set<string>) {
