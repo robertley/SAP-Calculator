@@ -164,7 +164,13 @@ function expandKeys(data) {
 export class UrlStateService {
   parseCalculatorStateFromUrl(): { state: any | null; error?: string } {
     const params = new URLSearchParams(window.location.search);
-    const encodedData = params.get('c');
+    const hash = window.location.hash.startsWith('#')
+      ? window.location.hash.slice(1)
+      : window.location.hash;
+    const hashParams = new URLSearchParams(
+      hash.startsWith('?') ? hash.slice(1) : hash,
+    );
+    const encodedData = params.get('c') || hashParams.get('c');
 
     if (!encodedData) {
       return { state: null };

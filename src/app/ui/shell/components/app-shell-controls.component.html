@@ -54,9 +54,7 @@
         <div class="top-controls-right">
           <div class="external-meta">
             <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link"
-              (click)="app.showInfo = true">Info/Guide</span>
-            <span data-bs-toggle="modal" data-bs-target="#patchNotes" class="btn-link"
-              (click)="app.showPatchNotes = true">Patch Notes</span>
+              (click)="app.showInfo = true">Guide</span>
           </div>
           <div class="external-buttons">
             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug"
@@ -65,11 +63,11 @@
             </button>
             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#export"
               (click)="app.showExport = true">
-              Export Calculator
+              Export
             </button>
             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import"
               (click)="app.showImport = true">
-              Import / Replay
+              Import
             </button>
             <button class="btn btn-primary" (click)="app.generateShareLink()">
               Generate Link

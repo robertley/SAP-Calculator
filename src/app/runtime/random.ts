@@ -1,17 +1,17 @@
-export function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length;
-  let randomIndex: number;
+export function shuffle<T>(items: T[]): T[] {
+  let remainingItemCount = items.length;
+  let swapIndex: number;
 
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+  while (remainingItemCount !== 0) {
+    swapIndex = Math.floor(Math.random() * remainingItemCount);
+    remainingItemCount--;
+    [items[remainingItemCount], items[swapIndex]] = [
+      items[swapIndex],
+      items[remainingItemCount],
     ];
   }
 
-  return array;
+  return items;
 }
 
 export function getRandomInt(min: number, max: number): number {

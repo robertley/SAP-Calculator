@@ -1,157 +1,171 @@
-<p>
-  The SAP Calculator is an analysis tool that allows you to easily calculate the
-  approximate odds of your team beating another team. The SAP Calculator
-  simulates the defined battle 1000 times and determines the percentage of wins,
-  draws and loses.
-</p>
-
-<p>
-  <b
-    >Disclaimer: The SAP Calculator is not an official tool of the game and is
-    not affiliated with the game's developers. The SAP Calculator is a fan-made
-    tool, and is not intended to replace the official game.</b
-  >
-</p>
-
-<p>
-  The SAP Calculator engine is based on the official game engine, but it may not
-  be 100% accurate. It is pretty darn close though, and should be completely
-  accurate for nearly every possible battle.
-</p>
-
 <h1>Guide</h1>
 
-<img src="./assets/info/pack.PNG" alt="pack" />
 <p>
-  Select the pack that the player and opponent are using. This determines the
-  pets that are available to each player.
+  SAP Calculator lets you compare two teams by running many simulated battles and
+  reporting estimated win, draw, and loss rates.
 </p>
 
-<img src="./assets/info/toy.PNG" alt="toy" />
-<p>Toy configuration.</p>
+<p>
+  <b>Disclaimer:</b> This is a fan-made tool. It is not official and not
+  affiliated with the game developers.
+</p>
 
-<img src="./assets/info/angler.PNG" alt="angler" />
+<p>
+  The simulator is designed to be very close to game behavior, but edge cases can
+  still differ.
+</p>
+
+<h2>Quick Start</h2>
+<ol>
+  <li>Set each side's pack and toys.</li>
+  <li>Build both teams on the board (pets, stats, equipment, levels).</li>
+  <li>Optionally adjust Advanced Settings for a specific scenario.</li>
+  <li>Click <b>Simulate</b>.</li>
+  <li>Review summary results, then inspect battles/logs for details.</li>
+</ol>
+
+<h2>Top Controls</h2>
+
+<img src="./assets/info/pack.PNG" alt="pack selection" />
+<p>
+  <b>Pack selectors:</b> Choose Player and Opponent packs. This determines which
+  pets are available in selectors and pack-based summon pools.
+</p>
+
+<img src="./assets/info/toy.PNG" alt="toy controls" />
+<p>
+  <b>Toy controls:</b> Choose each side's toy and toy level. Hard toys can be set
+  separately in the main controls.
+</p>
+
+<img src="./assets/info/angler.PNG" alt="global toggles" />
+<p><b>Global toggles:</b></p>
 <ul>
   <li>
-    Angler Mode: The opposite player's pets are available to be selected for
-    each player. (This does not affect pets that summon from your pack pet pool)
+    <b>All Pets:</b> Allows selecting from all pets, regardless of pack.
+  </li>
+  <li><b>Token Pets:</b> Allows selecting token pets directly.</li>
+  <li>
+    <b>Old Stork:</b> Uses legacy/base-stat stork summon behavior.
   </li>
   <li>
-    All Pets: All pets are availble to select. (This does not affect pets that
-    summon from your pack pet pool)
+    <b>Komodo Shuffle:</b> Shuffles pets in front of Komodo each battle.
   </li>
-  <li>Old Stork: Stork summons pets with base stats.</li>
-  <li>
-    Token Pets: Token pets are available to select. (This does not affect pets
-    that summon from your pack pet pool)
-  </li>
-  <li>Komodo Shuffle: Shuffle pet order each battle in front of a Komondo.</li>
-  <li>Mana: Show/hide mana stat on the pet selector.</li>
+  <li><b>Mana:</b> Shows mana fields on pet cards.</li>
 </ul>
 
-<img src="./assets/info/zoom.PNG" alt="zoom" />
-<p>Adjust the zoom level of the application.</p>
+<img src="./assets/info/zoom.PNG" alt="zoom controls" />
+<p><b>Zoom:</b> Changes UI scale for easier viewing.</p>
 
-<img src="./assets/info/advanced.PNG" alt="advanced" />
-<p>Toggle advanced settings.</p>
+<img src="./assets/info/advanced.PNG" alt="advanced toggle" />
+<p><b>Show/Hide Advanced Settings:</b> Expands scenario-specific controls.</p>
+
+<h2>Advanced Settings</h2>
 
 <img src="./assets/info/advanced-settings.PNG" alt="advanced settings" />
 <p>
-  Advanced settings. They allow you to configure the battle to a more specific
-  scenario.
+  Use these fields when you want to reproduce a specific game state instead of a
+  generic battle setup.
 </p>
 <ul>
   <li>
-    Turn: The turn the battle takes place. This will affect pets such as the
-    Stork, Eagle, and Stegosaurus.
+    <b>Turn:</b> Affects turn-dependent effects (for example pets tied to turn
+    timing).
   </li>
   <li>
-    Player Gold Spent: Player gold spent the previous round. This will affect
-    the Meerkat.
-  </li>
-  <li>Opponent Gold Spent: Same as above but for the Opponent player.</li>
-  <li>
-    Player Roll Amount: The amount of times the Player rolled in the shop phase.
-  </li>
-  <li>Opponent Roll Amount: Same as above but for the Opponent player.</li>
-  <li>Player Lvl 3 Sold: The amount of times the Player sold a Level 3 pet.</li>
-  <li>Opponent Lvl 3 Sold: Same as above but for the Opponent player.</li>
-  <li>
-    Player Summoned Amt: The amount of times the Player summoned a pet in the
-    shop phase.
-  </li>
-  <li>Opponent Summoned Amt: Same as above but for the Opponent player.</li>
-  <li>
-    Player Transformation Amt: The amount of times the Player transformed a pet
-    in the shop phase.
+    <b>Player/Opponent Gold Spent:</b> Gold spent in previous shop phase.
   </li>
   <li>
-    Opponent Transformation Amt: Same as above but for the Opponent player.
+    <b>Player/Opponent Roll Amount:</b> Number of shop rolls.
+  </li>
+  <li>
+    <b>Player/Opponent Lvl 3 Sold:</b> Number of level-3 sells.
+  </li>
+  <li>
+    <b>Player/Opponent Summoned Amt:</b> Number of shop summons.
+  </li>
+  <li>
+    <b>Player/Opponent Transformation Amt:</b> Number of shop transformations.
+  </li>
+  <li>
+    <b>Triggers Consumed / Debug Info / Swallowed Levels:</b> Extra battle and
+    debugging controls.
   </li>
 </ul>
 
-<img src="./assets/info/board.PNG" alt="board" />
+<h2>Board And Pet Editing</h2>
+
+<img src="./assets/info/board.PNG" alt="battle board" />
 <p>
-  This is the board. The left side is the Player pets and the right side is the
-  Opponent Pets. Each white box contains a pet and its' stats/equipment. The
-  layout of the pets are identical to as they would be in battle. The right most
-  Player pet is clashing with the left most Opponent pet.
+  The left side is Player; right side is Opponent. Positions match battle order.
+  The Player front unit (right-most on Player row) clashes with the Opponent
+  front unit (left-most on Opponent row).
 </p>
 
-<img src="./assets/info/pet.png" alt="pet" />
-<p>This is a pet.</p>
+<img src="./assets/info/pet.png" alt="pet editor" />
+<p>Each pet card lets you edit:</p>
+<ul>
+  <li><b>Pet selection</b> (which pet occupies the slot).</li>
+  <li><b>Equipment selection</b>.</li>
+  <li><b>Stats</b> (attack, health, and mana when enabled).</li>
+  <li><b>Experience</b> (0 to 5 XP, with level indicators).</li>
+  <li><b>Order</b> via drag-and-drop handle.</li>
+</ul>
+
+<h2>Simulation And Tools</h2>
+
+<img src="assets/info/simulate.PNG" alt="simulate controls" />
+<ul>
+  <li><b>Simulate:</b> Runs the selected number of battles.</li>
+  <li><b>Randomize:</b> Randomizes teams and equipment.</li>
+  <li><b>Undo Randomize:</b> Restores state before the last randomize.</li>
+</ul>
+
+<img src="assets/info/report-bug.PNG" alt="utility controls" />
+<ul>
+  <li><b>Report A Bug:</b> Opens bug-report form with calculator context.</li>
+  <li>
+    <b>Export:</b> Copies calculator state JSON to clipboard.
+  </li>
+  <li>
+    <b>Import:</b> Loads exported calculator JSON or replay-derived input.
+  </li>
+  <li>
+    <b>Generate Link:</b> Copies a shareable link containing current setup.
+  </li>
+</ul>
+
+<h2>Reading Results</h2>
+
+<img src="assets/info/outcome.PNG" alt="outcome summary" />
+<p>
+  Summary shows total Player wins, draws, and Opponent wins from the last
+  simulation run.
+</p>
+
+<img src="assets/info/battles.PNG" alt="battles table" />
+<p>
+  Battles table lists simulated fights and supports filtering by result type.
+</p>
+
+<img src="assets/info/logs.PNG" alt="battle logs" />
+<p>
+  Logs show detailed events for the selected battle. Player events are green,
+  Opponent events are red, and random/system events are highlighted separately.
+  Not every internal engine step is always shown.
+</p>
+
+<h2>Troubleshooting</h2>
 <ul>
   <li>
-    A: This select box is where you may choose the pet that will occupy this
-    space.
-  </li>
-  <li>B: This select box is where you may choose the pet's equipment.</li>
-  <li>
-    C: These fields are where you may input the pet's stats. The gray field is
-    attack, the red field is health, and the indigo field is mana.
+    If results look wrong, verify <b>turn</b>, <b>advanced fields</b>, and
+    <b>pet order</b> first.
   </li>
   <li>
-    D: This component determines the amount of exp the pet has. A pet may have
-    0-5 exp denoted by the number of boxes highlighted. The numbers (1, 2, 3) on
-    top of the exp bar signify the level of the pet. 0-1 exp is level 1, 2-4 exp
-    is level 2, and 5 exp is level 3. The x on the left will clear the exp bar
-    leaving the pet at level 1 with 0 exp.
+    If imports fail, ensure valid JSON and that replay payloads are complete.
   </li>
-  <li>E: This is a drag and drop tool. Use this to reorder your pets.</li>
-</ul>
-
-<img src="assets/info/simulate.PNG" alt="simulate" />
-<ul>
-  <li>Simulate: Run the simulation.</li>
-  <li>Randomize: Randomize the Player's and Opponents's pets and equipment.</li>
-</ul>
-
-<img src="assets/info/report-bug.PNG" alt="report bug" />
-<ul>
-  <li>Report A Bug: Report a bug to the SAP Calculator develepor.</li>
   <li>
-    Export Calculator: Saves a code to your devices clipboard that can be used
-    to import the calculator state.
+    If a shared link does not load, regenerate it from the current state and try
+    again.
   </li>
-  <li>Import Calculator: Import a calculator state.</li>
 </ul>
-
-<img src="assets/info/outcome.PNG" alt="outcome" />
-<p>
-  This is the outcome summary. It shows the number of wins, draws, and loses for
-  the last simulation ran.
-</p>
-
-<img src="assets/info/battles.PNG" alt="battles" />
-<p>
-  This is the Battles table. It is a table of all the battles that were
-  simulated. You may filter the table by the outcome of the battle.
-</p>
-
-<img src="assets/info/logs.PNG" alt="logs" />
-<p>
-  These are the logs of the last selected simulated battle. Logs that are
-  highlighted green are logs from a pet on the Player's team and logs that are
-  highlighted red are logs from a pet on the Opponent's team. Logs that are
-  highlighted purple are random events. Note: Not everything is logged.
-</p>

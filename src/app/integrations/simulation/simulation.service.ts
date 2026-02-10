@@ -111,7 +111,7 @@ export class SimulationService {
   ): SimulationResult {
     const config = this.buildConfig(formGroup, count);
     const wasLoggingEnabled = this.logService.isEnabled();
-    const wasDeferDecorations = this.logService.isDeferDecorations();
+    const wasDeferringDecorations = this.logService.isDeferDecorations();
     this.logService.setEnabled(config.logsEnabled !== false);
     this.logService.setDeferDecorations(true);
 
@@ -130,7 +130,7 @@ export class SimulationService {
     this.gameService.init(player, opponent);
     this.syncGameApiFromForm(formGroup);
     this.logService.setEnabled(wasLoggingEnabled);
-    this.logService.setDeferDecorations(wasDeferDecorations);
+    this.logService.setDeferDecorations(wasDeferringDecorations);
 
     return result;
   }
@@ -200,8 +200,8 @@ export class SimulationService {
       opponentTransformationAmount: formGroup.get(
         'opponentTransformationAmount',
       ).value,
-      playerPets: this.normalizePetConfigs(formGroup.get('playerPets').value),
-      opponentPets: this.normalizePetConfigs(formGroup.get('opponentPets').value),
+      playerPets: this.normalizePetList(formGroup.get('playerPets').value),
+      opponentPets: this.normalizePetList(formGroup.get('opponentPets').value),
       allPets: formGroup.get('allPets').value,
       oldStork: formGroup.get('oldStork').value,
       tokenPets: formGroup.get('tokenPets').value,
@@ -214,14 +214,14 @@ export class SimulationService {
     };
   }
 
-  private normalizePetConfigs(pets: any[]): (SimulationConfig['playerPets'][number] | null)[] {
+  private normalizePetList(pets: any[]): (SimulationConfig['playerPets'][number] | null)[] {
     if (!Array.isArray(pets)) {
       return [];
     }
-    return pets.map((pet) => this.normalizePetConfig(pet));
+    return pets.map((pet) => this.normalizePetEntry(pet));
   }
 
-  private normalizePetConfig(
+  private normalizePetEntry(
     pet: any,
   ): SimulationConfig['playerPets'][number] | null {
     if (!pet || !pet.name) {
