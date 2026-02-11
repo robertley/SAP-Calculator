@@ -181,11 +181,13 @@ export class AbilityService extends AbilityEventTriggers {
       'BeforeFriendAttacks',
       'BeforeAdjacentFriendAttacked',
     ]);
+    const phaseTriggers = new Set(['BeforeStartBattle', 'StartBattle']);
     this.abilityQueueService.processQueue(this.gameService.gameApi, {
       filter: (event) => beforeAttackTriggers.has(event.abilityType as string),
       onExecute: (event) => this.logTriggerHeader(event),
     });
     this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      filter: (event) => !phaseTriggers.has(event.abilityType as string),
       onExecute: (event) => this.logTriggerHeader(event),
     });
     this.lastLoggedTrigger = undefined;
@@ -207,6 +209,7 @@ export class AbilityService extends AbilityEventTriggers {
       'ThisAttacked',
       'ThisFirstAttack',
     ]);
+    const phaseTriggers = new Set(['BeforeStartBattle', 'StartBattle']);
     this.abilityQueueService.processQueue(this.gameService.gameApi, {
       filter: (event) => {
         const trigger = event.abilityType as string;
@@ -220,21 +223,88 @@ export class AbilityService extends AbilityEventTriggers {
       onExecute: (event) => this.logTriggerHeader(event),
     });
     this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      filter: (event) => !phaseTriggers.has(event.abilityType as string),
       onExecute: (event) => this.logTriggerHeader(event),
     });
     this.lastLoggedTrigger = undefined;
   }
 
-  private processPhaseWithInterleaving(allowedTriggers: Set<string>) {
+  private takeNextPhaseEvent(allowedTriggers: Set<string>): AbilityEvent | null {
     const queue = this.abilityQueueService.globalEventQueue;
-    while (true) {
-      const nextIdx = queue.findIndex((event) =>
-        allowedTriggers.has(event.abilityType as string),
+    let bestIdx = -1;
+
+    for (let i = 0; i < queue.length; i++) {
+      const event = queue[i];
+      if (!allowedTriggers.has(event.abilityType as string)) {
+        continue;
+      }
+
+      if (bestIdx === -1) {
+        bestIdx = i;
+        continue;
+      }
+
+      const currentBest = queue[bestIdx];
+      const eventAbilityPriority = this.abilityQueueService.getPriorityNumber(
+        event.abilityType as string,
       );
-      if (nextIdx === -1) {
+      const bestAbilityPriority = this.abilityQueueService.getPriorityNumber(
+        currentBest.abilityType as string,
+      );
+
+      if (eventAbilityPriority < bestAbilityPriority) {
+        bestIdx = i;
+        continue;
+      }
+      if (eventAbilityPriority > bestAbilityPriority) {
+        continue;
+      }
+
+      const eventPet =
+        event.pet?.transformed && event.pet?.transformedInto
+          ? event.pet.transformedInto
+          : event.pet;
+      const bestPet =
+        currentBest.pet?.transformed && currentBest.pet?.transformedInto
+          ? currentBest.pet.transformedInto
+          : currentBest.pet;
+
+      const eventPriority = eventPet
+        ? this.abilityQueueService.getPetEventPriority(eventPet)
+        : Number(event.priority ?? 0);
+      const bestPriority = bestPet
+        ? this.abilityQueueService.getPetEventPriority(bestPet)
+        : Number(currentBest.priority ?? 0);
+
+      if (eventPriority > bestPriority) {
+        bestIdx = i;
+        continue;
+      }
+      if (eventPriority < bestPriority) {
+        continue;
+      }
+
+      const eventTie = Number(event.tieBreaker ?? 0);
+      const bestTie = Number(currentBest.tieBreaker ?? 0);
+      if (eventTie < bestTie) {
+        bestIdx = i;
+      }
+    }
+
+    if (bestIdx === -1) {
+      return null;
+    }
+
+    const [event] = queue.splice(bestIdx, 1);
+    return event ?? null;
+  }
+
+  private processPhaseWithInterleaving(allowedTriggers: Set<string>) {
+    while (true) {
+      const event = this.takeNextPhaseEvent(allowedTriggers);
+      if (!event) {
         break;
       }
-      const [event] = queue.splice(nextIdx, 1);
       this.logTriggerHeader(event);
       this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
       this.abilityQueueService.processQueue(this.gameService.gameApi, {
