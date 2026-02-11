@@ -16,30 +16,18 @@ import { AbilityEventTriggers } from './ability-event-triggers';
   providedIn: 'root',
 })
 export class AbilityService extends AbilityEventTriggers {
-  public gameApi!: GameAPI;
-  protected lastLoggedTrigger?: AbilityTrigger;
-  protected gameService: GameService;
-  private logService: LogService;
-  protected toyEventService: ToyEventService;
-  protected abilityQueueService: AbilityQueueService;
-  private attackEventService: AttackEventService;
-  protected faintEventService: FaintEventService;
+  declare public gameApi: GameAPI;
+  declare protected lastLoggedTrigger?: AbilityTrigger;
 
   constructor(
-    gameService: GameService,
-    logService: LogService,
-    toyEventService: ToyEventService,
-    abilityQueueService: AbilityQueueService,
-    attackEventService: AttackEventService,
-    faintEventService: FaintEventService,
+    protected gameService: GameService,
+    private logService: LogService,
+    protected toyEventService: ToyEventService,
+    protected abilityQueueService: AbilityQueueService,
+    private attackEventService: AttackEventService,
+    protected faintEventService: FaintEventService,
   ) {
     super();
-    this.gameService = gameService;
-    this.logService = logService;
-    this.toyEventService = toyEventService;
-    this.abilityQueueService = abilityQueueService;
-    this.attackEventService = attackEventService;
-    this.faintEventService = faintEventService;
   }
 
   // --- Delegates to AbilityQueueService ---
