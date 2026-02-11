@@ -9,7 +9,7 @@
   "scripts": {
     "prepare": "node simulation/build.js",
     "ng": "ng",
-    "start": "node ./node_modules/@angular/cli/bin/ng serve --proxy-config config/proxy.conf.json",
+    "start": "node ./node_modules/@angular/cli/bin/ng serve --proxy-config config/proxy.conf.js",
     "start:server": "node server/index.js",
     "build": "node ./node_modules/@angular/cli/bin/ng build",
     "postbuild": "node simulation/build.js",

@@ -172,11 +172,15 @@ export function runPositioningOptimization(
       } as SimulationConfig;
 
       const result = simulateBatch(batchConfig);
+      const objectiveWins =
+        side === 'player' ? result.playerWins : result.opponentWins;
+      const objectiveLosses =
+        side === 'player' ? result.opponentWins : result.playerWins;
       candidate.simulations += simulationsToRun;
       candidate.rounds += 1;
-      candidate.wins += result.playerWins;
+      candidate.wins += objectiveWins;
       candidate.draws += result.draws;
-      candidate.losses += result.opponentWins;
+      candidate.losses += objectiveLosses;
       updateCandidateStats(candidate, confidenceZ);
       completedBattles += simulationsToRun;
 

@@ -10,6 +10,7 @@ import {
 import { of } from 'rxjs';
 import { catchError, finalize, timeout } from 'rxjs/operators';
 import { ReplayCalcService } from 'app/integrations/replay/replay-calc.service';
+import { getReplayApiUrl } from 'app/integrations/replay/replay-api-endpoints';
 
 @Component({
   selector: 'app-import-calculator',
@@ -21,6 +22,7 @@ import { ReplayCalcService } from 'app/integrations/replay/replay-calc.service';
 export class ImportCalculatorComponent implements OnInit {
   @Input()
   importFunc: (importVal: string, options?: { resetBattle?: boolean }) => boolean;
+  readonly pidExample = '{"Pid":"ce7b41c5-d69d-4152-8c5d-0d5fee869f9f","T":6}';
 
   formGroup: FormGroup = new FormGroup({
     calcCode: new FormControl(null, Validators.required),
@@ -87,7 +89,10 @@ export class ImportCalculatorComponent implements OnInit {
           }
           console.info('[replay] health check ok, requesting battle');
           this.http
-            .post('/api/replay-battle', { Pid: pidValue, T: turnNumber })
+            .post(getReplayApiUrl('/replay-battle'), {
+              Pid: pidValue,
+              T: turnNumber,
+            })
             .pipe(
               timeout(this.replayTimeoutMs),
               finalize(() => {
@@ -222,7 +227,7 @@ export class ImportCalculatorComponent implements OnInit {
         }
         console.info('[replay] health check ok, requesting battle');
         this.http
-          .post('/api/replay-battle', { Pid: pid, T: turnNumber })
+          .post(getReplayApiUrl('/replay-battle'), { Pid: pid, T: turnNumber })
           .pipe(
             timeout(this.replayTimeoutMs),
             finalize(() => {
@@ -269,7 +274,7 @@ export class ImportCalculatorComponent implements OnInit {
     return new Promise((resolve) => {
       console.info('[replay] health check start');
       this.http
-        .get('/api/health')
+        .get(getReplayApiUrl('/health'))
         .pipe(
           timeout(this.replayHealthTimeoutMs),
           catchError(() => of(null)),

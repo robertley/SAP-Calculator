@@ -9,13 +9,14 @@ Battle calculator for Super Auto Pets with support for official packs, custom pa
 ## Setup
 ```bash
 npm install --legacy-peer-deps
+cp .env.example .env
 ```
 
 ## Run Locally
 ```bash
 npm start
 ```
-This starts Angular dev server with the local `/api` proxy from `config/proxy.conf.json`.
+This starts Angular dev server with the `/api` proxy from `config/proxy.conf.js`, reading `REPLAY_API_TARGET` from `.env`.
 
 Open `http://localhost:4200`.
 
