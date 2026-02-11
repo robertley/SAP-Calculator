@@ -86,7 +86,10 @@ export class KakapoAbility extends Ability {
       undefined,
       owner,
     );
-    for (let target of pushTargetsResp.pets) {
+    const pushTargets = [...pushTargetsResp.pets].sort(
+      (a, b) => a.attack - b.attack,
+    );
+    for (let target of pushTargets) {
       target.parent.pushPetToBack(target);
       this.logService.createLog({
         message: `${owner.name} pushed ${target.name} to the back.`,
