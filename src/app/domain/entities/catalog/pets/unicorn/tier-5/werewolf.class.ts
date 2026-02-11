@@ -87,8 +87,8 @@ export class WerewolfAbility extends Ability {
         player: owner.parent,
         tiger: tiger,
       });
-      target.increaseAttack(owner.attack * power);
-      target.increaseHealth(owner.health * power);
+      target.increaseAttack(attackGain);
+      target.increaseHealth(healthGain);
     }
 
     // Tiger system: trigger Tiger execution at the end

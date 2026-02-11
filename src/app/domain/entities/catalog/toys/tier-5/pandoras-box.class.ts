@@ -11,6 +11,9 @@ import { Pet } from '../../../pet.class';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { getOpponent } from 'app/runtime/player-opponent';
 import { cloneEquipment } from 'app/runtime/equipment-clone';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 // Equipment effects are now multiplied by toy level via Equipment.getMultiplier()
@@ -151,11 +154,33 @@ export class PandorasBoxAbility extends Ability {
     });
 
     for (const pet of pets) {
-      const pool = Math.random() < 0.5 ? ailments : equipments;
+      const poolChoice = chooseRandomOption(
+        {
+          key: 'toy.pandoras-box.pool',
+          label: formatPetScopedRandomLabel(pet, 'Pandoras Box pool'),
+          options: [
+            { id: 'ailments', label: 'Ailments' },
+            { id: 'equipment', label: 'Equipment' },
+          ],
+        },
+        () => getRandomInt(0, 1),
+      );
+      const pool = poolChoice.index === 0 ? ailments : equipments;
       if (!pool.length) {
         continue;
       }
-      const baseEquipment = pool[Math.floor(Math.random() * pool.length)];
+      const equipmentChoice = chooseRandomOption(
+        {
+          key: 'toy.pandoras-box.item',
+          label: formatPetScopedRandomLabel(pet, 'Pandoras Box item'),
+          options: pool.map((equipment) => ({
+            id: equipment.name,
+            label: equipment.name,
+          })),
+        },
+        () => getRandomInt(0, pool.length - 1),
+      );
+      const baseEquipment = pool[equipmentChoice.index];
       if (!baseEquipment) {
         continue;
       }

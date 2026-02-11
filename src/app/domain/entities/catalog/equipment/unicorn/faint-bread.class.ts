@@ -56,7 +56,7 @@ export class FaintBreadAbility extends Ability {
     const owner = this.owner;
 
     for (let i = 0; i < this.equipment.multiplier; i++) {
-      let faintPet = this.petService.getRandomFaintPet(owner.parent, 1);
+      let faintPet = this.petService.getRandomFaintPet(owner.parent, 1, [], owner);
 
       let multiplierMessage = i > 0 ? this.equipment.multiplierMessage : '';
 

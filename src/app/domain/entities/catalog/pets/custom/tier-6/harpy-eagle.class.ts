@@ -5,6 +5,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class HarpyEagle extends Pet {
@@ -93,7 +96,15 @@ export class HarpyEagleAbility extends Ability {
       return;
     }
 
-    let petName = tierOnePool[Math.floor(Math.random() * tierOnePool.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.harpy-eagle-hurt-summon',
+        label: formatPetScopedRandomLabel(owner, 'Harpy Eagle hurt summon'),
+        options: tierOnePool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, tierOnePool.length - 1),
+    );
+    let petName = tierOnePool[choice.index];
     let summonPet = this.petService.createPet(
       {
         name: petName,
@@ -118,7 +129,7 @@ export class HarpyEagleAbility extends Ability {
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: true,
+        randomEvent: choice.randomEvent,
       });
     }
 

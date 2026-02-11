@@ -6,6 +6,9 @@ import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import { InjectorService } from 'app/integrations/injector.service';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Hare extends Pet {
@@ -81,8 +84,18 @@ export class HareAbility extends Ability {
       return;
     }
     // get random equipment
-    let randomEquipmentPet =
-      equipmentPets[Math.floor(Math.random() * equipmentPets.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.hare-copy-equipment',
+        label: formatPetScopedRandomLabel(owner, 'Hare copied equipment source'),
+        options: equipmentPets.map((pet) => ({
+          id: `${pet.savedPosition + 1}:${pet.name}`,
+          label: `O${pet.savedPosition + 1} ${pet.name}`,
+        })),
+      },
+      () => getRandomInt(0, equipmentPets.length - 1),
+    );
+    let randomEquipmentPet = equipmentPets[choice.index];
     let equipment = randomEquipmentPet.equipment;
 
     let targetResp = owner.parent.getThis(owner);
@@ -96,7 +109,7 @@ export class HareAbility extends Ability {
       type: 'ability',
       player: owner.parent,
       tiger: tiger,
-      randomEvent: equipmentPets.length > 0,
+      randomEvent: choice.randomEvent,
     });
 
     // Tiger system: trigger Tiger execution at the end

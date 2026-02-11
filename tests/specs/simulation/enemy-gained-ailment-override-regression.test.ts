@@ -75,4 +75,36 @@ describe('enemy gained ailment override regression', () => {
     expect(joinedLogs).toMatch(/Visitor.*made.*Icky/);
     expect(joinedLogs).toMatch(/Vampire Bat.*sniped/);
   });
+
+  it('targets the next closest alive enemy when the front enemy faints in the same hit', () => {
+    const config: SimulationConfig = {
+      playerPack: 'Unicorn',
+      opponentPack: 'Turtle',
+      turn: 12,
+      logsEnabled: true,
+      simulationCount: 1,
+      playerPets: [
+        { name: 'Visitor', attack: 8, health: 5, exp: 0 },
+        { name: 'Bigfoot', attack: 3, health: 3, exp: 0 },
+        null,
+        null,
+        null,
+      ],
+      opponentPets: [
+        { name: 'Deer', attack: 5, health: 3, exp: 0 },
+        { name: 'Otter', attack: 2, health: 4, exp: 0 },
+        null,
+        null,
+        null,
+      ],
+    };
+
+    const result = runSimulation(config);
+    const logs = result.battles?.[0]?.logs?.map((log) => log.message ?? '') ?? [];
+    const joinedLogs = logs.join('\n');
+
+    expect(joinedLogs).toMatch(/Visitor made Bigfoot Icky\./);
+    expect(joinedLogs).toMatch(/Visitor made Otter Icky\./);
+    expect(joinedLogs).not.toMatch(/Visitor made Deer Icky\./);
+  });
 });

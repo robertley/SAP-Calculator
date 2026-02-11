@@ -79,6 +79,7 @@ export class OrcaAbility extends Ability {
         owner.parent,
         undefined,
         [owner.name, 'Quetzalcoatlus'],
+        owner,
       );
       faintPet.attack = 6;
       faintPet.health = 6;

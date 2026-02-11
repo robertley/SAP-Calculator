@@ -4,6 +4,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Elk extends Pet {
@@ -68,7 +71,18 @@ export class ElkAbility extends Ability {
       return;
     }
 
-    const target = candidates[Math.floor(Math.random() * candidates.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.elk-end-turn-target',
+        label: formatPetScopedRandomLabel(owner, 'Elk end turn sell target'),
+        options: candidates.map((pet) => ({
+          id: `${pet.savedPosition + 1}:${pet.name}`,
+          label: `P${pet.savedPosition + 1} ${pet.name}`,
+        })),
+      },
+      () => getRandomInt(0, candidates.length - 1),
+    );
+    const target = candidates[choice.index];
     const sellValueGain = this.level * 2;
     target.increaseSellValue(sellValueGain);
     this.logService.createLog({
@@ -77,7 +91,7 @@ export class ElkAbility extends Ability {
       player: owner.parent,
       tiger: context.tiger,
       pteranodon: context.pteranodon,
-      randomEvent: candidates.length > 1,
+      randomEvent: choice.randomEvent,
     });
     this.triggerTigerExecution(context);
   }

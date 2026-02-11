@@ -7,6 +7,7 @@ import { getRandomInt } from 'app/runtime/random';
 import { hasSilly } from './player-utils';
 import { makeRoomForSlot, pushBackwardFromSlot, pushForwardFromSlot } from './player-movement';
 import type { PlayerLike } from './player-like.types';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
 
 
 export const summonPet = (
@@ -20,8 +21,31 @@ export const summonPet = (
   gameService: GameService,
 ): { success: boolean; randomEvent: boolean } => {
   if (summoner && hasSilly(summoner)) {
-    const targetTeam = Math.random() < 0.5 ? player : player.opponent;
-    const randomPosition = getRandomInt(0, 4);
+    const targetTeamChoice = chooseRandomOption(
+      {
+        key: 'summon.silly-target-team',
+        label: 'Silly summon target team',
+        options: [
+          { id: 'player', label: 'Player team' },
+          { id: 'opponent', label: 'Opponent team' },
+        ],
+      },
+      () => getRandomInt(0, 1),
+    );
+    const targetTeam =
+      targetTeamChoice.index === 0 ? player : player.opponent;
+    const positionChoice = chooseRandomOption(
+      {
+        key: 'summon.silly-position',
+        label: 'Silly summon position',
+        options: [0, 1, 2, 3, 4].map((slot) => ({
+          id: `slot-${slot + 1}`,
+          label: `Slot ${slot + 1}`,
+        })),
+      },
+      () => getRandomInt(0, 4),
+    );
+    const randomPosition = positionChoice.index;
 
     spawnPet.parent = targetTeam as Player;
 

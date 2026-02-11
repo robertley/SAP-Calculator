@@ -18,6 +18,7 @@ import {
   applyIckyMultiplier,
   applyManticoreMultiplier,
 } from 'app/domain/entities/combat/damage-reduction';
+import { getRandomFloat } from 'app/runtime/random';
 
 interface ToyJsonEntry {
   Name: string;
@@ -317,7 +318,7 @@ export class ToyService {
       this.toyEventService.setStartOfBattleEvent(event);
       return;
     }
-    event.tieBreaker = Math.random();
+    event.tieBreaker = getRandomFloat();
     this.localStartOfBattleEvents.push(event);
   }
 

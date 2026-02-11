@@ -6,6 +6,9 @@ import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { AbilityQueueService } from 'app/integrations/ability/ability-queue.service';
 import { InjectorService } from 'app/integrations/injector.service';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class PinkRobin extends Pet {
@@ -57,8 +60,18 @@ export class PinkRobinAbility extends Ability {
     );
 
     if (friends.length > 0) {
-      const randomIndex = Math.floor(Math.random() * friends.length);
-      const target = friends[randomIndex];
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.pink-robin-end-turn-target',
+          label: formatPetScopedRandomLabel(owner, 'Pink Robin end-turn target'),
+          options: friends.map((friend) => ({
+            id: `${friend.savedPosition + 1}:${friend.name}`,
+            label: `P${friend.savedPosition + 1} ${friend.name}`,
+          })),
+        },
+        () => getRandomInt(0, friends.length - 1),
+      );
+      const target = friends[choice.index];
       const abilityQueueService = InjectorService.getInjector().get(
         AbilityQueueService,
       );
@@ -71,6 +84,7 @@ export class PinkRobinAbility extends Ability {
         message: `${owner.name} activated End Turn on ${target.name}.`,
         type: 'ability',
         player: owner.parent,
+        randomEvent: choice.randomEvent,
         tiger,
         pteranodon,
       });

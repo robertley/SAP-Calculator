@@ -4,6 +4,7 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { shuffle } from 'app/runtime/random';
 
 
 export class HerculesBeetle extends Pet {
@@ -77,7 +78,7 @@ export class HerculesBeetleAbility extends Ability {
       }
     }
     if (remainder > 0) {
-      const shuffled = [...friends].sort(() => Math.random() - 0.5);
+      const shuffled = shuffle([...friends]);
       for (let i = 0; i < remainder && i < shuffled.length; i++) {
         shuffled[i].increaseAttack(1);
       }

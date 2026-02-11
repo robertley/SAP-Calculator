@@ -5,6 +5,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Kappa extends Pet {
@@ -80,9 +83,24 @@ export class KappaAbility extends Ability {
     let tier3Pets = petPool.get(3);
 
     for (let i = 0; i < owner.level; i++) {
-      let playerSpawn = tier3Pets[Math.floor(Math.random() * tier3Pets.length)];
-      let opponentSpawn =
-        tier3Pets[Math.floor(Math.random() * tier3Pets.length)];
+      const playerChoice = chooseRandomOption(
+        {
+          key: 'pet.kappa-player-spawn',
+          label: formatPetScopedRandomLabel(owner, 'Kappa player spawn', i + 1),
+          options: tier3Pets.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, tier3Pets.length - 1),
+      );
+      let playerSpawn = tier3Pets[playerChoice.index];
+      const opponentChoice = chooseRandomOption(
+        {
+          key: 'pet.kappa-opponent-spawn',
+          label: formatPetScopedRandomLabel(owner, 'Kappa opponent spawn', i + 1),
+          options: tier3Pets.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, tier3Pets.length - 1),
+      );
+      let opponentSpawn = tier3Pets[opponentChoice.index];
 
       let spawn = this.petService.createPet(
         {
@@ -109,7 +127,7 @@ export class KappaAbility extends Ability {
           player: owner.parent,
           tiger: tiger,
           pteranodon: pteranodon,
-          randomEvent: true,
+          randomEvent: playerChoice.randomEvent,
         });
       }
 
@@ -138,7 +156,7 @@ export class KappaAbility extends Ability {
           player: owner.parent,
           tiger: tiger,
           pteranodon: pteranodon,
-          randomEvent: true,
+          randomEvent: opponentChoice.randomEvent,
         });
       }
     }

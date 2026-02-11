@@ -9,6 +9,9 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import { InjectorService } from 'app/integrations/injector.service';
 import { cloneEquipment } from 'app/runtime/equipment-clone';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class GoodDog extends Pet {
@@ -92,8 +95,21 @@ export class GoodDogAbility extends Ability {
       if (!pet.alive) {
         continue;
       }
-      const baseEquipment =
-        equipmentArray[Math.floor(Math.random() * equipmentArray.length)];
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.good-dog-equipment',
+          label: formatPetScopedRandomLabel(
+            owner,
+            `Good Dog equipment for P${pet.savedPosition + 1} ${pet.name}`,
+          ),
+          options: equipmentArray.map((equipment) => ({
+            id: equipment.name,
+            label: equipment.name,
+          })),
+        },
+        () => getRandomInt(0, equipmentArray.length - 1),
+      );
+      const baseEquipment = equipmentArray[choice.index];
       const equipment = cloneEquipment(baseEquipment);
       if (!equipment) {
         continue;
@@ -102,7 +118,7 @@ export class GoodDogAbility extends Ability {
         message: `${owner.name} gave ${pet.name} ${equipment.name}`,
         type: 'ability',
         player: owner.parent,
-        randomEvent: targetsResp.random,
+        randomEvent: targetsResp.random || choice.randomEvent,
         tiger: tiger,
       });
       pet.givePetEquipment(equipment);

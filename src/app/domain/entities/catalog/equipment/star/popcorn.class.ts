@@ -4,6 +4,9 @@ import { PetService } from 'app/integrations/pet/pet.service';
 import { Equipment, EquipmentClass } from '../../../equipment.class';
 import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Popcorn extends Equipment {
@@ -60,14 +63,29 @@ export class PopcornAbility extends Ability {
     const owner = this.owner;
 
     for (let i = 0; i < this.equipment.multiplier; i++) {
-      let petPool;
-      if (owner.parent == gameApi.player) {
-        petPool = gameApi.playerPetPool;
-      } else {
-        petPool = gameApi.opponentPetPool;
+      const petPool =
+        owner.parent == gameApi.player
+          ? gameApi.playerPetPool
+          : gameApi.opponentPetPool;
+      let pets = [...(petPool?.get(owner.tier) ?? [])];
+      if (!pets.length) {
+        pets = [...(this.petService.allPets.get(owner.tier) ?? [])];
       }
-      let pets = petPool.get(owner.tier);
-      let petName = pets[Math.floor(Math.random() * pets.length)];
+      if (!pets.length) {
+        return;
+      }
+      const choice = chooseRandomOption(
+        {
+          key: 'equipment.popcorn-summon',
+          label: formatPetScopedRandomLabel(owner, 'Popcorn summon', i + 1),
+          options: pets.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, pets.length - 1),
+      );
+      if (choice.index < 0 || choice.index >= pets.length) {
+        return;
+      }
+      let petName = pets[choice.index];
       let popcornPet = this.petService.createPet(
         {
           attack: null,
@@ -90,7 +108,7 @@ export class PopcornAbility extends Ability {
           message: `${owner.name} Spawned ${popcornPet.name} (Popcorn)${multiplierMessage}`,
           type: 'ability',
           player: owner.parent,
-          randomEvent: true,
+          randomEvent: choice.randomEvent,
         });
       }
     }

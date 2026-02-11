@@ -162,6 +162,10 @@ $night: #33377a;
   grid-column: span 2;
 }
 
+.controls-section.random-overrides-section {
+  grid-column: span 4;
+}
+
 .teams-section {
   flex-direction: row;
   flex-wrap: wrap;
@@ -423,6 +427,57 @@ $night: #33377a;
   justify-content: flex-start;
 }
 
+.random-overrides-header {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.random-overrides-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.random-overrides-empty {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.random-overrides-error {
+  color: #b42318;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.random-overrides-table-wrap {
+  max-height: 260px;
+  overflow: auto;
+}
+
+.random-overrides-table {
+  margin-bottom: 0;
+}
+
+.decision-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.decision-key {
+  color: #6c757d;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.75rem;
+}
+
+.decision-choice-preview {
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+  min-height: 1.1rem;
+}
+
 .meta-text {
   color: #6c757d;
   font-size: 0.9rem;
@@ -445,6 +500,10 @@ $night: #33377a;
   .controls-section.advanced-section {
     grid-column: span 2;
   }
+
+  .controls-section.random-overrides-section {
+    grid-column: span 2;
+  }
 }
 
 @media (max-width: 991.98px) {
@@ -465,6 +524,10 @@ $night: #33377a;
   }
 
   .controls-section.advanced-section {
+    grid-column: span 1;
+  }
+
+  .controls-section.random-overrides-section {
     grid-column: span 1;
   }
 

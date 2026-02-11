@@ -73,7 +73,12 @@ export class RedLippedBatfishAbility extends Ability {
     }
 
     const targetTier = Math.max(1, 4 - this.level);
-    const newPet = this.petService.getRandomFaintPet(opponent, targetTier);
+    const newPet = this.petService.getRandomFaintPet(
+      opponent,
+      targetTier,
+      [],
+      owner,
+    );
     opponent.transformPet(target, newPet);
 
     this.logService.createLog({

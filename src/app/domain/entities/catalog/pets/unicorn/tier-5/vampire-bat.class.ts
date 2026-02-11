@@ -72,9 +72,9 @@ export class VampireBatAbility extends Ability {
       return;
     }
 
-    let petHealthPreSnipe = snipeTarget.health;
+    const targetHealthBeforeSnipe = snipeTarget.health;
     let damage = owner.snipePet(snipeTarget, power, false, tiger);
-    let healthGained = Math.min(damage, petHealthPreSnipe);
+    let healthGained = Math.min(damage, targetHealthBeforeSnipe);
 
     let targetResp = owner.parent.getThis(owner);
     let target = targetResp.pet;

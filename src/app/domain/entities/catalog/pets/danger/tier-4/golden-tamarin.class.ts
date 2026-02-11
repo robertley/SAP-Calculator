@@ -6,6 +6,9 @@ import { Player } from '../../../../player.class';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class GoldenTamarin extends Pet {
@@ -72,8 +75,15 @@ export class GoldenTamarinAbility extends Ability {
     }
 
     const petNames = DANGERS_AND_USEFUL_POOLS.goldenTamarin;
-    let randomIndex = Math.floor(Math.random() * petNames.length);
-    let selectedPetName = petNames[randomIndex];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.golden-tamarin-transform',
+        label: formatPetScopedRandomLabel(owner, 'Golden Tamarin transform'),
+        options: petNames.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, petNames.length - 1),
+    );
+    let selectedPetName = petNames[choice.index];
 
     let newPet = this.petService.createPet(
       {
@@ -94,7 +104,7 @@ export class GoldenTamarinAbility extends Ability {
       type: 'ability',
       player: owner.parent,
       tiger: tiger,
-      randomEvent: true,
+      randomEvent: choice.randomEvent,
     });
 
     // Tiger system: trigger Tiger execution at the end

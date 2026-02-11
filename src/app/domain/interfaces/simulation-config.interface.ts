@@ -221,6 +221,17 @@ export interface PetConfig {
   friendsDiedBeforeBattle?: number;
 }
 
+export interface CustomPackConfig {
+  name: string;
+  tier1Pets?: Array<string | null>;
+  tier2Pets?: Array<string | null>;
+  tier3Pets?: Array<string | null>;
+  tier4Pets?: Array<string | null>;
+  tier5Pets?: Array<string | null>;
+  tier6Pets?: Array<string | null>;
+  spells?: string[];
+}
+
 export interface SimulationConfig {
   playerPack: string;
   opponentPack: string;
@@ -245,6 +256,7 @@ export interface SimulationConfig {
   opponentTransformationAmount?: number;
   playerPets: (PetConfig | null)[];
   opponentPets: (PetConfig | null)[];
+  customPacks?: CustomPackConfig[];
   allPets?: boolean;
   oldStork?: boolean;
   tokenPets?: boolean;
@@ -255,6 +267,9 @@ export interface SimulationConfig {
   simulationCount?: number;
   logsEnabled?: boolean;
   maxLoggedBattles?: number;
+  captureRandomDecisions?: boolean;
+  randomDecisionOverrides?: RandomDecisionOverride[];
+  strictRandomOverrideValidation?: boolean;
 }
 
 export interface SimulationResult {
@@ -262,4 +277,27 @@ export interface SimulationResult {
   opponentWins: number;
   draws: number;
   battles?: any[]; // Using any[] for now to avoid importing Battle interface cycle
+  randomDecisions?: RandomDecisionCapture[];
+  randomOverrideError?: string | null;
+}
+
+export interface RandomDecisionOption {
+  id: string;
+  label: string;
+}
+
+export interface RandomDecisionCapture {
+  index: number;
+  key: string;
+  label: string;
+  options: RandomDecisionOption[];
+  selectedOptionId: string | null;
+  forced: boolean;
+}
+
+export interface RandomDecisionOverride {
+  index: number;
+  optionId: string;
+  key?: string;
+  label?: string;
 }

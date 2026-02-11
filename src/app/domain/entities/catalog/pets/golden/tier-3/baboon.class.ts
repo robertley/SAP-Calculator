@@ -4,6 +4,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Baboon extends Pet {
@@ -71,7 +74,18 @@ export class BaboonAbility extends Ability {
       return;
     }
 
-    const target = candidates[Math.floor(Math.random() * candidates.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.baboon-end-turn-target',
+        label: formatPetScopedRandomLabel(owner, 'Baboon end turn target'),
+        options: candidates.map((pet) => ({
+          id: `${pet.savedPosition + 1}:${pet.name}`,
+          label: `P${pet.savedPosition + 1} ${pet.name}`,
+        })),
+      },
+      () => getRandomInt(0, candidates.length - 1),
+    );
+    const target = candidates[choice.index];
     const buff = this.level;
     target.increaseAttack(buff);
     target.increaseHealth(buff);
@@ -82,7 +96,7 @@ export class BaboonAbility extends Ability {
       player: owner.parent,
       tiger: context.tiger,
       pteranodon: context.pteranodon,
-      randomEvent: candidates.length > 1,
+      randomEvent: choice.randomEvent,
     });
     this.triggerTigerExecution(context);
   }

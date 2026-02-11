@@ -6,6 +6,11 @@ import { Modal } from 'bootstrap';
 import { Player } from 'app/domain/entities/player.class';
 import { Battle } from 'app/domain/interfaces/battle.interface';
 import { Log } from 'app/domain/interfaces/log.interface';
+import {
+  RandomDecisionCapture,
+  RandomDecisionOverride,
+  SimulationConfig,
+} from 'app/domain/interfaces/simulation-config.interface';
 import { LogService } from 'app/integrations/log.service';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { GameService } from 'app/runtime/state/game.service';
@@ -19,7 +24,6 @@ import { SimulationService } from 'app/integrations/simulation/simulation.servic
 import { TeamPresetsService, TeamPreset, } from 'app/integrations/team-presets.service';
 import { PetSelectorComponent } from 'app/ui/components/pet-selector/pet-selector.component';
 import { ItemSelectionDialogComponent, SelectionType, } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
-import { PatchNotesComponent } from 'app/ui/components/patch-notes/patch-notes.component';
 import { CustomPackEditorComponent } from 'app/ui/components/custom-pack-editor/custom-pack-editor.component';
 import { InfoComponent } from 'app/ui/components/info/info.component';
 import { ImportCalculatorComponent } from 'app/ui/components/import-calculator/import-calculator.component';
@@ -30,7 +34,8 @@ import { AppShellBattleResultsComponent } from './components/app-shell-battle-re
 import { BATTLE_BACKGROUNDS, LOG_FILTER_TABS } from './view/app.ui.constants';
 import { loadTeamPreset, saveTeamPreset } from './state/app.component.teams';
 import { InjectorService } from 'app/integrations/injector.service';
-import { BattleDiffScope, BattleDiffRow, BattleDiffSummary, BattleTimelineRow, buildApiResponse as buildApiResponseImpl, refreshBattleDiff as refreshBattleDiffImpl, getDrawPercent as getDrawPercentImpl, getDrawWidth as getDrawWidthImpl, getLosePercent as getLosePercentImpl, getLoseWidth as getLoseWidthImpl, getWinPercent as getWinPercentImpl, LogMessagePart, refreshFilteredBattles as refreshFilteredBattlesImpl, refreshViewBattleTimeline as refreshViewBattleTimelineImpl, refreshViewBattleLogRows as refreshViewBattleLogRowsImpl, runSimulation as runSimulationImpl, cancelSimulation as cancelSimulationImpl, setBattleDiffLeft as setBattleDiffLeftImpl, setBattleDiffLeftScope as setBattleDiffLeftScopeImpl, setBattleDiffRight as setBattleDiffRightImpl, setBattleDiffRightScope as setBattleDiffRightScopeImpl, setViewBattle as setViewBattleImpl, simulate as simulateImpl, } from './simulation/app.component.simulation';
+import { BattleDiffScope, BattleDiffRow, BattleDiffSummary, BattleTimelineRow, buildApiResponse as buildApiResponseImpl, refreshBattleDiff as refreshBattleDiffImpl, getDrawPercent as getDrawPercentImpl, getDrawWidth as getDrawWidthImpl, getLosePercent as getLosePercentImpl, getLoseWidth as getLoseWidthImpl, getWinPercent as getWinPercentImpl, LogMessagePart, optimizePositioning as optimizePositioningImpl, refreshFilteredBattles as refreshFilteredBattlesImpl, refreshViewBattleTimeline as refreshViewBattleTimelineImpl, refreshViewBattleLogRows as refreshViewBattleLogRowsImpl, runSimulation as runSimulationImpl, cancelSimulation as cancelSimulationImpl, setBattleDiffLeft as setBattleDiffLeftImpl, setBattleDiffLeftScope as setBattleDiffLeftScopeImpl, setBattleDiffRight as setBattleDiffRightImpl, setBattleDiffRightScope as setBattleDiffRightScopeImpl, setViewBattle as setViewBattleImpl, simulate as simulateImpl, } from './simulation/app.component.simulation';
+import { decorateRandomDecisionTextParts } from './simulation/random-decision-decorate';
 import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCacheImpl, decrementToyLevel as decrementToyLevelImpl, drop as dropImpl, exportCalculator as exportCalculatorImpl, fixCustomPackSelect as fixCustomPackSelectImpl, generateShareLink as generateShareLinkImpl, getPackIcon as getPackIconImpl, getRandomEquipment as getRandomEquipmentImpl, getRollInputVisible as getRollInputVisibleImpl, getSelectedTeamName as getSelectedTeamNameImpl, getSelectedTeamPreviewIcons as getSelectedTeamPreviewIconsImpl, getToyIcon as getToyIconImpl, getToyIconPathValue as getToyIconPathValueImpl, getToyOptionStyle as getToyOptionStyleImpl, getValidCustomPacks as getValidCustomPacksImpl, importCalculator as importCalculatorImpl, incrementToyLevel as incrementToyLevelImpl, initApp as initAppImpl, initFormGroup as initFormGroupImpl, initGameApi as initGameApiImpl, initPetForms as initPetFormsImpl, initPlayerPets as initPlayerPetsImpl, initModals as initModalsImpl, loadLocalStorage as loadLocalStorageImpl, loadStateFromUrl as loadStateFromUrlImpl, makeFormGroup as makeFormGroupImpl, onItemSelected as onItemSelectedImpl, onPackImageError as onPackImageErrorImpl, openCustomPackEditor as openCustomPackEditorImpl, openSelectionDialog as openSelectionDialogImpl, printFormGroup as printFormGroupImpl, randomize as randomizeImpl, randomizePlayerPets as randomizePlayerPetsImpl, refreshPetFormArrays as refreshPetFormArraysImpl, removeHardToy as removeHardToyImpl, resetPackImageError as resetPackImageErrorImpl, resetPlayer as resetPlayerImpl, setDayNight as setDayNightImpl, setHardToyImage as setHardToyImageImpl, setRandomBackground as setRandomBackgroundImpl, setToyImage as setToyImageImpl, toggleAdvanced as toggleAdvancedImpl, trackByIndex as trackByIndexImpl, trackByLogTab as trackByLogTabImpl, trackByTeamId as trackByTeamIdImpl, updateGoldSpent as updateGoldSpentImpl, undoRandomize as undoRandomizeImpl, updatePlayerPack as updatePlayerPackImpl, updatePlayerToy as updatePlayerToyImpl, updatePreviousShopTier as updatePreviousShopTierImpl, updateToyLevel as updateToyLevelImpl, } from './view/app.component.ui';
 
 @Component({
@@ -44,7 +49,6 @@ import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCa
     DragDropModule,
     PetSelectorComponent,
     ItemSelectionDialogComponent,
-    PatchNotesComponent,
     CustomPackEditorComponent,
     InfoComponent,
     ImportCalculatorComponent,
@@ -93,6 +97,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   battleRandomEvents: LogMessagePart[][] = [];
   battleRandomEventsByBattle = new Map<Battle, LogMessagePart[]>();
   filteredBattlesCache: Battle[] = [];
+  randomDecisions: RandomDecisionCapture[] = [];
+  randomOverrideError: string | null = null;
+  randomDecisionSelectionByFingerprint: Record<string, string> = {};
+  private randomDecisionPartsCache = new Map<string, LogMessagePart[]>();
   currBattle: Battle;
   viewBattle: Battle;
   simulated = false;
@@ -123,7 +131,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   selectionType: SelectionType = 'pet';
   selectionSide: 'player' | 'opponent' | 'none' = 'none';
 
-  showPatchNotes = false;
   showInfo = false;
   showImport = false;
   showExport = false;
@@ -323,10 +330,209 @@ export class AppComponent implements OnInit, AfterViewInit {
     updateToyLevelImpl(this, player, level);
   readonly getRandomEquipment = () => getRandomEquipmentImpl(this);
   readonly simulate = (count: number = 1000) => simulateImpl(this, count);
-  readonly runSimulation = (count: number = 1000) =>
-    runSimulationImpl(this, count);
+  readonly runSimulation = (
+    count: number = 1000,
+    configOverrides?: Partial<SimulationConfig>,
+  ) => runSimulationImpl(this, count, configOverrides);
   readonly cancelSimulation = () => cancelSimulationImpl(this);
+  readonly optimizePositioning = (side: 'player' | 'opponent') =>
+    optimizePositioningImpl(
+      this,
+      side,
+      this.formGroup.get('simulations').value ?? 1000,
+    );
+  readonly afterPositioningApplied = () => {
+    this.refreshPetFormArrays();
+    setTimeout(() => {
+      for (const selector of this.petSelectors.toArray()) {
+        selector.substitutePet();
+      }
+    });
+  };
   readonly markForCheck = () => this.cdr.markForCheck();
+
+  readonly captureRandomEvents = () => {
+    if (this.simulationInProgress) {
+      return;
+    }
+    this.runSimulation(1, {
+      logsEnabled: true,
+      simulationCount: 1,
+      maxLoggedBattles: 1,
+      captureRandomDecisions: true,
+      randomDecisionOverrides: [],
+      strictRandomOverrideValidation: true,
+    });
+    this.syncRandomDecisionSelectionMap(this.randomDecisions, []);
+    if (this.randomDecisions.length === 0) {
+      this.setStatus('No random decisions captured in this battle.', 'error');
+      return;
+    }
+    this.setStatus(
+      `Captured ${this.randomDecisions.length} random decision(s).`,
+      'success',
+    );
+  };
+
+  readonly clearRandomOverrides = () => {
+    this.randomDecisionSelectionByFingerprint = {};
+    this.randomDecisions = [];
+    this.randomOverrideError = null;
+    this.markForCheck();
+  };
+
+  readonly runForcedRandomSimulation = () => {
+    if (this.simulationInProgress) {
+      return;
+    }
+    const previousDecisions = [...this.randomDecisions];
+    const overrides = this.buildRandomDecisionOverrides();
+    this.runSimulation(1, {
+      logsEnabled: true,
+      simulationCount: 1,
+      maxLoggedBattles: 1,
+      captureRandomDecisions: true,
+      randomDecisionOverrides: overrides,
+      strictRandomOverrideValidation: false,
+    });
+    this.syncRandomDecisionSelectionMap(this.randomDecisions, previousDecisions);
+    if (this.randomOverrideError) {
+      this.setStatus(this.randomOverrideError, 'error');
+      return;
+    }
+    this.setStatus('Forced simulation completed.', 'success');
+  };
+
+  readonly onRandomDecisionChoiceChanged = (
+    decision: RandomDecisionCapture,
+    optionId: string,
+  ) => {
+    const fingerprint = this.getDecisionFingerprint(decision);
+    this.randomDecisionSelectionByFingerprint = {
+      ...this.randomDecisionSelectionByFingerprint,
+      [fingerprint]: optionId,
+    };
+    this.refreshConditionalRandomDecisions();
+  };
+
+  private refreshConditionalRandomDecisions(): void {
+    if (this.simulationInProgress || this.randomDecisions.length === 0) {
+      return;
+    }
+    const previousDecisions = [...this.randomDecisions];
+    const overrides = this.buildRandomDecisionOverrides();
+    this.runSimulation(1, {
+      logsEnabled: true,
+      simulationCount: 1,
+      maxLoggedBattles: 1,
+      captureRandomDecisions: true,
+      randomDecisionOverrides: overrides,
+      strictRandomOverrideValidation: false,
+    });
+    this.syncRandomDecisionSelectionMap(this.randomDecisions, previousDecisions);
+  }
+
+  private buildRandomDecisionOverrides(): RandomDecisionOverride[] {
+    const overrides: RandomDecisionOverride[] = [];
+    for (const decision of this.randomDecisions) {
+        const selected = this.getSelectedRandomDecisionOptionId(decision);
+        if (!selected) {
+          continue;
+        }
+        overrides.push({
+          index: decision.index,
+          optionId: selected,
+          key: decision.key,
+          label: decision.label,
+        });
+    }
+    return overrides;
+  }
+
+  private getDecisionFingerprint(decision: RandomDecisionCapture): string {
+    return `${decision.key}::${decision.label}`;
+  }
+
+  readonly getRandomDecisionLabelParts = (
+    decision: RandomDecisionCapture,
+  ): LogMessagePart[] => {
+    const key = `label:${decision.key}:${decision.label}`;
+    const cached = this.randomDecisionPartsCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    const parts = decorateRandomDecisionTextParts(decision.label);
+    this.randomDecisionPartsCache.set(key, parts);
+    return parts;
+  };
+
+  readonly getRandomDecisionSelectedOptionParts = (
+    decision: RandomDecisionCapture,
+  ): LogMessagePart[] => {
+    const selectedId = this.getSelectedRandomDecisionOptionId(decision);
+    const selectedOption =
+      decision.options.find((option) => option.id === selectedId) ??
+      decision.options[0];
+    const optionLabel = selectedOption?.label ?? '';
+    const key = `option:${decision.key}:${optionLabel}`;
+    const cached = this.randomDecisionPartsCache.get(key);
+    if (cached) {
+      return cached;
+    }
+    const parts = decorateRandomDecisionTextParts(optionLabel);
+    this.randomDecisionPartsCache.set(key, parts);
+    return parts;
+  };
+
+  readonly getSelectedRandomDecisionOptionId = (
+    decision: RandomDecisionCapture,
+  ): string => {
+    const fingerprint = this.getDecisionFingerprint(decision);
+    const selected =
+      this.randomDecisionSelectionByFingerprint[fingerprint] ??
+      decision.selectedOptionId ??
+      decision.options[0]?.id ??
+      '';
+    if (!decision.options.some((option) => option.id === selected)) {
+      return decision.selectedOptionId ?? decision.options[0]?.id ?? '';
+    }
+    return selected;
+  };
+
+  private syncRandomDecisionSelectionMap(
+    nextDecisions: RandomDecisionCapture[],
+    previousDecisions: RandomDecisionCapture[],
+  ): void {
+    const previousByFingerprint = new Map<string, string>(
+      Object.entries(this.randomDecisionSelectionByFingerprint),
+    );
+    for (const decision of previousDecisions) {
+      const fingerprint = this.getDecisionFingerprint(decision);
+      const value = previousByFingerprint.get(fingerprint) ?? decision.selectedOptionId ?? null;
+      if (!value) {
+        continue;
+      }
+      previousByFingerprint.set(fingerprint, value);
+    }
+
+    const nextMap: Record<string, string> = {};
+    for (const decision of nextDecisions) {
+      const fingerprint = this.getDecisionFingerprint(decision);
+      const fromPrevious = previousByFingerprint.get(
+        fingerprint,
+      );
+      const fallback = decision.selectedOptionId ?? decision.options[0]?.id ?? '';
+      const candidate = fromPrevious ?? fallback;
+      if (!decision.options.some((option) => option.id === candidate)) {
+        if (fallback) {
+          nextMap[fingerprint] = fallback;
+        }
+        continue;
+      }
+      nextMap[fingerprint] = candidate;
+    }
+    this.randomDecisionSelectionByFingerprint = nextMap;
+  }
 
   get logs() {
     return this.logService.getLogs();

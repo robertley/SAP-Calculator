@@ -21,6 +21,10 @@ import {
   applySeededRandom,
   isBattleDeterministic,
 } from './simulation-randomness';
+import {
+  finishRandomDecisionSession,
+  startRandomDecisionSession,
+} from 'app/runtime/random-decision-state';
 
 export interface SimulationRunHooks {
   shouldAbort?: () => boolean;
@@ -112,6 +116,18 @@ export class SimulationRunner {
     hooks?: SimulationRunHooks,
   ): SimulationResult {
     const restoreRandom = applySeededRandom(config.seed);
+    let randomSessionResult: ReturnType<typeof finishRandomDecisionSession>;
+    let simulationResult: SimulationResult = {
+      playerWins: 0,
+      opponentWins: 0,
+      draws: 0,
+      battles: [],
+    };
+    startRandomDecisionSession({
+      capture: config.captureRandomDecisions,
+      overrides: config.randomDecisionOverrides,
+      strictValidation: config.strictRandomOverrideValidation !== false,
+    });
     try {
       let battleCount = config.simulationCount || 1000;
       const logsEnabled = config.logsEnabled !== false;
@@ -184,7 +200,7 @@ export class SimulationRunner {
         }
       }
 
-      return {
+      simulationResult = {
         playerWins: this.playerWinner,
         opponentWins: this.opponentWinner,
         draws: this.draw,
@@ -192,7 +208,11 @@ export class SimulationRunner {
       };
     } finally {
       restoreRandom();
+      randomSessionResult = finishRandomDecisionSession();
     }
+    simulationResult.randomDecisions = randomSessionResult.decisions;
+    simulationResult.randomOverrideError = randomSessionResult.invalidOverrideError;
+    return simulationResult;
   }
 
   protected resetSimulation() {
@@ -229,6 +249,7 @@ export class SimulationRunner {
     this.gameService.gameApi.playerLevel3Sold = config.playerLevel3Sold ?? 0;
     this.gameService.gameApi.opponentLevel3Sold =
       config.opponentLevel3Sold ?? 0;
+    this.petService.setCustomPackPools(config.customPacks ?? []);
 
     // Packs
     this.player.pack = config.playerPack as any;

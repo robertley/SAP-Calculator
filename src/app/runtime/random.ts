@@ -19,3 +19,11 @@ export function getRandomInt(min: number, max: number): number {
   const maxInt = Math.floor(max);
   return Math.floor(Math.random() * (maxInt - minInt + 1)) + minInt;
 }
+
+export function getRandomFloat(): number {
+  return Math.random();
+}
+
+export function chance(probability: number): boolean {
+  return getRandomFloat() < probability;
+}

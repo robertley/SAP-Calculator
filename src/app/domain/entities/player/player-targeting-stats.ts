@@ -5,6 +5,61 @@ import { hasSilly } from './player-utils';
 import { getRandomLivingPet, getRandomLivingPets } from './player-targeting-random';
 import type { PlayerLike } from './player-like.types';
 import { PetRandomResult, PetsRandomResult } from './player-targeting.types';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+
+function buildPetOption(pet: Pet) {
+  const side = pet.parent?.isOpponent ? 'opponent' : 'player';
+  const sideShort = pet.parent?.isOpponent ? 'O' : 'P';
+  const position = Number.isFinite(pet.savedPosition) ? pet.savedPosition + 1 : 0;
+  return {
+    id: `${side}:${position}:${pet.name}`,
+    label: `${sideShort}${position} ${pet.name}`,
+  };
+}
+
+function describePetRef(pet: Pet | undefined): string {
+  if (!pet) {
+    return 'unknown caller';
+  }
+  const side = pet.parent?.isOpponent ? 'O' : 'P';
+  const position = Number.isFinite(pet.savedPosition) ? pet.savedPosition + 1 : 0;
+  return `${side}${position} ${pet.name}`;
+}
+
+function describePool(pets: Pet[]): string {
+  const hasPlayer = pets.some((pet) => !pet.parent?.isOpponent);
+  const hasOpponent = pets.some((pet) => pet.parent?.isOpponent);
+  if (hasPlayer && hasOpponent) {
+    return 'both teams';
+  }
+  if (hasOpponent) {
+    return 'opponent team';
+  }
+  return 'player team';
+}
+
+function pickPet(
+  key: string,
+  label: string,
+  pets: Pet[],
+  callingPet?: Pet,
+): PetRandomResult {
+  if (pets.length === 0) {
+    return { pet: null, random: false };
+  }
+  const decision = chooseRandomOption(
+    {
+      key,
+      label: `${describePetRef(callingPet)} -> ${label} (${describePool(pets)}, ${pets.length} options)`,
+      options: pets.map((pet) => buildPetOption(pet)),
+    },
+    () => getRandomInt(0, pets.length - 1),
+  );
+  return {
+    pet: pets[decision.index] ?? null,
+    random: decision.randomEvent,
+  };
+}
 
 export const getHighestHealthPet = (
   player: PlayerLike,
@@ -39,10 +94,12 @@ export const getHighestHealthPet = (
     return { pet: null, random: false };
   }
 
-  return {
-    pet: highestHealthPets[getRandomInt(0, highestHealthPets.length - 1)],
-    random: highestHealthPets.length > 1,
-  };
+  return pickPet(
+    'target.highest-health',
+    'Highest health tie-break',
+    highestHealthPets,
+    callingPet,
+  );
 };
 
 export const getHighestAttackPet = (
@@ -73,15 +130,12 @@ export const getHighestAttackPet = (
       highestAttackPets = [pet];
     }
   }
-  const pet =
-    highestAttackPets.length === 0
-      ? null
-      : highestAttackPets[getRandomInt(0, highestAttackPets.length - 1)];
-
-  return {
-    pet,
-    random: pet == null ? false : highestAttackPets.length > 1,
-  };
+  return pickPet(
+    'target.highest-attack',
+    'Highest attack tie-break',
+    highestAttackPets,
+    callingPet,
+  );
 };
 
 export const getHighestAttackPets = (
@@ -176,15 +230,12 @@ export const getLowestAttackPet = (
       lowestAttackPets = [pet];
     }
   }
-  const pet =
-    lowestAttackPets.length === 0
-      ? null
-      : lowestAttackPets[getRandomInt(0, lowestAttackPets.length - 1)];
-
-  return {
-    pet,
-    random: pet == null ? false : lowestAttackPets.length > 1,
-  };
+  return pickPet(
+    'target.lowest-attack',
+    'Lowest attack tie-break',
+    lowestAttackPets,
+    callingPet,
+  );
 };
 
 export const getLowestHealthPet = (
@@ -215,15 +266,12 @@ export const getLowestHealthPet = (
       lowestHealthPets = [pet];
     }
   }
-  const pet =
-    lowestHealthPets.length === 0
-      ? null
-      : lowestHealthPets[getRandomInt(0, lowestHealthPets.length - 1)];
-
-  return {
-    pet,
-    random: pet == null ? false : lowestHealthPets.length > 1,
-  };
+  return pickPet(
+    'target.lowest-health',
+    'Lowest health tie-break',
+    lowestHealthPets,
+    callingPet,
+  );
 };
 
 export const getLowestHealthPets = (
@@ -352,8 +400,12 @@ export const getTierXOrLowerPet = (
     return { pet: null, random: false };
   }
 
-  const index = getRandomInt(0, availablePets.length - 1);
-  return { pet: availablePets[index], random: availablePets.length > 1 };
+  return pickPet(
+    'target.tier-x-or-lower',
+    `Tier ${tier} or lower target`,
+    availablePets,
+    callingPet,
+  );
 };
 
 export const getStrongestPet = (
@@ -382,10 +434,11 @@ export const getStrongestPet = (
     return { pet: null, random: false };
   }
 
-  const selectedPet = strongestPets[getRandomInt(0, strongestPets.length - 1)];
-  return {
-    pet: selectedPet,
-    random: strongestPets.length > 1,
-  };
+  return pickPet(
+    'target.strongest-pet',
+    'Strongest pet tie-break',
+    strongestPets,
+    callingPet,
+  );
 };
 

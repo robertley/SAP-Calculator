@@ -4,6 +4,9 @@ import { Equipment } from 'app/domain/entities/equipment.class';
 import { Pack, Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class SpottedHandfish extends Pet {
@@ -70,8 +73,15 @@ export class SpottedHandfishAbility extends Ability {
     ];
 
     for (let i = 0; i < amt; i++) {
-      const randomIndex = Math.floor(Math.random() * ailments.length);
-      const ailmentName = ailments[randomIndex];
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.spotted-handfish-ailment',
+          label: formatPetScopedRandomLabel(owner, 'Spotted Handfish canned ailment', i + 1),
+          options: ailments.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, ailments.length - 1),
+      );
+      const ailmentName = ailments[choice.index];
 
       // Add to canned ailments
       owner.parent.cannedAilments.push(ailmentName);
@@ -80,6 +90,7 @@ export class SpottedHandfishAbility extends Ability {
         message: `${owner.name} stocked a canned ${ailmentName}.`,
         type: 'ability',
         player: owner.parent,
+        randomEvent: choice.randomEvent,
       });
     }
 
