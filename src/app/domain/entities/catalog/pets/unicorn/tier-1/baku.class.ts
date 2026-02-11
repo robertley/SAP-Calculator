@@ -4,6 +4,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Baku extends Pet {
@@ -77,9 +80,19 @@ export class BakuAbility extends Ability {
     const targets: Pet[] = [];
     const pool = [...candidates];
     while (targets.length < 2 && pool.length > 0) {
-      const index = Math.floor(Math.random() * pool.length);
-      targets.push(pool[index]);
-      pool.splice(index, 1);
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.baku-end-turn-target',
+          label: formatPetScopedRandomLabel(owner, 'Baku ailment target', targets.length + 1),
+          options: pool.map((pet) => ({
+            id: `${pet.savedPosition + 1}:${pet.name}`,
+            label: `P${pet.savedPosition + 1} ${pet.name}`,
+          })),
+        },
+        () => getRandomInt(0, pool.length - 1),
+      );
+      targets.push(pool[choice.index]);
+      pool.splice(choice.index, 1);
     }
 
     const healthGain = this.level;

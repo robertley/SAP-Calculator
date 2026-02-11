@@ -1,227 +1,130 @@
 # SAP Calculator
 
-SAP battle calculator with support for multiple packs, custom packs, toys, replays, and detailed battle logs.
+Battle calculator for Super Auto Pets with support for official packs, custom packs, toys, replay import, detailed logs, and headless simulation.
 
 ## Requirements
-- Node.js (LTS recommended)
+- Node.js `>=20`
 - npm
 
-## Install
+## Setup
 ```bash
 npm install --legacy-peer-deps
 ```
 
-## Development
+## Run Locally
 ```bash
-ng serve
+npm start
 ```
-Open `http://localhost:4200/`.
+This starts Angular dev server with the local `/api` proxy from `config/proxy.conf.json`.
+
+Open `http://localhost:4200`.
 
 ## Build
 ```bash
-ng build
+npm run build
+```
+
+## Architecture
+The codebase is organized into explicit layers under `src/app`:
+
+- `src/app/domain`
+  - Core entities and interfaces (`Pet`, `Equipment`, `Toy`, `Player`, ability model, simulation interfaces).
+  - Catalog implementation classes in `src/app/domain/entities/catalog/**` for pets/equipment/toys.
+- `src/app/gameplay`
+  - Pure battle execution pipeline (`SimulationRunner`, `EventProcessor`, `AbilityEngine`, randomness controls).
+- `src/app/integrations`
+  - Registries, factories, and orchestration services that wire content into runtime.
+  - Includes `ability`, `pet`, `equipment`, `toy`, `simulation`, `replay`, and logging integrations.
+- `src/app/runtime`
+  - App/runtime utilities and persisted state services (`game`, URL state, local storage, calculator state).
+- `src/app/ui`
+  - Standalone Angular UI shell and feature components.
+  - Main shell is `src/app/ui/shell/app.component.ts`, composed from small workflow/view modules.
+
+At repo root:
+- `simulation/`: Node/headless entrypoints and CLI bundle.
+- `server/`: Optional replay proxy backend (`/api/health`, `/api/replay-battle`).
+- `tests/`: Vitest specs, meta checks, generated coverage, and pilot suites.
+
+## Simulation Flow
+1. `SimulationService` builds `SimulationConfig` from UI state.
+2. It runs via `simulation.worker.ts` (preferred) or directly in-process.
+3. `SimulationRunner` initializes player state and content through services.
+4. `EventProcessor` + `AbilityEngine` resolve combat events and triggers.
+5. `LogService` captures battle logs (optional, configurable).
+
+Positioning optimization is implemented in `src/app/integrations/simulation/positioning-optimizer.ts` and can also run in the worker.
+
+## Content Wiring (Pets/Equipment/Toys)
+Content classes live in `src/app/domain/entities/catalog/**` and must be registered to become usable:
+
+- Pets: pack registries in `src/app/integrations/pet/registries/`, aggregated by `src/app/integrations/pet/pet-registry.ts`
+- Equipment/Ailments: `src/app/integrations/equipment/equipment-registry.ts`
+- Toys: `src/app/integrations/toy/toy-registry.ts`
+
+Data files used by UI/selectors live in `src/assets/data` (`pets.json`, `food.json`, `toys.json`, etc.).
+
+## Testing
+Primary test runner is Vitest.
+
+```bash
+npm run test:vitest
+```
+
+Useful subsets:
+```bash
+npm run test:vitest:meta
+npm run test:vitest:specs
+npm run test:vitest:specs:pilot
+```
+
+Generated coverage utilities:
+```bash
+npm run generate:entity-tests
+npm run test:vitest:generated
+```
+
+Legacy Angular/Karma tests are still available:
+```bash
+npm test
 ```
 
 ## Headless Simulation (Library + CLI)
-This repo ships a Node-friendly simulation bundle for automated odds tools.
-
-Build the headless bundle:
+Build/update Node simulation bundle:
 ```bash
 npm run bundle-simulation
 ```
 
-Library usage (Node):
+Library usage:
 ```js
 const { runHeadlessSimulation } = require('sap-calculator/simulation/dist/index.js');
 
-const result = runHeadlessSimulation(config);
-// result: { playerWins, opponentWins, draws, battles? }
+const result = runHeadlessSimulation(config, {
+  enableLogs: false,
+  includeBattles: false,
+});
 ```
 
-CLI usage (JSON in/out):
+CLI usage:
 ```bash
 sap-calculator-sim battle.json
 cat battle.json | sap-calculator-sim --stdin --pretty
 ```
 
-Options:
-- `--include-battles` to include battle logs in the response
-- `--logs` to enable log generation
+CLI flags:
+- `--include-battles`
+- `--logs`
+- `--pretty`
+- `--input <path>`
 
-Minimal JSON payload example:
-```json
-{
-  "playerPack": "Turtle",
-  "opponentPack": "Turtle",
-  "turn": 1,
-  "playerPets": [null, null, null, null, null],
-  "opponentPets": [null, null, null, null, null],
-  "simulationCount": 250
-}
-```
+## Replay Backend (Optional)
+`server/index.js` provides replay proxy endpoints:
+- `GET /api/health`
+- `POST /api/replay-battle`
 
-## Tests
-```bash
-npx vitest run <file_path>
-```
-Legacy:
-```bash
-ng test
-```
-
-## Common Features
-- Import / Replay: Paste calculator JSON or replay JSON and load a battle.
-- Export: Copy a clean, shareable calculator state to the clipboard.
-- Share Link: Generate a URL for the current state.
-- Custom Packs: Create, import, and export custom packs.
-
-## Scripts
-See `package.json` for available scripts.
-
-## Architecture
-High-level layout:
-- `src/app/classes`: Core domain models for pets, equipment, abilities, toys, and battle state.
-- `src/app/services`: Registries, data loaders, simulation helpers, and shared utilities.
-- `src/app/engine`: Battle engine, event processor, and ability execution pipeline.
-- `src/app/components`: UI components (calculator, import/export, custom packs, logs).
-- `src/assets/data`: Source data (pets, toys, etc.).
-
-Battle flow (simplified):
-1. `SimulationRunner` sets up players, pets, and toys.
-2. `EventProcessor` drives turn flow and attacks.
-3. `AbilityService` + `AbilityQueueService` enqueue and execute triggers.
-4. `LogService` decorates and aggregates battle logs for UI display.
-
-### Ability Triggers
-Ability triggers are defined in `src/app/classes/ability.class.ts` and used by pets/equipment/toys.
-They are dispatched by services in `src/app/services/ability/` and executed through the global
-ability queue.
-
-Common trigger paths:
-- Start of battle: `triggerBeforeStartOfBattleEvents()` and `triggerStartBattleEvents()`
-- Before/after attack: `triggerBeforeAttackEvents()` and `triggerAfterAttackEvents()`
-- Faint/death: `triggerFaintEvents()` and `triggerAfterFaintEvents()`
-- Other events: food, perk, ailment, jump, transform, kill, etc.
-
-Notes:
-- Priority is resolved by `ABILITY_PRIORITIES` in `src/app/services/ability/ability-priorities.ts`.
-- Many triggers have numbered variants (e.g., `FriendDied2`) handled via the queue service.
-- If you add a new trigger, update `AbilityTrigger` types and the relevant dispatcher.
-
-### Registries
-Registries map names to classes and live under `src/app/services/*/registry`.
-They are used by `PetService`, `EquipmentService`, and `ToyService` to instantiate objects.
-
-Common registry paths:
-- Pets: `src/app/services/pet/registry/`
-- Equipment/Ailments: `src/app/services/equipment/`
-- Toys: `src/app/services/toy/registry/`
-
-When adding new content:
-1. Create the class under `src/app/classes/...`.
-2. Add the data entry under `src/assets/data/`.
-3. Register the class in the appropriate registry map.
-4. Ensure any new triggers or events are dispatched.
-
-### Adding a New Pet (Example)
-This is a minimal path for adding a pet with a simple ability.
-
-1. Create the class
-   - Example path: `src/app/classes/pets/danger/tier-1/my-new-pet.class.ts`
-   - Include a `Pet` class and an `Ability` class.
-
-2. Register it
-   - Add the import and map entry in the registry:
-     `src/app/services/pet/registry/pet-registry.danger.ts`
-
-3. Add data
-   - Add an entry in `src/assets/data/pets.json` with `Name`, `NameId`, `Tier`, etc.
-
-4. Verify triggers
-   - If you introduce a new trigger, add it to `AbilityTrigger` in
-     `src/app/classes/ability.class.ts` and dispatch it in the appropriate service.
-
-Minimal example (ability triggers at start of battle):
-```ts
-import { AbilityService } from 'app/services/ability/ability.service';
-import { LogService } from 'app/services/log.service';
-import { Equipment } from '../../../equipment.class';
-import { Pack, Pet } from '../../../pet.class';
-import { Player } from '../../../player.class';
-import { Ability, AbilityContext } from 'app/classes/ability.class';
-
-export class MyNewPet extends Pet {
-  name = 'My New Pet';
-  tier = 1;
-  pack: Pack = 'Danger';
-  attack = 2;
-  health = 3;
-
-  initAbilities(): void {
-    this.addAbility(new MyNewPetAbility(this, this.logService));
-    super.initAbilities();
-  }
-
-  constructor(
-    protected logService: LogService,
-    protected abilityService: AbilityService,
-    parent: Player,
-    health?: number,
-    attack?: number,
-    mana?: number,
-    exp?: number,
-    equipment?: Equipment,
-    triggersConsumed?: number,
-  ) {
-    super(logService, abilityService, parent);
-    this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
-  }
-}
-
-export class MyNewPetAbility extends Ability {
-  private logService: LogService;
-
-  constructor(owner: Pet, logService: LogService) {
-    super({
-      name: 'MyNewPetAbility',
-      owner,
-      triggers: ['StartBattle'],
-      abilityType: 'Pet',
-      native: true,
-      abilitylevel: owner.level,
-      abilityFunction: (context) => this.executeAbility(context),
-    });
-    this.logService = logService;
-  }
-
-  private executeAbility(context: AbilityContext): void {
-    const owner = this.owner;
-    const targetResp = owner.parent.getThis(owner);
-    const target = targetResp.pet;
-    if (!target) {
-      return;
-    }
-
-    target.increaseAttack(1);
-    this.logService.createLog({
-      message: `${owner.name} gave ${target.name} +1 attack`,
-      type: 'ability',
-      player: owner.parent,
-      sourcePet: owner,
-      targetPet: target,
-      randomEvent: targetResp.random,
-    });
-  }
-}
-```
-
-## Notes
-- The replay importer can call a local `/api/replay-battle` endpoint if configured.
-- Large simulations can be slow; consider disabling logs for speed.
+Deployment guide: `docs/DEPLOY_REPLAY.md`.
 
 ## Contributing
-1. Create a feature branch.
-2. Make changes with focused commits.
-3. Run tests as applicable (`npx vitest run <file_path>`).
-4. Ensure formatting and lint are clean.
-5. Open a PR with a concise summary and screenshots for UI changes.
+1. Keep changes scoped and aligned with layer boundaries above.
+2. Run targeted Vitest suites for touched areas.
+3. For new content entities, update catalog class + registry + data and regenerate/verify tests as needed.

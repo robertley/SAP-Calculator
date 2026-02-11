@@ -6,6 +6,7 @@ import { Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { GameService } from 'app/runtime/state/game.service';
 import { LogService } from '../log.service';
+import { getRandomFloat } from 'app/runtime/random';
 
 @Injectable({
   providedIn: 'root',
@@ -55,7 +56,7 @@ export class ToyEventService {
   }
 
   setStartOfBattleEvent(event: AbilityEvent): void {
-    event.tieBreaker = Math.random();
+    event.tieBreaker = getRandomFloat();
     this.startOfBattleToyEvents.push(event);
   }
 

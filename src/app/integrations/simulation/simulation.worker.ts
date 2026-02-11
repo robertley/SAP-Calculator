@@ -16,6 +16,7 @@ import { ToyEventService } from '../ability/toy-event.service';
 import { AttackEventService } from '../ability/attack-event.service';
 import { FaintEventService } from '../ability/faint-event.service';
 import { InjectorService } from '../injector.service';
+import { runPositioningOptimization } from './positioning-optimizer';
 
 type StartMessage = {
   type: 'start';
@@ -23,10 +24,24 @@ type StartMessage = {
   progressInterval?: number;
   showTriggerNamesInLogs?: boolean;
 };
+type OptimizePositioningStartMessage = {
+  type: 'optimize-positioning-start';
+  config: SimulationConfig;
+  options: {
+    side: 'player' | 'opponent';
+    batchSize?: number;
+    maxSimulationsPerPermutation?: number;
+    confidenceZ?: number;
+    minSamplesBeforeElimination?: number;
+  };
+};
 
 type CancelMessage = { type: 'cancel' };
 
-type IncomingMessage = StartMessage | CancelMessage;
+type IncomingMessage =
+  | StartMessage
+  | OptimizePositioningStartMessage
+  | CancelMessage;
 
 let cancelRequested = false;
 
@@ -67,6 +82,10 @@ const sanitizeResult = (result: any) => {
     opponentWins: result.opponentWins ?? 0,
     draws: result.draws ?? 0,
     battles: sanitizedBattles,
+    randomDecisions: Array.isArray(result.randomDecisions)
+      ? result.randomDecisions
+      : [],
+    randomOverrideError: result.randomOverrideError ?? null,
   };
 };
 
@@ -161,6 +180,46 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
   }
 
   if (data.type !== 'start') {
+    if (data.type !== 'optimize-positioning-start') {
+      return;
+    }
+
+    cancelRequested = false;
+    const { config, options } = data;
+
+    try {
+      const { runner } = createRunner();
+      const result = runPositioningOptimization({
+        baseConfig: config,
+        options: {
+          side: options.side,
+          batchSize: options.batchSize,
+          maxSimulationsPerPermutation: options.maxSimulationsPerPermutation,
+          confidenceZ: options.confidenceZ,
+          minSamplesBeforeElimination: options.minSamplesBeforeElimination,
+        },
+        shouldAbort: () => cancelRequested,
+        onProgress: (progress) => {
+          postMessage({ type: 'positioning-progress', progress });
+        },
+        simulateBatch: (batchConfig) =>
+          runner.run(batchConfig, {
+            shouldAbort: () => cancelRequested,
+          }),
+      });
+
+      if (cancelRequested || result.aborted) {
+        postMessage({ type: 'positioning-aborted', result });
+      } else {
+        postMessage({ type: 'positioning-result', result });
+      }
+    } catch (error) {
+      postMessage({
+        type: 'error',
+        message:
+          error instanceof Error ? error.message : 'Worker optimization failed.',
+      });
+    }
     return;
   }
 

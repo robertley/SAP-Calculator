@@ -13,6 +13,13 @@ import { PetService } from '../pet/pet.service';
 import { ToyService } from '../toy/toy.service';
 import { Player } from 'app/domain/entities/player.class';
 import { MAX_LOGGED_BATTLES } from './simulation.constants';
+import { CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
+import {
+  PositioningOptimizationResult,
+  PositioningOptimizationSide,
+  PositioningOptimizerProgress,
+  runPositioningOptimization,
+} from './positioning-optimizer';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +53,7 @@ export class SimulationService {
       onError?: (message: string) => void;
     },
     options?: { progressInterval?: number },
+    configOverrides?: Partial<SimulationConfig>,
   ): Worker | null {
     if (typeof Worker === 'undefined') {
       const result = this.runSimulation(formGroup, count, player, opponent);
@@ -53,7 +61,7 @@ export class SimulationService {
       return null;
     }
 
-    const config = this.buildConfig(formGroup, count);
+    const config = this.buildConfig(formGroup, count, configOverrides);
     const showTriggerNamesInLogs =
       formGroup.get('showTriggerNamesInLogs')?.value ?? false;
     const progressInterval = options?.progressInterval ?? 50;
@@ -92,6 +100,74 @@ export class SimulationService {
     return worker;
   }
 
+  runPositioningOptimizationInWorker(
+    formGroup: FormGroup,
+    count: number,
+    player: Player,
+    opponent: Player,
+    callbacks: {
+      onProgress?: (progress: PositioningOptimizerProgress) => void;
+      onResult?: (result: PositioningOptimizationResult) => void;
+      onAborted?: (result: PositioningOptimizationResult) => void;
+      onError?: (message: string) => void;
+    },
+    options: {
+      side: PositioningOptimizationSide;
+      batchSize?: number;
+      maxSimulationsPerPermutation?: number;
+      confidenceZ?: number;
+      minSamplesBeforeElimination?: number;
+    },
+    configOverrides?: Partial<SimulationConfig>,
+  ): Worker | null {
+    if (typeof Worker === 'undefined') {
+      const result = this.runPositioningOptimization(
+        formGroup,
+        count,
+        player,
+        opponent,
+        options,
+        configOverrides,
+      );
+      callbacks.onResult?.(result);
+      return null;
+    }
+
+    const config = this.buildConfig(formGroup, count, configOverrides);
+
+    const worker = new Worker(
+      new URL('./simulation.worker', import.meta.url),
+      { type: 'module' },
+    );
+
+    worker.onmessage = ({ data }) => {
+      if (!data || !data.type) {
+        return;
+      }
+      if (data.type === 'positioning-progress') {
+        callbacks.onProgress?.(data.progress as PositioningOptimizerProgress);
+      } else if (data.type === 'positioning-result') {
+        callbacks.onResult?.(data.result as PositioningOptimizationResult);
+      } else if (data.type === 'positioning-aborted') {
+        callbacks.onAborted?.(data.result as PositioningOptimizationResult);
+      } else if (data.type === 'error') {
+        callbacks.onError?.(data.message || 'Worker optimization failed.');
+      }
+    };
+
+    worker.onerror = (event) => {
+      callbacks.onError?.(event.message || 'Worker optimization failed.');
+    };
+
+    worker.postMessage({
+      type: 'optimize-positioning-start',
+      config,
+      options,
+    });
+
+    return worker;
+  }
+
   requestWorkerCancel(worker: Worker | null): void {
     if (!worker) {
       return;
@@ -108,8 +184,9 @@ export class SimulationService {
     count: number,
     player: Player,
     opponent: Player,
+    configOverrides?: Partial<SimulationConfig>,
   ): SimulationResult {
-    const config = this.buildConfig(formGroup, count);
+    const config = this.buildConfig(formGroup, count, configOverrides);
     const wasLoggingEnabled = this.logService.isEnabled();
     const wasDeferringDecorations = this.logService.isDeferDecorations();
     this.logService.setEnabled(config.logsEnabled !== false);
@@ -129,6 +206,56 @@ export class SimulationService {
     // Restore GameService to UI players
     this.gameService.init(player, opponent);
     this.syncGameApiFromForm(formGroup);
+    this.logService.setEnabled(wasLoggingEnabled);
+    this.logService.setDeferDecorations(wasDeferringDecorations);
+
+    return result;
+  }
+
+  runPositioningOptimization(
+    formGroup: FormGroup,
+    count: number,
+    player: Player,
+    opponent: Player,
+    options: {
+      side: PositioningOptimizationSide;
+      batchSize?: number;
+      maxSimulationsPerPermutation?: number;
+      confidenceZ?: number;
+      minSamplesBeforeElimination?: number;
+    },
+    configOverrides?: Partial<SimulationConfig>,
+  ): PositioningOptimizationResult {
+    const config = this.buildConfig(formGroup, count, configOverrides);
+    const wasLoggingEnabled = this.logService.isEnabled();
+    const wasDeferringDecorations = this.logService.isDeferDecorations();
+    this.logService.setEnabled(false);
+    this.logService.setDeferDecorations(true);
+
+    const runner = new SimulationRunner(
+      this.logService,
+      this.gameService,
+      this.abilityService,
+      this.petService,
+      this.equipmentService,
+      this.toyService,
+    );
+
+    const result = runPositioningOptimization({
+      baseConfig: config,
+      options: {
+        side: options.side,
+        batchSize: options.batchSize,
+        maxSimulationsPerPermutation: options.maxSimulationsPerPermutation,
+        confidenceZ: options.confidenceZ,
+        minSamplesBeforeElimination: options.minSamplesBeforeElimination,
+      },
+      simulateBatch: (batchConfig) => runner.run(batchConfig),
+    });
+
+    this.gameService.init(player, opponent);
+    this.syncGameApiFromForm(formGroup);
+
     this.logService.setEnabled(wasLoggingEnabled);
     this.logService.setDeferDecorations(wasDeferringDecorations);
 
@@ -167,7 +294,11 @@ export class SimulationService {
     this.gameService.setTurnNumber(formGroup.get('turn').value);
   }
 
-  private buildConfig(formGroup: FormGroup, count: number): SimulationConfig {
+  private buildConfig(
+    formGroup: FormGroup,
+    count: number,
+    configOverrides?: Partial<SimulationConfig>,
+  ): SimulationConfig {
     const logsEnabled = formGroup.get('logsEnabled')?.value ?? true;
     const rawSeed = formGroup.get('seed')?.value;
     const parsedSeed = Number(rawSeed);
@@ -202,6 +333,9 @@ export class SimulationService {
       ).value,
       playerPets: this.normalizePetList(formGroup.get('playerPets').value),
       opponentPets: this.normalizePetList(formGroup.get('opponentPets').value),
+      customPacks: this.normalizeCustomPacks(
+        formGroup.get('customPacks')?.value,
+      ),
       allPets: formGroup.get('allPets').value,
       oldStork: formGroup.get('oldStork').value,
       tokenPets: formGroup.get('tokenPets').value,
@@ -211,6 +345,48 @@ export class SimulationService {
       simulationCount: count,
       logsEnabled,
       maxLoggedBattles: MAX_LOGGED_BATTLES,
+      ...configOverrides,
+    };
+  }
+
+  private normalizeCustomPacks(customPacks: any): CustomPackConfig[] {
+    if (!Array.isArray(customPacks)) {
+      return [];
+    }
+
+    return customPacks
+      .map((customPack) => this.normalizeCustomPack(customPack))
+      .filter((customPack): customPack is CustomPackConfig => customPack !== null);
+  }
+
+  private normalizeCustomPack(customPack: any): CustomPackConfig | null {
+    if (!customPack || typeof customPack !== 'object') {
+      return null;
+    }
+    const name = `${customPack.name ?? ''}`.trim();
+    if (!name) {
+      return null;
+    }
+
+    const normalizeTierList = (value: any): string[] => {
+      if (!Array.isArray(value)) {
+        return [];
+      }
+      return value
+        .filter((entry): entry is string => typeof entry === 'string')
+        .map((entry) => entry.trim())
+        .filter((entry) => entry.length > 0);
+    };
+
+    return {
+      name,
+      tier1Pets: normalizeTierList(customPack.tier1Pets),
+      tier2Pets: normalizeTierList(customPack.tier2Pets),
+      tier3Pets: normalizeTierList(customPack.tier3Pets),
+      tier4Pets: normalizeTierList(customPack.tier4Pets),
+      tier5Pets: normalizeTierList(customPack.tier5Pets),
+      tier6Pets: normalizeTierList(customPack.tier6Pets),
+      spells: normalizeTierList(customPack.spells),
     };
   }
 

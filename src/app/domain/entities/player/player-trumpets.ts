@@ -10,6 +10,8 @@ import { GoldenRetriever } from 'app/domain/entities/catalog/pets/hidden/golden-
 import { hasSilly } from './player-utils';
 import { summonPet } from './player-summon';
 import type { PlayerLike } from './player-like.types';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
 
 
 export const resolveTrumpetGainTarget = (
@@ -17,7 +19,18 @@ export const resolveTrumpetGainTarget = (
   callingPet?: Pet,
 ): { player: Player; random: boolean } => {
   if (callingPet && hasSilly(callingPet)) {
-    const targetPlayer = Math.random() < 0.5 ? player : player.opponent;
+    const decision = chooseRandomOption(
+      {
+        key: 'trumpets.silly-target-team',
+        label: 'Silly trumpet target team',
+        options: [
+          { id: 'player', label: 'Player team' },
+          { id: 'opponent', label: 'Opponent team' },
+        ],
+      },
+      () => getRandomInt(0, 1),
+    );
+    const targetPlayer = decision.index === 0 ? player : player.opponent;
     return { player: targetPlayer as Player, random: true };
   }
   return { player: player as Player, random: false };

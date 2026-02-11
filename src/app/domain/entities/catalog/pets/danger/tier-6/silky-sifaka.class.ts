@@ -5,6 +5,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class SilkySifaka extends Pet {
@@ -80,8 +83,18 @@ export class SilkySifakaAbility extends Ability {
     let petsBehind = targetsResp.pets;
 
     for (let targetPet of petsBehind) {
-      let randomPetName =
-        sifakaPool[Math.floor(Math.random() * sifakaPool.length)];
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.silky-sifaka-transform',
+          label: formatPetScopedRandomLabel(
+            owner,
+            `Silky Sifaka transform for ${targetPet.name}`,
+          ),
+          options: sifakaPool.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, sifakaPool.length - 1),
+      );
+      let randomPetName = sifakaPool[choice.index];
       let newPet = this.petService.createPet(
         {
           name: randomPetName,
@@ -101,7 +114,7 @@ export class SilkySifakaAbility extends Ability {
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: true,
+        randomEvent: choice.randomEvent,
       });
     }
 

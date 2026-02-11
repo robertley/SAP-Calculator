@@ -6,6 +6,9 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class BayCat extends Pet {
@@ -79,7 +82,15 @@ export class BayCatAbility extends Ability {
     let bayPool = DANGERS_AND_USEFUL_POOLS.bayCat;
 
     for (let i = 0; i < owner.level; i++) {
-      let petName = bayPool[Math.floor(Math.random() * bayPool.length)];
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.bay-cat-summon',
+          label: formatPetScopedRandomLabel(owner, 'Bay Cat summon', i + 1),
+          options: bayPool.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, bayPool.length - 1),
+      );
+      let petName = bayPool[choice.index];
       let summonedPet = this.petService.createPet(
         {
           name: petName,
@@ -105,7 +116,7 @@ export class BayCatAbility extends Ability {
           player: owner.parent,
           tiger: tiger,
           pteranodon: pteranodon,
-          randomEvent: true,
+          randomEvent: choice.randomEvent,
         });
 
         // Activate start of battle ability

@@ -14,6 +14,14 @@
               <input class="form-control simulate-input" type="number" formControlName="simulations" min="1"
                 max="10000" />
             </div>
+            <button class="btn btn-outline-primary ms-1" (click)="app.optimizePositioning('player')"
+              [disabled]="app.simulationInProgress">
+              Optimize Player
+            </button>
+            <button class="btn btn-outline-primary ms-1" (click)="app.optimizePositioning('opponent')"
+              [disabled]="app.simulationInProgress">
+              Optimize Opponent
+            </button>
             <button class="btn btn-secondary" (click)="app.randomize()">
               Randomize
             </button>
@@ -318,6 +326,96 @@
                 app.formGroup.get("showAdvanced").value ? "Hide" : "Show"
                 }}
                 Advanced Settings</span>
+            </div>
+          </div>
+
+          <div class="controls-section random-overrides-section">
+            <div class="random-overrides-header">
+              <span class="section-title">Random Overrides</span>
+              <div class="random-overrides-actions">
+                <button
+                  class="btn btn-secondary btn-sm"
+                  (click)="app.captureRandomEvents()"
+                  [disabled]="app.simulationInProgress"
+                  title="Runs one logged battle and captures random decision points."
+                >
+                  Capture Random Events
+                </button>
+                <button
+                  class="btn btn-primary btn-sm"
+                  (click)="app.runForcedRandomSimulation()"
+                  [disabled]="app.simulationInProgress || !app.randomDecisions.length"
+                  title="Runs one logged battle while forcing selected random options."
+                >
+                  Run Forced Simulation
+                </button>
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="app.clearRandomOverrides()"
+                  [disabled]="!app.randomDecisions.length"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <div class="random-overrides-empty" *ngIf="!app.randomDecisions.length">
+              Capture random events to populate override selectors.
+            </div>
+
+            <div class="random-overrides-error" *ngIf="app.randomOverrideError">
+              {{ app.randomOverrideError }}
+            </div>
+
+            <div class="random-overrides-table-wrap" *ngIf="app.randomDecisions.length">
+              <table class="table table-sm random-overrides-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Step</th>
+                    <th scope="col">Event</th>
+                    <th scope="col">Forced Choice</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let decision of app.randomDecisions; trackBy: app.trackByIndex">
+                    <td>{{ decision.index + 1 }}</td>
+                    <td>
+                      <div class="decision-label">
+                        <ng-container *ngFor="let part of app.getRandomDecisionLabelParts(decision); trackBy: app.trackByIndex">
+                          <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
+                            width="16" height="16" loading="lazy" decoding="async" />
+                          <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                          <br *ngIf="part.type === 'br'" />
+                        </ng-container>
+                      </div>
+                      <div class="decision-key">{{ decision.key }}</div>
+                    </td>
+                    <td>
+                      <div class="decision-choice-preview">
+                        <ng-container *ngFor="let part of app.getRandomDecisionSelectedOptionParts(decision); trackBy: app.trackByIndex">
+                          <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
+                            width="16" height="16" loading="lazy" decoding="async" />
+                          <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                          <br *ngIf="part.type === 'br'" />
+                        </ng-container>
+                      </div>
+                      <select
+                        class="form-select form-select-sm"
+                        [ngModel]="app.getSelectedRandomDecisionOptionId(decision)"
+                        (ngModelChange)="app.onRandomDecisionChoiceChanged(decision, $event)"
+                        [ngModelOptions]="{ standalone: true }"
+                      >
+                        <option
+                          *ngFor="let option of decision.options; trackBy: app.trackByIndex"
+                          [ngValue]="option.id"
+                        >
+                          {{ option.label }}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

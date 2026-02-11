@@ -4,6 +4,58 @@ import { getRandomInt } from 'app/runtime/random';
 import { getPetsWithEquipment, hasSilly } from './player-utils';
 import type { PlayerLike } from './player-like.types';
 import { PetRandomResult, PetsRandomResult } from './player-targeting.types';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+
+function buildPetOption(pet: Pet) {
+  const side = pet.parent?.isOpponent ? 'opponent' : 'player';
+  const sideShort = pet.parent?.isOpponent ? 'O' : 'P';
+  const position = Number.isFinite(pet.savedPosition) ? pet.savedPosition + 1 : 0;
+  return {
+    id: `${side}:${position}:${pet.name}`,
+    label: `${sideShort}${position} ${pet.name}`,
+  };
+}
+
+function describePetRef(pet: Pet | undefined): string {
+  if (!pet) {
+    return 'unknown caller';
+  }
+  const side = pet.parent?.isOpponent ? 'O' : 'P';
+  const position = Number.isFinite(pet.savedPosition) ? pet.savedPosition + 1 : 0;
+  return `${side}${position} ${pet.name}`;
+}
+
+function describePool(pets: Pet[]): string {
+  const hasPlayer = pets.some((pet) => !pet.parent?.isOpponent);
+  const hasOpponent = pets.some((pet) => pet.parent?.isOpponent);
+  if (hasPlayer && hasOpponent) {
+    return 'both teams';
+  }
+  if (hasOpponent) {
+    return 'opponent team';
+  }
+  return 'player team';
+}
+
+function pickPetFromPool(
+  key: string,
+  label: string,
+  pets: Pet[],
+  callingPet?: Pet,
+): PetRandomResult {
+  if (pets.length === 0) {
+    return { pet: null, random: false };
+  }
+  const decision = chooseRandomOption(
+    {
+      key,
+      label: `${describePetRef(callingPet)} -> ${label} (${describePool(pets)}, ${pets.length} options)`,
+      options: pets.map((pet) => buildPetOption(pet)),
+    },
+    () => getRandomInt(0, pets.length - 1),
+  );
+  return { pet: pets[decision.index] ?? null, random: decision.randomEvent };
+}
 
 export const getRandomPet = (
   player: PlayerLike,
@@ -85,8 +137,12 @@ export const getRandomPet = (
   if (pets.length === 0) {
     return { pet: null, random: false };
   }
-  const index = getRandomInt(0, pets.length - 1);
-  return { pet: pets[index], random: pets.length > 1 };
+  return pickPetFromPool(
+    'target.random-pet',
+    'Random pet target',
+    pets,
+    callingPet,
+  );
 };
 
 export const getRandomPets = (
@@ -298,7 +354,11 @@ export const getRandomLivingPet = (
   if (pets.length === 0) {
     return { pet: null, random: false };
   }
-  const index = getRandomInt(0, pets.length - 1);
-  return { pet: pets[index], random: pets.length > 1 };
+  return pickPetFromPool(
+    'target.random-living-pet',
+    'Random living pet target',
+    pets,
+    undefined,
+  );
 };
 

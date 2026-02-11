@@ -15,6 +15,7 @@ import { resetPetState } from '../combat/pet-state';
 import { Equipment } from '../equipment.class';
 import type { Pet } from '../pet.class';
 import { PetTargetingRuntimeFacade } from './pet-targeting-runtime-facade';
+import { getRandomFloat } from 'app/runtime/random';
 
 export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
   [key: string]: any;
@@ -194,7 +195,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
         },
         pet: this as unknown as Pet,
         triggerPet: this as unknown as Pet,
-        tieBreaker: Math.random(),
+        tieBreaker: getRandomFloat(),
       });
     }
   }

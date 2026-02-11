@@ -6,6 +6,9 @@ import { Player } from '../../../../player.class';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class RolowayMonkey extends Pet {
@@ -72,8 +75,18 @@ export class RolowayMonkeyAbility extends Ability {
     const petNames = DANGERS_AND_USEFUL_POOLS.rolowayMonkey;
 
     for (let target of targetResp.pets) {
-      let randomIndex = Math.floor(Math.random() * petNames.length);
-      let selectedPetName = petNames[randomIndex];
+      const choice = chooseRandomOption(
+        {
+          key: 'pet.roloway-monkey-transform',
+          label: formatPetScopedRandomLabel(
+            owner,
+            `Roloway Monkey transform for P${target.savedPosition + 1} ${target.name}`,
+          ),
+          options: petNames.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, petNames.length - 1),
+      );
+      let selectedPetName = petNames[choice.index];
 
       let newPet = this.petService.createPet(
         {
@@ -94,7 +107,7 @@ export class RolowayMonkeyAbility extends Ability {
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: true,
+        randomEvent: choice.randomEvent,
       });
     }
 

@@ -4,6 +4,9 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { InjectorService } from 'app/integrations/injector.service';
 import { LogService } from 'app/integrations/log.service';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Confused extends Equipment {
@@ -44,7 +47,15 @@ export class ConfusedAbility extends Ability {
       return;
     }
 
-    const petName = pool[Math.floor(Math.random() * pool.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'equipment.confused-transform',
+        label: formatPetScopedRandomLabel(owner, 'Confused transform'),
+        options: pool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, pool.length - 1),
+    );
+    const petName = pool[choice.index];
     owner.removePerk();
 
     const transformedPet = this.petService.createPet(
@@ -63,7 +74,7 @@ export class ConfusedAbility extends Ability {
       message: `${owner.name} transformed into a ${petName}. (Confused)`,
       type: 'equipment',
       player: owner.parent,
-      randomEvent: true,
+      randomEvent: choice.randomEvent,
     });
 
     owner.parent.transformPet(owner, transformedPet);

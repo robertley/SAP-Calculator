@@ -56,10 +56,12 @@ export class VisitorAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getPetsWithinXSpaces(owner, this.level);
-    let targets = targetResp.pets.filter(
-      (pet) => pet.equipment?.name !== 'Icky',
-    );
+    // Visitor applies to nearby allies and the closest alive enemies.
+    const friendlyTargets = owner.parent.nearestPetsBehind(this.level, owner).pets;
+    const enemyTargets = owner.parent.opponent.getFurthestUpPets(this.level).pets;
+    const targets = [...friendlyTargets, ...enemyTargets]
+      .filter((pet) => pet.alive && pet.equipment?.name !== 'Icky')
+      .filter((pet, index, array) => array.indexOf(pet) === index);
     if (targets.length == 0) {
       return;
     }

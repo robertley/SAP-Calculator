@@ -5,6 +5,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Stork extends Pet {
@@ -91,8 +94,15 @@ export class StorkAbility extends Ability {
       return;
     }
 
-    let summonPetName =
-      summonPetPool[Math.floor(Math.random() * summonPetPool.length)];
+    const summonDecision = chooseRandomOption(
+      {
+        key: 'pet.stork-faint-summon',
+        label: formatPetScopedRandomLabel(owner, 'Stork faint summon'),
+        options: summonPetPool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, summonPetPool.length - 1),
+    );
+    let summonPetName = summonPetPool[summonDecision.index];
     let oldStork = gameApi.oldStork;
     let summonPet = this.petService.createPet(
       {
@@ -119,7 +129,7 @@ export class StorkAbility extends Ability {
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: true,
+        randomEvent: summonDecision.randomEvent,
         pteranodon: pteranodon,
       });
     }

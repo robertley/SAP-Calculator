@@ -11,6 +11,8 @@ import { Mouse } from 'app/domain/entities/catalog/pets/custom/tier-1/mouse.clas
 import { PET_REGISTRY } from './pet-registry';
 import { BASE_PACK_NAMES, PackName } from 'app/runtime/pack-names';
 import * as petJson from 'assets/data/pets.json';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
 
 interface PetJsonEntry {
   Name: string;
@@ -76,6 +78,29 @@ export class PetService {
         pack.set(i, customPack.get(`tier${i}Pets`).value);
       }
       this.playerCustomPackPets.set(customPack.get('name').value, pack);
+    }
+  }
+
+  setCustomPackPools(customPacks: CustomPackConfig[] = []) {
+    this.playerCustomPackPets.clear();
+    for (const customPack of customPacks) {
+      const packName = `${customPack?.name ?? ''}`.trim();
+      if (!packName) {
+        continue;
+      }
+      const pack = new Map<number, string[]>();
+      for (let tier = 1; tier <= 6; tier++) {
+        const tierKey = `tier${tier}Pets` as keyof CustomPackConfig;
+        const tierPets = customPack?.[tierKey];
+        const normalized = Array.isArray(tierPets)
+          ? tierPets
+              .filter((petName): petName is string => typeof petName === 'string')
+              .map((petName) => petName.trim())
+              .filter((petName) => petName.length > 0)
+          : [];
+        pack.set(tier, normalized);
+      }
+      this.playerCustomPackPets.set(packName, pack);
     }
   }
 
@@ -300,7 +325,19 @@ export class PetService {
   }
 
   getRandomPet(parent: Player) {
-    let tier = getRandomInt(1, 6);
+    const tierOptions = [1, 2, 3, 4, 5, 6].map((value) => ({
+      id: `tier-${value}`,
+      label: `Tier ${value}`,
+    }));
+    const tierDecision = chooseRandomOption(
+      {
+        key: 'pet.random-tier',
+        label: 'Random pet tier',
+        options: tierOptions,
+      },
+      () => getRandomInt(0, tierOptions.length - 1),
+    );
+    let tier = tierDecision.index + 1;
     let pets: string[];
     if (parent.allPets) {
       pets = [...(this.allPets.get(tier) || [])];
@@ -331,8 +368,15 @@ export class PetService {
       // Fallback if tier has no pets in this configuration
       pets = ['Ant']; // Very safe fallback
     }
-    let petNum = getRandomInt(0, pets.length - 1);
-    let pet = pets[petNum];
+    const petDecision = chooseRandomOption(
+      {
+        key: 'pet.random-pool',
+        label: `Random pet from tier ${tier}`,
+        options: pets.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, pets.length - 1),
+    );
+    let pet = pets[petDecision.index];
     return this.createPet(
       {
         attack: null,
@@ -350,6 +394,7 @@ export class PetService {
     parent: Player,
     tier?: number,
     excludeNames: string[] = [],
+    sourcePet?: Pet,
   ): Pet {
     if (!this.faintPetsByTier?.size) {
       this.faintPetsByTier = this.buildFaintPetsByTier(
@@ -386,7 +431,15 @@ export class PetService {
       pool = faintPets;
     }
 
-    let petName = pool[getRandomInt(0, pool.length - 1)];
+    const decision = chooseRandomOption(
+      {
+        key: 'pet.random-faint-pet',
+        label: `${this.describeRandomFaintPetOwner(parent, sourcePet)} -> Random faint pet summon`,
+        options: pool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, pool.length - 1),
+    );
+    let petName = pool[decision.index];
     return this.createPet(
       {
         name: petName,
@@ -398,6 +451,18 @@ export class PetService {
       },
       parent,
     );
+  }
+
+  private describeRandomFaintPetOwner(parent: Player, sourcePet?: Pet): string {
+    const ownerSide = parent?.isOpponent ? 'opponent team' : 'player team';
+    if (!sourcePet) {
+      return ownerSide;
+    }
+    const sourceSide = sourcePet.parent?.isOpponent ? 'O' : 'P';
+    const sourcePosition = Number.isFinite(sourcePet.savedPosition)
+      ? sourcePet.savedPosition + 1
+      : 0;
+    return `${sourceSide}${sourcePosition} ${sourcePet.name} (owner: ${ownerSide})`;
   }
 }
 

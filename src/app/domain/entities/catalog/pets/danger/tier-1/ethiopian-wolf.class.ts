@@ -41,7 +41,7 @@ export class EthiopianWolfAbility extends Ability {
     super({
       name: 'EthiopianWolfAbility',
       owner: owner,
-      triggers: ['Faint'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

@@ -4,6 +4,9 @@ import { Player } from '../../../../player.class';
 import { Pet, Pack } from '../../../../pet.class';
 import { Equipment } from '../../../../equipment.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class SeaAnemone extends Pet {
@@ -79,7 +82,18 @@ export class SeaAnemoneAbility extends Ability {
       return;
     }
 
-    const target = friends[Math.floor(Math.random() * friends.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.sea-anemone-friend-sold-target',
+        label: formatPetScopedRandomLabel(owner, 'Sea Anemone sold buff target'),
+        options: friends.map((friend) => ({
+          id: `${friend.savedPosition + 1}:${friend.name}`,
+          label: `P${friend.savedPosition + 1} ${friend.name}`,
+        })),
+      },
+      () => getRandomInt(0, friends.length - 1),
+    );
+    const target = friends[choice.index];
     const buffAmount = Math.min(Math.max(this.level, 1), 3);
 
     target.increaseAttack(buffAmount);
@@ -90,6 +104,7 @@ export class SeaAnemoneAbility extends Ability {
       message: `${owner.name} gave ${target.name} +${buffAmount}/+${buffAmount} after ${soldPet.name} was sold.`,
       type: 'ability',
       player: owner.parent,
+      randomEvent: choice.randomEvent,
       tiger: context.tiger,
       pteranodon: context.pteranodon,
     });

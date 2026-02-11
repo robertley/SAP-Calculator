@@ -4,6 +4,9 @@ import { Equipment, EquipmentClass } from '../../../equipment.class';
 import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { cloneEquipment } from 'app/runtime/equipment-clone';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class CocoaBean extends Equipment {
@@ -72,7 +75,18 @@ export class CocoaBeanAbility extends Ability {
         return;
       }
 
-      let randomEnemy = enemies[Math.floor(Math.random() * enemies.length)];
+      const choice = chooseRandomOption(
+        {
+          key: 'equipment.cocoa-bean-transform',
+          label: formatPetScopedRandomLabel(owner, 'Cocoa Bean transform', i + 1),
+          options: enemies.map((enemy) => ({
+            id: `${enemy.savedPosition + 1}:${enemy.name}`,
+            label: `O${enemy.savedPosition + 1} ${enemy.name}`,
+          })),
+        },
+        () => getRandomInt(0, enemies.length - 1),
+      );
+      let randomEnemy = enemies[choice.index];
 
       let equipmentInstance: Equipment | null = null;
       if (randomEnemy.equipment) {
@@ -123,7 +137,7 @@ export class CocoaBeanAbility extends Ability {
         message: `${owner.name} transformed into ${transformedPet.name} (Cocoa Bean)${multiplierMessage}`,
         type: 'equipment',
         player: owner.parent,
-        randomEvent: enemies.length > 1,
+        randomEvent: choice.randomEvent,
       });
 
       owner.parent.transformPet(owner, transformedPet);

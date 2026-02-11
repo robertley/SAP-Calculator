@@ -5,6 +5,9 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Eagle extends Pet {
@@ -105,7 +108,15 @@ export class EagleAbility extends Ability {
       return;
     }
 
-    let petName = pets[Math.floor(Math.random() * pets.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.eagle-faint-summon',
+        label: formatPetScopedRandomLabel(owner, `Eagle tier ${tier} summon`),
+        options: pets.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, pets.length - 1),
+    );
+    let petName = pets[choice.index];
     let power = this.level * 5;
     let pet = this.petService.createPet(
       {
@@ -131,7 +142,7 @@ export class EagleAbility extends Ability {
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: true,
+        randomEvent: choice.randomEvent,
         pteranodon: pteranodon,
       });
     }

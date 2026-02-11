@@ -41,8 +41,16 @@ export class WhiteTruffleAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, faintedPet, tiger } = context;
+    const { tiger } = context;
     const owner = this.owner;
+    const attackGain = 4 * this.equipment.multiplier;
+
+    owner.increaseAttack(attackGain);
+    this.logService.createLog({
+      message: `${owner.name} gained ${attackGain} attack (White Truffle)${this.equipment.multiplierMessage}`,
+      type: 'equipment',
+      player: owner.parent,
+    });
 
     for (let i = 0; i < this.equipment.multiplier; i++) {
       let targetResp = owner.parent.opponent.getHighestAttackPet(

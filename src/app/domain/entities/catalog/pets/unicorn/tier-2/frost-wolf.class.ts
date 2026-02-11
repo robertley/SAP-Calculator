@@ -68,6 +68,7 @@ export class FrostWolfAbility extends Ability {
 
     const coldAilment = new Cold();
     coldAilment.multiplier += this.level - 1;
+    coldAilment.baseMultiplier = coldAilment.multiplier;
 
     let effectMessage = '.';
     if (this.level === 2) {
@@ -77,7 +78,7 @@ export class FrostWolfAbility extends Ability {
     }
 
     this.logService.createLog({
-      message: `${owner.name} made ${target.name} Cold ${effectMessage}`,
+      message: `${owner.name} made ${target.name} Cold${effectMessage}`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

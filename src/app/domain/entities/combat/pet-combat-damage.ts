@@ -15,6 +15,8 @@ import {
   applyIckyMultiplier,
   applyManticoreMultiplier,
 } from './damage-reduction';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
 
 export type CombatDamageResponse = {
   defenseEquipment: Equipment | null;
@@ -141,7 +143,18 @@ export function calculateDamage(
 
   let fortuneCookie = false;
   if (attackEquipment instanceof FortuneCookie && !snipe) {
-    if (Math.random() < 0.5) {
+    const fortuneDecision = chooseRandomOption(
+      {
+        key: 'equipment.fortune-cookie',
+        label: 'Fortune Cookie outcome',
+        options: [
+          { id: 'double-damage', label: 'Double damage' },
+          { id: 'no-bonus', label: 'No bonus' },
+        ],
+      },
+      () => getRandomInt(0, 1),
+    );
+    if (fortuneDecision.index === 0) {
       attackAmt *= 2 + attackMultiplier - 1;
       fortuneCookie = true;
     }

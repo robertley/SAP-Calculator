@@ -8,6 +8,7 @@ import {
   processEventQueue,
   executeEventWithTransform,
 } from './event-queue-processing';
+import { getRandomFloat } from 'app/runtime/random';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +34,7 @@ export class AbilityQueueService {
     const abilityPriority = this.getAbilityPriority(event.abilityType);
 
     // Assign random tie breaker if not already set
-    event.tieBreaker = Math.random();
+    event.tieBreaker = getRandomFloat();
 
     // Binary search to find insertion point (Descending priority)
     let left = 0;
@@ -157,7 +158,7 @@ export class AbilityQueueService {
         pet: pet,
         triggerPet: triggerPet,
         abilityType: trigger,
-        tieBreaker: Math.random(),
+        tieBreaker: getRandomFloat(),
         customParams: eventCustomParams,
       };
 

@@ -7,6 +7,8 @@ import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
 import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class IriomoteCat extends Pet {
@@ -71,8 +73,15 @@ export class IriomoteCatAbility extends Ability {
       return;
     }
 
-    let randomIndex = getRandomInt(0, pool.length - 1);
-    let randomPetName = pool[randomIndex];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.iriomote-cat-transform',
+        label: formatPetScopedRandomLabel(owner, 'Iriomote Cat transform'),
+        options: pool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, pool.length - 1),
+    );
+    let randomPetName = pool[choice.index];
 
     let transformedPet = this.petService.createPet(
       {
@@ -90,7 +99,7 @@ export class IriomoteCatAbility extends Ability {
       message: `${owner.name} transformed into a ${randomPetName} (Level ${transformedPet.level}).`,
       type: 'ability',
       player: owner.parent,
-      randomEvent: true,
+      randomEvent: choice.randomEvent,
     });
 
     owner.parent.transformPet(owner, transformedPet);

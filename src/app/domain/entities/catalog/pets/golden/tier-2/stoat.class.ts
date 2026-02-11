@@ -5,6 +5,9 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { PetService } from 'app/integrations/pet/pet.service';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Stoat extends Pet {
@@ -79,7 +82,15 @@ export class StoatAbility extends Ability {
       return;
     }
 
-    const petName = pool[Math.floor(Math.random() * pool.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.stoat-summon',
+        label: formatPetScopedRandomLabel(owner, 'Stoat summon'),
+        options: pool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, pool.length - 1),
+    );
+    const petName = pool[choice.index];
     const exp = this.minExpForLevel;
     const summoned = this.petService.createPet(
       {
@@ -106,7 +117,7 @@ export class StoatAbility extends Ability {
         player: owner.parent,
         tiger: context.tiger,
         pteranodon: context.pteranodon,
-        randomEvent: true,
+        randomEvent: choice.randomEvent,
       });
     }
     this.triggerTigerExecution(context);

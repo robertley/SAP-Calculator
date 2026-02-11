@@ -4,6 +4,9 @@ import { Equipment } from 'app/domain/entities/equipment.class';
 import { Pack, Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Sphinx extends Pet {
@@ -62,8 +65,15 @@ export class SphinxAbility extends Ability {
     ];
 
     // Choose one random adventurous toy
-    const randomIndex = Math.floor(Math.random() * adventurousToys.length);
-    const toyName = adventurousToys[randomIndex];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.sphinx-toy-roll',
+        label: formatPetScopedRandomLabel(owner, 'Sphinx adventurous toy roll'),
+        options: adventurousToys.map((toy) => ({ id: toy, label: toy })),
+      },
+      () => getRandomInt(0, adventurousToys.length - 1),
+    );
+    const toyName = adventurousToys[choice.index];
 
     const newToy = (gameApi as any).toyService.createToy(
       toyName,
@@ -77,6 +87,7 @@ export class SphinxAbility extends Ability {
         message: `${owner.name} gained a level ${toyLevel} ${toyName}.`,
         type: 'ability',
         player: owner.parent,
+        randomEvent: choice.randomEvent,
       });
     }
 

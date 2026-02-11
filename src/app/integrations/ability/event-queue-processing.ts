@@ -1,6 +1,7 @@
 import { AbilityEvent } from 'app/domain/interfaces/ability-event.interface';
 import { AbilityTrigger } from 'app/domain/entities/ability.class';
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
+import { getRandomInt } from 'app/runtime/random';
 
 /**
  * Sorts events by priority (descending) with tieBreaker for equal priorities.
@@ -78,7 +79,7 @@ export function processEventQueue(
   if (options?.shuffle) {
     // Fisher-Yates shuffle for randomization of equal-priority events
     for (let i = queue.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = getRandomInt(0, i);
       [queue[i], queue[j]] = [queue[j], queue[i]];
     }
   }

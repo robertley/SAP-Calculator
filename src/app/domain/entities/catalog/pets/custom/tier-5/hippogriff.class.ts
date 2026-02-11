@@ -7,6 +7,9 @@ import { PetService } from 'app/integrations/pet/pet.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { logAbility, resolveFriendSummonedTarget } from 'app/domain/entities/ability-resolution';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { getRandomInt } from 'app/runtime/random';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Hippogriff extends Pet {
@@ -153,7 +156,18 @@ export class HippogriffAbility extends Ability {
       return;
     }
 
-    const petName = tierPool[Math.floor(Math.random() * tierPool.length)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.hippogriff-faint-summon',
+        label: formatPetScopedRandomLabel(
+          owner,
+          `Hippogriff tier ${tier} summon`,
+        ),
+        options: tierPool.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, tierPool.length - 1),
+    );
+    const petName = tierPool[choice.index];
     const power = this.level * 5;
     const pet = this.petService.createPet(
       {
@@ -179,7 +193,7 @@ export class HippogriffAbility extends Ability {
         type: 'ability',
         player: owner.parent,
         tiger: context.tiger,
-        randomEvent: true,
+        randomEvent: choice.randomEvent,
         pteranodon: context.pteranodon,
       });
     }
