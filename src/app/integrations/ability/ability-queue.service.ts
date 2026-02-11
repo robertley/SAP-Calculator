@@ -5,6 +5,7 @@ import { Pet } from 'app/domain/entities/pet.class';
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { ABILITY_PRIORITIES } from './ability-priorities';
 import {
+  processEventQueue,
   executeEventWithTransform,
 } from './event-queue-processing';
 
@@ -26,58 +27,6 @@ export class AbilityQueueService {
   constructor() { }
 
   // --- Queue Management ---
-
-  private getEventAbilityPriority(event: AbilityEvent): number {
-    if (!event.abilityType) {
-      return 999;
-    }
-    return this.getAbilityPriority(event.abilityType);
-  }
-
-  private getCurrentEventPriority(event: AbilityEvent): number {
-    if (event.pet) {
-      return this.getPetEventPriority(event.pet);
-    }
-    const queuedPriority = Number(event.priority ?? 0);
-    return Number.isFinite(queuedPriority) ? queuedPriority : 0;
-  }
-
-  private compareEventsForExecution(a: AbilityEvent, b: AbilityEvent): number {
-    const abilityPriorityDiff =
-      this.getEventAbilityPriority(a) - this.getEventAbilityPriority(b);
-    if (abilityPriorityDiff !== 0) {
-      return abilityPriorityDiff;
-    }
-
-    const eventPriorityDiff =
-      this.getCurrentEventPriority(b) - this.getCurrentEventPriority(a);
-    if (eventPriorityDiff !== 0) {
-      return eventPriorityDiff;
-    }
-
-    return (a.tieBreaker ?? 0) - (b.tieBreaker ?? 0);
-  }
-
-  private getNextHighestPriorityEventIndex(
-    filter?: (event: AbilityEvent) => boolean,
-  ): number {
-    let bestIdx = -1;
-    for (let i = 0; i < this.globalEventQueue.length; i++) {
-      const event = this.globalEventQueue[i];
-      if (filter && !filter(event)) {
-        continue;
-      }
-      if (bestIdx === -1) {
-        bestIdx = i;
-        continue;
-      }
-      const currentBest = this.globalEventQueue[bestIdx];
-      if (this.compareEventsForExecution(event, currentBest) < 0) {
-        bestIdx = i;
-      }
-    }
-    return bestIdx;
-  }
 
   addEventToQueue(event: AbilityEvent) {
     // Set priority based on ability type
@@ -102,17 +51,9 @@ export class AbilityQueueService {
         left = mid + 1;
       } else {
         // Same ability type priority, compare individual event priority (higher = first)
-        const eventPriorityRaw = Number(event.priority ?? 0);
-        const midPriorityRaw = Number(midEvent.priority ?? 0);
-        const eventPriority = Number.isFinite(eventPriorityRaw)
-          ? eventPriorityRaw
-          : 0;
-        const midPriority = Number.isFinite(midPriorityRaw)
-          ? midPriorityRaw
-          : 0;
-        if (eventPriority > midPriority) {
+        if (event.priority > midEvent.priority) {
           right = mid;
-        } else if (eventPriority < midPriority) {
+        } else if (event.priority < midEvent.priority) {
           left = mid + 1;
         } else {
           // Same priority - use random tie breaker (lower tieBreaker = first)
@@ -146,57 +87,16 @@ export class AbilityQueueService {
       onExecute?: (event: AbilityEvent) => void;
     },
   ) {
-    if (options?.shuffle) {
-      for (let i = this.globalEventQueue.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [this.globalEventQueue[i], this.globalEventQueue[j]] = [
-          this.globalEventQueue[j],
-          this.globalEventQueue[i],
-        ];
-      }
-    }
-
-    while (true) {
-      const nextIdx = this.getNextHighestPriorityEventIndex(options?.filter);
-      if (nextIdx === -1) {
-        break;
-      }
-      const [event] = this.globalEventQueue.splice(nextIdx, 1);
-      if (options?.onExecute) {
-        options.onExecute(event);
-      }
-      executeEventWithTransform(event, gameApi);
-    }
+    processEventQueue(this.globalEventQueue, gameApi, options);
   }
 
   getNextHighestPriorityEvent(): AbilityEvent | null {
-    return this.getNextHighestPriorityEventMatching();
+    return this.globalEventQueue.shift() || null;
   }
 
   // NEW: Legacy support
   peekNextHighestPriorityEvent(): AbilityEvent | null {
-    return this.peekNextHighestPriorityEventMatching();
-  }
-
-  getNextHighestPriorityEventMatching(
-    filter?: (event: AbilityEvent) => boolean,
-  ): AbilityEvent | null {
-    const nextIdx = this.getNextHighestPriorityEventIndex(filter);
-    if (nextIdx === -1) {
-      return null;
-    }
-    const [event] = this.globalEventQueue.splice(nextIdx, 1);
-    return event ?? null;
-  }
-
-  peekNextHighestPriorityEventMatching(
-    filter?: (event: AbilityEvent) => boolean,
-  ): AbilityEvent | null {
-    const nextIdx = this.getNextHighestPriorityEventIndex(filter);
-    if (nextIdx === -1) {
-      return null;
-    }
-    return this.globalEventQueue[nextIdx] ?? null;
+    return this.globalEventQueue.length > 0 ? this.globalEventQueue[0] : null;
   }
 
   executeEvent(event: AbilityEvent, gameApi: GameAPI) {
@@ -205,10 +105,7 @@ export class AbilityQueueService {
 
   // --- Priority Helpers ---
 
-  getAbilityPriority(trigger?: AbilityTrigger): number {
-    if (!trigger) {
-      return 999;
-    }
+  getAbilityPriority(trigger: AbilityTrigger): number {
     const direct = ABILITY_PRIORITIES[trigger];
     if (direct != null) {
       return direct;
@@ -224,10 +121,7 @@ export class AbilityQueueService {
   }
 
   getPetEventPriority(pet: Pet): number {
-    let priority = Number(pet.attack ?? 0);
-    if (!Number.isFinite(priority)) {
-      priority = 0;
-    }
+    let priority = pet.attack;
     if (pet.equipment?.name === 'Churros') {
       priority += 1000;
     } else if (pet.equipment?.name === 'Macaron') {
