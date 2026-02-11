@@ -10,6 +10,7 @@ import {
 import { of } from 'rxjs';
 import { catchError, finalize, timeout } from 'rxjs/operators';
 import { ReplayCalcService } from 'app/integrations/replay/replay-calc.service';
+import { getReplayApiUrl } from 'app/integrations/replay/replay-api-endpoints';
 
 @Component({
   selector: 'app-replay-calc',
@@ -96,7 +97,7 @@ export class ReplayCalcComponent implements OnInit {
           }
           console.info('[replay] health check ok, requesting battle');
           this.http
-            .post('/api/replay-battle', {
+            .post(getReplayApiUrl('/replay-battle'), {
               Pid: parsedInput.Pid,
               T: turnNumber,
               SapEmail: sapEmail || undefined,
@@ -252,7 +253,7 @@ export class ReplayCalcComponent implements OnInit {
     return new Promise((resolve) => {
       console.info('[replay] health check start');
       this.http
-        .get('/api/health')
+        .get(getReplayApiUrl('/health'))
         .pipe(
           timeout(this.replayHealthTimeoutMs),
           catchError(() => of(null)),

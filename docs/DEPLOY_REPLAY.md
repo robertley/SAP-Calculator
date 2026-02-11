@@ -23,10 +23,10 @@ npm ci --legacy-peer-deps
 ## 2) Configure replay server environment
 
 ```bash
-cp server/.env.example server/.env
+cp .env.example .env
 ```
 
-Edit `server/.env`:
+Edit `.env`:
 
 ```dotenv
 SAP_EMAIL=you@example.com
@@ -111,10 +111,9 @@ Then test from UI:
   - Check PM2 status and logs: `pm2 logs sap-replay`
   - Confirm Nginx `/api` proxy points to correct port.
 - `SAP credentials are required`:
-  - Verify `server/.env` exists and has valid `SAP_EMAIL`/`SAP_PASSWORD`.
+  - Verify `.env` exists and has valid `SAP_EMAIL`/`SAP_PASSWORD`.
 - `Replay fetch failed (status 401/502)`:
   - Re-check credentials and API version.
   - Restart process after env changes: `pm2 restart sap-replay`.
 - Timeout errors in UI:
   - Check server outbound network access to `api.teamwood.games`.
-

@@ -4,8 +4,7 @@ const { URL } = require("url");
 const fs = require("fs");
 const path = require("path");
 
-function loadEnvFile() {
-  const envPath = path.join(__dirname, ".env");
+function loadEnvFile(envPath) {
   if (!fs.existsSync(envPath)) {
     return;
   }
@@ -33,7 +32,8 @@ function loadEnvFile() {
   }
 }
 
-loadEnvFile();
+loadEnvFile(path.resolve(process.cwd(), ".env"));
+loadEnvFile(path.join(__dirname, ".env"));
 
 const PORT = Number(process.env.PORT || 3000);
 const API_VERSION = process.env.SAP_API_VERSION || "44";
