@@ -59,6 +59,10 @@ export class AbilityService extends AbilityEventTriggers {
     return this.abilityQueueService.hasGlobalEvents;
   }
 
+  getQueueSnapshot(): AbilityEvent[] {
+    return [...this.abilityQueueService.globalEventQueue];
+  }
+
   // Legacy API support for SimulationRunner
   getNextHighestPriorityEvent(): AbilityEvent | null {
     return this.abilityQueueService.getNextHighestPriorityEvent();

@@ -31,6 +31,8 @@ export class AbilityEngine {
 
   abilityCycle() {
     this.emptyFrontSpaceCheck();
+    let processedEvents = 0;
+    const maxEventsPerCycle = 100000;
     while (true) {
       while (this.abilityService.hasGlobalEvents) {
         const nextEvent = this.abilityService.peekNextHighestPriorityEvent();
@@ -51,6 +53,24 @@ export class AbilityEngine {
 
         const event = this.abilityService.getNextHighestPriorityEvent();
         if (event) {
+          processedEvents++;
+          if (processedEvents > maxEventsPerCycle) {
+            const queue = this.abilityService
+              .getQueueSnapshot()
+              .map((evt) => evt.abilityType ?? 'unknown');
+            const queueCounts = new Map<string, number>();
+            for (const type of queue) {
+              queueCounts.set(type, (queueCounts.get(type) ?? 0) + 1);
+            }
+            const summary = Array.from(queueCounts.entries())
+              .sort((a, b) => b[1] - a[1])
+              .slice(0, 10)
+              .map(([type, count]) => `${type}:${count}`)
+              .join(', ');
+            throw new Error(
+              `Ability cycle overflow: processed>${maxEventsPerCycle}. Last=${event.abilityType ?? 'unknown'}. QueueLen=${queue.length}. Top=[${summary}]`,
+            );
+          }
           this.abilityService.executeEventCallback(event);
           this.checkPetsAlive();
         } else {

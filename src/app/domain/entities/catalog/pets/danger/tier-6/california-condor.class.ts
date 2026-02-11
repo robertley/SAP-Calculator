@@ -64,6 +64,12 @@ export class CaliforniaCondorAbility extends Ability {
     if (!copyPet) {
       return;
     }
+    const isCondor =
+      copyPet.baseName === 'California Condor' ||
+      copyPet.name === 'California Condor';
+    if (isCondor) {
+      return;
+    }
 
     this.logService.createLog({
       message: `California Condor copied ${copyPet.name}'s level ${owner.level} ability`,
