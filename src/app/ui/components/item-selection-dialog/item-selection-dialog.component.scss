@@ -98,6 +98,8 @@
   padding: 0.5rem 0.5rem 0.75rem;
   overflow-y: auto;
   flex: 1;
+  align-content: start;
+  align-items: start;
 
   &::-webkit-scrollbar {
     width: 6px;

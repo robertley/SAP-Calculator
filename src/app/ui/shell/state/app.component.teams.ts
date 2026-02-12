@@ -277,10 +277,26 @@ export function loadTeamPreset(options: {
         : 'opponentTransformationAmount';
     options.formGroup.get(transformControl).setValue(team.transformationAmount);
   }
-  const playerToyName = team.playerToyName ?? team.toyName ?? null;
-  const playerToyLevel = team.playerToyLevel ?? team.toyLevel ?? 1;
-  const opponentToyName = team.opponentToyName ?? team.toyName ?? null;
-  const opponentToyLevel = team.opponentToyLevel ?? team.toyLevel ?? 1;
+  const playerToyName = resolvePresetToyName(
+    team.playerToyName,
+    team.toyName,
+    team.opponentToyName,
+  );
+  const playerToyLevel = resolvePresetToyLevel(
+    team.playerToyLevel,
+    team.toyLevel,
+    team.opponentToyLevel,
+  );
+  const opponentToyName = resolvePresetToyName(
+    team.opponentToyName,
+    team.toyName,
+    team.playerToyName,
+  );
+  const opponentToyLevel = resolvePresetToyLevel(
+    team.opponentToyLevel,
+    team.toyLevel,
+    team.playerToyLevel,
+  );
 
   options.formGroup.get('playerToy').setValue(playerToyName);
   options.formGroup.get('playerToyLevel').setValue(playerToyLevel);
@@ -466,6 +482,31 @@ function applyTeamEquipmentUses(
       .get('equipmentUses')
       ?.setValue(petData?.equipmentUses ?? null, { emitEvent: false });
   }
+}
+
+function resolvePresetToyName(
+  ...candidates: Array<string | null | undefined>
+): string | null {
+  for (const candidate of candidates) {
+    if (typeof candidate !== 'string') {
+      continue;
+    }
+    if (candidate.trim().length > 0) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+function resolvePresetToyLevel(
+  ...candidates: Array<number | null | undefined>
+): number {
+  for (const candidate of candidates) {
+    if (Number.isFinite(candidate)) {
+      return Number(candidate);
+    }
+  }
+  return 1;
 }
 
 

@@ -67,7 +67,7 @@ export class SkunkAbility extends Ability {
 
     targetPet.health = reducedTo;
     this.logService.createLog({
-      message: `${owner.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})`,
+      message: `${owner.name} reduced ${targetPet.name} health by ${power * 100}% to ${reducedTo}.`,
       type: 'ability',
       player: owner.parent,
       randomEvent: highestHealthPetResp.random,

@@ -93,6 +93,14 @@ export class ItemSelectionDialogComponent
     return index;
   }
 
+  get shouldShowNoneCard(): boolean {
+    return (
+      this.type !== 'swallowed-pet' &&
+      this.type !== 'pack' &&
+      this.searchQuery.trim().length === 0
+    );
+  }
+
   constructor(
     private petService: PetService,
     private equipmentService: EquipmentService,

@@ -55,7 +55,7 @@
       <div class="items-grid scroll" [class.team-grid]="type === 'team'">
         <div
           class="item-card none-card"
-          *ngIf="type !== 'swallowed-pet' && type !== 'pack'"
+          *ngIf="shouldShowNoneCard"
           (click)="onItemClick(null)"
         >
           <div class="item-icon-container">

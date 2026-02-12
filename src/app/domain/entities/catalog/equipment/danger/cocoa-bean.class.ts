@@ -3,7 +3,6 @@ import { PetService } from 'app/integrations/pet/pet.service';
 import { Equipment, EquipmentClass } from '../../../equipment.class';
 import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
-import { cloneEquipment } from 'app/runtime/equipment-clone';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
@@ -88,11 +87,6 @@ export class CocoaBeanAbility extends Ability {
       );
       let randomEnemy = enemies[choice.index];
 
-      let equipmentInstance: Equipment | null = null;
-      if (randomEnemy.equipment) {
-        equipmentInstance = cloneEquipment(randomEnemy.equipment);
-      }
-
       // Create proper Pet instance
       let transformedPet = this.petService.createPet(
         {
@@ -101,7 +95,7 @@ export class CocoaBeanAbility extends Ability {
           health: randomEnemy.health,
           mana: owner.mana,
           exp: randomEnemy.exp,
-          equipment: equipmentInstance,
+          equipment: null,
         },
         owner.parent,
       );

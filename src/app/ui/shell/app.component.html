@@ -58,16 +58,29 @@
                 let pet of playerPetsControls;
                 index as i;
                 trackBy: trackByIndex
-              " cdkDrag>
-              <div class="drag-handle" cdkDragHandle>
-                <svg fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                  </path>
-                  <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+              " cdkDrag (mousedown)="setActivePetSlot('player', 4 - i)"
+              (focusin)="setActivePetSlot('player', 4 - i)"
+              [class.pet-slot-active]="
+                activePetSlot?.side === 'player' && activePetSlot?.index === 4 - i
+              ">
+              <div class="pet-slot-actions">
+                <button type="button" class="drag-handle" cdkDragHandle title="Move this pet slot"
+                  aria-label="Move this pet slot">
+                  <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                    </path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                </button>
+                <button type="button" class="pet-clear-btn"
+                  (click)="playerPetSelector.removePet(); $event.stopPropagation()"
+                  title="Clear this pet selector" aria-label="Clear this pet selector">
+                  X
+                </button>
               </div>
               <app-pet-selector [pet]="player.getPet(4 - i)" [player]="player" [opponent]="opponent" [index]="4 - i"
+                #playerPetSelector
                 [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [allowEquipmentUseOverrides]="
@@ -134,16 +147,29 @@
                 let pet of opponentPetsControls;
                 index as i;
                 trackBy: trackByIndex
-              " cdkDrag>
-              <div class="drag-handle" cdkDragHandle>
-                <svg fill="currentColor" viewBox="0 0 24 24">
-                  <path
-                    d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                  </path>
-                  <path d="M0 0h24v24H0z" fill="none"></path>
-                </svg>
+              " cdkDrag (mousedown)="setActivePetSlot('opponent', i)"
+              (focusin)="setActivePetSlot('opponent', i)"
+              [class.pet-slot-active]="
+                activePetSlot?.side === 'opponent' && activePetSlot?.index === i
+              ">
+              <div class="pet-slot-actions">
+                <button type="button" class="drag-handle" cdkDragHandle title="Move this pet slot"
+                  aria-label="Move this pet slot">
+                  <svg fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
+                    </path>
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                  </svg>
+                </button>
+                <button type="button" class="pet-clear-btn"
+                  (click)="opponentPetSelector.removePet(); $event.stopPropagation()"
+                  title="Clear this pet selector" aria-label="Clear this pet selector">
+                  X
+                </button>
               </div>
               <app-pet-selector [pet]="opponent.getPet(i)" [player]="opponent" [opponent]="player" [index]="i"
+                #opponentPetSelector
                 [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [allowEquipmentUseOverrides]="
