@@ -4,7 +4,8 @@ import type { Pet } from '../pet.class';
 import { PetEquipmentFacade } from './pet-equipment-facade';
 
 export abstract class PetTargetingRuntimeFacade extends PetEquipmentFacade {
-  [key: string]: any;
+  abstract savedPosition: number;
+  abstract get position(): number;
 
   petBehind(seenDead = false, deadOrAlive = false): Pet {
     if (!this.parent) {
@@ -138,7 +139,7 @@ export abstract class PetTargetingRuntimeFacade extends PetEquipmentFacade {
 
     const candidates = [...this.parent.petArray, ...this.parent.opponent.petArray].filter(
       (pet) => {
-        if (!pet.alive || pet === this) {
+        if (!pet.alive || pet === this.asPet()) {
           return false;
         }
         if (excludeEquipment && pet.equipment?.name === excludeEquipment) {

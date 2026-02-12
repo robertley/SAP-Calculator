@@ -105,7 +105,8 @@ export class GiantOtterAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon, trigger } = context as any;
+    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const trigger = context.trigger as string | undefined;
     const owner = this.owner;
 
     if (trigger === 'PostRemovalFaint') {

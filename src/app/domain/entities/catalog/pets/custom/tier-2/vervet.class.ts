@@ -57,11 +57,11 @@ export class VervetAbility extends Ability {
     const level = this.level;
 
     const toyName = 'Microwave Oven';
-    const toy = (gameApi as any).toyService.createToy(
+    const toy = gameApi?.toyService?.createToy(
       toyName,
       owner.parent,
       level,
-    );
+    ) as Player['toy'];
 
     if (toy) {
       owner.parent.toy = toy;

@@ -11,7 +11,7 @@ export class AttackEventService {
   // --- Before Attack ---
 
   triggerBeforeAttackEvents(attackingPet: Pet) {
-    const parent = attackingPet?.parent as any;
+    const parent = attackingPet?.parent;
     const friends =
       parent && Array.isArray(parent.petArray) ? parent.petArray : [];
 

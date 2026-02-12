@@ -23,21 +23,30 @@ const PACK_CODE_TO_NAME: Record<string, Pack> = {
 };
 
 const FOOD_PACKS_BY_NAME: Map<string, Set<Pack>> = new Map();
-const foodEntries = (foodJson as unknown as { default?: any[] }).default ?? (foodJson as any[]);
+const foodEntries =
+  (foodJson as unknown as { default?: unknown[] }).default ??
+  (foodJson as unknown[]);
 if (Array.isArray(foodEntries)) {
   for (const food of foodEntries) {
-    if (!food?.Name) {
+    if (!food || typeof food !== 'object') {
+      continue;
+    }
+    const foodRecord = food as {
+      Name?: string;
+      Packs?: string[];
+    };
+    if (!foodRecord.Name) {
       continue;
     }
     const packs = new Set<Pack>();
-    for (const code of food.Packs ?? []) {
+    for (const code of foodRecord.Packs ?? []) {
       const packName = PACK_CODE_TO_NAME[code];
       if (packName) {
         packs.add(packName);
       }
     }
     if (packs.size > 0) {
-      FOOD_PACKS_BY_NAME.set(food.Name, packs);
+      FOOD_PACKS_BY_NAME.set(foodRecord.Name, packs);
     }
   }
 }

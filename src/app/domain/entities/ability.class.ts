@@ -125,13 +125,17 @@ export type AbilityTrigger =
   | NumberedTriggerBase
   | `${NumberedTriggerBase}${number}`;
 
+export type AbilityCustomParams = Record<string, unknown>;
+
 export interface AbilityContext {
   gameApi: GameAPI;
   triggerPet?: Pet;
   tiger?: boolean;
   pteranodon?: boolean;
+  puma?: boolean;
   damageAmount?: number;
-  [key: string]: any; // Allow for additional custom parameters
+  tigerSupportPet?: Pet | null;
+  [key: string]: unknown; // Allow for additional custom parameters
 }
 
 export interface AbilityCondition {
@@ -215,7 +219,7 @@ export class Ability {
     triggerPet?: Pet,
     tiger?: boolean,
     pteranodon?: boolean,
-    customParams?: any,
+    customParams?: AbilityCustomParams,
   ): boolean {
     //Check if pet is removed
     if (this.owner.removed && !this.matchesTrigger('PostRemovalFaint')) {
@@ -233,7 +237,7 @@ export class Ability {
         triggerPet,
         tiger,
         pteranodon,
-        ...customParams, // Spread any additional custom parameters
+        ...(customParams ?? {}), // Spread any additional custom parameters
       };
 
       // Check precondition before consuming any use
@@ -285,8 +289,7 @@ export class Ability {
   // Tiger execution method for new framework
   // Subclasses should call this at the end of their ability logic
   protected triggerTigerExecution(context: AbilityContext): void {
-    const tigerPet =
-      (context as any).tigerSupportPet ?? this.owner.petBehind(true, true);
+    const tigerPet = context.tigerSupportPet ?? this.owner.petBehind(true, true);
     if (!this.tigerCheck(context.tiger, tigerPet)) {
       return;
     }

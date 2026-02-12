@@ -67,7 +67,7 @@
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-              <app-pet-selector [pet]="player['pet' + (4 - i)]" [player]="player" [opponent]="opponent" [index]="4 - i"
+              <app-pet-selector [pet]="player.getPet(4 - i)" [player]="player" [opponent]="opponent" [index]="4 - i"
                 [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [allowEquipmentUseOverrides]="
@@ -143,7 +143,7 @@
                   <path d="M0 0h24v24H0z" fill="none"></path>
                 </svg>
               </div>
-              <app-pet-selector [pet]="opponent['pet' + i]" [player]="opponent" [opponent]="player" [index]="i"
+              <app-pet-selector [pet]="opponent.getPet(i)" [player]="opponent" [opponent]="player" [index]="i"
                 [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
                 [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
                 [allowEquipmentUseOverrides]="
@@ -210,7 +210,7 @@
         </div>
         <div class="modal-body">
           @defer (when showImport) {
-          <app-import-calculator [importFunc]="import.bind(this)"></app-import-calculator>
+          <app-import-calculator [importFunc]="importForDialog"></app-import-calculator>
           } @placeholder {
           <div class="text-muted">Loading import tools…</div>
           }

@@ -193,7 +193,7 @@ export const summonPetInFront = (
 
   const oldPosition = summoner.position;
   const destination = Math.min(oldPosition + 1, 4);
-  summoner.parent[`pet${oldPosition}`] = null;
+  summoner.parent.setPet(oldPosition, null);
   if (player.getPet(destination) != null) {
     pushBackwardFromSlot(player, destination);
   }
@@ -237,7 +237,7 @@ export const summonPetBehind = (
 
   if (hasSpaceInFront) {
     const position = summoner.position;
-    summoner.parent[`pet${position}`] = null;
+    summoner.parent.setPet(position, null);
     const destination = Math.max(position - 1, 0);
     if (player.getPet(destination) != null) {
       pushForwardFromSlot(player, destination);

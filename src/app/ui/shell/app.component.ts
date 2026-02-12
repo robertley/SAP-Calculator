@@ -110,8 +110,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   hardWackyToys: Map<number, string[]> = new Map();
   customPackEditorModal: Modal;
 
-  previousPackPlayer = null;
-  previousPackOpponent = null;
+  previousPackPlayer: string | null = null;
+  previousPackOpponent: string | null = null;
 
   dayNight = true;
   battleBackgroundUrl = '';
@@ -125,7 +125,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   battleBackgrounds = [...BATTLE_BACKGROUNDS];
   logFilterTabs = [...LOG_FILTER_TABS];
   api = false;
-  apiResponse = null;
+  apiResponse: string | null = null;
 
   showSelectionDialog = false;
   selectionType: SelectionType = 'pet';
@@ -156,7 +156,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   playerPackImageBroken = false;
   opponentPackImageBroken = false;
-  undoState: any = null;
+  undoState: unknown = null;
 
   private isLoadedFromUrl = false;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
@@ -266,7 +266,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   readonly loadLocalStorage = () => loadLocalStorageImpl(this);
-  readonly applyCalculatorState = (calculator: any) =>
+  readonly applyCalculatorState = (calculator: unknown) =>
     applyCalculatorStateImpl(this, calculator);
   readonly setDayNight = () => setDayNightImpl(this);
   readonly setRandomBackground = () => setRandomBackgroundImpl(this);
@@ -610,6 +610,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     isInitialLoad: boolean = false,
     options?: { resetBattle?: boolean },
   ): boolean => importCalculatorImpl(this, importVal, isInitialLoad, options);
+  readonly importForDialog = (
+    importVal: string,
+    options?: { resetBattle?: boolean },
+  ): boolean => importCalculatorImpl(this, importVal, false, options);
   readonly generateShareLink = () => generateShareLinkImpl(this);
   readonly refreshFilteredBattles = () => refreshFilteredBattlesImpl(this);
 
@@ -645,7 +649,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     type: SelectionType,
     side: 'player' | 'opponent' | 'none',
   ) => openSelectionDialogImpl(this, type, side);
-  readonly onItemSelected = (item: any) => onItemSelectedImpl(this, item);
+  readonly onItemSelected = (item: unknown) => onItemSelectedImpl(this, item);
   readonly getPackIconPath = getPackIconImpl;
   readonly onPackImageError = (side: 'player' | 'opponent') =>
     onPackImageErrorImpl(this, side);

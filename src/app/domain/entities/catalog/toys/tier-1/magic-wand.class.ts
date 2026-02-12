@@ -12,10 +12,12 @@ export class MagicWand extends Toy {
   tier = 1;
   startOfBattle(gameApi?: GameAPI, puma?: boolean) {
     let targets = this.parent.petArray.filter((pet) => pet.level < 3);
-    let target = null;
+    let target: Pet | null = null;
     let random = false;
     if (targets.length == 0) {
-      target = this.parent.getRandomPet([], true);
+      const targetResp = this.parent.getRandomPet([], true);
+      target = targetResp.pet;
+      random = targetResp.random;
     } else {
       targets = shuffle(targets);
       target = targets[0];

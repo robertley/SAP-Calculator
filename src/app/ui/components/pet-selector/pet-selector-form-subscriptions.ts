@@ -5,6 +5,7 @@ import {
   PARROT_COPY_ABOMINATION_SWALLOWED_FIELDS,
 } from './pet-selector.constants';
 import { PetSelectorSwallowing } from './pet-selector-swallowing';
+import { PetForm } from 'app/integrations/pet/pet-factory.service';
 
 function buildAbominationParrotCopyControlNames(): string[] {
   const controls: string[] = [];
@@ -28,6 +29,16 @@ function buildAbominationParrotCopyControlNames(): string[] {
 }
 
 const ABOMINATION_PARROT_COPY_FIELDS = buildAbominationParrotCopyControlNames();
+
+type PetFormValue = {
+  attack?: unknown;
+  health?: unknown;
+  mana?: unknown;
+  triggersConsumed?: unknown;
+  foodsEaten?: unknown;
+  equipment?: unknown;
+  [key: string]: unknown;
+};
 
 @Directive()
 export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
@@ -182,17 +193,17 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
 
   private subscribeControl(
     controlName: string,
-    onValue: (value: any) => void,
+    onValue: (value: string | null) => void,
   ): void {
     this.formGroup
       .get(controlName)
       ?.valueChanges.pipe(takeUntil(this.destroy$))
-      .subscribe(onValue);
+      .subscribe((value) => onValue((value ?? null) as string | null));
   }
 
   private subscribeControls(
     controlNames: string[],
-    onValue: (value: any) => void,
+    onValue: (value: string | null) => void,
   ): void {
     for (const controlName of controlNames) {
       this.subscribeControl(controlName, onValue);
@@ -201,7 +212,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
 
   substitutePet(nameChange = false) {
     setTimeout(() => {
-      let formValue = this.formGroup.getRawValue();
+      let formValue = this.formGroup.getRawValue() as PetFormValue;
       if (nameChange) {
         this.formGroup.get('attack').setValue(null, { emitEvent: false });
         this.formGroup.get('health').setValue(null, { emitEvent: false });
@@ -210,12 +221,15 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
           .get('triggersConsumed')
           .setValue(null, { emitEvent: false });
         this.formGroup.get('foodsEaten').setValue(null, { emitEvent: false });
-        formValue = this.formGroup.getRawValue();
+        formValue = this.formGroup.getRawValue() as PetFormValue;
       }
       this.applyStatCaps(formValue);
       formValue.equipment = this.normalizeEquipmentValue(formValue.equipment);
 
-      let pet = this.petService.createPet(formValue, this.player);
+      let pet = this.petService.createPet(
+        formValue as unknown as PetForm,
+        this.player,
+      );
       this.player.setPet(this.index, pet, true);
       this.pet = pet;
       this.cdr.markForCheck();
@@ -235,7 +249,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     });
   }
 
-  protected applyStatCaps(formValue: any) {
+  protected applyStatCaps(formValue: PetFormValue) {
     const attack = this.clampValue(formValue.attack, 0, 100);
     const health = this.clampValue(formValue.health, 0, 100);
     const mana = this.clampValue(formValue.mana, 0, 50);
@@ -283,7 +297,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     }
   }
 
-  protected clampValue(value: any, min: number, max: number) {
+  protected clampValue(value: unknown, min: number, max: number) {
     if (value == null || value === '') {
       return value;
     }

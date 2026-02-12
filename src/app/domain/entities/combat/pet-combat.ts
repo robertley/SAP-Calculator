@@ -83,7 +83,7 @@ export function attackPet(
     dealDamage(self, pet, damage);
     if (attackEquipment != null) {
       const attackPower = attackEquipment.power ?? 0;
-      let power: any = Math.abs(attackPower);
+      let power: number | string = Math.abs(attackPower);
       let sign = '-';
       if (attackPower > 0) {
         sign = '+';
@@ -122,7 +122,7 @@ export function attackPet(
     }
     if (defenseEquipment != null) {
       const defensePower = defenseEquipment.power ?? 0;
-      let power: any = Math.abs(defensePower);
+      let power: number | string = Math.abs(defensePower);
       let sign = '-';
       if (defensePower < 0) {
         sign = '+';

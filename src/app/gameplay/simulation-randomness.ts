@@ -62,10 +62,11 @@ export function applySeededRandom(seed: number | null | undefined): () => void {
     return () => {};
   }
   const random = createSeededRandom(Math.trunc(seed));
-  const originalRandom = Math.random;
-  (Math as any).random = random;
+  const mathWithRandom = Math as typeof Math & { random: () => number };
+  const originalRandom = mathWithRandom.random;
+  mathWithRandom.random = random;
   return () => {
-    (Math as any).random = originalRandom;
+    mathWithRandom.random = originalRandom;
   };
 }
 

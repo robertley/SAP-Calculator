@@ -8,6 +8,7 @@ import { Player } from 'app/domain/entities/player.class';
 import { Toy } from 'app/domain/entities/toy.class';
 import {
   ToyRegistryDeps,
+  ToyRuntimeService,
   STANDARD_TOYS,
   TOYS_NEEDING_ABILITY_SERVICE,
   SPECIAL_TOY_BUILDERS,
@@ -29,7 +30,7 @@ export class ToyFactoryService {
     toyName: string,
     parent: Player,
     level: number,
-    toyService: any,
+    toyService: ToyRuntimeService,
     petService?: PetService,
     equipmentService?: EquipmentService,
     gameService?: GameService,

@@ -64,39 +64,36 @@ export class KakapoAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
-    // Effect 1: Spooked
-    let spookTargetsResp = owner.parent.opponent.getHighestAttackPets(
+    const selectedTargetsResp = owner.parent.opponent.getHighestAttackPets(
       this.level,
       undefined,
       owner,
     );
-    for (let target of spookTargetsResp.pets) {
+    const orderedTargets = [...selectedTargetsResp.pets].sort(
+      (a, b) => a.attack - b.attack,
+    );
+
+    // Effect 1: Spooked (lowest attack first among selected targets)
+    for (let target of orderedTargets) {
       target.givePetEquipment(new Spooked());
       this.logService.createLog({
         message: `${owner.name} gave ${target.name} Spooked.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: spookTargetsResp.random,
+        randomEvent: selectedTargetsResp.random,
       });
     }
-    // Effect 2: Push
-    let pushTargetsResp = owner.parent.opponent.getHighestAttackPets(
-      this.level,
-      undefined,
-      owner,
-    );
-    const pushTargets = [...pushTargetsResp.pets].sort(
-      (a, b) => a.attack - b.attack,
-    );
-    for (let target of pushTargets) {
+
+    // Effect 2: Push (same selected targets, same order)
+    for (let target of orderedTargets) {
       target.parent.pushPetToBack(target);
       this.logService.createLog({
         message: `${owner.name} pushed ${target.name} to the back.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: pushTargetsResp.random,
+        randomEvent: selectedTargetsResp.random,
       });
     }
 

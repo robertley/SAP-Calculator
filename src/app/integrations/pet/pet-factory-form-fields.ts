@@ -1,9 +1,17 @@
 import { Pet } from 'app/domain/entities/pet.class';
+import {
+  PET_MEMORY_SLOTS,
+  createPetMemorySlotFields,
+} from 'app/domain/entities/pet/pet-memory-fields';
 import { PetForm } from './pet-form.interface';
 
-const PET_INDEXES = [1, 2, 3] as const;
-
 type PetFormField = keyof PetForm;
+type RecordShape = Record<string, unknown>;
+
+const toFormRecord = (petForm: PetForm): Readonly<RecordShape> =>
+  petForm as unknown as Readonly<RecordShape>;
+
+const toPetRecord = (pet: Pet): RecordShape => pet as unknown as RecordShape;
 
 const buildParrotFormFields = (): ReadonlyArray<PetFormField> => {
   const fields: PetFormField[] = [
@@ -11,36 +19,27 @@ const buildParrotFormFields = (): ReadonlyArray<PetFormField> => {
     'parrotCopyPetBelugaSwallowedPet',
   ];
 
-  for (const i of PET_INDEXES) {
-    fields.push(`parrotCopyPetAbominationSwallowedPet${i}` as PetFormField);
-    fields.push(
-      `parrotCopyPetAbominationSwallowedPet${i}BelugaSwallowedPet` as PetFormField,
+  for (const slot of PET_MEMORY_SLOTS) {
+    const slotFields = createPetMemorySlotFields(
+      'parrotCopyPetAbominationSwallowedPet',
+      slot,
     );
     fields.push(
-      `parrotCopyPetAbominationSwallowedPet${i}Level` as PetFormField,
-    );
-    fields.push(
-      `parrotCopyPetAbominationSwallowedPet${i}TimesHurt` as PetFormField,
-    );
-    fields.push(
-      `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPet` as PetFormField,
-    );
-    fields.push(
-      `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetBelugaSwallowedPet` as PetFormField,
+      slotFields.base as PetFormField,
+      slotFields.belugaSwallowedPet as PetFormField,
+      slotFields.level as PetFormField,
+      slotFields.timesHurt as PetFormField,
+      slotFields.parrotCopyPet as PetFormField,
+      slotFields.parrotCopyPetBelugaSwallowedPet as PetFormField,
     );
 
-    for (const j of PET_INDEXES) {
+    for (const nestedSlot of PET_MEMORY_SLOTS) {
+      const nestedFields = slotFields.nested(nestedSlot);
       fields.push(
-        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}` as PetFormField,
-      );
-      fields.push(
-        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}BelugaSwallowedPet` as PetFormField,
-      );
-      fields.push(
-        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}Level` as PetFormField,
-      );
-      fields.push(
-        `parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}TimesHurt` as PetFormField,
+        nestedFields.base as PetFormField,
+        nestedFields.belugaSwallowedPet as PetFormField,
+        nestedFields.level as PetFormField,
+        nestedFields.timesHurt as PetFormField,
       );
     }
   }
@@ -51,27 +50,21 @@ const buildParrotFormFields = (): ReadonlyArray<PetFormField> => {
 const buildAbominationFormFields = (): ReadonlyArray<PetFormField> => {
   const fields: PetFormField[] = [];
 
-  for (const i of PET_INDEXES) {
+  for (const slot of PET_MEMORY_SLOTS) {
+    const slotFields = createPetMemorySlotFields('abominationSwallowedPet', slot);
     fields.push(
-      `abominationSwallowedPet${i}BelugaSwallowedPet` as PetFormField,
-    );
-    fields.push(`abominationSwallowedPet${i}ParrotCopyPet` as PetFormField);
-    fields.push(
-      `abominationSwallowedPet${i}ParrotCopyPetBelugaSwallowedPet` as PetFormField,
+      slotFields.belugaSwallowedPet as PetFormField,
+      slotFields.parrotCopyPet as PetFormField,
+      slotFields.parrotCopyPetBelugaSwallowedPet as PetFormField,
     );
 
-    for (const j of PET_INDEXES) {
+    for (const nestedSlot of PET_MEMORY_SLOTS) {
+      const nestedFields = slotFields.nested(nestedSlot);
       fields.push(
-        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}` as PetFormField,
-      );
-      fields.push(
-        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}BelugaSwallowedPet` as PetFormField,
-      );
-      fields.push(
-        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}Level` as PetFormField,
-      );
-      fields.push(
-        `abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}TimesHurt` as PetFormField,
+        nestedFields.base as PetFormField,
+        nestedFields.belugaSwallowedPet as PetFormField,
+        nestedFields.level as PetFormField,
+        nestedFields.timesHurt as PetFormField,
       );
     }
   }
@@ -108,8 +101,9 @@ export function hasNonDefaultFormValue(
   petForm: PetForm,
   fields: ReadonlyArray<keyof PetForm>,
 ): boolean {
+  const formRecord = toFormRecord(petForm);
   for (const field of fields) {
-    const value = (petForm as any)[field];
+    const value = formRecord[String(field)];
     if (isNonDefaultPetFormValue(field, value)) {
       return true;
     }
@@ -122,21 +116,24 @@ export function copyPetFormFields(
   petForm: PetForm,
   fields: ReadonlyArray<keyof PetForm>,
 ): void {
+  const formRecord = toFormRecord(petForm);
+  const targetRecord = toPetRecord(target);
   for (const field of fields) {
-    const value = (petForm as any)[field];
+    const key = String(field);
+    const value = formRecord[key];
     if (value != null) {
-      (target as any)[field] = value;
+      targetRecord[key] = value;
       continue;
     }
-    const fieldName = String(field);
+    const fieldName = key;
     if (fieldName.endsWith('Level')) {
-      (target as any)[field] = 1;
+      targetRecord[key] = 1;
       continue;
     }
     if (fieldName.endsWith('TimesHurt')) {
-      (target as any)[field] = 0;
+      targetRecord[key] = 0;
       continue;
     }
-    (target as any)[field] = null;
+    targetRecord[key] = null;
   }
 }

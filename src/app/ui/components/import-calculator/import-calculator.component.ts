@@ -11,6 +11,34 @@ import { of } from 'rxjs';
 import { catchError, finalize, timeout } from 'rxjs/operators';
 import { ReplayCalcService } from 'app/integrations/replay/replay-calc.service';
 import { getReplayApiUrl } from 'app/integrations/replay/replay-api-endpoints';
+import {
+  ReplayBattleJson,
+  ReplayBoardJson,
+  ReplayBuildModelJson,
+  ReplayMetaBoards,
+} from 'app/integrations/replay/replay-calc-parser';
+
+interface ReplayActionEntry {
+  Type?: number;
+  Battle?: string;
+}
+
+interface ReplayImportPayload {
+  Pid?: string;
+  pid?: string;
+  T?: number;
+  t?: number;
+  Actions?: ReplayActionEntry[];
+  UserBoard?: ReplayBoardJson;
+  OpponentBoard?: ReplayBoardJson;
+  GenesisBuildModel?: ReplayBuildModelJson;
+}
+
+interface ReplayBattleResponse {
+  battle?: ReplayBattleJson;
+  genesisBuildModel?: ReplayBuildModelJson;
+  error?: string;
+}
 
 @Component({
   selector: 'app-import-calculator',
@@ -59,9 +87,9 @@ export class ImportCalculatorComponent implements OnInit {
     calcControl?.markAsUntouched();
     calcControl?.updateValueAndValidity({ emitEvent: false });
 
-    let parsedInput: any;
+    let parsedInput: ReplayImportPayload;
     try {
-      parsedInput = JSON.parse(rawInput);
+      parsedInput = JSON.parse(rawInput) as ReplayImportPayload;
     } catch (error) {
       if (this.tryReplayPid(rawInput)) {
         return;
@@ -101,7 +129,7 @@ export class ImportCalculatorComponent implements OnInit {
               }),
             )
             .subscribe({
-              next: (response: any) => {
+              next: (response: ReplayBattleResponse) => {
                 const battleJson = response?.battle;
                 if (!battleJson) {
                   this.errorMessage = 'Replay lookup failed to return a battle.';
@@ -187,9 +215,9 @@ export class ImportCalculatorComponent implements OnInit {
   }
 
   private importReplayBattle(
-    battleJson: any,
-    buildModel?: any,
-    metaBoards?: { userBoard?: any; opponentBoard?: any },
+    battleJson: ReplayBattleJson,
+    buildModel?: ReplayBuildModelJson,
+    metaBoards?: ReplayMetaBoards,
     options?: { resetBattle?: boolean },
   ) {
     const calculatorState = this.replayCalcService.parseReplayForCalculator(
@@ -236,7 +264,7 @@ export class ImportCalculatorComponent implements OnInit {
             }),
           )
           .subscribe({
-            next: (response: any) => {
+            next: (response: ReplayBattleResponse) => {
               const battleJson = response?.battle;
               if (!battleJson) {
                 this.errorMessage = 'Replay lookup failed to return a battle.';

@@ -66,8 +66,7 @@ export class SageGrouseAbility extends Ability {
     owner.removePerk(true);
 
     const gainGold = 3;
-    (player as any).gold = (player as any).gold ?? 0;
-    (player as any).gold += gainGold;
+    player.gold = (player.gold ?? 0) + gainGold;
 
     this.logService.createLog({
       message: `${owner.name} sold and removed Strawberry to gain +${gainGold} gold.`,

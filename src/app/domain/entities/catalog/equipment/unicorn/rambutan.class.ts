@@ -7,7 +7,7 @@ import { Pet } from '../../../pet.class';
 export class Rambutan extends Equipment {
   name = 'Rambutan';
   equipmentClass = 'beforeAttack' as EquipmentClass;
-  callback = (pet) => {
+  callback = (pet: Pet): void => {
     const equipment = pet.getEquippedEquipmentInstance(this);
     pet.addAbility(new RambutanAbility(pet, equipment, this.logService));
   };

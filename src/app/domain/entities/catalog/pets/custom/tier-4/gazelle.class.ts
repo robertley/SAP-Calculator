@@ -4,6 +4,7 @@ import { Equipment } from 'app/domain/entities/equipment.class';
 import { Pack, Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 
 
 export class Gazelle extends Pet {
@@ -63,7 +64,7 @@ export class GazelleAbility extends Ability {
   }
 
   private applyBonus(
-    gameApi: any,
+    gameApi: GameAPI,
     owner: Pet,
     tiger?: boolean,
     pteranodon?: boolean,

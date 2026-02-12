@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { IriomoteCat } from 'app/domain/entities/catalog/pets/danger/tier-1/iriomote-cat.class';
 import { IliPika } from 'app/domain/entities/catalog/pets/danger/tier-1/ili-pika.class';
 import { MalayTapir } from 'app/domain/entities/catalog/pets/danger/tier-1/malay-tapir.class';
@@ -59,7 +60,7 @@ import { PhilippineEagle } from 'app/domain/entities/catalog/pets/danger/tier-6/
 import { SilkySifaka } from 'app/domain/entities/catalog/pets/danger/tier-6/silky-sifaka.class';
 import { SumatranTiger } from 'app/domain/entities/catalog/pets/danger/tier-6/sumatran-tiger.class';
 
-export const DANGER_PET_REGISTRY: { [key: string]: any } = {
+export const DANGER_PET_REGISTRY: PetRegistryMap = {
   'Iriomote Cat': IriomoteCat,
   'Ili Pika': IliPika,
   'Malay Tapir': MalayTapir,
@@ -121,5 +122,7 @@ export const DANGER_PET_REGISTRY: { [key: string]: any } = {
   'Silky Sifaka': SilkySifaka,
   Takhi: Takhi,
 };
+
+
 
 

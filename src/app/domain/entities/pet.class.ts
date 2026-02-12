@@ -3,6 +3,7 @@ import { Equipment } from './equipment.class';
 import { Player } from './player.class';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { Ability } from 'app/domain/entities/ability.class';
+import { PetMemoryState } from 'app/domain/interfaces/pet-memory.interface';
 import { PetRuntimeFacade } from './pet/pet-runtime-facade';
 
 
@@ -15,7 +16,8 @@ export type Pack =
   | 'Custom'
   | 'Danger';
 
-export abstract class Pet extends PetRuntimeFacade {
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
   name: string;
   baseName: string;
   tier: number;
@@ -26,186 +28,19 @@ export abstract class Pet extends PetRuntimeFacade {
   attack: number;
   exp?: number = 0;
   equipment?: Equipment;
+  equipmentUsesOverride?: number | null;
   mana: number = 0;
   suppressManaSnipeOnFaint: boolean = false;
   triggersConsumed: number = 0;
   foodsEaten: number = 0;
   sellValue: number = 1;
   baseSellValue: number = 1;
-  //memories
+  // Memory-heavy swallowed/copy state is typed in PetMemoryState.
   swallowedPets?: Pet[] = [];
-  abominationSwallowedPet1?: string;
-  abominationSwallowedPet2?: string;
-  abominationSwallowedPet3?: string;
-  abominationSwallowedPet1BelugaSwallowedPet?: string;
-  abominationSwallowedPet2BelugaSwallowedPet?: string;
-  abominationSwallowedPet3BelugaSwallowedPet?: string;
-  abominationSwallowedPet1ParrotCopyPet?: string | null;
-  abominationSwallowedPet2ParrotCopyPet?: string | null;
-  abominationSwallowedPet3ParrotCopyPet?: string | null;
-  abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet?: string | null;
-  abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet?: string | null;
-  abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet?: string | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1?: string | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2?: string | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3?: string | null;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1?: string | null;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2?: string | null;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3?: string | null;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1?: string | null;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2?: string | null;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3?: string | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level?: number;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level?: number;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level?: number;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level?: number;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level?: number;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level?: number;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level?: number;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level?: number;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level?: number;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  abominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  abominationSwallowedPet1Level?: number;
-  abominationSwallowedPet2Level?: number;
-  abominationSwallowedPet3Level?: number;
-  abominationSwallowedPet1TimesHurt: number = 0;
-  abominationSwallowedPet2TimesHurt: number = 0;
-  abominationSwallowedPet3TimesHurt: number = 0;
   belugaSwallowedPet: string | null = null;
   parrotCopyPet: string | null = null;
   parrotCopyPetBelugaSwallowedPet: string | null = null;
-  parrotCopyPetAbominationSwallowedPet1?: string | null;
-  parrotCopyPetAbominationSwallowedPet2?: string | null;
-  parrotCopyPetAbominationSwallowedPet3?: string | null;
-  parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?: string | null;
-  parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?: string | null;
-  parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?: string | null;
-  parrotCopyPetAbominationSwallowedPet1Level?: number;
-  parrotCopyPetAbominationSwallowedPet2Level?: number;
-  parrotCopyPetAbominationSwallowedPet3Level?: number;
-  parrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPet?: string | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPet?: string | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPet?: string | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet?:
-    | string
-    | null;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1Level?: number;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2Level?: number;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3Level?: number;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1Level?: number;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2Level?: number;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3Level?: number;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1Level?: number;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2Level?: number;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3Level?: number;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet2ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet1TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet2TimesHurt: number = 0;
-  parrotCopyPetAbominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt: number = 0;
-  sarcasticFringeheadSwallowedPet?: string;
+  sarcasticFringeheadSwallowedPet?: string | null;
   friendsDiedBeforeBattle: number = 0;
   timesHurt: number = 0;
   timesAttacked: number = 0;
@@ -295,6 +130,9 @@ export abstract class Pet extends PetRuntimeFacade {
   }
 
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging, no-redeclare
+export interface Pet extends PetMemoryState {}
 
 
 

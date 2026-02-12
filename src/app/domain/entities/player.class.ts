@@ -42,6 +42,10 @@ export class Player extends PlayerSummonFacade {
   public isOpponent: boolean = false;
   public allPets: boolean = false;
   public tokenPets: boolean = false;
+  public gold: number = 0;
+  public pendingGoldFromMimic: number = 0;
+  public futureShopBuffs: Map<number, { attack: number; health: number }> =
+    new Map();
 
   cannedAilments: string[] = [];
 

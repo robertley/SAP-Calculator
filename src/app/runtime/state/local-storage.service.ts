@@ -18,36 +18,43 @@ export class LocalStorageService {
     this.setStorage(formGroup.value);
   }
 
-  setStorage(value: any) {
+  setStorage(value: unknown) {
     if (typeof value === 'object' && value !== null) {
-      const cache = new Set();
-      const replacer = (key: string, value: any) => {
-        if (key === 'equipment' && value && typeof value === 'object' && value.name) {
-          return { name: value.name };
+      const cache = new Set<unknown>();
+      const replacer = (key: string, replacerValue: unknown): unknown => {
+        if (
+          key === 'equipment' &&
+          typeof replacerValue === 'object' &&
+          replacerValue !== null &&
+          'name' in replacerValue
+        ) {
+          const equipmentName =
+            typeof replacerValue.name === 'string' ? replacerValue.name : null;
+          return equipmentName ? { name: equipmentName } : null;
         }
 
         // Prune service references that might be causing circular dependencies.
         if (['parent', 'logService', 'abilityService', 'gameService', 'petService'].includes(key)) {
-            return undefined;
+          return undefined;
         }
 
-        if (typeof value === 'object' && value !== null) {
-            if (cache.has(value)) {
-                // Circular reference found, discard.
-                return undefined;
-            }
-            cache.add(value);
+        if (typeof replacerValue === 'object' && replacerValue !== null) {
+          if (cache.has(replacerValue)) {
+            // Circular reference found, discard.
+            return undefined;
+          }
+          cache.add(replacerValue);
         }
-        return value;
+        return replacerValue;
       };
 
       try {
-          const jsonString = JSON.stringify(value, replacer);
-          window.localStorage.setItem(this.key, jsonString);
+        const jsonString = JSON.stringify(value, replacer);
+        window.localStorage.setItem(this.key, jsonString);
       } catch (e) {
-          console.error("Could not stringify value for local storage", e);
+        console.error('Could not stringify value for local storage', e);
       }
-    } else if (typeof value == 'string') {
+    } else if (typeof value === 'string') {
       window.localStorage.setItem(this.key, value);
     }
   }

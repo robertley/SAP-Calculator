@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { getDefaultTeams } from './team-presets.defaults';
+import { PetForm } from './pet/pet-factory.service';
 
 export interface TeamPreset {
   id: string;
   name: string;
   createdAt: number;
-  pets: any[];
+  pets: PetForm[];
   toyName?: string | null;
   toyLevel?: number;
   playerToyName?: string | null;

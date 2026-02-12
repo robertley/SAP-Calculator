@@ -56,11 +56,11 @@ export class Komodo extends Pet {
     this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 
-  shufflePets(start: number, end: number) {
+  shufflePets(start: number, end: number): Pet[] {
     let pets = this.parent.petArray.slice(start, end);
     shuffle(pets);
     for (let i = 0; i < pets.length; i++) {
-      this.parent[`pet${i}`] = pets[i];
+      this.parent.setPet(i, pets[i]);
     }
     return pets;
   }

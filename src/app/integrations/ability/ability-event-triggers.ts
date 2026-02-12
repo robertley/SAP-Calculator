@@ -22,7 +22,7 @@ export abstract class AbilityEventTriggers {
 
   // Summon events
   triggerSummonEvents(summonedPet: Pet) {
-    const parent = summonedPet?.parent as any;
+    const parent = summonedPet?.parent;
     if (!parent || !Array.isArray(parent.petArray)) {
       return;
     }
@@ -270,7 +270,7 @@ export abstract class AbilityEventTriggers {
 
   // Level up events handler
   triggerLevelUpEvents(levelUpPet: Pet) {
-    let player = levelUpPet.parent as any;
+    const player = levelUpPet.parent;
     this.triggerFriendlyLevelUpToyEvents(player, levelUpPet);
 
     // Check friends

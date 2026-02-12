@@ -1,5 +1,8 @@
 import { AbilityEvent } from 'app/domain/interfaces/ability-event.interface';
-import { AbilityTrigger } from 'app/domain/entities/ability.class';
+import {
+  AbilityCustomParams,
+  AbilityTrigger,
+} from 'app/domain/entities/ability.class';
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { getRandomInt } from 'app/runtime/random';
 
@@ -21,7 +24,7 @@ export function sortEventsByPriority(events: AbilityEvent[]): void {
 export function executeEventWithTransform(
   event: AbilityEvent,
   gameApi: GameAPI,
-  customParams?: any,
+  customParams?: AbilityCustomParams,
 ): void {
   const executingPet = event.pet;
 

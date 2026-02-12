@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { Ant } from 'app/domain/entities/catalog/pets/turtle/tier-1/ant.class';
 import { Cricket } from 'app/domain/entities/catalog/pets/turtle/tier-1/cricket.class';
 import { Fish } from 'app/domain/entities/catalog/pets/turtle/tier-1/fish.class';
@@ -59,7 +60,7 @@ import { Cat } from 'app/domain/entities/catalog/pets/turtle/tier-6/cat.class';
 import { Snake } from 'app/domain/entities/catalog/pets/turtle/tier-6/snake.class';
 import { Fly } from 'app/domain/entities/catalog/pets/turtle/tier-6/fly.class';
 
-export const TURTLE_PET_REGISTRY: { [key: string]: any } = {
+export const TURTLE_PET_REGISTRY: PetRegistryMap = {
   Ant: Ant,
   Cricket: Cricket,
   Fish: Fish,
@@ -121,5 +122,7 @@ export const TURTLE_PET_REGISTRY: { [key: string]: any } = {
   Snake: Snake,
   Fly: Fly,
 };
+
+
 
 

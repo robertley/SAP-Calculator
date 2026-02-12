@@ -24,16 +24,26 @@ export function openSelectionDialog(
   ctx.showSelectionDialog = true;
 }
 
-export function onItemSelected(ctx: AppUiContext, item: any): void {
+export function onItemSelected(ctx: AppUiContext, item: unknown): void {
   if (item instanceof Event) {
     ctx.showSelectionDialog = false;
     ctx.selectionSide = 'none';
     return;
   }
+  const itemRecord =
+    item && typeof item === 'object'
+      ? (item as { id?: unknown; name?: unknown; item?: unknown })
+      : null;
   if (!ctx.selectionSide || ctx.selectionSide === 'none') {
     if (ctx.selectionType === 'team') {
       ctx.selectedTeamId =
-        typeof item === 'string' ? item : item?.id || item?.name || '';
+        typeof item === 'string'
+          ? item
+          : typeof itemRecord?.id === 'string'
+            ? itemRecord.id
+            : typeof itemRecord?.name === 'string'
+              ? itemRecord.name
+              : '';
     }
     ctx.showSelectionDialog = false;
     ctx.selectionSide = 'none';
@@ -44,14 +54,24 @@ export function onItemSelected(ctx: AppUiContext, item: any): void {
   const type = ctx.selectionType;
 
   if (type === 'pack') {
-    const packName = item?.name || item;
+    const packName =
+      typeof item === 'string'
+        ? item
+        : typeof itemRecord?.name === 'string'
+          ? itemRecord.name
+          : null;
     if (side === 'player') {
       ctx.formGroup.get('playerPack').setValue(packName);
     } else {
       ctx.formGroup.get('opponentPack').setValue(packName);
     }
   } else if (type === 'toy') {
-    const rawToyName = item?.name || item || null;
+    const rawToyName =
+      typeof item === 'string'
+        ? item
+        : typeof itemRecord?.name === 'string'
+          ? itemRecord.name
+          : null;
     const toyName =
       typeof rawToyName === 'string' &&
       rawToyName.trim().toLowerCase() === 'none'
@@ -63,7 +83,12 @@ export function onItemSelected(ctx: AppUiContext, item: any): void {
       ctx.formGroup.get('opponentToy').setValue(toyName);
     }
   } else if (type === 'hard-toy') {
-    const rawToyName = item?.name || item || null;
+    const rawToyName =
+      typeof item === 'string'
+        ? item
+        : typeof itemRecord?.name === 'string'
+          ? itemRecord.name
+          : null;
     const toyName =
       typeof rawToyName === 'string' &&
       rawToyName.trim().toLowerCase() === 'none'
@@ -76,7 +101,13 @@ export function onItemSelected(ctx: AppUiContext, item: any): void {
     }
   } else if (type === 'team') {
     ctx.selectedTeamId =
-      typeof item === 'string' ? item : item?.id || item?.name || '';
+      typeof item === 'string'
+        ? item
+        : typeof itemRecord?.id === 'string'
+          ? itemRecord.id
+          : typeof itemRecord?.name === 'string'
+            ? itemRecord.name
+            : '';
   }
 
   ctx.showSelectionDialog = false;

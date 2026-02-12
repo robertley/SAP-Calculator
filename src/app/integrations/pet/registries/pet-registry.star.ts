@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { Pillbug } from 'app/domain/entities/catalog/pets/star/tier-1/pillbug.class';
 import { Cockroach } from 'app/domain/entities/catalog/pets/star/tier-1/cockroach.class';
 import { Frog } from 'app/domain/entities/catalog/pets/star/tier-1/frog.class';
@@ -58,7 +59,7 @@ import { Alpaca } from 'app/domain/entities/catalog/pets/star/tier-6/alpaca.clas
 import { Velociraptor } from 'app/domain/entities/catalog/pets/star/tier-6/velociraptor.class';
 import { Ammonite } from 'app/domain/entities/catalog/pets/star/tier-6/ammonite.class';
 
-export const STAR_PET_REGISTRY: { [key: string]: any } = {
+export const STAR_PET_REGISTRY: PetRegistryMap = {
   Pillbug: Pillbug,
   Cockroach: Cockroach,
   Frog: Frog,
@@ -119,5 +120,7 @@ export const STAR_PET_REGISTRY: { [key: string]: any } = {
   Iguana: Iguana,
   Pug: Pug,
 };
+
+
 
 

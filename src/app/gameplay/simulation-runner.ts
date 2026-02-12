@@ -252,8 +252,8 @@ export class SimulationRunner {
     this.petService.setCustomPackPools(config.customPacks ?? []);
 
     // Packs
-    this.player.pack = config.playerPack as any;
-    this.opponent.pack = config.opponentPack as any;
+    this.player.pack = config.playerPack as Player['pack'];
+    this.opponent.pack = config.opponentPack as Player['pack'];
 
     // Pet Pools - assuming this logic needs to access PetService tables
     const getPetPool = (pack: string) => {
@@ -414,16 +414,20 @@ export class SimulationRunner {
   }
 
   protected buildPetForm(petConfig: PetConfig): PetForm {
-    const equipmentValue = petConfig.equipment as any;
+    const equipmentValue = petConfig.equipment as unknown;
     let equipment: PetForm['equipment'] = null;
     if (typeof equipmentValue === 'string') {
       equipment = { name: equipmentValue };
     } else if (equipmentValue && typeof equipmentValue === 'object') {
       equipment = equipmentValue;
     }
+    const equipmentValueRecord =
+      equipmentValue && typeof equipmentValue === 'object'
+        ? (equipmentValue as { uses?: unknown })
+        : null;
 
     return {
-      ...(petConfig as any),
+      ...petConfig,
       name: petConfig.name,
       attack: petConfig.attack ?? 0,
       health: petConfig.health ?? 0,
@@ -434,7 +438,9 @@ export class SimulationRunner {
       equipment,
       equipmentUses:
         petConfig.equipmentUses ??
-        (typeof equipmentValue?.uses === 'number' ? equipmentValue.uses : null),
+        (typeof equipmentValueRecord?.uses === 'number'
+          ? equipmentValueRecord.uses
+          : null),
       battlesFought: petConfig.battlesFought ?? 0,
       timesHurt: petConfig.timesHurt ?? 0,
       friendsDiedBeforeBattle: petConfig.friendsDiedBeforeBattle ?? 0,

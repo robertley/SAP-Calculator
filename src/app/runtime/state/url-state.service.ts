@@ -24,7 +24,7 @@ const PARROT_COPY_PET_ABOMINATION_REVERSE_KEY_MAP: Record<string, string> =
     return map;
   })();
 
-const REVERSE_KEY_MAP = {
+const REVERSE_KEY_MAP: Record<string, string> = {
   pP: 'playerPack',
   oP: 'opponentPack',
   pT: 'playerToy',
@@ -143,13 +143,17 @@ const REVERSE_KEY_MAP = {
   tH: 'timesHurt',
 };
 
-function expandKeys(data) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function expandKeys(data: unknown): unknown {
   if (Array.isArray(data)) {
     return data.map((item) => expandKeys(item));
   }
-  if (data !== null && typeof data === 'object') {
-    const newObj = {};
-    for (const key in data) {
+  if (isRecord(data)) {
+    const newObj: Record<string, unknown> = {};
+    for (const key of Object.keys(data)) {
       const newKey = REVERSE_KEY_MAP[key] || key;
       newObj[newKey] = expandKeys(data[key]);
     }
@@ -162,7 +166,10 @@ function expandKeys(data) {
   providedIn: 'root',
 })
 export class UrlStateService {
-  parseCalculatorStateFromUrl(): { state: any | null; error?: string } {
+  parseCalculatorStateFromUrl(): {
+    state: Record<string, unknown> | null;
+    error?: string;
+  } {
     const params = new URLSearchParams(window.location.search);
     const hash = window.location.hash.startsWith('#')
       ? window.location.hash.slice(1)
@@ -180,15 +187,15 @@ export class UrlStateService {
       const decodedData = decodeURIComponent(encodedData);
       let truncatedJson;
       if (decodedData.trim().startsWith('{')) {
-        truncatedJson = JSON.parse(decodedData);
+        truncatedJson = JSON.parse(decodedData) as unknown;
       } else {
         const compressedData = atob(encodedData);
         const inflatedData = decodeURIComponent(compressedData);
-        truncatedJson = JSON.parse(inflatedData);
+        truncatedJson = JSON.parse(inflatedData) as unknown;
       }
 
       const fullKeyJson = expandKeys(truncatedJson);
-      return { state: fullKeyJson };
+      return isRecord(fullKeyJson) ? { state: fullKeyJson } : { state: null };
     } catch (e) {
       return {
         state: null,
@@ -197,7 +204,10 @@ export class UrlStateService {
     }
   }
 
-  parseApiStateFromUrl(): { state: any | null; error?: string } {
+  parseApiStateFromUrl(): {
+    state: Record<string, unknown> | null;
+    error?: string;
+  } {
     const params = new URLSearchParams(window.location.search);
     const apiCode = params.get('code');
 
@@ -206,8 +216,8 @@ export class UrlStateService {
     }
 
     try {
-      const jsonData = JSON.parse(decodeURIComponent(apiCode));
-      return { state: jsonData };
+      const jsonData = JSON.parse(decodeURIComponent(apiCode)) as unknown;
+      return isRecord(jsonData) ? { state: jsonData } : { state: null };
     } catch (e) {
       return { state: null, error: 'Error parsing API data from URL.' };
     }

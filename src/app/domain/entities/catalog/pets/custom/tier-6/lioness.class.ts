@@ -74,15 +74,14 @@ export class LionessAbility extends Ability {
 
     this.usesThisTurn++;
     const tier = triggerPet?.tier ?? owner.tier;
-    const futureShopKey = 'futureShopBuffs';
     const futureShopBuffs: Map<number, { attack: number; health: number }> =
-      (owner.parent as any)[futureShopKey] ?? new Map();
+      owner.parent.futureShopBuffs ?? new Map();
 
     const buff = futureShopBuffs.get(tier) ?? { attack: 0, health: 0 };
     buff.attack += this.level;
     buff.health += this.level;
     futureShopBuffs.set(tier, buff);
-    (owner.parent as any)[futureShopKey] = futureShopBuffs;
+    owner.parent.futureShopBuffs = futureShopBuffs;
 
     this.logService.createLog({
       message: `${owner.name} gave future tier ${tier} shop pets +${this.level}/+${this.level} (uses ${this.usesThisTurn}/2 this turn).`,

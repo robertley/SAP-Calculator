@@ -26,7 +26,12 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Unit Tests (Vitest Pilot Sample)
+        if: github.event_name == 'push'
+        run: npm run test:vitest:specs:pilot
+
       - name: Unit Tests (Vitest Specs)
+        if: github.event_name == 'pull_request'
         run: npm run test:vitest:specs
 
       - name: Build

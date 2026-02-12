@@ -1,6 +1,7 @@
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import {
   Ability,
+  AbilityCustomParams,
   AbilityTrigger,
   AbilityType,
 } from '../ability.class';
@@ -19,10 +20,10 @@ export abstract class PetAbilityFacade {
 
   setAbilityEquipments() {
     if (this.equipment?.name == 'Eggplant') {
-      this.equipment.callback(this as any);
+      this.equipment.callback(this.asPet());
       this.eggplantTouched = true;
     } else if (this.equipment?.callback) {
-      this.equipment.callback(this as any);
+      this.equipment.callback(this.asPet());
     }
   }
 
@@ -76,7 +77,7 @@ export abstract class PetAbilityFacade {
     triggerPet?: Pet,
     tiger?: boolean,
     pteranodon?: boolean,
-    customParams?: any,
+    customParams?: AbilityCustomParams,
   ): void {
     if (this.transformed && this.transformedInto) {
       this.transformedInto.executeAbilities(
@@ -131,7 +132,7 @@ export abstract class PetAbilityFacade {
     gameApi: GameAPI,
     type: AbilityType,
     triggerPet?: Pet,
-    customParams?: any,
+    customParams?: AbilityCustomParams,
   ): void {
     const matchingAbilities = this.getAbilities(trigger, type);
     for (const ability of matchingAbilities) {
@@ -147,7 +148,7 @@ export abstract class PetAbilityFacade {
     const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
     this.removeAbility(undefined, abilityType);
     for (const ability of abilitiesToCopy) {
-      const copiedAbility = ability.copy(this as any);
+      const copiedAbility = ability.copy(this.asPet());
       if (copiedAbility == null) {
         continue;
       }
@@ -182,7 +183,7 @@ export abstract class PetAbilityFacade {
   ): void {
     const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
     for (const ability of abilitiesToCopy) {
-      const copiedAbility = ability.copy(this as any);
+      const copiedAbility = ability.copy(this.asPet());
       if (copiedAbility == null) {
         continue;
       }
@@ -265,5 +266,9 @@ export abstract class PetAbilityFacade {
       return true;
     }
     return false;
+  }
+
+  protected asPet(): Pet {
+    return this as unknown as Pet;
   }
 }

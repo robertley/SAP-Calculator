@@ -12,14 +12,14 @@ export class CuckooChick extends Pet {
   hidden: boolean = true;
   attack = 1;
   health = 1;
-  override increaseAttack(amt) {
+  override increaseAttack(amt: number): void {
     if (amt <= 0 || !this.alive) {
       return;
     }
     this.attack = Math.min(this.attack + amt, 1);
   }
 
-  override increaseHealth(amt) {
+  override increaseHealth(amt: number): void {
     if (amt <= 0 || !this.alive) {
       return;
     }

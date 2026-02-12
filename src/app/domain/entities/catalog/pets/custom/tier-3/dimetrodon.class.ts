@@ -81,9 +81,12 @@ export class DimetrodonAbility extends Ability {
     const owner = this.owner;
     const level = this.level;
     const stats = 5 * level;
+    const ownerWithAbilityService = owner as Pet & {
+      abilityService: AbilityService;
+    };
     const summoned = new SummonedDimetrodon(
       this.logService,
-      (owner as any).abilityService,
+      ownerWithAbilityService.abilityService,
       owner.parent,
       stats,
       stats,

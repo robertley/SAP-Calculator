@@ -60,7 +60,7 @@ interface RunPositioningOptimizationParams {
   simulateBatch: (config: SimulationConfig) => SimulationResult;
 }
 
-const DEFAULT_MAX_SIMULATIONS_PER_PERMUTATION = 400;
+const DEFAULT_MAX_SIMULATIONS_PER_PERMUTATION = 250;
 const DEFAULT_BATCH_SIZE = 25;
 const DEFAULT_CONFIDENCE_Z = 1.96;
 const DEFAULT_MIN_SAMPLES_BEFORE_ELIMINATION = 50;
@@ -105,7 +105,7 @@ export function runPositioningOptimization(
 
   const petsKey = side === 'player' ? 'playerPets' : 'opponentPets';
   const sidePets = (baseConfig[petsKey] ?? []).slice();
-  const permutations = generateIndexPermutations(sidePets.length);
+  const permutations = generateIndexPermutations(sidePets);
   const candidates: CandidateState[] = permutations.map((order) => ({
     order,
     lineup: applyOrder(sidePets, order),
@@ -307,30 +307,148 @@ function applyOrder<T>(source: T[], order: number[]): T[] {
   return order.map((index) => source[index]);
 }
 
-function generateIndexPermutations(size: number): number[][] {
+function generateIndexPermutations<T>(source: T[]): number[][] {
+  const size = source.length;
   if (size <= 0) {
     return [[]];
   }
-  const working = Array.from({ length: size }, (_, index) => index);
-  const counters = new Array(size).fill(0);
-  const permutations: number[][] = [working.slice()];
-  let index = 0;
 
-  while (index < size) {
-    if (counters[index] < index) {
-      const swapLeft = index % 2 === 0 ? 0 : counters[index];
-      const swapRight = index;
-      const temp = working[swapLeft];
-      working[swapLeft] = working[swapRight];
-      working[swapRight] = temp;
-      permutations.push(working.slice());
-      counters[index] += 1;
-      index = 0;
+  const groups = groupEquivalentValues(source);
+  const remainingCounts = groups.map((group) => group.indices.length);
+  const groupOrder = new Array<number>(size);
+  const groupPermutations: number[][] = [];
+
+  generateGroupOrderPermutations(
+    0,
+    groupOrder,
+    remainingCounts,
+    groupPermutations,
+  );
+
+  return groupPermutations.map((permutation) =>
+    materializeIndexPermutation(permutation, groups),
+  );
+}
+
+function groupEquivalentValues<T>(
+  source: T[],
+): Array<{ representative: T; indices: number[] }> {
+  const groups: Array<{ representative: T; indices: number[] }> = [];
+
+  for (let index = 0; index < source.length; index += 1) {
+    const value = source[index];
+    const existingGroup = groups.find((group) =>
+      valuesAreEquivalent(group.representative, value),
+    );
+    if (existingGroup) {
+      existingGroup.indices.push(index);
       continue;
     }
-    counters[index] = 0;
-    index += 1;
+    groups.push({
+      representative: value,
+      indices: [index],
+    });
   }
 
-  return permutations;
+  return groups;
+}
+
+function generateGroupOrderPermutations(
+  depth: number,
+  groupOrder: number[],
+  remainingCounts: number[],
+  output: number[][],
+): void {
+  if (depth >= groupOrder.length) {
+    output.push(groupOrder.slice());
+    return;
+  }
+
+  for (
+    let groupIndex = 0;
+    groupIndex < remainingCounts.length;
+    groupIndex += 1
+  ) {
+    if (remainingCounts[groupIndex] <= 0) {
+      continue;
+    }
+
+    groupOrder[depth] = groupIndex;
+    remainingCounts[groupIndex] -= 1;
+    generateGroupOrderPermutations(
+      depth + 1,
+      groupOrder,
+      remainingCounts,
+      output,
+    );
+    remainingCounts[groupIndex] += 1;
+  }
+}
+
+function materializeIndexPermutation<T>(
+  groupOrder: number[],
+  groups: Array<{ representative: T; indices: number[] }>,
+): number[] {
+  const groupOffsets = groups.map(() => 0);
+
+  return groupOrder.map((groupIndex) => {
+    const offset = groupOffsets[groupIndex];
+    groupOffsets[groupIndex] += 1;
+    const index = groups[groupIndex].indices[offset];
+    if (index == null) {
+      throw new Error('Failed to map grouped permutation to index permutation.');
+    }
+    return index;
+  });
+}
+
+function valuesAreEquivalent(left: unknown, right: unknown): boolean {
+  if (Object.is(left, right)) {
+    return true;
+  }
+
+  if (left == null || right == null) {
+    return left === right;
+  }
+
+  if (Array.isArray(left) || Array.isArray(right)) {
+    if (!Array.isArray(left) || !Array.isArray(right)) {
+      return false;
+    }
+    if (left.length !== right.length) {
+      return false;
+    }
+    for (let index = 0; index < left.length; index += 1) {
+      if (!valuesAreEquivalent(left[index], right[index])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  if (typeof left !== 'object' || typeof right !== 'object') {
+    return false;
+  }
+
+  const leftRecord = left as Record<string, unknown>;
+  const rightRecord = right as Record<string, unknown>;
+  const leftKeys = Object.keys(leftRecord).sort();
+  const rightKeys = Object.keys(rightRecord).sort();
+
+  if (leftKeys.length !== rightKeys.length) {
+    return false;
+  }
+
+  for (let index = 0; index < leftKeys.length; index += 1) {
+    const leftKey = leftKeys[index];
+    const rightKey = rightKeys[index];
+    if (leftKey !== rightKey) {
+      return false;
+    }
+    if (!valuesAreEquivalent(leftRecord[leftKey], rightRecord[rightKey])) {
+      return false;
+    }
+  }
+
+  return true;
 }

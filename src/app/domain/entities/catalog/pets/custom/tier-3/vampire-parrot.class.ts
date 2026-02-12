@@ -59,7 +59,9 @@ export class VampireParrotAbility extends Ability {
     const uniqueAilments = new Set<string>();
 
     for (const pet of eligiblePets) {
-      const equipmentClass = (pet.equipment as any).equipmentClass;
+      const equipmentClass = (
+        pet.equipment as Equipment & { equipmentClass?: string }
+      ).equipmentClass;
       if (
         equipmentClass === 'ailment-attack' ||
         equipmentClass === 'ailment-defense' ||

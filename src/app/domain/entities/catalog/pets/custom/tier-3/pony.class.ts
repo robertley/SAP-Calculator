@@ -63,7 +63,9 @@ export class PonyAbility extends Ability {
       return;
     }
 
-    const abilityService = (player as any).abilityService as AbilityService;
+    const abilityService = (player as Player & {
+      abilityService: AbilityService;
+    }).abilityService;
 
     for (let i = 0; i < apples; i++) {
       this.applyBetterApple(target, abilityService);

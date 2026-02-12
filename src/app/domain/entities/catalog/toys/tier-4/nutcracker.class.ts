@@ -31,7 +31,7 @@ export class Nutcracker extends Toy {
     this.pendingSpawn = true;
     this.abilityService.setCounterEvent({
       priority: 0,
-      callback: (_trigger?: any, _gameApi?: GameAPI, _triggerPet?: Pet) => {
+      callback: (_trigger?: unknown, _gameApi?: GameAPI, _triggerPet?: Pet) => {
         this.pendingSpawn = false;
         this.attemptSalmonSpawn();
       },

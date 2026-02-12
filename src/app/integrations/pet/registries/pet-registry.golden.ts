@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { Bulldog } from 'app/domain/entities/catalog/pets/golden/tier-1/bulldog.class';
 import { Groundhog } from 'app/domain/entities/catalog/pets/golden/tier-1/groundhog.class';
 import { ConeSnail } from 'app/domain/entities/catalog/pets/golden/tier-1/cone-snail.class';
@@ -59,7 +60,7 @@ import { GermanShepherd } from 'app/domain/entities/catalog/pets/golden/tier-6/g
 import { BirdOfParadise } from 'app/domain/entities/catalog/pets/golden/tier-6/bird-of-paradise.class';
 import { Oyster } from 'app/domain/entities/catalog/pets/golden/tier-6/oyster.class';
 
-export const GOLDEN_PET_REGISTRY: { [key: string]: any } = {
+export const GOLDEN_PET_REGISTRY: PetRegistryMap = {
   Bulldog: Bulldog,
   Groundhog: Groundhog,
   'Cone Snail': ConeSnail,
@@ -121,5 +122,7 @@ export const GOLDEN_PET_REGISTRY: { [key: string]: any } = {
   Pteranodon: Pteranodon,
   Wolf: Wolf,
 };
+
+
 
 

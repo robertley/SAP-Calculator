@@ -137,11 +137,17 @@ export class EquipmentFactoryService {
   }
 
   private initRandomEquipment() {
-    const foods = (foodJson as any).default || foodJson;
+    const foods =
+      (foodJson as unknown as { default?: unknown }).default ??
+      (foodJson as unknown);
     if (Array.isArray(foods)) {
       for (const food of foods) {
-        if (food.Random) {
-          this.randomEquipmentSet.add(food.Name);
+        if (!food || typeof food !== 'object') {
+          continue;
+        }
+        const entry = food as { Random?: unknown; Name?: unknown };
+        if (entry.Random === true && typeof entry.Name === 'string') {
+          this.randomEquipmentSet.add(entry.Name);
         }
       }
     }

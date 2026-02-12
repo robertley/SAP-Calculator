@@ -117,7 +117,7 @@ export class CustomPackEditorComponent implements OnInit {
     };
   }
 
-  submitEvent(event) {
+  submitEvent(event: FormGroup) {
     if (this.customPacks.controls.includes(event)) {
       // update
     } else {

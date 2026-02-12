@@ -3,6 +3,7 @@ import { AbilityService } from '../ability/ability.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { Player } from 'app/domain/entities/player.class';
 import { Pet } from 'app/domain/entities/pet.class';
+import { Equipment } from 'app/domain/entities/equipment.class';
 import { GoblinShark } from 'app/domain/entities/catalog/pets/custom/tier-4/goblin-shark.class';
 import { RedLippedBatfish } from 'app/domain/entities/catalog/pets/custom/tier-4/red-lipped-batfish.class';
 import { Kappa } from 'app/domain/entities/catalog/pets/custom/tier-5/kappa.class';
@@ -39,6 +40,9 @@ import { Hippogriff } from 'app/domain/entities/catalog/pets/custom/tier-5/hippo
 import { Leviathan } from 'app/domain/entities/catalog/pets/custom/tier-6/leviathan.class';
 import { Tadpole } from 'app/domain/entities/catalog/pets/custom/tier-2/tadpole.class';
 import { Stoat } from 'app/domain/entities/catalog/pets/golden/tier-2/stoat.class';
+import { PetRegistryMap } from './pet-registry.types';
+import { PetForm } from './pet-form.interface';
+import type { PetService } from './pet.service';
 
 export interface PetFactoryDeps {
   logService: LogService;
@@ -46,8 +50,19 @@ export interface PetFactoryDeps {
   gameService: GameService;
 }
 
+export type PetFactoryPetService = PetService;
+
+type SpecialBuilderPetForm = PetForm & { equipment?: Equipment | null };
+
+export type SpecialFormPetBuilder = (
+  deps: PetFactoryDeps,
+  petForm: SpecialBuilderPetForm,
+  parent: Player,
+  petService: PetFactoryPetService,
+) => Pet;
+
 // Registry: Pet names -> Classes that need PetService
-export const PETS_NEEDING_PETSERVICE: { [key: string]: any } = {
+export const PETS_NEEDING_PETSERVICE: PetRegistryMap = {
   Spider: Spider,
   Whale: Whale,
   Parrot: Parrot,
@@ -83,12 +98,12 @@ export const PETS_NEEDING_PETSERVICE: { [key: string]: any } = {
 };
 
 // Registry: Pet names -> Classes that need PetService AND GameService
-export const PETS_NEEDING_GAMESERVICE: { [key: string]: any } = {
+export const PETS_NEEDING_GAMESERVICE: PetRegistryMap = {
   Seagull: Seagull,
   'Good Dog': GoodDog,
 };
 
-export const PETS_NEEDING_PETSERVICE_TYPES: any[] = [
+export const PETS_NEEDING_PETSERVICE_TYPES: unknown[] = [
   GoblinShark,
   RedLippedBatfish,
   Kappa,
@@ -123,16 +138,13 @@ export const PETS_NEEDING_PETSERVICE_TYPES: any[] = [
   Stoat,
 ];
 
-export const PETS_NEEDING_GAMESERVICE_TYPES: any[] = [Seagull, GoodDog];
+export const PETS_NEEDING_GAMESERVICE_TYPES: unknown[] = [
+  Seagull,
+  GoodDog,
+];
 
-export const SPECIAL_FORM_PET_BUILDERS: {
-  [key: string]: (
-    deps: PetFactoryDeps,
-    petForm: any,
-    parent: Player,
-    petService: any,
-  ) => Pet;
-} = {
+export const SPECIAL_FORM_PET_BUILDERS: Record<string, SpecialFormPetBuilder> =
+  {
   'Beluga Whale': (deps, petForm, parent, petService) => {
     return new BelugaWhale(
       deps.logService,
@@ -213,6 +225,6 @@ export const SPECIAL_FORM_PET_BUILDERS: {
       petForm.triggersConsumed,
     );
   },
-};
+  };
 
 

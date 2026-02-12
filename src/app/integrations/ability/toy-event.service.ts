@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { shuffle } from 'lodash-es';
-import { AbilityEvent } from 'app/domain/interfaces/ability-event.interface';
+import {
+  AbilityEvent,
+  AbilityEventCallback,
+} from 'app/domain/interfaces/ability-event.interface';
 import { RandomEventReason } from 'app/domain/interfaces/log.interface';
 import { Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
@@ -29,7 +32,7 @@ export class ToyEventService {
     queue: AbilityEvent[],
     player: Player,
     triggerPet: Pet | undefined,
-    callback: (...args: any[]) => void,
+    callback: AbilityEventCallback,
   ): void {
     this.addToyEvent(queue, {
       callback,

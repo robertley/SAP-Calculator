@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Pet } from 'app/domain/entities/pet.class';
 import { getPetIconPath } from 'app/runtime/asset-catalog';
+import { SwallowedPetTarget } from '../pet-selector.constants';
 
 @Component({
     selector: 'app-swallowed-pet-selector',
@@ -13,29 +15,13 @@ import { getPetIconPath } from 'app/runtime/asset-catalog';
 })
 export class SwallowedPetSelectorComponent {
     @Input() formGroup!: FormGroup;
-    @Input() pet: any;
+    @Input() pet: Pet | null = null;
     @Input() showSwallowedLevels = false;
 
     @Output() openSelection = new EventEmitter<{
         type: 'pet' | 'equipment' | 'swallowed-pet',
         index?: number,
-        target:
-        | 'pet'
-        | 'abomination'
-        | 'sarcastic'
-        | 'abomination-beluga'
-        | 'parrot'
-        | 'parrot-beluga'
-        | 'parrot-abomination'
-        | 'parrot-abomination-beluga'
-        | 'abomination-parrot'
-        | 'abomination-parrot-beluga'
-        | 'abomination-parrot-abomination'
-        | 'abomination-parrot-abomination-beluga'
-        | 'parrot-abomination-parrot'
-        | 'parrot-abomination-parrot-beluga'
-        | 'parrot-abomination-parrot-abomination'
-        | 'parrot-abomination-parrot-abomination-beluga',
+        target: SwallowedPetTarget,
         parentIndex?: number
     }>();
 
@@ -75,23 +61,7 @@ export class SwallowedPetSelectorComponent {
     openSelectionDialog(
         type: 'swallowed-pet',
         index?: number,
-        target:
-            | 'pet'
-            | 'abomination'
-            | 'sarcastic'
-            | 'abomination-beluga'
-            | 'parrot'
-            | 'parrot-beluga'
-            | 'parrot-abomination'
-            | 'parrot-abomination-beluga'
-            | 'abomination-parrot'
-            | 'abomination-parrot-beluga'
-            | 'abomination-parrot-abomination'
-            | 'abomination-parrot-abomination-beluga'
-            | 'parrot-abomination-parrot'
-            | 'parrot-abomination-parrot-beluga'
-            | 'parrot-abomination-parrot-abomination'
-            | 'parrot-abomination-parrot-abomination-beluga' = 'pet',
+        target: SwallowedPetTarget = 'pet',
         parentIndex?: number
     ) {
         this.openSelection.emit({ type, index, target, parentIndex });
