@@ -75,15 +75,15 @@ export class SphinxAbility extends Ability {
     );
     const toyName = adventurousToys[choice.index];
 
-    const newToy = (gameApi as any).toyService.createToy(
+    const newToy = gameApi?.toyService?.createToy(
       toyName,
       owner.parent,
       toyLevel,
-    );
+    ) as Player['toy'];
     if (newToy) {
       owner.parent.toy = newToy;
 
-      (gameApi as any).logService.createLog({
+      gameApi?.logService?.createLog({
         message: `${owner.name} gained a level ${toyLevel} ${toyName}.`,
         type: 'ability',
         player: owner.parent,

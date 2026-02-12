@@ -17,8 +17,17 @@ import type { Pet } from '../pet.class';
 import { PetTargetingRuntimeFacade } from './pet-targeting-runtime-facade';
 import { getRandomFloat } from 'app/runtime/random';
 
+interface AbilityLifecycle {
+  reset(): void;
+  initUses(): void;
+}
+
 export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
-  [key: string]: any;
+  abstract mana: number;
+  abstract suppressManaSnipeOnFaint: boolean;
+  abstract exp?: number;
+  abstract sellValue: number;
+  abstract baseSellValue: number;
 
   initAbilities() {
     this.initAbilityUses();
@@ -42,13 +51,13 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
   }
 
   resetAbilityUses() {
-    this.abilityList.forEach((ability: any) => {
+    this.abilityList.forEach((ability: AbilityLifecycle) => {
       ability.reset();
     });
   }
 
   initAbilityUses() {
-    this.abilityList.forEach((ability: any) => {
+    this.abilityList.forEach((ability: AbilityLifecycle) => {
       ability.initUses();
     });
   }
@@ -59,7 +68,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     power?: number,
     random: boolean = false,
   ) {
-    attackPetImpl(this as any, pet as any, jumpAttack, power, random);
+    attackPetImpl(this.asPet(), pet, jumpAttack, power, random);
   }
 
   applyCrisp() {
@@ -109,8 +118,8 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     basePowerForLog?: number,
   ) {
     return snipePetImpl(
-      this as any,
-      pet as any,
+      this.asPet(),
+      pet,
       power,
       randomEvent,
       tiger,
@@ -138,11 +147,11 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     mapleSyrupReduction?: number;
     ghostKittenReduction?: number;
   } {
-    return calculateDamageImpl(this as any, pet as any, manticoreMult, power, snipe);
+    return calculateDamageImpl(this.asPet(), pet, manticoreMult, power, snipe);
   }
 
   resetPet() {
-    resetPetState(this as any);
+    resetPetState(this.asPet());
   }
 
   jumpAttackPrep(target: Pet) {
@@ -157,7 +166,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     damage?: number,
     randomEvent: boolean = false,
   ) {
-    jumpAttackImpl(this as any, target as any, tiger, damage, randomEvent);
+    jumpAttackImpl(this.asPet(), target, tiger, damage, randomEvent);
   }
 
   get alive(): boolean {
@@ -173,8 +182,8 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
       this.abilityService.setManaEvent({
         priority: this.attack,
         callback: (
-          _trigger: any,
-          _abilityTrigger: any,
+          _trigger: unknown,
+          _abilityTrigger: unknown,
           _gameApi: GameAPI,
           _triggerPet?: Pet,
         ) => {
@@ -185,7 +194,13 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
             return;
           }
           const opponent = this.parent.opponent;
-          const targetResp = opponent.getRandomPet([], false, true, false, this);
+          const targetResp = opponent.getRandomPet(
+            [],
+            false,
+            true,
+            false,
+            this.asPet(),
+          );
 
           if (targetResp.pet == null) {
             return;
@@ -266,7 +281,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
       });
       this.removePerk();
     }
-    dealDamageImpl(this as any, pet as any, damage);
+    dealDamageImpl(this.asPet(), pet, damage);
   }
 
   triggerHurtEventsFor(pet: Pet, damage: number): void {
@@ -341,19 +356,19 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     if (!parent) {
       return this.savedPosition;
     }
-    if (this == parent.pet0) {
+    if (this.asPet() == parent.pet0) {
       return 0;
     }
-    if (this == parent.pet1) {
+    if (this.asPet() == parent.pet1) {
       return 1;
     }
-    if (this == parent.pet2) {
+    if (this.asPet() == parent.pet2) {
       return 2;
     }
-    if (this == parent.pet3) {
+    if (this.asPet() == parent.pet3) {
       return 3;
     }
-    if (this == parent.pet4) {
+    if (this.asPet() == parent.pet4) {
       return 4;
     }
     return this.savedPosition;

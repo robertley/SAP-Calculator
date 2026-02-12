@@ -60,7 +60,7 @@ export class HammerheadSharkAbility extends Ability {
     }
 
     const goldGain = this.level * 3;
-    const player = owner.parent as any;
+    const player = owner.parent;
     player.gold = (player.gold ?? 0) + goldGain;
 
     this.logService.createLog({

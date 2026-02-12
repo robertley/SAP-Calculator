@@ -19,10 +19,10 @@ export class CustomPackFormComponent implements OnInit {
   petPackMap: Map<number, Map<string, string[]>>;
 
   @Output()
-  submitEvent: EventEmitter<any> = new EventEmitter<any>();
+  submitEvent: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
 
   @Output()
-  cancelEvent: EventEmitter<any> = new EventEmitter<any>();
+  cancelEvent: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
 
   checkboxFormGroup: FormGroup;
   loaded = false;

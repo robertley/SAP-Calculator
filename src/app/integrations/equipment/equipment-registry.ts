@@ -114,8 +114,15 @@ export interface EquipmentRegistryDeps {
   petService: PetService | null;
 }
 
+type NoArgEquipmentConstructor = new () => Equipment;
+type LogOnlyEquipmentConstructor = new (logService: LogService) => Equipment;
+type LogAbilityEquipmentConstructor = new (
+  logService: LogService,
+  abilityService: AbilityService,
+) => Equipment;
+
 // No-arg equipment
-export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
+export const NO_ARG_EQUIPMENT: Record<string, NoArgEquipmentConstructor> = {
   Garlic: Garlic,
   'Meat Bone': MeatBone,
   Steak: Steak,
@@ -166,7 +173,7 @@ export const NO_ARG_EQUIPMENT: { [key: string]: any } = {
 };
 
 // LogService-only equipment
-export const LOG_ONLY_EQUIPMENT: { [key: string]: any } = {
+export const LOG_ONLY_EQUIPMENT: Record<string, LogOnlyEquipmentConstructor> = {
   Cake: Cake,
   Egg: Egg,
   Squash: Squash,
@@ -195,7 +202,10 @@ export const LOG_ONLY_EQUIPMENT: { [key: string]: any } = {
 };
 
 // LogService + AbilityService equipment
-export const LOG_ABILITY_EQUIPMENT: { [key: string]: any } = {
+export const LOG_ABILITY_EQUIPMENT: Record<
+  string,
+  LogAbilityEquipmentConstructor
+> = {
   Honey: Honey,
   Chili: Chili,
   'Chocolate Cake': ChocolateCake,
@@ -208,7 +218,7 @@ export const LOG_ABILITY_EQUIPMENT: { [key: string]: any } = {
 };
 
 // Ailments - mostly no args
-export const NO_ARG_AILMENTS: { [key: string]: any } = {
+export const NO_ARG_AILMENTS: Record<string, NoArgEquipmentConstructor> = {
   Cold: Cold,
   Crisp: Crisp,
   Dazed: Dazed,

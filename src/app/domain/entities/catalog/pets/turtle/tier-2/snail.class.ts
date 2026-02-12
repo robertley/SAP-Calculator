@@ -53,7 +53,7 @@ export class SnailAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
-    const gameApi = context.gameApi as any;
+    const gameApi = context.gameApi;
     const isPlayer = owner.parent === gameApi?.player;
     const lostLastBattle = isPlayer
       ? Boolean(gameApi?.playerLostLastBattle)

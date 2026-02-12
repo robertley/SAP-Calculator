@@ -116,7 +116,7 @@ export class ChameleonAbility extends Ability {
   }
   private addToyAbility(toyName: string): void {
     let owner = this.owner;
-    const toyAbilityMap: { [key: string]: any } = {
+    const toyAbilityMap: Record<string, () => Ability> = {
       'Tennis Ball': () => new TennisBallAbility(owner, this.logService),
       Balloon: () => new BalloonAbility(owner, this.logService),
       'Plastic Saw': () => new PlasticSawAbility(owner, this.logService),

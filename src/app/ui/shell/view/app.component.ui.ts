@@ -103,11 +103,11 @@ export function loadLocalStorage(ctx: AppUiContext): void {
 
 export function applyCalculatorState(
   ctx: AppUiContext,
-  calculator: any,
+  calculator: unknown,
 ): void {
   ctx.calculatorStateService.applyCalculatorState(
     ctx.formGroup,
-    calculator,
+    calculator as Record<string, unknown>,
     ctx.dayNight,
     () => fixCustomPackSelect(ctx),
   );

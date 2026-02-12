@@ -4,6 +4,7 @@ import { LogService } from '../log.service';
 import { AbilityService } from '../ability/ability.service';
 import { EquipmentService } from '../equipment/equipment.service';
 import { PetService } from '../pet/pet.service';
+import type { ToyService } from './toy.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { Balloon } from 'app/domain/entities/catalog/toys/tier-1/balloon.class';
 import { TennisBall } from 'app/domain/entities/catalog/toys/tier-1/tennis-ball.class';
@@ -65,10 +66,12 @@ import { Nutcracker } from 'app/domain/entities/catalog/toys/tier-4/nutcracker.c
 import { TinderBox } from 'app/domain/entities/catalog/toys/tier-4/tinder-box.class';
 import { MicrowaveOven } from 'app/domain/entities/catalog/toys/tier-2/microwave-oven.class';
 
+export type ToyRuntimeService = ToyService;
+
 export interface ToyRegistryDeps {
   logService: LogService;
   abilityService: AbilityService;
-  toyService: any;
+  toyService: ToyRuntimeService;
   parent: Player;
   level: number;
   petService?: PetService;
@@ -76,8 +79,23 @@ export interface ToyRegistryDeps {
   gameService?: GameService;
 }
 
+type StandardToyConstructor = new (
+  logService: LogService,
+  toyService: ToyRuntimeService,
+  parent: Player,
+  level: number,
+) => Toy;
+
+type AbilityServiceToyConstructor = new (
+  logService: LogService,
+  toyService: ToyRuntimeService,
+  abilityService: AbilityService,
+  parent: Player,
+  level: number,
+) => Toy;
+
 // Standard toys (logService, toyService, parent, level)
-export const STANDARD_TOYS: { [key: string]: any } = {
+export const STANDARD_TOYS: Record<string, StandardToyConstructor> = {
   'Action Figure': ActionFigure,
   Balloon: Balloon,
   'Chocolate Box': ChocolateBox,
@@ -94,11 +112,9 @@ export const STANDARD_TOYS: { [key: string]: any } = {
   'Pogo Stick': PogoStick,
   'Remote Car': RemoteCar,
   'Ring Pyramid': RingPyramid,
-  'Rubber Duck': RubberDuck,
   Scale: Scale,
   'Soccer Ball': SoccerBall,
   'Sticky Hand': StickyHand,
-  'Stuffed Bear': StuffedBear,
   Radio: Radio,
   'Plastic Saw': PlasticSaw,
   'Toilet Paper': ToiletPaper,
@@ -134,7 +150,10 @@ export const STANDARD_TOYS: { [key: string]: any } = {
 };
 
 // Toys needing AbilityService (logService, toyService, abilityService, parent, level)
-export const TOYS_NEEDING_ABILITY_SERVICE: { [key: string]: any } = {
+export const TOYS_NEEDING_ABILITY_SERVICE: Record<
+  string,
+  AbilityServiceToyConstructor
+> = {
   'Evil Book': EvilBook,
   Nutcracker: Nutcracker,
   'Tinder Box': TinderBox,

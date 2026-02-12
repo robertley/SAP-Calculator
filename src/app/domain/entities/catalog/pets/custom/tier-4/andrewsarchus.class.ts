@@ -10,15 +10,24 @@ import * as petJson from 'assets/data/pets.json';
 const PET_STATS_BY_NAME: Map<string, { attack: number; health: number }> =
   new Map();
 const petEntries =
-  (petJson as unknown as { default?: any[] }).default ?? (petJson as any[]);
+  (petJson as unknown as { default?: unknown[] }).default ??
+  (petJson as unknown[]);
 if (Array.isArray(petEntries)) {
   for (const pet of petEntries) {
-    if (!pet?.Name) {
+    if (!pet || typeof pet !== 'object') {
       continue;
     }
-    const attack = Number(pet.Attack ?? 0);
-    const health = Number(pet.Health ?? 0);
-    PET_STATS_BY_NAME.set(pet.Name, { attack, health });
+    const petRecord = pet as {
+      Name?: string;
+      Attack?: unknown;
+      Health?: unknown;
+    };
+    if (!petRecord.Name) {
+      continue;
+    }
+    const attack = Number(petRecord.Attack ?? 0);
+    const health = Number(petRecord.Health ?? 0);
+    PET_STATS_BY_NAME.set(petRecord.Name, { attack, health });
   }
 }
 

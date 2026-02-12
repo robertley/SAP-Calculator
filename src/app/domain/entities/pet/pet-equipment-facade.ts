@@ -6,6 +6,7 @@ import { WhiteOkra } from 'app/domain/entities/catalog/equipment/danger/white-ok
 import { Strawberry } from 'app/domain/entities/catalog/equipment/star/strawberry.class';
 import { Blackberry } from 'app/domain/entities/catalog/equipment/puppy/blackberry.class';
 import { Equipment } from '../equipment.class';
+import { Player } from '../player.class';
 import { PetAbilityFacade } from './pet-ability-facade';
 
 export abstract class PetEquipmentFacade extends PetAbilityFacade {
@@ -16,7 +17,7 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
   abstract health: number;
   abstract level: number;
   abstract alive: boolean;
-  abstract parent: any;
+  abstract parent: Player;
   abstract equipment?: Equipment;
   abstract lastLostEquipment?: Equipment;
   abstract getSparrowLevel(): number;
@@ -71,7 +72,7 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
     this.setEquipmentMultiplier(pandorasBoxLevel);
     this.removeAbility(undefined, 'Equipment');
     if (this.equipment.callback) {
-      this.equipment.callback(this as any);
+      this.equipment.callback(this.asPet());
     }
   }
 
@@ -94,7 +95,7 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
 
     if (!wasAilment) {
       this.abilityService.triggerPerkLossEvents(
-        this as any,
+        this.asPet(),
         this.lastLostEquipment?.name,
       );
     }
@@ -142,7 +143,7 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
     } else {
       this.increaseHealth(multiplier);
     }
-    this.abilityService.triggerFoodEvents(this as any, 'corn');
+    this.abilityService.triggerFoodEvents(this.asPet(), 'corn');
     return true;
   }
 
@@ -191,7 +192,7 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
       this.removePerk(true);
     }
     this.applyEquipment(equipment, pandorasBoxLevel);
-    this.abilityService.triggerAilmentGainEvents(this as any, equipment.name);
+    this.abilityService.triggerAilmentGainEvents(this.asPet(), equipment.name);
     return true;
   }
 
@@ -215,7 +216,7 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
       this.applyEquipment(equipment, pandorasBoxLevel);
     }
 
-    this.abilityService.triggerPerkGainEvents(this as any, equipment.name);
-    this.abilityService.triggerFoodEvents(this as any, equipment.name);
+    this.abilityService.triggerPerkGainEvents(this.asPet(), equipment.name);
+    this.abilityService.triggerFoodEvents(this.asPet(), equipment.name);
   }
 }

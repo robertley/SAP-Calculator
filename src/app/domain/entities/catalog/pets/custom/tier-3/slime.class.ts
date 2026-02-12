@@ -67,9 +67,12 @@ export class SlimeAbility extends Ability {
     let summoned = 0;
 
     for (let i = 0; i < slimesToSpawn; i++) {
+      const ownerWithAbilityService = owner as Pet & {
+        abilityService: AbilityService;
+      };
       const slime = new SmallerSlime(
         this.logService,
-        (owner as any).abilityService,
+        ownerWithAbilityService.abilityService,
         owner.parent,
         stats,
         stats,

@@ -68,9 +68,13 @@ export class WhaleSummonAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
+    const swallowedPets = owner.swallowedPets ?? [];
 
-    while ((owner as any).swallowedPets.length > 0) {
-      let pet = (owner as any).swallowedPets.shift();
+    while (swallowedPets.length > 0) {
+      const pet = swallowedPets.shift();
+      if (!pet) {
+        continue;
+      }
 
       let summonResult = owner.parent.summonPet(
         pet,
@@ -145,7 +149,10 @@ export class WhaleSwallowAbility extends Ability {
       },
       owner.parent,
     );
-    (owner as any).swallowedPets.push(swallowPet);
+    if (!owner.swallowedPets) {
+      owner.swallowedPets = [];
+    }
+    owner.swallowedPets.push(swallowPet);
     targetPet.health = 0;
     this.logService.createLog({
       message: `${owner.name} swallowed ${targetPet.name}`,

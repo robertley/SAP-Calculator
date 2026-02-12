@@ -53,7 +53,7 @@ export interface AppUiContext {
   opponentHardToyImageUrl: string;
   playerPetsControls: AbstractControl[];
   opponentPetsControls: AbstractControl[];
-  undoState?: any;
+  undoState?: unknown;
   simulated?: boolean;
   battles?: Battle[];
   battleRandomEvents?: LogMessagePart[][];

@@ -1,6 +1,8 @@
 import type { TeamPreset } from './team-presets.service';
 import { getShoggothDefaultTeams } from './team-presets.shoggoth';
 
+type TeamPresetPet = TeamPreset['pets'][number];
+
 export function getDefaultTeams(): TeamPreset[] {
     return [
       {
@@ -9,7 +11,7 @@ export function getDefaultTeams(): TeamPreset[] {
         createdAt: Date.now(),
         toyName: 'Nutcracker',
         toyLevel: 3,
-        pets: Array.from({ length: 5 }, () => ({
+        pets: Array.from({ length: 5 }, (): TeamPresetPet => ({
           name: 'Sea Serpent',
           attack: 50,
           health: 50,
@@ -36,7 +38,7 @@ export function getDefaultTeams(): TeamPreset[] {
         createdAt: Date.now(),
         toyName: 'Evil Book',
         toyLevel: 3,
-        pets: Array.from({ length: 5 }, () => ({
+        pets: Array.from({ length: 5 }, (): TeamPresetPet => ({
           name: 'Beluga Whale',
           attack: 50,
           health: 50,
@@ -211,7 +213,7 @@ export function getDefaultTeams(): TeamPreset[] {
         createdAt: Date.now(),
         toyName: null,
         toyLevel: 1,
-        pets: Array.from({ length: 5 }, () => ({
+        pets: Array.from({ length: 5 }, (): TeamPresetPet => ({
           name: 'Sloth',
           attack: 1,
           health: 1,
@@ -238,7 +240,7 @@ export function getDefaultTeams(): TeamPreset[] {
         createdAt: Date.now(),
         toyName: 'Nutcracker',
         toyLevel: 3,
-        pets: Array.from({ length: 5 }, () => ({
+        pets: Array.from({ length: 5 }, (): TeamPresetPet => ({
           name: 'Leopard',
           attack: 50,
           health: 50,

@@ -3,8 +3,10 @@ import { Toy } from '../../../toy.class';
 import { Walnut } from 'app/domain/entities/catalog/equipment/puppy/walnut.class';
 import { LogService } from 'app/integrations/log.service';
 import { PetService } from 'app/integrations/pet/pet.service';
+import { ToyService } from 'app/integrations/toy/toy.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { Pet } from '../../../pet.class';
+import { Player } from '../../../player.class';
 
 
 export class Stick extends Toy {
@@ -13,8 +15,8 @@ export class Stick extends Toy {
 
   constructor(
     protected logService: LogService,
-    protected toyService: any,
-    parent: any,
+    protected toyService: ToyService,
+    parent: Player,
     level: number,
     private petService?: PetService,
   ) {

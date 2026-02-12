@@ -9,7 +9,6 @@ const PET_REGISTRY_DIR = path.join(
   'src',
   'app',
   'integrations',
-  'services',
   'pet',
   'registries',
 );
@@ -18,7 +17,6 @@ const TOY_REGISTRY_FILE = path.join(
   'src',
   'app',
   'integrations',
-  'services',
   'toy',
   'toy-registry.ts',
 );
@@ -27,10 +25,13 @@ const EQUIPMENT_REGISTRY_FILE = path.join(
   'src',
   'app',
   'integrations',
-  'services',
   'equipment',
   'equipment-registry.ts',
 );
+const PETS_JSON = path.join(ROOT, 'src', 'assets', 'data', 'pets.json');
+const TOYS_JSON = path.join(ROOT, 'src', 'assets', 'data', 'toys.json');
+const FOOD_JSON = path.join(ROOT, 'src', 'assets', 'data', 'food.json');
+const PERKS_JSON = path.join(ROOT, 'src', 'assets', 'data', 'perks.json');
 
 function slugify(value) {
   return value
@@ -38,6 +39,237 @@ function slugify(value) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .replace(/--+/g, '-');
+}
+
+function quote(value) {
+  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function readJson(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+}
+
+function firstAbilityText(entry) {
+  if (!Array.isArray(entry?.Abilities)) {
+    return null;
+  }
+  const lvl1 =
+    entry.Abilities.find((ability) => Number(ability?.Level) === 1)?.About ??
+    entry.Abilities[0]?.About;
+  if (typeof lvl1 !== 'string') {
+    return null;
+  }
+  const text = lvl1.trim();
+  return text.length ? text : null;
+}
+
+function getAbilityPrefix(text) {
+  const idx = text.indexOf(':');
+  if (idx < 0) {
+    return '';
+  }
+  return text.slice(0, idx).trim().toLowerCase();
+}
+
+const SHOP_TRIGGER_PREFIXES = [
+  'start of turn',
+  'end turn',
+  'break',
+  'sell',
+  'buy',
+  'friend sold',
+  'friend bought',
+  'friendly level-up',
+  'level-up',
+  'shop',
+  'roll',
+  'three friends bought',
+  'spend',
+  'food bought',
+  'eats',
+  'eat',
+  'pet sold',
+];
+
+const BATTLE_TRIGGER_PREFIXES = [
+  'before battle',
+  'start of battle',
+  'before attack',
+  'after attack',
+  'faint',
+  'hurt',
+  'friend summoned',
+  'summoned',
+  'friend faints',
+  'friend hurt',
+  'friend ahead',
+  'enemy summoned',
+  'enemy hurt',
+  'enemy faints',
+  'enemy gained ailment',
+  'friendly attacked',
+  'friend attacked',
+  'adjacent friend attacked',
+  'before friend attacks',
+  'before any attack',
+  'before first attack',
+  'empty front space',
+  'knock out',
+  'anyone',
+  'bee summoned',
+  'pet flung',
+  'enemy',
+];
+
+const TOY_BATTLE_SUPPORTED_PREFIXES = new Set([
+  'start of battle',
+  'empty front space',
+  'faint',
+  'friend summoned',
+]);
+
+const EQUIPMENT_BATTLE_SUPPORTED_PREFIXES = new Set([
+  'start of battle',
+  'before battle',
+  'before attack',
+  'faint',
+  'hurt',
+  'empty front space',
+  'knock out',
+  'anyone attacks',
+]);
+
+function classifyAbilityScope(abilityText) {
+  if (!abilityText) {
+    return { scope: 'none', reason: 'No ability text.' };
+  }
+  const text = abilityText.trim();
+  if (!text || /^No ability\./i.test(text)) {
+    return { scope: 'none', reason: 'No ability text.' };
+  }
+
+  const prefix = getAbilityPrefix(text);
+  if (prefix) {
+    if (SHOP_TRIGGER_PREFIXES.some((token) => prefix.includes(token))) {
+      return {
+        scope: 'shop',
+        reason: `Shop-phase trigger (${prefix}).`,
+      };
+    }
+    if (BATTLE_TRIGGER_PREFIXES.some((token) => prefix.includes(token))) {
+      return {
+        scope: 'battle',
+        reason: `Battle-phase trigger (${prefix}).`,
+      };
+    }
+  }
+
+  const lowered = text.toLowerCase();
+  if (!prefix) {
+    if (
+      /\b(start of battle|before battle|before attack|after attack|faint|hurt|summon|empty front space|knock out|enemy summoned|friend summoned)\b/.test(
+        lowered,
+      )
+    ) {
+      return { scope: 'battle', reason: 'Battle keyword match.' };
+    }
+    if (
+      /\b(start of turn|end turn|break|sell|buy|roll|shop|food|level-?up|spend \d+ gold|tier)\b/.test(
+        lowered,
+      )
+    ) {
+      return { scope: 'shop', reason: 'Shop keyword match.' };
+    }
+    return {
+      scope: 'unknown',
+      reason: 'Unable to classify trigger scope from ability text.',
+    };
+  }
+
+  if (
+    /\b(start of battle|before battle|before attack|after attack|faint|hurt|summon|attack|enemy|empty front space|knock out|jump)\b/.test(
+      lowered,
+    )
+  ) {
+    return { scope: 'battle', reason: 'Battle keyword match.' };
+  }
+  if (
+    /\b(start of turn|end turn|sell|buy|roll|shop|food|level-?up|spend \d+ gold|tier)\b/.test(
+      lowered,
+    )
+  ) {
+    return { scope: 'shop', reason: 'Shop keyword match.' };
+  }
+  return {
+    scope: 'unknown',
+    reason: 'Unable to classify trigger scope from ability text.',
+  };
+}
+
+function isBattleBehaviorSupported(kind, abilityText) {
+  if (!abilityText) {
+    return false;
+  }
+  const prefix = getAbilityPrefix(abilityText);
+  if (!prefix) {
+    return false;
+  }
+  if (kind === 'toy') {
+    return TOY_BATTLE_SUPPORTED_PREFIXES.has(prefix);
+  }
+  if (kind === 'equipment') {
+    return EQUIPMENT_BATTLE_SUPPORTED_PREFIXES.has(prefix);
+  }
+  return true;
+}
+
+function buildPetAbilityMap() {
+  const petData = readJson(PETS_JSON);
+  return new Map(
+    petData.map((entry) => [entry.Name, firstAbilityText(entry) ?? null]),
+  );
+}
+
+function buildToyAbilityMap() {
+  const toyData = readJson(TOYS_JSON);
+  return new Map(
+    toyData.map((entry) => [entry.Name, firstAbilityText(entry) ?? null]),
+  );
+}
+
+function buildEquipmentAbilityMap() {
+  const map = new Map();
+  const rows = [...readJson(FOOD_JSON), ...readJson(PERKS_JSON)];
+  for (const row of rows) {
+    const name = row?.Name;
+    const text =
+      typeof row?.Ability === 'string' ? row.Ability.trim() || null : null;
+    if (!name) {
+      continue;
+    }
+    map.set(name, text);
+  }
+  return map;
+}
+
+function withAbilityMeta(entry, abilityMap, kind) {
+  const abilityText = abilityMap.get(entry.name) ?? null;
+  let classified = classifyAbilityScope(abilityText);
+  if (
+    classified.scope === 'battle' &&
+    !isBattleBehaviorSupported(kind, abilityText)
+  ) {
+    classified = {
+      scope: 'unknown',
+      reason: 'Battle trigger requires specialized scenario; skipped by generator.',
+    };
+  }
+  return {
+    ...entry,
+    abilityText,
+    abilityScope: classified.scope,
+    abilityScopeReason: classified.reason,
+  };
 }
 
 function extractObjectBody(source, objectName) {
@@ -169,54 +401,108 @@ function ensureDir(dirPath) {
 function writePetTestFile(entry) {
   const filename = `${slugify(entry.pack)}__${slugify(entry.name)}.generated.test.ts`;
   const filePath = path.join(TEST_ROOT, 'pets', filename);
+  const abilityLiteral = entry.abilityText ? `'${quote(entry.abilityText)}'` : 'null';
+  const safeName = quote(entry.name);
+  const safePack = quote(entry.pack);
   const content = `import { describe, expect, it } from 'vitest';
-import { runPetSmoke } from '../../support/smoke-test-runners';
+import { runPetBehavior, runPetSmoke } from '../../support/smoke-test-runners';
 
-describe('Generated pet smoke: ${entry.name}', () => {
-  it('runs ${entry.name} without crashing', () => {
+const ABILITY_TEXT = ${abilityLiteral};
+const ABILITY_SCOPE = '${entry.abilityScope}';
+const ABILITY_SCOPE_REASON = '${quote(entry.abilityScopeReason)}';
+
+describe('Generated pet test: ${safeName}', () => {
+  it('runs ${safeName} without crashing', () => {
     const result = runPetSmoke({
-      petName: '${entry.name}',
-      playerPack: '${entry.pack}',
-      opponentPack: '${entry.pack}',
+      petName: '${safeName}',
+      playerPack: '${safePack}',
+      opponentPack: '${safePack}',
     });
     expect(result.playerWins + result.opponentWins + result.draws).toBeGreaterThanOrEqual(0);
   });
+
+  if (ABILITY_SCOPE === 'battle') {
+    it(\`validates battle ability behavior: \${ABILITY_TEXT}\`, () => {
+      runPetBehavior({
+        petName: '${safeName}',
+        playerPack: '${safePack}',
+        opponentPack: '${safePack}',
+        abilityText: ABILITY_TEXT,
+      });
+    });
+  } else {
+    it.skip(\`battle behavior assertion skipped: \${ABILITY_SCOPE_REASON}\`, () => {});
+  }
 });
 `;
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
 function writeToyTestFile(name) {
-  const filename = `${slugify(name)}.generated.test.ts`;
+  const filename = `${slugify(name.name)}.generated.test.ts`;
   const filePath = path.join(TEST_ROOT, 'toys', filename);
+  const abilityLiteral = name.abilityText ? `'${quote(name.abilityText)}'` : 'null';
+  const safeName = quote(name.name);
   const content = `import { describe, expect, it } from 'vitest';
-import { runToySmoke } from '../../support/smoke-test-runners';
+import { runToyBehavior, runToySmoke } from '../../support/smoke-test-runners';
 
-describe('Generated toy smoke: ${name}', () => {
-  it('runs ${name} without crashing', () => {
+const ABILITY_TEXT = ${abilityLiteral};
+const ABILITY_SCOPE = '${name.abilityScope}';
+const ABILITY_SCOPE_REASON = '${quote(name.abilityScopeReason)}';
+
+describe('Generated toy test: ${safeName}', () => {
+  it('runs ${safeName} without crashing', () => {
     const result = runToySmoke({
-      toyName: '${name}',
+      toyName: '${safeName}',
     });
     expect(result.playerWins + result.opponentWins + result.draws).toBeGreaterThanOrEqual(0);
   });
+
+  if (ABILITY_SCOPE === 'battle') {
+    it(\`validates battle ability behavior: \${ABILITY_TEXT}\`, () => {
+      runToyBehavior({
+        toyName: '${safeName}',
+        abilityText: ABILITY_TEXT,
+      });
+    });
+  } else {
+    it.skip(\`battle behavior assertion skipped: \${ABILITY_SCOPE_REASON}\`, () => {});
+  }
 });
 `;
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
 function writeEquipmentTestFile(name) {
-  const filename = `${slugify(name)}.generated.test.ts`;
+  const filename = `${slugify(name.name)}.generated.test.ts`;
   const filePath = path.join(TEST_ROOT, 'equipment', filename);
+  const abilityLiteral = name.abilityText ? `'${quote(name.abilityText)}'` : 'null';
+  const safeName = quote(name.name);
   const content = `import { describe, expect, it } from 'vitest';
-import { runEquipmentSmoke } from '../../support/smoke-test-runners';
+import { runEquipmentBehavior, runEquipmentSmoke } from '../../support/smoke-test-runners';
 
-describe('Generated equipment smoke: ${name}', () => {
-  it('runs ${name} without crashing', () => {
+const ABILITY_TEXT = ${abilityLiteral};
+const ABILITY_SCOPE = '${name.abilityScope}';
+const ABILITY_SCOPE_REASON = '${quote(name.abilityScopeReason)}';
+
+describe('Generated equipment test: ${safeName}', () => {
+  it('runs ${safeName} without crashing', () => {
     const result = runEquipmentSmoke({
-      equipmentName: '${name}',
+      equipmentName: '${safeName}',
     });
     expect(result.playerWins + result.opponentWins + result.draws).toBeGreaterThanOrEqual(0);
   });
+
+  if (ABILITY_SCOPE === 'battle') {
+    it(\`validates battle ability behavior: \${ABILITY_TEXT}\`, () => {
+      runEquipmentBehavior({
+        equipmentName: '${safeName}',
+        abilityText: ABILITY_TEXT,
+      });
+    });
+  } else {
+    it.skip(\`battle behavior assertion skipped: \${ABILITY_SCOPE_REASON}\`, () => {});
+  }
 });
 `;
   fs.writeFileSync(filePath, content, 'utf8');
@@ -242,9 +528,19 @@ function writeManifest(pets, toys, equipment) {
 }
 
 function main() {
-  const pets = parsePetEntries();
-  const toys = parseToyEntries();
-  const equipment = parseEquipmentEntries();
+  const petAbilities = buildPetAbilityMap();
+  const toyAbilities = buildToyAbilityMap();
+  const equipmentAbilities = buildEquipmentAbilityMap();
+
+  const pets = parsePetEntries().map((entry) =>
+    withAbilityMeta(entry, petAbilities, 'pet'),
+  );
+  const toys = parseToyEntries().map((name) =>
+    withAbilityMeta({ name }, toyAbilities, 'toy'),
+  );
+  const equipment = parseEquipmentEntries().map((name) =>
+    withAbilityMeta({ name }, equipmentAbilities, 'equipment'),
+  );
 
   fs.rmSync(TEST_ROOT, { recursive: true, force: true });
   ensureDir(path.join(TEST_ROOT, 'pets'));
@@ -262,8 +558,13 @@ function main() {
   }
 
   writeManifest(pets, toys, equipment);
+  const battlePetCount = pets.filter((entry) => entry.abilityScope === 'battle').length;
+  const battleToyCount = toys.filter((entry) => entry.abilityScope === 'battle').length;
+  const battleEquipmentCount = equipment.filter(
+    (entry) => entry.abilityScope === 'battle',
+  ).length;
   console.log(
-    `Generated ${pets.length} pet tests, ${toys.length} toy tests, ${equipment.length} equipment tests.`,
+    `Generated ${pets.length} pet tests (${battlePetCount} battle-behavior), ${toys.length} toy tests (${battleToyCount} battle-behavior), ${equipment.length} equipment tests (${battleEquipmentCount} battle-behavior).`,
   );
 }
 

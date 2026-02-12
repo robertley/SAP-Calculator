@@ -122,11 +122,11 @@ export class HyenaAbility extends Ability {
     this.level2Ability(gameApi, tiger, pteranodon);
   }
 
-  private shufflePets(player: any) {
+  private shufflePets(player: Player): void {
     let pets = player.petArray;
     shuffle(pets);
     for (let i = 0; i < pets.length; i++) {
-      player[`pet${i}`] = pets[i];
+      player.setPet(i, pets[i]);
     }
   }
 

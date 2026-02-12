@@ -55,7 +55,9 @@ export class SeaSerpentAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    const contextState = context as any;
+    const contextState = context as AbilityContext & {
+      seaSerpentMana?: number;
+    };
     const manaSpent = contextState.seaSerpentMana ?? owner.mana;
     if (manaSpent == 0) {
       return;

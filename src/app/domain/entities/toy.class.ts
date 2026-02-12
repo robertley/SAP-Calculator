@@ -7,24 +7,39 @@ import { Player } from './player.class';
 
 export class Toy {
   name: string;
-  onBreak?(gameApi?: GameAPI, puma?: boolean);
-  startOfBattle?(gameApi?: GameAPI, puma?: boolean);
+  onBreak?(gameApi?: GameAPI, puma?: boolean): void;
+  startOfBattle?(gameApi?: GameAPI, puma?: boolean): void;
   emptyFromSpace?(
     gameApi?: GameAPI,
     puma?: boolean,
     level?: number,
     priority?: number,
-  );
-  friendSummoned?(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number);
+  ): void;
+  friendSummoned?(
+    gameApi?: GameAPI,
+    pet?: Pet,
+    puma?: boolean,
+    level?: number,
+  ): void;
   friendlyLevelUp?(
     gameApi?: GameAPI,
     pet?: Pet,
     puma?: boolean,
     level?: number,
-  );
-  friendFaints?(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number);
-  friendJumped?(gameApi?: GameAPI, pet?: Pet, puma?: boolean, level?: number);
-  allEnemiesFainted?(gameApi?: GameAPI, puma?: boolean);
+  ): void;
+  friendFaints?(
+    gameApi?: GameAPI,
+    pet?: Pet,
+    puma?: boolean,
+    level?: number,
+  ): void;
+  friendJumped?(
+    gameApi?: GameAPI,
+    pet?: Pet,
+    puma?: boolean,
+    level?: number,
+  ): void;
+  allEnemiesFainted?(gameApi?: GameAPI, puma?: boolean): void;
   parent: Player;
   level: number;
   tier: number;

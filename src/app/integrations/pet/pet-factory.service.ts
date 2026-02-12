@@ -19,12 +19,15 @@ import {
 } from './pet-factory-form-fields';
 import {
   PetFactoryDeps,
+  PetFactoryPetService,
   PETS_NEEDING_PETSERVICE,
   PETS_NEEDING_GAMESERVICE,
   PETS_NEEDING_PETSERVICE_TYPES,
   PETS_NEEDING_GAMESERVICE_TYPES,
+  SpecialFormPetBuilder,
   SPECIAL_FORM_PET_BUILDERS,
 } from './pet-factory-registry';
+import { PetConstructor, PetRegistryMap } from './pet-registry.types';
 
 @Injectable({
   providedIn: 'root',
@@ -45,17 +48,18 @@ export class PetFactoryService {
    */
   createPet(
     originalPet: Pet,
-    petService: any,
+    petService: PetFactoryPetService,
     attack?: number,
     health?: number,
     exp?: number,
   ): Pet {
-    const PetClass = originalPet.constructor as any;
+    const PetClass = originalPet.constructor as unknown as PetConstructor;
     const parent = originalPet.parent;
     const xp = exp ?? levelToExp(originalPet.level);
 
     // Special Cases requiring PetService + GameService
-    for (const GameServicePet of PETS_NEEDING_GAMESERVICE_TYPES) {
+    for (const gameServicePetCtor of PETS_NEEDING_GAMESERVICE_TYPES) {
+      const GameServicePet = gameServicePetCtor as PetConstructor;
       if (originalPet instanceof GameServicePet) {
         return new GameServicePet(
           this.logService,
@@ -102,9 +106,9 @@ export class PetFactoryService {
   createPetFromForm(
     petForm: PetForm,
     parent: Player,
-    petService: any,
-    registry: { [key: string]: any },
-  ): Pet {
+    petService: PetFactoryPetService,
+    registry: PetRegistryMap,
+  ): Pet | null {
     const plan = this.getPetBuildPlan(petForm, registry);
     const equipment = this.resolveEquipment(
       plan.equipmentValue,
@@ -112,7 +116,10 @@ export class PetFactoryService {
     );
     const { name, health, attack, mana, exp, triggersConsumed, foodsEaten } = petForm;
     let hasRandomEvents = petForm.hasRandomEvents;
-    if (hasRandomEvents === undefined && petService && typeof petService.isPetRandom === 'function') {
+    if (
+      hasRandomEvents === undefined &&
+      typeof petService.isPetRandom === 'function'
+    ) {
       hasRandomEvents = petService.isPetRandom(name);
     }
 
@@ -177,7 +184,8 @@ export class PetFactoryService {
 
     // Check if pet needs GameService (highest priority)
     if (plan.builderKind === 'gameservice' && plan.PetClass) {
-      const petInstance = new plan.PetClass(
+      const PetClass = plan.PetClass as PetConstructor;
+      const petInstance = new PetClass(
         this.logService,
         this.abilityService,
         petService,
@@ -210,7 +218,8 @@ export class PetFactoryService {
     }
 
     if (plan.builderKind === 'petservice' && plan.PetClass) {
-      const petInstance = new plan.PetClass(
+      const PetClass = plan.PetClass as PetConstructor;
+      const petInstance = new PetClass(
         this.logService,
         this.abilityService,
         petService,
@@ -226,7 +235,8 @@ export class PetFactoryService {
     }
 
     if (plan.builderKind === 'registry' && plan.PetClass) {
-      const petInstance = new plan.PetClass(
+      const PetClass = plan.PetClass as PetConstructor;
+      const petInstance = new PetClass(
         this.logService,
         this.abilityService,
         parent,
@@ -249,7 +259,7 @@ export class PetFactoryService {
       return pet;
     }
     if (petForm.equipmentUses != null) {
-      (pet as any).equipmentUsesOverride = petForm.equipmentUses;
+      pet.equipmentUsesOverride = petForm.equipmentUses;
     }
     return pet;
   }
@@ -329,7 +339,7 @@ export class PetFactoryService {
 
   private getPetBuildPlan(
     petForm: PetForm,
-    registry: { [key: string]: any },
+    registry: PetRegistryMap,
   ): PetBuildPlan {
 
 
@@ -398,8 +408,8 @@ export class PetFactoryService {
 type PetBuildPlan = {
   name: string;
   builderKind: 'gameservice' | 'special' | 'petservice' | 'registry' | 'missing';
-  PetClass?: any;
-  specialBuilder?: any;
+  PetClass?: unknown;
+  specialBuilder?: SpecialFormPetBuilder;
   needsPostInit: boolean;
   hasParrotData: boolean;
   hasAbominationData: boolean;

@@ -1,3 +1,4 @@
+import { PetRegistryMap } from './pet-registry.types';
 import { TURTLE_PET_REGISTRY } from './registries/pet-registry.turtle';
 import { PUPPY_PET_REGISTRY } from './registries/pet-registry.puppy';
 import { STAR_PET_REGISTRY } from './registries/pet-registry.star';
@@ -7,7 +8,7 @@ import { DANGER_PET_REGISTRY } from './registries/pet-registry.danger';
 import { CUSTOM_PET_REGISTRY } from './registries/pet-registry.custom';
 import { HIDDEN_PET_REGISTRY } from './registries/pet-registry.hidden';
 
-export const PET_REGISTRY: { [key: string]: any } = {
+export const PET_REGISTRY: PetRegistryMap = {
   ...TURTLE_PET_REGISTRY,
   ...PUPPY_PET_REGISTRY,
   ...STAR_PET_REGISTRY,
@@ -17,4 +18,6 @@ export const PET_REGISTRY: { [key: string]: any } = {
   ...CUSTOM_PET_REGISTRY,
   ...HIDDEN_PET_REGISTRY,
 };
+
+
 

@@ -405,7 +405,7 @@ function reorderFormArrayByLineup(
 }
 
 function findNextMatchingSourceIndex(
-  sourceValues: any[],
+  sourceValues: unknown[],
   targetPet: PetConfig | null,
   usedSourceIndices: Set<number>,
 ): number {
@@ -421,31 +421,37 @@ function findNextMatchingSourceIndex(
   return -1;
 }
 
-function buildPetSignature(pet: any): string {
-  if (!pet || !pet.name) {
+function buildPetSignature(pet: unknown): string {
+  if (!pet || typeof pet !== 'object') {
+    return 'empty';
+  }
+  const petRecord = pet as Record<string, unknown>;
+  if (typeof petRecord.name !== 'string' || !petRecord.name) {
     return 'empty';
   }
 
-  const rawEquipment = pet.equipment;
+  const rawEquipment = petRecord.equipment;
   const equipmentName =
     rawEquipment && typeof rawEquipment === 'object'
-      ? rawEquipment.name ?? null
+      ? typeof (rawEquipment as { name?: unknown }).name === 'string'
+        ? (rawEquipment as { name: string }).name
+        : null
       : rawEquipment ?? null;
 
   const signature = {
-    name: pet.name ?? null,
-    attack: pet.attack ?? null,
-    health: pet.health ?? null,
-    exp: pet.exp ?? null,
+    name: petRecord.name ?? null,
+    attack: petRecord.attack ?? null,
+    health: petRecord.health ?? null,
+    exp: petRecord.exp ?? null,
     equipment: equipmentName ?? null,
-    equipmentUses: pet.equipmentUses ?? null,
-    belugaSwallowedPet: pet.belugaSwallowedPet ?? null,
-    parrotCopyPet: pet.parrotCopyPet ?? null,
-    mana: pet.mana ?? null,
-    triggersConsumed: pet.triggersConsumed ?? null,
-    foodsEaten: pet.foodsEaten ?? null,
-    battlesFought: pet.battlesFought ?? null,
-    timesHurt: pet.timesHurt ?? null,
+    equipmentUses: petRecord.equipmentUses ?? null,
+    belugaSwallowedPet: petRecord.belugaSwallowedPet ?? null,
+    parrotCopyPet: petRecord.parrotCopyPet ?? null,
+    mana: petRecord.mana ?? null,
+    triggersConsumed: petRecord.triggersConsumed ?? null,
+    foodsEaten: petRecord.foodsEaten ?? null,
+    battlesFought: petRecord.battlesFought ?? null,
+    timesHurt: petRecord.timesHurt ?? null,
   };
 
   return JSON.stringify(signature);

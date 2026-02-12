@@ -208,15 +208,19 @@ export class PetSelectorPackFiltering {
     });
   }
 
-  protected normalizeEquipmentValue(value: any): string | null {
+  protected normalizeEquipmentValue(value: unknown): string | null {
     if (!value) {
       return null;
     }
     if (typeof value === 'string') {
       return value;
     }
-    if (typeof value === 'object' && typeof value.name === 'string') {
-      return value.name;
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      typeof (value as { name?: unknown }).name === 'string'
+    ) {
+      return (value as { name: string }).name;
     }
     return null;
   }

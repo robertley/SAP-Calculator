@@ -6,6 +6,7 @@ import { GreatOne } from 'app/domain/entities/catalog/pets/custom/tier-6/great-o
 import { Toy } from '../../../toy.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { Pet } from '../../../pet.class';
+import { Player } from '../../../player.class';
 
 
 export class EvilBook extends Toy {
@@ -49,8 +50,8 @@ export class EvilBook extends Toy {
     protected logService: LogService,
     protected toyService: ToyService,
     protected abilityService: AbilityService,
-    parent,
-    level,
+    parent: Player,
+    level: number,
   ) {
     super(logService, toyService, parent, level);
   }

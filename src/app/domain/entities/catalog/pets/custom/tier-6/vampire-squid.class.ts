@@ -58,7 +58,12 @@ export class VampireSquidAbility extends Ability {
       if (!pet || pet === owner || !pet.alive || !pet.equipment) {
         continue;
       }
-      const equipmentClass = (pet.equipment as any).equipmentClass ?? '';
+      const equipmentClass =
+        (
+          pet.equipment as Equipment & {
+            equipmentClass?: string;
+          }
+        ).equipmentClass ?? '';
       if (!equipmentClass.startsWith('ailment')) {
         continue;
       }

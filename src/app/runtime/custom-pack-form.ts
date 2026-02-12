@@ -6,8 +6,9 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
 
-export function createPack(customPack?: any): FormGroup {
+export function createPack(customPack?: Partial<CustomPackConfig> | null): FormGroup {
   return new FormGroup({
     name: new FormControl(customPack?.name ?? null, Validators.required),
     tier1Pets: new FormControl(customPack?.tier1Pets ?? [], controlArrayLengthOf10()),

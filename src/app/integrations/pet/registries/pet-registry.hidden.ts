@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { AdultFlounder } from 'app/domain/entities/catalog/pets/hidden/adult-flounder.class';
 import { AngryPygmyHog } from 'app/domain/entities/catalog/pets/hidden/angry-pygmy-hog.class';
 import { BabyUrchin } from 'app/domain/entities/catalog/pets/hidden/baby-urchin.class';
@@ -40,7 +41,7 @@ import { YoungPhoenix } from 'app/domain/entities/catalog/pets/hidden/young-phoe
 import { ZombieCricket } from 'app/domain/entities/catalog/pets/hidden/zombie-cricket.class';
 import { ZombieFly } from 'app/domain/entities/catalog/pets/hidden/zombie-fly.class';
 
-export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
+export const HIDDEN_PET_REGISTRY: PetRegistryMap = {
   'Adult Flounder': AdultFlounder,
   'Angry Pygmy Hog': AngryPygmyHog,
   'Baby Urchin': BabyUrchin,
@@ -83,5 +84,7 @@ export const HIDDEN_PET_REGISTRY: { [key: string]: any } = {
   'Zombie Cricket': ZombieCricket,
   'Zombie Fly': ZombieFly,
 };
+
+
 
 

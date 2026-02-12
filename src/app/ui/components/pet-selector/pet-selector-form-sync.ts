@@ -85,7 +85,7 @@ export class PetSelectorFormSync
     this.showSelectionDialog = true;
   }
 
-  onItemSelected(item: any) {
+  onItemSelected(item: unknown) {
     if (item instanceof Event) {
       this.closeSelectionDialog();
       return;
@@ -94,7 +94,13 @@ export class PetSelectorFormSync
       this.formGroup.get('name').setValue(item);
     } else if (this.selectionType === 'equipment') {
       const equipmentName =
-        typeof item === 'string' ? item : item?.name ?? null;
+        typeof item === 'string'
+          ? item
+          : item &&
+              typeof item === 'object' &&
+              typeof (item as { name?: unknown }).name === 'string'
+            ? (item as { name: string }).name
+            : null;
       this.formGroup.get('equipment').setValue(equipmentName);
     } else if (this.selectionType === 'swallowed-pet') {
       const controlPath = resolveSwallowedPetControlPath({

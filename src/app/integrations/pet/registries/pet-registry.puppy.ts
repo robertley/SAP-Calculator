@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { Moth } from 'app/domain/entities/catalog/pets/puppy/tier-1/moth.class';
 import { Bluebird } from 'app/domain/entities/catalog/pets/puppy/tier-1/bluebird.class';
 import { Chinchilla } from 'app/domain/entities/catalog/pets/puppy/tier-1/chinchilla.class';
@@ -56,7 +57,7 @@ import { ElephantSeal } from 'app/domain/entities/catalog/pets/puppy/tier-6/elep
 import { Puma } from 'app/domain/entities/catalog/pets/puppy/tier-6/puma.class';
 import { Mongoose } from 'app/domain/entities/catalog/pets/puppy/tier-6/mongoose.class';
 
-export const PUPPY_PET_REGISTRY: { [key: string]: any } = {
+export const PUPPY_PET_REGISTRY: PetRegistryMap = {
   Moth: Moth,
   Bluebird: Bluebird,
   Chinchilla: Chinchilla,
@@ -115,5 +116,7 @@ export const PUPPY_PET_REGISTRY: { [key: string]: any } = {
   Mongoose: Mongoose,
   Eagle: Eagle,
 };
+
+
 
 

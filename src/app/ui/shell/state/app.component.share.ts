@@ -20,25 +20,32 @@ type ParrotAbomSlot = [
   ParrotAbomInner[],
 ];
 
-function forEachPet(state: any, cb: (pet: any) => void): void {
-  if (!state || typeof state !== 'object') {
+type RecordShape = Record<string, unknown>;
+
+function isRecord(value: unknown): value is RecordShape {
+  return typeof value === 'object' && value !== null;
+}
+
+function forEachPet(state: unknown, cb: (pet: RecordShape) => void): void {
+  if (!isRecord(state)) {
     return;
   }
+  const playerPets = Array.isArray(state.playerPets) ? state.playerPets : [];
+  const opponentPets = Array.isArray(state.opponentPets)
+    ? state.opponentPets
+    : [];
   const pets = [
-    ...(state.playerPets || []),
-    ...(state.opponentPets || []),
+    ...playerPets,
+    ...opponentPets,
   ];
   for (const pet of pets) {
-    if (pet && typeof pet === 'object') {
+    if (isRecord(pet)) {
       cb(pet);
     }
   }
 }
 
-function encodeParrotAbomSwallowed(pet: any): void {
-  if (!pet || typeof pet !== 'object') {
-    return;
-  }
+function encodeParrotAbomSwallowed(pet: RecordShape): void {
   if (Array.isArray(pet[PARROT_ABOM_SWALLOWED_KEY])) {
     return;
   }
@@ -82,10 +89,7 @@ function encodeParrotAbomSwallowed(pet: any): void {
   pet[PARROT_ABOM_SWALLOWED_KEY] = slots;
 }
 
-function decodeParrotAbomSwallowed(pet: any): void {
-  if (!pet || typeof pet !== 'object') {
-    return;
-  }
+function decodeParrotAbomSwallowed(pet: RecordShape): void {
   const slots = pet[PARROT_ABOM_SWALLOWED_KEY];
   if (!Array.isArray(slots)) {
     return;
@@ -135,14 +139,14 @@ function decodeParrotAbomSwallowed(pet: any): void {
   delete pet[PARROT_ABOM_SWALLOWED_KEY];
 }
 
-export function compactCalculatorState(state: any): any {
+export function compactCalculatorState(state: unknown): unknown {
   const clean = cloneDeep(state);
   forEachPet(clean, encodeParrotAbomSwallowed);
   return clean;
 }
 
-export function expandCompactCalculatorState(state: any): any {
-  if (!state || typeof state !== 'object') {
+export function expandCompactCalculatorState(state: unknown): unknown {
+  if (!isRecord(state)) {
     return state;
   }
   forEachPet(state, decodeParrotAbomSwallowed);
@@ -174,28 +178,31 @@ export function buildShareableLink(
   baseUrl: string,
 ): string {
   const rawValue = formGroup.value;
-  const cleanValue = cloneDeep(rawValue);
+  const cleanValue = cloneDeep(rawValue) as RecordShape;
 
   const petsToClean = [
-    ...(cleanValue.playerPets || []),
-    ...(cleanValue.opponentPets || []),
+    ...(Array.isArray(cleanValue.playerPets) ? cleanValue.playerPets : []),
+    ...(Array.isArray(cleanValue.opponentPets) ? cleanValue.opponentPets : []),
   ];
 
   for (const pet of petsToClean) {
-    if (pet) {
-      delete pet.parent;
-      delete pet.logService;
-      delete pet.abilityService;
-      delete pet.gameService;
-      delete pet.petService;
+    if (!isRecord(pet)) {
+      continue;
+    }
+    delete pet.parent;
+    delete pet.logService;
+    delete pet.abilityService;
+    delete pet.gameService;
+    delete pet.petService;
 
-      if (pet.equipment) {
-        const equipmentName =
-          typeof pet.equipment === 'string'
-            ? pet.equipment
-            : pet.equipment.name;
-        pet.equipment = equipmentName ? { name: equipmentName } : null;
-      }
+    if (pet.equipment) {
+      const equipmentName =
+        typeof pet.equipment === 'string'
+          ? pet.equipment
+          : isRecord(pet.equipment) && typeof pet.equipment.name === 'string'
+            ? pet.equipment.name
+            : null;
+      pet.equipment = equipmentName ? { name: equipmentName } : null;
     }
   }
 

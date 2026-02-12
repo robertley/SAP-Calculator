@@ -1,7 +1,11 @@
 /// <reference lib="webworker" />
 
+import { Injector } from '@angular/core';
 import { SimulationRunner } from 'app/gameplay/simulation-runner';
-import { SimulationConfig } from 'app/domain/interfaces/simulation-config.interface';
+import {
+  SimulationConfig,
+  SimulationResult,
+} from 'app/domain/interfaces/simulation-config.interface';
 import { LogService } from '../log.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { AbilityService } from '../ability/ability.service';
@@ -45,17 +49,17 @@ type IncomingMessage =
 
 let cancelRequested = false;
 
-const sanitizeResult = (result: any) => {
+const sanitizeResult = (result: SimulationResult): SimulationResult => {
   if (!result || !Array.isArray(result.battles)) {
     return result;
   }
 
-  const sanitizedBattles = result.battles.map((battle: any) => {
+  const sanitizedBattles = result.battles.map((battle) => {
     const logs = Array.isArray(battle?.logs)
-      ? battle.logs.map((log: any) => ({
+      ? battle.logs.map((log) => ({
           message: log?.message ?? '',
           rawMessage: log?.rawMessage,
-          type: log?.type,
+          type: log?.type ?? 'board',
           randomEvent: log?.randomEvent,
           randomEventReason: log?.randomEventReason,
           tiger: log?.tiger,
@@ -140,8 +144,9 @@ const createRunner = () => {
     toyFactory,
   );
 
+  type InjectedToken = unknown;
   const injectorShim = {
-    get: (token: any) => {
+    get: (token: InjectedToken) => {
       if (token === PetService) return petService;
       if (token === EquipmentService) return equipmentService;
       if (token === LogService) return logService;
@@ -152,7 +157,7 @@ const createRunner = () => {
       return null;
     },
   };
-  InjectorService.setInjector(injectorShim as any);
+  InjectorService.setInjector(injectorShim as unknown as Injector);
 
   petService.init();
 

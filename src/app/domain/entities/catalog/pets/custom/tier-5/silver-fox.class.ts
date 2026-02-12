@@ -55,7 +55,7 @@ export class SilverFoxAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
     const goldGain = this.level;
-    const player = owner.parent as any;
+    const player = owner.parent;
     player.gold = (player.gold ?? 0) + goldGain;
 
     this.logService.createLog({

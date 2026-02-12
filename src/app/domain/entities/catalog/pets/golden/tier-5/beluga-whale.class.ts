@@ -91,6 +91,13 @@ export class BelugaWhaleAbility extends Ability {
       },
       owner.parent,
     );
+    const levelMultiplier = owner.level;
+    const spawnedBaseAttack = spawnPet.attack - spawnPet.exp;
+    const spawnedBaseHealth = spawnPet.health - spawnPet.exp;
+    spawnPet.attack = spawnedBaseAttack * levelMultiplier;
+    spawnPet.health = spawnedBaseHealth * levelMultiplier;
+    spawnPet.originalAttack = spawnPet.attack;
+    spawnPet.originalHealth = spawnPet.health;
 
     let summonResult = owner.parent.summonPet(
       spawnPet,

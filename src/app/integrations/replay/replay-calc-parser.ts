@@ -1,4 +1,8 @@
 import {
+  CustomPackConfig,
+  PetConfig,
+} from 'app/domain/interfaces/simulation-config.interface';
+import {
   KEY_MAP,
   PACK_MAP,
   PERKS_BY_ID,
@@ -7,38 +11,183 @@ import {
   TOYS_BY_ID,
 } from './replay-calc-schema';
 
+interface ReplayAbilityJson {
+  TrCo?: number | null;
+}
+
+interface ReplayPetStatsJson {
+  Temp?: number | null;
+  Perm?: number | null;
+}
+
+interface ReplayPetJson {
+  Enu?: number | string | null;
+  At?: ReplayPetStatsJson | null;
+  Hp?: ReplayPetStatsJson | null;
+  Exp?: number | null;
+  Perk?: number | string | null;
+  Mana?: number | null;
+  Pow?: {
+    SabertoothTigerAbility?: number | null;
+  } | null;
+  Abil?: ReplayAbilityJson[] | null;
+  Poi?: {
+    x?: number | null;
+  } | null;
+  MiMs?: {
+    Lsts?: {
+      WhiteWhaleAbility?: ReplayPetJson[] | null;
+    } | null;
+  } | null;
+}
+
+interface ReplayToyJson {
+  Enu?: number | string | null;
+  Lvl?: number | null;
+}
+
+export interface ReplayDeckJson {
+  Id?: number | string | null;
+  Title?: string | null;
+  Minions?: Array<number | string> | null;
+  Spells?: Array<string | number> | null;
+}
+
+export interface ReplayBoardJson {
+  [key: string]: unknown;
+  Mins?: {
+    Items?: Array<ReplayPetJson | null> | null;
+  } | null;
+  Rel?: {
+    Items?: Array<ReplayToyJson | null> | null;
+  } | null;
+  Deck?: ReplayDeckJson | null;
+  Pack?: number | null;
+}
+
+export interface ReplayBattleJson {
+  UserBoard?: ReplayBoardJson | null;
+  OpponentBoard?: ReplayBoardJson | null;
+}
+
+export interface ReplayBuildModelJson {
+  Bor?: {
+    Deck?: ReplayDeckJson | null;
+  } | null;
+}
+
+export interface ReplayMetaBoards {
+  userBoard?: ReplayBoardJson | null;
+  opponentBoard?: ReplayBoardJson | null;
+}
+
+export interface ReplayCustomPack extends CustomPackConfig {
+  name: string;
+  deckId?: string | null;
+  tier1Pets: (string | null)[];
+  tier2Pets: (string | null)[];
+  tier3Pets: (string | null)[];
+  tier4Pets: (string | null)[];
+  tier5Pets: (string | null)[];
+  tier6Pets: (string | null)[];
+  spells: string[];
+}
+
+interface ReplayParsedToy {
+  name: string | null;
+  level: number;
+}
+
+type StrippedReplayPet = Pick<PetConfig, 'name'> & Partial<Omit<PetConfig, 'name'>>;
+
+export interface ReplayCalculatorState {
+  playerPack: string;
+  opponentPack: string;
+  playerToy: string | null;
+  playerToyLevel: string;
+  playerHardToy: null;
+  playerHardToyLevel: number;
+  opponentToy: string | null;
+  opponentToyLevel: string;
+  opponentHardToy: null;
+  opponentHardToyLevel: number;
+  turn: number;
+  playerGoldSpent: number;
+  opponentGoldSpent: number;
+  playerRollAmount: number;
+  opponentRollAmount: number;
+  playerSummonedAmount: number;
+  opponentSummonedAmount: number;
+  playerLevel3Sold: number;
+  opponentLevel3Sold: number;
+  playerTransformationAmount: number;
+  opponentTransformationAmount: number;
+  playerPets: (PetConfig | null)[];
+  opponentPets: (PetConfig | null)[];
+  allPets: boolean;
+  logFilter: string | null;
+  customPacks: ReplayCustomPack[];
+  oldStork: boolean;
+  tokenPets: boolean;
+  komodoShuffle: boolean;
+  mana: boolean;
+  seed: number | null;
+  triggersConsumed: boolean;
+  foodsEaten?: boolean;
+  showAdvanced: boolean;
+  showTriggerNamesInLogs: boolean;
+  showSwallowedLevels: boolean;
+  ailmentEquipment: boolean;
+}
+
+type ReplayCustomPackCore = Omit<ReplayCustomPack, 'deckId'>;
+
+function toFiniteNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+}
+
+function toNumberOrFallback(value: unknown, fallback: number): number {
+  const parsed = toFiniteNumber(value);
+  return parsed ?? fallback;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 export class ReplayCalcParser {
   parseReplayForCalculator(
-    battleJson: any,
-    buildModel?: any,
-    metaBoards?: { userBoard?: any; opponentBoard?: any },
-  ) {
+    battleJson: ReplayBattleJson,
+    buildModel?: ReplayBuildModelJson,
+    metaBoards?: ReplayMetaBoards,
+  ): ReplayCalculatorState {
     const userBoard = battleJson?.UserBoard ?? metaBoards?.userBoard;
-    const opponentBoard =
-      battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
+    const opponentBoard = battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
 
-    const readBoardValue = (board: any, key: string, fallback: any = null) => {
-      const value = board?.[key];
-      return value === undefined ? fallback : value;
+    const readBoardNumber = (
+      board: ReplayBoardJson | null | undefined,
+      key: string,
+      fallback: number,
+    ): number => {
+      return toNumberOrFallback(board?.[key], fallback);
     };
 
-    const getTimesHurt = (petJson: any) => {
-      const value = petJson?.Pow?.SabertoothTigerAbility;
-      return Number.isFinite(value) ? value : null;
+    const getTimesHurt = (petJson: ReplayPetJson): number | null => {
+      return toFiniteNumber(petJson?.Pow?.SabertoothTigerAbility);
     };
 
-    const parsePet = (petJson: any) => {
+    const parsePet = (petJson: ReplayPetJson | null | undefined): PetConfig | null => {
       if (!petJson) {
         return null;
       }
 
       const petId = String(petJson.Enu ?? 0);
-      const petTempAtk = petJson.At?.Temp ?? 0;
-      const petTempHp = petJson.Hp?.Temp ?? 0;
+      const petTempAtk = toNumberOrFallback(petJson.At?.Temp, 0);
+      const petTempHp = toNumberOrFallback(petJson.Hp?.Temp, 0);
 
-      let belugaSwallowedPet = null;
+      let belugaSwallowedPet: string | null = null;
       if (petId === '182') {
-        const swallowedPets = petJson?.MiMs?.Lsts?.WhiteWhaleAbility || [];
+        const swallowedPets = petJson?.MiMs?.Lsts?.WhiteWhaleAbility ?? [];
         if (swallowedPets.length > 0) {
           const swallowedPetId = swallowedPets[0]?.Enu;
           belugaSwallowedPet =
@@ -47,20 +196,20 @@ export class ReplayCalcParser {
       }
 
       const timesHurt = getTimesHurt(petJson);
-      const abilityTriggersConsumed = (petJson?.Abil || [])
-        .map((ability: any) => ability?.TrCo)
-        .filter((value: any) => Number.isFinite(value));
+      const abilityTriggersConsumed = (petJson?.Abil ?? [])
+        .map((ability) => toFiniteNumber(ability?.TrCo))
+        .filter((value): value is number => value !== null);
 
-      const parsedPet: any = {
+      const parsedPet: PetConfig = {
         name: PETS_BY_ID.get(petId) || null,
-        attack: (petJson.At?.Perm ?? 0) + petTempAtk,
-        health: (petJson.Hp?.Perm ?? 0) + petTempHp,
-        exp: petJson.Exp || 0,
+        attack: toNumberOrFallback(petJson.At?.Perm, 0) + petTempAtk,
+        health: toNumberOrFallback(petJson.Hp?.Perm, 0) + petTempHp,
+        exp: toNumberOrFallback(petJson.Exp, 0),
         equipment: petJson.Perk
           ? { name: PERKS_BY_ID.get(String(petJson.Perk)) || 'Unknown Perk' }
           : null,
-        mana: petJson.Mana || 0,
-        belugaSwallowedPet: belugaSwallowedPet,
+        mana: toNumberOrFallback(petJson.Mana, 0),
+        belugaSwallowedPet,
         sarcasticFringeheadSwallowedPet: null,
         abominationSwallowedPet1: null,
         abominationSwallowedPet2: null,
@@ -82,13 +231,17 @@ export class ReplayCalcParser {
       return parsedPet;
     };
 
-    const parseBoardPets = (boardJson: any) => {
-      const pets = (boardJson?.Mins?.Items || []).filter(Boolean);
-      const petArray = Array(5).fill(null);
+    const parseBoardPets = (
+      boardJson: ReplayBoardJson | null | undefined,
+    ): (PetConfig | null)[] => {
+      const pets = (boardJson?.Mins?.Items ?? []).filter(
+        (pet): pet is ReplayPetJson => pet !== null,
+      );
+      const petArray: (PetConfig | null)[] = Array(5).fill(null);
 
-      pets.forEach((pet: any, index: number) => {
-        let pos = pet.Poi?.x;
-        if (pos === undefined) {
+      pets.forEach((pet, index) => {
+        let pos = toFiniteNumber(pet.Poi?.x);
+        if (pos === null) {
           pos = index;
         }
         if (pos >= 0 && pos < 5) {
@@ -99,15 +252,13 @@ export class ReplayCalcParser {
       return petArray.reverse();
     };
 
-    const getToy = (boardJson: any) => {
-      const toyItem = (boardJson?.Rel?.Items || []).find(
-        (item: any) => item && item.Enu,
-      );
+    const getToy = (boardJson: ReplayBoardJson | null | undefined): ReplayParsedToy => {
+      const toyItem = (boardJson?.Rel?.Items ?? []).find((item) => Boolean(item?.Enu));
       if (toyItem) {
         const toyId = String(toyItem.Enu);
         return {
           name: TOYS_BY_ID.get(toyId) || null,
-          level: toyItem.Lvl || 1,
+          level: toNumberOrFallback(toyItem.Lvl, 1),
         };
       }
       return { name: null, level: 1 };
@@ -116,10 +267,7 @@ export class ReplayCalcParser {
     const playerToy = getToy(userBoard);
     const opponentToy = getToy(opponentBoard);
 
-    const customPacks = this.buildCustomPacksFromGenesis(
-      buildModel,
-      battleJson,
-    );
+    const customPacks = this.buildCustomPacksFromGenesis(buildModel, battleJson);
     const playerCustomPack = this.findCustomPackFromDeck(
       customPacks,
       userBoard?.Deck,
@@ -129,9 +277,13 @@ export class ReplayCalcParser {
       opponentBoard?.Deck,
     );
     const playerPackName =
-      PACK_MAP[userBoard?.Pack] || playerCustomPack?.name || 'Turtle';
+      PACK_MAP[toNumberOrFallback(userBoard?.Pack, NaN)] ||
+      playerCustomPack?.name ||
+      'Turtle';
     const opponentPackName =
-      PACK_MAP[opponentBoard?.Pack] || opponentCustomPack?.name || 'Turtle';
+      PACK_MAP[toNumberOrFallback(opponentBoard?.Pack, NaN)] ||
+      opponentCustomPack?.name ||
+      'Turtle';
 
     return {
       playerPack: playerPackName,
@@ -144,23 +296,22 @@ export class ReplayCalcParser {
       opponentToyLevel: String(opponentToy.level),
       opponentHardToy: null,
       opponentHardToyLevel: 1,
-      turn: readBoardValue(userBoard, 'Tur', 1) || 1,
-      playerGoldSpent: readBoardValue(userBoard, 'GoSp', 0) || 0,
-      opponentGoldSpent: readBoardValue(opponentBoard, 'GoSp', 0) || 0,
-      playerRollAmount: readBoardValue(userBoard, 'Rold', 0) || 0,
-      opponentRollAmount: readBoardValue(opponentBoard, 'Rold', 0) || 0,
-      playerSummonedAmount: readBoardValue(userBoard, 'MiSu', 0) || 0,
-      opponentSummonedAmount: readBoardValue(opponentBoard, 'MiSu', 0) || 0,
-      playerLevel3Sold: readBoardValue(userBoard, 'MSFL', 0) || 0,
-      opponentLevel3Sold: readBoardValue(opponentBoard, 'MSFL', 0) || 0,
-      playerTransformationAmount: readBoardValue(userBoard, 'TrTT', 0) || 0,
-      opponentTransformationAmount:
-        readBoardValue(opponentBoard, 'TrTT', 0) || 0,
+      turn: readBoardNumber(userBoard, 'Tur', 1) || 1,
+      playerGoldSpent: readBoardNumber(userBoard, 'GoSp', 0) || 0,
+      opponentGoldSpent: readBoardNumber(opponentBoard, 'GoSp', 0) || 0,
+      playerRollAmount: readBoardNumber(userBoard, 'Rold', 0) || 0,
+      opponentRollAmount: readBoardNumber(opponentBoard, 'Rold', 0) || 0,
+      playerSummonedAmount: readBoardNumber(userBoard, 'MiSu', 0) || 0,
+      opponentSummonedAmount: readBoardNumber(opponentBoard, 'MiSu', 0) || 0,
+      playerLevel3Sold: readBoardNumber(userBoard, 'MSFL', 0) || 0,
+      opponentLevel3Sold: readBoardNumber(opponentBoard, 'MSFL', 0) || 0,
+      playerTransformationAmount: readBoardNumber(userBoard, 'TrTT', 0) || 0,
+      opponentTransformationAmount: readBoardNumber(opponentBoard, 'TrTT', 0) || 0,
       playerPets: parseBoardPets(userBoard),
       opponentPets: parseBoardPets(opponentBoard),
       allPets: false,
       logFilter: null,
-      customPacks: customPacks,
+      customPacks,
       oldStork: false,
       tokenPets: false,
       komodoShuffle: false,
@@ -174,24 +325,20 @@ export class ReplayCalcParser {
     };
   }
 
-  buildCustomPacksFromGenesis(buildModel?: any, battleJson?: any) {
+  buildCustomPacksFromGenesis(
+    buildModel?: ReplayBuildModelJson,
+    battleJson?: ReplayBattleJson,
+  ): ReplayCustomPack[] {
     const decks = [
       buildModel?.Bor?.Deck,
       battleJson?.UserBoard?.Deck,
       battleJson?.OpponentBoard?.Deck,
-    ].filter((deck) => deck && Array.isArray(deck.Minions));
+    ].filter(
+      (deck): deck is ReplayDeckJson =>
+        deck !== null && deck !== undefined && Array.isArray(deck.Minions),
+    );
 
-    const packs: Array<{
-      name: string;
-      deckId: string | null;
-      tier1Pets: (string | null)[];
-      tier2Pets: (string | null)[];
-      tier3Pets: (string | null)[];
-      tier4Pets: (string | null)[];
-      tier5Pets: (string | null)[];
-      tier6Pets: (string | null)[];
-    }> = [];
-
+    const packs: ReplayCustomPack[] = [];
     const seenDeckIds = new Set<string>();
     const usedNames = new Set<string>();
 
@@ -212,7 +359,7 @@ export class ReplayCalcParser {
     return packs;
   }
 
-  generateCalculatorLink(calculatorState: any) {
+  generateCalculatorLink(calculatorState: ReplayCalculatorState): string {
     const baseUrl = window.location.origin + window.location.pathname;
     const strippedState = this.stripDefaultValues(calculatorState);
     const truncatedState = this.truncateKeys(strippedState);
@@ -221,13 +368,16 @@ export class ReplayCalcParser {
     return `${baseUrl}#c=${base64Data}`;
   }
 
-  private buildCustomPackFromDeck(deck: any, usedNames: Set<string>) {
+  private buildCustomPackFromDeck(
+    deck: ReplayDeckJson | null | undefined,
+    usedNames: Set<string>,
+  ): ReplayCustomPackCore | null {
     if (!deck || !Array.isArray(deck.Minions)) {
       return null;
     }
 
-    const minions = deck.Minions.map((id: number) => String(id));
-    const spells = Array.isArray(deck.Spells) ? deck.Spells.slice() : [];
+    const minions = deck.Minions.map((id) => String(id));
+    const spells = Array.isArray(deck.Spells) ? deck.Spells.map(String) : [];
     const tierPets: Record<number, string[]> = {
       1: [],
       2: [],
@@ -247,12 +397,12 @@ export class ReplayCalcParser {
       }
     }
 
-    const normalizeTierPets = (pets: string[]) => {
+    const normalizeTierPets = (pets: string[]): (string | null)[] => {
       const normalized = pets.slice(0, 10);
       while (normalized.length < 10) {
         normalized.push(null);
       }
-      return normalized as (string | null)[];
+      return normalized;
     };
 
     let deckName = deck.Title || 'Custom Pack';
@@ -273,14 +423,14 @@ export class ReplayCalcParser {
       tier4Pets: normalizeTierPets(tierPets[4]),
       tier5Pets: normalizeTierPets(tierPets[5]),
       tier6Pets: normalizeTierPets(tierPets[6]),
-      spells: spells,
+      spells,
     };
   }
 
   private findCustomPackFromDeck(
-    customPacks: Array<{ name: string; deckId?: string | null }>,
-    deck: any,
-  ) {
+    customPacks: ReplayCustomPack[],
+    deck: ReplayDeckJson | null | undefined,
+  ): ReplayCustomPack | null {
     if (!deck) {
       return null;
     }
@@ -298,102 +448,165 @@ export class ReplayCalcParser {
     return null;
   }
 
-  private stripDefaultValues(state: any) {
-    const strippedState: any = {};
+  private stripDefaultValues(
+    state: ReplayCalculatorState,
+  ): Record<string, unknown> {
+    const strippedState: Record<string, unknown> = {};
 
-    if (state.playerPack !== 'Turtle')
+    if (state.playerPack !== 'Turtle') {
       strippedState.playerPack = state.playerPack;
-    if (state.opponentPack !== 'Turtle')
+    }
+    if (state.opponentPack !== 'Turtle') {
       strippedState.opponentPack = state.opponentPack;
-    if (state.playerToy) strippedState.playerToy = state.playerToy;
-    if (state.playerToyLevel && state.playerToyLevel !== '1')
+    }
+    if (state.playerToy) {
+      strippedState.playerToy = state.playerToy;
+    }
+    if (state.playerToyLevel && state.playerToyLevel !== '1') {
       strippedState.playerToyLevel = state.playerToyLevel;
-    if (state.opponentToy) strippedState.opponentToy = state.opponentToy;
-    if (state.opponentToyLevel && state.opponentToyLevel !== '1')
+    }
+    if (state.opponentToy) {
+      strippedState.opponentToy = state.opponentToy;
+    }
+    if (state.opponentToyLevel && state.opponentToyLevel !== '1') {
       strippedState.opponentToyLevel = state.opponentToyLevel;
-    if (state.turn !== 11) strippedState.turn = state.turn;
-    if (state.playerGoldSpent !== 10)
+    }
+    if (state.turn !== 11) {
+      strippedState.turn = state.turn;
+    }
+    if (state.playerGoldSpent !== 10) {
       strippedState.playerGoldSpent = state.playerGoldSpent;
-    if (state.opponentGoldSpent !== 10)
+    }
+    if (state.opponentGoldSpent !== 10) {
       strippedState.opponentGoldSpent = state.opponentGoldSpent;
-    if (state.playerRollAmount !== 4)
+    }
+    if (state.playerRollAmount !== 4) {
       strippedState.playerRollAmount = state.playerRollAmount;
-    if (state.opponentRollAmount !== 4)
+    }
+    if (state.opponentRollAmount !== 4) {
       strippedState.opponentRollAmount = state.opponentRollAmount;
-    if (state.playerSummonedAmount !== 0)
+    }
+    if (state.playerSummonedAmount !== 0) {
       strippedState.playerSummonedAmount = state.playerSummonedAmount;
-    if (state.opponentSummonedAmount !== 0)
+    }
+    if (state.opponentSummonedAmount !== 0) {
       strippedState.opponentSummonedAmount = state.opponentSummonedAmount;
-    if (state.playerLevel3Sold !== 0)
+    }
+    if (state.playerLevel3Sold !== 0) {
       strippedState.playerLevel3Sold = state.playerLevel3Sold;
-    if (state.opponentLevel3Sold !== 0)
+    }
+    if (state.opponentLevel3Sold !== 0) {
       strippedState.opponentLevel3Sold = state.opponentLevel3Sold;
-    if (state.playerTransformationAmount !== 0)
-      strippedState.playerTransformationAmount =
-        state.playerTransformationAmount;
-    if (state.opponentTransformationAmount !== 0)
-      strippedState.opponentTransformationAmount =
-        state.opponentTransformationAmount;
+    }
+    if (state.playerTransformationAmount !== 0) {
+      strippedState.playerTransformationAmount = state.playerTransformationAmount;
+    }
+    if (state.opponentTransformationAmount !== 0) {
+      strippedState.opponentTransformationAmount = state.opponentTransformationAmount;
+    }
 
-    if (state.allPets) strippedState.allPets = true;
-    if (state.oldStork) strippedState.oldStork = true;
-    if (state.tokenPets) strippedState.tokenPets = true;
-    if (state.komodoShuffle) strippedState.komodoShuffle = true;
-    if (state.mana) strippedState.mana = true;
-    if (state.seed != null) strippedState.seed = state.seed;
-    if (state.triggersConsumed) strippedState.triggersConsumed = true;
-    if (state.foodsEaten) strippedState.foodsEaten = true;
-    if (state.showAdvanced) strippedState.showAdvanced = true;
-    if (state.showTriggerNamesInLogs)
+    if (state.allPets) {
+      strippedState.allPets = true;
+    }
+    if (state.oldStork) {
+      strippedState.oldStork = true;
+    }
+    if (state.tokenPets) {
+      strippedState.tokenPets = true;
+    }
+    if (state.komodoShuffle) {
+      strippedState.komodoShuffle = true;
+    }
+    if (state.mana) {
+      strippedState.mana = true;
+    }
+    if (state.seed != null) {
+      strippedState.seed = state.seed;
+    }
+    if (state.triggersConsumed) {
+      strippedState.triggersConsumed = true;
+    }
+    if (state.foodsEaten) {
+      strippedState.foodsEaten = true;
+    }
+    if (state.showAdvanced) {
+      strippedState.showAdvanced = true;
+    }
+    if (state.showTriggerNamesInLogs) {
       strippedState.showTriggerNamesInLogs = true;
-    if (state.showSwallowedLevels) strippedState.showSwallowedLevels = true;
-    if (state.ailmentEquipment) strippedState.ailmentEquipment = true;
+    }
+    if (state.showSwallowedLevels) {
+      strippedState.showSwallowedLevels = true;
+    }
+    if (state.ailmentEquipment) {
+      strippedState.ailmentEquipment = true;
+    }
 
-    if (state.logFilter) strippedState.logFilter = state.logFilter;
-    if (state.customPacks && state.customPacks.length > 0)
+    if (state.logFilter) {
+      strippedState.logFilter = state.logFilter;
+    }
+    if (state.customPacks.length > 0) {
       strippedState.customPacks = state.customPacks;
+    }
 
-    const stripPetDefaults = (pet: any) => {
+    const stripPetDefaults = (pet: PetConfig | null): StrippedReplayPet | null => {
       if (!pet || !pet.name) {
         return null;
       }
 
-      const newPet: any = { name: pet.name };
+      const newPet: StrippedReplayPet = { name: pet.name };
 
-      if (pet.attack !== 0) newPet.attack = pet.attack;
-      if (pet.health !== 0) newPet.health = pet.health;
-      if (pet.exp !== 0) newPet.exp = pet.exp;
-      if (pet.mana !== 0) newPet.mana = pet.mana;
-      if (pet.equipment) newPet.equipment = pet.equipment;
-      if (pet.triggersConsumed) newPet.triggersConsumed = pet.triggersConsumed;
-      if (pet.foodsEaten) newPet.foodsEaten = pet.foodsEaten;
-      if (pet.belugaSwallowedPet !== null)
+      if (typeof pet.attack === 'number' && pet.attack !== 0) {
+        newPet.attack = pet.attack;
+      }
+      if (typeof pet.health === 'number' && pet.health !== 0) {
+        newPet.health = pet.health;
+      }
+      if (typeof pet.exp === 'number' && pet.exp !== 0) {
+        newPet.exp = pet.exp;
+      }
+      if (typeof pet.mana === 'number' && pet.mana !== 0) {
+        newPet.mana = pet.mana;
+      }
+      if (pet.equipment) {
+        newPet.equipment = pet.equipment;
+      }
+      if (pet.triggersConsumed) {
+        newPet.triggersConsumed = pet.triggersConsumed;
+      }
+      if (pet.foodsEaten) {
+        newPet.foodsEaten = pet.foodsEaten;
+      }
+      if (pet.belugaSwallowedPet != null) {
         newPet.belugaSwallowedPet = pet.belugaSwallowedPet;
-      if (pet.timesHurt) newPet.timesHurt = pet.timesHurt;
+      }
+      if (pet.timesHurt) {
+        newPet.timesHurt = pet.timesHurt;
+      }
 
       return newPet;
     };
 
     const strippedPlayerPets = state.playerPets.map(stripPetDefaults);
-    if (strippedPlayerPets.some((pet: any) => pet !== null)) {
+    if (strippedPlayerPets.some((pet) => pet !== null)) {
       strippedState.playerPets = strippedPlayerPets;
     }
 
     const strippedOpponentPets = state.opponentPets.map(stripPetDefaults);
-    if (strippedOpponentPets.some((pet: any) => pet !== null)) {
+    if (strippedOpponentPets.some((pet) => pet !== null)) {
       strippedState.opponentPets = strippedOpponentPets;
     }
 
     return strippedState;
   }
 
-  private truncateKeys(data: any): any {
+  private truncateKeys(data: unknown): unknown {
     if (Array.isArray(data)) {
       return data.map((item) => this.truncateKeys(item));
     }
-    if (data !== null && typeof data === 'object') {
-      const newObj: any = {};
-      for (const key in data) {
+    if (isRecord(data)) {
+      const newObj: Record<string, unknown> = {};
+      for (const key of Object.keys(data)) {
         const newKey = KEY_MAP[key] || key;
         newObj[newKey] = this.truncateKeys(data[key]);
       }

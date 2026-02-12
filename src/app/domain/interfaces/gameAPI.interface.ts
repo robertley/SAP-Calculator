@@ -3,6 +3,17 @@ import { Player } from 'app/domain/entities/player.class';
 export interface GameAPI {
   player: Player;
   opponent: Player;
+  toyService?: {
+    createToy: (toyName: string, parent: Player, level: number) => unknown;
+  };
+  logService?: {
+    createLog: (entry: {
+      message: string;
+      type: string;
+      player?: Player;
+      randomEvent?: boolean;
+    }) => void;
+  };
   playerPetPool?: Map<number, string[]>;
   opponentPetPool?: Map<number, string[]>;
   previousShopTier?: number;
@@ -26,5 +37,7 @@ export interface GameAPI {
   playerTransformationAmount?: number;
   opponentTransformationAmount?: number;
   FirstNonJumpAttackHappened?: boolean;
+  playerLostLastBattle?: boolean;
+  opponentLostLastBattle?: boolean;
 }
 

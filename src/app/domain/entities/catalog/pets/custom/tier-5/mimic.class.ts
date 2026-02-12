@@ -69,7 +69,7 @@ export class MimicAbility extends Ability {
     if (context.trigger === 'StartBattle') {
       ownerData.mimicFaintCount = 0;
       ownerData.mimicTriggeredThreshold = 0;
-      (owner.parent as any)['pendingGoldFromMimic'] = 0;
+      owner.parent.pendingGoldFromMimic = 0;
       this.triggerTigerExecution(context);
       return;
     }
@@ -86,9 +86,8 @@ export class MimicAbility extends Ability {
         ownerData.mimicTriggeredThreshold = triggeredThreshold;
         const goldPerActivation = this.level;
         const totalGold = goldPerActivation * activations;
-        const key = 'pendingGoldFromMimic';
-        (owner.parent as any)[key] =
-          ((owner.parent as any)[key] ?? 0) + totalGold;
+        owner.parent.pendingGoldFromMimic =
+          (owner.parent.pendingGoldFromMimic ?? 0) + totalGold;
 
         this.logService.createLog({
           message: `${owner.name} will grant +${totalGold} gold next turn after ${ownerData.mimicFaintCount} friendly faints.`,

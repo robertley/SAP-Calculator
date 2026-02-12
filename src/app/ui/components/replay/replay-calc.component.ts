@@ -11,6 +11,31 @@ import { of } from 'rxjs';
 import { catchError, finalize, timeout } from 'rxjs/operators';
 import { ReplayCalcService } from 'app/integrations/replay/replay-calc.service';
 import { getReplayApiUrl } from 'app/integrations/replay/replay-api-endpoints';
+import {
+  ReplayBattleJson,
+  ReplayBoardJson,
+  ReplayBuildModelJson,
+} from 'app/integrations/replay/replay-calc-parser';
+
+interface ReplayActionEntry {
+  Type?: number;
+  Battle?: string;
+}
+
+interface ReplayCalcPayload {
+  Pid?: string;
+  T?: number;
+  Actions?: ReplayActionEntry[];
+  UserBoard?: ReplayBoardJson;
+  OpponentBoard?: ReplayBoardJson;
+  GenesisBuildModel?: ReplayBuildModelJson;
+}
+
+interface ReplayBattleResponse {
+  battle?: ReplayBattleJson;
+  genesisBuildModel?: ReplayBuildModelJson;
+  error?: string;
+}
 
 @Component({
   selector: 'app-replay-calc',
@@ -67,16 +92,16 @@ export class ReplayCalcComponent implements OnInit {
       return;
     }
 
-    let parsedInput: any;
+    let parsedInput: ReplayCalcPayload;
     try {
-      parsedInput = JSON.parse(rawInput);
+      parsedInput = JSON.parse(rawInput) as ReplayCalcPayload;
     } catch (error) {
       this.errorMessage =
         'Invalid JSON. Please paste a valid replay or battle JSON.';
       return;
     }
 
-    let battleJson = null;
+    let battleJson: ReplayBattleJson | null = null;
     if (parsedInput?.Pid && !parsedInput?.Actions) {
       const turnNumber = Number(
         parsedInput?.T ?? this.formGroup.get('turn').value,
@@ -111,7 +136,7 @@ export class ReplayCalcComponent implements OnInit {
               }),
             )
             .subscribe({
-              next: (response: any) => {
+              next: (response: ReplayBattleResponse) => {
                 battleJson = response?.battle;
                 if (!battleJson) {
                   this.errorMessage = 'Replay lookup failed to return a battle.';

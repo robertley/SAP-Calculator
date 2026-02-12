@@ -17,7 +17,8 @@ type StatFood = {
 
 const STAT_FOODS: StatFood[] = (() => {
   const foods =
-    (foodJson as unknown as { default?: any[] }).default ?? (foodJson as any[]);
+    (foodJson as unknown as { default?: unknown[] }).default ??
+    (foodJson as unknown[]);
   if (!Array.isArray(foods)) {
     return [];
   }
@@ -27,7 +28,14 @@ const STAT_FOODS: StatFood[] = (() => {
     /Give one pet \+(\d+) attack(?: and \+(\d+) health)?|Give one pet \+(\d+) health/;
 
   for (const food of foods) {
-    const ability: string = food?.Ability ?? '';
+    if (!food || typeof food !== 'object') {
+      continue;
+    }
+    const foodRecord = food as {
+      Name?: string;
+      Ability?: string;
+    };
+    const ability: string = foodRecord.Ability ?? '';
     if (!ability || /perk/i.test(ability)) {
       continue;
     }
@@ -49,9 +57,12 @@ const STAT_FOODS: StatFood[] = (() => {
     if (!Number.isFinite(attack) || !Number.isFinite(health)) {
       continue;
     }
+    if (!foodRecord.Name) {
+      continue;
+    }
 
     results.push({
-      name: food.Name,
+      name: foodRecord.Name,
       attack,
       health,
     });

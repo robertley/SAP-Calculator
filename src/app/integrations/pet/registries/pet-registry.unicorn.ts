@@ -1,3 +1,4 @@
+import { PetRegistryMap } from '../pet-registry.types';
 import { Baku } from 'app/domain/entities/catalog/pets/unicorn/tier-1/baku.class';
 import { QuestionMarks } from 'app/domain/entities/catalog/pets/unicorn/tier-1/question-marks.class';
 import { Barghest } from 'app/domain/entities/catalog/pets/unicorn/tier-1/barghest.class';
@@ -60,7 +61,7 @@ import { Cerberus } from 'app/domain/entities/catalog/pets/unicorn/tier-6/cerber
 import { Hydra } from 'app/domain/entities/catalog/pets/unicorn/tier-6/hydra.class';
 import { Behemoth } from 'app/domain/entities/catalog/pets/unicorn/tier-6/behemoth.class';
 
-export const UNICORN_PET_REGISTRY: { [key: string]: any } = {
+export const UNICORN_PET_REGISTRY: PetRegistryMap = {
   Baku: Baku,
   Barghest: Barghest,
   Tsuchinoko: Tsuchinoko,
@@ -123,5 +124,7 @@ export const UNICORN_PET_REGISTRY: { [key: string]: any } = {
   Behemoth: Behemoth,
   Abomination: Abomination,
 };
+
+
 
 

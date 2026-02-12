@@ -349,7 +349,7 @@ export class SimulationService {
     };
   }
 
-  private normalizeCustomPacks(customPacks: any): CustomPackConfig[] {
+  private normalizeCustomPacks(customPacks: unknown): CustomPackConfig[] {
     if (!Array.isArray(customPacks)) {
       return [];
     }
@@ -359,8 +359,12 @@ export class SimulationService {
       .filter((customPack): customPack is CustomPackConfig => customPack !== null);
   }
 
-  private normalizeCustomPack(customPack: any): CustomPackConfig | null {
-    if (!customPack || typeof customPack !== 'object') {
+  private isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null;
+  }
+
+  private normalizeCustomPack(customPack: unknown): CustomPackConfig | null {
+    if (!this.isRecord(customPack)) {
       return null;
     }
     const name = `${customPack.name ?? ''}`.trim();
@@ -368,7 +372,7 @@ export class SimulationService {
       return null;
     }
 
-    const normalizeTierList = (value: any): string[] => {
+    const normalizeTierList = (value: unknown): string[] => {
       if (!Array.isArray(value)) {
         return [];
       }
@@ -390,7 +394,9 @@ export class SimulationService {
     };
   }
 
-  private normalizePetList(pets: any[]): (SimulationConfig['playerPets'][number] | null)[] {
+  private normalizePetList(
+    pets: unknown,
+  ): (SimulationConfig['playerPets'][number] | null)[] {
     if (!Array.isArray(pets)) {
       return [];
     }
@@ -398,19 +404,23 @@ export class SimulationService {
   }
 
   private normalizePetEntry(
-    pet: any,
+    pet: unknown,
   ): SimulationConfig['playerPets'][number] | null {
-    if (!pet || !pet.name) {
+    if (!this.isRecord(pet) || typeof pet.name !== 'string' || !pet.name) {
       return null;
     }
 
-    const normalized = { ...pet };
+    const normalized: Record<string, unknown> = { ...pet };
     const rawEquipment = normalized.equipment;
     let equipmentName: string | null = null;
-    let equipmentUses: number | null = normalized.equipmentUses ?? null;
+    let equipmentUses: number | null =
+      typeof normalized.equipmentUses === 'number'
+        ? normalized.equipmentUses
+        : null;
 
-    if (rawEquipment && typeof rawEquipment === 'object') {
-      equipmentName = rawEquipment.name ?? null;
+    if (this.isRecord(rawEquipment)) {
+      equipmentName =
+        typeof rawEquipment.name === 'string' ? rawEquipment.name : null;
       if (equipmentUses == null && rawEquipment.uses != null) {
         const usesValue = Number(rawEquipment.uses);
         equipmentUses = Number.isFinite(usesValue) ? usesValue : null;
@@ -431,8 +441,9 @@ export class SimulationService {
     delete normalized.originalAbilityList;
     delete normalized.originalEquipment;
 
-    return normalized;
+    return normalized as unknown as SimulationConfig['playerPets'][number];
   }
+
 }
 
 

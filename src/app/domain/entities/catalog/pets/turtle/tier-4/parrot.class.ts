@@ -1,12 +1,18 @@
 import { PetService } from 'app/integrations/pet/pet.service';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { LogService } from 'app/integrations/log.service';
+import { PetForm } from 'app/integrations/pet/pet-factory.service';
 import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
-
-const PARROT_COPY_ABOMINATION_SLOTS = [1, 2, 3] as const;
+import {
+  PET_MEMORY_SLOTS,
+  PetMemoryFieldMap,
+  createPetMemorySlotFields,
+  readPetMemoryNumber,
+  readPetMemoryString,
+} from '../../../../pet/pet-memory-fields';
 
 export class Parrot extends Pet {
   name = 'Parrot';
@@ -62,59 +68,78 @@ export class ParrotAbility extends Ability {
     const useSavedCopy =
       owner.parrotCopyPet != null && owner.parrotCopyPet !== '';
     const copyPetName = useSavedCopy
-      ? owner.parrotCopyPet
+      ? readPetMemoryString(owner, 'parrotCopyPet', null)
       : (owner.petAhead?.name ?? null);
     const belugaSwallowedPet = useSavedCopy
-      ? owner.parrotCopyPetBelugaSwallowedPet
+      ? readPetMemoryString(owner, 'parrotCopyPetBelugaSwallowedPet', null)
       : null;
-    const getOwnerValue = <T>(prop: string, fallback: T): T => {
-      const value = (owner as unknown as Record<string, T | null | undefined>)[
-        prop
-      ];
-      return value ?? fallback;
-    };
-    const buildAbominationSwallowFields = () => {
-      const fields: Record<string, string | number | null | undefined> = {};
-      for (const slot of PARROT_COPY_ABOMINATION_SLOTS) {
-        const base = `parrotCopyPetAbominationSwallowedPet${slot}`;
-        fields[`abominationSwallowedPet${slot}`] = getOwnerValue<string | null>(
-          base,
+    const buildAbominationSwallowFields = (): PetMemoryFieldMap => {
+      const fields: PetMemoryFieldMap = {};
+      for (const slot of PET_MEMORY_SLOTS) {
+        const sourceFields = createPetMemorySlotFields(
+          'parrotCopyPetAbominationSwallowedPet',
+          slot,
+        );
+        const targetFields = createPetMemorySlotFields(
+          'abominationSwallowedPet',
+          slot,
+        );
+
+        fields[targetFields.base] = readPetMemoryString(
+          owner,
+          sourceFields.base,
           null,
         );
-        fields[`abominationSwallowedPet${slot}BelugaSwallowedPet`] =
-          getOwnerValue<string | null>(`${base}BelugaSwallowedPet`, null);
-        fields[`abominationSwallowedPet${slot}Level`] = getOwnerValue<number>(
-          `${base}Level`,
+        fields[targetFields.belugaSwallowedPet] = readPetMemoryString(
+          owner,
+          sourceFields.belugaSwallowedPet,
+          null,
+        );
+        fields[targetFields.level] = readPetMemoryNumber(
+          owner,
+          sourceFields.level,
           1,
         );
-        fields[`abominationSwallowedPet${slot}TimesHurt`] =
-          getOwnerValue<number>(`${base}TimesHurt`, 0);
-        fields[`abominationSwallowedPet${slot}ParrotCopyPet`] = getOwnerValue<
-          string | null
-        >(`${base}ParrotCopyPet`, null);
-        fields[
-          `abominationSwallowedPet${slot}ParrotCopyPetBelugaSwallowedPet`
-        ] = getOwnerValue<string | null>(
-          `${base}ParrotCopyPetBelugaSwallowedPet`,
+        fields[targetFields.timesHurt] = readPetMemoryNumber(
+          owner,
+          sourceFields.timesHurt,
+          0,
+        );
+        fields[targetFields.parrotCopyPet] = readPetMemoryString(
+          owner,
+          sourceFields.parrotCopyPet,
           null,
         );
-        for (const nestedSlot of PARROT_COPY_ABOMINATION_SLOTS) {
-          const nestedBase = `${base}ParrotCopyPetAbominationSwallowedPet${nestedSlot}`;
-          fields[
-            `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${nestedSlot}`
-          ] = getOwnerValue<string | null>(nestedBase, null);
-          fields[
-            `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${nestedSlot}BelugaSwallowedPet`
-          ] = getOwnerValue<string | null>(
-            `${nestedBase}BelugaSwallowedPet`,
+        fields[targetFields.parrotCopyPetBelugaSwallowedPet] =
+          readPetMemoryString(
+            owner,
+            sourceFields.parrotCopyPetBelugaSwallowedPet,
             null,
           );
-          fields[
-            `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${nestedSlot}Level`
-          ] = getOwnerValue<number>(`${nestedBase}Level`, 1);
-          fields[
-            `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${nestedSlot}TimesHurt`
-          ] = getOwnerValue<number>(`${nestedBase}TimesHurt`, 0);
+
+        for (const nestedSlot of PET_MEMORY_SLOTS) {
+          const sourceNestedFields = sourceFields.nested(nestedSlot);
+          const targetNestedFields = targetFields.nested(nestedSlot);
+          fields[targetNestedFields.base] = readPetMemoryString(
+            owner,
+            sourceNestedFields.base,
+            null,
+          );
+          fields[targetNestedFields.belugaSwallowedPet] = readPetMemoryString(
+            owner,
+            sourceNestedFields.belugaSwallowedPet,
+            null,
+          );
+          fields[targetNestedFields.level] = readPetMemoryNumber(
+            owner,
+            sourceNestedFields.level,
+            1,
+          );
+          fields[targetNestedFields.timesHurt] = readPetMemoryNumber(
+            owner,
+            sourceNestedFields.timesHurt,
+            0,
+          );
         }
       }
       return fields;
@@ -126,22 +151,24 @@ export class ParrotAbility extends Ability {
       copyPetName === 'Abomination' && useSavedCopy
         ? buildAbominationSwallowFields()
         : {};
-    let copyPet = this.petService.createPet(
-      {
-        name: copyPetName,
-        attack: null,
-        health: null,
-        mana: null,
-        exp: owner.exp ?? 0,
-        equipment: null,
-        belugaSwallowedPet:
-          copyPetName === 'Beluga Whale'
-            ? (belugaSwallowedPet ?? null)
-            : undefined,
-        ...abominationFields,
-      },
-      owner.parent,
-    );
+    const copyPetForm: PetForm = {
+      name: copyPetName,
+      attack: null,
+      health: null,
+      mana: null,
+      exp: owner.exp ?? 0,
+      equipment: null,
+      belugaSwallowedPet:
+        copyPetName === 'Beluga Whale'
+          ? (readPetMemoryString(
+              { belugaSwallowedPet },
+              'belugaSwallowedPet',
+              null,
+            ) ?? null)
+          : undefined,
+    };
+    Object.assign(copyPetForm, abominationFields);
+    let copyPet = this.petService.createPet(copyPetForm, owner.parent);
     if (copyPet == null) {
       return;
     }

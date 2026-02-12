@@ -3,6 +3,8 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { createPack } from 'app/runtime/custom-pack-form';
 import { GameService } from './game.service';
 
+type CalculatorStateInput = Record<string, unknown> | null | undefined;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,21 +13,22 @@ export class CalculatorStateService {
 
   applyCalculatorState(
     formGroup: FormGroup,
-    calculator: any,
+    calculator: CalculatorStateInput,
     dayNight: boolean,
     fixCustomPackSelect?: () => void,
   ): void {
     const defaultState = this.getDefaultState();
-    const finalState = { ...defaultState, ...calculator };
+    const calculatorState = this.asRecord(calculator);
+    const finalState = { ...defaultState, ...calculatorState };
 
     formGroup.patchValue(finalState, { emitEvent: false });
 
-    const customPacks = calculator?.customPacks;
-    if (calculator) {
-      calculator.customPacks = [];
-    }
+    const customPacks = calculatorState?.customPacks;
+    const patchState = calculatorState
+      ? { ...calculatorState, customPacks: [] }
+      : {};
     this.loadCustomPacks(formGroup, customPacks);
-    formGroup.patchValue(calculator, { emitEvent: false });
+    formGroup.patchValue(patchState, { emitEvent: false });
     formGroup.get('tokenPets')?.setValue(true, { emitEvent: false });
     this.normalizeEquipmentControls(
       formGroup.get('playerPets') as FormArray,
@@ -66,7 +69,7 @@ export class CalculatorStateService {
     this.gameService.gameApi.turnNumber = formGroup.get('turn').value;
   }
 
-  loadCustomPacks(formGroup: FormGroup, customPacks: any): void {
+  loadCustomPacks(formGroup: FormGroup, customPacks: unknown): void {
     const formArray = formGroup.get('customPacks') as FormArray;
     formArray.clear();
     const packs = Array.isArray(customPacks) ? customPacks : [];
@@ -76,7 +79,7 @@ export class CalculatorStateService {
     }
   }
 
-  private getDefaultState() {
+  private getDefaultState(): Record<string, unknown> {
     return {
       playerPack: 'Turtle',
       opponentPack: 'Turtle',
@@ -134,15 +137,27 @@ export class CalculatorStateService {
     }
   }
 
-  private getEquipmentName(value: any): string | null {
+  private getEquipmentName(value: unknown): string | null {
     if (!value) {
       return null;
     }
     if (typeof value === 'string') {
       return value;
     }
-    if (typeof value === 'object' && typeof value.name === 'string') {
+    if (
+      value !== null &&
+      typeof value === 'object' &&
+      'name' in value &&
+      typeof value.name === 'string'
+    ) {
       return value.name;
+    }
+    return null;
+  }
+
+  private asRecord(value: CalculatorStateInput): Record<string, unknown> | null {
+    if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+      return value;
     }
     return null;
   }

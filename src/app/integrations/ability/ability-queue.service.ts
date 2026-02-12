@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AbilityEvent } from 'app/domain/interfaces/ability-event.interface';
-import { AbilityTrigger } from 'app/domain/entities/ability.class';
+import {
+  AbilityCustomParams,
+  AbilityTrigger,
+} from 'app/domain/entities/ability.class';
 import { Pet } from 'app/domain/entities/pet.class';
+import { Player } from 'app/domain/entities/player.class';
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { ABILITY_PRIORITIES } from './ability-priorities';
 import {
@@ -112,7 +116,7 @@ export class AbilityQueueService {
       return direct;
     }
     if (/\d+$/.test(trigger)) {
-      return (ABILITY_PRIORITIES as any).CounterEvent ?? 999;
+      return ABILITY_PRIORITIES.CounterEvent ?? 999;
     }
     return 999;
   }
@@ -137,7 +141,7 @@ export class AbilityQueueService {
     pet: Pet,
     trigger: AbilityTrigger,
     triggerPet?: Pet,
-    customParams?: any,
+    customParams?: AbilityCustomParams,
   ): void {
     if (pet.hasTrigger(trigger)) {
       let eventPriority = this.getPetEventPriority(pet);
@@ -181,7 +185,7 @@ export class AbilityQueueService {
   handleCounterTriggers(
     pet: Pet,
     triggerPet: Pet | undefined,
-    customParams: any,
+    customParams: AbilityCustomParams | undefined,
     counters: Array<{ trigger: AbilityTrigger; modulo: number }>,
   ): void {
     for (const counter of counters) {
@@ -206,7 +210,7 @@ export class AbilityQueueService {
   handleNumberedCounterTriggers(
     pet: Pet,
     triggerPet: Pet | undefined,
-    customParams: any,
+    customParams: AbilityCustomParams | undefined,
     triggers: AbilityTrigger[],
   ): void {
     const counters = triggers
@@ -267,8 +271,8 @@ export class AbilityQueueService {
     return result;
   }
 
-  public getTeam(petOrPlayer: any): Pet[] {
-    const parent = petOrPlayer?.parent ?? petOrPlayer;
+  public getTeam(petOrPlayer?: Pet | Player | null): Pet[] {
+    const parent = petOrPlayer instanceof Pet ? petOrPlayer.parent : petOrPlayer;
     const arr = parent?.petArray;
     return Array.isArray(arr) ? arr : [];
   }

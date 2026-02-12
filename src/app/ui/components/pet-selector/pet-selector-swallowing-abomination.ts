@@ -7,7 +7,7 @@ import { PetSelectorPackFiltering } from './pet-selector-pack-filtering';
 export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
   protected substitutePet(_nameChange = false): void {}
 
-  setAbominationParrotCopySettings(_value: any) {
+  setAbominationParrotCopySettings(_value: unknown) {
     let pet = this.player.getPet(this.index);
     if (pet == null) {
       return;
@@ -27,9 +27,12 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.value ??
         null;
 
-      (pet as any)[`${base}ParrotCopyPet`] = parrotCopyPet;
-      (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] =
-        parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null;
+      this.setPetField(pet, `${base}ParrotCopyPet`, parrotCopyPet);
+      this.setPetField(
+        pet,
+        `${base}ParrotCopyPetBelugaSwallowedPet`,
+        parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null,
+      );
       if (parrotCopyPet !== 'Beluga Whale') {
         this.formGroup
           .get(`${base}ParrotCopyPetBelugaSwallowedPet`)
@@ -49,14 +52,20 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         const innerLevel = Number(
           this.formGroup.get(`${innerBase}Level`)?.value ?? 1,
         );
-        (pet as any)[innerBase] = innerName;
-        (pet as any)[`${innerBase}BelugaSwallowedPet`] =
-          innerName === 'Beluga Whale' ? innerBeluga : null;
-        (pet as any)[`${innerBase}Level`] = innerLevel || 1;
-        (pet as any)[`${innerBase}TimesHurt`] =
+        this.setPetField(pet, innerBase, innerName);
+        this.setPetField(
+          pet,
+          `${innerBase}BelugaSwallowedPet`,
+          innerName === 'Beluga Whale' ? innerBeluga : null,
+        );
+        this.setPetField(pet, `${innerBase}Level`, innerLevel || 1);
+        this.setPetField(
+          pet,
+          `${innerBase}TimesHurt`,
           this.getAbominationParrotCopyAbominationTimesHurtValue(
             `${innerBase}TimesHurt`,
-          );
+          ),
+        );
 
         if (innerName !== 'Beluga Whale') {
           this.formGroup
@@ -78,7 +87,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     return name === 'Sabertooth Tiger' || name === 'Tuna';
   }
 
-  setParrotCopyPetAbominationSwallowedPets(_value: any) {
+  setParrotCopyPetAbominationSwallowedPets(_value: unknown) {
     let pet = this.player.getPet(this.index);
     if (pet == null) {
       return;
@@ -159,7 +168,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     this.setParrotCopyPetAbominationParrotSettings(null);
   }
 
-  setParrotCopyPetAbominationParrotSettings(_value: any) {
+  setParrotCopyPetAbominationParrotSettings(_value: unknown) {
     let pet = this.player.getPet(this.index);
     if (pet == null) {
       return;
@@ -178,9 +187,12 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         this.formGroup.get(`${base}ParrotCopyPetBelugaSwallowedPet`)?.value ??
         null;
 
-      (pet as any)[`${base}ParrotCopyPet`] = parrotCopyPet;
-      (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] =
-        parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null;
+      this.setPetField(pet, `${base}ParrotCopyPet`, parrotCopyPet);
+      this.setPetField(
+        pet,
+        `${base}ParrotCopyPetBelugaSwallowedPet`,
+        parrotCopyPet === 'Beluga Whale' ? parrotCopyBeluga : null,
+      );
       if (parrotCopyPet !== 'Beluga Whale') {
         this.formGroup
           .get(`${base}ParrotCopyPetBelugaSwallowedPet`)
@@ -200,14 +212,20 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         const innerLevel = Number(
           this.formGroup.get(`${innerBase}Level`)?.value ?? 1,
         );
-        (pet as any)[innerBase] = innerName;
-        (pet as any)[`${innerBase}BelugaSwallowedPet`] =
-          innerName === 'Beluga Whale' ? innerBeluga : null;
-        (pet as any)[`${innerBase}Level`] = innerLevel || 1;
-        (pet as any)[`${innerBase}TimesHurt`] =
+        this.setPetField(pet, innerBase, innerName);
+        this.setPetField(
+          pet,
+          `${innerBase}BelugaSwallowedPet`,
+          innerName === 'Beluga Whale' ? innerBeluga : null,
+        );
+        this.setPetField(pet, `${innerBase}Level`, innerLevel || 1);
+        this.setPetField(
+          pet,
+          `${innerBase}TimesHurt`,
           this.getParrotCopyPetAbominationParrotAbominationTimesHurtValue(
             `${innerBase}TimesHurt`,
-          );
+          ),
+        );
         if (innerName !== 'Beluga Whale') {
           this.formGroup
             .get(`${innerBase}BelugaSwallowedPet`)
@@ -244,7 +262,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     pet.sarcasticFringeheadSwallowedPet = value;
   }
 
-  setSwallowedPets(_value: any) {
+  setSwallowedPets(_value: unknown) {
     let pet = this.player.getPet(this.index);
     if (pet == null) {
       return;
@@ -331,8 +349,8 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
 
   private clearAbominationParrotCopySettings(pet: Pet, slot: number) {
     const base = `abominationSwallowedPet${slot}`;
-    (pet as any)[`${base}ParrotCopyPet`] = null;
-    (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] = null;
+    this.setPetField(pet, `${base}ParrotCopyPet`, null);
+    this.setPetField(pet, `${base}ParrotCopyPetBelugaSwallowedPet`, null);
     this.formGroup
       .get(`${base}ParrotCopyPet`)
       ?.setValue(null, { emitEvent: false });
@@ -348,10 +366,10 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
   ) {
     for (let inner = 1; inner <= 3; inner++) {
       const innerBase = `abominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${inner}`;
-      (pet as any)[innerBase] = null;
-      (pet as any)[`${innerBase}BelugaSwallowedPet`] = null;
-      (pet as any)[`${innerBase}Level`] = 1;
-      (pet as any)[`${innerBase}TimesHurt`] = 0;
+      this.setPetField(pet, innerBase, null);
+      this.setPetField(pet, `${innerBase}BelugaSwallowedPet`, null);
+      this.setPetField(pet, `${innerBase}Level`, 1);
+      this.setPetField(pet, `${innerBase}TimesHurt`, 0);
       this.formGroup.get(innerBase)?.setValue(null, { emitEvent: false });
       this.formGroup
         .get(`${innerBase}BelugaSwallowedPet`)
@@ -381,8 +399,8 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
 
   private clearParrotCopyPetAbominationParrotSettings(pet: Pet, slot: number) {
     const base = `parrotCopyPetAbominationSwallowedPet${slot}`;
-    (pet as any)[`${base}ParrotCopyPet`] = null;
-    (pet as any)[`${base}ParrotCopyPetBelugaSwallowedPet`] = null;
+    this.setPetField(pet, `${base}ParrotCopyPet`, null);
+    this.setPetField(pet, `${base}ParrotCopyPetBelugaSwallowedPet`, null);
     this.formGroup
       .get(`${base}ParrotCopyPet`)
       ?.setValue(null, { emitEvent: false });
@@ -398,10 +416,10 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
   ) {
     for (let inner = 1; inner <= 3; inner++) {
       const innerBase = `parrotCopyPetAbominationSwallowedPet${slot}ParrotCopyPetAbominationSwallowedPet${inner}`;
-      (pet as any)[innerBase] = null;
-      (pet as any)[`${innerBase}BelugaSwallowedPet`] = null;
-      (pet as any)[`${innerBase}Level`] = 1;
-      (pet as any)[`${innerBase}TimesHurt`] = 0;
+      this.setPetField(pet, innerBase, null);
+      this.setPetField(pet, `${innerBase}BelugaSwallowedPet`, null);
+      this.setPetField(pet, `${innerBase}Level`, 1);
+      this.setPetField(pet, `${innerBase}TimesHurt`, 0);
       this.formGroup.get(innerBase)?.setValue(null, { emitEvent: false });
       this.formGroup
         .get(`${innerBase}BelugaSwallowedPet`)
@@ -434,7 +452,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         : field.endsWith('TimesHurt')
           ? 0
           : null;
-      (pet as any)[field] = defaultValue;
+      this.setPetField(pet, field, defaultValue);
       this.formGroup.get(field)?.setValue(defaultValue, { emitEvent: false });
     }
     for (let slot = 1; slot <= 3; slot++) {
@@ -452,5 +470,9 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
       return 0;
     }
     return Math.max(0, Math.min(99, rawValue));
+  }
+
+  private setPetField(pet: Pet, field: string, value: unknown): void {
+    (pet as unknown as Record<string, unknown>)[field] = value;
   }
 }

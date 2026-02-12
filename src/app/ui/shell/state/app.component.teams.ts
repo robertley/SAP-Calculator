@@ -7,6 +7,7 @@ import {
   TeamPresetsService,
 } from 'app/integrations/team-presets.service';
 import { cloneEquipment } from 'app/runtime/equipment-clone';
+import { PetForm } from 'app/integrations/pet/pet-factory.service';
 
 export function saveTeamPreset(options: {
   side: 'player' | 'opponent';
@@ -379,63 +380,79 @@ export function loadTeamPreset(options: {
 function buildTeamFromSide(
   formGroup: FormGroup,
   side: 'player' | 'opponent',
-): any[] {
+): PetForm[] {
   const key = side === 'player' ? 'playerPets' : 'opponentPets';
   const formArray = formGroup.get(key) as FormArray;
   return formArray.controls.map((control) =>
     sanitizePetFormValue(control.value),
-  );
+  ).filter((pet): pet is PetForm => pet !== null);
 }
 
-function sanitizePetFormValue(petValue: any): any {
-  if (!petValue?.name) {
+function sanitizePetFormValue(petValue: unknown): PetForm | null {
+  if (!petValue || typeof petValue !== 'object') {
+    return null;
+  }
+  const petRecord = petValue as Record<string, unknown>;
+  if (!petRecord.name) {
     return null;
   }
   const equipmentName =
-    typeof petValue.equipment === 'string'
-      ? petValue.equipment
-      : petValue.equipment?.name ?? null;
+    typeof petRecord.equipment === 'string'
+      ? petRecord.equipment
+      : typeof (petRecord.equipment as { name?: unknown })?.name === 'string'
+        ? (petRecord.equipment as { name: string }).name
+        : null;
   return {
-    name: petValue.name ?? null,
-    attack: petValue.attack ?? 0,
-    health: petValue.health ?? 0,
-    exp: petValue.exp ?? 0,
+    name: String(petRecord.name),
+    attack: (petRecord.attack as number | null) ?? 0,
+    health: (petRecord.health as number | null) ?? 0,
+    exp: (petRecord.exp as number | null) ?? 0,
     equipment: equipmentName ? { name: equipmentName } : null,
-    belugaSwallowedPet: petValue.belugaSwallowedPet ?? null,
+    belugaSwallowedPet: (petRecord.belugaSwallowedPet as string | null) ?? null,
     sarcasticFringeheadSwallowedPet:
-      petValue.sarcasticFringeheadSwallowedPet ?? null,
-    mana: petValue.mana ?? 0,
-    triggersConsumed: petValue.triggersConsumed ?? 0,
-    foodsEaten: petValue.foodsEaten ?? 0,
-    abominationSwallowedPet1: petValue.abominationSwallowedPet1 ?? null,
-    abominationSwallowedPet2: petValue.abominationSwallowedPet2 ?? null,
-    abominationSwallowedPet3: petValue.abominationSwallowedPet3 ?? null,
+      (petRecord.sarcasticFringeheadSwallowedPet as string | null) ?? null,
+    mana: (petRecord.mana as number | null) ?? 0,
+    triggersConsumed: (petRecord.triggersConsumed as number | null) ?? 0,
+    foodsEaten: (petRecord.foodsEaten as number | null) ?? 0,
+    abominationSwallowedPet1:
+      (petRecord.abominationSwallowedPet1 as string | null) ?? null,
+    abominationSwallowedPet2:
+      (petRecord.abominationSwallowedPet2 as string | null) ?? null,
+    abominationSwallowedPet3:
+      (petRecord.abominationSwallowedPet3 as string | null) ?? null,
     abominationSwallowedPet1BelugaSwallowedPet:
-      petValue.abominationSwallowedPet1BelugaSwallowedPet ?? null,
+      (petRecord.abominationSwallowedPet1BelugaSwallowedPet as string | null) ??
+      null,
     abominationSwallowedPet2BelugaSwallowedPet:
-      petValue.abominationSwallowedPet2BelugaSwallowedPet ?? null,
+      (petRecord.abominationSwallowedPet2BelugaSwallowedPet as string | null) ??
+      null,
     abominationSwallowedPet3BelugaSwallowedPet:
-      petValue.abominationSwallowedPet3BelugaSwallowedPet ?? null,
-    abominationSwallowedPet1Level: petValue.abominationSwallowedPet1Level ?? 1,
-    abominationSwallowedPet2Level: petValue.abominationSwallowedPet2Level ?? 1,
-    abominationSwallowedPet3Level: petValue.abominationSwallowedPet3Level ?? 1,
+      (petRecord.abominationSwallowedPet3BelugaSwallowedPet as string | null) ??
+      null,
+    abominationSwallowedPet1Level:
+      (petRecord.abominationSwallowedPet1Level as number | null) ?? 1,
+    abominationSwallowedPet2Level:
+      (petRecord.abominationSwallowedPet2Level as number | null) ?? 1,
+    abominationSwallowedPet3Level:
+      (petRecord.abominationSwallowedPet3Level as number | null) ?? 1,
     abominationSwallowedPet1TimesHurt:
-      petValue.abominationSwallowedPet1TimesHurt ?? 0,
+      (petRecord.abominationSwallowedPet1TimesHurt as number | null) ?? 0,
     abominationSwallowedPet2TimesHurt:
-      petValue.abominationSwallowedPet2TimesHurt ?? 0,
+      (petRecord.abominationSwallowedPet2TimesHurt as number | null) ?? 0,
     abominationSwallowedPet3TimesHurt:
-      petValue.abominationSwallowedPet3TimesHurt ?? 0,
-    friendsDiedBeforeBattle: petValue.friendsDiedBeforeBattle ?? 0,
-    battlesFought: petValue.battlesFought ?? 0,
-    timesHurt: petValue.timesHurt ?? 0,
-    equipmentUses: petValue.equipmentUses ?? null,
+      (petRecord.abominationSwallowedPet3TimesHurt as number | null) ?? 0,
+    friendsDiedBeforeBattle:
+      (petRecord.friendsDiedBeforeBattle as number | null) ?? 0,
+    battlesFought: (petRecord.battlesFought as number | null) ?? 0,
+    timesHurt: (petRecord.timesHurt as number | null) ?? 0,
+    equipmentUses: (petRecord.equipmentUses as number | null) ?? null,
   };
 }
 
 function applyTeamEquipmentUses(
   formGroup: FormGroup,
   side: 'player' | 'opponent',
-  pets?: any[],
+  pets?: PetForm[],
 ) {
   const key = side === 'player' ? 'playerPets' : 'opponentPets';
   const formArray = formGroup.get(key) as FormArray;

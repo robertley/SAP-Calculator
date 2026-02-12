@@ -86,7 +86,7 @@ export class SpottedHandfishAbility extends Ability {
       // Add to canned ailments
       owner.parent.cannedAilments.push(ailmentName);
 
-      (gameApi as any).logService.createLog({
+      gameApi?.logService?.createLog({
         message: `${owner.name} stocked a canned ${ailmentName}.`,
         type: 'ability',
         player: owner.parent,

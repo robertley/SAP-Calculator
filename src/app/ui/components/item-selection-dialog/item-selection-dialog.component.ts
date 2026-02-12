@@ -290,7 +290,7 @@ export class ItemSelectionDialogComponent
 
   private loadTeams() {
     const teams = Array.isArray(this.savedTeams) ? this.savedTeams : [];
-    this.items = teams.map((team) => {
+    this.items = teams.map<SelectionItem>((team) => {
       const petNames = (team.pets || [])
         .map((p) => p?.name)
         .filter(Boolean)
@@ -477,7 +477,7 @@ export class ItemSelectionDialogComponent
     return null;
   }
 
-  private buildTokenItems(): any[] {
+  private buildTokenItems(): SelectionItem[] {
     const tokenItems: SelectionItem[] = [];
     for (const [tier, pets] of this.petService.tokenPetsMap) {
       pets.forEach((name) => {
