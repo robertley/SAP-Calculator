@@ -74,7 +74,7 @@ export class HumpheadWrasseAbility extends Ability {
     target.attack = newAttack;
 
     this.logService.createLog({
-      message: `${owner.name} reduced ${target.name}'s attack by ${percentage * 100}% to (${target.attack})`,
+      message: `${owner.name} reduced ${target.name}'s attack by ${percentage * 100}% to ${target.attack}.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

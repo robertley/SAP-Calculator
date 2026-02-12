@@ -10,3 +10,113 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+:root {
+  --sap-btn-primary: #2563eb;
+  --sap-btn-primary-hover: #1d4ed8;
+  --sap-btn-primary-active: #1e40af;
+
+  --sap-btn-accent: #14b8a6;
+  --sap-btn-accent-hover: #0d9488;
+  --sap-btn-accent-active: #0f766e;
+
+  --sap-btn-secondary: #e2e8f0;
+  --sap-btn-secondary-hover: #cbd5e1;
+  --sap-btn-secondary-active: #94a3b8;
+  --sap-btn-secondary-text: #0f172a;
+
+  --sap-btn-danger: #ef4444;
+  --sap-btn-danger-hover: #dc2626;
+  --sap-btn-danger-active: #b91c1c;
+
+  --sap-btn-disabled-bg: #e5e7eb;
+  --sap-btn-disabled-text: #94a3b8;
+}
+
+.btn {
+  --bs-btn-disabled-bg: var(--sap-btn-disabled-bg);
+  --bs-btn-disabled-border-color: var(--sap-btn-disabled-bg);
+  --bs-btn-disabled-color: var(--sap-btn-disabled-text);
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--sap-btn-primary);
+  --bs-btn-border-color: var(--sap-btn-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--sap-btn-primary-hover);
+  --bs-btn-hover-border-color: var(--sap-btn-primary-hover);
+  --bs-btn-focus-shadow-rgb: 37, 99, 235;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--sap-btn-primary-active);
+  --bs-btn-active-border-color: var(--sap-btn-primary-active);
+}
+
+.btn-secondary {
+  --bs-btn-color: var(--sap-btn-secondary-text);
+  --bs-btn-bg: var(--sap-btn-secondary);
+  --bs-btn-border-color: var(--sap-btn-secondary);
+  --bs-btn-hover-color: var(--sap-btn-secondary-text);
+  --bs-btn-hover-bg: var(--sap-btn-secondary-hover);
+  --bs-btn-hover-border-color: var(--sap-btn-secondary-hover);
+  --bs-btn-focus-shadow-rgb: 15, 23, 42;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--sap-btn-secondary-active);
+  --bs-btn-active-border-color: var(--sap-btn-secondary-active);
+}
+
+.btn-danger {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--sap-btn-danger);
+  --bs-btn-border-color: var(--sap-btn-danger);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--sap-btn-danger-hover);
+  --bs-btn-hover-border-color: var(--sap-btn-danger-hover);
+  --bs-btn-focus-shadow-rgb: 239, 68, 68;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--sap-btn-danger-active);
+  --bs-btn-active-border-color: var(--sap-btn-danger-active);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--sap-btn-primary);
+  --bs-btn-border-color: var(--sap-btn-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--sap-btn-primary);
+  --bs-btn-hover-border-color: var(--sap-btn-primary);
+  --bs-btn-focus-shadow-rgb: 37, 99, 235;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--sap-btn-primary-active);
+  --bs-btn-active-border-color: var(--sap-btn-primary-active);
+  --bs-btn-disabled-color: var(--sap-btn-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--sap-btn-disabled-bg);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--sap-btn-danger);
+  --bs-btn-border-color: var(--sap-btn-danger);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--sap-btn-danger);
+  --bs-btn-hover-border-color: var(--sap-btn-danger);
+  --bs-btn-focus-shadow-rgb: 239, 68, 68;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--sap-btn-danger-active);
+  --bs-btn-active-border-color: var(--sap-btn-danger-active);
+  --bs-btn-disabled-color: var(--sap-btn-disabled-text);
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: var(--sap-btn-disabled-bg);
+}
+
+.btn-accent {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--sap-btn-accent);
+  --bs-btn-border-color: var(--sap-btn-accent);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--sap-btn-accent-hover);
+  --bs-btn-hover-border-color: var(--sap-btn-accent-hover);
+  --bs-btn-focus-shadow-rgb: 20, 184, 166;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--sap-btn-accent-active);
+  --bs-btn-active-border-color: var(--sap-btn-accent-active);
+}

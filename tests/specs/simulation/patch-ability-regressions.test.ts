@@ -215,6 +215,66 @@ describe('Pet Ability Patch Regressions', () => {
         expect(cocoaBeanLog).toBeDefined();
     });
 
+    it('Cocoa Bean transform should not copy enemy equipment', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: { name: 'Cocoa Bean' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: { name: 'Salt' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const playerAttackLog = logs.find((log: any) =>
+            log.type === 'attack' &&
+            log.player?.isOpponent === false &&
+            typeof log.message === 'string' &&
+            log.message.includes('attacks')
+        );
+
+        expect(playerAttackLog).toBeDefined();
+        expect(playerAttackLog.message).not.toContain('(Salt');
+    });
+
     it('Mana Hound logs should not leak onerror text when decorated', () => {
         const config: SimulationConfig = {
             ...baseConfig,

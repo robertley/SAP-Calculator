@@ -73,6 +73,7 @@ export interface AppSimulationContext {
   setStatus?: (message: string, tone?: 'success' | 'error') => void;
   randomDecisions?: RandomDecisionCapture[];
   randomOverrideError?: string | null;
+  refreshFightAnimationFromViewBattle?: () => void;
 }
 
 const logPartsCache = new WeakMap<
@@ -100,6 +101,78 @@ function cacheParsedMessage(message: string, parts: LogMessagePart[]): void {
   }
 }
 
+function buildLogPositionPrefix(log: Log): string {
+  const raw = `${log.rawMessage ?? log.message ?? ''}`.replace(/<[^>]+>/g, '');
+  if (/\b[PO][1-5]\b/.test(raw)) {
+    return '';
+  }
+
+  const sourceLabel = buildPositionLabel(getSourceIsOpponent(log), log.sourceIndex);
+  const targetLabel = buildPositionLabel(getTargetIsOpponent(log), log.targetIndex);
+
+  if (sourceLabel && targetLabel) {
+    return `[${sourceLabel}->${targetLabel}] `;
+  }
+  if (sourceLabel) {
+    return `[${sourceLabel}] `;
+  }
+  if (targetLabel) {
+    return `[->${targetLabel}] `;
+  }
+  return '';
+}
+
+function buildPositionLabel(
+  isOpponent: boolean | null,
+  index: number | null | undefined,
+): string | null {
+  if (isOpponent == null || index == null || !Number.isFinite(index)) {
+    return null;
+  }
+  const clampedIndex = Math.min(Math.max(1, Math.trunc(index)), 5);
+  return `${isOpponent ? 'O' : 'P'}${clampedIndex}`;
+}
+
+function getSourceIsOpponent(log: Log): boolean | null {
+  if (log.player?.isOpponent === true) {
+    return true;
+  }
+  if (log.player?.isOpponent === false) {
+    return false;
+  }
+  if (log.playerIsOpponent === true) {
+    return true;
+  }
+  if (log.playerIsOpponent === false) {
+    return false;
+  }
+  const sourceSide = log.sourcePet?.parent?.isOpponent;
+  if (sourceSide === true) {
+    return true;
+  }
+  if (sourceSide === false) {
+    return false;
+  }
+  return null;
+}
+
+function getTargetIsOpponent(log: Log): boolean | null {
+  const targetSide = log.targetPet?.parent?.isOpponent;
+  if (targetSide === true) {
+    return true;
+  }
+  if (targetSide === false) {
+    return false;
+  }
+  if (log.targetIsOpponent === true) {
+    return true;
+  }
+  if (log.targetIsOpponent === false) {
+    return false;
+  }
+  return null;
+}
+
 function getLogMessageParts(
   log: Log,
   logService: LogService | null,
@@ -107,7 +180,9 @@ function getLogMessageParts(
   if (logService) {
     logService.decorateLogIfNeeded(log);
   }
-  const message = log.message + (log.count > 1 ? ` (x${log.count})` : '');
+  const prefix = buildLogPositionPrefix(log);
+  const message =
+    `${prefix}${log.message}` + (log.count > 1 ? ` (x${log.count})` : '');
   const cached = logPartsCache.get(log);
   if (cached && cached.message === message) {
     return cached.parts;
@@ -488,6 +563,7 @@ function applySimulationResult(
   ctx.viewBattleLogs = ctx.viewBattle?.logs ?? [];
   refreshViewBattleLogRows(ctx);
   refreshViewBattleTimeline(ctx);
+  ctx.refreshFightAnimationFromViewBattle?.();
   ctx.diffBattleLeftIndex = 0;
   ctx.diffBattleRightIndex = ctx.battles.length > 1 ? 1 : 0;
   refreshBattleDiff(ctx);
@@ -503,6 +579,7 @@ export function setViewBattle(ctx: AppSimulationContext, battle: Battle): void {
   ctx.viewBattleLogs = ctx.viewBattle?.logs ?? [];
   refreshViewBattleLogRows(ctx);
   refreshViewBattleTimeline(ctx);
+  ctx.refreshFightAnimationFromViewBattle?.();
 }
 
 export function refreshViewBattleLogRows(ctx: AppSimulationContext): void {

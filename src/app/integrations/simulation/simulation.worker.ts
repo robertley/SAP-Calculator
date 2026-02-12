@@ -72,6 +72,7 @@ const sanitizeResult = (result: SimulationResult): SimulationResult => {
           sourceIndex: log?.sourceIndex,
           targetIndex: log?.targetIndex,
           playerIsOpponent: log?.player?.isOpponent ?? log?.playerIsOpponent,
+          targetIsOpponent: log?.targetPet?.parent?.isOpponent,
         }))
       : [];
 

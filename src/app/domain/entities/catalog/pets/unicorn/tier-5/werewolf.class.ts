@@ -52,10 +52,13 @@ export class WerewolfAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { gameApi, tiger } = context;
     const owner = this.owner;
+    const turnNumber = gameApi?.turnNumber ?? 1;
+    const manaEnabled = Boolean(gameApi?.mana);
+    const isEvenTurn = turnNumber % 2 === 0;
 
-    if (gameApi.day) {
+    if (!isEvenTurn && manaEnabled) {
       const manaGain = this.level * 6;
       let targetResp = owner.parent.getThis(owner);
       let target = targetResp.pet;

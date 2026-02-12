@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Injector, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
@@ -36,6 +36,12 @@ import { loadTeamPreset, saveTeamPreset } from './state/app.component.teams';
 import { InjectorService } from 'app/integrations/injector.service';
 import { BattleDiffScope, BattleDiffRow, BattleDiffSummary, BattleTimelineRow, buildApiResponse as buildApiResponseImpl, refreshBattleDiff as refreshBattleDiffImpl, getDrawPercent as getDrawPercentImpl, getDrawWidth as getDrawWidthImpl, getLosePercent as getLosePercentImpl, getLoseWidth as getLoseWidthImpl, getWinPercent as getWinPercentImpl, LogMessagePart, optimizePositioning as optimizePositioningImpl, refreshFilteredBattles as refreshFilteredBattlesImpl, refreshViewBattleTimeline as refreshViewBattleTimelineImpl, refreshViewBattleLogRows as refreshViewBattleLogRowsImpl, runSimulation as runSimulationImpl, cancelSimulation as cancelSimulationImpl, setBattleDiffLeft as setBattleDiffLeftImpl, setBattleDiffLeftScope as setBattleDiffLeftScopeImpl, setBattleDiffRight as setBattleDiffRightImpl, setBattleDiffRightScope as setBattleDiffRightScopeImpl, setViewBattle as setViewBattleImpl, simulate as simulateImpl, } from './simulation/app.component.simulation';
 import { decorateRandomDecisionTextParts } from './simulation/random-decision-decorate';
+import {
+  FightAnimationDeath,
+  FightAnimationFrame,
+  FightAnimationPopup,
+  buildFightAnimationFrames,
+} from './simulation/app.component.fight-animation';
 import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCacheImpl, decrementToyLevel as decrementToyLevelImpl, drop as dropImpl, exportCalculator as exportCalculatorImpl, fixCustomPackSelect as fixCustomPackSelectImpl, generateShareLink as generateShareLinkImpl, getPackIcon as getPackIconImpl, getRandomEquipment as getRandomEquipmentImpl, getRollInputVisible as getRollInputVisibleImpl, getSelectedTeamName as getSelectedTeamNameImpl, getSelectedTeamPreviewIcons as getSelectedTeamPreviewIconsImpl, getToyIcon as getToyIconImpl, getToyIconPathValue as getToyIconPathValueImpl, getToyOptionStyle as getToyOptionStyleImpl, getValidCustomPacks as getValidCustomPacksImpl, importCalculator as importCalculatorImpl, incrementToyLevel as incrementToyLevelImpl, initApp as initAppImpl, initFormGroup as initFormGroupImpl, initGameApi as initGameApiImpl, initPetForms as initPetFormsImpl, initPlayerPets as initPlayerPetsImpl, initModals as initModalsImpl, loadLocalStorage as loadLocalStorageImpl, loadStateFromUrl as loadStateFromUrlImpl, makeFormGroup as makeFormGroupImpl, onItemSelected as onItemSelectedImpl, onPackImageError as onPackImageErrorImpl, openCustomPackEditor as openCustomPackEditorImpl, openSelectionDialog as openSelectionDialogImpl, printFormGroup as printFormGroupImpl, randomize as randomizeImpl, randomizePlayerPets as randomizePlayerPetsImpl, refreshPetFormArrays as refreshPetFormArraysImpl, removeHardToy as removeHardToyImpl, resetPackImageError as resetPackImageErrorImpl, resetPlayer as resetPlayerImpl, setDayNight as setDayNightImpl, setHardToyImage as setHardToyImageImpl, setRandomBackground as setRandomBackgroundImpl, setToyImage as setToyImageImpl, toggleAdvanced as toggleAdvancedImpl, trackByIndex as trackByIndexImpl, trackByLogTab as trackByLogTabImpl, trackByTeamId as trackByTeamIdImpl, updateGoldSpent as updateGoldSpentImpl, undoRandomize as undoRandomizeImpl, updatePlayerPack as updatePlayerPackImpl, updatePlayerToy as updatePlayerToyImpl, updatePreviousShopTier as updatePreviousShopTierImpl, updateToyLevel as updateToyLevelImpl, } from './view/app.component.ui';
 
 @Component({
@@ -62,7 +68,7 @@ import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCa
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly app = this;
 
   @ViewChildren(PetSelectorComponent)
@@ -136,6 +142,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   showExport = false;
   showReportABug = false;
   showBattleAnalysis = false;
+  battleViewMode: 'logs' | 'animate' = 'logs';
+  fightAnimationFrames: FightAnimationFrame[] = [];
+  fightAnimationFrameIndex = -1;
+  fightAnimationPlaying = false;
+  fightAnimationSpeed = 1;
 
   playerPetsControls: AbstractControl[] = [];
   opponentPetsControls: AbstractControl[] = [];
@@ -160,15 +171,170 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   private isLoadedFromUrl = false;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
+  private fightAnimationTimer: ReturnType<typeof setTimeout> | null = null;
 
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
+  activePetSlot: { side: 'player' | 'opponent'; index: number } | null = null;
+  private petClipboard: Record<string, unknown> | null = null;
 
   readonly trackByIndex = trackByIndexImpl;
   readonly trackByTeamId = trackByTeamIdImpl;
   readonly trackByLogTab = trackByLogTabImpl;
   readonly toggleBattleAnalysis = () => {
     this.showBattleAnalysis = !this.showBattleAnalysis;
+  };
+  readonly setBattleViewMode = (mode: 'logs' | 'animate') => {
+    this.battleViewMode = mode;
+    this.cdr.markForCheck();
+  };
+  readonly refreshFightAnimationFromViewBattle = () => {
+    this.pauseFightAnimation(false);
+    this.fightAnimationFrames = buildFightAnimationFrames(this.viewBattleLogs);
+    this.fightAnimationFrameIndex = this.fightAnimationFrames.length > 0 ? 0 : -1;
+    this.cdr.markForCheck();
+  };
+  readonly toggleFightAnimationPlayback = () => {
+    if (this.fightAnimationFrames.length === 0) {
+      return;
+    }
+    if (this.fightAnimationPlaying) {
+      this.pauseFightAnimation();
+      return;
+    }
+    this.playFightAnimation();
+  };
+  readonly resetFightAnimation = () => {
+    this.pauseFightAnimation(false);
+    if (this.fightAnimationFrames.length === 0) {
+      this.fightAnimationFrameIndex = -1;
+      this.cdr.markForCheck();
+      return;
+    }
+    this.fightAnimationFrameIndex = 0;
+    this.cdr.markForCheck();
+  };
+  readonly stepFightAnimation = (delta: number) => {
+    this.pauseFightAnimation(false);
+    if (this.fightAnimationFrames.length === 0) {
+      this.fightAnimationFrameIndex = -1;
+      this.cdr.markForCheck();
+      return;
+    }
+    const maxIndex = this.fightAnimationFrames.length - 1;
+    const normalizedDelta = Number.isFinite(delta) ? Math.trunc(delta) : 0;
+    const next = Math.min(
+      maxIndex,
+      Math.max(0, this.fightAnimationFrameIndex + normalizedDelta),
+    );
+    this.fightAnimationFrameIndex = next;
+    this.cdr.markForCheck();
+  };
+  readonly setFightAnimationSpeed = (speed: number) => {
+    const normalized = speed === 0.5 || speed === 2 ? speed : 1;
+    if (this.fightAnimationSpeed === normalized) {
+      return;
+    }
+    this.fightAnimationSpeed = normalized;
+    if (this.fightAnimationPlaying) {
+      this.scheduleFightAnimationTick();
+    }
+    this.cdr.markForCheck();
+  };
+  readonly onFightAnimationScrub = (rawValue: string | number) => {
+    if (this.fightAnimationFrames.length === 0) {
+      return;
+    }
+    const parsed = typeof rawValue === 'number' ? rawValue : Number(rawValue);
+    if (!Number.isFinite(parsed)) {
+      return;
+    }
+    this.pauseFightAnimation(false);
+    const maxIndex = this.fightAnimationFrames.length - 1;
+    this.fightAnimationFrameIndex = Math.min(
+      maxIndex,
+      Math.max(0, Math.trunc(parsed)),
+    );
+    this.cdr.markForCheck();
+  };
+  readonly isFightAttackerSlot = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): boolean => {
+    const impact = this.currentFightAnimationFrame?.impact;
+    if (!impact) {
+      return false;
+    }
+    return impact.attackerSide === side && impact.attackerSlot === slot;
+  };
+  readonly isFightTargetSlot = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): boolean => {
+    const impact = this.currentFightAnimationFrame?.impact;
+    if (!impact) {
+      return false;
+    }
+    return impact.targetSide === side && impact.targetSlot === slot;
+  };
+  readonly getFightPopupsForSlot = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): FightAnimationPopup[] => {
+    const popups = this.currentFightAnimationFrame?.popups ?? [];
+    return popups.filter((popup) => popup.side === side && popup.slot === slot);
+  };
+  readonly getFightPopupText = (popup: FightAnimationPopup): string => {
+    const absDelta = Math.abs(popup.delta);
+    const sign = popup.delta > 0 ? '+' : '-';
+    if (popup.type === 'attack') {
+      return `${sign}${absDelta} ATK`;
+    }
+    if (popup.type === 'health') {
+      return `${sign}${absDelta} HP`;
+    }
+    return `${sign}${absDelta}`;
+  };
+  readonly isFightDeathSlot = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): boolean => {
+    const death = this.currentFightAnimationFrame?.death;
+    if (!death) {
+      return false;
+    }
+    return death.side === side && death.slot === slot;
+  };
+  readonly getFightDeathForSlot = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): FightAnimationDeath | null => {
+    const death = this.currentFightAnimationFrame?.death;
+    if (!death) {
+      return null;
+    }
+    if (death.side !== side || death.slot !== slot) {
+      return null;
+    }
+    return death;
+  };
+  readonly isFightShiftedSlot = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): boolean => {
+    const shifts = this.currentFightAnimationFrame?.shifts ?? [];
+    return shifts.some((shift) => shift.side === side && shift.slot === slot);
+  };
+  readonly getFightShiftSteps = (
+    side: 'player' | 'opponent',
+    slot: number,
+  ): number => {
+    const shifts = this.currentFightAnimationFrame?.shifts ?? [];
+    const shift = shifts.find((item) => item.side === side && item.slot === slot);
+    if (!shift) {
+      return 0;
+    }
+    return Math.max(1, shift.fromSlot - shift.slot);
   };
 
   constructor(
@@ -265,6 +431,14 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.clearFightAnimationTimer();
+    if (this.statusTimer) {
+      clearTimeout(this.statusTimer);
+      this.statusTimer = null;
+    }
+  }
+
   readonly loadLocalStorage = () => loadLocalStorageImpl(this);
   readonly applyCalculatorState = (calculator: unknown) =>
     applyCalculatorStateImpl(this, calculator);
@@ -277,6 +451,44 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly randomizePlayerPets = (player: Player) =>
     randomizePlayerPetsImpl(this, player);
   readonly makeFormGroup = makeFormGroupImpl;
+  readonly setActivePetSlot = (
+    side: 'player' | 'opponent',
+    index: number,
+  ) => {
+    this.activePetSlot = { side, index };
+  };
+
+  @HostListener('document:keydown', ['$event'])
+  handlePetSlotClipboardShortcuts(event: KeyboardEvent): void {
+    if (this.api || !this.formGroup) {
+      return;
+    }
+    if (!(event.ctrlKey || event.metaKey) || event.altKey) {
+      return;
+    }
+    if (this.isEditableTarget(event.target)) {
+      return;
+    }
+
+    const key = event.key.toLowerCase();
+    if (key === 'c') {
+      if (this.copyActivePet(false)) {
+        event.preventDefault();
+      }
+      return;
+    }
+    if (key === 'x') {
+      if (this.copyActivePet(true)) {
+        event.preventDefault();
+      }
+      return;
+    }
+    if (key === 'v') {
+      if (this.pasteToActivePet()) {
+        event.preventDefault();
+      }
+    }
+  }
 
   initFormGroup() {
     initFormGroupImpl(this);
@@ -537,6 +749,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   get logs() {
     return this.logService.getLogs();
   }
+  get currentFightAnimationFrame(): FightAnimationFrame | null {
+    if (
+      this.fightAnimationFrameIndex < 0 ||
+      this.fightAnimationFrameIndex >= this.fightAnimationFrames.length
+    ) {
+      return null;
+    }
+    return this.fightAnimationFrames[this.fightAnimationFrameIndex] ?? null;
+  }
+
+  get currentFightAnimationLogIndex(): number {
+    return this.currentFightAnimationFrame?.logIndex ?? -1;
+  }
 
   readonly setViewBattle = (battle: Battle) => setViewBattleImpl(this, battle);
   readonly refreshViewBattleTimeline = () =>
@@ -664,6 +889,172 @@ export class AppComponent implements OnInit, AfterViewInit {
   readonly removeHardToy = (side: 'player' | 'opponent') =>
     removeHardToyImpl(this, side);
   readonly getToyIconPath = getToyIconPathValueImpl;
+
+  private copyActivePet(cut: boolean): boolean {
+    if (!this.activePetSlot) {
+      this.setStatus('Select a pet slot first.', 'error');
+      return false;
+    }
+
+    const selector = this.findPetSelector(
+      this.activePetSlot.side,
+      this.activePetSlot.index,
+    );
+    if (!selector) {
+      this.setStatus('Could not access selected pet slot.', 'error');
+      return false;
+    }
+
+    const sourceValue = selector.formGroup?.getRawValue?.() as
+      | Record<string, unknown>
+      | null
+      | undefined;
+    if (!sourceValue?.name) {
+      this.setStatus('Selected slot is empty.', 'error');
+      return false;
+    }
+
+    this.petClipboard = JSON.parse(JSON.stringify(sourceValue)) as Record<
+      string,
+      unknown
+    >;
+
+    if (cut) {
+      selector.removePet();
+      this.setStatus('Pet cut.', 'success');
+    } else {
+      this.setStatus('Pet copied.', 'success');
+    }
+    return true;
+  }
+
+  private pasteToActivePet(): boolean {
+    if (!this.activePetSlot) {
+      this.setStatus('Select a pet slot first.', 'error');
+      return false;
+    }
+    if (!this.petClipboard?.name) {
+      this.setStatus('Nothing copied yet.', 'error');
+      return false;
+    }
+
+    const selector = this.findPetSelector(
+      this.activePetSlot.side,
+      this.activePetSlot.index,
+    );
+    if (!selector) {
+      this.setStatus('Could not access selected pet slot.', 'error');
+      return false;
+    }
+
+    const payload = JSON.parse(JSON.stringify(this.petClipboard)) as Record<
+      string,
+      unknown
+    >;
+    selector.removePet();
+    for (const [key, value] of Object.entries(payload)) {
+      const control = selector.formGroup?.get(key);
+      if (control) {
+        control.setValue(value, { emitEvent: false });
+      }
+    }
+    selector.substitutePet(false);
+    selector.fixLoadEquipment();
+    this.setStatus('Pet pasted.', 'success');
+    return true;
+  }
+
+  private findPetSelector(
+    side: 'player' | 'opponent',
+    index: number,
+  ): PetSelectorComponent | null {
+    const targetPlayer = side === 'player' ? this.player : this.opponent;
+    return (
+      this.petSelectors
+        ?.toArray()
+        ?.find(
+          (selector) =>
+            selector.player === targetPlayer && selector.index === index,
+        ) ?? null
+    );
+  }
+
+  private isEditableTarget(target: EventTarget | null): boolean {
+    const element = target as HTMLElement | null;
+    if (!element) {
+      return false;
+    }
+    if (element.isContentEditable) {
+      return true;
+    }
+    const tagName = element.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT';
+  }
+
+  private playFightAnimation(): void {
+    if (this.fightAnimationFrames.length === 0) {
+      this.fightAnimationFrameIndex = -1;
+      this.fightAnimationPlaying = false;
+      this.clearFightAnimationTimer();
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const maxIndex = this.fightAnimationFrames.length - 1;
+    if (this.fightAnimationFrameIndex < 0 || this.fightAnimationFrameIndex > maxIndex) {
+      this.fightAnimationFrameIndex = 0;
+    }
+    if (this.fightAnimationFrameIndex >= maxIndex) {
+      this.fightAnimationFrameIndex = 0;
+    }
+
+    this.fightAnimationPlaying = true;
+    this.scheduleFightAnimationTick();
+    this.cdr.markForCheck();
+  }
+
+  private pauseFightAnimation(markForCheck: boolean = true): void {
+    this.fightAnimationPlaying = false;
+    this.clearFightAnimationTimer();
+    if (markForCheck) {
+      this.cdr.markForCheck();
+    }
+  }
+
+  private scheduleFightAnimationTick(): void {
+    this.clearFightAnimationTimer();
+    if (!this.fightAnimationPlaying) {
+      return;
+    }
+    const intervalMs = Math.max(120, Math.round(700 / this.fightAnimationSpeed));
+    this.fightAnimationTimer = setTimeout(() => {
+      this.fightAnimationTimer = null;
+      this.advanceFightAnimationTick();
+    }, intervalMs);
+  }
+
+  private advanceFightAnimationTick(): void {
+    if (!this.fightAnimationPlaying || this.fightAnimationFrames.length === 0) {
+      this.pauseFightAnimation(false);
+      return;
+    }
+    const maxIndex = this.fightAnimationFrames.length - 1;
+    if (this.fightAnimationFrameIndex >= maxIndex) {
+      this.pauseFightAnimation();
+      return;
+    }
+    this.fightAnimationFrameIndex += 1;
+    this.cdr.markForCheck();
+    this.scheduleFightAnimationTick();
+  }
+
+  private clearFightAnimationTimer(): void {
+    if (!this.fightAnimationTimer) {
+      return;
+    }
+    clearTimeout(this.fightAnimationTimer);
+    this.fightAnimationTimer = null;
+  }
 
   setStatus(message: string, tone: 'success' | 'error' = 'success') {
     this.statusMessage = message;
