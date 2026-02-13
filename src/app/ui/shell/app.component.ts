@@ -147,6 +147,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   fightAnimationFrameIndex = -1;
   fightAnimationPlaying = false;
   fightAnimationSpeed = 1;
+  readonly fightAttackIconSrc = '/assets/art/Public/Public/Icons/fist-from-textmap.png';
+  readonly fightHealthIconSrc = '/assets/art/Public/Public/Icons/heart-from-textmap.png';
 
   playerPetsControls: AbstractControl[] = [];
   opponentPetsControls: AbstractControl[] = [];
@@ -287,12 +289,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly getFightPopupText = (popup: FightAnimationPopup): string => {
     const absDelta = Math.abs(popup.delta);
     const sign = popup.delta > 0 ? '+' : '-';
-    if (popup.type === 'attack') {
-      return `${sign}${absDelta} ATK`;
-    }
-    if (popup.type === 'health') {
-      return `${sign}${absDelta} HP`;
-    }
     return `${sign}${absDelta}`;
   };
   readonly isFightDeathSlot = (

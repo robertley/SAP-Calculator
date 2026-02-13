@@ -1,57 +1,3 @@
-import * as perks from 'assets/data/perks.json';
-import * as toys from 'assets/data/toys.json';
-import * as petsByTier from 'assets/data/pets.json';
-
-export const PETS_BY_ID = new Map<string, string>();
-export const PETS_META_BY_ID = new Map<
-  string,
-  { name: string; tier: number }
->();
-
-const petList =
-  (
-    petsByTier as unknown as {
-      default?: Array<{ Id: string; Name: string; Tier: string | number }>;
-    }
-  ).default ??
-  (petsByTier as unknown as Array<{
-    Id: string;
-    Name: string;
-    Tier: string | number;
-  }>);
-
-petList.forEach((pet) => {
-  const petId = String(pet.Id);
-  const tierValue = Number(pet.Tier);
-  PETS_BY_ID.set(petId, pet.Name);
-  if (Number.isFinite(tierValue)) {
-    PETS_META_BY_ID.set(petId, { name: pet.Name, tier: tierValue });
-  }
-});
-
-const perkList =
-  (perks as unknown as { default?: Array<{ Id: string; Name: string }> })
-    .default ?? (perks as unknown as Array<{ Id: string; Name: string }>);
-const toyList =
-  (toys as unknown as { default?: Array<{ Id: string; Name: string }> })
-    .default ?? (toys as unknown as Array<{ Id: string; Name: string }>);
-
-export const PERKS_BY_ID = new Map<string, string>(
-  perkList.map((perk) => [String(perk.Id), perk.Name]),
-);
-export const TOYS_BY_ID = new Map<string, string>(
-  toyList.map((toy) => [String(toy.Id), toy.Name]),
-);
-
-export const PACK_MAP: Record<number, string> = {
-  0: 'Turtle',
-  1: 'Puppy',
-  2: 'Star',
-  5: 'Golden',
-  6: 'Unicorn',
-  7: 'Danger',
-};
-
 const PARROT_COPY_PET_ABOMINATION_KEY_MAP: Record<string, string> = (() => {
   const map: Record<string, string> = {};
   for (let outer = 1; outer <= 3; outer++) {
@@ -112,12 +58,20 @@ export const KEY_MAP: Record<string, string> = {
   showTriggerNamesInLogs: 'stn',
   showSwallowedLevels: 'swl',
   ailmentEquipment: 'ae',
+  changeEquipmentUses: 'cEU',
+  logsEnabled: 'lE',
+  simulations: 'sim',
   name: 'n',
   attack: 'a',
   health: 'h',
   exp: 'e',
   equipment: 'eq',
+  equipmentUses: 'eU',
   belugaSwallowedPet: 'bSP',
+  sarcasticFringeheadSwallowedPet: 'sFSP',
+  parrotCopyPet: 'pCP',
+  parrotCopyPetBelugaSwallowedPet: 'pCPB',
+  abomParrotSwallowed: 'aPS',
   abominationSwallowedPet1: 'aSP1',
   abominationSwallowedPet2: 'aSP2',
   abominationSwallowedPet3: 'aSP3',
@@ -130,8 +84,9 @@ export const KEY_MAP: Record<string, string> = {
   abominationSwallowedPet1TimesHurt: 'aSP1T',
   abominationSwallowedPet2TimesHurt: 'aSP2T',
   abominationSwallowedPet3TimesHurt: 'aSP3T',
-  parrotCopyPet: 'pCP',
-  parrotCopyPetBelugaSwallowedPet: 'pCPB',
+  battlesFought: 'bF',
+  friendsDiedBeforeBattle: 'fDBB',
+  foodsEaten: 'fE',
   ...PARROT_COPY_PET_ABOMINATION_KEY_MAP,
   abominationSwallowedPet1ParrotCopyPet: 'aSP1PCP',
   abominationSwallowedPet2ParrotCopyPet: 'aSP2PCP',
@@ -204,3 +159,13 @@ export const KEY_MAP: Record<string, string> = {
     'aSP3PCPAS3T',
   timesHurt: 'tH',
 };
+
+export const REVERSE_KEY_MAP: Record<string, string> = Object.entries(
+  KEY_MAP,
+).reduce(
+  (acc, [fullKey, shortKey]) => {
+    acc[shortKey] = fullKey;
+    return acc;
+  },
+  {} as Record<string, string>,
+);

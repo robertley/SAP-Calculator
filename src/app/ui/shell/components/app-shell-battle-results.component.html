@@ -106,7 +106,11 @@
                         [class.fight-value-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
                         [class.fight-value-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
                         [style.--fight-popup-index]="popupIndex">
-                        {{ app.getFightPopupText(popup) }}
+                        <img *ngIf="popup.type === 'attack' || popup.type === 'health'"
+                          [ngSrc]="popup.type === 'attack' ? app.fightAttackIconSrc : app.fightHealthIconSrc"
+                          class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
+                          decoding="async" />
+                        <span class="fight-value-popup-number">{{ app.getFightPopupText(popup) }}</span>
                       </span>
                     </ng-container>
                     <div class="fight-faint-ghost"
@@ -121,7 +125,17 @@
                     </div>
                   </div>
                   <div class="fight-slot-stats" *ngIf="slot.attack != null && slot.health != null">
-                    {{ slot.attack }}/{{ slot.health }}
+                    <span class="fight-slot-stat">
+                      <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slot.attack }}</span>
+                    </span>
+                    <span class="fight-slot-stat-divider">/</span>
+                    <span class="fight-slot-stat">
+                      <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slot.health }}</span>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -161,7 +175,11 @@
                         [class.fight-value-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
                         [class.fight-value-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
                         [style.--fight-popup-index]="popupIndex">
-                        {{ app.getFightPopupText(popup) }}
+                        <img *ngIf="popup.type === 'attack' || popup.type === 'health'"
+                          [ngSrc]="popup.type === 'attack' ? app.fightAttackIconSrc : app.fightHealthIconSrc"
+                          class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
+                          decoding="async" />
+                        <span class="fight-value-popup-number">{{ app.getFightPopupText(popup) }}</span>
                       </span>
                     </ng-container>
                     <div class="fight-faint-ghost"
@@ -176,7 +194,17 @@
                     </div>
                   </div>
                   <div class="fight-slot-stats" *ngIf="slot.attack != null && slot.health != null">
-                    {{ slot.attack }}/{{ slot.health }}
+                    <span class="fight-slot-stat">
+                      <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slot.attack }}</span>
+                    </span>
+                    <span class="fight-slot-stat-divider">/</span>
+                    <span class="fight-slot-stat">
+                      <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slot.health }}</span>
+                    </span>
                   </div>
                 </div>
               </div>

@@ -12,6 +12,9 @@ import {
 } from './replay-calc-schema';
 
 interface ReplayAbilityJson {
+  Enu?: number | string | null;
+  Lvl?: number | null;
+  Grop?: number | null;
   TrCo?: number | null;
 }
 
@@ -25,6 +28,7 @@ interface ReplayPetJson {
   At?: ReplayPetStatsJson | null;
   Hp?: ReplayPetStatsJson | null;
   Exp?: number | null;
+  Lvl?: number | null;
   Perk?: number | string | null;
   Mana?: number | null;
   Pow?: {
@@ -71,6 +75,7 @@ export interface ReplayBattleJson {
 }
 
 export interface ReplayBuildModelJson {
+  [key: string]: unknown;
   Bor?: {
     Deck?: ReplayDeckJson | null;
   } | null;
@@ -79,6 +84,16 @@ export interface ReplayBuildModelJson {
 export interface ReplayMetaBoards {
   userBoard?: ReplayBoardJson | null;
   opponentBoard?: ReplayBoardJson | null;
+}
+
+export interface ReplayParseOptions {
+  abilityPetMap?: Record<string, string | number> | null;
+}
+
+export interface ReplayActionJson {
+  Build?: string | null;
+  Battle?: string | null;
+  Mode?: string | null;
 }
 
 export interface ReplayCustomPack extends CustomPackConfig {
@@ -155,11 +170,166 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+const COPY_SOURCE_PET_IDS = new Set<string>([
+  '53', // Parrot
+  '373', // Abomination
+]);
+
+const ABOMINATION_SLOT_FIELDS = [
+  {
+    pet: 'abominationSwallowedPet1',
+    level: 'abominationSwallowedPet1Level',
+  },
+  {
+    pet: 'abominationSwallowedPet2',
+    level: 'abominationSwallowedPet2Level',
+  },
+  {
+    pet: 'abominationSwallowedPet3',
+    level: 'abominationSwallowedPet3Level',
+  },
+] as const;
+
+type AbilityOwnerCounts = Map<string, Map<string, number>>;
+
+type AbominationSwallowedPetField = (typeof ABOMINATION_SLOT_FIELDS)[number]['pet'];
+type AbominationSwallowedPetLevelField =
+  (typeof ABOMINATION_SLOT_FIELDS)[number]['level'];
+
+type AbominationSwallowedState = Pick<
+  PetConfig,
+  AbominationSwallowedPetField | AbominationSwallowedPetLevelField
+>;
+
+function toReplayId(value: unknown): string | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return String(value);
+  }
+  if (typeof value === 'string' && value.length > 0) {
+    return value;
+  }
+  return null;
+}
+
+function incrementAbilityOwnerCount(
+  abilityOwnerCounts: AbilityOwnerCounts,
+  abilityId: string,
+  petId: string,
+): void {
+  let petCountById = abilityOwnerCounts.get(abilityId);
+  if (!petCountById) {
+    petCountById = new Map<string, number>();
+    abilityOwnerCounts.set(abilityId, petCountById);
+  }
+  petCountById.set(petId, (petCountById.get(petId) ?? 0) + 1);
+}
+
+function collectAbilityOwnerCounts(
+  value: unknown,
+  abilityOwnerCounts: AbilityOwnerCounts,
+): void {
+  if (Array.isArray(value)) {
+    value.forEach((entry) => collectAbilityOwnerCounts(entry, abilityOwnerCounts));
+    return;
+  }
+
+  if (!isRecord(value)) {
+    return;
+  }
+
+  const petId = toReplayId(value.Enu);
+  const abilities = value.Abil;
+  if (petId && Array.isArray(abilities) && !COPY_SOURCE_PET_IDS.has(petId)) {
+    abilities.forEach((ability) => {
+      if (!isRecord(ability)) {
+        return;
+      }
+      const abilityId = toReplayId(ability.Enu);
+      if (!abilityId) {
+        return;
+      }
+      incrementAbilityOwnerCount(abilityOwnerCounts, abilityId, petId);
+    });
+  }
+
+  Object.values(value).forEach((entry) => {
+    collectAbilityOwnerCounts(entry, abilityOwnerCounts);
+  });
+}
+
+function pickMostLikelyPetId(petCountById: Map<string, number>): string | null {
+  let bestPetId: string | null = null;
+  let bestCount = -1;
+
+  for (const [petId, count] of petCountById.entries()) {
+    if (
+      count > bestCount ||
+      (count === bestCount && (bestPetId === null || petId < bestPetId))
+    ) {
+      bestPetId = petId;
+      bestCount = count;
+    }
+  }
+
+  return bestPetId;
+}
+
+function buildReplayAbilityPetMapFromCounts(
+  abilityOwnerCounts: AbilityOwnerCounts,
+): Record<string, string> {
+  const abilityPetMap: Record<string, string> = {};
+  for (const [abilityId, petCountById] of abilityOwnerCounts.entries()) {
+    const petId = pickMostLikelyPetId(petCountById);
+    if (petId) {
+      abilityPetMap[abilityId] = petId;
+    }
+  }
+  return abilityPetMap;
+}
+
+function parseJsonValue(raw: unknown): unknown {
+  if (typeof raw !== 'string' || raw.length === 0) {
+    return null;
+  }
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+export function buildReplayAbilityPetMapFromActions(
+  actions: ReadonlyArray<ReplayActionJson> | null | undefined,
+): Record<string, string> {
+  const abilityOwnerCounts: AbilityOwnerCounts = new Map();
+  (actions ?? []).forEach((action) => {
+    const parsedBuild = parseJsonValue(action?.Build);
+    const parsedBattle = parseJsonValue(action?.Battle);
+    const parsedMode = parseJsonValue(action?.Mode);
+    collectAbilityOwnerCounts(parsedBuild, abilityOwnerCounts);
+    collectAbilityOwnerCounts(parsedBattle, abilityOwnerCounts);
+    collectAbilityOwnerCounts(parsedMode, abilityOwnerCounts);
+  });
+  return buildReplayAbilityPetMapFromCounts(abilityOwnerCounts);
+}
+
+function defaultAbominationSwallowedState(): AbominationSwallowedState {
+  return {
+    abominationSwallowedPet1: null,
+    abominationSwallowedPet2: null,
+    abominationSwallowedPet3: null,
+    abominationSwallowedPet1Level: 1,
+    abominationSwallowedPet2Level: 1,
+    abominationSwallowedPet3Level: 1,
+  };
+}
+
 export class ReplayCalcParser {
   parseReplayForCalculator(
     battleJson: ReplayBattleJson,
     buildModel?: ReplayBuildModelJson,
     metaBoards?: ReplayMetaBoards,
+    options?: ReplayParseOptions,
   ): ReplayCalculatorState {
     const userBoard = battleJson?.UserBoard ?? metaBoards?.userBoard;
     const opponentBoard = battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
@@ -172,8 +342,152 @@ export class ReplayCalcParser {
       return toNumberOrFallback(board?.[key], fallback);
     };
 
+    const abilityPetNameByAbilityId = new Map<string, string>();
+    const abilityPetIdByAbilityId = new Map<string, string>();
+    const applyAbilityPetMap = (
+      abilityPetMap: Record<string, string | number> | null | undefined,
+    ): void => {
+      if (!abilityPetMap) {
+        return;
+      }
+      Object.entries(abilityPetMap).forEach(([abilityIdRaw, petIdOrName]) => {
+        const abilityId = toReplayId(abilityIdRaw);
+        if (!abilityId) {
+          return;
+        }
+        const mappedPetId =
+          typeof petIdOrName === 'number' || typeof petIdOrName === 'string'
+            ? String(petIdOrName)
+            : null;
+        const mappedPetName =
+          (mappedPetId ? PETS_BY_ID.get(mappedPetId) : null) ||
+          (typeof petIdOrName === 'string' ? petIdOrName : null);
+        if (mappedPetName) {
+          abilityPetNameByAbilityId.set(abilityId, mappedPetName);
+        }
+        if (mappedPetId && PETS_BY_ID.has(mappedPetId)) {
+          abilityPetIdByAbilityId.set(abilityId, mappedPetId);
+        }
+      });
+    };
+
+    const inferredAbilityOwnerCounts: AbilityOwnerCounts = new Map();
+    collectAbilityOwnerCounts(battleJson, inferredAbilityOwnerCounts);
+    collectAbilityOwnerCounts(buildModel, inferredAbilityOwnerCounts);
+    collectAbilityOwnerCounts(metaBoards, inferredAbilityOwnerCounts);
+    applyAbilityPetMap(
+      buildReplayAbilityPetMapFromCounts(inferredAbilityOwnerCounts),
+    );
+    applyAbilityPetMap(options?.abilityPetMap ?? null);
+
+    const resolveAbilityOwnerPetNameByNearbyMap = (
+      abilityId: string,
+    ): string | null => {
+      const parsedAbilityId = Number(abilityId);
+      if (!Number.isInteger(parsedAbilityId)) {
+        return null;
+      }
+
+      const offsetCounts = new Map<number, number>();
+      for (const [mappedAbilityId, mappedPetId] of abilityPetIdByAbilityId.entries()) {
+        const parsedMappedAbilityId = Number(mappedAbilityId);
+        const parsedMappedPetId = Number(mappedPetId);
+        if (
+          !Number.isInteger(parsedMappedAbilityId) ||
+          !Number.isInteger(parsedMappedPetId)
+        ) {
+          continue;
+        }
+
+        const distance = Math.abs(parsedMappedAbilityId - parsedAbilityId);
+        if (distance === 0 || distance > 2) {
+          continue;
+        }
+
+        const offset = parsedMappedAbilityId - parsedMappedPetId;
+        offsetCounts.set(offset, (offsetCounts.get(offset) ?? 0) + 1);
+      }
+
+      let bestOffset: number | null = null;
+      let bestOffsetCount = 0;
+      for (const [offset, count] of offsetCounts.entries()) {
+        if (
+          count > bestOffsetCount ||
+          (count === bestOffsetCount &&
+            (bestOffset === null || Math.abs(offset) < Math.abs(bestOffset)))
+        ) {
+          bestOffset = offset;
+          bestOffsetCount = count;
+        }
+      }
+
+      if (bestOffset === null) {
+        return null;
+      }
+
+      const inferredPetId = String(parsedAbilityId - bestOffset);
+      return PETS_BY_ID.get(inferredPetId) ?? null;
+    };
+
+    const resolveAbilityOwnerPetName = (abilityId: string): string | null => {
+      return (
+        abilityPetNameByAbilityId.get(abilityId) ??
+        resolveAbilityOwnerPetNameByNearbyMap(abilityId)
+      );
+    };
+
     const getTimesHurt = (petJson: ReplayPetJson): number | null => {
       return toFiniteNumber(petJson?.Pow?.SabertoothTigerAbility);
+    };
+
+    const parseAbominationSwallowedState = (
+      petJson: ReplayPetJson,
+    ): AbominationSwallowedState => {
+      const abominationState = defaultAbominationSwallowedState();
+      const copiedAbilities = (petJson?.Abil ?? []).filter(
+        (ability): ability is ReplayAbilityJson =>
+          ability !== null && toReplayId(ability?.Enu) !== null,
+      );
+
+      if (copiedAbilities.length === 0) {
+        return abominationState;
+      }
+
+      const groupedAbilities = new Map<number, ReplayAbilityJson[]>();
+      const orderedGroupKeys: number[] = [];
+      copiedAbilities.forEach((ability) => {
+        const groupKey = toFiniteNumber(ability?.Grop) ?? 0;
+        if (!groupedAbilities.has(groupKey)) {
+          groupedAbilities.set(groupKey, []);
+          orderedGroupKeys.push(groupKey);
+        }
+        groupedAbilities.get(groupKey)?.push(ability);
+      });
+
+      ABOMINATION_SLOT_FIELDS.forEach((slotFields, index) => {
+        const groupKey = orderedGroupKeys[index];
+        if (groupKey === undefined) {
+          return;
+        }
+        const groupAbilities = groupedAbilities.get(groupKey);
+        if (!groupAbilities || groupAbilities.length === 0) {
+          return;
+        }
+
+        const primaryAbility = groupAbilities[0];
+        const primaryAbilityId = toReplayId(primaryAbility?.Enu);
+        if (primaryAbilityId) {
+          abominationState[slotFields.pet] =
+            resolveAbilityOwnerPetName(primaryAbilityId);
+        }
+
+        const inferredLevel = toFiniteNumber(primaryAbility?.Lvl);
+        if (inferredLevel !== null) {
+          abominationState[slotFields.level] = inferredLevel;
+        }
+      });
+
+      return abominationState;
     };
 
     const parsePet = (petJson: ReplayPetJson | null | undefined): PetConfig | null => {
@@ -194,6 +508,10 @@ export class ReplayCalcParser {
             PETS_BY_ID.get(String(swallowedPetId)) || `Pet #${swallowedPetId}`;
         }
       }
+      const abominationSwallowedState =
+        petId === '373'
+          ? parseAbominationSwallowedState(petJson)
+          : defaultAbominationSwallowedState();
 
       const timesHurt = getTimesHurt(petJson);
       const abilityTriggersConsumed = (petJson?.Abil ?? [])
@@ -211,12 +529,7 @@ export class ReplayCalcParser {
         mana: toNumberOrFallback(petJson.Mana, 0),
         belugaSwallowedPet,
         sarcasticFringeheadSwallowedPet: null,
-        abominationSwallowedPet1: null,
-        abominationSwallowedPet2: null,
-        abominationSwallowedPet3: null,
-        abominationSwallowedPet1Level: 1,
-        abominationSwallowedPet2Level: 1,
-        abominationSwallowedPet3Level: 1,
+        ...abominationSwallowedState,
         battlesFought: 0,
         triggersConsumed:
           abilityTriggersConsumed.length > 0
@@ -580,6 +893,16 @@ export class ReplayCalcParser {
       if (pet.belugaSwallowedPet != null) {
         newPet.belugaSwallowedPet = pet.belugaSwallowedPet;
       }
+      ABOMINATION_SLOT_FIELDS.forEach((slotFields) => {
+        const swallowedPet = pet[slotFields.pet];
+        if (swallowedPet != null) {
+          newPet[slotFields.pet] = swallowedPet;
+        }
+        const swallowedLevel = pet[slotFields.level];
+        if (typeof swallowedLevel === 'number' && swallowedLevel !== 1) {
+          newPet[slotFields.level] = swallowedLevel;
+        }
+      });
       if (pet.timesHurt) {
         newPet.timesHurt = pet.timesHurt;
       }

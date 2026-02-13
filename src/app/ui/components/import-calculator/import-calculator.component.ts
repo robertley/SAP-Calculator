@@ -16,11 +16,15 @@ import {
   ReplayBoardJson,
   ReplayBuildModelJson,
   ReplayMetaBoards,
+  ReplayParseOptions,
+  buildReplayAbilityPetMapFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 
 interface ReplayActionEntry {
   Type?: number;
   Battle?: string;
+  Build?: string | null;
+  Mode?: string | null;
 }
 
 interface ReplayImportPayload {
@@ -32,11 +36,13 @@ interface ReplayImportPayload {
   UserBoard?: ReplayBoardJson;
   OpponentBoard?: ReplayBoardJson;
   GenesisBuildModel?: ReplayBuildModelJson;
+  AbilityPetMap?: Record<string, string | number> | null;
 }
 
 interface ReplayBattleResponse {
   battle?: ReplayBattleJson;
   genesisBuildModel?: ReplayBuildModelJson;
+  abilityPetMap?: Record<string, string | number> | null;
   error?: string;
 }
 
@@ -91,6 +97,10 @@ export class ImportCalculatorComponent implements OnInit {
     try {
       parsedInput = JSON.parse(rawInput) as ReplayImportPayload;
     } catch (error) {
+      if (this.importFunc(rawInput)) {
+        this.setStatus('Import successful.', 'success');
+        return;
+      }
       if (this.tryReplayPid(rawInput)) {
         return;
       }
@@ -139,6 +149,7 @@ export class ImportCalculatorComponent implements OnInit {
                   battleJson,
                   response?.genesisBuildModel,
                   undefined,
+                  { abilityPetMap: response?.abilityPetMap ?? null },
                   { resetBattle: true },
                 );
               },
@@ -167,6 +178,8 @@ export class ImportCalculatorComponent implements OnInit {
       this.importReplayBattle(parsedInput, parsedInput?.GenesisBuildModel, {
         userBoard: parsedInput?.UserBoard,
         opponentBoard: parsedInput?.OpponentBoard,
+      }, {
+        abilityPetMap: parsedInput?.AbilityPetMap ?? null,
       });
       return;
     }
@@ -200,9 +213,14 @@ export class ImportCalculatorComponent implements OnInit {
         this.errorMessage = `No battle found for turn ${turnNumber}.`;
         return;
       }
+      const abilityPetMap =
+        parsedInput?.AbilityPetMap ??
+        buildReplayAbilityPetMapFromActions(parsedInput.Actions);
       this.importReplayBattle(battleJson, parsedInput?.GenesisBuildModel, {
         userBoard: parsedInput?.UserBoard,
         opponentBoard: parsedInput?.OpponentBoard,
+      }, {
+        abilityPetMap,
       });
       return;
     }
@@ -218,12 +236,14 @@ export class ImportCalculatorComponent implements OnInit {
     battleJson: ReplayBattleJson,
     buildModel?: ReplayBuildModelJson,
     metaBoards?: ReplayMetaBoards,
+    parseOptions?: ReplayParseOptions,
     options?: { resetBattle?: boolean },
   ) {
     const calculatorState = this.replayCalcService.parseReplayForCalculator(
       battleJson,
       buildModel,
       metaBoards,
+      parseOptions,
     );
     if (this.importFunc(JSON.stringify(calculatorState), options)) {
       this.setStatus('Import successful.', 'success');
@@ -274,6 +294,7 @@ export class ImportCalculatorComponent implements OnInit {
                 battleJson,
                 response?.genesisBuildModel,
                 undefined,
+                { abilityPetMap: response?.abilityPetMap ?? null },
                 { resetBattle: true },
               );
             },

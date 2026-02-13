@@ -15,11 +15,15 @@ import {
   ReplayBattleJson,
   ReplayBoardJson,
   ReplayBuildModelJson,
+  ReplayParseOptions,
+  buildReplayAbilityPetMapFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 
 interface ReplayActionEntry {
   Type?: number;
   Battle?: string;
+  Build?: string | null;
+  Mode?: string | null;
 }
 
 interface ReplayCalcPayload {
@@ -29,11 +33,13 @@ interface ReplayCalcPayload {
   UserBoard?: ReplayBoardJson;
   OpponentBoard?: ReplayBoardJson;
   GenesisBuildModel?: ReplayBuildModelJson;
+  AbilityPetMap?: Record<string, string | number> | null;
 }
 
 interface ReplayBattleResponse {
   battle?: ReplayBattleJson;
   genesisBuildModel?: ReplayBuildModelJson;
+  abilityPetMap?: Record<string, string | number> | null;
   error?: string;
 }
 
@@ -102,6 +108,7 @@ export class ReplayCalcComponent implements OnInit {
     }
 
     let battleJson: ReplayBattleJson | null = null;
+    let parseOptions: ReplayParseOptions | undefined;
     if (parsedInput?.Pid && !parsedInput?.Actions) {
       const turnNumber = Number(
         parsedInput?.T ?? this.formGroup.get('turn').value,
@@ -146,6 +153,8 @@ export class ReplayCalcComponent implements OnInit {
                   this.replayCalcService.parseReplayForCalculator(
                     battleJson,
                     response?.genesisBuildModel,
+                    undefined,
+                    { abilityPetMap: response?.abilityPetMap ?? null },
                   );
                 this.calculatorLink =
                   this.replayCalcService.generateCalculatorLink(
@@ -173,6 +182,9 @@ export class ReplayCalcComponent implements OnInit {
       return;
     } else if (parsedInput?.UserBoard && parsedInput?.OpponentBoard) {
       battleJson = parsedInput;
+      parseOptions = {
+        abilityPetMap: parsedInput?.AbilityPetMap ?? null,
+      };
     } else if (parsedInput?.Actions) {
       const turnNumber = Number(
         this.formGroup.get('turn').value ?? parsedInput?.T,
@@ -201,6 +213,11 @@ export class ReplayCalcComponent implements OnInit {
         this.errorMessage = `No battle found for turn ${turnNumber}.`;
         return;
       }
+      parseOptions = {
+        abilityPetMap:
+          parsedInput?.AbilityPetMap ??
+          buildReplayAbilityPetMapFromActions(parsedInput.Actions),
+      };
     } else {
       this.errorMessage =
         'Replay JSON should include Actions or a battle with UserBoard/OpponentBoard.';
@@ -210,6 +227,8 @@ export class ReplayCalcComponent implements OnInit {
     const calculatorState = this.replayCalcService.parseReplayForCalculator(
       battleJson,
       parsedInput?.GenesisBuildModel,
+      undefined,
+      parseOptions,
     );
     this.calculatorLink =
       this.replayCalcService.generateCalculatorLink(calculatorState);

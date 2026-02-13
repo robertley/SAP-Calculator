@@ -4,7 +4,12 @@ import { Modal } from 'bootstrap';
 import { Player } from 'app/domain/entities/player.class';
 import { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
 import { getPackIconPath, getToyIconPath } from 'app/runtime/asset-catalog';
-import { buildExportPayload, buildShareableLink, expandCompactCalculatorState } from '../state/app.component.share';
+import {
+  buildExportPayload,
+  buildShareableLink,
+  expandCompactCalculatorState,
+  parseImportPayload,
+} from '../state/app.component.share';
 import { AppUiContext } from './app.component.ui-common';
 import { clearPlayerToy, randomizePlayerPets, randomizePlayerToy } from './app.component.ui-pack-toy';
 import {
@@ -339,7 +344,7 @@ export function importCalculator(
 ): boolean {
   let success = false;
   try {
-    const calculator = expandCompactCalculatorState(JSON.parse(importVal));
+    const calculator = expandCompactCalculatorState(parseImportPayload(importVal));
 
     if (options?.resetBattle) {
       resetSimulationState(ctx);

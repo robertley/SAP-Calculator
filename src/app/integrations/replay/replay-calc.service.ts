@@ -6,6 +6,7 @@ import {
   ReplayCalcParser,
   ReplayCalculatorState,
   ReplayMetaBoards,
+  ReplayParseOptions,
 } from './replay-calc-parser';
 
 @Injectable({
@@ -18,11 +19,13 @@ export class ReplayCalcService {
     battleJson: ReplayBattleJson,
     buildModel?: ReplayBuildModelJson,
     metaBoards?: ReplayMetaBoards,
+    options?: ReplayParseOptions,
   ): ReplayCalculatorState {
     return this.parser.parseReplayForCalculator(
       battleJson,
       buildModel,
       metaBoards,
+      options,
     );
   }
 

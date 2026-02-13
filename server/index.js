@@ -137,15 +137,115 @@ function postJson(hostname, path, body, headers = {}) {
   });
 }
 
-function safeParseBattle(battleJson) {
-  if (!battleJson) {
+const COPY_SOURCE_PET_IDS = new Set(["53", "373"]);
+
+function safeParseJson(rawJson) {
+  if (typeof rawJson !== "string" || rawJson.length === 0) {
     return null;
   }
   try {
-    return JSON.parse(battleJson);
+    return JSON.parse(rawJson);
   } catch (error) {
     return null;
   }
+}
+
+function safeParseBattle(battleJson) {
+  return safeParseJson(battleJson);
+}
+
+function toReplayId(value) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+  if (typeof value === "string" && value.length > 0) {
+    return value;
+  }
+  return null;
+}
+
+function incrementAbilityOwnerCount(abilityOwnerCounts, abilityId, petId) {
+  let petCountById = abilityOwnerCounts.get(abilityId);
+  if (!petCountById) {
+    petCountById = new Map();
+    abilityOwnerCounts.set(abilityId, petCountById);
+  }
+  petCountById.set(petId, (petCountById.get(petId) || 0) + 1);
+}
+
+function collectAbilityOwnerCounts(value, abilityOwnerCounts) {
+  if (Array.isArray(value)) {
+    value.forEach((entry) => {
+      collectAbilityOwnerCounts(entry, abilityOwnerCounts);
+    });
+    return;
+  }
+
+  if (!value || typeof value !== "object") {
+    return;
+  }
+
+  const petId = toReplayId(value.Enu);
+  const abilities = value.Abil;
+  if (petId && Array.isArray(abilities) && !COPY_SOURCE_PET_IDS.has(petId)) {
+    abilities.forEach((ability) => {
+      if (!ability || typeof ability !== "object") {
+        return;
+      }
+      const abilityId = toReplayId(ability.Enu);
+      if (!abilityId) {
+        return;
+      }
+      incrementAbilityOwnerCount(abilityOwnerCounts, abilityId, petId);
+    });
+  }
+
+  Object.values(value).forEach((entry) => {
+    collectAbilityOwnerCounts(entry, abilityOwnerCounts);
+  });
+}
+
+function pickMostLikelyPetId(petCountById) {
+  let bestPetId = null;
+  let bestCount = -1;
+
+  for (const [petId, count] of petCountById.entries()) {
+    if (
+      count > bestCount ||
+      (count === bestCount && (bestPetId === null || petId < bestPetId))
+    ) {
+      bestPetId = petId;
+      bestCount = count;
+    }
+  }
+
+  return bestPetId;
+}
+
+function buildReplayAbilityPetMap(replay) {
+  const abilityOwnerCounts = new Map();
+  const actions = Array.isArray(replay?.Actions) ? replay.Actions : [];
+
+  actions.forEach((action) => {
+    const parsedBuild = safeParseJson(action?.Build);
+    const parsedBattle = safeParseJson(action?.Battle);
+    const parsedMode = safeParseJson(action?.Mode);
+    collectAbilityOwnerCounts(parsedBuild, abilityOwnerCounts);
+    collectAbilityOwnerCounts(parsedBattle, abilityOwnerCounts);
+    collectAbilityOwnerCounts(parsedMode, abilityOwnerCounts);
+  });
+
+  collectAbilityOwnerCounts(replay?.GenesisBuildModel, abilityOwnerCounts);
+
+  const abilityPetMap = {};
+  for (const [abilityId, petCountById] of abilityOwnerCounts.entries()) {
+    const petId = pickMostLikelyPetId(petCountById);
+    if (petId) {
+      abilityPetMap[abilityId] = petId;
+    }
+  }
+
+  return abilityPetMap;
 }
 
 async function login(email, password) {
@@ -289,6 +389,7 @@ const server = http.createServer(async (req, res) => {
         battle,
         genesisBuildModel: replay.GenesisBuildModel || null,
         genesisModeModel: replay.GenesisModeModel || null,
+        abilityPetMap: buildReplayAbilityPetMap(replay),
       });
     } catch (error) {
       const statusCode = error.statusCode || 500;
