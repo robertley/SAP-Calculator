@@ -312,9 +312,29 @@
 }
 
 .fight-slot-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
   font-size: 0.74rem;
   font-weight: 700;
   color: #212529;
+}
+
+.fight-slot-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+}
+
+.fight-slot-stat-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+.fight-slot-stat-divider {
+  color: #6c757d;
+  font-size: 0.66rem;
 }
 
 .fight-event {
@@ -493,6 +513,9 @@
   left: 50%;
   top: calc(-4px - (var(--fight-popup-index, 0) * 13px));
   transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.14rem;
   font-size: 0.78rem;
   font-weight: 700;
   color: #495057;
@@ -510,6 +533,12 @@
 
 .fight-value-popup.fight-value-popup-buff {
   color: #2f9e44;
+}
+
+.fight-value-popup-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
 }
 
 @keyframes fight-value-pop-a {

@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
-import { cloneDeep } from 'lodash-es';
+import { buildExportPayload } from 'app/ui/shell/state/app.component.share';
 
 @Component({
   selector: 'app-export-calculator',
@@ -28,34 +28,7 @@ export class ExportCalculatorComponent implements OnInit {
       return '';
     }
     try {
-      const rawValue = this.formGroup.value;
-      const cleanValue = cloneDeep(rawValue);
-
-      const petsToClean = [
-        ...(cleanValue.playerPets || []),
-        ...(cleanValue.opponentPets || []),
-      ];
-
-      for (const pet of petsToClean) {
-        if (pet) {
-          // Remove properties that are class instances or cause cycles
-          delete pet.parent;
-          delete pet.logService;
-          delete pet.abilityService;
-          delete pet.gameService;
-          delete pet.petService; // If it exists on the pet
-
-          if (pet.equipment) {
-            const equipmentName =
-              typeof pet.equipment === 'string'
-                ? pet.equipment
-                : pet.equipment.name;
-            pet.equipment = equipmentName ? { name: equipmentName } : null;
-          }
-        }
-      }
-
-      return JSON.stringify(cleanValue, null, 2);
+      return buildExportPayload(this.formGroup);
     } catch (e) {
       console.error('Error creating export string:', e);
       return 'Error: Could not generate the export data.';

@@ -23,6 +23,10 @@
     "test:vitest:specs": "vitest run --config config/vitest.config.ts tests --exclude tests/generated/** --exclude tests/meta/**",
     "generate:entity-tests": "node scripts/generate-entity-tests.mjs",
     "generate:pilot-specs": "node scripts/generate-pilot-specs.mjs",
+    "analyze:abomination-pool": "node scripts/analyze-abomination-pool.mjs",
+    "search:a:flex-pet": "node scripts/search-a-flex-pet.mjs",
+    "search:b:combinations": "node scripts/search-b-combinations.mjs",
+    "search:c:triplets": "node scripts/search-c-triplets.mjs",
     "test:vitest:specs:pilot": "vitest run --config config/vitest.config.ts tests/specs/pilot",
     "test:vitest:generated:ci": "npm run generate:entity-tests && npm run test:vitest:meta && npm run test:vitest:generated"
   },
