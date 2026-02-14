@@ -11,4 +11,8 @@ import type { AppComponent } from '../app.component';
 })
 export class AppShellControlsComponent {
   @Input({ required: true }) app: AppComponent;
+
+  optimizeSide: 'player' | 'opponent' = 'player';
+  saveSide: 'player' | 'opponent' = 'player';
+  loadSide: 'player' | 'opponent' = 'player';
 }

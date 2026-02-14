@@ -29,6 +29,61 @@ export class PetSelectorFormSync
   extends PetSelectorFormSubscriptions
   implements OnInit, OnDestroy, OnChanges
 {
+  get abominationSwallowedPetArt(): Array<{
+    image: string;
+    belugaSwallowedImage: string | null;
+  }> {
+    const name = this.formGroup?.get('name')?.value;
+    if (name !== 'Abomination') {
+      return [];
+    }
+
+    const values = [
+      {
+        name: this.formGroup.get('abominationSwallowedPet1')?.value,
+        belugaSwallowed: this.formGroup.get(
+          'abominationSwallowedPet1BelugaSwallowedPet',
+        )?.value,
+      },
+      {
+        name: this.formGroup.get('abominationSwallowedPet2')?.value,
+        belugaSwallowed: this.formGroup.get(
+          'abominationSwallowedPet2BelugaSwallowedPet',
+        )?.value,
+      },
+      {
+        name: this.formGroup.get('abominationSwallowedPet3')?.value,
+        belugaSwallowed: this.formGroup.get(
+          'abominationSwallowedPet3BelugaSwallowedPet',
+        )?.value,
+      },
+    ];
+
+    const art: Array<{ image: string; belugaSwallowedImage: string | null }> =
+      [];
+    for (const value of values) {
+      if (!value.name) {
+        continue;
+      }
+      const image = this.getPetImagePath(value.name);
+      if (!image) {
+        continue;
+      }
+
+      const belugaSwallowedImage =
+        value.name === 'Beluga Whale' && value.belugaSwallowed
+          ? this.getPetImagePath(value.belugaSwallowed)
+          : null;
+
+      art.push({
+        image,
+        belugaSwallowedImage,
+      });
+    }
+
+    return art;
+  }
+
   trackByIndex(index: number): number {
     return index;
   }
@@ -169,50 +224,6 @@ export class PetSelectorFormSync
       return this.getPetImagePath(this.formGroup.get('parrotCopyPet')?.value);
     }
     return null;
-  }
-
-  get abominationSwallowedPetImages(): string[] {
-    const name = this.formGroup?.get('name')?.value;
-    if (name !== 'Abomination') {
-      return [];
-    }
-    const values = [
-      {
-        name: this.formGroup.get('abominationSwallowedPet1')?.value,
-        belugaSwallowed: this.formGroup.get(
-          'abominationSwallowedPet1BelugaSwallowedPet',
-        )?.value,
-      },
-      {
-        name: this.formGroup.get('abominationSwallowedPet2')?.value,
-        belugaSwallowed: this.formGroup.get(
-          'abominationSwallowedPet2BelugaSwallowedPet',
-        )?.value,
-      },
-      {
-        name: this.formGroup.get('abominationSwallowedPet3')?.value,
-        belugaSwallowed: this.formGroup.get(
-          'abominationSwallowedPet3BelugaSwallowedPet',
-        )?.value,
-      },
-    ];
-    const images: string[] = [];
-    for (const value of values) {
-      if (!value.name) {
-        continue;
-      }
-      const image = this.getPetImagePath(value.name);
-      if (image) {
-        images.push(image);
-      }
-      if (value.name === 'Beluga Whale' && value.belugaSwallowed) {
-        const belugaImage = this.getPetImagePath(value.belugaSwallowed);
-        if (belugaImage) {
-          images.push(belugaImage);
-        }
-      }
-    }
-    return images;
   }
 
   get equipmentImageSrc(): string | null {

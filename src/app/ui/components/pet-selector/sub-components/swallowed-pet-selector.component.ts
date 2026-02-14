@@ -38,24 +38,28 @@ export class SwallowedPetSelectorComponent {
         return level;
     }
 
+    private supportsTimesHurt(petName: string | null | undefined): boolean {
+        return petName === 'Tuna' || petName === 'Sabertooth Tiger';
+    }
+
     shouldShowParrotCopyPetAbominationParrotAbominationTimesHurt(i: number, k: number): boolean {
         const petName = this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${k}`)?.value;
-        return petName === 'Tuna';
+        return this.supportsTimesHurt(petName);
     }
 
     shouldShowParrotCopyPetAbominationTimesHurt(i: number): boolean {
         const petName = this.formGroup.get(`parrotCopyPetAbominationSwallowedPet${i}`)?.value;
-        return petName === 'Tuna';
+        return this.supportsTimesHurt(petName);
     }
 
     shouldShowAbominationParrotCopyAbominationTimesHurt(i: number, j: number): boolean {
         const petName = this.formGroup.get(`abominationSwallowedPet${i}ParrotCopyPetAbominationSwallowedPet${j}`)?.value;
-        return petName === 'Tuna';
+        return this.supportsTimesHurt(petName);
     }
 
     shouldShowAbominationSwallowTimesHurt(i: number): boolean {
         const petName = this.formGroup.get(`abominationSwallowedPet${i + 1}`)?.value;
-        return petName === 'Tuna';
+        return this.supportsTimesHurt(petName);
     }
 
     openSelectionDialog(

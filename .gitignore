@@ -52,6 +52,8 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+.venv/
+.venv*/
 
 # Misc
 .sass-cache/

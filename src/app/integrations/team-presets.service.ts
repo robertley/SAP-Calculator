@@ -45,6 +45,11 @@ export interface TeamPreset {
 })
 export class TeamPresetsService {
   private readonly storageKey = 'sap-team-presets';
+  private readonly removedPresetIds = new Set([
+    'default-shoggoth',
+    'default-shoggoths-return',
+    'default-sloths',
+  ]);
 
   loadTeams(): TeamPreset[] {
     const raw = window.localStorage.getItem(this.storageKey);
@@ -99,6 +104,14 @@ export class TeamPresetsService {
       };
     });
 
-    return { teams: migrated, changed };
+    const filtered = migrated.filter((team) => {
+      if (this.removedPresetIds.has(team.id)) {
+        changed = true;
+        return false;
+      }
+      return true;
+    });
+
+    return { teams: filtered, changed };
   }
 }

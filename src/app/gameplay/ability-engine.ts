@@ -3,6 +3,7 @@ import { GameService } from 'app/runtime/state/game.service';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { ToyService } from 'app/integrations/toy/toy.service';
 import { Player } from 'app/domain/entities/player.class';
+import { Toy } from 'app/domain/entities/toy.class';
 import { Puma } from 'app/domain/entities/catalog/pets/puppy/tier-6/puma.class';
 
 export class AbilityEngine {
@@ -132,46 +133,47 @@ export class AbilityEngine {
   }
 
   initToys() {
-    const playerToy = this.player.toy;
-    const playerToyStart = playerToy?.startOfBattle;
-    if (playerToy && playerToyStart) {
-      this.toyService.setStartOfBattleEvent({
-        callback: () => {
-          playerToyStart.call(playerToy, this.gameService.gameApi);
-          const toyLevel = playerToy.level;
-          for (let pet of this.player.petArray) {
-            if (pet instanceof Puma) {
-              playerToy.level = pet.level;
-              playerToyStart.call(playerToy, this.gameService.gameApi, true);
-              playerToy.level = toyLevel;
-            }
-          }
-        },
-        priority: playerToy.tier,
-        player: this.player,
-      });
+    this.registerStartOfBattleToyEvents(this.player);
+    this.registerStartOfBattleToyEvents(this.opponent);
+  }
+
+  private getActiveToys(player: Player): Toy[] {
+    const activeToys: Toy[] = [];
+    if (player.toy) {
+      activeToys.push(player.toy);
     }
-    const opponentToy = this.opponent.toy;
-    const opponentToyStart = opponentToy?.startOfBattle;
-    if (opponentToy && opponentToyStart) {
+    if (player.hardToy) {
+      activeToys.push(player.hardToy);
+    }
+    return activeToys;
+  }
+
+  private registerStartOfBattleToyEvents(player: Player): void {
+    const toys = this.getActiveToys(player);
+    for (const toy of toys) {
+      const startOfBattle = toy.startOfBattle;
+      if (!startOfBattle) {
+        continue;
+      }
+
       this.toyService.setStartOfBattleEvent({
         callback: () => {
-          opponentToyStart.call(opponentToy, this.gameService.gameApi);
-          const toyLevel = opponentToy.level;
-          for (let pet of this.opponent.petArray) {
+          startOfBattle.call(toy, this.gameService.gameApi);
+          const toyLevel = toy.level;
+          for (const pet of player.petArray) {
             if (pet instanceof Puma) {
-              opponentToy.level = pet.level;
-              opponentToyStart.call(
-                opponentToy,
-                this.gameService.gameApi,
-                true,
-              );
-              opponentToy.level = toyLevel;
+              toy.level = pet.level;
+              startOfBattle.call(toy, this.gameService.gameApi, true);
+              toy.level = toyLevel;
             }
           }
         },
-        priority: opponentToy.tier,
-        player: this.opponent,
+        priority: toy.tier,
+        player,
+        customParams: {
+          toyName: toy.name,
+          suppressFriendFaintLog: toy.suppressFriendFaintLog,
+        },
       });
     }
   }

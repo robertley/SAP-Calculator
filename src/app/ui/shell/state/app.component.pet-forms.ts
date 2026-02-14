@@ -18,22 +18,54 @@ export function initPetForms(
       equipmentUses: new FormControl(pet?.equipment?.uses ?? null),
       belugaSwallowedPet: new FormControl(pet?.belugaSwallowedPet),
       parrotCopyPet: new FormControl(pet?.parrotCopyPet ?? null),
-      parrotCopyPetBelugaSwallowedPet: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet1: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet2: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet3: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet1Level: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet2Level: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet3Level: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet1TimesHurt: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet2TimesHurt: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet3TimesHurt: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet1ParrotCopyPet: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet2ParrotCopyPet: new FormControl(),
-      parrotCopyPetAbominationSwallowedPet3ParrotCopyPet: new FormControl(),
+      parrotCopyPetBelugaSwallowedPet: new FormControl(
+        pet?.parrotCopyPetBelugaSwallowedPet ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet1: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet1 ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet2: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet2 ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet3: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet3 ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet1Level: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet1Level ?? 1,
+      ),
+      parrotCopyPetAbominationSwallowedPet2Level: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet2Level ?? 1,
+      ),
+      parrotCopyPetAbominationSwallowedPet3Level: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet3Level ?? 1,
+      ),
+      parrotCopyPetAbominationSwallowedPet1TimesHurt: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet1TimesHurt ?? 0,
+      ),
+      parrotCopyPetAbominationSwallowedPet2TimesHurt: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet2TimesHurt ?? 0,
+      ),
+      parrotCopyPetAbominationSwallowedPet3TimesHurt: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet3TimesHurt ?? 0,
+      ),
+      parrotCopyPetAbominationSwallowedPet1ParrotCopyPet: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet1ParrotCopyPet ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet2ParrotCopyPet: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet2ParrotCopyPet ?? null,
+      ),
+      parrotCopyPetAbominationSwallowedPet3ParrotCopyPet: new FormControl(
+        pet?.parrotCopyPetAbominationSwallowedPet3ParrotCopyPet ?? null,
+      ),
       parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet:
         new FormControl(
           pet?.parrotCopyPetAbominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ??
@@ -236,15 +268,33 @@ export function initPetForms(
       abominationSwallowedPet1: new FormControl(pet?.abominationSwallowedPet1),
       abominationSwallowedPet2: new FormControl(pet?.abominationSwallowedPet2),
       abominationSwallowedPet3: new FormControl(pet?.abominationSwallowedPet3),
-      abominationSwallowedPet1BelugaSwallowedPet: new FormControl(),
-      abominationSwallowedPet2BelugaSwallowedPet: new FormControl(),
-      abominationSwallowedPet3BelugaSwallowedPet: new FormControl(),
-      abominationSwallowedPet1ParrotCopyPet: new FormControl(),
-      abominationSwallowedPet2ParrotCopyPet: new FormControl(),
-      abominationSwallowedPet3ParrotCopyPet: new FormControl(),
-      abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet: new FormControl(),
-      abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet: new FormControl(),
-      abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet: new FormControl(),
+      abominationSwallowedPet1BelugaSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet1BelugaSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet2BelugaSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet2BelugaSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet3BelugaSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet3BelugaSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet1ParrotCopyPet: new FormControl(
+        pet?.abominationSwallowedPet1ParrotCopyPet ?? null,
+      ),
+      abominationSwallowedPet2ParrotCopyPet: new FormControl(
+        pet?.abominationSwallowedPet2ParrotCopyPet ?? null,
+      ),
+      abominationSwallowedPet3ParrotCopyPet: new FormControl(
+        pet?.abominationSwallowedPet3ParrotCopyPet ?? null,
+      ),
+      abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet1ParrotCopyPetBelugaSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet2ParrotCopyPetBelugaSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet3ParrotCopyPetBelugaSwallowedPet ?? null,
+      ),
       abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1:
         new FormControl(
           pet?.abominationSwallowedPet1ParrotCopyPetAbominationSwallowedPet1 ??
@@ -425,13 +475,27 @@ export function initPetForms(
           pet?.abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt ??
             0,
         ),
-      abominationSwallowedPet1Level: new FormControl(),
-      abominationSwallowedPet2Level: new FormControl(),
-      abominationSwallowedPet3Level: new FormControl(),
-      abominationSwallowedPet1TimesHurt: new FormControl(),
-      abominationSwallowedPet2TimesHurt: new FormControl(),
-      abominationSwallowedPet3TimesHurt: new FormControl(),
-      friendsDiedBeforeBattle: new FormControl(),
+      abominationSwallowedPet1Level: new FormControl(
+        pet?.abominationSwallowedPet1Level ?? 1,
+      ),
+      abominationSwallowedPet2Level: new FormControl(
+        pet?.abominationSwallowedPet2Level ?? 1,
+      ),
+      abominationSwallowedPet3Level: new FormControl(
+        pet?.abominationSwallowedPet3Level ?? 1,
+      ),
+      abominationSwallowedPet1TimesHurt: new FormControl(
+        pet?.abominationSwallowedPet1TimesHurt ?? 0,
+      ),
+      abominationSwallowedPet2TimesHurt: new FormControl(
+        pet?.abominationSwallowedPet2TimesHurt ?? 0,
+      ),
+      abominationSwallowedPet3TimesHurt: new FormControl(
+        pet?.abominationSwallowedPet3TimesHurt ?? 0,
+      ),
+      friendsDiedBeforeBattle: new FormControl(
+        pet?.friendsDiedBeforeBattle ?? 0,
+      ),
       battlesFought: new FormControl(pet?.battlesFought ?? 0),
       timesHurt: new FormControl(pet?.timesHurt ?? 0),
     });

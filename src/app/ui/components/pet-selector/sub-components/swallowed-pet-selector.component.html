@@ -27,7 +27,7 @@
                     )
                   ">
                     <!-- Nested Level for Swallowed Pet -->
-                    <div class="form-group small-w-input mb-2" *ngIf="showSwallowedLevels">
+                    <div class="form-group small-w-input mb-2" *ngIf="showSwallowedLevels || pet?.name === 'Abomination'">
                         <label class="swallowed-label-small">Level</label>
                         <select class="form-control form-control-sm"
                             [formControlName]="'abominationSwallowedPet' + (i + 1) + 'Level'">

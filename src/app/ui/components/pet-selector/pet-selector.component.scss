@@ -109,6 +109,20 @@
   gap: 2px;
 }
 
+.swallowed-stack-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.swallowed-beluga-nested {
+  width: 16px !important;
+  height: 16px !important;
+  margin-left: -4px;
+  margin-top: 2px;
+  z-index: 1;
+}
+
 .swallowed-label {
   font-weight: 700;
   text-transform: uppercase;

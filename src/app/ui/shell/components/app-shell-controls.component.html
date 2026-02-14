@@ -14,14 +14,17 @@
               <input class="form-control simulate-input" type="number" formControlName="simulations" min="1"
                 max="10000" />
             </div>
-            <button class="btn btn-outline-primary ms-1" (click)="app.optimizePositioning('player')"
-              [disabled]="app.simulationInProgress">
-              Optimize Player
-            </button>
-            <button class="btn btn-outline-primary ms-1" (click)="app.optimizePositioning('opponent')"
-              [disabled]="app.simulationInProgress">
-              Optimize Opponent
-            </button>
+            <div class="d-inline-flex align-items-center ms-1">
+              <button class="btn btn-outline-primary" (click)="app.optimizePositioning(optimizeSide)"
+                [disabled]="app.simulationInProgress">
+                Optimize
+              </button>
+              <select class="form-select form-select-sm ms-1" [(ngModel)]="optimizeSide"
+                [ngModelOptions]="{ standalone: true }" [disabled]="app.simulationInProgress">
+                <option value="player">Player</option>
+                <option value="opponent">Opponent</option>
+              </select>
+            </div>
             <button class="btn btn-secondary" (click)="app.randomize()">
               Randomize
             </button>
@@ -91,6 +94,9 @@
       >
         {{ app.statusMessage }}
       </div>
+      <div *ngIf="app.autoSaveLabel" class="px-3 pb-2 text-muted small">
+        {{ app.autoSaveLabel }}
+      </div>
       <div *ngIf="app.simulationInProgress" class="simulation-progress px-3 pb-2">
         <div class="progress flex-1">
           <div class="progress-bar" role="progressbar" [style.width]="app.simulationProgress + '%'"></div>
@@ -107,12 +113,14 @@
               <input class="form-control team-name-input" [(ngModel)]="app.teamName" [ngModelOptions]="{ standalone: true }"
                 placeholder="Team name" />
               <div class="team-name-actions">
-                <button class="btn btn-secondary btn-sm" (click)="app.saveTeam('player')">
-                  Save Player
+                <button class="btn btn-secondary btn-sm" (click)="app.saveTeam(saveSide)">
+                  Save
                 </button>
-                <button class="btn btn-secondary btn-sm" (click)="app.saveTeam('opponent')">
-                  Save Opponent
-                </button>
+                <select class="form-select form-select-sm" [(ngModel)]="saveSide"
+                  [ngModelOptions]="{ standalone: true }">
+                  <option value="player">Player</option>
+                  <option value="opponent">Opponent</option>
+                </select>
               </div>
             </div>
             <div class="team-column">
@@ -134,12 +142,14 @@
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
               <div class="team-name-actions load-actions">
-                <button class="btn btn-secondary btn-sm" (click)="app.loadTeam('player')">
-                  Load Player
+                <button class="btn btn-secondary btn-sm" (click)="app.loadTeam(loadSide)">
+                  Load
                 </button>
-                <button class="btn btn-secondary btn-sm" (click)="app.loadTeam('opponent')">
-                  Load Opponent
-                </button>
+                <select class="form-select form-select-sm" [(ngModel)]="loadSide"
+                  [ngModelOptions]="{ standalone: true }">
+                  <option value="player">Player</option>
+                  <option value="opponent">Opponent</option>
+                </select>
               </div>
             </div>
           </div>

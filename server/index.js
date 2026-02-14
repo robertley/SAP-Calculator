@@ -154,6 +154,24 @@ function safeParseBattle(battleJson) {
   return safeParseJson(battleJson);
 }
 
+function getBattleActions(replay) {
+  const actions = Array.isArray(replay?.Actions) ? replay.Actions : [];
+  return actions.filter((action) => action?.Type === 0 && action?.Battle);
+}
+
+function getBattleForTurn(replay, turnNumber) {
+  const battleActions = getBattleActions(replay);
+  const actionByTurn = battleActions.find(
+    (action) => Number(action?.Turn) === turnNumber,
+  );
+  if (actionByTurn?.Battle) {
+    return safeParseBattle(actionByTurn.Battle);
+  }
+
+  const fallbackAction = battleActions[turnNumber - 1];
+  return fallbackAction?.Battle ? safeParseBattle(fallbackAction.Battle) : null;
+}
+
 function toReplayId(value) {
   if (typeof value === "number" && Number.isFinite(value)) {
     return String(value);
@@ -373,11 +391,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       const replay = await fetchReplay(participationId, sapEmail, sapPassword);
-      const battles = replay.Actions.filter((action) => action?.Type === 0)
-        .map((action) => safeParseBattle(action.Battle))
-        .filter(Boolean);
-
-      const battle = battles[turnNumber - 1];
+      const battle = getBattleForTurn(replay, turnNumber);
       if (!battle) {
         sendJson(res, 404, {
           error: `No battle found for turn ${turnNumber}.`,
@@ -438,12 +452,7 @@ const server = http.createServer(async (req, res) => {
 
       let battle = null;
       if (Number.isFinite(turnNumber) && turnNumber > 0) {
-        const battles = replay.Actions.filter(
-          (action) => action?.Type === 0,
-        )
-          .map((action) => safeParseBattle(action.Battle))
-          .filter(Boolean);
-        battle = battles[turnNumber - 1] || null;
+        battle = getBattleForTurn(replay, turnNumber);
       }
 
       sendJson(res, 200, {

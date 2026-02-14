@@ -46,11 +46,16 @@
         <img [ngSrc]="swallowedPetImageSrc" width="32" height="32" loading="lazy" decoding="async"
           alt="Swallowed Pet" />
       </div>
-      <div class="swallowed-art swallowed-stack" *ngIf="abominationSwallowedPetImages.length">
-        <img *ngFor="
-            let image of abominationSwallowedPetImages;
+      <div class="swallowed-art swallowed-stack" *ngIf="abominationSwallowedPetArt.length">
+        <div class="swallowed-stack-item" *ngFor="
+            let swallowedArt of abominationSwallowedPetArt;
             trackBy: trackByIndex
-          " [ngSrc]="image" width="32" height="32" loading="lazy" decoding="async" alt="Swallowed Pet" />
+          ">
+          <img [ngSrc]="swallowedArt.image" width="32" height="32" loading="lazy" decoding="async" alt="Swallowed Pet" />
+          <img class="swallowed-beluga-nested" *ngIf="swallowedArt.belugaSwallowedImage"
+            [ngSrc]="swallowedArt.belugaSwallowedImage" width="16" height="16" loading="lazy" decoding="async"
+            alt="Beluga Swallowed Pet" />
+        </div>
       </div>
     </div>
 

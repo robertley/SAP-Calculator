@@ -17,10 +17,12 @@ import {
   ReplayBuildModelJson,
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
+  selectReplayBattleFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 
 interface ReplayActionEntry {
   Type?: number;
+  Turn?: number;
   Battle?: string;
   Build?: string | null;
   Mode?: string | null;
@@ -193,22 +195,7 @@ export class ReplayCalcComponent implements OnInit {
         this.errorMessage = 'Enter a valid turn number.';
         return;
       }
-      let battleIndex = 0;
-      for (const action of parsedInput.Actions) {
-        if (action?.Type !== 0 || !action?.Battle) {
-          continue;
-        }
-        battleIndex += 1;
-        if (battleIndex === turnNumber) {
-          try {
-            battleJson = JSON.parse(action.Battle);
-          } catch (error) {
-            this.errorMessage = `Failed to parse battle JSON for turn ${turnNumber}.`;
-            return;
-          }
-          break;
-        }
-      }
+      battleJson = selectReplayBattleFromActions(parsedInput.Actions, turnNumber);
       if (!battleJson) {
         this.errorMessage = `No battle found for turn ${turnNumber}.`;
         return;

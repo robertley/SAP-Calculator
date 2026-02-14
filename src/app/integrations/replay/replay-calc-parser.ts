@@ -91,6 +91,8 @@ export interface ReplayParseOptions {
 }
 
 export interface ReplayActionJson {
+  Type?: number | null;
+  Turn?: number | string | null;
   Build?: string | null;
   Battle?: string | null;
   Mode?: string | null;
@@ -296,6 +298,36 @@ function parseJsonValue(raw: unknown): unknown {
   } catch {
     return null;
   }
+}
+
+function parseBattleAction(raw: unknown): ReplayBattleJson | null {
+  const parsed = parseJsonValue(raw);
+  if (!isRecord(parsed)) {
+    return null;
+  }
+  return parsed as ReplayBattleJson;
+}
+
+export function selectReplayBattleFromActions(
+  actions: ReadonlyArray<ReplayActionJson> | null | undefined,
+  turnNumber: number,
+): ReplayBattleJson | null {
+  if (!Number.isFinite(turnNumber) || turnNumber <= 0) {
+    return null;
+  }
+
+  const battleActions = (actions ?? []).filter(
+    (action) =>
+      Boolean(action?.Battle) &&
+      (action?.Type === 0 || action?.Type === null || action?.Type === undefined),
+  );
+
+  const actionForTurn =
+    battleActions.find((action) => Number(action?.Turn) === turnNumber) ??
+    battleActions[turnNumber - 1] ??
+    null;
+
+  return parseBattleAction(actionForTurn?.Battle ?? null);
 }
 
 export function buildReplayAbilityPetMapFromActions(

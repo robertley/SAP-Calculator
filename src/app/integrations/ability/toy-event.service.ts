@@ -7,6 +7,7 @@ import {
 import { RandomEventReason } from 'app/domain/interfaces/log.interface';
 import { Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
+import { Toy } from 'app/domain/entities/toy.class';
 import { GameService } from 'app/runtime/state/game.service';
 import { LogService } from '../log.service';
 import { getRandomFloat } from 'app/runtime/random';
@@ -31,15 +32,20 @@ export class ToyEventService {
   private enqueueToyEvents(
     queue: AbilityEvent[],
     player: Player,
+    toy: Toy,
     triggerPet: Pet | undefined,
     callback: AbilityEventCallback,
   ): void {
     this.addToyEvent(queue, {
       callback,
       priority: 100,
-      level: player.toy.level,
+      level: toy.level,
       triggerPet,
       player,
+      customParams: {
+        toyName: toy.name,
+        suppressFriendFaintLog: toy.suppressFriendFaintLog,
+      },
     });
 
     const pumas = player.petArray.filter((pet) => pet.name === 'Puma');
@@ -52,6 +58,17 @@ export class ToyEventService {
         player,
       });
     }
+  }
+
+  private getActiveToys(player: Player): Toy[] {
+    const activeToys: Toy[] = [];
+    if (player.toy) {
+      activeToys.push(player.toy);
+    }
+    if (player.hardToy) {
+      activeToys.push(player.hardToy);
+    }
+    return activeToys;
   }
 
   private addToyEvent(queue: AbilityEvent[], event: AbilityEvent): void {
@@ -103,7 +120,9 @@ export class ToyEventService {
     randomEvent: boolean,
     randomEventReason: RandomEventReason,
   ): void {
-    const toyName = event.player?.toy?.name;
+    const toyName =
+      (event.customParams?.toyName as string | undefined) ??
+      event.player?.toy?.name;
     if (!toyName) {
       return;
     }
@@ -159,7 +178,9 @@ export class ToyEventService {
     randomEvent: boolean,
     randomEventReason: RandomEventReason,
   ): void {
-    const toyName = event.player?.toy?.name;
+    const toyName =
+      (event.customParams?.toyName as string | undefined) ??
+      event.player?.toy?.name;
     if (!toyName) {
       return;
     }
@@ -177,15 +198,19 @@ export class ToyEventService {
 
   // Empty front space events
   triggerEmptyFrontSpaceToyEvents(player: Player): void {
-    if (player.toy?.emptyFromSpace != null) {
-      if (player.toy.used) {
-        return;
+    for (const toy of this.getActiveToys(player)) {
+      if (toy.emptyFromSpace == null) {
+        continue;
+      }
+      if (toy.used) {
+        continue;
       }
       this.enqueueToyEvents(
         this.emptyFrontSpaceToyEvents,
         player,
+        toy,
         undefined,
-        player.toy.emptyFromSpace.bind(player.toy),
+        toy.emptyFromSpace.bind(toy),
       );
     }
   }
@@ -207,12 +232,16 @@ export class ToyEventService {
 
   // Friend summoned toy events
   triggerFriendSummonedToyEvents(player: Player, pet: Pet): void {
-    if (player.toy?.friendSummoned != null) {
+    for (const toy of this.getActiveToys(player)) {
+      if (toy.friendSummoned == null) {
+        continue;
+      }
       this.enqueueToyEvents(
         this.friendSummonedToyEvents,
         player,
+        toy,
         pet,
-        player.toy.friendSummoned.bind(player.toy),
+        toy.friendSummoned.bind(toy),
       );
     }
   }
@@ -237,12 +266,16 @@ export class ToyEventService {
     if (player != pet.parent) {
       return;
     }
-    if (player.toy?.friendlyLevelUp != null) {
+    for (const toy of this.getActiveToys(player)) {
+      if (toy.friendlyLevelUp == null) {
+        continue;
+      }
       this.enqueueToyEvents(
         this.friendlyLevelUpToyEvents,
         player,
+        toy,
         pet,
-        player.toy.friendlyLevelUp.bind(player.toy),
+        toy.friendlyLevelUp.bind(toy),
       );
     }
   }
@@ -267,12 +300,16 @@ export class ToyEventService {
     if (player != pet.parent) {
       return;
     }
-    if (player.toy?.friendFaints != null) {
+    for (const toy of this.getActiveToys(player)) {
+      if (toy.friendFaints == null) {
+        continue;
+      }
       this.enqueueToyEvents(
         this.friendFaintsToyEvents,
         player,
+        toy,
         pet,
-        player.toy.friendFaints.bind(player.toy),
+        toy.friendFaints.bind(toy),
       );
     }
   }
@@ -289,7 +326,7 @@ export class ToyEventService {
         );
       },
       'reacted to friend fainting',
-      (event) => !event.player?.toy?.suppressFriendFaintLog,
+      (event) => !Boolean(event.customParams?.suppressFriendFaintLog),
     );
   }
 
@@ -298,12 +335,16 @@ export class ToyEventService {
     if (player != pet.parent) {
       return;
     }
-    if (player.toy?.friendJumped != null) {
+    for (const toy of this.getActiveToys(player)) {
+      if (toy.friendJumped == null) {
+        continue;
+      }
       this.enqueueToyEvents(
         this.friendJumpedToyEvents,
         player,
+        toy,
         pet,
-        player.toy.friendJumped.bind(player.toy),
+        toy.friendJumped.bind(toy),
       );
     }
   }
