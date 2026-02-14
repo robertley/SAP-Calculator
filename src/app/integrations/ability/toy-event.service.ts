@@ -326,7 +326,7 @@ export class ToyEventService {
         );
       },
       'reacted to friend fainting',
-      (event) => !Boolean(event.customParams?.suppressFriendFaintLog),
+      (event) => !event.customParams?.suppressFriendFaintLog,
     );
   }
 
