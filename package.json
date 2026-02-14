@@ -27,6 +27,8 @@
     "search:a:flex-pet": "node scripts/search-a-flex-pet.mjs",
     "search:b:combinations": "node scripts/search-b-combinations.mjs",
     "search:c:triplets": "node scripts/search-c-triplets.mjs",
+    "search:evolution:pool": "node simulation/dist/cli.js preset-pool --pretty",
+    "search:evolution:run": "python scripts/evolution/ray_pytorch_evolution.py",
     "test:vitest:specs:pilot": "vitest run --config config/vitest.config.ts tests/specs/pilot",
     "test:vitest:generated:ci": "npm run generate:entity-tests && npm run test:vitest:meta && npm run test:vitest:generated"
   },

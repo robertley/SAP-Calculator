@@ -15,30 +15,30 @@ export const breakToy = (
   abilityService: AbilityService,
   gameService: GameService,
 ): void => {
-  if (player.toy == null) {
-    return;
-  }
-  player.brokenToy = player.toy;
-  logService.createLog({
-    message: `${player.toy.name} broke!`,
-    type: 'ability',
-    player: player as Player,
-    randomEvent: false,
-  });
-  if (player.toy.onBreak != null) {
+  const breakSingleToy = (toy: Toy): void => {
+    logService.createLog({
+      message: `${toy.name} broke!`,
+      type: 'ability',
+      player: player as Player,
+      randomEvent: false,
+    });
+    if (toy.onBreak == null) {
+      return;
+    }
+
     const events: AbilityEvent[] = [
       {
-        callback: player.toy.onBreak.bind(player.toy),
+        callback: toy.onBreak.bind(toy),
         priority: 99,
       },
     ];
-    const toyLevel = player.toy.level;
+    const toyLevel = toy.level;
     for (const pet of player.petArray) {
       if (pet instanceof Puma) {
         const callback = () => {
-          player.toy.level = pet.level;
-          player.toy.onBreak(gameService.gameApi, true);
-          player.toy.level = toyLevel;
+          toy.level = pet.level;
+          toy.onBreak(gameService.gameApi, true);
+          toy.level = toyLevel;
         };
         events.push({
           callback: callback,
@@ -52,10 +52,26 @@ export const breakToy = (
     for (const event of events) {
       event.callback(gameService.gameApi);
     }
+  };
+
+  if (player.toy != null) {
+    const toy = player.toy;
+    player.brokenToy = toy;
+    breakSingleToy(toy);
+    player.toy = null;
   }
-  player.toy = null;
+
+  if (player.hardToy != null) {
+    const toy = player.hardToy;
+    player.brokenHardToy = toy;
+    breakSingleToy(toy);
+    player.hardToy = null;
+  }
+
   if (respawn) {
-    setToy(player, player.brokenToy);
+    if (player.brokenToy) {
+      setToy(player, player.brokenToy);
+    }
   }
 };
 

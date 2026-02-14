@@ -16,7 +16,9 @@ export interface PlayerLike {
   opponent: PlayerLike;
   furthestUpPet: Pet | null;
   toy: Toy | null;
+  hardToy?: Toy | null;
   brokenToy: Toy | null;
+  brokenHardToy?: Toy | null;
   trumpets: number;
   spawnedGoldenRetiever: boolean;
   getPet(index: number): Pet | undefined;

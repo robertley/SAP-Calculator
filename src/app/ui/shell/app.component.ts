@@ -1,6 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
+import { Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { Modal } from 'bootstrap';
 import { Player } from 'app/domain/entities/player.class';
@@ -174,9 +176,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private isLoadedFromUrl = false;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
   private fightAnimationTimer: ReturnType<typeof setTimeout> | null = null;
+  private formAutoSaveSubscription: Subscription | null = null;
 
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
+  lastAutoSavedAt: Date | null = null;
   activePetSlot: { side: 'player' | 'opponent'; index: number } | null = null;
   private petClipboard: Record<string, unknown> | null = null;
 
@@ -409,6 +413,26 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.toys = this.toyService.toys;
     this.regularToys = this.toyService.getToysByType(0);
     this.hardWackyToys = this.toyService.getToysByType(1);
+
+    this.formAutoSaveSubscription?.unsubscribe();
+    this.formAutoSaveSubscription = this.formGroup.valueChanges
+      .pipe(debounceTime(250))
+      .subscribe(() => {
+        this.localStorageService.setFormStorage(this.formGroup);
+        this.lastAutoSavedAt = new Date();
+        this.cdr.markForCheck();
+      });
+  }
+
+  get autoSaveLabel(): string {
+    if (!this.lastAutoSavedAt) {
+      return '';
+    }
+    return `Saved ${this.lastAutoSavedAt.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })}`;
   }
 
   readonly loadStateFromUrl = (
@@ -428,6 +452,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.formAutoSaveSubscription?.unsubscribe();
     this.clearFightAnimationTimer();
     if (this.statusTimer) {
       clearTimeout(this.statusTimer);

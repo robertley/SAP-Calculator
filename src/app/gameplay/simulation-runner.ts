@@ -324,6 +324,18 @@ export class SimulationRunner {
       this.player.originalToy = null;
     }
 
+    if (config.playerHardToy) {
+      this.player.hardToy = this.toyService.createToy(
+        config.playerHardToy,
+        this.player,
+        config.playerHardToyLevel ?? 1,
+      );
+      this.player.originalHardToy = this.player.hardToy;
+    } else {
+      this.player.hardToy = null;
+      this.player.originalHardToy = null;
+    }
+
     if (config.opponentToy) {
       this.opponent.toy = this.toyService.createToy(
         config.opponentToy,
@@ -334,6 +346,18 @@ export class SimulationRunner {
     } else {
       this.opponent.toy = null;
       this.opponent.originalToy = null;
+    }
+
+    if (config.opponentHardToy) {
+      this.opponent.hardToy = this.toyService.createToy(
+        config.opponentHardToy,
+        this.opponent,
+        config.opponentHardToyLevel ?? 1,
+      );
+      this.opponent.originalHardToy = this.opponent.hardToy;
+    } else {
+      this.opponent.hardToy = null;
+      this.opponent.originalHardToy = null;
     }
 
     this.gameService.gameApi.playerHardToy = config.playerHardToy ?? null;

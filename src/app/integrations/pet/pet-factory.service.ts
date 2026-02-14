@@ -109,13 +109,22 @@ export class PetFactoryService {
     petService: PetFactoryPetService,
     registry: PetRegistryMap,
   ): Pet | null {
-    const plan = this.getPetBuildPlan(petForm, registry);
+    const normalizedPetForm = this.normalizePetForm(petForm);
+    const plan = this.getPetBuildPlan(normalizedPetForm, registry);
     const equipment = this.resolveEquipment(
       plan.equipmentValue,
       plan.equipmentUses,
     );
-    const { name, health, attack, mana, exp, triggersConsumed, foodsEaten } = petForm;
-    let hasRandomEvents = petForm.hasRandomEvents;
+    const {
+      name,
+      health,
+      attack,
+      mana,
+      exp,
+      triggersConsumed,
+      foodsEaten,
+    } = normalizedPetForm;
+    let hasRandomEvents = normalizedPetForm.hasRandomEvents;
     if (
       hasRandomEvents === undefined &&
       typeof petService.isPetRandom === 'function'
@@ -126,8 +135,9 @@ export class PetFactoryService {
     const applySarcasticSetting = (pet: Pet) => {
       if (pet && (plan.hasSarcastic || plan.hasFriendsDied)) {
         pet.sarcasticFringeheadSwallowedPet =
-          petForm.sarcasticFringeheadSwallowedPet ?? null;
-        pet.friendsDiedBeforeBattle = petForm.friendsDiedBeforeBattle ?? 0;
+          normalizedPetForm.sarcasticFringeheadSwallowedPet ?? null;
+        pet.friendsDiedBeforeBattle =
+          normalizedPetForm.friendsDiedBeforeBattle ?? 0;
       }
       return pet;
     };
@@ -142,9 +152,9 @@ export class PetFactoryService {
           pet.originalFoodsEaten = value;
         }
       }
-      if (plan.hasTimesHurt && petForm.timesHurt != null) {
-        pet.timesHurt = petForm.timesHurt;
-        pet.originalTimesHurt = petForm.timesHurt;
+      if (plan.hasTimesHurt && normalizedPetForm.timesHurt != null) {
+        pet.timesHurt = normalizedPetForm.timesHurt;
+        pet.originalTimesHurt = normalizedPetForm.timesHurt;
       }
       if (hasRandomEvents) {
         pet.hasRandomEvents = true;
@@ -155,14 +165,18 @@ export class PetFactoryService {
       if (!plan.hasAbominationData || petInstance?.name !== 'Abomination') {
         return petInstance;
       }
-      copyPetFormFields(petInstance, petForm, ABOMINATION_FORM_FIELDS);
+      copyPetFormFields(
+        petInstance,
+        normalizedPetForm,
+        ABOMINATION_FORM_FIELDS,
+      );
       return petInstance;
     };
     const applyParrotCopyPet = (petInstance: Pet) => {
       if (!plan.hasParrotData || petInstance?.name !== 'Parrot') {
         return petInstance;
       }
-      copyPetFormFields(petInstance, petForm, PARROT_FORM_FIELDS);
+      copyPetFormFields(petInstance, normalizedPetForm, PARROT_FORM_FIELDS);
       return petInstance;
     };
     const buildPetInstance = (petInstance: Pet) => {
@@ -173,7 +187,7 @@ export class PetFactoryService {
         return petInstance;
       }
       const withEquipment = plan.hasEquipmentUses
-        ? this.applyEquipmentUsesOverride(petInstance, petForm)
+        ? this.applyEquipmentUsesOverride(petInstance, normalizedPetForm)
         : petInstance;
       return finalizePet(
         applyParrotCopyPet(
@@ -207,7 +221,7 @@ export class PetFactoryService {
         abilityService: this.abilityService,
         gameService: this.gameService,
       };
-      const petFormWithEquipment = { ...petForm, equipment };
+      const petFormWithEquipment = { ...normalizedPetForm, equipment };
       const petInstance = plan.specialBuilder(
         deps,
         petFormWithEquipment,
@@ -400,6 +414,67 @@ export class PetFactoryService {
 
 
     return plan;
+  }
+
+  private normalizePetForm(petForm: PetForm): PetForm {
+    if (petForm.name !== 'Abomination') {
+      return petForm;
+    }
+
+    const normalized = { ...petForm };
+    const normalizedRecord = normalized as Record<string, unknown>;
+    const slots = [1, 2, 3] as const;
+
+    for (const slot of slots) {
+      const petField = `abominationSwallowedPet${slot}`;
+      const levelField = `abominationSwallowedPet${slot}Level`;
+      const timesHurtField = `abominationSwallowedPet${slot}TimesHurt`;
+      const belugaField = `abominationSwallowedPet${slot}BelugaSwallowedPet`;
+
+      const rawName = normalizedRecord[petField];
+      const name =
+        typeof rawName === 'string' && rawName.trim().length > 0
+          ? rawName
+          : null;
+
+      if (!name) {
+        normalizedRecord[petField] = null;
+        normalizedRecord[levelField] = 1;
+        normalizedRecord[timesHurtField] = 0;
+        normalizedRecord[belugaField] = null;
+        continue;
+      }
+      if (name !== 'Beluga Whale') {
+        normalizedRecord[belugaField] = null;
+      }
+    }
+
+    const hasBehemoth = slots.some(
+      (slot) => normalizedRecord[`abominationSwallowedPet${slot}`] === 'Behemoth',
+    );
+    const maxStat = hasBehemoth ? 100 : 50;
+
+    const clampedAttack = this.clampFiniteNumber(normalized.attack, 0, maxStat);
+    if (clampedAttack != null) {
+      normalized.attack = clampedAttack;
+    }
+    const clampedHealth = this.clampFiniteNumber(normalized.health, 0, maxStat);
+    if (clampedHealth != null) {
+      normalized.health = clampedHealth;
+    }
+
+    return normalized;
+  }
+
+  private clampFiniteNumber(
+    value: unknown,
+    min: number,
+    max: number,
+  ): number | null {
+    if (typeof value !== 'number' || !Number.isFinite(value)) {
+      return null;
+    }
+    return Math.min(max, Math.max(min, value));
   }
 
 

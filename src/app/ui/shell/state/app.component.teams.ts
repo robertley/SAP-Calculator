@@ -298,10 +298,13 @@ export function loadTeamPreset(options: {
     team.playerToyLevel,
   );
 
-  options.formGroup.get('playerToy').setValue(playerToyName);
-  options.formGroup.get('playerToyLevel').setValue(playerToyLevel);
-  options.formGroup.get('opponentToy').setValue(opponentToyName);
-  options.formGroup.get('opponentToyLevel').setValue(opponentToyLevel);
+  if (options.side === 'player') {
+    options.formGroup.get('playerToy').setValue(playerToyName);
+    options.formGroup.get('playerToyLevel').setValue(playerToyLevel);
+  } else {
+    options.formGroup.get('opponentToy').setValue(opponentToyName);
+    options.formGroup.get('opponentToyLevel').setValue(opponentToyLevel);
+  }
 
   if (team.playerHardToy != null) {
     options.formGroup.get('playerHardToy').setValue(team.playerHardToy);

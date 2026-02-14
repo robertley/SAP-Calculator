@@ -33,8 +33,11 @@ export class Player extends PlayerSummonFacade {
     | 'Danger' = 'Turtle';
 
   toy: Toy | null = null;
+  hardToy: Toy | null = null;
   brokenToy: Toy | null = null;
+  brokenHardToy: Toy | null = null;
   originalToy: Toy | null = null;
+  originalHardToy: Toy | null = null;
 
   trumpets: number = 0;
   spawnedGoldenRetiever: boolean = false;

@@ -118,6 +118,13 @@ CLI flags:
 - `--pretty`
 - `--input <path>`
 
+Additional CLI commands:
+- `sap-calculator-sim preset-pool --pretty`
+- `sap-calculator-sim evaluate --stdin`
+- `sap-calculator-sim evaluate-batch --stdin`
+
+See `docs/EVOLUTIONARY_SEARCH.md` for the PyTorch + Ray evolutionary runner that uses these built-in commands.
+
 ## Replay Backend (Optional)
 `server/index.js` provides replay proxy endpoints:
 - `GET /api/health`

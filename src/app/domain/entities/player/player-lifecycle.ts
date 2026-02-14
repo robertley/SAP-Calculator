@@ -47,7 +47,16 @@ export const resetPets = (player: Player): void => {
       player.toy.level = player.originalToy.level;
     }
   }
+  player.hardToy = player.originalHardToy;
+  if (player.hardToy) {
+    player.hardToy.used = false;
+    player.hardToy.triggers = 0;
+    if (player.originalHardToy) {
+      player.hardToy.level = player.originalHardToy.level;
+    }
+  }
   player.brokenToy = null;
+  player.brokenHardToy = null;
   player.trumpets = 0;
   player.spawnedGoldenRetiever = false;
   player.summonedBoatThisBattle = false;

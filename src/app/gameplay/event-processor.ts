@@ -213,10 +213,15 @@ export class EventProcessor {
     winner: Player,
     loser: Player,
   ): boolean {
-    if (!winner.toy?.allEnemiesFainted) {
+    const activeToys = [winner.toy, winner.hardToy].filter(
+      (toy) => toy?.allEnemiesFainted != null,
+    );
+    if (activeToys.length === 0) {
       return false;
     }
-    winner.toy.allEnemiesFainted(this.ctx.gameService.gameApi);
+    for (const toy of activeToys) {
+      toy?.allEnemiesFainted?.(this.ctx.gameService.gameApi);
+    }
     return loser.alive();
   }
 }

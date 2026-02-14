@@ -263,41 +263,21 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
   }
 
   setSwallowedPets(_value: unknown) {
-    let pet = this.player.getPet(this.index);
+    const pet = this.player.getPet(this.index);
     if (pet == null) {
       return;
     }
-    const pet1 = this.formGroup.get('abominationSwallowedPet1').value;
-    const pet2 = this.formGroup.get('abominationSwallowedPet2').value;
-    const pet3 = this.formGroup.get('abominationSwallowedPet3').value;
-    const beluga1 =
-      this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')?.value ??
-      null;
-    const beluga2 =
-      this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')?.value ??
-      null;
-    const beluga3 =
-      this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')?.value ??
-      null;
-    const level1 = Number(
-      this.formGroup.get('abominationSwallowedPet1Level').value ?? 1,
-    );
-    const level2 = Number(
-      this.formGroup.get('abominationSwallowedPet2Level').value ?? 1,
-    );
-    const level3 = Number(
-      this.formGroup.get('abominationSwallowedPet3Level').value ?? 1,
-    );
+    const slots = this.normalizeAbominationSwallowedSlots(pet);
 
-    pet.abominationSwallowedPet1 = pet1 ?? null;
-    pet.abominationSwallowedPet2 = pet2 ?? null;
-    pet.abominationSwallowedPet3 = pet3 ?? null;
-    pet.abominationSwallowedPet1BelugaSwallowedPet = beluga1;
-    pet.abominationSwallowedPet2BelugaSwallowedPet = beluga2;
-    pet.abominationSwallowedPet3BelugaSwallowedPet = beluga3;
-    pet.abominationSwallowedPet1Level = level1 || 1;
-    pet.abominationSwallowedPet2Level = level2 || 1;
-    pet.abominationSwallowedPet3Level = level3 || 1;
+    pet.abominationSwallowedPet1 = slots[0].name;
+    pet.abominationSwallowedPet2 = slots[1].name;
+    pet.abominationSwallowedPet3 = slots[2].name;
+    pet.abominationSwallowedPet1BelugaSwallowedPet = slots[0].beluga;
+    pet.abominationSwallowedPet2BelugaSwallowedPet = slots[1].beluga;
+    pet.abominationSwallowedPet3BelugaSwallowedPet = slots[2].beluga;
+    pet.abominationSwallowedPet1Level = slots[0].level;
+    pet.abominationSwallowedPet2Level = slots[1].level;
+    pet.abominationSwallowedPet3Level = slots[2].level;
     pet.abominationSwallowedPet1TimesHurt = this.getAbominationTimesHurtValue(
       'abominationSwallowedPet1TimesHurt',
     );
@@ -308,6 +288,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
       'abominationSwallowedPet3TimesHurt',
     );
     this.setAbominationParrotCopySettings(null);
+    this.substitutePet(false);
   }
 
   shouldShowAbominationSwallowTimesHurt(index: number): boolean {
@@ -470,6 +451,74 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
       return 0;
     }
     return Math.max(0, Math.min(99, rawValue));
+  }
+
+  private normalizeAbominationSwallowedSlots(pet: Pet): Array<{
+    index: 1 | 2 | 3;
+    name: string | null;
+    beluga: string | null;
+    level: number;
+  }> {
+    const slots: Array<{
+      index: 1 | 2 | 3;
+      name: string | null;
+      beluga: string | null;
+      level: number;
+    }> = [
+      {
+        index: 1,
+        name: this.formGroup.get('abominationSwallowedPet1')?.value ?? null,
+        beluga:
+          this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')
+            ?.value ?? null,
+        level: Number(this.formGroup.get('abominationSwallowedPet1Level')?.value ?? 1) || 1,
+      },
+      {
+        index: 2,
+        name: this.formGroup.get('abominationSwallowedPet2')?.value ?? null,
+        beluga:
+          this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')
+            ?.value ?? null,
+        level: Number(this.formGroup.get('abominationSwallowedPet2Level')?.value ?? 1) || 1,
+      },
+      {
+        index: 3,
+        name: this.formGroup.get('abominationSwallowedPet3')?.value ?? null,
+        beluga:
+          this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')
+            ?.value ?? null,
+        level: Number(this.formGroup.get('abominationSwallowedPet3Level')?.value ?? 1) || 1,
+      },
+    ];
+
+    for (const slot of slots) {
+      const normalizedName =
+        typeof slot.name === 'string' && slot.name.trim().length > 0
+          ? slot.name
+          : null;
+      slot.name = normalizedName;
+
+      if (!normalizedName) {
+        slot.beluga = null;
+        this.formGroup
+          .get(`abominationSwallowedPet${slot.index}BelugaSwallowedPet`)
+          ?.setValue(null, { emitEvent: false });
+        this.clearAbominationParrotCopySettings(pet, slot.index);
+        continue;
+      }
+
+      if (normalizedName !== 'Beluga Whale') {
+        slot.beluga = null;
+        this.formGroup
+          .get(`abominationSwallowedPet${slot.index}BelugaSwallowedPet`)
+          ?.setValue(null, { emitEvent: false });
+      }
+      if (normalizedName !== 'Parrot') {
+        this.clearAbominationParrotCopySettings(pet, slot.index);
+      }
+    }
+
+    return slots;
   }
 
   private setPetField(pet: Pet, field: string, value: unknown): void {

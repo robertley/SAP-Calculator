@@ -250,8 +250,13 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
   }
 
   protected applyStatCaps(formValue: PetFormValue) {
-    const attack = this.clampValue(formValue.attack, 0, 100);
-    const health = this.clampValue(formValue.health, 0, 100);
+    const attackHealthMax = this.getAttackHealthMax(formValue);
+    if (this.attackHealthMax !== attackHealthMax) {
+      this.attackHealthMax = attackHealthMax;
+      this.cdr.markForCheck();
+    }
+    const attack = this.clampValue(formValue.attack, 0, attackHealthMax);
+    const health = this.clampValue(formValue.health, 0, attackHealthMax);
     const mana = this.clampValue(formValue.mana, 0, 50);
     const triggers = this.clampValue(formValue.triggersConsumed, 0, 10);
     const foodsEaten = this.clampValue(formValue.foodsEaten, 0, 99);
@@ -283,6 +288,19 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
         .setValue(foodsEaten, { emitEvent: false });
       formValue.foodsEaten = foodsEaten;
     }
+  }
+
+  private getAttackHealthMax(formValue: PetFormValue): number {
+    if (formValue.name !== 'Abomination') {
+      return 100;
+    }
+    const swallowedPets = [
+      this.formGroup.get('abominationSwallowedPet1')?.value,
+      this.formGroup.get('abominationSwallowedPet2')?.value,
+      this.formGroup.get('abominationSwallowedPet3')?.value,
+    ];
+    const hasBehemoth = swallowedPets.some((pet) => pet === 'Behemoth');
+    return hasBehemoth ? 100 : 50;
   }
 
   protected clampControl(controlName: string, min: number, max: number) {
