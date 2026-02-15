@@ -34,8 +34,9 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
 
   // Pre-Removal Faint events
   Faint: 9, // e.g., pets/hidden/baby-urchin.class
-  FriendFaints: 9, // e.g., pets/unicorn/tier-5/kitsune.class
   FriendAheadFainted: 10, // e.g., pets/unicorn/tier-3/tatzelwurm.class
+  FriendFaints: 11, // e.g., pets/unicorn/tier-5/kitsune.class
+  EnemyFaint: 11, // e.g., pets/custom/tier-5/cuckoo.class
 
   // Kill events (post-removal ordering)
   KnockOut: 13, // e.g., pets/turtle/tier-4/hippo.class

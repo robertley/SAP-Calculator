@@ -57,7 +57,7 @@ export class CuckooAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, tiger, pteranodon } = context;
+    const { triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
     const opponent = owner.parent.opponent;
 
@@ -77,7 +77,7 @@ export class CuckooAbility extends Ability {
     // Correct order: exp, health, attack, mana, equipment, triggersConsumed
     cuckooChick.initPet(0, 1, 1, 0, null, 0);
 
-    const summonIdx = 0;
+    const summonIdx = triggerPet?.savedPosition ?? 0;
 
     let summonResult = opponent.summonPet(cuckooChick, summonIdx, true, owner);
 

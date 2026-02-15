@@ -84,14 +84,14 @@ export class BelugaWhaleAbility extends Ability {
       {
         attack: null,
         equipment: null,
-        exp: owner.minExpForLevel,
+        exp: this.minExpForLevel,
         health: null,
         name: owner.belugaSwallowedPet,
         mana: 0,
       },
       owner.parent,
     );
-    const levelMultiplier = owner.level;
+    const levelMultiplier = this.level;
     const spawnedBaseAttack = spawnPet.attack - spawnPet.exp;
     const spawnedBaseHealth = spawnPet.health - spawnPet.exp;
     spawnPet.attack = spawnedBaseAttack * levelMultiplier;
@@ -107,7 +107,7 @@ export class BelugaWhaleAbility extends Ability {
     );
     if (summonResult.success) {
       this.logService.createLog({
-        message: `${owner.name} spawned ${spawnPet.name} Level ${owner.level}`,
+        message: `${owner.name} spawned ${spawnPet.name} Level ${this.level}`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,

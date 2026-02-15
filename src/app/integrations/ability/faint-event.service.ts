@@ -94,6 +94,7 @@ export class FaintEventService {
       .filter((p) => p.alive);
     for (let pet of enemyTeam) {
       this.abilityQueueService.triggerAbility(pet, 'EnemyFainted', faintedPet);
+      this.abilityQueueService.triggerAbility(pet, 'EnemyFaint', faintedPet);
       this.abilityQueueService.triggerAbility(pet, 'PetFainted', faintedPet);
       this.abilityQueueService.handleNumberedCounterTriggers(
         pet,

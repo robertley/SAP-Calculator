@@ -9998,15 +9998,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Enemy faints: Summon 1/1 bad Chicks up front for the enemy early. Can summon up to 2 per battle."
+        "About": "Enemy faints: Summon a 1/1 bad Chick in that slot for the enemy early. Can summon up to 2 per battle."
       },
       {
         "Level": 2,
-        "About": "Enemy faints: Summon 1/1 bad Chicks up front for the enemy early. Can summon up to 4 per battle."
+        "About": "Enemy faints: Summon a 1/1 bad Chick in that slot for the enemy early. Can summon up to 4 per battle."
       },
       {
         "Level": 3,
-        "About": "Enemy faints: Summon 1/1 bad Chicks up front for the enemy early. Can summon up to 6 per battle."
+        "About": "Enemy faints: Summon a 1/1 bad Chick in that slot for the enemy early. Can summon up to 6 per battle."
       }
     ],
     "Id": "787",
