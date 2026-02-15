@@ -12,6 +12,14 @@ export class GhostKitten extends Pet {
   pack: Pack = 'Unicorn';
   attack = 4;
   health = 3;
+
+  initAbilities(): void {
+    this.addAbility(
+      new GhostKittenAbility(this, this.logService, this.abilityService),
+    );
+    super.initAbilities();
+  }
+
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

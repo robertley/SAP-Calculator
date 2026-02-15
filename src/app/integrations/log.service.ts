@@ -31,6 +31,7 @@ export class LogService {
   private enabled = true;
   private deferDecorations = false;
   private showTriggerNamesInLogs = false;
+  private debugSummonBoardStateLogs = false;
   constructor() {
     const petNames = getAllPetNames();
     const toyNames = getAllToyNames();
@@ -78,6 +79,14 @@ export class LogService {
 
   isShowTriggerNamesInLogs(): boolean {
     return this.showTriggerNamesInLogs;
+  }
+
+  setDebugSummonBoardStateLogs(enabled: boolean) {
+    this.debugSummonBoardStateLogs = Boolean(enabled);
+  }
+
+  isDebugSummonBoardStateLogs(): boolean {
+    return this.debugSummonBoardStateLogs;
   }
 
   decorateLogIfNeeded(log: Log) {
@@ -173,7 +182,11 @@ export class LogService {
     }
 
     const lastLog = this.logs[this.logs.length - 1];
+    const shouldAppendSummonBoard = this.shouldAppendSummonBoardState(log);
     if (this.tryMergeAttackHealthLogs(lastLog, log)) {
+      if (shouldAppendSummonBoard) {
+        this.appendSummonBoardStateLog(log);
+      }
       return;
     }
     const samePlayer = lastLog?.player === log.player;
@@ -204,6 +217,10 @@ export class LogService {
       lastLog.count = (lastLog.count ?? 1) + 1;
     } else {
       this.logs.push(log);
+    }
+
+    if (shouldAppendSummonBoard) {
+      this.appendSummonBoardStateLog(log);
     }
   }
 
@@ -450,6 +467,66 @@ export class LogService {
     }
 
     return true;
+  }
+
+  private shouldAppendSummonBoardState(log: Log): boolean {
+    if (!this.debugSummonBoardStateLogs) {
+      return false;
+    }
+    if (!log?.message || log.type === 'board') {
+      return false;
+    }
+    if (!log.player || !log.player.opponent) {
+      return false;
+    }
+    return /\b(summoned|spawned)\b|^No room to spawn\b/i.test(log.message);
+  }
+
+  private appendSummonBoardStateLog(log: Log): void {
+    const player = log.player;
+    const opponent = log.player?.opponent;
+    if (!player || !opponent) {
+      return;
+    }
+
+    this.logs.push({
+      message: this.buildPlainBoardStateMessage(player, opponent),
+      type: 'board',
+      player,
+    });
+  }
+
+  private buildPlainBoardStateMessage(player: Player, opponent: Player): string {
+    const playerState = [
+      player.pet4,
+      player.pet3,
+      player.pet2,
+      player.pet1,
+      player.pet0,
+    ]
+      .map((pet) => this.renderPlainPetText(pet))
+      .join(' ');
+
+    const opponentState = [
+      opponent.pet0,
+      opponent.pet1,
+      opponent.pet2,
+      opponent.pet3,
+      opponent.pet4,
+    ]
+      .map((pet) => this.renderPlainPetText(pet))
+      .join(' ');
+
+    return `${playerState} | ${opponentState}`;
+  }
+
+  private renderPlainPetText(pet: Pet | null | undefined): string {
+    if (!pet) {
+      return '___ (-/-)';
+    }
+    const index = this.getFrontIndex(pet);
+    const label = index != null ? `${pet.parent?.isOpponent ? 'O' : 'P'}${index}` : 'P?';
+    return `${label} ${pet.name}(${pet.attack}/${pet.health})`;
   }
 
   printState(player: Player, opponent: Player, message?: string) {

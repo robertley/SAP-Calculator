@@ -47,7 +47,7 @@ export class SarcasticFringeheadAbility extends Ability {
     super({
       name: 'SarcasticFringeheadAbility',
       owner: owner,
-      triggers: ['FoodEatenByThis', 'PostRemovalFaint'],
+      triggers: ['PostRemovalFaint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -57,44 +57,29 @@ export class SarcasticFringeheadAbility extends Ability {
     this.petService = petService;
   }
 
-  private swallowFood(context: AbilityContext): void {
-    const owner = this.owner;
-    if (context.triggerPet !== owner) {
-      return;
-    }
-    const swallowedName = owner.sarcasticFringeheadSwallowedPet;
-    if (!swallowedName) {
-      return;
-    }
-
-    const swallowedPet = this.petService.createPet(
-      {
-        name: swallowedName,
-        attack: 1,
-        health: 1,
-        exp: owner.minExpForLevel,
-        equipment: null,
-        mana: 0,
-      },
-      owner.parent,
-    );
-
-    if (!swallowedPet) {
-      return;
-    }
-
-    owner.swallowedPets.push(swallowedPet);
-    this.logService.createLog({
-      message: `${owner.name} swallowed ${swallowedName}.`,
-      type: 'ability',
-      player: owner.parent,
-      tiger: context.tiger,
-    });
-  }
-
   private spawnForOpponent(context: AbilityContext): void {
     const owner = this.owner;
     const opponent = owner.parent.opponent;
+
+    if ((owner.swallowedPets?.length ?? 0) === 0) {
+      const swallowedName = owner.sarcasticFringeheadSwallowedPet;
+      if (swallowedName) {
+        const swallowedPet = this.petService.createPet(
+          {
+            name: swallowedName,
+            attack: 1,
+            health: 1,
+            exp: owner.minExpForLevel,
+            equipment: null,
+            mana: 0,
+          },
+          owner.parent,
+        );
+        if (swallowedPet) {
+          owner.swallowedPets.push(swallowedPet);
+        }
+      }
+    }
 
     while (owner.swallowedPets.length > 0) {
       const swallowedPet = owner.swallowedPets.shift();
@@ -117,12 +102,7 @@ export class SarcasticFringeheadAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const trigger = context.trigger;
-    if (trigger === 'FoodEatenByThis') {
-      this.swallowFood(context);
-    } else if (trigger === 'PostRemovalFaint') {
-      this.spawnForOpponent(context);
-    }
+    this.spawnForOpponent(context);
     this.triggerTigerExecution(context);
   }
 

@@ -116,6 +116,11 @@ export class AbilityQueueService {
       return direct;
     }
     if (/\d+$/.test(trigger)) {
+      const baseTrigger = trigger.replace(/\d+$/, '');
+      const basePriority = ABILITY_PRIORITIES[baseTrigger];
+      if (basePriority != null) {
+        return basePriority;
+      }
       return ABILITY_PRIORITIES.CounterEvent ?? 999;
     }
     return 999;

@@ -70,21 +70,29 @@ export class NessieAbility extends Ability {
       ? gameApi.playerRollAmount
       : gameApi.opponentRollAmount;
 
-    let attack = this.level * 3;
-    let health = this.level * 3;
+    const baseAttack = this.level * 3;
+    const baseHealth = this.level * 3;
+    let attack = baseAttack;
+    let health = baseHealth;
     let firstBoatMessage = '';
 
-    if (!owner.parent.summonedBoatThisBattle) {
+    const isFirstBoatThisBattle = !owner.parent.summonedBoatThisBattle;
+    if (isFirstBoatThisBattle) {
       const bonusPerRoll = this.level;
       const bonusStats = rolls * bonusPerRoll;
       attack += bonusStats;
       health += bonusStats;
       owner.parent.summonedBoatThisBattle = true;
-      firstBoatMessage = ` It's the first Boat, so it gains +${bonusStats}/+${bonusStats}!`;
     }
 
     attack = Math.min(50, attack);
     health = Math.min(50, health);
+
+    if (isFirstBoatThisBattle) {
+      const gainedAttack = Math.max(0, attack - baseAttack);
+      const gainedHealth = Math.max(0, health - baseHealth);
+      firstBoatMessage = ` It's the first Boat, so it gains +${gainedAttack}/+${gainedHealth}!`;
+    }
 
     let nessieQ = new NessieQ(
       this.logService,
