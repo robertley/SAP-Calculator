@@ -4,7 +4,7 @@ import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
-import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
+import { formatEquipmentScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Tasty extends Equipment {
@@ -53,7 +53,7 @@ export class TastyAbility extends Ability {
     const choice = chooseRandomOption(
       {
         key: 'equipment.tasty-target',
-        label: formatPetScopedRandomLabel(owner, 'Tasty target'),
+        label: formatEquipmentScopedRandomLabel(owner, 'Tasty', 'target'),
         options: enemies.map((enemy) => ({
           id: `${enemy.savedPosition + 1}:${enemy.name}`,
           label: `O${enemy.savedPosition + 1} ${enemy.name}`,

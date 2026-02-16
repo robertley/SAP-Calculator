@@ -247,7 +247,7 @@ export function getSelectedTeam(ctx: AppUiContext) {
 }
 
 export function getSelectedTeamName(ctx: AppUiContext): string {
-  return getSelectedTeam(ctx)?.name || 'Saved teams';
+  return getSelectedTeam(ctx)?.name || '';
 }
 
 export function getSelectedTeamPreviewIcons(ctx: AppUiContext): string[] {

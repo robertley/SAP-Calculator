@@ -6,6 +6,50 @@ import {
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { getRandomInt } from 'app/runtime/random';
 
+type ProcessQueueOptions = {
+  shuffle?: boolean;
+  filter?: (event: AbilityEvent) => boolean;
+  onExecute?: (event: AbilityEvent) => void;
+};
+
+function getAbilityExecutorTarget(event: AbilityEvent) {
+  const executingPet = event.pet;
+  if (!executingPet) {
+    return null;
+  }
+  return executingPet.transformed && executingPet.transformedInto
+    ? executingPet.transformedInto
+    : executingPet;
+}
+
+function executeAndNotify(
+  event: AbilityEvent,
+  gameApi: GameAPI,
+  onExecute?: (event: AbilityEvent) => void,
+): void {
+  if (onExecute) {
+    onExecute(event);
+  }
+  executeEventWithTransform(event, gameApi);
+}
+
+function executeFilteredEvents(
+  queue: AbilityEvent[],
+  gameApi: GameAPI,
+  filter: (event: AbilityEvent) => boolean,
+  onExecute?: (event: AbilityEvent) => void,
+): void {
+  let nextIndex = queue.findIndex(filter);
+  while (nextIndex !== -1) {
+    const [event] = queue.splice(nextIndex, 1);
+    if (!event) {
+      break;
+    }
+    executeAndNotify(event, gameApi, onExecute);
+    nextIndex = queue.findIndex(filter);
+  }
+}
+
 /**
  * Sorts events by priority (descending) with tieBreaker for equal priorities.
  * Higher priority values execute first.
@@ -26,9 +70,8 @@ export function executeEventWithTransform(
   gameApi: GameAPI,
   customParams?: AbilityCustomParams,
 ): void {
-  const executingPet = event.pet;
-
   if (event.callback) {
+    const executingPet = event.pet;
     if (
       executingPet &&
       executingPet.transformed &&
@@ -49,12 +92,12 @@ export function executeEventWithTransform(
       };
     }
     event.callback(event.abilityType, gameApi, event.triggerPet);
-  } else if (executingPet && event.abilityType) {
+    return;
+  }
+
+  const targetPet = getAbilityExecutorTarget(event);
+  if (targetPet && event.abilityType) {
     // New optimize path
-    let targetPet = executingPet;
-    if (executingPet.transformed && executingPet.transformedInto) {
-      targetPet = executingPet.transformedInto;
-    }
     targetPet.executeAbilities(
       event.abilityType,
       gameApi,
@@ -73,11 +116,7 @@ export function executeEventWithTransform(
 export function processEventQueue(
   queue: AbilityEvent[],
   gameApi: GameAPI,
-  options?: {
-    shuffle?: boolean;
-    filter?: (event: AbilityEvent) => boolean;
-    onExecute?: (event: AbilityEvent) => void;
-  },
+  options?: ProcessQueueOptions,
 ): void {
   if (options?.shuffle) {
     // Fisher-Yates shuffle for randomization of equal-priority events
@@ -89,22 +128,14 @@ export function processEventQueue(
 
   // Queue order is maintained by AbilityQueueService.addEventToQueue.
   // Do not re-sort here or we will lose trigger priority ordering.
-
-  const remaining: AbilityEvent[] = [];
-  while (queue.length > 0) {
-    const event = queue.shift()!;
-    if (options?.filter && !options.filter(event)) {
-      remaining.push(event);
-      continue;
-    }
-    if (options?.onExecute) {
-      options.onExecute(event);
-    }
-    executeEventWithTransform(event, gameApi);
+  if (options?.filter) {
+    executeFilteredEvents(queue, gameApi, options.filter, options.onExecute);
+    return;
   }
 
-  if (remaining.length > 0) {
-    queue.push(...remaining);
+  while (queue.length > 0) {
+    const event = queue.shift()!;
+    executeAndNotify(event, gameApi, options?.onExecute);
   }
 }
 

@@ -97,13 +97,24 @@ export class HareAbility extends Ability {
     );
     let randomEquipmentPet = equipmentPets[choice.index];
     let equipment = randomEquipmentPet.equipment;
+    if (!equipment) {
+      return;
+    }
+
+    const copiedEquipment = InjectorService.getInjector()
+      .get(EquipmentService)
+      .getInstanceOfAllEquipment()
+      .get(equipment.name);
+    if (!copiedEquipment) {
+      return;
+    }
 
     let targetResp = owner.parent.getThis(owner);
     let target = targetResp.pet;
     if (target == null) {
       return;
     }
-    owner.givePetEquipment(equipment);
+    owner.givePetEquipment(copiedEquipment);
     this.logService.createLog({
       message: `${owner.name} copied ${equipment.name} to ${target.name} from ${randomEquipmentPet.name}.`,
       type: 'ability',

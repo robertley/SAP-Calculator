@@ -145,35 +145,7 @@ export abstract class PetAbilityFacade {
     abilityType?: AbilityType,
     level?: number,
   ): void {
-    const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
-    this.removeAbility(undefined, abilityType);
-    for (const ability of abilitiesToCopy) {
-      const copiedAbility = ability.copy(this.asPet());
-      if (copiedAbility == null) {
-        continue;
-      }
-      if (level) {
-        copiedAbility.abilityLevel = level;
-        copiedAbility.alwaysIgnorePetLevel = true;
-        copiedAbility.reset();
-      }
-      copiedAbility.native = false;
-
-      const originalFunction = copiedAbility.abilityFunction;
-      const sourcePetName = sourcePet.name;
-      copiedAbility.abilityFunction = (context) => {
-        const originalName = this.name;
-        const baseName = this.baseName ?? originalName;
-        this.name = `${baseName}'s ${sourcePetName}`;
-        try {
-          originalFunction(context);
-        } finally {
-          this.name = originalName;
-        }
-      };
-
-      this.addAbility(copiedAbility);
-    }
+    this.transferAbilities(sourcePet, abilityType, level, true);
   }
 
   gainAbilities(
@@ -181,7 +153,20 @@ export abstract class PetAbilityFacade {
     abilityType?: AbilityType,
     level?: number,
   ): void {
+    this.transferAbilities(sourcePet, abilityType, level, false);
+  }
+
+  private transferAbilities(
+    sourcePet: Pet,
+    abilityType: AbilityType | undefined,
+    level: number | undefined,
+    replaceExisting: boolean,
+  ): void {
     const abilitiesToCopy = sourcePet.getAbilities(undefined, abilityType);
+    if (replaceExisting) {
+      this.removeAbility(undefined, abilityType);
+    }
+
     for (const ability of abilitiesToCopy) {
       const copiedAbility = ability.copy(this.asPet());
       if (copiedAbility == null) {

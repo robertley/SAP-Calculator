@@ -124,7 +124,7 @@
 }
 
 .swallowed-label {
-  font-weight: 700;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #f8f9fa;
@@ -135,7 +135,7 @@
 .swallowed-label-small,
 .swallowed-label-tiny {
   color: rgba(255, 255, 255, 0.9);
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -225,7 +225,7 @@ input[type="number"] {
 label:not(.swallowed-label) {
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
   margin-bottom: 4px;
   display: block;
@@ -240,7 +240,8 @@ label:not(.swallowed-label) {
   color: white !important;
   transition: all 0.2s ease;
   text-align: left;
-  font-weight: 500;
+  font-weight: 400;
+  font-family: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
   width: 100%;
   margin-bottom: 0.5rem;
 
@@ -259,9 +260,15 @@ label:not(.swallowed-label) {
   }
 
   .btn-text {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    line-height: 1.15;
+    letter-spacing: 0.025em;
     color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
+    font-weight: 400;
+    text-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.6),
+      0 0 2px rgba(0, 0, 0, 0.45);
   }
 
   i {
@@ -305,7 +312,7 @@ label:not(.swallowed-label) {
     color: #fff;
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 500;
     height: auto;
     display: flex;
     align-items: center;

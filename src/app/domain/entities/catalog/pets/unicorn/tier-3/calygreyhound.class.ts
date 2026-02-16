@@ -69,7 +69,7 @@ export class CalygreyhoundAbility extends Ability {
     for (let target of targetsResp.pets) {
       target.health = Math.max(1, target.health - power);
       this.logService.createLog({
-        message: `${owner.name} reduced ${target.name}'s health by ${power} (${target.health}).`,
+        message: `${owner.name} reduced ${target.name}'s health by ${power} to ${target.health}.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,

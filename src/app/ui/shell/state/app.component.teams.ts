@@ -371,6 +371,15 @@ export function loadTeamPreset(options: {
           petData.abominationSwallowedPet2BelugaSwallowedPet ?? null,
         abominationSwallowedPet3BelugaSwallowedPet:
           petData.abominationSwallowedPet3BelugaSwallowedPet ?? null,
+        abominationSwallowedPet1SarcasticFringeheadSwallowedPet:
+          petData.abominationSwallowedPet1SarcasticFringeheadSwallowedPet ??
+          null,
+        abominationSwallowedPet2SarcasticFringeheadSwallowedPet:
+          petData.abominationSwallowedPet2SarcasticFringeheadSwallowedPet ??
+          null,
+        abominationSwallowedPet3SarcasticFringeheadSwallowedPet:
+          petData.abominationSwallowedPet3SarcasticFringeheadSwallowedPet ??
+          null,
         abominationSwallowedPet1Level:
           petData.abominationSwallowedPet1Level ?? 1,
         abominationSwallowedPet2Level:
@@ -448,6 +457,15 @@ function sanitizePetFormValue(petValue: unknown): PetForm | null {
     abominationSwallowedPet3BelugaSwallowedPet:
       (petRecord.abominationSwallowedPet3BelugaSwallowedPet as string | null) ??
       null,
+    abominationSwallowedPet1SarcasticFringeheadSwallowedPet:
+      (petRecord.abominationSwallowedPet1SarcasticFringeheadSwallowedPet as
+        string | null) ?? null,
+    abominationSwallowedPet2SarcasticFringeheadSwallowedPet:
+      (petRecord.abominationSwallowedPet2SarcasticFringeheadSwallowedPet as
+        string | null) ?? null,
+    abominationSwallowedPet3SarcasticFringeheadSwallowedPet:
+      (petRecord.abominationSwallowedPet3SarcasticFringeheadSwallowedPet as
+        string | null) ?? null,
     abominationSwallowedPet1Level:
       (petRecord.abominationSwallowedPet1Level as number | null) ?? 1,
     abominationSwallowedPet2Level:

@@ -38,13 +38,13 @@
             <div class="results-row">
               <div class="stats">
                 <span class="stat-block player-stat">
-                  <span class="stat-label">Player Wins:</span><span>{{ app.playerWinner }} - {{ app.winPercent }}%</span>
+                  <span class="stat-label" style="color: #5fbf5f">Player Wins:</span><span>{{ app.playerWinner }} - {{ app.winPercent }}%</span>
                 </span>
                 <span class="stat-block draw-stat">
                   <span class="stat-label">Draws:</span><span>{{ app.draw }} - {{ app.drawPercent }}%</span>
                 </span>
                 <span class="stat-block opponent-stat">
-                  <span class="stat-label">Opponent Wins:</span><span>{{ app.opponentWinner }} - {{ app.losePercent }}%</span>
+                  <span class="stat-label" style="color: #e06a6a">Opponent Wins:</span><span>{{ app.opponentWinner }} - {{ app.losePercent }}%</span>
                 </span>
               </div>
               <div class="py-1">
@@ -64,8 +64,16 @@
         </div>
         <div class="top-controls-right">
           <div class="external-meta">
-            <span data-bs-toggle="modal" data-bs-target="#info" class="btn-link info-link"
-              (click)="app.showInfo = true">Guide</span>
+            <button
+              type="button"
+              data-bs-toggle="modal"
+              data-bs-target="#info"
+              class="btn-link info-link"
+              (click)="app.showInfo = true"
+              aria-label="Open guide"
+            >
+              Guide
+            </button>
           </div>
           <div class="external-buttons">
             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug"
@@ -190,8 +198,21 @@
           </div>
 
           <div class="controls-section advanced-section">
+            <div class="advanced-panel-header">
+              <button
+                type="button"
+                class="btn-link advanced-toggle-btn"
+                (click)="app.toggleAdvanced()"
+                [attr.aria-expanded]="app.formGroup.get('showAdvanced').value"
+                aria-controls="advanced-settings-panel"
+              >
+                <span>Advanced Settings</span>
+                <span class="advanced-chevron" [class.expanded]="app.formGroup.get('showAdvanced').value" aria-hidden="true">▾</span>
+              </button>
+            </div>
             <ng-container *ngIf="app.formGroup.get('showAdvanced').value">
-              <div class="advanced-grid">
+              <div id="advanced-settings-panel" class="advanced-panel-body">
+                <div class="advanced-grid">
                 <div class="form-check" title="Shuffle pets in front of Komodo if present.">
                   <input class="form-check-input" type="checkbox" value="" id="komodoShuffle"
                     formControlName="komodoShuffle" />
@@ -245,98 +266,93 @@
                     Swallowed Levels
                   </label>
                 </div>
-              </div>
-              <div class="advanced-number-grid mt-2">
-                <div class="form-group small-w-input">
-                  <label for="turn">Turn Number</label>
-                  <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
                 </div>
-                <div class="form-group advanced-input">
-                  <label for="seed" title="Simulation Seed">
-                    Seed
-                  </label>
-                  <input class="form-control" id="seed" type="number" formControlName="seed" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="playerGoldSpent" title="Player Gold Spent" class="advanced-label-with-icon">
-                    <span class="advanced-icon gold-icon" aria-hidden="true"></span>
-                    Player Gold Spent
-                  </label>
-                  <input class="form-control" type="number" formControlName="playerGoldSpent" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="opponentGoldSpent" title="Opponent Gold Spent" class="advanced-label-with-icon">
-                    <span class="advanced-icon gold-icon" aria-hidden="true"></span>
-                    Opponent Gold Spent
-                  </label>
-                  <input class="form-control" type="number" formControlName="opponentGoldSpent" max="99" />
-                </div>
-                <div class="form-group advanced-input" *ngIf="app.rollInputVisible">
-                  <label for="playerRollAmount" title="Player Roll Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon roll-icon" aria-hidden="true"></span>
-                    Player Roll Amount
-                  </label>
-                  <input class="form-control" type="number" formControlName="playerRollAmount" max="99" />
-                </div>
-                <div class="form-group advanced-input" *ngIf="app.rollInputVisible">
-                  <label for="opponentRollAmount" title="Opponent Roll Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon roll-icon" aria-hidden="true"></span>
-                    Opponent Roll Amount
-                  </label>
-                  <input class="form-control" type="number" formControlName="opponentRollAmount" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="playerLevel3Sold" title="Player Level 3 Sold" class="advanced-label-with-icon">
-                    <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
-                    Player Level 3 Sold
-                  </label>
-                  <input class="form-control" type="number" formControlName="playerLevel3Sold" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="opponentLevel3Sold" title="Opponent Level 3 Sold" class="advanced-label-with-icon">
-                    <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
-                    Opponent Level 3 Sold
-                  </label>
-                  <input class="form-control" type="number" formControlName="opponentLevel3Sold" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="playerSummonedAmount" title="Player Summoned Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon summon-icon" aria-hidden="true"></span>
-                    Player Summoned Amount
-                  </label>
-                  <input class="form-control" type="number" formControlName="playerSummonedAmount" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="opponentSummonedAmount" title="Opponent Summoned Amount" class="advanced-label-with-icon">
-                    <span class="advanced-icon summon-icon" aria-hidden="true"></span>
-                    Opponent Summoned Amount
-                  </label>
-                  <input class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="playerTransformationAmount" title="Player Transformation Amount"
-                    class="advanced-label-with-icon">
-                    <span class="advanced-icon transform-icon" aria-hidden="true"></span>
-                    Player Transformation Amount
-                  </label>
-                  <input class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
-                </div>
-                <div class="form-group advanced-input">
-                  <label for="opponentTransformationAmount" title="Opponent Transformation Amount"
-                    class="advanced-label-with-icon">
-                    <span class="advanced-icon transform-icon" aria-hidden="true"></span>
-                    Opponent Transformation Amount
-                  </label>
-                  <input class="form-control" type="number" formControlName="opponentTransformationAmount" max="99" />
+                <div class="advanced-number-grid mt-2">
+                  <div class="form-group small-w-input">
+                    <label for="turn">Turn Number</label>
+                    <input class="form-control" id="turn" type="number" formControlName="turn" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="seed" title="Simulation Seed">
+                      Seed
+                    </label>
+                    <input class="form-control" id="seed" type="number" formControlName="seed" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="playerGoldSpent" title="Player Gold Spent" class="advanced-label-with-icon">
+                      <span class="advanced-icon gold-icon" aria-hidden="true"></span>
+                      Player Gold Spent
+                    </label>
+                    <input id="playerGoldSpent" class="form-control" type="number" formControlName="playerGoldSpent" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="opponentGoldSpent" title="Opponent Gold Spent" class="advanced-label-with-icon">
+                      <span class="advanced-icon gold-icon" aria-hidden="true"></span>
+                      Opponent Gold Spent
+                    </label>
+                    <input id="opponentGoldSpent" class="form-control" type="number" formControlName="opponentGoldSpent" max="99" />
+                  </div>
+                  <div class="form-group advanced-input" *ngIf="app.rollInputVisible">
+                    <label for="playerRollAmount" title="Player Roll Amount" class="advanced-label-with-icon">
+                      <span class="advanced-icon roll-icon" aria-hidden="true"></span>
+                      Player Roll Amount
+                    </label>
+                    <input id="playerRollAmount" class="form-control" type="number" formControlName="playerRollAmount" max="99" />
+                  </div>
+                  <div class="form-group advanced-input" *ngIf="app.rollInputVisible">
+                    <label for="opponentRollAmount" title="Opponent Roll Amount" class="advanced-label-with-icon">
+                      <span class="advanced-icon roll-icon" aria-hidden="true"></span>
+                      Opponent Roll Amount
+                    </label>
+                    <input id="opponentRollAmount" class="form-control" type="number" formControlName="opponentRollAmount" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="playerLevel3Sold" title="Player Level 3 Sold" class="advanced-label-with-icon">
+                      <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
+                      Player Level 3 Sold
+                    </label>
+                    <input id="playerLevel3Sold" class="form-control" type="number" formControlName="playerLevel3Sold" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="opponentLevel3Sold" title="Opponent Level 3 Sold" class="advanced-label-with-icon">
+                      <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
+                      Opponent Level 3 Sold
+                    </label>
+                    <input id="opponentLevel3Sold" class="form-control" type="number" formControlName="opponentLevel3Sold" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="playerSummonedAmount" title="Player Summoned Amount" class="advanced-label-with-icon">
+                      <span class="advanced-icon summon-icon" aria-hidden="true"></span>
+                      Player Summoned Amount
+                    </label>
+                    <input id="playerSummonedAmount" class="form-control" type="number" formControlName="playerSummonedAmount" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="opponentSummonedAmount" title="Opponent Summoned Amount" class="advanced-label-with-icon">
+                      <span class="advanced-icon summon-icon" aria-hidden="true"></span>
+                      Opponent Summoned Amount
+                    </label>
+                    <input id="opponentSummonedAmount" class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="playerTransformationAmount" title="Player Transformation Amount"
+                      class="advanced-label-with-icon">
+                      <span class="advanced-icon transform-icon" aria-hidden="true"></span>
+                      Player Transformation Amount
+                    </label>
+                    <input id="playerTransformationAmount" class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
+                  </div>
+                  <div class="form-group advanced-input">
+                    <label for="opponentTransformationAmount" title="Opponent Transformation Amount"
+                      class="advanced-label-with-icon">
+                      <span class="advanced-icon transform-icon" aria-hidden="true"></span>
+                      Opponent Transformation Amount
+                    </label>
+                    <input id="opponentTransformationAmount" class="form-control" type="number" formControlName="opponentTransformationAmount" max="99" />
+                  </div>
                 </div>
               </div>
             </ng-container>
-            <div class="advanced-toggle">
-              <span class="btn-link" (click)="app.toggleAdvanced()">{{
-                app.formGroup.get("showAdvanced").value ? "Hide" : "Show"
-                }}
-                Advanced Settings</span>
-            </div>
           </div>
 
           <div class="controls-section random-overrides-section">

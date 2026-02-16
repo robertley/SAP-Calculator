@@ -61,34 +61,88 @@ function pickPet(
   };
 }
 
-export const getHighestHealthPet = (
-  player: PlayerLike,
-  excludePet?: Pet,
-  callingPet?: Pet,
-): PetRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
-    return getRandomLivingPet(player, [callingPet], true);
-  }
+function shouldUseSillyRandom(callingPet?: Pet): callingPet is Pet {
+  return Boolean(callingPet && hasSilly(callingPet));
+}
 
-  const pets = player.petArray;
-  let highestHealthPets: Pet[] = [];
+function getAvailableLivingPets(player: PlayerLike, excludePets?: Pet[]): Pet[] {
+  return [...player.petArray].filter(
+    (pet) => pet.alive && (!excludePets || !excludePets.includes(pet)),
+  );
+}
+
+function collectExtremePets(
+  pets: Pet[],
+  selector: (pet: Pet) => number,
+  mode: 'max' | 'min',
+  excludePet?: Pet,
+): Pet[] {
+  let selected: Pet[] = [];
 
   for (const pet of pets) {
     if (pet === excludePet || !pet.alive) {
       continue;
     }
-    if (highestHealthPets.length === 0) {
-      highestHealthPets = [pet];
+    if (selected.length === 0) {
+      selected = [pet];
       continue;
     }
-    if (pet.health === highestHealthPets[0].health) {
-      highestHealthPets.push(pet);
+
+    const current = selector(pet);
+    const best = selector(selected[0]);
+    if (current === best) {
+      selected.push(pet);
       continue;
     }
-    if (pet.health > highestHealthPets[0].health) {
-      highestHealthPets = [pet];
+    if (mode === 'max' ? current > best : current < best) {
+      selected = [pet];
     }
   }
+
+  return selected;
+}
+
+function selectSortedPetsWithTieRandom(
+  availablePets: Pet[],
+  count: number,
+  compare: (a: Pet, b: Pet) => number,
+  valueAt: (pet: Pet) => number,
+): PetsRandomResult {
+  if (availablePets.length === 0) {
+    return { pets: [], random: false };
+  }
+
+  const shuffledPets = shuffle(availablePets);
+  shuffledPets.sort(compare);
+  const targets = shuffledPets.slice(0, count);
+
+  let isRandom = false;
+  if (targets.length === count && shuffledPets.length > count) {
+    const lastSelectedValue = valueAt(targets[count - 1]);
+    const nextPetValue = valueAt(shuffledPets[count]);
+    if (lastSelectedValue === nextPetValue) {
+      isRandom = true;
+    }
+  }
+
+  return { pets: targets, random: isRandom };
+}
+
+export const getHighestHealthPet = (
+  player: PlayerLike,
+  excludePet?: Pet,
+  callingPet?: Pet,
+): PetRandomResult => {
+  if (shouldUseSillyRandom(callingPet)) {
+    return getRandomLivingPet(player, [callingPet], true);
+  }
+
+  const highestHealthPets = collectExtremePets(
+    player.petArray,
+    (pet) => pet.health,
+    'max',
+    excludePet,
+  );
 
   if (highestHealthPets.length === 0) {
     return { pet: null, random: false };
@@ -107,29 +161,15 @@ export const getHighestAttackPet = (
   excludePet?: Pet,
   callingPet?: Pet,
 ): PetRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
-
-  const pets = player.petArray;
-  let highestAttackPets: Pet[] = [];
-
-  for (const pet of pets) {
-    if (pet === excludePet || !pet.alive) {
-      continue;
-    }
-    if (highestAttackPets.length === 0) {
-      highestAttackPets = [pet];
-      continue;
-    }
-    if (pet.attack === highestAttackPets[0].attack) {
-      highestAttackPets.push(pet);
-      continue;
-    }
-    if (pet.attack > highestAttackPets[0].attack) {
-      highestAttackPets = [pet];
-    }
-  }
+  const highestAttackPets = collectExtremePets(
+    player.petArray,
+    (pet) => pet.attack,
+    'max',
+    excludePet,
+  );
   return pickPet(
     'target.highest-attack',
     'Highest attack tie-break',
@@ -144,30 +184,16 @@ export const getHighestAttackPets = (
   excludePets?: Pet[],
   callingPet?: Pet,
 ): PetsRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
-  const availablePets = [...player.petArray].filter(
-    (pet) => pet.alive && (!excludePets || !excludePets.includes(pet)),
+  return selectSortedPetsWithTieRandom(
+    getAvailableLivingPets(player, excludePets),
+    count,
+    (a, b) => b.attack - a.attack,
+    (pet) => pet.attack,
   );
-
-  if (availablePets.length === 0) {
-    return { pets: [], random: false };
-  }
-
-  const shuffledPets = shuffle(availablePets);
-  shuffledPets.sort((a, b) => b.attack - a.attack);
-  const targets = shuffledPets.slice(0, count);
-  let isRandom = false;
-  if (targets.length === count && shuffledPets.length > count) {
-    const lastSelectedAttack = targets[count - 1].attack;
-    const nextPetAttack = shuffledPets[count].attack;
-    if (lastSelectedAttack === nextPetAttack) {
-      isRandom = true;
-    }
-  }
-  return { pets: targets, random: isRandom };
 };
 
 export const getLowestAttackPets = (
@@ -176,30 +202,16 @@ export const getLowestAttackPets = (
   excludePets?: Pet[],
   callingPet?: Pet,
 ): PetsRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
-  const availablePets = [...player.petArray].filter(
-    (pet) => pet.alive && (!excludePets || !excludePets.includes(pet)),
+  return selectSortedPetsWithTieRandom(
+    getAvailableLivingPets(player, excludePets),
+    count,
+    (a, b) => a.attack - b.attack,
+    (pet) => pet.attack,
   );
-
-  if (availablePets.length === 0) {
-    return { pets: [], random: false };
-  }
-
-  const shuffledPets = shuffle(availablePets);
-  shuffledPets.sort((a, b) => a.attack - b.attack);
-  const targets = shuffledPets.slice(0, count);
-  let isRandom = false;
-  if (targets.length === count && shuffledPets.length > count) {
-    const lastSelectedAttack = targets[count - 1].attack;
-    const nextPetAttack = shuffledPets[count].attack;
-    if (lastSelectedAttack === nextPetAttack) {
-      isRandom = true;
-    }
-  }
-  return { pets: targets, random: isRandom };
 };
 
 export const getLowestAttackPet = (
@@ -207,29 +219,15 @@ export const getLowestAttackPet = (
   excludePet?: Pet,
   callingPet?: Pet,
 ): PetRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
-
-  const pets = player.petArray;
-  let lowestAttackPets: Pet[] = [];
-
-  for (const pet of pets) {
-    if (pet === excludePet || !pet.alive) {
-      continue;
-    }
-    if (lowestAttackPets.length === 0) {
-      lowestAttackPets = [pet];
-      continue;
-    }
-    if (pet.attack === lowestAttackPets[0].attack) {
-      lowestAttackPets.push(pet);
-      continue;
-    }
-    if (pet.attack < lowestAttackPets[0].attack) {
-      lowestAttackPets = [pet];
-    }
-  }
+  const lowestAttackPets = collectExtremePets(
+    player.petArray,
+    (pet) => pet.attack,
+    'min',
+    excludePet,
+  );
   return pickPet(
     'target.lowest-attack',
     'Lowest attack tie-break',
@@ -243,29 +241,15 @@ export const getLowestHealthPet = (
   excludePet?: Pet,
   callingPet?: Pet,
 ): PetRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
-
-  const pets = player.petArray;
-  let lowestHealthPets: Pet[] = [];
-
-  for (const pet of pets) {
-    if (pet === excludePet || !pet.alive) {
-      continue;
-    }
-    if (lowestHealthPets.length === 0) {
-      lowestHealthPets = [pet];
-      continue;
-    }
-    if (pet.health === lowestHealthPets[0].health) {
-      lowestHealthPets.push(pet);
-      continue;
-    }
-    if (pet.health < lowestHealthPets[0].health) {
-      lowestHealthPets = [pet];
-    }
-  }
+  const lowestHealthPets = collectExtremePets(
+    player.petArray,
+    (pet) => pet.health,
+    'min',
+    excludePet,
+  );
   return pickPet(
     'target.lowest-health',
     'Lowest health tie-break',
@@ -280,33 +264,16 @@ export const getLowestHealthPets = (
   excludePets?: Pet[],
   callingPet?: Pet,
 ): PetsRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
-  const availablePets = [...player.petArray].filter(
-    (pet) => pet.alive && (!excludePets || !excludePets.includes(pet)),
+  return selectSortedPetsWithTieRandom(
+    getAvailableLivingPets(player, excludePets),
+    count,
+    (a, b) => a.health - b.health,
+    (pet) => pet.health,
   );
-
-  if (availablePets.length === 0) {
-    return { pets: [], random: false };
-  }
-
-  const shuffledPets = shuffle(availablePets);
-  shuffledPets.sort((a, b) => a.health - b.health);
-
-  const targets = shuffledPets.slice(0, count);
-
-  let isRandom = false;
-  if (targets.length === count && shuffledPets.length > count) {
-    const lastSelectedHealth = targets[count - 1].health;
-    const nextPetHealth = shuffledPets[count].health;
-    if (lastSelectedHealth === nextPetHealth) {
-      isRandom = true;
-    }
-  }
-
-  return { pets: targets, random: isRandom };
 };
 
 export const getHighestHealthPets = (
@@ -315,33 +282,16 @@ export const getHighestHealthPets = (
   excludePets?: Pet[],
   callingPet?: Pet,
 ): PetsRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
-  const availablePets = [...player.petArray].filter(
-    (pet) => pet.alive && (!excludePets || !excludePets.includes(pet)),
+  return selectSortedPetsWithTieRandom(
+    getAvailableLivingPets(player, excludePets),
+    count,
+    (a, b) => b.health - a.health,
+    (pet) => pet.health,
   );
-
-  if (availablePets.length === 0) {
-    return { pets: [], random: false };
-  }
-
-  const shuffledPets = shuffle(availablePets);
-  shuffledPets.sort((a, b) => b.health - a.health);
-
-  const targets = shuffledPets.slice(0, count);
-
-  let isRandom = false;
-  if (targets.length === count && shuffledPets.length > count) {
-    const lastSelectedHealth = targets[count - 1].health;
-    const nextPetHealth = shuffledPets[count].health;
-    if (lastSelectedHealth === nextPetHealth) {
-      isRandom = true;
-    }
-  }
-
-  return { pets: targets, random: isRandom };
 };
 
 export const getHighestTierPets = (
@@ -350,33 +300,16 @@ export const getHighestTierPets = (
   excludePets?: Pet[],
   callingPet?: Pet,
 ): PetsRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPets(player, count, true, [callingPet]);
   }
 
-  const availablePets = [...player.petArray].filter(
-    (pet) => pet.alive && (!excludePets || !excludePets.includes(pet)),
+  return selectSortedPetsWithTieRandom(
+    getAvailableLivingPets(player, excludePets),
+    count,
+    (a, b) => b.tier - a.tier,
+    (pet) => pet.tier,
   );
-
-  if (availablePets.length === 0) {
-    return { pets: [], random: false };
-  }
-
-  const shuffledPets = shuffle(availablePets);
-  shuffledPets.sort((a, b) => b.tier - a.tier);
-
-  const targets = shuffledPets.slice(0, count);
-
-  let isRandom = false;
-  if (targets.length === count && shuffledPets.length > count) {
-    const lastSelectedTier = targets[count - 1].tier;
-    const nextPetTier = shuffledPets[count].tier;
-    if (lastSelectedTier === nextPetTier) {
-      isRandom = true;
-    }
-  }
-
-  return { pets: targets, random: isRandom };
 };
 
 export const getTierXOrLowerPet = (
@@ -385,7 +318,7 @@ export const getTierXOrLowerPet = (
   excludePets?: Pet[],
   callingPet?: Pet,
 ): PetRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
 
@@ -412,7 +345,7 @@ export const getStrongestPet = (
   player: PlayerLike,
   callingPet?: Pet,
 ): PetRandomResult => {
-  if (callingPet && hasSilly(callingPet)) {
+  if (shouldUseSillyRandom(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
   }
 

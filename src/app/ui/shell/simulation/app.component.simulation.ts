@@ -89,6 +89,7 @@ const viewBattleLogRowsCache = new WeakMap<
   }
 >();
 const PARSED_MESSAGE_CACHE_MAX = 1000;
+type StatusTone = 'success' | 'error';
 
 function cacheParsedMessage(message: string, parts: LogMessagePart[]): void {
   parsedMessageCache.set(message, parts);
@@ -98,6 +99,68 @@ function cacheParsedMessage(message: string, parts: LogMessagePart[]): void {
   const oldestKey = parsedMessageCache.keys().next().value;
   if (oldestKey) {
     parsedMessageCache.delete(oldestKey);
+  }
+}
+
+function startAsyncRun(
+  ctx: AppSimulationContext,
+  initialProgressLabel: string,
+  statusMessage: string,
+): number {
+  ctx.simulationInProgress = true;
+  ctx.simulationCancelRequested = false;
+  ctx.simulationProgress = 0;
+  ctx.simulationProgressLabel = initialProgressLabel;
+  const runId = (ctx.simulationRunId ?? 0) + 1;
+  ctx.simulationRunId = runId;
+  ctx.setStatus?.(statusMessage, 'success');
+  ctx.markForCheck?.();
+  return runId;
+}
+
+function isCurrentRun(ctx: AppSimulationContext, runId: number): boolean {
+  return ctx.simulationRunId === runId;
+}
+
+function endAsyncRun(
+  ctx: AppSimulationContext,
+  statusMessage: string,
+  tone: StatusTone,
+): void {
+  ctx.simulationInProgress = false;
+  ctx.simulationCancelRequested = false;
+  ctx.setStatus?.(statusMessage, tone);
+  ctx.markForCheck?.();
+}
+
+function classifyDiffKind(
+  left: string,
+  right: string,
+): BattleDiffRow['kind'] {
+  if (left === right) {
+    return 'same';
+  }
+  if (left && right) {
+    return 'changed';
+  }
+  if (left) {
+    return 'left-only';
+  }
+  return 'right-only';
+}
+
+function applyDiffSummary(
+  summary: BattleDiffSummary,
+  kind: BattleDiffRow['kind'],
+): void {
+  if (kind === 'same') {
+    summary.equalSteps += 1;
+  } else if (kind === 'changed') {
+    summary.changedSteps += 1;
+  } else if (kind === 'left-only') {
+    summary.leftOnly += 1;
+  } else if (kind === 'right-only') {
+    summary.rightOnly += 1;
   }
 }
 
@@ -248,14 +311,7 @@ export function runSimulationAsync(
 
   ctx.simulationBattleAmt = count;
   ctx.localStorageService.setFormStorage(ctx.formGroup);
-  ctx.simulationInProgress = true;
-  ctx.simulationCancelRequested = false;
-  ctx.simulationProgress = 0;
-  ctx.simulationProgressLabel = `0 / ${count}`;
-  const runId = (ctx.simulationRunId ?? 0) + 1;
-  ctx.simulationRunId = runId;
-  ctx.setStatus?.('Simulation started...', 'success');
-  ctx.markForCheck?.();
+  const runId = startAsyncRun(ctx, `0 / ${count}`, 'Simulation started...');
 
   const worker = ctx.simulationService.runSimulationInWorker(
     ctx.formGroup,
@@ -264,7 +320,7 @@ export function runSimulationAsync(
     ctx.opponent,
     {
       onProgress: (progress) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         const percent = progress.total
@@ -278,38 +334,29 @@ export function runSimulationAsync(
         ctx.markForCheck?.();
       },
       onResult: (result) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
         applySimulationResult(ctx, result);
         ctx.simulationProgress = 100;
         ctx.simulationProgressLabel = `${count} / ${count}`;
-        ctx.simulationInProgress = false;
-        ctx.simulationCancelRequested = false;
-        ctx.setStatus?.('Simulation finished.', 'success');
-        ctx.markForCheck?.();
+        endAsyncRun(ctx, 'Simulation finished.', 'success');
       },
       onAborted: (result) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
         applySimulationResult(ctx, result);
-        ctx.simulationInProgress = false;
-        ctx.simulationCancelRequested = false;
-        ctx.setStatus?.('Simulation cancelled.', 'error');
-        ctx.markForCheck?.();
+        endAsyncRun(ctx, 'Simulation cancelled.', 'error');
       },
       onError: (message) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
-        ctx.simulationInProgress = false;
-        ctx.simulationCancelRequested = false;
-        ctx.setStatus?.(message || 'Simulation failed.', 'error');
-        ctx.markForCheck?.();
+        endAsyncRun(ctx, message || 'Simulation failed.', 'error');
       },
     },
     { progressInterval: 50 },
@@ -347,17 +394,11 @@ export function optimizePositioning(
 
   const maxSimulationsPerPermutation = Math.max(1, Math.trunc(count || 1));
 
-  ctx.simulationInProgress = true;
-  ctx.simulationCancelRequested = false;
-  ctx.simulationProgress = 0;
-  ctx.simulationProgressLabel = `0 / ${maxSimulationsPerPermutation * 120}`;
-  const runId = (ctx.simulationRunId ?? 0) + 1;
-  ctx.simulationRunId = runId;
-  ctx.setStatus?.(
+  const runId = startAsyncRun(
+    ctx,
+    `0 / ${maxSimulationsPerPermutation * 120}`,
     `Optimizing ${side} positioning...`,
-    'success',
   );
-  ctx.markForCheck?.();
 
   const worker = ctx.simulationService.runPositioningOptimizationInWorker(
     ctx.formGroup,
@@ -366,7 +407,7 @@ export function optimizePositioning(
     ctx.opponent,
     {
       onProgress: (progress) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         const percent = progress.totalBattlesEstimate
@@ -380,7 +421,7 @@ export function optimizePositioning(
         ctx.markForCheck?.();
       },
       onResult: (result) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
@@ -399,27 +440,25 @@ export function optimizePositioning(
         runSimulationAsync(ctx, count);
       },
       onAborted: (result) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
         if (result.bestPermutation) {
           applyOptimizedLineup(ctx, result);
         }
-        ctx.simulationInProgress = false;
-        ctx.simulationCancelRequested = false;
-        ctx.setStatus?.('Positioning optimization cancelled.', 'error');
-        ctx.markForCheck?.();
+        endAsyncRun(ctx, 'Positioning optimization cancelled.', 'error');
       },
       onError: (message) => {
-        if (ctx.simulationRunId !== runId) {
+        if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
-        ctx.simulationInProgress = false;
-        ctx.simulationCancelRequested = false;
-        ctx.setStatus?.(message || 'Positioning optimization failed.', 'error');
-        ctx.markForCheck?.();
+        endAsyncRun(
+          ctx,
+          message || 'Positioning optimization failed.',
+          'error',
+        );
       },
     },
     {
@@ -683,30 +722,10 @@ export function refreshBattleDiff(ctx: AppSimulationContext): void {
   for (let i = 0; i < maxLen; i++) {
     const left = leftRows[i] ?? '';
     const right = rightRows[i] ?? '';
-    const same = left === right;
-    let kind: BattleDiffRow['kind'] = 'same';
-    if (!same) {
-      if (left && right) {
-        kind = 'changed';
-      } else if (left) {
-        kind = 'left-only';
-      } else {
-        kind = 'right-only';
-      }
-    }
+    const kind = classifyDiffKind(left, right);
+    const same = kind === 'same';
     rows.push({ step: i + 1, left, right, same, kind });
-
-    if (same) {
-      summary.equalSteps += 1;
-      continue;
-    }
-    if (kind === 'changed') {
-      summary.changedSteps += 1;
-    } else if (kind === 'left-only') {
-      summary.leftOnly += 1;
-    } else if (kind === 'right-only') {
-      summary.rightOnly += 1;
-    }
+    applyDiffSummary(summary, kind);
   }
 
   ctx.battleDiffRows = rows;

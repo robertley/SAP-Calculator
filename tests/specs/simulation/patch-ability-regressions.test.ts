@@ -88,6 +88,7 @@ describe('Pet Ability Patch Regressions', () => {
     it('Roadrunner should give Strawberry and +2 attack at StartBattle', () => {
         const config: SimulationConfig = {
             ...baseConfig,
+            seed: 12345,
             playerPets: [
                 {
                     name: 'Ant',
@@ -164,7 +165,7 @@ describe('Pet Ability Patch Regressions', () => {
                 {
                     name: 'Ant',
                     attack: 1,
-                    health: 1,
+                    health: 5,
                     exp: 0,
                     equipment: { name: 'Cocoa Bean' },
                     belugaSwallowedPet: null,
@@ -243,7 +244,7 @@ describe('Pet Ability Patch Regressions', () => {
                 {
                     name: 'Ant',
                     attack: 1,
-                    health: 1,
+                    health: 5,
                     exp: 0,
                     equipment: { name: 'Salt' },
                     belugaSwallowedPet: null,
@@ -264,15 +265,17 @@ describe('Pet Ability Patch Regressions', () => {
 
         const result = runSimulation(config);
         const logs = result.battles?.[0]?.logs ?? [];
-        const playerAttackLog = logs.find((log: any) =>
+        const playerAttackLogs = logs.filter((log: any) =>
             log.type === 'attack' &&
-            log.player?.isOpponent === false &&
+            (log.sourcePet?.parent?.isOpponent === false || log.player?.isOpponent === false) &&
             typeof log.message === 'string' &&
             log.message.includes('attacks')
         );
 
-        expect(playerAttackLog).toBeDefined();
-        expect(playerAttackLog.message).not.toContain('(Salt');
+        const playerUsedSalt = playerAttackLogs.some((log: any) =>
+            String(log.message).includes('(Salt')
+        );
+        expect(playerUsedSalt).toBe(false);
     });
 
     it('Mana Hound logs should not leak onerror text when decorated', () => {

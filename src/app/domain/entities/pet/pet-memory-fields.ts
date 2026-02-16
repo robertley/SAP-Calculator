@@ -17,6 +17,7 @@ type PetMemorySlotBaseField = `${PetMemorySlotPrefix}${PetMemorySlot}`;
 export type PetMemoryNestedSlotFields = {
   base: PetMemoryStringField;
   belugaSwallowedPet: PetMemoryStringField;
+  sarcasticFringeheadSwallowedPet: PetMemoryStringField;
   level: PetMemoryNumberField;
   timesHurt: PetMemoryNumberField;
 };
@@ -24,6 +25,7 @@ export type PetMemoryNestedSlotFields = {
 export type PetMemorySlotFields = {
   base: PetMemoryStringField;
   belugaSwallowedPet: PetMemoryStringField;
+  sarcasticFringeheadSwallowedPet: PetMemoryStringField;
   level: PetMemoryNumberField;
   timesHurt: PetMemoryNumberField;
   parrotCopyPet: PetMemoryStringField;
@@ -42,6 +44,8 @@ export function createPetMemorySlotFields(
   return {
     base: base as PetMemoryStringField,
     belugaSwallowedPet: `${base}BelugaSwallowedPet` as PetMemoryStringField,
+    sarcasticFringeheadSwallowedPet:
+      `${base}SarcasticFringeheadSwallowedPet` as PetMemoryStringField,
     level: `${base}Level` as PetMemoryNumberField,
     timesHurt: `${base}TimesHurt` as PetMemoryNumberField,
     parrotCopyPet: `${base}ParrotCopyPet` as PetMemoryStringField,
@@ -54,6 +58,8 @@ export function createPetMemorySlotFields(
         base: nestedBase,
         belugaSwallowedPet:
           `${nestedBase}BelugaSwallowedPet` as PetMemoryStringField,
+        sarcasticFringeheadSwallowedPet:
+          `${nestedBase}SarcasticFringeheadSwallowedPet` as PetMemoryStringField,
         level: `${nestedBase}Level` as PetMemoryNumberField,
         timesHurt: `${nestedBase}TimesHurt` as PetMemoryNumberField,
       };

@@ -275,6 +275,12 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     pet.abominationSwallowedPet1BelugaSwallowedPet = slots[0].beluga;
     pet.abominationSwallowedPet2BelugaSwallowedPet = slots[1].beluga;
     pet.abominationSwallowedPet3BelugaSwallowedPet = slots[2].beluga;
+    pet.abominationSwallowedPet1SarcasticFringeheadSwallowedPet =
+      slots[0].sarcastic;
+    pet.abominationSwallowedPet2SarcasticFringeheadSwallowedPet =
+      slots[1].sarcastic;
+    pet.abominationSwallowedPet3SarcasticFringeheadSwallowedPet =
+      slots[2].sarcastic;
     pet.abominationSwallowedPet1Level = slots[0].level;
     pet.abominationSwallowedPet2Level = slots[1].level;
     pet.abominationSwallowedPet3Level = slots[2].level;
@@ -457,12 +463,14 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     index: 1 | 2 | 3;
     name: string | null;
     beluga: string | null;
+    sarcastic: string | null;
     level: number;
   }> {
     const slots: Array<{
       index: 1 | 2 | 3;
       name: string | null;
       beluga: string | null;
+      sarcastic: string | null;
       level: number;
     }> = [
       {
@@ -471,6 +479,10 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         beluga:
           this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')
             ?.value ?? null,
+        sarcastic:
+          this.formGroup.get(
+            'abominationSwallowedPet1SarcasticFringeheadSwallowedPet',
+          )?.value ?? null,
         level: Number(this.formGroup.get('abominationSwallowedPet1Level')?.value ?? 1) || 1,
       },
       {
@@ -479,6 +491,10 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         beluga:
           this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')
             ?.value ?? null,
+        sarcastic:
+          this.formGroup.get(
+            'abominationSwallowedPet2SarcasticFringeheadSwallowedPet',
+          )?.value ?? null,
         level: Number(this.formGroup.get('abominationSwallowedPet2Level')?.value ?? 1) || 1,
       },
       {
@@ -487,6 +503,10 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         beluga:
           this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')
             ?.value ?? null,
+        sarcastic:
+          this.formGroup.get(
+            'abominationSwallowedPet3SarcasticFringeheadSwallowedPet',
+          )?.value ?? null,
         level: Number(this.formGroup.get('abominationSwallowedPet3Level')?.value ?? 1) || 1,
       },
     ];
@@ -500,8 +520,14 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
 
       if (!normalizedName) {
         slot.beluga = null;
+        slot.sarcastic = null;
         this.formGroup
           .get(`abominationSwallowedPet${slot.index}BelugaSwallowedPet`)
+          ?.setValue(null, { emitEvent: false });
+        this.formGroup
+          .get(
+            `abominationSwallowedPet${slot.index}SarcasticFringeheadSwallowedPet`,
+          )
           ?.setValue(null, { emitEvent: false });
         this.clearAbominationParrotCopySettings(pet, slot.index);
         continue;
@@ -511,6 +537,14 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
         slot.beluga = null;
         this.formGroup
           .get(`abominationSwallowedPet${slot.index}BelugaSwallowedPet`)
+          ?.setValue(null, { emitEvent: false });
+      }
+      if (normalizedName !== 'Sarcastic Fringehead') {
+        slot.sarcastic = null;
+        this.formGroup
+          .get(
+            `abominationSwallowedPet${slot.index}SarcasticFringeheadSwallowedPet`,
+          )
           ?.setValue(null, { emitEvent: false });
       }
       if (normalizedName !== 'Parrot') {

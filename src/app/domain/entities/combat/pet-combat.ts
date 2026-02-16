@@ -16,6 +16,60 @@ import {
 import { calculateDamage } from './pet-combat-damage';
 export { calculateDamage } from './pet-combat-damage';
 
+type DamageResponse = ReturnType<typeof calculateDamage>;
+
+const MANTICORE_AILMENTS = ['Weak', 'Cold', 'Icky', 'Spooked'];
+
+function appendIckyMessage(message: string, pet: Pet): string {
+  if (pet.equipment?.name != 'Icky') {
+    return message;
+  }
+
+  let updated = `${message}x2 (Icky)`;
+  if (pet.equipment.multiplier > 1) {
+    updated += pet.equipment.multiplierMessage;
+  }
+  return updated;
+}
+
+function appendManticoreMessage(message: string, self: Pet, pet: Pet): string {
+  const manticoreMult = self.getManticoreMult();
+  const petEquipName = pet.equipment?.name ?? '';
+  if (manticoreMult.length === 0 || !MANTICORE_AILMENTS.includes(petEquipName)) {
+    return message;
+  }
+
+  let updated = message;
+  for (const mult of manticoreMult) {
+    updated += ` x${mult + 1} (Manticore)`;
+  }
+  return updated;
+}
+
+function appendDamageReductionMessages(
+  message: string,
+  damageResp: DamageResponse,
+  includeMapleSyrupReduction: boolean,
+): string {
+  let updated = message;
+  if (damageResp.nurikabe > 0) {
+    updated += ` -${damageResp.nurikabe} (Nurikabe)`;
+  }
+  if ((damageResp.fairyBallReduction ?? 0) > 0) {
+    updated += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
+  }
+  if ((damageResp.fanMusselReduction ?? 0) > 0) {
+    updated += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
+  }
+  if ((damageResp.ghostKittenReduction ?? 0) > 0) {
+    updated += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
+  }
+  if (includeMapleSyrupReduction && (damageResp.mapleSyrupReduction ?? 0) > 0) {
+    updated += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`;
+  }
+  return updated;
+}
+
 
 export function attackPet(
   self: Pet,
@@ -156,39 +210,9 @@ export function attackPet(
       //pet.useDefenseEquipment();
     }
 
-    if (pet.equipment instanceof Icky) {
-      message += 'x2 (Icky)';
-      if (pet.equipment.multiplier > 1) {
-        message += pet.equipment.multiplierMessage;
-      }
-    }
-
-    if (damageResp.nurikabe > 0) {
-      message += ` -${damageResp.nurikabe} (Nurikabe)`;
-    }
-    if ((damageResp.fairyBallReduction ?? 0) > 0) {
-      message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
-    }
-    if ((damageResp.fanMusselReduction ?? 0) > 0) {
-      message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
-    }
-    if ((damageResp.ghostKittenReduction ?? 0) > 0) {
-      message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
-    }
-    if ((damageResp.mapleSyrupReduction ?? 0) > 0) {
-      message += ` -${damageResp.mapleSyrupReduction} (Maple Syrup)`;
-    }
-
-    let manticoreMult = self.getManticoreMult();
-    let manticoreAilments = ['Weak', 'Cold', 'Icky', 'Spooked'];
-    const petEquipName = pet.equipment?.name ?? '';
-    let hasAilment = manticoreAilments.includes(petEquipName);
-
-    if (manticoreMult.length > 0 && hasAilment) {
-      for (let mult of manticoreMult) {
-        message += ` x${mult + 1} (Manticore)`;
-      }
-    }
+    message = appendIckyMessage(message, pet);
+    message = appendDamageReductionMessages(message, damageResp, true);
+    message = appendManticoreMessage(message, self, pet);
 
     self.createLog({
       message: message,
@@ -323,35 +347,9 @@ export function snipePet(
     message += ' (Mana)';
   }
 
-  if (pet.equipment?.name == 'Icky') {
-    message += 'x2 (Icky)';
-    if (pet.equipment.multiplier > 1) {
-      message += pet.equipment.multiplierMessage;
-    }
-  }
-
-  let manticoreMult = self.getManticoreMult();
-  let manticoreAilments = ['Weak', 'Cold', 'Icky', 'Spooked'];
-  const petEquipName = pet.equipment?.name ?? '';
-  let hasAilment = manticoreAilments.includes(petEquipName);
-  if (manticoreMult.length > 0 && hasAilment) {
-    for (let mult of manticoreMult) {
-      message += ` x${mult + 1} (Manticore)`;
-    }
-  }
-
-  if (damageResp.nurikabe > 0) {
-    message += ` -${damageResp.nurikabe} (Nurikabe)`;
-  }
-  if ((damageResp.fairyBallReduction ?? 0) > 0) {
-    message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
-  }
-  if ((damageResp.fanMusselReduction ?? 0) > 0) {
-    message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
-  }
-  if ((damageResp.ghostKittenReduction ?? 0) > 0) {
-    message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
-  }
+  message = appendIckyMessage(message, pet);
+  message = appendManticoreMessage(message, self, pet);
+  message = appendDamageReductionMessages(message, damageResp, false);
 
   self.createLog({
     message: message,
@@ -408,9 +406,6 @@ export function jumpAttack(
 
   attackPet.useAttackDefenseEquipment();
   target.useAttackDefenseEquipment();
-
-  attackPet.parent.checkPetsAlive();
-  target.parent.checkPetsAlive();
 
   attackPet.executeAfterAttackEvents();
   // 6. Trigger and execute friend/enemy jumped abilities

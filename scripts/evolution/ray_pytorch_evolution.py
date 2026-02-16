@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import base64
 import json
 import math
 import os
@@ -49,6 +50,76 @@ DEFAULT_PREFERRED_EQUIPMENT = (
     "Peanut Butter",
     "Meat Bone",
 )
+EXPORT_TOKEN_PREFIX = "SAPC1:"
+
+REVERSE_EXPORT_KEY_MAP: Dict[str, str] = {
+    "pP": "playerPack",
+    "oP": "opponentPack",
+    "pT": "playerToy",
+    "pTL": "playerToyLevel",
+    "pHT": "playerHardToy",
+    "pHTL": "playerHardToyLevel",
+    "oT": "opponentToy",
+    "oTL": "opponentToyLevel",
+    "oHT": "opponentHardToy",
+    "oHTL": "opponentHardToyLevel",
+    "t": "turn",
+    "pGS": "playerGoldSpent",
+    "oGS": "opponentGoldSpent",
+    "pRA": "playerRollAmount",
+    "oRA": "opponentRollAmount",
+    "pSA": "playerSummonedAmount",
+    "oSA": "opponentSummonedAmount",
+    "pL3": "playerLevel3Sold",
+    "oL3": "opponentLevel3Sold",
+    "pTA": "playerTransformationAmount",
+    "oTA": "opponentTransformationAmount",
+    "p": "playerPets",
+    "o": "opponentPets",
+    "ap": "allPets",
+    "lf": "logFilter",
+    "cp": "customPacks",
+    "os": "oldStork",
+    "tp": "tokenPets",
+    "ks": "komodoShuffle",
+    "m": "mana",
+    "sd": "seed",
+    "tc": "triggersConsumed",
+    "sa": "showAdvanced",
+    "stn": "showTriggerNamesInLogs",
+    "swl": "showSwallowedLevels",
+    "ae": "ailmentEquipment",
+    "cEU": "changeEquipmentUses",
+    "lE": "logsEnabled",
+    "sim": "simulations",
+    "n": "name",
+    "a": "attack",
+    "h": "health",
+    "e": "exp",
+    "eq": "equipment",
+    "eU": "equipmentUses",
+    "bSP": "belugaSwallowedPet",
+    "sFSP": "sarcasticFringeheadSwallowedPet",
+    "pCP": "parrotCopyPet",
+    "pCPB": "parrotCopyPetBelugaSwallowedPet",
+    "aPS": "abomParrotSwallowed",
+    "aSP1": "abominationSwallowedPet1",
+    "aSP2": "abominationSwallowedPet2",
+    "aSP3": "abominationSwallowedPet3",
+    "aSP1B": "abominationSwallowedPet1BelugaSwallowedPet",
+    "aSP2B": "abominationSwallowedPet2BelugaSwallowedPet",
+    "aSP3B": "abominationSwallowedPet3BelugaSwallowedPet",
+    "aSP1L": "abominationSwallowedPet1Level",
+    "aSP2L": "abominationSwallowedPet2Level",
+    "aSP3L": "abominationSwallowedPet3Level",
+    "aSP1T": "abominationSwallowedPet1TimesHurt",
+    "aSP2T": "abominationSwallowedPet2TimesHurt",
+    "aSP3T": "abominationSwallowedPet3TimesHurt",
+    "bF": "battlesFought",
+    "fDBB": "friendsDiedBeforeBattle",
+    "fE": "foodsEaten",
+    "tH": "timesHurt",
+}
 
 
 def _pet_uses_times_hurt(pet_name: Any) -> bool:
@@ -388,6 +459,61 @@ def load_teams_from_file(path: str) -> List[TeamSide]:
     raise ValueError(
         f"Warm-start JSON must be either team-side shape ('pets') or calculator-state shape ('playerPets'/'opponentPets'): {path}"
     )
+
+
+def _expand_export_keys(data: Any) -> Any:
+    if isinstance(data, list):
+        return [_expand_export_keys(item) for item in data]
+    if isinstance(data, dict):
+        expanded: Dict[str, Any] = {}
+        for key, value in data.items():
+            new_key = REVERSE_EXPORT_KEY_MAP.get(str(key), str(key))
+            expanded[new_key] = _expand_export_keys(value)
+        return expanded
+    return data
+
+
+def _decode_base64url_json(encoded_payload: str) -> Any:
+    payload = encoded_payload.replace("-", "+").replace("_", "/")
+    payload += "=" * ((4 - (len(payload) % 4)) % 4)
+    decoded = base64.b64decode(payload.encode("utf-8")).decode("utf-8")
+    return json.loads(decoded)
+
+
+def load_teams_from_export_token(token: str, side: str = "opponent") -> List[TeamSide]:
+    raw = str(token or "").strip()
+    if not raw:
+        return []
+
+    encoded = raw
+    if raw.startswith(EXPORT_TOKEN_PREFIX):
+        encoded = raw[len(EXPORT_TOKEN_PREFIX) :]
+    elif "#c=" in raw:
+        encoded = raw.split("#c=", 1)[1]
+
+    parsed = _decode_base64url_json(encoded)
+    expanded = _expand_export_keys(parsed)
+    if not isinstance(expanded, dict):
+        raise ValueError("Warm-start export must decode to a JSON object.")
+
+    if isinstance(expanded.get("pets"), list):
+        return [expanded]
+
+    if not isinstance(expanded.get("playerPets"), list) or not isinstance(expanded.get("opponentPets"), list):
+        raise ValueError(
+            "Warm-start export must contain player/opponent pets after decode."
+        )
+
+    normalized_side = str(side or "opponent").strip().lower()
+    if normalized_side not in {"player", "opponent", "both"}:
+        normalized_side = "opponent"
+
+    teams: List[TeamSide] = []
+    if normalized_side in {"player", "both"}:
+        teams.append(_extract_side_from_calculator_state(expanded, "player"))
+    if normalized_side in {"opponent", "both"}:
+        teams.append(_extract_side_from_calculator_state(expanded, "opponent"))
+    return teams
 
 
 def random_pet(pet_pool: List[str], equipment_pool: List[str], rng: random.Random) -> Dict[str, Any]:
@@ -974,6 +1100,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed-source", choices=["all", "focus"], default="all")
     parser.add_argument("--focus-anchor-only", action="store_true")
     parser.add_argument("--warm-start-team", action="append", default=[])
+    parser.add_argument("--warm-start-export", action="append", default=[])
+    parser.add_argument(
+        "--warm-start-export-side",
+        choices=["player", "opponent", "both"],
+        default="opponent",
+    )
     parser.add_argument("--opponent-source", choices=["presets", "warm-start"], default="presets")
     parser.add_argument("--prototype", action="store_true")
     parser.add_argument("--simulations-min", type=int, default=None)
@@ -1072,8 +1204,9 @@ def main() -> None:
     opponents = [_normalize_toy(team, toy_pool, rng) for team in opponents]
 
     warm_start_teams: List[TeamSide] = []
-    if args.warm_start_team:
-        warm_start_inputs = [str(path).strip() for path in args.warm_start_team if str(path).strip()]
+    warm_start_inputs = [str(path).strip() for path in args.warm_start_team if str(path).strip()]
+    warm_start_exports = [str(value).strip() for value in args.warm_start_export if str(value).strip()]
+    if warm_start_inputs or warm_start_exports:
         for warm_start_input in warm_start_inputs:
             warm_start_path = os.path.abspath(os.path.join(workspace, warm_start_input))
             if not os.path.exists(warm_start_path):
@@ -1081,6 +1214,15 @@ def main() -> None:
             teams_from_file = load_teams_from_file(warm_start_path)
             for team_from_file in teams_from_file:
                 warm_start_team = _normalize_toy(normalize_team(team_from_file), toy_pool, rng)
+                warm_start_teams.append(warm_start_team)
+
+        for warm_start_export in warm_start_exports:
+            teams_from_export = load_teams_from_export_token(
+                warm_start_export,
+                side=args.warm_start_export_side,
+            )
+            for team_from_export in teams_from_export:
+                warm_start_team = _normalize_toy(normalize_team(team_from_export), toy_pool, rng)
                 warm_start_teams.append(warm_start_team)
 
         unique_warm: List[TeamSide] = []
@@ -1111,8 +1253,9 @@ def main() -> None:
 
             seed_population = warm_start_teams + warm_start_variants + seed_population
             print(
-                f"warm_start=file count={len(warm_start_teams) + len(warm_start_variants)} "
-                f"paths={','.join(warm_start_inputs)}"
+                f"warm_start=inputs count={len(warm_start_teams) + len(warm_start_variants)} "
+                f"files={','.join(warm_start_inputs) if warm_start_inputs else '-'} "
+                f"exports={len(warm_start_exports)} side={args.warm_start_export_side}"
             )
 
     if args.opponent_source == "warm-start":
@@ -1317,6 +1460,8 @@ def main() -> None:
             "seedSource": args.seed_source,
             "focusAnchorOnly": bool(args.focus_anchor_only),
             "warmStartTeam": args.warm_start_team,
+            "warmStartExport": args.warm_start_export,
+            "warmStartExportSide": args.warm_start_export_side,
             "opponentSource": args.opponent_source,
             "prototype": bool(args.prototype),
             "simulationsMin": args.simulations_min,

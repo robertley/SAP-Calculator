@@ -18,6 +18,8 @@ npm start
 ```
 This starts Angular dev server with the `/api` proxy from `config/proxy.conf.js`, reading `REPLAY_API_TARGET` from `.env`.
 
+By default, replay requests are proxied to `https://sap-replay-bot-main.vercel.app`. Set `REPLAY_API_TARGET=http://127.0.0.1:3000` if you want to use a local replay backend.
+
 Open `http://localhost:4200`.
 
 ## Build
@@ -46,6 +48,15 @@ At repo root:
 - `simulation/`: Node/headless entrypoints and CLI bundle.
 - `server/`: Optional replay proxy backend (`/api/health`, `/api/replay-battle`).
 - `tests/`: Vitest specs, meta checks, generated coverage, and pilot suites.
+
+## Typography Rollout (Lapsus Pro)
+Lapsus typography is controlled in stages from `src/app/ui/shell/app.component.ts` via `lapsusTypographyStage`.
+
+- Stage 1: item selection dialog (`app-item-selection-dialog`) uses Lapsus Pro.
+- Stage 2: reserved for additional surfaces after visual/accessibility checks.
+- Stage 3: reserved for full UI adoption when rollout is complete.
+
+To advance rollout, change `lapsusTypographyStage` from `1` to `2` or `3` and apply style rules by stage-specific class (`lapsus-stage-1`, `lapsus-stage-2`, `lapsus-stage-3`).
 
 ## Simulation Flow
 1. `SimulationService` builds `SimulationConfig` from UI state.

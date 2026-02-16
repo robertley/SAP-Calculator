@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { of } from 'rxjs';
-import { catchError, finalize, timeout } from 'rxjs/operators';
-import { ReplayCalcService } from 'app/integrations/replay/replay-calc.service';
-import { getReplayApiUrl } from 'app/integrations/replay/replay-api-endpoints';
+import { finalize } from 'rxjs/operators';
+import {
+  ReplayCalcService,
+  ReplayBattleResponse,
+} from 'app/integrations/replay/replay-calc.service';
 import {
   ReplayBattleJson,
   ReplayBoardJson,
@@ -37,13 +37,6 @@ interface ReplayImportPayload {
   OpponentBoard?: ReplayBoardJson;
   GenesisBuildModel?: ReplayBuildModelJson;
   AbilityPetMap?: Record<string, string | number> | null;
-}
-
-interface ReplayBattleResponse {
-  battle?: ReplayBattleJson;
-  genesisBuildModel?: ReplayBuildModelJson;
-  abilityPetMap?: Record<string, string | number> | null;
-  error?: string;
 }
 
 @Component({
@@ -73,7 +66,6 @@ export class ImportCalculatorComponent implements OnInit {
 
   constructor(
     private replayCalcService: ReplayCalcService,
-    private http: HttpClient,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -119,20 +111,20 @@ export class ImportCalculatorComponent implements OnInit {
         return;
       }
       this.setLoading(true);
-      this.checkReplayApiReachable()
+      this.replayCalcService
+        .checkReplayApiReachable(this.replayHealthTimeoutMs)
         .then((reachable) => {
           if (!reachable) {
+            this.errorMessage =
+              'Replay API is not reachable. Ensure the replay server is running.';
             this.setLoading(false);
+            this.cdr.markForCheck();
             return;
           }
           console.info('[replay] health check ok, requesting battle');
-          this.http
-            .post(getReplayApiUrl('/replay-battle'), {
-              Pid: pidValue,
-              T: turnNumber,
-            })
+          this.replayCalcService
+            .fetchReplayBattle({ Pid: pidValue, T: turnNumber }, this.replayTimeoutMs)
             .pipe(
-              timeout(this.replayTimeoutMs),
               finalize(() => {
                 this.setLoading(false);
                 console.info('[replay] replay-battle request finalized');
@@ -267,17 +259,20 @@ export class ImportCalculatorComponent implements OnInit {
       return true;
     }
     this.setLoading(true);
-    this.checkReplayApiReachable()
+    this.replayCalcService
+      .checkReplayApiReachable(this.replayHealthTimeoutMs)
       .then((reachable) => {
         if (!reachable) {
+          this.errorMessage =
+            'Replay API is not reachable. Ensure the replay server is running.';
           this.setLoading(false);
+          this.cdr.markForCheck();
           return;
         }
         console.info('[replay] health check ok, requesting battle');
-        this.http
-          .post(getReplayApiUrl('/replay-battle'), { Pid: pid, T: turnNumber })
+        this.replayCalcService
+          .fetchReplayBattle({ Pid: pid, T: turnNumber }, this.replayTimeoutMs)
           .pipe(
-            timeout(this.replayTimeoutMs),
             finalize(() => {
               this.setLoading(false);
               console.info('[replay] replay-battle request finalized');
@@ -317,39 +312,6 @@ export class ImportCalculatorComponent implements OnInit {
         this.cdr.markForCheck();
       });
     return true;
-  }
-
-  private async checkReplayApiReachable(): Promise<boolean> {
-    return new Promise((resolve) => {
-      console.info('[replay] health check start');
-      this.http
-        .get(getReplayApiUrl('/health'))
-        .pipe(
-          timeout(this.replayHealthTimeoutMs),
-          catchError(() => of(null)),
-        )
-        .subscribe({
-          next: (value) => {
-            if (!value) {
-              this.errorMessage =
-                'Replay API is not reachable. Ensure the replay server is running.';
-              console.info('[replay] health check failed');
-              this.cdr.markForCheck();
-              resolve(false);
-              return;
-            }
-            console.info('[replay] health check success');
-            resolve(true);
-          },
-          error: () => {
-            this.errorMessage =
-              'Replay API is not reachable. Ensure the replay server is running.';
-            console.info('[replay] health check error');
-            this.cdr.markForCheck();
-            resolve(false);
-          },
-        });
-    });
   }
 
   private setLoading(value: boolean) {

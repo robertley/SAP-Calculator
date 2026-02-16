@@ -67,7 +67,7 @@ export class KrakenAbility extends Ability {
       let reducedTo = Math.max(1, Math.floor(targetPet.health * (1 - power)));
       targetPet.health = reducedTo;
       this.logService.createLog({
-        message: `${owner.name} reduced ${targetPet.name} health by ${(power * 100).toFixed(0)}% (${reducedTo})`,
+        message: `${owner.name} reduced ${targetPet.name} health by ${(power * 100).toFixed(0)}% to ${reducedTo}`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,

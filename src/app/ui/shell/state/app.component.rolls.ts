@@ -43,6 +43,27 @@ export function shouldShowRollInputs(
           ROLL_PETS.includes(pet.abominationSwallowedPet3BelugaSwallowedPet)
         )
           return true;
+        if (
+          pet.abominationSwallowedPet1 === 'Sarcastic Fringehead' &&
+          ROLL_PETS.includes(
+            pet.abominationSwallowedPet1SarcasticFringeheadSwallowedPet,
+          )
+        )
+          return true;
+        if (
+          pet.abominationSwallowedPet2 === 'Sarcastic Fringehead' &&
+          ROLL_PETS.includes(
+            pet.abominationSwallowedPet2SarcasticFringeheadSwallowedPet,
+          )
+        )
+          return true;
+        if (
+          pet.abominationSwallowedPet3 === 'Sarcastic Fringehead' &&
+          ROLL_PETS.includes(
+            pet.abominationSwallowedPet3SarcasticFringeheadSwallowedPet,
+          )
+        )
+          return true;
       }
 
       if (

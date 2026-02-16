@@ -57,7 +57,7 @@ export class DurianAbility extends Ability {
       let multiplierMessage = i > 0 ? this.equipment.multiplierMessage : '';
 
       this.logService.createLog({
-        message: `${this.equipment.name} reduced ${targetPet.name} health by ${power * 100}% (${reducedTo})${multiplierMessage}`,
+        message: `${this.equipment.name} reduced ${targetPet.name} health by ${power * 100}% to ${reducedTo}${multiplierMessage}`,
         type: 'ability',
         player: owner.parent,
         randomEvent: resp.random,

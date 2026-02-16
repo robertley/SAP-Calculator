@@ -157,7 +157,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
   jumpAttackPrep(target: Pet) {
     this.abilityService.triggerBeforeAttackEvent(this as unknown as Pet);
     this.abilityService.triggerBeforeAttackEvent(target);
-    this.abilityService.executeBeforeAttackEvents();
+    this.abilityService.executeBeforeAttackTriggerOnly();
   }
 
   jumpAttack(
@@ -220,7 +220,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
       return;
     }
     this.equipment.uses -= 1;
-    if (this.equipment.uses == 0) {
+    if (this.equipment.uses <= 0) {
       this.removePerk();
     }
   }
@@ -230,7 +230,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
       return;
     }
     this.equipment.uses -= 1;
-    if (this.equipment.uses == 0) {
+    if (this.equipment.uses <= 0) {
       this.removePerk();
     }
   }

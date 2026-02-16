@@ -3,6 +3,7 @@ export type SwallowedPetTarget =
   | 'abomination'
   | 'sarcastic'
   | 'abomination-beluga'
+  | 'abomination-sarcastic'
   | 'parrot'
   | 'parrot-beluga'
   | 'parrot-abomination'

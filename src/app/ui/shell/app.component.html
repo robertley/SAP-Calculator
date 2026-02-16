@@ -2,14 +2,14 @@
   <div id="apiResponse">{{ apiResponse }}</div>
 </ng-container>
 <ng-container *ngIf="!api">
-  <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" #container>
+  <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" [ngClass]="lapsusTypographyStageClass" #container>
     <div class="row battle-row pb-5 pt-3" [style.background-image]="
         battleBackgroundUrl ? 'url(' + battleBackgroundUrl + ')' : ''
       ">
       <div class="col-12 col-xl-6 px-4 mb-2 mb-xl-0">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center toy-wrap">
-            <h2 class="me-2">Player</h2>
+            <h2 class="me-2" style="color: #5fbf5f">Player</h2>
             <div class="toy-row">
               <div class="toy-slot">
                 <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'player')">
@@ -21,11 +21,23 @@
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="toy-level-controls inline" *ngIf="playerToyImageUrl">
-                  <button class="toy-level-btn" (click)="decrementToyLevel('player')" title="Decrease level">
+                  <button
+                    type="button"
+                    class="toy-level-btn"
+                    (click)="decrementToyLevel('player')"
+                    title="Decrease level"
+                    aria-label="Decrease player toy level"
+                  >
                     <i class="fas fa-minus"></i>
                   </button>
                   <span class="toy-level-label">Lv{{ formGroup.get("playerToyLevel").value }}</span>
-                  <button class="toy-level-btn" (click)="incrementToyLevel('player')" title="Increase level">
+                  <button
+                    type="button"
+                    class="toy-level-btn"
+                    (click)="incrementToyLevel('player')"
+                    title="Increase level"
+                    aria-label="Increase player toy level"
+                  >
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -40,7 +52,7 @@
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <button type="button" *ngIf="playerHardToyImageUrl" class="toy-remove-btn-inline"
-                  (click)="removeHardToy('player')" title="Remove hard toy">
+                  (click)="removeHardToy('player')" title="Remove hard toy" aria-label="Remove player hard toy">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -64,15 +76,6 @@
                 activePetSlot?.side === 'player' && activePetSlot?.index === 4 - i
               ">
               <div class="pet-slot-actions">
-                <button type="button" class="drag-handle" cdkDragHandle title="Move this pet slot"
-                  aria-label="Move this pet slot">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                    </path>
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                  </svg>
-                </button>
                 <button type="button" class="pet-clear-btn"
                   (click)="playerPetSelector.removePet(); $event.stopPropagation()"
                   title="Clear this pet selector" aria-label="Clear this pet selector">
@@ -97,7 +100,7 @@
       <div class="col-12 col-xl-6 px-4">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center toy-wrap">
-            <h2 class="me-2">Opponent</h2>
+            <h2 class="me-2" style="color: #e06a6a">Opponent</h2>
             <div class="toy-row">
               <div class="toy-slot">
                 <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'opponent')">
@@ -109,11 +112,23 @@
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="toy-level-controls inline" *ngIf="opponentToyImageUrl">
-                  <button class="toy-level-btn" (click)="decrementToyLevel('opponent')" title="Decrease level">
+                  <button
+                    type="button"
+                    class="toy-level-btn"
+                    (click)="decrementToyLevel('opponent')"
+                    title="Decrease level"
+                    aria-label="Decrease opponent toy level"
+                  >
                     <i class="fas fa-minus"></i>
                   </button>
                   <span class="toy-level-label">Lv{{ formGroup.get("opponentToyLevel").value }}</span>
-                  <button class="toy-level-btn" (click)="incrementToyLevel('opponent')" title="Increase level">
+                  <button
+                    type="button"
+                    class="toy-level-btn"
+                    (click)="incrementToyLevel('opponent')"
+                    title="Increase level"
+                    aria-label="Increase opponent toy level"
+                  >
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -128,7 +143,7 @@
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <button type="button" *ngIf="opponentHardToyImageUrl" class="toy-remove-btn-inline"
-                  (click)="removeHardToy('opponent')" title="Remove hard toy">
+                  (click)="removeHardToy('opponent')" title="Remove hard toy" aria-label="Remove opponent hard toy">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
@@ -153,15 +168,6 @@
                 activePetSlot?.side === 'opponent' && activePetSlot?.index === i
               ">
               <div class="pet-slot-actions">
-                <button type="button" class="drag-handle" cdkDragHandle title="Move this pet slot"
-                  aria-label="Move this pet slot">
-                  <svg fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                      d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z">
-                    </path>
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                  </svg>
-                </button>
                 <button type="button" class="pet-clear-btn"
                   (click)="opponentPetSelector.removePet(); $event.stopPropagation()"
                   title="Clear this pet selector" aria-label="Clear this pet selector">
@@ -190,9 +196,9 @@
     <app-shell-battle-results [app]="app"></app-shell-battle-results>
   </div>
   <!-- Custom Pack -->
-  <div class="modal fade" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true"
+  <div class="modal fade custom-pack-editor-modal" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true"
     #customPackEditor>
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg custom-pack-editor-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="customPackEditorLabel">
@@ -265,11 +271,11 @@
     </div>
   </div>
 
-  <div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABug" aria-hidden="true">
+  <div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABugLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="reportABug">Report A Bug</h1>
+          <h1 class="modal-title fs-5" id="reportABugLabel">Report A Bug</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -284,7 +290,7 @@
   </div>
 </ng-container>
 
-<app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType"
+<app-item-selection-dialog *ngIf="showSelectionDialog" [ngClass]="lapsusTypographyStageClass" [type]="selectionType"
   [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')" [savedTeams]="savedTeams"
   (select)="onItemSelected($event)" (close)="showSelectionDialog = false">
 </app-item-selection-dialog>

@@ -44,7 +44,10 @@ import {
   FightAnimationPopup,
   buildFightAnimationFrames,
 } from './simulation/app.component.fight-animation';
+import { clearFightAnimationTimer as clearFightAnimationTimerImpl, getFightDeathForSlot as getFightDeathForSlotImpl, getFightPopupText as getFightPopupTextImpl, getFightPopupsForSlot as getFightPopupsForSlotImpl, getFightShiftSteps as getFightShiftStepsImpl, isFightAttackerSlot as isFightAttackerSlotImpl, isFightDeathSlot as isFightDeathSlotImpl, isFightShiftedSlot as isFightShiftedSlotImpl, isFightTargetSlot as isFightTargetSlotImpl, onFightAnimationScrub as onFightAnimationScrubImpl, refreshFightAnimationFromViewBattle as refreshFightAnimationFromViewBattleImpl, resetFightAnimation as resetFightAnimationImpl, setFightAnimationSpeed as setFightAnimationSpeedImpl, stepFightAnimation as stepFightAnimationImpl, toggleFightAnimationPlayback as toggleFightAnimationPlaybackImpl, } from './simulation/app.component.fight-animation-controls';
+import { captureRandomEvents as captureRandomEventsImpl, clearRandomOverrides as clearRandomOverridesImpl, getRandomDecisionLabelParts as getRandomDecisionLabelPartsImpl, getRandomDecisionSelectedOptionParts as getRandomDecisionSelectedOptionPartsImpl, getSelectedRandomDecisionOptionId as getSelectedRandomDecisionOptionIdImpl, onRandomDecisionChoiceChanged as onRandomDecisionChoiceChangedImpl, runForcedRandomSimulation as runForcedRandomSimulationImpl, } from './simulation/app.component.random-decisions';
 import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCacheImpl, decrementToyLevel as decrementToyLevelImpl, drop as dropImpl, exportCalculator as exportCalculatorImpl, fixCustomPackSelect as fixCustomPackSelectImpl, generateShareLink as generateShareLinkImpl, getPackIcon as getPackIconImpl, getRandomEquipment as getRandomEquipmentImpl, getRollInputVisible as getRollInputVisibleImpl, getSelectedTeamName as getSelectedTeamNameImpl, getSelectedTeamPreviewIcons as getSelectedTeamPreviewIconsImpl, getToyIcon as getToyIconImpl, getToyIconPathValue as getToyIconPathValueImpl, getToyOptionStyle as getToyOptionStyleImpl, getValidCustomPacks as getValidCustomPacksImpl, importCalculator as importCalculatorImpl, incrementToyLevel as incrementToyLevelImpl, initApp as initAppImpl, initFormGroup as initFormGroupImpl, initGameApi as initGameApiImpl, initPetForms as initPetFormsImpl, initPlayerPets as initPlayerPetsImpl, initModals as initModalsImpl, loadLocalStorage as loadLocalStorageImpl, loadStateFromUrl as loadStateFromUrlImpl, makeFormGroup as makeFormGroupImpl, onItemSelected as onItemSelectedImpl, onPackImageError as onPackImageErrorImpl, openCustomPackEditor as openCustomPackEditorImpl, openSelectionDialog as openSelectionDialogImpl, printFormGroup as printFormGroupImpl, randomize as randomizeImpl, randomizePlayerPets as randomizePlayerPetsImpl, refreshPetFormArrays as refreshPetFormArraysImpl, removeHardToy as removeHardToyImpl, resetPackImageError as resetPackImageErrorImpl, resetPlayer as resetPlayerImpl, setDayNight as setDayNightImpl, setHardToyImage as setHardToyImageImpl, setRandomBackground as setRandomBackgroundImpl, setToyImage as setToyImageImpl, toggleAdvanced as toggleAdvancedImpl, trackByIndex as trackByIndexImpl, trackByLogTab as trackByLogTabImpl, trackByTeamId as trackByTeamIdImpl, updateGoldSpent as updateGoldSpentImpl, undoRandomize as undoRandomizeImpl, updatePlayerPack as updatePlayerPackImpl, updatePlayerToy as updatePlayerToyImpl, updatePreviousShopTier as updatePreviousShopTierImpl, updateToyLevel as updateToyLevelImpl, } from './view/app.component.ui';
+import { handlePetSlotClipboardShortcuts as handlePetSlotClipboardShortcutsImpl } from './view/app.component.pet-clipboard';
 
 @Component({
   selector: 'app-root',
@@ -72,6 +75,11 @@ import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCa
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly app = this;
+  readonly lapsusTypographyStage: 1 | 2 | 3 = 1;
+
+  get lapsusTypographyStageClass(): string {
+    return `lapsus-stage-${this.lapsusTypographyStage}`;
+  }
 
   @ViewChildren(PetSelectorComponent)
   petSelectors: QueryList<PetSelectorComponent>;
@@ -108,7 +116,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   randomDecisions: RandomDecisionCapture[] = [];
   randomOverrideError: string | null = null;
   randomDecisionSelectionByFingerprint: Record<string, string> = {};
-  private randomDecisionPartsCache = new Map<string, LogMessagePart[]>();
+  randomDecisionPartsCache = new Map<string, LogMessagePart[]>();
   currBattle: Battle;
   viewBattle: Battle;
   simulated = false;
@@ -175,14 +183,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private isLoadedFromUrl = false;
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
-  private fightAnimationTimer: ReturnType<typeof setTimeout> | null = null;
+  fightAnimationTimer: ReturnType<typeof setTimeout> | null = null;
   private formAutoSaveSubscription: Subscription | null = null;
 
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
   lastAutoSavedAt: Date | null = null;
   activePetSlot: { side: 'player' | 'opponent'; index: number } | null = null;
-  private petClipboard: Record<string, unknown> | null = null;
+  petClipboard: Record<string, unknown> | null = null;
 
   readonly trackByIndex = trackByIndexImpl;
   readonly trackByTeamId = trackByTeamIdImpl;
@@ -194,148 +202,37 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.battleViewMode = mode;
     this.cdr.markForCheck();
   };
-  readonly refreshFightAnimationFromViewBattle = () => {
-    this.pauseFightAnimation(false);
-    this.fightAnimationFrames = buildFightAnimationFrames(this.viewBattleLogs);
-    this.fightAnimationFrameIndex = this.fightAnimationFrames.length > 0 ? 0 : -1;
-    this.cdr.markForCheck();
-  };
-  readonly toggleFightAnimationPlayback = () => {
-    if (this.fightAnimationFrames.length === 0) {
-      return;
-    }
-    if (this.fightAnimationPlaying) {
-      this.pauseFightAnimation();
-      return;
-    }
-    this.playFightAnimation();
-  };
-  readonly resetFightAnimation = () => {
-    this.pauseFightAnimation(false);
-    if (this.fightAnimationFrames.length === 0) {
-      this.fightAnimationFrameIndex = -1;
-      this.cdr.markForCheck();
-      return;
-    }
-    this.fightAnimationFrameIndex = 0;
-    this.cdr.markForCheck();
-  };
-  readonly stepFightAnimation = (delta: number) => {
-    this.pauseFightAnimation(false);
-    if (this.fightAnimationFrames.length === 0) {
-      this.fightAnimationFrameIndex = -1;
-      this.cdr.markForCheck();
-      return;
-    }
-    const maxIndex = this.fightAnimationFrames.length - 1;
-    const normalizedDelta = Number.isFinite(delta) ? Math.trunc(delta) : 0;
-    const next = Math.min(
-      maxIndex,
-      Math.max(0, this.fightAnimationFrameIndex + normalizedDelta),
-    );
-    this.fightAnimationFrameIndex = next;
-    this.cdr.markForCheck();
-  };
-  readonly setFightAnimationSpeed = (speed: number) => {
-    const normalized = speed === 0.5 || speed === 2 ? speed : 1;
-    if (this.fightAnimationSpeed === normalized) {
-      return;
-    }
-    this.fightAnimationSpeed = normalized;
-    if (this.fightAnimationPlaying) {
-      this.scheduleFightAnimationTick();
-    }
-    this.cdr.markForCheck();
-  };
-  readonly onFightAnimationScrub = (rawValue: string | number) => {
-    if (this.fightAnimationFrames.length === 0) {
-      return;
-    }
-    const parsed = typeof rawValue === 'number' ? rawValue : Number(rawValue);
-    if (!Number.isFinite(parsed)) {
-      return;
-    }
-    this.pauseFightAnimation(false);
-    const maxIndex = this.fightAnimationFrames.length - 1;
-    this.fightAnimationFrameIndex = Math.min(
-      maxIndex,
-      Math.max(0, Math.trunc(parsed)),
-    );
-    this.cdr.markForCheck();
-  };
-  readonly isFightAttackerSlot = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): boolean => {
-    const impact = this.currentFightAnimationFrame?.impact;
-    if (!impact) {
-      return false;
-    }
-    return impact.attackerSide === side && impact.attackerSlot === slot;
-  };
-  readonly isFightTargetSlot = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): boolean => {
-    const impact = this.currentFightAnimationFrame?.impact;
-    if (!impact) {
-      return false;
-    }
-    return impact.targetSide === side && impact.targetSlot === slot;
-  };
+  readonly refreshFightAnimationFromViewBattle = () =>
+    refreshFightAnimationFromViewBattleImpl(this);
+  readonly toggleFightAnimationPlayback = () =>
+    toggleFightAnimationPlaybackImpl(this);
+  readonly resetFightAnimation = () => resetFightAnimationImpl(this);
+  readonly stepFightAnimation = (delta: number) =>
+    stepFightAnimationImpl(this, delta);
+  readonly setFightAnimationSpeed = (speed: number) =>
+    setFightAnimationSpeedImpl(this, speed);
+  readonly onFightAnimationScrub = (rawValue: string | number) =>
+    onFightAnimationScrubImpl(this, rawValue);
+  readonly isFightAttackerSlot = (side: 'player' | 'opponent', slot: number) =>
+    isFightAttackerSlotImpl(this, side, slot);
+  readonly isFightTargetSlot = (side: 'player' | 'opponent', slot: number) =>
+    isFightTargetSlotImpl(this, side, slot);
   readonly getFightPopupsForSlot = (
     side: 'player' | 'opponent',
     slot: number,
-  ): FightAnimationPopup[] => {
-    const popups = this.currentFightAnimationFrame?.popups ?? [];
-    return popups.filter((popup) => popup.side === side && popup.slot === slot);
-  };
-  readonly getFightPopupText = (popup: FightAnimationPopup): string => {
-    const absDelta = Math.abs(popup.delta);
-    const sign = popup.delta > 0 ? '+' : '-';
-    return `${sign}${absDelta}`;
-  };
-  readonly isFightDeathSlot = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): boolean => {
-    const death = this.currentFightAnimationFrame?.death;
-    if (!death) {
-      return false;
-    }
-    return death.side === side && death.slot === slot;
-  };
+  ): FightAnimationPopup[] => getFightPopupsForSlotImpl(this, side, slot);
+  readonly getFightPopupText = (popup: FightAnimationPopup): string =>
+    getFightPopupTextImpl(popup);
+  readonly isFightDeathSlot = (side: 'player' | 'opponent', slot: number) =>
+    isFightDeathSlotImpl(this, side, slot);
   readonly getFightDeathForSlot = (
     side: 'player' | 'opponent',
     slot: number,
-  ): FightAnimationDeath | null => {
-    const death = this.currentFightAnimationFrame?.death;
-    if (!death) {
-      return null;
-    }
-    if (death.side !== side || death.slot !== slot) {
-      return null;
-    }
-    return death;
-  };
-  readonly isFightShiftedSlot = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): boolean => {
-    const shifts = this.currentFightAnimationFrame?.shifts ?? [];
-    return shifts.some((shift) => shift.side === side && shift.slot === slot);
-  };
-  readonly getFightShiftSteps = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): number => {
-    const shifts = this.currentFightAnimationFrame?.shifts ?? [];
-    const shift = shifts.find((item) => item.side === side && item.slot === slot);
-    if (!shift) {
-      return 0;
-    }
-    return Math.max(1, shift.fromSlot - shift.slot);
-  };
+  ): FightAnimationDeath | null => getFightDeathForSlotImpl(this, side, slot);
+  readonly isFightShiftedSlot = (side: 'player' | 'opponent', slot: number) =>
+    isFightShiftedSlotImpl(this, side, slot);
+  readonly getFightShiftSteps = (side: 'player' | 'opponent', slot: number) =>
+    getFightShiftStepsImpl(this, side, slot);
 
   constructor(
     public logService: LogService,
@@ -359,24 +256,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
     this.initFormGroup();
-    // this.loadLocalStorage();
-    // this.initApp();
-    // this.initGameApi();
-    // this.setDayNight();
-
-    // get the end of url
-    // let url = window.location.href;
-    // let urlSplit = url.split('/');
-    // let lastUrl = urlSplit[urlSplit.length - 1];
-    // let code = decodeURIComponent((lastUrl + '').replace(/\+/g, '%20'));;
-    // // remove ?code= from string
-    // code = code.replace('?code=', '');
-    // if (code) {
-    //   this.api = true;
-    //   this.loadCalculatorFromValue(JSON.parse(code));
-    //   this.simulate();
-    //   this.buildApiResponse();
-    // }
     const apiState = this.urlStateService.parseApiStateFromUrl();
     if (apiState.state) {
       this.api = true;
@@ -481,34 +360,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('document:keydown', ['$event'])
   handlePetSlotClipboardShortcuts(event: KeyboardEvent): void {
-    if (this.api || !this.formGroup) {
-      return;
-    }
-    if (!(event.ctrlKey || event.metaKey) || event.altKey) {
-      return;
-    }
-    if (this.isEditableTarget(event.target)) {
-      return;
-    }
-
-    const key = event.key.toLowerCase();
-    if (key === 'c') {
-      if (this.copyActivePet(false)) {
-        event.preventDefault();
-      }
-      return;
-    }
-    if (key === 'x') {
-      if (this.copyActivePet(true)) {
-        event.preventDefault();
-      }
-      return;
-    }
-    if (key === 'v') {
-      if (this.pasteToActivePet()) {
-        event.preventDefault();
-      }
-    }
+    handlePetSlotClipboardShortcutsImpl(this, event);
   }
 
   initFormGroup() {
@@ -584,188 +436,28 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   };
   readonly markForCheck = () => this.cdr.markForCheck();
 
-  readonly captureRandomEvents = () => {
-    if (this.simulationInProgress) {
-      return;
-    }
-    this.runSimulation(1, {
-      logsEnabled: true,
-      simulationCount: 1,
-      maxLoggedBattles: 1,
-      captureRandomDecisions: true,
-      randomDecisionOverrides: [],
-      strictRandomOverrideValidation: true,
-    });
-    this.syncRandomDecisionSelectionMap(this.randomDecisions, []);
-    if (this.randomDecisions.length === 0) {
-      this.setStatus('No random decisions captured in this battle.', 'error');
-      return;
-    }
-    this.setStatus(
-      `Captured ${this.randomDecisions.length} random decision(s).`,
-      'success',
-    );
-  };
+  readonly captureRandomEvents = () => captureRandomEventsImpl(this);
 
-  readonly clearRandomOverrides = () => {
-    this.randomDecisionSelectionByFingerprint = {};
-    this.randomDecisions = [];
-    this.randomOverrideError = null;
-    this.markForCheck();
-  };
+  readonly clearRandomOverrides = () => clearRandomOverridesImpl(this);
 
-  readonly runForcedRandomSimulation = () => {
-    if (this.simulationInProgress) {
-      return;
-    }
-    const previousDecisions = [...this.randomDecisions];
-    const overrides = this.buildRandomDecisionOverrides();
-    this.runSimulation(1, {
-      logsEnabled: true,
-      simulationCount: 1,
-      maxLoggedBattles: 1,
-      captureRandomDecisions: true,
-      randomDecisionOverrides: overrides,
-      strictRandomOverrideValidation: false,
-    });
-    this.syncRandomDecisionSelectionMap(this.randomDecisions, previousDecisions);
-    if (this.randomOverrideError) {
-      this.setStatus(this.randomOverrideError, 'error');
-      return;
-    }
-    this.setStatus('Forced simulation completed.', 'success');
-  };
+  readonly runForcedRandomSimulation = () => runForcedRandomSimulationImpl(this);
 
   readonly onRandomDecisionChoiceChanged = (
     decision: RandomDecisionCapture,
     optionId: string,
-  ) => {
-    const fingerprint = this.getDecisionFingerprint(decision);
-    this.randomDecisionSelectionByFingerprint = {
-      ...this.randomDecisionSelectionByFingerprint,
-      [fingerprint]: optionId,
-    };
-    this.refreshConditionalRandomDecisions();
-  };
-
-  private refreshConditionalRandomDecisions(): void {
-    if (this.simulationInProgress || this.randomDecisions.length === 0) {
-      return;
-    }
-    const previousDecisions = [...this.randomDecisions];
-    const overrides = this.buildRandomDecisionOverrides();
-    this.runSimulation(1, {
-      logsEnabled: true,
-      simulationCount: 1,
-      maxLoggedBattles: 1,
-      captureRandomDecisions: true,
-      randomDecisionOverrides: overrides,
-      strictRandomOverrideValidation: false,
-    });
-    this.syncRandomDecisionSelectionMap(this.randomDecisions, previousDecisions);
-  }
-
-  private buildRandomDecisionOverrides(): RandomDecisionOverride[] {
-    const overrides: RandomDecisionOverride[] = [];
-    for (const decision of this.randomDecisions) {
-        const selected = this.getSelectedRandomDecisionOptionId(decision);
-        if (!selected) {
-          continue;
-        }
-        overrides.push({
-          index: decision.index,
-          optionId: selected,
-          key: decision.key,
-          label: decision.label,
-        });
-    }
-    return overrides;
-  }
-
-  private getDecisionFingerprint(decision: RandomDecisionCapture): string {
-    return `${decision.key}::${decision.label}`;
-  }
+  ) => onRandomDecisionChoiceChangedImpl(this, decision, optionId);
 
   readonly getRandomDecisionLabelParts = (
     decision: RandomDecisionCapture,
-  ): LogMessagePart[] => {
-    const key = `label:${decision.key}:${decision.label}`;
-    const cached = this.randomDecisionPartsCache.get(key);
-    if (cached) {
-      return cached;
-    }
-    const parts = decorateRandomDecisionTextParts(decision.label);
-    this.randomDecisionPartsCache.set(key, parts);
-    return parts;
-  };
+  ): LogMessagePart[] => getRandomDecisionLabelPartsImpl(this, decision);
 
   readonly getRandomDecisionSelectedOptionParts = (
     decision: RandomDecisionCapture,
-  ): LogMessagePart[] => {
-    const selectedId = this.getSelectedRandomDecisionOptionId(decision);
-    const selectedOption =
-      decision.options.find((option) => option.id === selectedId) ??
-      decision.options[0];
-    const optionLabel = selectedOption?.label ?? '';
-    const key = `option:${decision.key}:${optionLabel}`;
-    const cached = this.randomDecisionPartsCache.get(key);
-    if (cached) {
-      return cached;
-    }
-    const parts = decorateRandomDecisionTextParts(optionLabel);
-    this.randomDecisionPartsCache.set(key, parts);
-    return parts;
-  };
+  ): LogMessagePart[] => getRandomDecisionSelectedOptionPartsImpl(this, decision);
 
   readonly getSelectedRandomDecisionOptionId = (
     decision: RandomDecisionCapture,
-  ): string => {
-    const fingerprint = this.getDecisionFingerprint(decision);
-    const selected =
-      this.randomDecisionSelectionByFingerprint[fingerprint] ??
-      decision.selectedOptionId ??
-      decision.options[0]?.id ??
-      '';
-    if (!decision.options.some((option) => option.id === selected)) {
-      return decision.selectedOptionId ?? decision.options[0]?.id ?? '';
-    }
-    return selected;
-  };
-
-  private syncRandomDecisionSelectionMap(
-    nextDecisions: RandomDecisionCapture[],
-    previousDecisions: RandomDecisionCapture[],
-  ): void {
-    const previousByFingerprint = new Map<string, string>(
-      Object.entries(this.randomDecisionSelectionByFingerprint),
-    );
-    for (const decision of previousDecisions) {
-      const fingerprint = this.getDecisionFingerprint(decision);
-      const value = previousByFingerprint.get(fingerprint) ?? decision.selectedOptionId ?? null;
-      if (!value) {
-        continue;
-      }
-      previousByFingerprint.set(fingerprint, value);
-    }
-
-    const nextMap: Record<string, string> = {};
-    for (const decision of nextDecisions) {
-      const fingerprint = this.getDecisionFingerprint(decision);
-      const fromPrevious = previousByFingerprint.get(
-        fingerprint,
-      );
-      const fallback = decision.selectedOptionId ?? decision.options[0]?.id ?? '';
-      const candidate = fromPrevious ?? fallback;
-      if (!decision.options.some((option) => option.id === candidate)) {
-        if (fallback) {
-          nextMap[fingerprint] = fallback;
-        }
-        continue;
-      }
-      nextMap[fingerprint] = candidate;
-    }
-    this.randomDecisionSelectionByFingerprint = nextMap;
-  }
+  ): string => getSelectedRandomDecisionOptionIdImpl(this, decision);
 
   get logs() {
     return this.logService.getLogs();
@@ -911,179 +603,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     removeHardToyImpl(this, side);
   readonly getToyIconPath = getToyIconPathValueImpl;
 
-  private copyActivePet(cut: boolean): boolean {
-    if (!this.activePetSlot) {
-      this.setStatus('Select a pet slot first.', 'error');
-      return false;
-    }
-
-    const selector = this.findPetSelector(
-      this.activePetSlot.side,
-      this.activePetSlot.index,
-    );
-    if (!selector) {
-      this.setStatus('Could not access selected pet slot.', 'error');
-      return false;
-    }
-
-    const sourceValue = selector.formGroup?.getRawValue?.() as
-      | Record<string, unknown>
-      | null
-      | undefined;
-    if (!sourceValue?.name) {
-      this.setStatus('Selected slot is empty.', 'error');
-      return false;
-    }
-
-    this.petClipboard = JSON.parse(JSON.stringify(sourceValue)) as Record<
-      string,
-      unknown
-    >;
-
-    if (cut) {
-      selector.removePet();
-      this.setStatus('Pet cut.', 'success');
-    } else {
-      this.setStatus('Pet copied.', 'success');
-    }
-    return true;
-  }
-
-  private pasteToActivePet(): boolean {
-    if (!this.activePetSlot) {
-      this.setStatus('Select a pet slot first.', 'error');
-      return false;
-    }
-    if (!this.petClipboard?.name) {
-      this.setStatus('Nothing copied yet.', 'error');
-      return false;
-    }
-
-    const selector = this.findPetSelector(
-      this.activePetSlot.side,
-      this.activePetSlot.index,
-    );
-    if (!selector) {
-      this.setStatus('Could not access selected pet slot.', 'error');
-      return false;
-    }
-
-    const payload = JSON.parse(JSON.stringify(this.petClipboard)) as Record<
-      string,
-      unknown
-    >;
-    selector.removePet();
-    for (const [key, value] of Object.entries(payload)) {
-      const control = selector.formGroup?.get(key);
-      if (control) {
-        control.setValue(value, { emitEvent: false });
-      }
-    }
-    selector.substitutePet(false);
-    selector.fixLoadEquipment();
-    this.setStatus('Pet pasted.', 'success');
-    return true;
-  }
-
-  private findPetSelector(
-    side: 'player' | 'opponent',
-    index: number,
-  ): PetSelectorComponent | null {
-    const targetPlayer = side === 'player' ? this.player : this.opponent;
-    return (
-      this.petSelectors
-        ?.toArray()
-        ?.find(
-          (selector) =>
-            selector.player === targetPlayer && selector.index === index,
-        ) ?? null
-    );
-  }
-
-  private isEditableTarget(target: EventTarget | null): boolean {
-    const element = target as HTMLElement | null;
-    if (!element) {
-      return false;
-    }
-    if (element.isContentEditable) {
-      return true;
-    }
-    const tagName = element.tagName;
-    return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT';
-  }
-
-  private playFightAnimation(): void {
-    if (this.fightAnimationFrames.length === 0) {
-      this.fightAnimationFrameIndex = -1;
-      this.fightAnimationPlaying = false;
-      this.clearFightAnimationTimer();
-      this.cdr.markForCheck();
-      return;
-    }
-
-    const maxIndex = this.fightAnimationFrames.length - 1;
-    if (this.fightAnimationFrameIndex < 0 || this.fightAnimationFrameIndex > maxIndex) {
-      this.fightAnimationFrameIndex = 0;
-    }
-    if (this.fightAnimationFrameIndex >= maxIndex) {
-      this.fightAnimationFrameIndex = 0;
-    }
-
-    this.fightAnimationPlaying = true;
-    this.scheduleFightAnimationTick();
-    this.cdr.markForCheck();
-  }
-
-  private pauseFightAnimation(markForCheck: boolean = true): void {
-    this.fightAnimationPlaying = false;
-    this.clearFightAnimationTimer();
-    if (markForCheck) {
-      this.cdr.markForCheck();
-    }
-  }
-
-  private scheduleFightAnimationTick(): void {
-    this.clearFightAnimationTimer();
-    if (!this.fightAnimationPlaying) {
-      return;
-    }
-    const intervalMs = Math.max(120, Math.round(700 / this.fightAnimationSpeed));
-    this.fightAnimationTimer = setTimeout(() => {
-      this.fightAnimationTimer = null;
-      this.advanceFightAnimationTick();
-    }, intervalMs);
-  }
-
-  private advanceFightAnimationTick(): void {
-    if (!this.fightAnimationPlaying || this.fightAnimationFrames.length === 0) {
-      this.pauseFightAnimation(false);
-      return;
-    }
-    const maxIndex = this.fightAnimationFrames.length - 1;
-    if (this.fightAnimationFrameIndex >= maxIndex) {
-      this.pauseFightAnimation();
-      return;
-    }
-    this.fightAnimationFrameIndex += 1;
-    this.cdr.markForCheck();
-    this.scheduleFightAnimationTick();
-  }
-
   private clearFightAnimationTimer(): void {
-    if (!this.fightAnimationTimer) {
-      return;
-    }
-    clearTimeout(this.fightAnimationTimer);
-    this.fightAnimationTimer = null;
+    clearFightAnimationTimerImpl(this);
   }
 
   setStatus(message: string, tone: 'success' | 'error' = 'success') {
     this.statusMessage = message;
     this.statusTone = tone;
     this.cdr.markForCheck();
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-    }
+    this.clearStatusTimer();
     this.statusTimer = setTimeout(() => {
       this.statusMessage = '';
       this.statusTimer = null;
@@ -1092,12 +620,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   clearStatus() {
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-      this.statusTimer = null;
-    }
+    this.clearStatusTimer();
     this.statusMessage = '';
     this.cdr.markForCheck();
+  }
+
+  private clearStatusTimer(): void {
+    if (!this.statusTimer) {
+      return;
+    }
+    clearTimeout(this.statusTimer);
+    this.statusTimer = null;
   }
 }
 

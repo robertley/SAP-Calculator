@@ -68,7 +68,7 @@ export class SunfishAbility extends Ability {
     }
 
     for (const target of targets) {
-      owner.dealDamage(target, damage);
+      owner.snipePet(target, damage);
     }
 
     const names = targets.map((pet) => pet.name).join(', ');

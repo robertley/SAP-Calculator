@@ -431,20 +431,22 @@ function applyTransformMutation(
   if (transform.transformedName) {
     setSlotPet(targetRef.value, transform.transformedName);
   }
-  const previousAttack = targetRef.value.attack;
-  if (transform.attack != null) {
-    targetRef.value.attack = transform.attack;
-    const appliedDelta =
-      previousAttack != null ? transform.attack - previousAttack : 0;
-    pushStatPopup(popups, targetRef.side, targetRef.slot, 'attack', appliedDelta);
-  }
-  const previousHealth = targetRef.value.health;
-  if (transform.health != null) {
-    targetRef.value.health = transform.health;
-    const appliedDelta =
-      previousHealth != null ? transform.health - previousHealth : 0;
-    pushStatPopup(popups, targetRef.side, targetRef.slot, 'health', appliedDelta);
-  }
+  applyAbsoluteStatChange(
+    targetRef.value,
+    popups,
+    targetRef.side,
+    targetRef.slot,
+    'attack',
+    transform.attack,
+  );
+  applyAbsoluteStatChange(
+    targetRef.value,
+    popups,
+    targetRef.side,
+    targetRef.slot,
+    'health',
+    transform.health,
+  );
   if (transform.equipmentName) {
     setSlotEquipment(targetRef.value, transform.equipmentName);
   }
@@ -487,24 +489,65 @@ function applyStatMutation(
     return;
   }
 
-  if (statChange.attackDelta !== 0) {
-    const previousAttack = targetRef.value.attack ?? 0;
-    targetRef.value.attack = Math.max(
-      0,
-      previousAttack + statChange.attackDelta,
-    );
-    const appliedDelta = targetRef.value.attack - previousAttack;
-    pushStatPopup(popups, targetRef.side, targetRef.slot, 'attack', appliedDelta);
+  applyDeltaStatChange(
+    targetRef.value,
+    popups,
+    targetRef.side,
+    targetRef.slot,
+    'attack',
+    statChange.attackDelta,
+  );
+  applyDeltaStatChange(
+    targetRef.value,
+    popups,
+    targetRef.side,
+    targetRef.slot,
+    'health',
+    statChange.healthDelta,
+  );
+}
+
+function applyAbsoluteStatChange(
+  slot: FightAnimationSlot,
+  popups: FightAnimationPopup[],
+  side: FightSide,
+  slotIndex: number,
+  type: 'attack' | 'health',
+  value: number | null,
+): void {
+  if (value == null) {
+    return;
   }
-  if (statChange.healthDelta !== 0) {
-    const previousHealth = targetRef.value.health ?? 0;
-    targetRef.value.health = Math.max(
-      0,
-      previousHealth + statChange.healthDelta,
-    );
-    const appliedDelta = targetRef.value.health - previousHealth;
-    pushStatPopup(popups, targetRef.side, targetRef.slot, 'health', appliedDelta);
+  const previous = type === 'attack' ? slot.attack : slot.health;
+  if (type === 'attack') {
+    slot.attack = value;
+  } else {
+    slot.health = value;
   }
+  const appliedDelta = previous != null ? value - previous : 0;
+  pushStatPopup(popups, side, slotIndex, type, appliedDelta);
+}
+
+function applyDeltaStatChange(
+  slot: FightAnimationSlot,
+  popups: FightAnimationPopup[],
+  side: FightSide,
+  slotIndex: number,
+  type: 'attack' | 'health',
+  delta: number,
+): void {
+  if (delta === 0) {
+    return;
+  }
+
+  const previous = type === 'attack' ? (slot.attack ?? 0) : (slot.health ?? 0);
+  const next = Math.max(0, previous + delta);
+  if (type === 'attack') {
+    slot.attack = next;
+  } else {
+    slot.health = next;
+  }
+  pushStatPopup(popups, side, slotIndex, type, next - previous);
 }
 
 function pushStatPopup(
@@ -991,40 +1034,28 @@ function resolveSlotRef(
 }
 
 function getLogPrimarySide(log: Log): FightSide {
-  if (log.player?.isOpponent === true) {
-    return 'opponent';
-  }
-  if (log.player?.isOpponent === false) {
-    return 'player';
-  }
-  if (log.playerIsOpponent === true) {
-    return 'opponent';
-  }
-  if (log.playerIsOpponent === false) {
-    return 'player';
-  }
-  const sourceSide = log.sourcePet?.parent?.isOpponent;
-  if (sourceSide === true) {
-    return 'opponent';
-  }
-  if (sourceSide === false) {
-    return 'player';
-  }
-  return 'player';
+  return (
+    resolveSideFromIsOpponent(log.player?.isOpponent) ??
+    resolveSideFromIsOpponent(log.playerIsOpponent) ??
+    resolveSideFromIsOpponent(log.sourcePet?.parent?.isOpponent) ??
+    'player'
+  );
 }
 
 function getLogTargetSide(log: Log): FightSide | null {
-  const targetSide = log.targetPet?.parent?.isOpponent;
-  if (targetSide === true) {
+  return (
+    resolveSideFromIsOpponent(log.targetPet?.parent?.isOpponent) ??
+    resolveSideFromIsOpponent(log.targetIsOpponent)
+  );
+}
+
+function resolveSideFromIsOpponent(
+  isOpponent: boolean | null | undefined,
+): FightSide | null {
+  if (isOpponent === true) {
     return 'opponent';
   }
-  if (targetSide === false) {
-    return 'player';
-  }
-  if (log.targetIsOpponent === true) {
-    return 'opponent';
-  }
-  if (log.targetIsOpponent === false) {
+  if (isOpponent === false) {
     return 'player';
   }
   return null;

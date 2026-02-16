@@ -74,6 +74,7 @@ export class DarwinsFoxAbility extends Ability {
       owner.jumpAttackPrep(target);
       owner.jumpAttack(target, tiger, undefined, targetResp.random);
     }
+
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);
   }

@@ -98,6 +98,7 @@ export class AbominationAbility extends Ability {
       level: number;
       timesHurt: number;
       belugaSwallowedPet?: string | null;
+      sarcasticFringeheadSwallowedPet?: string | null;
       parrotCopyPet?: string | null;
       parrotCopyPetBelugaSwallowedPet?: string | null;
     };
@@ -122,6 +123,12 @@ export class AbominationAbility extends Ability {
           nestedFields.belugaSwallowedPet,
           null,
         );
+        config[parrotCopySlotFields.sarcasticFringeheadSwallowedPet] =
+          readPetMemoryString(
+            owner,
+            nestedFields.sarcasticFringeheadSwallowedPet,
+            null,
+          );
         config[parrotCopySlotFields.level] = readPetMemoryNumber(
           owner,
           nestedFields.level,
@@ -148,6 +155,8 @@ export class AbominationAbility extends Ability {
         config[slotFields.base] = source[slotFields.base] ?? undefined;
         config[slotFields.belugaSwallowedPet] =
           source[slotFields.belugaSwallowedPet] ?? undefined;
+        config[slotFields.sarcasticFringeheadSwallowedPet] =
+          source[slotFields.sarcasticFringeheadSwallowedPet] ?? undefined;
         config[slotFields.level] = source[slotFields.level] ?? undefined;
         config[slotFields.timesHurt] = source[slotFields.timesHurt] ?? undefined;
       }
@@ -163,6 +172,11 @@ export class AbominationAbility extends Ability {
         belugaSwallowedPet: readPetMemoryString(
           owner,
           slotFields.belugaSwallowedPet,
+          null,
+        ),
+        sarcasticFringeheadSwallowedPet: readPetMemoryString(
+          owner,
+          slotFields.sarcasticFringeheadSwallowedPet,
           null,
         ),
         parrotCopyPet: readPetMemoryString(
@@ -200,6 +214,15 @@ export class AbominationAbility extends Ability {
           owner,
           slotFields.belugaSwallowedPet,
           readPetMemoryString(source, slotFields.belugaSwallowedPet, null),
+        );
+        writePetMemoryString(
+          owner,
+          slotFields.sarcasticFringeheadSwallowedPet,
+          readPetMemoryString(
+            source,
+            slotFields.sarcasticFringeheadSwallowedPet,
+            null,
+          ),
         );
         writePetMemoryNumber(
           owner,
@@ -247,6 +270,14 @@ export class AbominationAbility extends Ability {
             ? (readPetMemoryString(swallowedPet, 'belugaSwallowedPet', null) ??
               undefined)
             : undefined,
+        sarcasticFringeheadSwallowedPet:
+          swallowedName === 'Sarcastic Fringehead'
+            ? (readPetMemoryString(
+                swallowedPet,
+                'sarcasticFringeheadSwallowedPet',
+                null,
+              ) ?? undefined)
+            : undefined,
         parrotCopyPet:
           swallowedName === 'Parrot'
             ? (readPetMemoryString(swallowedPet, 'parrotCopyPet', null) ??
@@ -270,6 +301,11 @@ export class AbominationAbility extends Ability {
 
       if (swallowedName === 'Beluga Whale') {
         owner.belugaSwallowedPet = swallowedPet.belugaSwallowedPet ?? null;
+      }
+
+      if (swallowedName === 'Sarcastic Fringehead') {
+        owner.sarcasticFringeheadSwallowedPet =
+          swallowedPet.sarcasticFringeheadSwallowedPet ?? null;
       }
 
       if (swallowedName === 'Parrot') {

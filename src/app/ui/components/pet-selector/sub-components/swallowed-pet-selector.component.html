@@ -60,6 +60,22 @@
                         </button>
                     </div>
 
+                    <!-- Sarcastic Fringehead inside Abomination -->
+                    <div class="nested-selection mb-2"
+                        *ngIf="formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Sarcastic Fringehead'">
+                        <label class="swallowed-label-small">Swallowed by Fringehead</label>
+                        <button type="button" class="btn selection-btn btn-sm w-100 d-flex align-items-center"
+                            (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination-sarcastic')">
+                            <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'SarcasticFringeheadSwallowedPet')?.value)"
+                                class="selection-icon"
+                                [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'SarcasticFringeheadSwallowedPet')?.value)!"
+                                width="20" height="20" loading="lazy" decoding="async" alt="Fringehead Swallowed Pet" />
+                            <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1) +
+                                'SarcasticFringeheadSwallowedPet')?.value || 'None' }}</span>
+                            <i class="fas fa-chevron-down ms-auto"></i>
+                        </button>
+                    </div>
+
                     <!-- Parrot inside Abomination -->
                     <div class="nested-selection"
                         *ngIf="formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Parrot'">

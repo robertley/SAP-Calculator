@@ -18,6 +18,11 @@ import { getRandomFloat } from 'app/runtime/random';
   providedIn: 'root',
 })
 export class AbilityQueueService {
+  private static readonly BEFORE_ATTACK_PRIORITY_BONUS = 20000;
+  private static readonly FRIENDLY_GAINS_PERK_SELF_PRIORITY_BONUS = 10000;
+  private static readonly CHURROS_PRIORITY_OFFSET = 1000;
+  private static readonly MACARON_PRIORITY_OFFSET = -1000;
+
   public globalEventQueue: AbilityEvent[] = [];
   private numberedTriggerCache = new WeakMap<
     Pet,
@@ -34,46 +39,48 @@ export class AbilityQueueService {
   // --- Queue Management ---
 
   addEventToQueue(event: AbilityEvent) {
-    // Set priority based on ability type
-    const abilityPriority = this.getAbilityPriority(event.abilityType);
-
     // Assign random tie breaker if not already set
     event.tieBreaker = getRandomFloat();
 
-    // Binary search to find insertion point (Descending priority)
+    const insertionIndex = this.findEventInsertionIndex(event);
+    this.globalEventQueue.splice(insertionIndex, 0, event);
+  }
+
+  private findEventInsertionIndex(event: AbilityEvent): number {
     let left = 0;
     let right = this.globalEventQueue.length;
 
     while (left < right) {
       const mid = Math.floor((left + right) / 2);
       const midEvent = this.globalEventQueue[mid];
-      const midAbilityPriority = this.getAbilityPriority(midEvent.abilityType);
+      const compareResult = this.compareEventsForQueueOrder(event, midEvent);
 
-      // Compare ability type priority first
-      if (abilityPriority < midAbilityPriority) {
+      if (compareResult < 0) {
         right = mid;
-      } else if (abilityPriority > midAbilityPriority) {
-        left = mid + 1;
       } else {
-        // Same ability type priority, compare individual event priority (higher = first)
-        if (event.priority > midEvent.priority) {
-          right = mid;
-        } else if (event.priority < midEvent.priority) {
-          left = mid + 1;
-        } else {
-          // Same priority - use random tie breaker (lower tieBreaker = first)
-          const eventTieBreaker = event.tieBreaker ?? 0;
-          const midTieBreaker = midEvent.tieBreaker ?? 0;
-          if (eventTieBreaker < midTieBreaker) {
-            right = mid;
-          } else {
-            left = mid + 1;
-          }
-        }
+        left = mid + 1;
       }
     }
 
-    this.globalEventQueue.splice(left, 0, event);
+    return left;
+  }
+
+  private compareEventsForQueueOrder(a: AbilityEvent, b: AbilityEvent): number {
+    const abilityPriorityDiff =
+      this.getAbilityPriority(a.abilityType) -
+      this.getAbilityPriority(b.abilityType);
+    if (abilityPriorityDiff !== 0) {
+      return abilityPriorityDiff;
+    }
+
+    const eventPriorityDiff = b.priority - a.priority;
+    if (eventPriorityDiff !== 0) {
+      return eventPriorityDiff;
+    }
+
+    const aTieBreaker = a.tieBreaker ?? 0;
+    const bTieBreaker = b.tieBreaker ?? 0;
+    return aTieBreaker - bTieBreaker;
   }
 
   clearGlobalEventQueue() {
@@ -115,8 +122,8 @@ export class AbilityQueueService {
     if (direct != null) {
       return direct;
     }
-    if (/\d+$/.test(trigger)) {
-      const baseTrigger = trigger.replace(/\d+$/, '');
+    const baseTrigger = this.removeNumericSuffix(trigger);
+    if (baseTrigger !== trigger) {
       const basePriority = ABILITY_PRIORITIES[baseTrigger];
       if (basePriority != null) {
         return basePriority;
@@ -133,9 +140,9 @@ export class AbilityQueueService {
   getPetEventPriority(pet: Pet): number {
     let priority = pet.attack;
     if (pet.equipment?.name === 'Churros') {
-      priority += 1000;
+      priority += AbilityQueueService.CHURROS_PRIORITY_OFFSET;
     } else if (pet.equipment?.name === 'Macaron') {
-      priority -= 1000;
+      priority += AbilityQueueService.MACARON_PRIORITY_OFFSET;
     }
     return priority;
   }
@@ -150,9 +157,13 @@ export class AbilityQueueService {
   ): void {
     if (pet.hasTrigger(trigger)) {
       let eventPriority = this.getPetEventPriority(pet);
+      if (trigger === 'BeforeThisAttacks' || trigger === 'BeforeFirstAttack') {
+        eventPriority += AbilityQueueService.BEFORE_ATTACK_PRIORITY_BONUS;
+      }
       // Perk-self events should resolve before ally perk events for FriendlyGainsPerk users.
       if (trigger === 'FriendlyGainsPerk' && pet === triggerPet) {
-        eventPriority += 10000;
+        eventPriority +=
+          AbilityQueueService.FRIENDLY_GAINS_PERK_SELF_PRIORITY_BONUS;
       }
 
       const eventCustomParams = {
@@ -205,9 +216,9 @@ export class AbilityQueueService {
   }
 
   getTriggerModulo(trigger: AbilityTrigger): number | null {
-    const match = trigger.match(/(\d+)$/);
+    const match = this.getNumericSuffix(trigger);
     if (match) {
-      return parseInt(match[1], 10);
+      return parseInt(match, 10);
     }
     return null;
   }
@@ -218,15 +229,13 @@ export class AbilityQueueService {
     customParams: AbilityCustomParams | undefined,
     triggers: AbilityTrigger[],
   ): void {
-    const counters = triggers
-      .map((trigger) => ({
-        trigger,
-        modulo: this.getTriggerModulo(trigger),
-      }))
-      .filter(
-        (counter): counter is { trigger: AbilityTrigger; modulo: number } =>
-          counter.modulo != null,
-      );
+    const counters: Array<{ trigger: AbilityTrigger; modulo: number }> = [];
+    for (const trigger of triggers) {
+      const modulo = this.getTriggerModulo(trigger);
+      if (modulo != null) {
+        counters.push({ trigger, modulo });
+      }
+    }
 
     if (counters.length === 0) {
       return;
@@ -274,6 +283,15 @@ export class AbilityQueueService {
     const result = Array.from(triggers);
     cache.prefixMap.set(prefix, result);
     return result;
+  }
+
+  private getNumericSuffix(value: string): string | null {
+    const match = value.match(/(\d+)$/);
+    return match ? match[1] : null;
+  }
+
+  private removeNumericSuffix(value: string): string {
+    return this.getNumericSuffix(value) ? value.replace(/\d+$/, '') : value;
   }
 
   public getTeam(petOrPlayer?: Pet | Player | null): Pet[] {
