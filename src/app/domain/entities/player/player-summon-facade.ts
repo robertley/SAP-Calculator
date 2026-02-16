@@ -1,6 +1,3 @@
-import { AbilityService } from 'app/integrations/ability/ability.service';
-import { LogService } from 'app/integrations/log.service';
-import { GameService } from 'app/runtime/state/game.service';
 import { Pet } from '../pet.class';
 import type { PlayerLike } from './player-like.types';
 import { PlayerTrumpetFacade } from './player-trumpet-facade';

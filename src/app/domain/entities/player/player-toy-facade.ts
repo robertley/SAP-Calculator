@@ -1,5 +1,3 @@
-import { AbilityService } from 'app/integrations/ability/ability.service';
-import { LogService } from 'app/integrations/log.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { Toy } from '../toy.class';
 import type { PlayerLike } from './player-like.types';

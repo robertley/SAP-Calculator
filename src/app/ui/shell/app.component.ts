@@ -10,7 +10,6 @@ import { Battle } from 'app/domain/interfaces/battle.interface';
 import { Log } from 'app/domain/interfaces/log.interface';
 import {
   RandomDecisionCapture,
-  RandomDecisionOverride,
   SimulationConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
 import { LogService } from 'app/integrations/log.service';
@@ -37,12 +36,10 @@ import { BATTLE_BACKGROUNDS, LOG_FILTER_TABS } from './view/app.ui.constants';
 import { loadTeamPreset, saveTeamPreset } from './state/app.component.teams';
 import { InjectorService } from 'app/integrations/injector.service';
 import { BattleDiffScope, BattleDiffRow, BattleDiffSummary, BattleTimelineRow, buildApiResponse as buildApiResponseImpl, refreshBattleDiff as refreshBattleDiffImpl, getDrawPercent as getDrawPercentImpl, getDrawWidth as getDrawWidthImpl, getLosePercent as getLosePercentImpl, getLoseWidth as getLoseWidthImpl, getWinPercent as getWinPercentImpl, LogMessagePart, optimizePositioning as optimizePositioningImpl, refreshFilteredBattles as refreshFilteredBattlesImpl, refreshViewBattleTimeline as refreshViewBattleTimelineImpl, refreshViewBattleLogRows as refreshViewBattleLogRowsImpl, runSimulation as runSimulationImpl, cancelSimulation as cancelSimulationImpl, setBattleDiffLeft as setBattleDiffLeftImpl, setBattleDiffLeftScope as setBattleDiffLeftScopeImpl, setBattleDiffRight as setBattleDiffRightImpl, setBattleDiffRightScope as setBattleDiffRightScopeImpl, setViewBattle as setViewBattleImpl, simulate as simulateImpl, } from './simulation/app.component.simulation';
-import { decorateRandomDecisionTextParts } from './simulation/random-decision-decorate';
 import {
   FightAnimationDeath,
   FightAnimationFrame,
   FightAnimationPopup,
-  buildFightAnimationFrames,
 } from './simulation/app.component.fight-animation';
 import { clearFightAnimationTimer as clearFightAnimationTimerImpl, getFightDeathForSlot as getFightDeathForSlotImpl, getFightPopupText as getFightPopupTextImpl, getFightPopupsForSlot as getFightPopupsForSlotImpl, getFightShiftSteps as getFightShiftStepsImpl, isFightAttackerSlot as isFightAttackerSlotImpl, isFightDeathSlot as isFightDeathSlotImpl, isFightShiftedSlot as isFightShiftedSlotImpl, isFightTargetSlot as isFightTargetSlotImpl, onFightAnimationScrub as onFightAnimationScrubImpl, refreshFightAnimationFromViewBattle as refreshFightAnimationFromViewBattleImpl, resetFightAnimation as resetFightAnimationImpl, setFightAnimationSpeed as setFightAnimationSpeedImpl, stepFightAnimation as stepFightAnimationImpl, toggleFightAnimationPlayback as toggleFightAnimationPlaybackImpl, } from './simulation/app.component.fight-animation-controls';
 import { captureRandomEvents as captureRandomEventsImpl, clearRandomOverrides as clearRandomOverridesImpl, getRandomDecisionLabelParts as getRandomDecisionLabelPartsImpl, getRandomDecisionSelectedOptionParts as getRandomDecisionSelectedOptionPartsImpl, getSelectedRandomDecisionOptionId as getSelectedRandomDecisionOptionIdImpl, onRandomDecisionChoiceChanged as onRandomDecisionChoiceChangedImpl, runForcedRandomSimulation as runForcedRandomSimulationImpl, } from './simulation/app.component.random-decisions';
