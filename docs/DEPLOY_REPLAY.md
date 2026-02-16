@@ -4,7 +4,7 @@ This guide sets up the replay backend so teammates can use replay import without
 
 ## What this enables
 
-- Frontend calls to `/api/health` and `/api/replay-battle` work from your hosted calculator.
+- Frontend calls to `/api/health`, `/api/replays/:id/turns`, and `/api/replay-battle` work from your hosted calculator.
 - Teammates only open the site; no local replay server needed.
 
 ## Prerequisites

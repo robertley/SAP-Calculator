@@ -106,8 +106,11 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
       return;
     }
 
-    const baseMultiplier =
-      this.equipment.baseMultiplier ?? this.equipment.multiplier ?? 1;
+    let baseMultiplier = this.equipment.baseMultiplier ?? 1;
+    const configuredMultiplier = this.equipment.multiplier ?? 1;
+    if (baseMultiplier === 1 && configuredMultiplier !== 1) {
+      baseMultiplier = configuredMultiplier;
+    }
     this.equipment.baseMultiplier = baseMultiplier;
     let multiplier = baseMultiplier;
     let messages: string[] = [];

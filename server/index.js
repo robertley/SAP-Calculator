@@ -54,7 +54,7 @@ function sendJson(res, statusCode, payload) {
     "Content-Type": "application/json",
     "Content-Length": Buffer.byteLength(body),
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   });
   res.end(body);
@@ -170,6 +170,106 @@ function getBattleForTurn(replay, turnNumber) {
 
   const fallbackAction = battleActions[turnNumber - 1];
   return fallbackAction?.Battle ? safeParseBattle(fallbackAction.Battle) : null;
+}
+
+function readFiniteNumber(value) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function buildTurnStats(board) {
+  return {
+    turn: readFiniteNumber(board?.Tur),
+    victories: readFiniteNumber(board?.Vic),
+    health: readFiniteNumber(board?.Back),
+    goldSpent: readFiniteNumber(board?.GoSp),
+    rolls: readFiniteNumber(board?.Rold),
+    summons: readFiniteNumber(board?.MiSu),
+    level3Sold: readFiniteNumber(board?.MSFL),
+    transformed: readFiniteNumber(board?.TrTT),
+  };
+}
+
+function buildTurnPet(pet, fallbackSlot) {
+  if (!pet || typeof pet !== "object") {
+    return null;
+  }
+
+  const abilities = Array.isArray(pet.Abil)
+    ? pet.Abil
+        .filter((ability) => ability && typeof ability === "object")
+        .map((ability) => ({
+          id: toReplayId(ability.Enu),
+          level: readFiniteNumber(ability.Lvl),
+          group: readFiniteNumber(ability.Grop),
+          triggersConsumed: readFiniteNumber(ability.TrCo),
+        }))
+    : [];
+
+  return {
+    slot: readFiniteNumber(pet?.Poi?.x) ?? fallbackSlot,
+    id: toReplayId(pet.Enu),
+    level: readFiniteNumber(pet.Lvl),
+    experience: readFiniteNumber(pet.Exp),
+    perkId: toReplayId(pet.Perk),
+    attack: {
+      permanent: readFiniteNumber(pet?.At?.Perm),
+      temporary: readFiniteNumber(pet?.At?.Temp),
+      max: readFiniteNumber(pet?.At?.Max),
+    },
+    health: {
+      permanent: readFiniteNumber(pet?.Hp?.Perm),
+      temporary: readFiniteNumber(pet?.Hp?.Temp),
+      max: readFiniteNumber(pet?.Hp?.Max),
+    },
+    mana: readFiniteNumber(pet.Mana),
+    cosmetic: readFiniteNumber(pet.Cosm),
+    abilities,
+  };
+}
+
+function buildTurnPets(board) {
+  const items = Array.isArray(board?.Mins?.Items) ? board.Mins.Items : [];
+  return items
+    .map((pet, index) => buildTurnPet(pet, index))
+    .filter((pet) => pet !== null);
+}
+
+function buildTurnRecord(action, fallbackTurn) {
+  const battle = safeParseBattle(action?.Battle);
+  if (!battle || typeof battle !== "object") {
+    return null;
+  }
+
+  const userBoard = battle.UserBoard;
+  const opponentBoard = battle.OpponentBoard;
+  const actionTurn = Number(action?.Turn);
+  const inferredTurn =
+    readFiniteNumber(userBoard?.Tur) ?? readFiniteNumber(opponentBoard?.Tur);
+  const turn =
+    Number.isFinite(actionTurn) && actionTurn > 0
+      ? actionTurn
+      : inferredTurn ?? fallbackTurn;
+
+  return {
+    turn,
+    user: {
+      stats: buildTurnStats(userBoard),
+      pets: buildTurnPets(userBoard),
+    },
+    opponent: {
+      stats: buildTurnStats(opponentBoard),
+      pets: buildTurnPets(opponentBoard),
+    },
+  };
+}
+
+function getReplayTurns(replay) {
+  const battleActions = getBattleActions(replay);
+  const turns = battleActions
+    .map((action, index) => buildTurnRecord(action, index + 1))
+    .filter((turnRecord) => turnRecord !== null)
+    .sort((a, b) => a.turn - b.turn);
+  return turns;
 }
 
 function toReplayId(value) {
@@ -346,7 +446,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     });
     res.end();
@@ -360,6 +460,66 @@ const server = http.createServer(async (req, res) => {
       hasCredentials: Boolean(SAP_EMAIL && SAP_PASSWORD),
       tokenLoaded: authCache.size > 0,
     });
+    return;
+  }
+
+  const replayTurnsMatch =
+    req.method === "GET"
+      ? url.pathname.match(/^\/api\/replays\/([^/]+)\/turns$/)
+      : null;
+  if (replayTurnsMatch) {
+    try {
+      const participationId = decodeURIComponent(replayTurnsMatch[1]);
+      const sapEmail =
+        url.searchParams.get("SapEmail") ||
+        url.searchParams.get("sapEmail") ||
+        url.searchParams.get("Email") ||
+        url.searchParams.get("email") ||
+        SAP_EMAIL;
+      const sapPassword =
+        url.searchParams.get("SapPassword") ||
+        url.searchParams.get("sapPassword") ||
+        url.searchParams.get("Password") ||
+        url.searchParams.get("password") ||
+        SAP_PASSWORD;
+
+      if (!participationId) {
+        sendJson(res, 400, {
+          error: "Replay id is required.",
+        });
+        return;
+      }
+
+      if (!sapEmail || !sapPassword) {
+        sendJson(res, 400, {
+          error: "SAP credentials are required for participation lookups.",
+        });
+        return;
+      }
+
+      const replay = await fetchReplay(participationId, sapEmail, sapPassword);
+      const turns = getReplayTurns(replay);
+      if (turns.length === 0) {
+        sendJson(res, 404, {
+          error: "No turn-level battle data found for this replay.",
+        });
+        return;
+      }
+
+      sendJson(res, 200, {
+        replayId: participationId,
+        totalTurns: turns.length,
+        turns,
+        genesisBuildModel: replay?.GenesisBuildModel || null,
+        genesisModeModel: replay?.GenesisModeModel || null,
+        abilityPetMap: buildReplayAbilityPetMap(replay),
+      });
+    } catch (error) {
+      const statusCode = error.statusCode || 500;
+      sendJson(res, statusCode, {
+        error: error.message || "Replay lookup failed.",
+      });
+    }
     return;
   }
 
