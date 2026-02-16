@@ -6,7 +6,7 @@ import { InjectorService } from 'app/integrations/injector.service';
 import { LogService } from 'app/integrations/log.service';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
-import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
+import { formatEquipmentScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Confused extends Equipment {
@@ -50,7 +50,7 @@ export class ConfusedAbility extends Ability {
     const choice = chooseRandomOption(
       {
         key: 'equipment.confused-transform',
-        label: formatPetScopedRandomLabel(owner, 'Confused transform'),
+        label: formatEquipmentScopedRandomLabel(owner, 'Confused', 'transform'),
         options: pool.map((name) => ({ id: name, label: name })),
       },
       () => getRandomInt(0, pool.length - 1),

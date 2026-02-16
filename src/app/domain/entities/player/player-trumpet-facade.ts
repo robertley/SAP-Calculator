@@ -14,10 +14,6 @@ import {
 } from './player-trumpets';
 
 export abstract class PlayerTrumpetFacade extends PlayerToyFacade {
-  protected abstract logService: LogService;
-  protected abstract abilityService: AbilityService;
-  protected abstract gameService: GameService;
-
   resolveTrumpetGainTarget(
     callingPet?: Pet,
   ): { player: Player; random: boolean } {

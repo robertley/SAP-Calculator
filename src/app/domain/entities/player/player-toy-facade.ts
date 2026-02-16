@@ -7,8 +7,6 @@ import { PlayerMovementFacade } from './player-movement-facade';
 import { breakToy as breakToyImpl, setToy as setToyImpl } from './player-toys';
 
 export abstract class PlayerToyFacade extends PlayerMovementFacade {
-  protected abstract logService: LogService;
-  protected abstract abilityService: AbilityService;
   protected abstract gameService: GameService;
 
   breakToy(respawn = false) {

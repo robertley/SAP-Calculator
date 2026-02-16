@@ -69,6 +69,8 @@ export class ItemSelectionDialogComponent
   searchQuery = '';
   selectedPack = 'All';
   availablePacks = ['All', ...PACK_NAMES, 'Tokens'];
+  selectedItemCategory = 'All';
+  availableItemCategories = ['All'];
 
   items: SelectionItem[] = [];
   filteredItems: SelectionItem[] = [];
@@ -83,6 +85,10 @@ export class ItemSelectionDialogComponent
 
   trackByPack(index: number, pack: string): string {
     return pack ?? String(index);
+  }
+
+  trackByCategory(index: number, category: string): string {
+    return category ?? String(index);
   }
 
   trackByItem(index: number, item: SelectionItem): string | number {
@@ -179,6 +185,7 @@ export class ItemSelectionDialogComponent
     } else if (this.type === 'team') {
       this.loadTeams();
     }
+    this.updateAvailableItemCategories();
     this.filterItems();
   }
 
@@ -410,6 +417,15 @@ export class ItemSelectionDialogComponent
       }
     }
 
+    if (
+      (this.type === 'equipment' || this.type === 'toy' || this.type === 'hard-toy') &&
+      this.selectedItemCategory !== 'All'
+    ) {
+      filtered = filtered.filter(
+        (item) => item.category === this.selectedItemCategory,
+      );
+    }
+
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -443,6 +459,40 @@ export class ItemSelectionDialogComponent
   selectPack(pack: string) {
     this.selectedPack = pack;
     this.filterItems();
+  }
+
+  selectItemCategory(category: string) {
+    this.selectedItemCategory = category;
+    this.filterItems();
+  }
+
+  getPackFilterIcon(pack: string): string | null {
+    if (!pack || pack === 'All') {
+      return null;
+    }
+
+    if (pack === 'Tokens') {
+      return getPetIconPath('Bee');
+    }
+
+    if ((PACK_NAMES as readonly string[]).includes(pack)) {
+      return getPackIconPath(pack);
+    }
+
+    if (this.customPacks && this.customPacks instanceof FormArray) {
+      const customPacksArray = this.customPacks as FormArray;
+      const matchingPack = customPacksArray.controls.find(
+        (control) => control.get('name')?.value === pack && control.valid,
+      );
+      if (matchingPack) {
+        const firstPet = this.getFirstCustomPackPet(matchingPack);
+        if (firstPet) {
+          return getPetIconPath(firstPet);
+        }
+      }
+    }
+
+    return getPackIconPath(pack);
   }
 
   onItemClick(item: SelectionItem | null) {
@@ -502,6 +552,50 @@ export class ItemSelectionDialogComponent
       });
     }
     return tokenItems;
+  }
+
+  private updateAvailableItemCategories(): void {
+    if (
+      this.type !== 'equipment' &&
+      this.type !== 'toy' &&
+      this.type !== 'hard-toy'
+    ) {
+      this.availableItemCategories = ['All'];
+      this.selectedItemCategory = 'All';
+      return;
+    }
+
+    const categories = Array.from(
+      new Set(this.items.map((item) => item.category).filter(Boolean)),
+    );
+
+    categories.sort((a, b) => {
+      const tierA = this.extractTierNumber(a);
+      const tierB = this.extractTierNumber(b);
+      if (tierA != null && tierB != null) {
+        return tierA - tierB;
+      }
+      if (tierA != null) {
+        return -1;
+      }
+      if (tierB != null) {
+        return 1;
+      }
+      return a.localeCompare(b);
+    });
+
+    this.availableItemCategories = ['All', ...categories];
+    if (!this.availableItemCategories.includes(this.selectedItemCategory)) {
+      this.selectedItemCategory = 'All';
+    }
+  }
+
+  private extractTierNumber(category: string): number | null {
+    const match = /^Tier\s+(\d+)$/i.exec(category);
+    if (!match) {
+      return null;
+    }
+    return Number(match[1]);
   }
 }
 

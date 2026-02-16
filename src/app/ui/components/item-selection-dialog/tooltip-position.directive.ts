@@ -3,6 +3,7 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnDestroy,
   Renderer2,
 } from '@angular/core';
 
@@ -10,8 +11,11 @@ import {
   selector: '[appTooltip]',
   standalone: true,
 })
-export class TooltipPositionDirective {
+export class TooltipPositionDirective implements OnDestroy {
   @Input('appTooltip') tooltipText: string | null = null;
+
+  private tooltipElement: HTMLElement | null = null;
+  private currentTooltipText: string | null = null;
 
   constructor(
     private el: ElementRef<HTMLElement>,
@@ -21,32 +25,56 @@ export class TooltipPositionDirective {
   @HostListener('mouseenter')
   @HostListener('focus')
   onShow(): void {
-    const text = this.tooltipText?.trim();
+    const text = this.formatTooltipText(this.tooltipText);
     if (!text) {
-      this.renderer.removeAttribute(this.el.nativeElement, 'data-tooltip');
+      this.removeTooltip();
       return;
     }
 
-    this.renderer.setAttribute(this.el.nativeElement, 'data-tooltip', text);
-    this.renderer.addClass(this.el.nativeElement, 'has-tooltip');
+    this.currentTooltipText = text;
+    this.ensureTooltipElements();
+    if (!this.tooltipElement) {
+      return;
+    }
+
+    this.tooltipElement.textContent = text;
+    this.renderer.setAttribute(this.tooltipElement, 'role', 'tooltip');
     this.updatePosition(text);
   }
 
   @HostListener('mouseleave')
   @HostListener('blur')
   onHide(): void {
-    this.renderer.removeClass(this.el.nativeElement, 'has-tooltip');
+    this.removeTooltip();
+  }
+
+  @HostListener('window:resize')
+  @HostListener('window:scroll')
+  onViewportChange(): void {
+    if (!this.currentTooltipText || !this.tooltipElement) {
+      return;
+    }
+
+    this.updatePosition(this.currentTooltipText);
+  }
+
+  ngOnDestroy(): void {
+    this.removeTooltip();
   }
 
   private updatePosition(text: string): void {
+    if (!this.tooltipElement) {
+      return;
+    }
+
     const rect = this.el.nativeElement.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const padding = 12;
-    const arrowSize = 8;
+    const arrowSize = 0;
     const gap = 12;
-    const maxTooltipWidth = Math.min(170, viewportWidth - padding * 2);
-    const maxTooltipHeight = Math.min(140, viewportHeight - padding * 2);
+    const maxTooltipWidth = Math.min(420, viewportWidth - padding * 2);
+    const maxTooltipHeight = Math.min(360, viewportHeight - padding * 2);
 
     const { width: tooltipWidth, height: tooltipHeight } = this.measureTooltip(
       text,
@@ -81,16 +109,8 @@ export class TooltipPositionDirective {
 
     let top = rect.top - tooltipHeight - gap - arrowSize;
     let tooltipLeft = left;
-    let arrowLeft = this.clamp(
-      centerX,
-      padding + arrowSize,
-      viewportWidth - padding - arrowSize,
-    );
-    let arrowTop = rect.top - gap - arrowSize;
-
     if (placement === 'bottom') {
       top = rect.bottom + gap + arrowSize;
-      arrowTop = rect.bottom + gap;
     }
 
     if (placement === 'right') {
@@ -103,12 +123,6 @@ export class TooltipPositionDirective {
         rect.top + rect.height / 2 - tooltipHeight / 2,
         padding,
         viewportHeight - tooltipHeight - padding,
-      );
-      arrowLeft = rect.right + gap;
-      arrowTop = this.clamp(
-        rect.top + rect.height / 2,
-        padding + arrowSize,
-        viewportHeight - padding - arrowSize,
       );
     }
 
@@ -123,45 +137,13 @@ export class TooltipPositionDirective {
         padding,
         viewportHeight - tooltipHeight - padding,
       );
-      arrowLeft = rect.left - gap - arrowSize;
-      arrowTop = this.clamp(
-        rect.top + rect.height / 2,
-        padding + arrowSize,
-        viewportHeight - padding - arrowSize,
-      );
     }
 
-    this.renderer.setStyle(
-      this.el.nativeElement,
-      '--tooltip-left',
-      `${tooltipLeft}px`,
-    );
-    this.renderer.setStyle(this.el.nativeElement, '--tooltip-top', `${top}px`);
-    this.renderer.setStyle(
-      this.el.nativeElement,
-      '--tooltip-arrow-left',
-      `${arrowLeft}px`,
-    );
-    this.renderer.setStyle(
-      this.el.nativeElement,
-      '--tooltip-arrow-top',
-      `${arrowTop}px`,
-    );
-    this.renderer.setStyle(
-      this.el.nativeElement,
-      '--tooltip-max-width',
-      `${maxTooltipWidth}px`,
-    );
-    this.renderer.setStyle(
-      this.el.nativeElement,
-      '--tooltip-max-height',
-      `${maxTooltipHeight}px`,
-    );
-    this.renderer.setAttribute(
-      this.el.nativeElement,
-      'data-tooltip-placement',
-      placement,
-    );
+    this.renderer.setStyle(this.tooltipElement, 'left', `${tooltipLeft}px`);
+    this.renderer.setStyle(this.tooltipElement, 'top', `${top}px`);
+    this.renderer.setStyle(this.tooltipElement, 'max-width', `${maxTooltipWidth}px`);
+    this.renderer.setStyle(this.tooltipElement, 'max-height', `${maxTooltipHeight}px`);
+    this.renderer.setAttribute(this.tooltipElement, 'data-placement', placement);
   }
 
   private measureTooltip(
@@ -181,10 +163,7 @@ export class TooltipPositionDirective {
     measure.style.maxWidth = `${maxWidth}px`;
     measure.style.maxHeight = `${maxHeight}px`;
     measure.style.whiteSpace = 'pre-wrap';
-    measure.style.overflow = 'hidden';
-    measure.style.display = '-webkit-box';
-    measure.style.webkitBoxOrient = 'vertical';
-    measure.style.webkitLineClamp = '6';
+    measure.style.overflow = 'visible';
     measure.style.boxSizing = 'border-box';
     measure.style.width = 'max-content';
     document.body.appendChild(measure);
@@ -196,6 +175,35 @@ export class TooltipPositionDirective {
     document.body.removeChild(measure);
 
     return { width: rect.width, height: rect.height };
+  }
+
+  private ensureTooltipElements(): void {
+    if (!this.tooltipElement) {
+      this.tooltipElement = this.renderer.createElement('div');
+      this.renderer.addClass(this.tooltipElement, 'sap-floating-tooltip');
+      this.renderer.appendChild(document.body, this.tooltipElement);
+    }
+  }
+
+  private removeTooltip(): void {
+    this.currentTooltipText = null;
+
+    if (this.tooltipElement) {
+      this.renderer.removeChild(document.body, this.tooltipElement);
+      this.tooltipElement = null;
+    }
+  }
+
+  private formatTooltipText(text: string | null): string {
+    if (!text) {
+      return '';
+    }
+
+    return text
+      .trim()
+      .replace(/\s*(Level\s+\d+\s*[:\-])/gi, '\n$1')
+      .replace(/^\n+/, '')
+      .replace(/\n{3,}/g, '\n\n');
   }
 
   private clamp(value: number, min: number, max: number): number {

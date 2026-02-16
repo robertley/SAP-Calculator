@@ -10,10 +10,6 @@ import {
 } from './player-summon';
 
 export abstract class PlayerSummonFacade extends PlayerTrumpetFacade {
-  protected abstract logService: LogService;
-  protected abstract abilityService: AbilityService;
-  protected abstract gameService: GameService;
-
   summonPetInFront(
     summoner: Pet,
     summonedPet: Pet,

@@ -42,6 +42,10 @@ import type { PlayerLike } from './player-like.types';
 export abstract class PlayerTargetingFacade {
   abstract get petArray(): Pet[];
 
+  protected asPlayerLike(): PlayerLike {
+    return this as unknown as PlayerLike;
+  }
+
   getRandomPet(
     excludePets?: Pet[],
     donut?: boolean,
@@ -51,7 +55,7 @@ export abstract class PlayerTargetingFacade {
     includeOpponent?: boolean,
   ): PetRandomResult {
     return getRandomPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       excludePets,
       donut,
       blueberry,
@@ -70,7 +74,7 @@ export abstract class PlayerTargetingFacade {
     includeOpponent?: boolean,
   ): { pets: Pet[]; random: boolean } {
     return getRandomPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       amt,
       excludePets,
       donut,
@@ -88,7 +92,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getRandomEnemyPetsWithSillyFallbackImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       amt,
       excludePets,
       donut,
@@ -102,14 +106,14 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): Pet[] {
     return getPetsWithEquipmentWithSillyFallbackImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       equipmentName,
       callingPet,
     );
   }
 
   getRandomLivingPets(amt: number): { pets: Pet[]; random: boolean } {
-    return getRandomLivingPetsImpl(this as unknown as PlayerLike, amt);
+    return getRandomLivingPetsImpl(this.asPlayerLike(), amt);
   }
 
   getAll(
@@ -118,7 +122,7 @@ export abstract class PlayerTargetingFacade {
     excludeSelf?: boolean,
   ): { pets: Pet[]; random: boolean } {
     return getAllImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       includeOpponent,
       callingPet,
       excludeSelf,
@@ -126,23 +130,23 @@ export abstract class PlayerTargetingFacade {
   }
 
   getPetsWithEquipment(equipmentName: string): Pet[] {
-    return getPetsWithEquipmentImpl(this as unknown as PlayerLike, equipmentName);
+    return getPetsWithEquipmentImpl(this.asPlayerLike(), equipmentName);
   }
 
   getPetsWithoutEquipment(equipmentName: string): Pet[] {
-    return getPetsWithoutEquipmentImpl(this as unknown as PlayerLike, equipmentName);
+    return getPetsWithoutEquipmentImpl(this.asPlayerLike(), equipmentName);
   }
 
   getPetAtPosition(position: number): Pet | null {
-    return getPetAtPositionImpl(this as unknown as PlayerLike, position);
+    return getPetAtPositionImpl(this.asPlayerLike(), position);
   }
 
   getMiddleFriend(callingPet?: Pet): PetRandomResult {
-    return getMiddleFriendImpl(this as unknown as PlayerLike, callingPet);
+    return getMiddleFriendImpl(this.asPlayerLike(), callingPet);
   }
 
   getLastPet(excludePets?: Pet[], callingPet?: Pet): PetRandomResult {
-    return getLastPetImpl(this as unknown as PlayerLike, excludePets, callingPet);
+    return getLastPetImpl(this.asPlayerLike(), excludePets, callingPet);
   }
 
   getLastPets(
@@ -151,7 +155,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getLastPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -160,7 +164,7 @@ export abstract class PlayerTargetingFacade {
 
   getHighestHealthPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
     return getHighestHealthPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       excludePet,
       callingPet,
     );
@@ -168,7 +172,7 @@ export abstract class PlayerTargetingFacade {
 
   getHighestAttackPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
     return getHighestAttackPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       excludePet,
       callingPet,
     );
@@ -180,7 +184,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getHighestAttackPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -193,7 +197,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getLowestAttackPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -202,7 +206,7 @@ export abstract class PlayerTargetingFacade {
 
   getLowestAttackPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
     return getLowestAttackPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       excludePet,
       callingPet,
     );
@@ -210,7 +214,7 @@ export abstract class PlayerTargetingFacade {
 
   getLowestHealthPet(excludePet?: Pet, callingPet?: Pet): PetRandomResult {
     return getLowestHealthPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       excludePet,
       callingPet,
     );
@@ -222,7 +226,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getLowestHealthPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -235,7 +239,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getHighestHealthPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -248,7 +252,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getHighestTierPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -261,7 +265,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): PetRandomResult {
     return getTierXOrLowerPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       tier,
       excludePets,
       callingPet,
@@ -279,7 +283,7 @@ export abstract class PlayerTargetingFacade {
 
   getFurthestUpPet(callingPet?: Pet, excludePets?: Pet[]): PetRandomResult {
     return getFurthestUpPetImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       callingPet,
       excludePets,
     );
@@ -291,7 +295,7 @@ export abstract class PlayerTargetingFacade {
     callingPet?: Pet,
   ): { pets: Pet[]; random: boolean } {
     return getFurthestUpPetsImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       count,
       excludePets,
       callingPet,
@@ -304,7 +308,7 @@ export abstract class PlayerTargetingFacade {
     excludePets?: Pet[],
   ): { pets: Pet[]; random: boolean } {
     return nearestPetsBehindImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       amt,
       callingPet,
       excludePets,
@@ -312,11 +316,11 @@ export abstract class PlayerTargetingFacade {
   }
 
   getThis(callingPet: Pet): PetRandomResult {
-    return getThisImpl(this as unknown as PlayerLike, callingPet);
+    return getThisImpl(this.asPlayerLike(), callingPet);
   }
 
   getSpecificPet(callingPet: Pet, target: Pet): PetRandomResult {
-    return getSpecificPetImpl(this as unknown as PlayerLike, callingPet, target);
+    return getSpecificPetImpl(this.asPlayerLike(), callingPet, target);
   }
 
   nearestPetsAhead(
@@ -327,7 +331,7 @@ export abstract class PlayerTargetingFacade {
     excludeEquipment?: string,
   ): { pets: Pet[]; random: boolean } {
     return nearestPetsAheadImpl(
-      this as unknown as PlayerLike,
+      this.asPlayerLike(),
       amt,
       callingPet,
       excludePets,
@@ -337,26 +341,26 @@ export abstract class PlayerTargetingFacade {
   }
 
   getStrongestPet(callingPet?: Pet): PetRandomResult {
-    return getStrongestPetImpl(this as unknown as PlayerLike, callingPet);
+    return getStrongestPetImpl(this.asPlayerLike(), callingPet);
   }
 
   getManticoreMult(): number[] {
-    return getManticoreMultImpl(this as unknown as PlayerLike);
+    return getManticoreMultImpl(this.asPlayerLike());
   }
 
   getPetsWithinXSpaces(
     callingPet: Pet,
     range: number,
   ): { pets: Pet[]; random: boolean } {
-    return getPetsWithinXSpacesImpl(this as unknown as PlayerLike, callingPet, range);
+    return getPetsWithinXSpacesImpl(this.asPlayerLike(), callingPet, range);
   }
 
   getOppositeEnemyPet(callingPet: Pet): PetRandomResult {
-    return getOppositeEnemyPetImpl(this as unknown as PlayerLike, callingPet);
+    return getOppositeEnemyPetImpl(this.asPlayerLike(), callingPet);
   }
 
   getRandomLivingPet(excludePets?: Pet[]): PetRandomResult {
-    return getRandomLivingPetImpl(this as unknown as PlayerLike, excludePets);
+    return getRandomLivingPetImpl(this.asPlayerLike(), excludePets);
   }
 }
 

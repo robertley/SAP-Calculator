@@ -69,7 +69,7 @@ export class BanggaiCardinalfishAbility extends Ability {
 
       targetPet.attack = newAttack;
       this.logService.createLog({
-        message: `${owner.name} reduced ${targetPet.name} attack by ${attackReduction} to (${newAttack}).`,
+        message: `${owner.name} reduced ${targetPet.name} attack by ${attackReduction} to ${newAttack}.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,

@@ -35,6 +35,29 @@ $night: #33377a;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+  font-family: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
+  font-weight: 400;
+}
+
+.battle-row h2 {
+  font-weight: 500;
+}
+
+.battle-row button,
+.battle-row input,
+.battle-row select,
+.battle-row textarea,
+.battle-row label,
+.battle-row h1,
+.battle-row h2,
+.battle-row h3,
+.battle-row h4,
+.battle-row h5,
+.battle-row h6,
+.battle-row span,
+.battle-row p,
+.battle-row div {
+  font-family: inherit;
 }
 
 .log-row {
@@ -207,8 +230,11 @@ $night: #33377a;
 }
 
 .btn-placeholder {
-  color: #adb5bd;
+  color: #495057;
   font-size: 0.9rem;
+  font-family: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.025em;
 }
 
 .team-name-input {
@@ -249,11 +275,19 @@ $night: #33377a;
   cursor: pointer;
   text-align: left;
   min-height: 40px;
+  font-family: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
+  font-weight: 400;
 
   &:hover {
     background: #f1f3f5;
     border-color: #adb5bd;
     transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--sap-btn-primary);
+    outline-offset: 2px;
+    border-color: var(--sap-btn-primary);
   }
 
   .btn-icon {
@@ -265,7 +299,9 @@ $night: #33377a;
   .btn-text {
     font-size: 0.9rem;
     color: #495057;
-    font-weight: 500;
+    font-weight: 400;
+    font-family: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
+    letter-spacing: 0.025em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -288,7 +324,16 @@ $night: #33377a;
       border-color: #555;
     }
 
+    &:focus-visible {
+      outline-color: #9ec5ff;
+      border-color: #9ec5ff;
+    }
+
     .btn-text {
+      color: #eee;
+    }
+
+    .btn-placeholder {
       color: #eee;
     }
   }
@@ -326,6 +371,36 @@ $night: #33377a;
 
 .advanced-section {
   gap: 0.5rem;
+}
+
+.advanced-panel-header {
+  display: flex;
+  align-items: center;
+}
+
+.advanced-toggle-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.advanced-chevron {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.advanced-chevron.expanded {
+  transform: rotate(180deg);
+}
+
+.advanced-panel-body {
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  background: #f8f9fa;
+  padding: 0.75rem;
 }
 
 .advanced-grid {
@@ -534,6 +609,71 @@ $night: #33377a;
   .teams-section {
     flex-direction: column;
   }
+
+  .advanced-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+
+  .packs-section .min-w-input,
+  .team-column {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .top-controls {
+    padding: 0.35rem 0.35rem 0.5rem;
+  }
+
+  .top-controls-header,
+  .top-controls-body {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
+  .simulate-controls,
+  .simulate-input-group,
+  .team-name-actions,
+  .external-buttons,
+  .random-overrides-actions {
+    width: 100%;
+  }
+
+  .simulate-controls,
+  .team-name-actions,
+  .external-buttons,
+  .random-overrides-actions {
+    gap: 0.4rem;
+  }
+
+  .simulate-input-group {
+    flex-wrap: wrap;
+  }
+
+  .simulate-input-group .simulate-input {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .external-buttons .btn,
+  .team-name-actions .btn,
+  .team-name-actions .form-select,
+  .random-overrides-actions .btn {
+    flex: 1 1 auto;
+  }
+
+  .team-name-input {
+    max-width: 100%;
+  }
+
+  .advanced-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advanced-number-grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.6rem;
+  }
 }
 
 .stats {
@@ -581,11 +721,11 @@ $night: #33377a;
 }
 
 .player-stat span:last-child {
-  color: #0f9d00;
+  color: #5fbf5f;
 }
 
 .opponent-stat span:last-child {
-  color: #d10015;
+  color: #e06a6a;
 }
 
 .draw-stat span:last-child {

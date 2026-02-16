@@ -259,9 +259,15 @@ export function clearCache(ctx: AppUiContext): void {
 export function initModals(ctx: AppUiContext): void {
   ctx.customPackEditorModal = new Modal(ctx.customPackEditor.nativeElement);
   ctx.customPackEditor.nativeElement.addEventListener(
+    'show.bs.modal',
+    () => {
+      document.body.classList.add('custom-pack-editor-open');
+    },
+  );
+  ctx.customPackEditor.nativeElement.addEventListener(
     'hidden.bs.modal',
     () => {
-      // placeholder for modal close logic
+      document.body.classList.remove('custom-pack-editor-open');
     },
   );
 }

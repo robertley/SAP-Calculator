@@ -50,7 +50,7 @@ export class AyeAyeAbility extends Ability {
     super({
       name: 'AyeAyeAbility',
       owner: owner,
-      triggers: ['EnemyAttacked8'],
+      triggers: ['EnemyAttacked7'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

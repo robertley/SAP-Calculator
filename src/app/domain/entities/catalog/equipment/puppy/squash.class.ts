@@ -55,7 +55,7 @@ export class SquashAbility extends Ability {
       targetPet.health = reducedTo;
       let multiplierMessage = i > 0 ? this.equipment.multiplierMessage : '';
       this.logService.createLog({
-        message: `${this.equipment.name} reduced ${targetPet.name} health by ${power} (${reducedTo})${multiplierMessage}`,
+        message: `${this.equipment.name} reduced ${targetPet.name} health by ${power} to ${reducedTo}${multiplierMessage}`,
         type: 'equipment',
         player: owner.parent,
       });

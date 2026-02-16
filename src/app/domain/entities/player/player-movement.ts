@@ -6,33 +6,69 @@ import { AbilityService } from 'app/integrations/ability/ability.service';
 import { Onion } from 'app/domain/entities/catalog/equipment/golden/onion.class';
 import type { PlayerLike } from './player-like.types';
 
+const MAX_PET_SLOT = 4;
+
+const setSlotDirect = (
+  player: PlayerLike,
+  index: number,
+  value?: Pet,
+): void => {
+  switch (index) {
+    case 0:
+      player.pet0 = value;
+      break;
+    case 1:
+      player.pet1 = value;
+      break;
+    case 2:
+      player.pet2 = value;
+      break;
+    case 3:
+      player.pet3 = value;
+      break;
+    case 4:
+      player.pet4 = value;
+      break;
+  }
+};
+
+const trySetPet = (player: PlayerLike, index: number, value?: Pet): void => {
+  try {
+    player.setPet(index, value);
+  } catch {
+    setSlotDirect(player, index, undefined);
+  }
+};
+
+const findClosestEmptyAhead = (
+  player: PlayerLike,
+  slot: number,
+): number | null => {
+  for (let index = slot - 1; index >= 0; index--) {
+    if (player.getPet(index) == null) {
+      return index;
+    }
+  }
+  return null;
+};
+
+const findClosestEmptyBehind = (
+  player: PlayerLike,
+  slot: number,
+): number | null => {
+  for (let index = slot + 1; index <= MAX_PET_SLOT; index++) {
+    if (player.getPet(index) == null) {
+      return index;
+    }
+  }
+  return null;
+};
+
 
 export const pushPetsForward = (player: PlayerLike): void => {
   const array = clone(player.petArray);
-  try {
-    player.setPet(0, array[0]);
-  } catch {
-    player.pet0 = undefined;
-  }
-  try {
-    player.setPet(1, array[1]);
-  } catch {
-    player.pet1 = undefined;
-  }
-  try {
-    player.setPet(2, array[2]);
-  } catch {
-    player.pet2 = undefined;
-  }
-  try {
-    player.setPet(3, array[3]);
-  } catch {
-    player.pet3 = undefined;
-  }
-  try {
-    player.setPet(4, array[4]);
-  } catch {
-    player.pet4 = undefined;
+  for (let index = 0; index <= MAX_PET_SLOT; index++) {
+    trySetPet(player, index, array[index]);
   }
 };
 
@@ -47,119 +83,27 @@ export const onionCheck = (player: PlayerLike): void => {
 };
 
 export const pushForwardFromSlot = (player: PlayerLike, slot: number): boolean => {
-  let slotWithSpace: number | null = null;
-  let isSpaceAhead = false;
-  if (slot > 0) {
-    if (player.pet0 == null) {
-      isSpaceAhead = true;
-      slotWithSpace = 0;
-    }
+  const slotWithSpace = findClosestEmptyAhead(player, slot);
+  if (slotWithSpace == null) {
+    return false;
   }
-  if (slot > 1) {
-    if (player.pet1 == null) {
-      isSpaceAhead = true;
-      slotWithSpace = 1;
-    }
+
+  for (let i = slotWithSpace; i < slot; i++) {
+    setSlotDirect(player, i, player.getPet(i + 1));
   }
-  if (slot > 2) {
-    if (player.pet2 == null) {
-      isSpaceAhead = true;
-      slotWithSpace = 2;
-    }
-  }
-  if (slot > 3) {
-    if (player.pet3 == null) {
-      isSpaceAhead = true;
-      slotWithSpace = 3;
-    }
-  }
-  if (isSpaceAhead) {
-    if (slotWithSpace == null) {
-      return false;
-    }
-    const setSlot = (index: number, value?: Pet) => {
-      switch (index) {
-        case 0:
-          player.pet0 = value;
-          break;
-        case 1:
-          player.pet1 = value;
-          break;
-        case 2:
-          player.pet2 = value;
-          break;
-        case 3:
-          player.pet3 = value;
-          break;
-        case 4:
-          player.pet4 = value;
-          break;
-      }
-    };
-    for (let i = slotWithSpace; i < slot; i++) {
-      setSlot(i, player.getPet(i + 1));
-    }
-    return true;
-  }
-  return false;
+  return true;
 };
 
 export const pushBackwardFromSlot = (player: PlayerLike, slot: number): boolean => {
-  let slotWithSpace: number | null = null;
-  let isSpaceBehind = false;
-  if (slot < 4) {
-    if (player.pet4 == null) {
-      isSpaceBehind = true;
-      slotWithSpace = 4;
-    }
+  const slotWithSpace = findClosestEmptyBehind(player, slot);
+  if (slotWithSpace == null) {
+    return false;
   }
-  if (slot < 3) {
-    if (player.pet3 == null) {
-      isSpaceBehind = true;
-      slotWithSpace = 3;
-    }
+
+  for (let i = slotWithSpace; i > slot; i--) {
+    setSlotDirect(player, i, player.getPet(i - 1));
   }
-  if (slot < 2) {
-    if (player.pet2 == null) {
-      isSpaceBehind = true;
-      slotWithSpace = 2;
-    }
-  }
-  if (slot < 1) {
-    if (player.pet1 == null) {
-      isSpaceBehind = true;
-      slotWithSpace = 1;
-    }
-  }
-  if (isSpaceBehind) {
-    if (slotWithSpace == null) {
-      return false;
-    }
-    const setSlot = (index: number, value?: Pet) => {
-      switch (index) {
-        case 0:
-          player.pet0 = value;
-          break;
-        case 1:
-          player.pet1 = value;
-          break;
-        case 2:
-          player.pet2 = value;
-          break;
-        case 3:
-          player.pet3 = value;
-          break;
-        case 4:
-          player.pet4 = value;
-          break;
-      }
-    };
-    for (let i = slotWithSpace; i > slot; i--) {
-      setSlot(i, player.getPet(i - 1));
-    }
-    return true;
-  }
-  return false;
+  return true;
 };
 
 export const makeRoomForSlot = (player: PlayerLike, slot: number): void => {
@@ -192,23 +136,7 @@ export const pushPet = (
   }
 
   const position = pet.position;
-  switch (position) {
-    case 0:
-      pet.parent.pet0 = undefined;
-      break;
-    case 1:
-      pet.parent.pet1 = undefined;
-      break;
-    case 2:
-      pet.parent.pet2 = undefined;
-      break;
-    case 3:
-      pet.parent.pet3 = undefined;
-      break;
-    case 4:
-      pet.parent.pet4 = undefined;
-      break;
-  }
+  setSlotDirect(pet.parent, position, undefined);
   let destination;
   if (spaces > 0) {
     destination = Math.max(position - spaces, 0);
@@ -220,7 +148,7 @@ export const pushPet = (
     player.setPet(destination, pet);
   }
   if (spaces < 0) {
-    destination = Math.min(position - spaces, 4);
+    destination = Math.min(position - spaces, MAX_PET_SLOT);
     if (player.getPet(destination) != null) {
       if (!pushBackwardFromSlot(player, destination)) {
         pushForwardFromSlot(player, destination);

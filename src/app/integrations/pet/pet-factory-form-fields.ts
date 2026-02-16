@@ -27,6 +27,7 @@ const buildParrotFormFields = (): ReadonlyArray<PetFormField> => {
     fields.push(
       slotFields.base as PetFormField,
       slotFields.belugaSwallowedPet as PetFormField,
+      slotFields.sarcasticFringeheadSwallowedPet as PetFormField,
       slotFields.level as PetFormField,
       slotFields.timesHurt as PetFormField,
       slotFields.parrotCopyPet as PetFormField,
@@ -38,6 +39,7 @@ const buildParrotFormFields = (): ReadonlyArray<PetFormField> => {
       fields.push(
         nestedFields.base as PetFormField,
         nestedFields.belugaSwallowedPet as PetFormField,
+        nestedFields.sarcasticFringeheadSwallowedPet as PetFormField,
         nestedFields.level as PetFormField,
         nestedFields.timesHurt as PetFormField,
       );
@@ -54,6 +56,7 @@ const buildAbominationFormFields = (): ReadonlyArray<PetFormField> => {
     const slotFields = createPetMemorySlotFields('abominationSwallowedPet', slot);
     fields.push(
       slotFields.belugaSwallowedPet as PetFormField,
+      slotFields.sarcasticFringeheadSwallowedPet as PetFormField,
       slotFields.parrotCopyPet as PetFormField,
       slotFields.parrotCopyPetBelugaSwallowedPet as PetFormField,
     );
@@ -63,6 +66,7 @@ const buildAbominationFormFields = (): ReadonlyArray<PetFormField> => {
       fields.push(
         nestedFields.base as PetFormField,
         nestedFields.belugaSwallowedPet as PetFormField,
+        nestedFields.sarcasticFringeheadSwallowedPet as PetFormField,
         nestedFields.level as PetFormField,
         nestedFields.timesHurt as PetFormField,
       );

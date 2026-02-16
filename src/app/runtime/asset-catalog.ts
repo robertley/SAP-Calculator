@@ -100,10 +100,13 @@ const formatAbilityText = (
   abilities?: AbilityEntry[],
   perkNote?: string,
 ): string | null => {
+  const isNoAbilityText = (text?: string): boolean =>
+    !text || /^no ability\.?$/i.test(text.trim());
+
   const lines: string[] = [];
   if (Array.isArray(abilities)) {
     for (const ability of abilities) {
-      if (!ability?.About) {
+      if (!ability?.About || isNoAbilityText(ability.About)) {
         continue;
       }
       if (ability.Level != null) {

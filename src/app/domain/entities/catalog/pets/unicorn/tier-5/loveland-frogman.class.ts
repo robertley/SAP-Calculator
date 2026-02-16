@@ -48,7 +48,6 @@ export class LovelandFrogmanAbility extends Ability {
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
-      maxUses: owner.level,
       precondition: (context: AbilityContext) => {
         const { triggerPet } = context;
         const owner = this.owner;

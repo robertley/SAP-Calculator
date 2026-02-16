@@ -116,7 +116,32 @@ export class LogService {
     if (log.message?.startsWith('Phase ')) {
       log.bold = true;
     }
-    // Fallback for auto-decoration if sourcePet is missing but we have player/message
+    this.resolveLogMetadata(log);
+
+    let message = this.decorateLogMessage(log);
+    message = this.appendTagSuffixes(message, log);
+    this.persistDecoratedMessage(log, message);
+
+    const lastLog = this.logs[this.logs.length - 1];
+    const shouldAppendSummonBoard = this.shouldAppendSummonBoardState(log);
+    if (this.tryMergeAttackHealthLogs(lastLog, log)) {
+      if (shouldAppendSummonBoard) {
+        this.appendSummonBoardStateLog(log);
+      }
+      return;
+    }
+    if (this.shouldCollapseLog(lastLog, log)) {
+      lastLog.count = (lastLog.count ?? 1) + 1;
+    } else {
+      this.logs.push(log);
+    }
+
+    if (shouldAppendSummonBoard) {
+      this.appendSummonBoardStateLog(log);
+    }
+  }
+
+  private resolveLogMetadata(log: Log): void {
     if (!log.sourcePet && log.player && log.message) {
       const possiblePets = log.player.petArray.filter(
         (p) => p && log.message.startsWith(p.name),
@@ -140,88 +165,89 @@ export class LogService {
     if (log.targetPet && log.targetIndex == null) {
       log.targetIndex = this.getFrontIndex(log.targetPet) ?? undefined;
     }
+  }
 
-    let message = log.message ?? '';
-    if (!this.deferDecorations) {
-      message = this.decorateMessageWithNames(
-        message,
-        log.sourcePet,
-        log.targetPet,
-        log.sourceIndex,
-        log.targetIndex,
-      );
+  private decorateLogMessage(log: Log): string {
+    const message = log.message ?? '';
+    if (this.deferDecorations) {
+      return message;
     }
+    return this.decorateMessageWithNames(
+      message,
+      log.sourcePet,
+      log.targetPet,
+      log.sourceIndex,
+      log.targetIndex,
+    );
+  }
 
+  private appendTagSuffixes(message: string, log: Log): string {
+    let updated = message;
     if (log.tiger) {
-      message += ' (Tiger)';
+      updated += ' (Tiger)';
     }
     if (log.puma) {
-      message += ' (Puma)';
+      updated += ' (Puma)';
     }
     if (log.pteranodon) {
-      message += ' (Pteranodon)';
+      updated += ' (Pteranodon)';
     }
     if (log.pantherMultiplier != null && log.pantherMultiplier > 1) {
-      message += ` x${log.pantherMultiplier} (Panther)`;
+      updated += ` x${log.pantherMultiplier} (Panther)`;
     }
+    return updated;
+  }
 
-    if (message) {
-      if (this.deferDecorations) {
-        log.rawMessage = message;
-        log.message = message;
-        log.decorated = false;
-      } else {
-        log.message = decorateInlineIcons(
-          message,
-          this.inlineNameRegex,
-          this.inlineNameTypeMap,
-          this.ailmentNames,
-        );
-        log.decorated = true;
-      }
-    }
-
-    const lastLog = this.logs[this.logs.length - 1];
-    const shouldAppendSummonBoard = this.shouldAppendSummonBoardState(log);
-    if (this.tryMergeAttackHealthLogs(lastLog, log)) {
-      if (shouldAppendSummonBoard) {
-        this.appendSummonBoardStateLog(log);
-      }
+  private persistDecoratedMessage(log: Log, message: string): void {
+    if (!message) {
       return;
     }
-    const samePlayer = lastLog?.player === log.player;
-    const sameMessage = lastLog?.message?.trim() === log.message?.trim();
-    const sameRandom = lastLog?.randomEvent === log.randomEvent;
+
+    if (this.deferDecorations) {
+      log.rawMessage = message;
+      log.message = message;
+      log.decorated = false;
+      return;
+    }
+
+    log.message = decorateInlineIcons(
+      message,
+      this.inlineNameRegex,
+      this.inlineNameTypeMap,
+      this.ailmentNames,
+    );
+    log.decorated = true;
+  }
+
+  private shouldCollapseLog(lastLog: Log | undefined, log: Log): lastLog is Log {
+    if (!lastLog) {
+      return false;
+    }
+
+    const samePlayer = lastLog.player === log.player;
+    const sameMessage = lastLog.message?.trim() === log.message?.trim();
+    const sameRandom = lastLog.randomEvent === log.randomEvent;
     const sameRandomReason =
-      lastLog?.randomEventReason === log.randomEventReason;
+      lastLog.randomEventReason === log.randomEventReason;
     const sameSource =
-      lastLog?.sourcePet === log.sourcePet &&
-      lastLog?.sourceIndex === log.sourceIndex;
+      lastLog.sourcePet === log.sourcePet &&
+      lastLog.sourceIndex === log.sourceIndex;
     const sameTarget =
-      lastLog?.targetPet === log.targetPet &&
-      lastLog?.targetIndex === log.targetIndex;
+      lastLog.targetPet === log.targetPet &&
+      lastLog.targetIndex === log.targetIndex;
     const hasSourceOrTarget =
       log.sourcePet != null ||
       log.targetPet != null ||
       log.sourceIndex != null ||
       log.targetIndex != null;
 
-    if (
-      lastLog &&
+    return (
       sameMessage &&
       samePlayer &&
       sameRandom &&
       sameRandomReason &&
       (!hasSourceOrTarget || (sameSource && sameTarget))
-    ) {
-      lastLog.count = (lastLog.count ?? 1) + 1;
-    } else {
-      this.logs.push(log);
-    }
-
-    if (shouldAppendSummonBoard) {
-      this.appendSummonBoardStateLog(log);
-    }
+    );
   }
 
   getLogs() {

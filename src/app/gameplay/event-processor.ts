@@ -185,8 +185,8 @@ export class EventProcessor {
     opponentPet.useAttackDefenseEquipment();
 
     this.ctx.gameService.gameApi.FirstNonJumpAttackHappened = true;
-    this.ctx.abilityEngine.checkPetsAlive();
     this.ctx.abilityService.executeAfterAttackEvents();
+    this.ctx.abilityEngine.checkPetsAlive();
   }
 
   pushPetsForwards() {

@@ -1,5 +1,12 @@
-    <div class="row flex-1 bottom-container" *ngIf="app.simulated">
-      <div class="col-12 col-md-6 border h-100 flex-col pe-0">
+    <div class="bottom-container-scroll" *ngIf="app.simulated">
+      <div class="bottom-container-scroll-hint" aria-hidden="true">
+        Swipe or shift-scroll to view logs →
+      </div>
+      <div class="row flex-1 bottom-container g-0" #battleSplitContainer>
+        <div class="col-12 col-md-6 border h-100 flex-col pe-0 battle-pane"
+          [style.flex-basis.px]="leftPaneWidthPx"
+          [style.max-width.px]="leftPaneWidthPx"
+          [style.width.px]="leftPaneWidthPx">
         <h3>Battles</h3>
         <div class="row">
           <div class="col-12">
@@ -56,7 +63,12 @@
         </div>
       </div>
 
-      <div class="col-12 col-md-6 border h-100 flex-col">
+        <div class="battle-log-divider" role="separator" aria-label="Resize battle and logs panes"
+          aria-orientation="vertical" tabindex="0" (pointerdown)="onDividerPointerDown($event)"
+          (pointermove)="onDividerPointerMove($event)" (pointerup)="onDividerPointerUp($event)"
+          (pointercancel)="onDividerPointerUp($event)" (keydown)="onPaneDividerKeyDown($event)"></div>
+
+        <div class="col-12 col-md-6 border h-100 flex-col logs-pane">
         <div class="d-flex align-items-center justify-content-between battle-view-header">
           <h3>{{ app.battleViewMode === 'animate' ? 'Fight Animation' : 'Logs' }}</h3>
           <div class="d-flex align-items-center gap-2">
@@ -70,7 +82,7 @@
                 Animate
               </button>
             </div>
-            <button *ngIf="app.battleViewMode === 'logs'" class="btn btn-sm btn-secondary" (click)="app.toggleBattleAnalysis()">
+            <button class="btn btn-sm btn-secondary" (click)="app.toggleBattleAnalysis()">
               {{ app.showBattleAnalysis ? 'Hide' : 'Show' }} Analysis
             </button>
           </div>
@@ -78,7 +90,10 @@
 
         <ng-container *ngIf="app.battleViewMode === 'animate'; else logsView">
           <ng-container *ngIf="app.currentFightAnimationFrame as frame; else noAnimationFrames">
-            <div class="fight-stage">
+            <div class="vertical-resizable-stack" #animationSplitContainer>
+              <div class="animation-top-pane" [style.flex-basis.px]="animationTopHeightPx" [style.max-height.px]="animationTopHeightPx"
+                [style.height.px]="animationTopHeightPx">
+                <div class="fight-stage">
               <div class="fight-team fight-team-opponent">
                 <div class="fight-slot" *ngFor="let slot of frame.opponentSlots; trackBy: app.trackByIndex"
                   [class.fight-slot-front]="slot.slot === 0" [class.fight-slot-empty-card]="slot.isEmpty"
@@ -208,9 +223,9 @@
                   </div>
                 </div>
               </div>
-            </div>
+              </div>
 
-            <div class="fight-controls">
+              <div class="fight-controls">
               <div class="btn-group btn-group-sm" role="group" aria-label="Animation controls">
                 <button class="btn btn-outline-secondary" type="button" (click)="app.resetFightAnimation()"
                   [disabled]="app.fightAnimationFrames.length === 0">
@@ -244,24 +259,31 @@
                   2x
                 </button>
               </div>
-            </div>
+                </div>
 
-            <div class="fight-scrubber">
-              <input class="form-range" type="range" [min]="0" [max]="app.fightAnimationFrames.length - 1"
-                [value]="app.fightAnimationFrameIndex" (input)="app.onFightAnimationScrub($any($event.target).value)" />
-            </div>
+                <div class="fight-scrubber">
+                  <input class="form-range" type="range" [min]="0" [max]="app.fightAnimationFrames.length - 1"
+                    [value]="app.fightAnimationFrameIndex" (input)="app.onFightAnimationScrub($any($event.target).value)" />
+                </div>
+              </div>
 
-            <div class="fight-log-stream scroll">
-              <div class="fight-log-row" *ngFor="let log of app.viewBattleLogRows; index as i; trackBy: app.trackByIndex"
-                [class.fight-log-row-active]="i === app.currentFightAnimationLogIndex">
-                <span [ngClass]="log.classes">
-                  <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
-                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
-                      height="18" loading="lazy" decoding="async" />
-                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                    <br *ngIf="part.type === 'br'" />
-                  </ng-container>
-                </span>
+              <div class="horizontal-resize-divider" role="separator" aria-label="Resize animation and log stream"
+                aria-orientation="horizontal" tabindex="0" (pointerdown)="onAnimationDividerPointerDown($event)"
+                (pointermove)="onAnimationDividerPointerMove($event)" (pointerup)="onAnimationDividerPointerUp($event)"
+                (pointercancel)="onAnimationDividerPointerUp($event)" (keydown)="onAnimationDividerKeyDown($event)"></div>
+
+              <div class="fight-log-stream scroll animation-bottom-pane">
+                <div class="fight-log-row" *ngFor="let log of app.viewBattleLogRows; index as i; trackBy: app.trackByIndex"
+                  [class.fight-log-row-active]="i === app.currentFightAnimationLogIndex">
+                  <span [ngClass]="log.classes">
+                    <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
+                      <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
+                        height="18" loading="lazy" decoding="async" />
+                      <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                      <br *ngIf="part.type === 'br'" />
+                    </ng-container>
+                  </span>
+                </div>
               </div>
             </div>
           </ng-container>
@@ -274,120 +296,162 @@
         </ng-template>
 
         <ng-template #logsView>
-          <div class="row log-container flex-1 scroll" [class.log-container-with-analysis]="app.showBattleAnalysis">
-            <div class="col-12" *ngFor="let log of app.viewBattleLogRows; trackBy: app.trackByIndex">
-              <span [ngClass]="log.classes">
-                <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
-                  <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
-                    height="18" loading="lazy" decoding="async" />
-                  <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                  <br *ngIf="part.type === 'br'" />
-                </ng-container>
-              </span>
+          <div *ngIf="app.showBattleAnalysis; else logsOnlyView" class="vertical-resizable-stack logs-analysis-stack"
+            #logsAnalysisSplitContainer>
+            <div class="row log-container scroll logs-top-pane"
+              [style.flex-basis.px]="logsTopHeightPx"
+              [style.max-height.px]="logsTopHeightPx"
+              [style.height.px]="logsTopHeightPx"
+              [class.log-container-with-analysis]="app.showBattleAnalysis">
+              <div class="col-12" *ngFor="let log of app.viewBattleLogRows; trackBy: app.trackByIndex">
+                <span [ngClass]="log.classes">
+                  <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
+                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
+                      height="18" loading="lazy" decoding="async" />
+                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                    <br *ngIf="part.type === 'br'" />
+                  </ng-container>
+                </span>
+              </div>
+            </div>
+
+            <div class="horizontal-resize-divider" role="separator" aria-label="Resize logs and analysis"
+              aria-orientation="horizontal" tabindex="0" (pointerdown)="onLogsAnalysisDividerPointerDown($event)"
+              (pointermove)="onLogsAnalysisDividerPointerMove($event)" (pointerup)="onLogsAnalysisDividerPointerUp($event)"
+              (pointercancel)="onLogsAnalysisDividerPointerUp($event)" (keydown)="onLogsAnalysisDividerKeyDown($event)"></div>
+
+            <div class="analysis-bottom-pane">
+              <div class="vertical-resizable-stack analysis-sections-stack" #analysisSplitContainer>
+                <div class="analysis-section mt-2 timeline-top-pane"
+                  [style.flex-basis.px]="timelineTopHeightPx"
+                  [style.max-height.px]="timelineTopHeightPx"
+                  [style.height.px]="timelineTopHeightPx">
+                  <h4 class="analysis-title">Trigger Timeline</h4>
+                  <div class="analysis-table-wrap scroll">
+                    <table class="table table-sm analysis-table mb-0">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Source</th>
+                          <th>Target</th>
+                          <th>Reason</th>
+                          <th>Event</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let row of app.viewBattleTimelineRows; trackBy: app.trackByIndex" [ngClass]="[
+                            row.side === 'player' ? 'timeline-player' : '',
+                            row.side === 'opponent' ? 'timeline-opponent' : '',
+                            row.reason === 'true random' ? 'timeline-random' : '',
+                            row.reason === 'tie-broken' ? 'timeline-tie' : '',
+                            row.reason === 'deterministic' ? 'timeline-deterministic' : ''
+                          ]">
+                          <td>{{ row.step }}</td>
+                          <td>{{ row.source }}</td>
+                          <td>{{ row.target }}</td>
+                          <td>{{ row.reason }}</td>
+                          <td>{{ row.text }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="horizontal-resize-divider" role="separator" aria-label="Resize trigger timeline and battle diff"
+                  aria-orientation="horizontal" tabindex="0" (pointerdown)="onAnalysisDividerPointerDown($event)"
+                  (pointermove)="onAnalysisDividerPointerMove($event)" (pointerup)="onAnalysisDividerPointerUp($event)"
+                  (pointercancel)="onAnalysisDividerPointerUp($event)" (keydown)="onAnalysisDividerKeyDown($event)"></div>
+
+                <div class="analysis-section mt-2 diff-bottom-pane scroll">
+                  <h4 class="analysis-title">Battle Diff</h4>
+                  <div class="diff-controls">
+                    <label class="diff-label">
+                      Left
+                      <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftIndex"
+                        (ngModelChange)="app.setBattleDiffLeft($event)" [ngModelOptions]="{ standalone: true }">
+                        <option *ngFor="let battle of app.battles; index as i; trackBy: app.trackByIndex" [ngValue]="i">
+                          {{ i }} ({{ battle.winner }})
+                        </option>
+                      </select>
+                    </label>
+                    <label class="diff-label">
+                      Left Scope
+                      <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftScope"
+                        (ngModelChange)="app.setBattleDiffLeftScope($event)" [ngModelOptions]="{ standalone: true }">
+                        <option [ngValue]="'all'">All</option>
+                        <option [ngValue]="'player'">Player</option>
+                        <option [ngValue]="'opponent'">Opponent</option>
+                      </select>
+                    </label>
+                    <label class="diff-label">
+                      Right
+                      <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightIndex"
+                        (ngModelChange)="app.setBattleDiffRight($event)" [ngModelOptions]="{ standalone: true }">
+                        <option *ngFor="let battle of app.battles; index as i; trackBy: app.trackByIndex" [ngValue]="i">
+                          {{ i }} ({{ battle.winner }})
+                        </option>
+                      </select>
+                    </label>
+                    <label class="diff-label">
+                      Right Scope
+                      <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightScope"
+                        (ngModelChange)="app.setBattleDiffRightScope($event)" [ngModelOptions]="{ standalone: true }">
+                        <option [ngValue]="'all'">All</option>
+                        <option [ngValue]="'player'">Player</option>
+                        <option [ngValue]="'opponent'">Opponent</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="diff-summary">
+                    Equal: {{ app.battleDiffSummary.equalSteps }} |
+                    Changed: {{ app.battleDiffSummary.changedSteps }} |
+                    Left Only: {{ app.battleDiffSummary.leftOnly }} |
+                    Right Only: {{ app.battleDiffSummary.rightOnly }}
+                  </div>
+                  <div class="analysis-table-wrap scroll">
+                    <table class="table table-sm analysis-table mb-0">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Left</th>
+                          <th>Right</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let row of app.battleDiffRows; trackBy: app.trackByIndex" [ngClass]="{
+                            'diff-same': row.kind === 'same',
+                            'diff-changed': row.kind === 'changed',
+                            'diff-left-only': row.kind === 'left-only',
+                            'diff-right-only': row.kind === 'right-only'
+                          }">
+                          <td>{{ row.step }}</td>
+                          <td>{{ row.left }}</td>
+                          <td>{{ row.right }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div *ngIf="app.showBattleAnalysis" class="analysis-section mt-2">
-            <h4 class="analysis-title">Trigger Timeline</h4>
-            <div class="analysis-table-wrap scroll">
-              <table class="table table-sm analysis-table mb-0">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Source</th>
-                    <th>Target</th>
-                    <th>Reason</th>
-                    <th>Event</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let row of app.viewBattleTimelineRows; trackBy: app.trackByIndex" [ngClass]="[
-                      row.side === 'player' ? 'timeline-player' : '',
-                      row.side === 'opponent' ? 'timeline-opponent' : '',
-                      row.reason === 'true random' ? 'timeline-random' : '',
-                      row.reason === 'tie-broken' ? 'timeline-tie' : '',
-                      row.reason === 'deterministic' ? 'timeline-deterministic' : ''
-                    ]">
-                    <td>{{ row.step }}</td>
-                    <td>{{ row.source }}</td>
-                    <td>{{ row.target }}</td>
-                    <td>{{ row.reason }}</td>
-                    <td>{{ row.text }}</td>
-                  </tr>
-                </tbody>
-              </table>
+
+          <ng-template #logsOnlyView>
+            <div class="row log-container flex-1 scroll">
+              <div class="col-12" *ngFor="let log of app.viewBattleLogRows; trackBy: app.trackByIndex">
+                <span [ngClass]="log.classes">
+                  <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
+                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
+                      height="18" loading="lazy" decoding="async" />
+                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                    <br *ngIf="part.type === 'br'" />
+                  </ng-container>
+                </span>
+              </div>
             </div>
-          </div>
-          <div *ngIf="app.showBattleAnalysis" class="analysis-section mt-2">
-            <h4 class="analysis-title">Battle Diff</h4>
-            <div class="diff-controls">
-              <label class="diff-label">
-                Left
-                <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftIndex"
-                  (ngModelChange)="app.setBattleDiffLeft($event)" [ngModelOptions]="{ standalone: true }">
-                  <option *ngFor="let battle of app.battles; index as i; trackBy: app.trackByIndex" [ngValue]="i">
-                    {{ i }} ({{ battle.winner }})
-                  </option>
-                </select>
-              </label>
-              <label class="diff-label">
-                Left Scope
-                <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftScope"
-                  (ngModelChange)="app.setBattleDiffLeftScope($event)" [ngModelOptions]="{ standalone: true }">
-                  <option [ngValue]="'all'">All</option>
-                  <option [ngValue]="'player'">Player</option>
-                  <option [ngValue]="'opponent'">Opponent</option>
-                </select>
-              </label>
-              <label class="diff-label">
-                Right
-                <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightIndex"
-                  (ngModelChange)="app.setBattleDiffRight($event)" [ngModelOptions]="{ standalone: true }">
-                  <option *ngFor="let battle of app.battles; index as i; trackBy: app.trackByIndex" [ngValue]="i">
-                    {{ i }} ({{ battle.winner }})
-                  </option>
-                </select>
-              </label>
-              <label class="diff-label">
-                Right Scope
-                <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightScope"
-                  (ngModelChange)="app.setBattleDiffRightScope($event)" [ngModelOptions]="{ standalone: true }">
-                  <option [ngValue]="'all'">All</option>
-                  <option [ngValue]="'player'">Player</option>
-                  <option [ngValue]="'opponent'">Opponent</option>
-                </select>
-              </label>
-            </div>
-            <div class="diff-summary">
-              Equal: {{ app.battleDiffSummary.equalSteps }} |
-              Changed: {{ app.battleDiffSummary.changedSteps }} |
-              Left Only: {{ app.battleDiffSummary.leftOnly }} |
-              Right Only: {{ app.battleDiffSummary.rightOnly }}
-            </div>
-            <div class="analysis-table-wrap scroll">
-              <table class="table table-sm analysis-table mb-0">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Left</th>
-                    <th>Right</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let row of app.battleDiffRows; trackBy: app.trackByIndex" [ngClass]="{
-                      'diff-same': row.kind === 'same',
-                      'diff-changed': row.kind === 'changed',
-                      'diff-left-only': row.kind === 'left-only',
-                      'diff-right-only': row.kind === 'right-only'
-                    }">
-                    <td>{{ row.step }}</td>
-                    <td>{{ row.left }}</td>
-                    <td>{{ row.right }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          </ng-template>
         </ng-template>
+        </div>
       </div>
     </div>
 

@@ -185,6 +185,21 @@ export class AbilityService extends AbilityEventTriggers {
     this.lastLoggedTrigger = undefined;
   }
 
+  executeBeforeAttackTriggerOnly() {
+    const beforeAttackTriggers = new Set([
+      'BeforeFriendlyAttack',
+      'BeforeThisAttacks',
+      'BeforeFirstAttack',
+      'BeforeFriendAttacks',
+      'BeforeAdjacentFriendAttacked',
+    ]);
+    this.abilityQueueService.processQueue(this.gameService.gameApi, {
+      filter: (event) => beforeAttackTriggers.has(event.abilityType as string),
+      onExecute: (event) => this.logTriggerHeader(event),
+    });
+    this.lastLoggedTrigger = undefined;
+  }
+
   // Friend/After attacks events
   triggerAttacksEvents(AttackingPet: Pet) {
     this.attackEventService.triggerAfterAttackEvents(AttackingPet);

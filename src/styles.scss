@@ -1,4 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "Lapsus Pro";
+  src:
+    local("Lapsus Pro"),
+    url("/assets/fonts/LapsusPro-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lapsus Pro";
+  src:
+    local("Lapsus Pro Bold"),
+    local("Lapsus Pro"),
+    url("/assets/fonts/LapsusPro-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 html {
   font-size: 13px;
 }
@@ -120,3 +141,26 @@ body {
   --bs-btn-active-bg: var(--sap-btn-accent-active);
   --bs-btn-active-border-color: var(--sap-btn-accent-active);
 }
+
+.sap-floating-tooltip {
+  position: fixed;
+  transform: translateZ(0);
+  background: rgba(20, 22, 35, 0.95);
+  color: #f8f9fa;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  width: max-content;
+  max-width: min(420px, calc(100vw - 24px));
+  max-height: min(360px, calc(100vh - 24px));
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow: auto;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+  z-index: 3000;
+  pointer-events: none;
+}
+

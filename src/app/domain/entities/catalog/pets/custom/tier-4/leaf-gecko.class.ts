@@ -9,6 +9,8 @@ import { InjectorService } from 'app/integrations/injector.service';
 import { getRandomInt } from 'app/runtime/random';
 import { canApplyAilment, logAbility } from 'app/domain/entities/ability-resolution';
 import { cloneEquipment } from 'app/runtime/equipment-clone';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class LeafGecko extends Pet {
@@ -46,7 +48,7 @@ export class LeafGeckoAbility extends Ability {
     super({
       name: 'Leaf Gecko Ability',
       owner: owner,
-      triggers: ['PostRemovalFaint'],
+      triggers: ['Faint'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -75,14 +77,58 @@ export class LeafGeckoAbility extends Ability {
 
     const requiredCount = this.level * 3;
     let appliedCount = 0;
+    const appliedDetails: string[] = [];
     let attempts = 0;
     const maxAttempts = requiredCount * 5;
+    let randomEvent = false;
 
     while (appliedCount < requiredCount && attempts < maxAttempts) {
-      const target = targets[getRandomInt(0, targets.length - 1)];
-      const ailmentName =
-        ailmentNames[getRandomInt(0, ailmentNames.length - 1)];
-      if (!target || !canApplyAilment(target, ailmentName)) {
+      const targetDecision = chooseRandomOption(
+        {
+          key: 'pet.leaf-gecko-target',
+          label: formatPetScopedRandomLabel(
+            owner,
+            'Leaf Gecko cursed target',
+            attempts + 1,
+          ),
+          options: targets.map((pet) => ({
+            id: `${pet.parent?.isOpponent ? 'O' : 'P'}:${pet.savedPosition + 1}:${pet.name}`,
+            label: `${pet.parent?.isOpponent ? 'O' : 'P'}${pet.savedPosition + 1} ${pet.name}`,
+          })),
+        },
+        () => getRandomInt(0, targets.length - 1),
+      );
+      randomEvent = randomEvent || targetDecision.randomEvent;
+      const target = targets[targetDecision.index];
+
+      if (!target) {
+        attempts++;
+        continue;
+      }
+
+      const availableAilments = ailmentNames.filter((ailmentName) =>
+        canApplyAilment(target, ailmentName),
+      );
+      if (availableAilments.length === 0) {
+        attempts++;
+        continue;
+      }
+
+      const ailmentDecision = chooseRandomOption(
+        {
+          key: 'pet.leaf-gecko-ailment',
+          label: formatPetScopedRandomLabel(
+            owner,
+            `Leaf Gecko ailment for ${target.name}`,
+            attempts + 1,
+          ),
+          options: availableAilments.map((name) => ({ id: name, label: name })),
+        },
+        () => getRandomInt(0, availableAilments.length - 1),
+      );
+      randomEvent = randomEvent || ailmentDecision.randomEvent;
+      const ailmentName = availableAilments[ailmentDecision.index];
+      if (!ailmentName) {
         attempts++;
         continue;
       }
@@ -104,17 +150,30 @@ export class LeafGeckoAbility extends Ability {
         ailmentClone.multiplier = 2;
         ailmentClone.multiplierMessage = ' x2 (Leaf Gecko)';
       }
+
       target.givePetEquipment(ailmentClone);
-      appliedCount++;
+
+      if (
+        target.equipment?.name === ailmentName &&
+        target.equipment?.equipmentClass?.startsWith('ailment')
+      ) {
+        appliedCount++;
+        appliedDetails.push(
+          `${target.name} (${ailmentName}${target.parent !== owner.parent ? ' x2' : ''})`,
+        );
+      }
+
       attempts++;
     }
 
     const message =
       appliedCount > 0
-        ? `${owner.name} cursed ${appliedCount} pet${appliedCount === 1 ? '' : 's'} with random ailments.`
+        ? `${owner.name} cursed ${appliedCount} pet${appliedCount === 1 ? '' : 's'}: ${appliedDetails.join(', ')}.`
         : `${owner.name} could not apply any random ailments.`;
 
-    logAbility(this.logService, owner, message, tiger, pteranodon);
+    logAbility(this.logService, owner, message, tiger, pteranodon, {
+      randomEvent,
+    });
     this.triggerTigerExecution(context);
   }
 

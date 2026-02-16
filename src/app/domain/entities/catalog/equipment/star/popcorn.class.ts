@@ -6,7 +6,7 @@ import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
-import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
+import { formatEquipmentScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Popcorn extends Equipment {
@@ -77,7 +77,12 @@ export class PopcornAbility extends Ability {
       const choice = chooseRandomOption(
         {
           key: 'equipment.popcorn-summon',
-          label: formatPetScopedRandomLabel(owner, 'Popcorn summon', i + 1),
+          label: formatEquipmentScopedRandomLabel(
+            owner,
+            'Popcorn',
+            'summon',
+            i + 1,
+          ),
           options: pets.map((name) => ({ id: name, label: name })),
         },
         () => getRandomInt(0, pets.length - 1),

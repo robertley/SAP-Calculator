@@ -5,7 +5,7 @@ import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
-import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
+import { formatEquipmentScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class CocoaBean extends Equipment {
@@ -77,7 +77,12 @@ export class CocoaBeanAbility extends Ability {
       const choice = chooseRandomOption(
         {
           key: 'equipment.cocoa-bean-transform',
-          label: formatPetScopedRandomLabel(owner, 'Cocoa Bean transform', i + 1),
+          label: formatEquipmentScopedRandomLabel(
+            owner,
+            'Cocoa Bean',
+            'transform',
+            i + 1,
+          ),
           options: enemies.map((enemy) => ({
             id: `${enemy.savedPosition + 1}:${enemy.name}`,
             label: `O${enemy.savedPosition + 1} ${enemy.name}`,
@@ -121,10 +126,6 @@ export class CocoaBeanAbility extends Ability {
         }
       }
 
-      transformedPet.abilityCounter = randomEnemy.abilityCounter;
-      transformedPet.timesHurt = randomEnemy.timesHurt;
-      transformedPet.timesAttacked = randomEnemy.timesAttacked;
-      transformedPet.battlesFought = randomEnemy.battlesFought;
       transformedPet.copyAbilities(randomEnemy, 'Pet');
       let multiplierMessage = i > 0 ? this.equipment.multiplierMessage : '';
       this.logService.createLog({

@@ -38,12 +38,12 @@ function loadEnvFile() {
 loadEnvFile();
 
 const replayApiTarget =
-  process.env.REPLAY_API_TARGET || 'http://127.0.0.1:3000';
+  process.env.REPLAY_API_TARGET || 'https://sap-replay-bot-main.vercel.app';
 
 module.exports = {
   '/api': {
     target: replayApiTarget,
     secure: false,
-    changeOrigin: false,
+    changeOrigin: true,
   },
 };

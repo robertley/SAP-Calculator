@@ -9,7 +9,7 @@ import { getRandomInt } from 'app/runtime/random';
 import { FormArray } from '@angular/forms';
 import { Mouse } from 'app/domain/entities/catalog/pets/custom/tier-1/mouse.class';
 import { PET_REGISTRY } from './pet-registry';
-import { BASE_PACK_NAMES, PackName } from 'app/runtime/pack-names';
+import { BASE_PACK_NAMES, BasePackName, PackName } from 'app/runtime/pack-names';
 import * as petJson from 'assets/data/pets.json';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
@@ -23,6 +23,11 @@ interface PetJsonEntry {
   Rollable?: boolean;
   Random?: boolean;
 }
+
+const MIN_TIER = 1;
+const MAX_TIER = 6;
+const ALL_TIERS = [1, 2, 3, 4, 5, 6] as const;
+const RANDOM_PET_FALLBACK = 'Ant';
 
 const PACK_CODE_TO_NAME: Record<string, PackName> = {
   Pack1: 'Turtle',
@@ -89,19 +94,63 @@ export class PetService {
         continue;
       }
       const pack = new Map<number, string[]>();
-      for (let tier = 1; tier <= 6; tier++) {
+      for (const tier of ALL_TIERS) {
         const tierKey = `tier${tier}Pets` as keyof CustomPackConfig;
         const tierPets = customPack?.[tierKey];
-        const normalized = Array.isArray(tierPets)
-          ? tierPets
-              .filter((petName): petName is string => typeof petName === 'string')
-              .map((petName) => petName.trim())
-              .filter((petName) => petName.length > 0)
-          : [];
+        const normalized = this.normalizePetNameList(tierPets);
         pack.set(tier, normalized);
       }
       this.playerCustomPackPets.set(packName, pack);
     }
+  }
+
+  private normalizePetNameList(value: unknown): string[] {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    return value
+      .filter((petName): petName is string => typeof petName === 'string')
+      .map((petName) => petName.trim())
+      .filter((petName) => petName.length > 0);
+  }
+
+  private isValidTier(value: number): boolean {
+    return Number.isFinite(value) && value >= MIN_TIER && value <= MAX_TIER;
+  }
+
+  private getCustomPackTierPets(packName: string, tier: number): string[] {
+    return [...(this.playerCustomPackPets.get(packName)?.get(tier) || [])];
+  }
+
+  private getBasePackTierPets(packName: BasePackName, tier: number): string[] {
+    return [...(this.basePackPetsByName[packName]?.get(tier) || [])];
+  }
+
+  private resolveBasePackName(packName: string): BasePackName | null {
+    switch (packName) {
+      case 'Turtle':
+      case 'Puppy':
+      case 'Star':
+      case 'Golden':
+      case 'Unicorn':
+      case 'Danger':
+        return packName;
+      default:
+        return null;
+    }
+  }
+
+  private getRandomPetPoolByTier(parent: Player, tier: number): string[] {
+    if (parent.allPets) {
+      return [...(this.allPets.get(tier) || [])];
+    }
+
+    const basePackName = this.resolveBasePackName(parent.pack);
+    if (basePackName) {
+      return this.getBasePackTierPets(basePackName, tier);
+    }
+
+    return this.getCustomPackTierPets(parent.pack, tier);
   }
 
   private resetPackMaps() {
@@ -117,7 +166,7 @@ export class PetService {
     ];
     for (const map of tierMaps) {
       map.clear();
-      for (let tier = 1; tier <= 6; tier++) {
+      for (const tier of ALL_TIERS) {
         map.set(tier, []);
       }
     }
@@ -144,7 +193,7 @@ export class PetService {
         this.petDataMap.set(pet.Name, pet);
       }
       const tier = Number(pet.Tier);
-      if (!Number.isFinite(tier) || tier < 1 || tier > 6) {
+      if (!this.isValidTier(tier)) {
         continue;
       }
       const hasNoAbility =
@@ -235,12 +284,12 @@ export class PetService {
 
   private buildFaintPetsByTier(pets: PetJsonEntry[]): Map<number, string[]> {
     const faintMap = new Map<number, string[]>();
-    for (let tier = 1; tier <= 6; tier++) {
+    for (const tier of ALL_TIERS) {
       faintMap.set(tier, []);
     }
     for (const pet of pets) {
       const tier = Number(pet.Tier);
-      if (!Number.isFinite(tier) || tier < 1 || tier > 6) {
+      if (!this.isValidTier(tier)) {
         continue;
       }
       if (pet.Rollable !== true) {
@@ -273,8 +322,8 @@ export class PetService {
 
   setAllPets() {
     this.allPets = new Map();
-    for (let i = 1; i <= 6; i++) {
-      this.allPets.set(i, []);
+    for (const tier of ALL_TIERS) {
+      this.allPets.set(tier, []);
     }
     for (const packName of BASE_PACK_NAMES) {
       const packPets = this.basePackPetsByName[packName];
@@ -325,7 +374,7 @@ export class PetService {
   }
 
   getRandomPet(parent: Player) {
-    const tierOptions = [1, 2, 3, 4, 5, 6].map((value) => ({
+    const tierOptions = ALL_TIERS.map((value) => ({
       id: `tier-${value}`,
       label: `Tier ${value}`,
     }));
@@ -338,24 +387,7 @@ export class PetService {
       () => getRandomInt(0, tierOptions.length - 1),
     );
     let tier = tierDecision.index + 1;
-    let pets: string[];
-    if (parent.allPets) {
-      pets = [...(this.allPets.get(tier) || [])];
-    } else if (parent.pack == 'Turtle') {
-      pets = [...(this.turtlePackPets.get(tier) || [])];
-    } else if (parent.pack == 'Puppy') {
-      pets = [...(this.puppyPackPets.get(tier) || [])];
-    } else if (parent.pack == 'Star') {
-      pets = [...(this.starPackPets.get(tier) || [])];
-    } else if (parent.pack == 'Golden') {
-      pets = [...(this.goldenPackPets.get(tier) || [])];
-    } else if (parent.pack == 'Unicorn') {
-      pets = [...(this.unicornPackPets.get(tier) || [])];
-    } else if (parent.pack == 'Danger') {
-      pets = [...(this.dangerPackPets.get(tier) || [])];
-    } else {
-      pets = [...(this.playerCustomPackPets.get(parent.pack)?.get(tier) || [])];
-    }
+    let pets = this.getRandomPetPoolByTier(parent, tier);
 
     if (parent.allPets && parent.tokenPets) {
       const tokens = this.tokenPetsMap.get(tier) || [];
@@ -366,7 +398,7 @@ export class PetService {
 
     if (!pets || pets.length === 0) {
       // Fallback if tier has no pets in this configuration
-      pets = ['Ant']; // Very safe fallback
+      pets = [RANDOM_PET_FALLBACK]; // Very safe fallback
     }
     const petDecision = chooseRandomOption(
       {

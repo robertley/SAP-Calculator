@@ -48,7 +48,34 @@
           [class.btn-outline-primary]="selectedPack !== pack"
           (click)="selectPack(pack)"
         >
-          {{ pack }}
+          <span class="pack-filter-content">
+            <img
+              *ngIf="getPackFilterIcon(pack) as packIcon"
+              [ngSrc]="packIcon"
+              width="18"
+              height="18"
+              loading="lazy"
+              decoding="async"
+              [alt]="pack"
+              class="pack-filter-icon"
+            />
+            <span>{{ pack }}</span>
+          </span>
+        </button>
+      </div>
+
+      <div
+        class="pack-filters"
+        *ngIf="type === 'equipment' || type === 'toy' || type === 'hard-toy'"
+      >
+        <button
+          *ngFor="let category of availableItemCategories; trackBy: trackByCategory"
+          class="btn btn-sm"
+          [class.btn-primary]="selectedItemCategory === category"
+          [class.btn-outline-primary]="selectedItemCategory !== category"
+          (click)="selectItemCategory(category)"
+        >
+          {{ category }}
         </button>
       </div>
 
@@ -98,7 +125,11 @@
                   [alt]="item.name"
                   class="item-icon"
                 />
-                <div *ngIf="item.tier > 0 && type !== 'hard-toy'" class="tier-badge">
+                <div
+                  *ngIf="item.tier > 0 && type !== 'hard-toy'"
+                  class="tier-badge"
+                  [ngClass]="'tier-badge-tier-' + item.tier"
+                >
                   {{ item.tier }}
                 </div>
               </ng-container>

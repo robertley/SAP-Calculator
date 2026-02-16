@@ -19,6 +19,11 @@ export function resolveSwallowedPetControlPath({
         swallowedPetIndex,
         (idx) => `abominationSwallowedPet${idx}BelugaSwallowedPet`,
       );
+    case 'abomination-sarcastic':
+      return withIndex(
+        swallowedPetIndex,
+        (idx) => `abominationSwallowedPet${idx}SarcasticFringeheadSwallowedPet`,
+      );
     case 'parrot':
       return 'parrotCopyPet';
     case 'parrot-beluga':

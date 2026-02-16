@@ -277,6 +277,15 @@ export function initPetForms(
       abominationSwallowedPet3BelugaSwallowedPet: new FormControl(
         pet?.abominationSwallowedPet3BelugaSwallowedPet ?? null,
       ),
+      abominationSwallowedPet1SarcasticFringeheadSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet1SarcasticFringeheadSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet2SarcasticFringeheadSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet2SarcasticFringeheadSwallowedPet ?? null,
+      ),
+      abominationSwallowedPet3SarcasticFringeheadSwallowedPet: new FormControl(
+        pet?.abominationSwallowedPet3SarcasticFringeheadSwallowedPet ?? null,
+      ),
       abominationSwallowedPet1ParrotCopyPet: new FormControl(
         pet?.abominationSwallowedPet1ParrotCopyPet ?? null,
       ),

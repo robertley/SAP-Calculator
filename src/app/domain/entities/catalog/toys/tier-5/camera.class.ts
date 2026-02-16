@@ -21,7 +21,7 @@ export class Camera extends Toy {
       let reducedTo = Math.max(1, Math.floor(target.attack * (1 - power)));
       target.attack = reducedTo;
       this.logService.createLog({
-        message: `${this.name} reduced ${target.name} attack by ${power * 100}% (${reducedTo})`,
+        message: `${this.name} reduced ${target.name} attack by ${power * 100}% to ${reducedTo}`,
         type: 'ability',
         player: this.parent,
         puma: puma,
@@ -52,7 +52,7 @@ export class CameraAbility extends Ability {
           let reducedTo = Math.max(1, Math.floor(target.attack * (1 - power)));
           target.attack = reducedTo;
           logService.createLog({
-            message: `${owner.name} reduced ${target.name} attack by ${power * 100}% (${reducedTo}) (Camera)`,
+            message: `${owner.name} reduced ${target.name} attack by ${power * 100}% to ${reducedTo} (Camera)`,
             type: 'ability',
             player: owner.parent,
             puma: puma,

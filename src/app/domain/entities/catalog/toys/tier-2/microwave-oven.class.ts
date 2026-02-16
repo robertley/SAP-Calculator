@@ -15,7 +15,7 @@ export class MicrowaveOven extends Toy {
   name = 'Microwave Oven';
   tier = 2;
   startOfBattle(gameApi?: GameAPI, puma?: boolean) {
-    let excludePets = this.parent.getPetsWithEquipment('Popcorn');
+    let excludePets = this.parent.getPetsWithEquipment('perk');
     let targetResp = this.parent.getFurthestUpPets(this.level, excludePets);
     let targets = targetResp.pets;
     if (targets.length == 0) {
@@ -60,7 +60,7 @@ export class MicrowaveOvenAbility extends Ability {
       abilityType: 'Pet',
       abilityFunction: (context: AbilityContext) => {
         const { puma } = context;
-        let excludePets = owner.parent.getPetsWithEquipment('Popcorn');
+        let excludePets = owner.parent.getPetsWithEquipment('perk');
         let targetResp = owner.parent.getFurthestUpPets(
           this.abilityLevel,
           excludePets,

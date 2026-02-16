@@ -7,10 +7,12 @@ type SwallowedPetPrefix =
 type SwallowedPetStringSuffix =
   | ''
   | 'BelugaSwallowedPet'
+  | 'SarcasticFringeheadSwallowedPet'
   | 'ParrotCopyPet'
   | 'ParrotCopyPetBelugaSwallowedPet'
   | `ParrotCopyPetAbominationSwallowedPet${SwallowSlot}`
-  | `ParrotCopyPetAbominationSwallowedPet${SwallowSlot}BelugaSwallowedPet`;
+  | `ParrotCopyPetAbominationSwallowedPet${SwallowSlot}BelugaSwallowedPet`
+  | `ParrotCopyPetAbominationSwallowedPet${SwallowSlot}SarcasticFringeheadSwallowedPet`;
 
 type SwallowedPetNumberSuffix =
   | 'Level'
