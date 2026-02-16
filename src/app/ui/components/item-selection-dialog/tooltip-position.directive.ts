@@ -201,7 +201,7 @@ export class TooltipPositionDirective implements OnDestroy {
 
     return text
       .trim()
-      .replace(/\s*(Level\s+\d+\s*[:\-])/gi, '\n$1')
+      .replace(/\s*(Level\s+\d+\s*[:-])/gi, '\n$1')
       .replace(/^\n+/, '')
       .replace(/\n{3,}/g, '\n\n');
   }

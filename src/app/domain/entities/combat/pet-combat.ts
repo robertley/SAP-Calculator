@@ -7,7 +7,6 @@ import { Salt } from 'app/domain/entities/catalog/equipment/puppy/salt.class';
 import { Cheese } from 'app/domain/entities/catalog/equipment/star/cheese.class';
 import { FortuneCookie } from 'app/domain/entities/catalog/equipment/custom/fortune-cookie.class';
 import { Pepper } from 'app/domain/entities/catalog/equipment/star/pepper.class';
-import { Icky } from 'app/domain/entities/catalog/equipment/ailments/icky.class';
 import { Sleepy } from 'app/domain/entities/catalog/equipment/ailments/sleepy.class';
 import {
   MapleSyrup,
