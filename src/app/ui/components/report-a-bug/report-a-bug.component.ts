@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { cloneDeep } from 'lodash-es';
+import { buildShareableLink } from '../../shell/state/app.component.share';
 
 @Component({
   selector: 'app-report-a-bug',
@@ -39,41 +39,14 @@ export class ReportABugComponent implements OnInit {
       return;
     }
 
-    // Clean the form data to remove circular references and generate shareable link
+    // Reuse the app's canonical share-link format (#c= compact payload).
     let shareableLink: string;
     try {
-      const rawValue = this.calcFormGroup.value;
-      const cleanValue = cloneDeep(rawValue);
-
-      const petsToClean = [
-        ...(cleanValue.playerPets || []),
-        ...(cleanValue.opponentPets || []),
-      ];
-
-      for (const pet of petsToClean) {
-        if (pet) {
-          // Remove properties that are class instances or cause cycles
-          delete pet.parent;
-          delete pet.logService;
-          delete pet.abilityService;
-          delete pet.gameService;
-          delete pet.petService;
-
-          if (pet.equipment) {
-            const equipmentName =
-              typeof pet.equipment === 'string'
-                ? pet.equipment
-                : pet.equipment.name;
-            pet.equipment = equipmentName ? { name: equipmentName } : null;
-          }
-        }
+      if (!this.calcFormGroup) {
+        throw new Error('Calculator form is unavailable.');
       }
-
-      const calculatorStateString = JSON.stringify(cleanValue);
-      const encodedData = encodeURIComponent(calculatorStateString);
-
       const baseUrl = window.location.origin + window.location.pathname;
-      shareableLink = `${baseUrl}?c=${encodedData}`;
+      shareableLink = buildShareableLink(this.calcFormGroup, baseUrl);
     } catch (e) {
       console.error('Error creating bug report data:', e);
       shareableLink = 'Error: Could not generate shareable link';
@@ -89,7 +62,6 @@ export class ReportABugComponent implements OnInit {
         'https://formspree.io/f/mgvzngzp',
         {
           name: 'SAP CALC',
-          replyto: 'Ruihan20080129@gmail.com',
           message: message,
         },
         { headers: headers },
