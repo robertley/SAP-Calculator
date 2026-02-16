@@ -1,0 +1,37 @@
+{
+  "template": "tmp/replay-template.json",
+  "output": "generated-battle.json",
+  "calculatorStateFile": "tmp/calculator-export.txt",
+  "calculatorPetsAreFrontToBack": true,
+  "defaultHat": "none",
+  "background": "grass field",
+  "backgrounds": {
+    "grass field": 0
+  },
+  "hats": {
+    "none": 0,
+    "abandon": 1,
+    "trophy": 2
+  },
+  "abilitiesByPet": {
+    "mammoth": [31],
+    "snake": [38],
+    "tiger": [53],
+    "fly": [51],
+    "shark": [35]
+  },
+  "team_1": [
+    { "pet": "shark", "perk": "melon", "level": 2, "attack": 20, "health": 20, "hat": "abandon" },
+    { "pet": "fly", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "abandon" },
+    { "pet": "tiger", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "abandon" },
+    { "pet": "snake", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "abandon" },
+    { "pet": "mammoth", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "abandon" }
+  ],
+  "team_2": [
+    { "pet": "mammoth", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "trophy" },
+    { "pet": "snake", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "trophy" },
+    { "pet": "tiger", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "trophy" },
+    { "pet": "fly", "perk": "mushroom", "level": 2, "attack": 10, "health": 20, "hat": "trophy" },
+    { "pet": "shark", "perk": "melon", "level": 2, "attack": 20, "health": 20, "hat": "trophy" }
+  ]
+}

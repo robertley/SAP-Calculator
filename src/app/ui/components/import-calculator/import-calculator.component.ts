@@ -19,6 +19,7 @@ import {
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
+import { parseReplayCode } from 'app/integrations/replay/replay-code';
 
 interface ReplayActionEntry {
   Type?: number;
@@ -84,6 +85,17 @@ export class ImportCalculatorComponent implements OnInit {
     calcControl?.markAsPristine();
     calcControl?.markAsUntouched();
     calcControl?.updateValueAndValidity({ emitEvent: false });
+
+    const replayCodePayload = parseReplayCode(rawInput);
+    if (replayCodePayload?.battle) {
+      this.importReplayBattle(
+        replayCodePayload.battle,
+        replayCodePayload.genesisBuildModel,
+        undefined,
+        { abilityPetMap: replayCodePayload.abilityPetMap ?? null },
+      );
+      return;
+    }
 
     let parsedInput: ReplayImportPayload;
     try {

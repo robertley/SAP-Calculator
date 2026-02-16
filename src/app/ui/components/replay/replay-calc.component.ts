@@ -19,6 +19,7 @@ import {
   buildReplayAbilityPetMapFromActions,
   selectReplayBattleFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
+import { buildReplayCode } from 'app/integrations/replay/replay-code';
 
 interface ReplayActionEntry {
   Type?: number;
@@ -59,6 +60,7 @@ export class ReplayCalcComponent implements OnInit {
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
   calculatorLink = '';
+  replayCode = '';
   loading = false;
   private readonly replayTimeoutMs = 10000;
   private readonly replayHealthTimeoutMs = 2500;
@@ -83,6 +85,7 @@ export class ReplayCalcComponent implements OnInit {
     this.errorMessage = '';
     this.clearStatus();
     this.calculatorLink = '';
+    this.replayCode = '';
     this.loading = false;
 
     const rawInput = this.formGroup.get('replayJson').value?.trim();
@@ -149,17 +152,12 @@ export class ReplayCalcComponent implements OnInit {
                   this.errorMessage = 'Replay lookup failed to return a battle.';
                   return;
                 }
-                const calculatorState =
-                  this.replayCalcService.parseReplayForCalculator(
-                    battleJson,
-                    response?.genesisBuildModel,
-                    undefined,
-                    { abilityPetMap: response?.abilityPetMap ?? null },
-                  );
-                this.calculatorLink =
-                  this.replayCalcService.generateCalculatorLink(
-                    calculatorState,
-                  );
+                this.populateReplayOutputs(
+                  battleJson,
+                  response?.genesisBuildModel,
+                  response?.abilityPetMap ?? null,
+                  turnNumber,
+                );
               },
               error: (error) => {
                 if (error?.name === 'TimeoutError') {
@@ -209,14 +207,12 @@ export class ReplayCalcComponent implements OnInit {
       return;
     }
 
-    const calculatorState = this.replayCalcService.parseReplayForCalculator(
+    this.populateReplayOutputs(
       battleJson,
       parsedInput?.GenesisBuildModel,
-      undefined,
-      parseOptions,
+      parseOptions?.abilityPetMap ?? null,
+      Number(this.formGroup.get('turn').value ?? parsedInput?.T),
     );
-    this.calculatorLink =
-      this.replayCalcService.generateCalculatorLink(calculatorState);
   }
 
   copyLink() {
@@ -234,6 +230,48 @@ export class ReplayCalcComponent implements OnInit {
           'error',
         );
       });
+  }
+
+  copyReplayCode() {
+    if (!this.replayCode) {
+      return;
+    }
+    navigator.clipboard
+      .writeText(this.replayCode)
+      .then(() => {
+        this.setStatus('Replay code copied to clipboard!', 'success');
+      })
+      .catch(() => {
+        this.setStatus(
+          'Failed to copy replay code. Please copy it manually.',
+          'error',
+        );
+      });
+  }
+
+  private populateReplayOutputs(
+    battleJson: ReplayBattleJson,
+    genesisBuildModel?: ReplayBuildModelJson,
+    abilityPetMap?: Record<string, string | number> | null,
+    turnNumber?: number,
+  ) {
+    const calculatorState = this.replayCalcService.parseReplayForCalculator(
+      battleJson,
+      genesisBuildModel,
+      undefined,
+      { abilityPetMap: abilityPetMap ?? null },
+    );
+    this.calculatorLink =
+      this.replayCalcService.generateCalculatorLink(calculatorState);
+    this.replayCode = buildReplayCode({
+      battle: battleJson,
+      genesisBuildModel: genesisBuildModel ?? null,
+      abilityPetMap: abilityPetMap ?? null,
+      turn:
+        typeof turnNumber === 'number' && Number.isFinite(turnNumber)
+          ? turnNumber
+          : undefined,
+    });
   }
 
   private saveSapCredentials() {

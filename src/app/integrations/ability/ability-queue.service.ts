@@ -117,7 +117,10 @@ export class AbilityQueueService {
 
   // --- Priority Helpers ---
 
-  getAbilityPriority(trigger: AbilityTrigger): number {
+  getAbilityPriority(trigger: AbilityTrigger | string | null | undefined): number {
+    if (typeof trigger !== 'string' || trigger.length === 0) {
+      return 999;
+    }
     const direct = ABILITY_PRIORITIES[trigger];
     if (direct != null) {
       return direct;
@@ -285,12 +288,18 @@ export class AbilityQueueService {
     return result;
   }
 
-  private getNumericSuffix(value: string): string | null {
+  private getNumericSuffix(value: string | null | undefined): string | null {
+    if (typeof value !== 'string' || value.length === 0) {
+      return null;
+    }
     const match = value.match(/(\d+)$/);
     return match ? match[1] : null;
   }
 
-  private removeNumericSuffix(value: string): string {
+  private removeNumericSuffix(value: string | null | undefined): string {
+    if (typeof value !== 'string' || value.length === 0) {
+      return '';
+    }
     return this.getNumericSuffix(value) ? value.replace(/\d+$/, '') : value;
   }
 

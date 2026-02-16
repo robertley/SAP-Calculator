@@ -139,9 +139,13 @@ See `docs/EVOLUTIONARY_SEARCH.md` for the PyTorch + Ray evolutionary runner that
 ## Replay Backend (Optional)
 `server/index.js` provides replay proxy endpoints:
 - `GET /api/health`
+- `GET /api/replays/:id/turns`
 - `POST /api/replay-battle`
 
 Deployment guide: `docs/DEPLOY_REPLAY.md`.
+
+Replay JSON generation for in-game playback: `docs/REPLAY_JSON_GENERATOR.md` (`python .\\scripts\\make-team.py`).
+Local replay injection scripts: `scripts/mitmproxy-plugin.py`, `scripts/start-proxy.ps1`, `scripts/start-proxy.sh`.
 
 ## Contributing
 1. Keep changes scoped and aligned with layer boundaries above.

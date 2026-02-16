@@ -1,0 +1,190 @@
+{
+  "UserBoard": {
+    "Tur": 1,
+    "Vic": 1,
+    "Back": 0,
+    "Mins": {
+      "Items": [
+        {
+          "Enu": 372,
+          "Lvl": 3,
+          "Perk": 0,
+          "At": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 372,
+          "Lvl": 3,
+          "Perk": 0,
+          "At": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 372,
+          "Lvl": 3,
+          "Perk": 0,
+          "At": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 372,
+          "Lvl": 3,
+          "Perk": 0,
+          "At": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 372,
+          "Lvl": 3,
+          "Perk": 0,
+          "At": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 50,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        }
+      ]
+    }
+  },
+  "OpponentBoard": {
+    "Tur": 1,
+    "Vic": 1,
+    "Back": 0,
+    "Mins": {
+      "Items": [
+        {
+          "Enu": 568,
+          "Lvl": 1,
+          "Perk": 88,
+          "At": {
+            "Perm": 4,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 10,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 409,
+          "Lvl": 3,
+          "Perk": null,
+          "At": {
+            "Perm": 8,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 15,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 409,
+          "Lvl": 3,
+          "Perk": null,
+          "At": {
+            "Perm": 8,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 15,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 409,
+          "Lvl": 3,
+          "Perk": null,
+          "At": {
+            "Perm": 8,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 15,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        },
+        {
+          "Enu": 409,
+          "Lvl": 3,
+          "Perk": 8,
+          "At": {
+            "Perm": 8,
+            "Temp": 0,
+            "Max": null
+          },
+          "Hp": {
+            "Perm": 15,
+            "Temp": 0,
+            "Max": null
+          },
+          "Cosm": 0,
+          "Abil": []
+        }
+      ]
+    }
+  }
+}

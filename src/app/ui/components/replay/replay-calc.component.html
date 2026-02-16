@@ -80,4 +80,17 @@
       >Open</a
     >
   </div>
+
+  <div *ngIf="replayCode" class="mt-3">
+    <label for="replayCode" class="form-label">Replay Export Code</label>
+    <input
+      id="replayCode"
+      class="form-control mb-3"
+      [value]="replayCode"
+      readonly
+    />
+    <button class="btn btn-secondary" (click)="copyReplayCode()">
+      Copy Replay Code
+    </button>
+  </div>
 </div>

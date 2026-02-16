@@ -69,7 +69,13 @@ export class MoleAbility extends Ability {
       if (pet == owner) {
         continue;
       }
-      if (pet.equipment) {
+      const equipmentClass = pet.equipment?.equipmentClass;
+      const hasPerk =
+        !!equipmentClass &&
+        equipmentClass !== 'ailment-attack' &&
+        equipmentClass !== 'ailment-defense' &&
+        equipmentClass !== 'ailment-other';
+      if (hasPerk) {
         equipmentPets.push(pet);
       }
     }
@@ -86,12 +92,12 @@ export class MoleAbility extends Ability {
     }
     for (let pet of equipmentPets) {
       this.logService.createLog({
-        message: `${owner.name} removed ${pet.name}'s equipment.`,
+        message: `${owner.name} removed ${pet.name}'s perk.`,
         type: 'ability',
         player: owner.parent,
         pteranodon: pteranodon,
       });
-      pet.removePerk();
+      pet.removePerk(true);
     }
     let mole = new Mole(
       this.logService,
