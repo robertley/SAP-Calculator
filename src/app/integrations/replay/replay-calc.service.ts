@@ -27,6 +27,11 @@ export interface ReplayBattleResponse {
   error?: string;
 }
 
+export interface ReplayApiHealthStatus {
+  reachable: boolean;
+  isReplayHealthContract: boolean;
+}
+
 interface ReplayIndexResponse {
   replayId?: string;
   status?: string;
@@ -153,73 +158,123 @@ export class ReplayCalcService {
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
+    return this.fetchReplayBattleFromTurnsApi(payload, timeoutMs).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error?.status !== 404 && error?.status !== 405) {
+          return throwError(error);
+        }
+
+        return this.fetchReplayBattleFromReplayBattleApi(payload, timeoutMs);
+      }),
+    );
+  }
+
+  private fetchReplayBattleFromReplayBattleApi(
+    payload: ReplayBattleRequest,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
     return this.http
       .post<ReplayBattleResponse>(getReplayApiUrl('/replay-battle'), payload)
       .pipe(
         timeout(timeoutMs),
-        catchError((error: HttpErrorResponse) => {
-          if (error?.status !== 404 && error?.status !== 405) {
-            return throwError(error);
+      );
+  }
+
+  private fetchReplayBattleFromTurnsApi(
+    payload: ReplayBattleRequest,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
+    return this.http
+      .post<ReplayIndexResponse>(getReplayApiUrl('/replays'), {
+        participationId: payload.Pid,
+      })
+      .pipe(
+        timeout(timeoutMs),
+        switchMap((indexResponse) => {
+          const replayId = indexResponse?.replayId;
+          if (!replayId) {
+            return throwError({
+              error: {
+                error:
+                  'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
+              },
+              status: 400,
+            });
           }
 
-          return this.http
-            .post<ReplayIndexResponse>(getReplayApiUrl('/replays'), {
-              participationId: payload.Pid,
-            })
-            .pipe(
-              timeout(timeoutMs),
-              switchMap((indexResponse) => {
-                const replayId = indexResponse?.replayId;
-                if (!replayId) {
-                  return throwError({
-                    error: {
-                      error:
-                        'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
-                    },
-                    status: 400,
-                  });
-                }
+          return this.http.get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId)).pipe(
+            timeout(timeoutMs),
+            map((turnsResponse) =>
+              this.buildReplayBattleResponseFromTurns(
+                turnsResponse,
+                payload.T,
+                replayId,
+              ),
+            ),
+          );
+        }),
+        catchError((fallbackError) => {
+          if (fallbackError?.status === 404 || fallbackError?.status === 400) {
+            return throwError(fallbackError);
+          }
 
-                return this.http
-                  .get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId))
-                  .pipe(
-                    timeout(timeoutMs),
-                    map((turnsResponse) =>
-                      this.buildReplayBattleResponseFromTurns(
-                        turnsResponse,
-                        payload.T,
-                        replayId,
-                      ),
-                    ),
-                  );
-              }),
-              catchError((fallbackError) => {
-                if (fallbackError?.status === 404 || fallbackError?.status === 400) {
-                  return throwError(fallbackError);
-                }
-
-                return throwError({
-                  error: {
-                    error:
-                      'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
-                  },
-                  status: 400,
-                });
-              }),
-            );
+          return throwError({
+            error: {
+              error:
+                'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
+            },
+            status: 400,
+          });
         }),
       );
   }
 
-  async checkReplayApiReachable(timeoutMs: number): Promise<boolean> {
+  async checkReplayApiHealth(timeoutMs: number): Promise<ReplayApiHealthStatus> {
     const result = await this.http
-      .get(getReplayApiUrl('/health'))
+      .get<unknown>(getReplayApiUrl('/health'))
       .pipe(
         timeout(timeoutMs),
-        catchError(() => of(null)),
+        map((response) => ({
+          reachable: true,
+          isReplayHealthContract: this.isReplayHealthResponse(response),
+        })),
+        catchError(() =>
+          of({
+            reachable: false,
+            isReplayHealthContract: false,
+          }),
+        ),
       )
       .toPromise();
-    return Boolean(result);
+    return (
+      result ?? {
+        reachable: false,
+        isReplayHealthContract: false,
+      }
+    );
+  }
+
+  async checkReplayApiReachable(timeoutMs: number): Promise<boolean> {
+    const status = await this.checkReplayApiHealth(timeoutMs);
+    return status.reachable;
+  }
+
+  private isReplayHealthResponse(value: unknown): boolean {
+    if (!value || typeof value !== 'object') {
+      return false;
+    }
+
+    const response = value as {
+      ok?: unknown;
+      hasCredentials?: unknown;
+      tokenLoaded?: unknown;
+    };
+
+    return (
+      typeof response.ok === 'boolean' &&
+      typeof response.hasCredentials === 'boolean' &&
+      typeof response.tokenLoaded === 'boolean'
+    );
   }
 
   private toFiniteNumber(value: unknown): number | null {

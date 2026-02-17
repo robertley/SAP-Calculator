@@ -56,7 +56,11 @@
   <div
     *ngIf="statusMessage"
     class="mb-2"
-    [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'"
+    [ngClass]="{
+      'text-success': statusTone === 'success',
+      'text-danger': statusTone === 'error',
+      'text-warning': statusTone === 'warning'
+    }"
   >
     {{ statusMessage }}
   </div>

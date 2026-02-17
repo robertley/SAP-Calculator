@@ -58,7 +58,7 @@ export class ReplayCalcComponent implements OnInit {
 
   errorMessage = '';
   statusMessage = '';
-  statusTone: 'success' | 'error' = 'success';
+  statusTone: 'success' | 'error' | 'warning' = 'success';
   calculatorLink = '';
   replayCode = '';
   loading = false;
@@ -119,16 +119,22 @@ export class ReplayCalcComponent implements OnInit {
       const sapEmail = this.formGroup.get('sapEmail').value?.trim();
       const sapPassword = this.formGroup.get('sapPassword').value;
       this.replayCalcService
-        .checkReplayApiReachable(this.replayHealthTimeoutMs)
-        .then((reachable) => {
-          if (!reachable) {
+        .checkReplayApiHealth(this.replayHealthTimeoutMs)
+        .then((healthStatus) => {
+          if (!healthStatus.reachable) {
             this.errorMessage =
               'Replay API is not reachable. Ensure the replay server is running.';
             this.setLoading(false);
             this.cdr.markForCheck();
             return;
           }
-          console.info('[replay] health check ok, requesting battle');
+          if (!healthStatus.isReplayHealthContract) {
+            this.setStatus(
+              'Replay API is reachable, but /api/health is not the replay backend format. Continuing lookup.',
+              'warning',
+            );
+          }
+          console.info('[replay] health check reachable, requesting battle');
           this.replayCalcService
             .fetchReplayBattle(
               {
@@ -304,7 +310,7 @@ export class ReplayCalcComponent implements OnInit {
     this.statusMessage = '';
   }
 
-  private setStatus(message: string, tone: 'success' | 'error') {
+  private setStatus(message: string, tone: 'success' | 'error' | 'warning') {
     this.statusMessage = message;
     this.statusTone = tone;
     if (this.statusTimer) {
