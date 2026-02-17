@@ -39,6 +39,8 @@ const PORT = Number(process.env.PORT || 3000);
 const API_VERSION = process.env.SAP_API_VERSION || "44";
 const SAP_EMAIL = process.env.SAP_EMAIL;
 const SAP_PASSWORD = process.env.SAP_PASSWORD;
+const CORS_ALLOWED_ORIGIN =
+  process.env.CORS_ALLOWED_ORIGIN || "https://www.sap-calculator.com";
 
 const authCache = new Map();
 
@@ -53,9 +55,9 @@ function sendJson(res, statusCode, payload) {
   res.writeHead(statusCode, {
     "Content-Type": "application/json",
     "Content-Length": Buffer.byteLength(body),
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": CORS_ALLOWED_ORIGIN,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
   });
   res.end(body);
 }
@@ -445,9 +447,10 @@ async function fetchReplay(participationId, email, password) {
 const server = http.createServer(async (req, res) => {
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": CORS_ALLOWED_ORIGIN,
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Max-Age": "86400",
     });
     res.end();
     return;
