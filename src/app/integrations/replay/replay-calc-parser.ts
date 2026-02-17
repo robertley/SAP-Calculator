@@ -527,7 +527,13 @@ export class ReplayCalcParser {
         return null;
       }
 
-      const petId = String(petJson.Enu ?? 0);
+      const rawPetRef = petJson.Enu;
+      const petId = String(rawPetRef ?? 0);
+      const petName =
+        PETS_BY_ID.get(petId) ||
+        (typeof rawPetRef === 'string' && rawPetRef.trim().length > 0
+          ? rawPetRef.trim()
+          : null);
       const petTempAtk = toNumberOrFallback(petJson.At?.Temp, 0);
       const petTempHp = toNumberOrFallback(petJson.Hp?.Temp, 0);
 
@@ -550,14 +556,19 @@ export class ReplayCalcParser {
         .map((ability) => toFiniteNumber(ability?.TrCo))
         .filter((value): value is number => value !== null);
 
+      const perkValue = petJson.Perk;
+      const perkName =
+        perkValue !== null && perkValue !== undefined
+          ? PERKS_BY_ID.get(String(perkValue)) ||
+            (typeof perkValue === 'string' ? perkValue : 'Unknown Perk')
+          : null;
+
       const parsedPet: PetConfig = {
-        name: PETS_BY_ID.get(petId) || null,
+        name: petName,
         attack: toNumberOrFallback(petJson.At?.Perm, 0) + petTempAtk,
         health: toNumberOrFallback(petJson.Hp?.Perm, 0) + petTempHp,
         exp: toNumberOrFallback(petJson.Exp, 0),
-        equipment: petJson.Perk
-          ? { name: PERKS_BY_ID.get(String(petJson.Perk)) || 'Unknown Perk' }
-          : null,
+        equipment: perkName ? { name: perkName } : null,
         mana: toNumberOrFallback(petJson.Mana, 0),
         belugaSwallowedPet,
         sarcasticFringeheadSwallowedPet: null,

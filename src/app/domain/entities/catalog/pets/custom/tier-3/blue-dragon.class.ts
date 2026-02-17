@@ -1,4 +1,5 @@
-import { Pet } from '../../../../pet.class';
+import { Equipment } from '../../../../equipment.class';
+import { Pack, Pet } from '../../../../pet.class';
 import { LogService } from 'app/integrations/log.service';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { Player } from '../../../../player.class';
@@ -6,21 +7,29 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 
 
 export class BlueDragon extends Pet {
+  name = 'Blue Dragon';
+  tier = 3;
+  pack: Pack = 'Custom';
+  attack = 3;
+  health = 4;
+
   constructor(
-    logService: LogService,
-    abilityService: AbilityService,
+    protected logService: LogService,
+    protected abilityService: AbilityService,
     parent: Player,
+    health?: number,
+    attack?: number,
+    mana?: number,
+    exp?: number,
+    equipment?: Equipment,
+    triggersConsumed?: number,
   ) {
     super(logService, abilityService, parent);
-    this.name = 'Blue Dragon';
-    this.tier = 3;
-    this.pack = 'Custom';
-    this.attack = 3;
-    this.health = 4;
+    this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 
   initAbilities(): void {
-    this.abilityList = [new BlueDragonAbility(this, this.logService)];
+    this.addAbility(new BlueDragonAbility(this, this.logService));
     super.initAbilities();
   }
 }

@@ -86,6 +86,26 @@ interface ReplayTurnEntry {
   turn?: number | string | null;
   user?: ReplayTurnsSide | null;
   opponent?: ReplayTurnsSide | null;
+  turnNumber?: number | string | null;
+  playerGoldSpent?: number | null;
+  opponentGoldSpent?: number | null;
+  playerRolls?: number | null;
+  opponentRolls?: number | null;
+  playerSummons?: number | null;
+  opponentSummons?: number | null;
+  pets?: {
+    player?: ReplaySummaryPet[] | null;
+    opponent?: ReplaySummaryPet[] | null;
+  } | null;
+}
+
+interface ReplaySummaryPet {
+  position?: number | null;
+  petName?: string | null;
+  level?: number | null;
+  attack?: number | null;
+  health?: number | null;
+  perk?: string | number | null;
 }
 
 interface ReplayTurnsResponse {
@@ -263,6 +283,31 @@ export class ReplayCalcService {
     };
   }
 
+  private mapReplaySummaryPet(pet: ReplaySummaryPet): Record<string, unknown> {
+    return {
+      Enu: this.toReplayId(pet?.petName),
+      Lvl: this.toFiniteNumber(pet?.level) ?? 1,
+      Exp: 0,
+      Perk: this.toReplayId(pet?.perk),
+      At: {
+        Perm: this.toFiniteNumber(pet?.attack) ?? 0,
+        Temp: 0,
+        Max: null,
+      },
+      Hp: {
+        Perm: this.toFiniteNumber(pet?.health) ?? 0,
+        Temp: 0,
+        Max: null,
+      },
+      Mana: 0,
+      Cosm: 0,
+      Poi: {
+        x: this.toFiniteNumber(pet?.position) ?? 0,
+      },
+      Abil: [],
+    };
+  }
+
   private mapReplayTurnsSide(side?: ReplayTurnsSide | null): Record<string, unknown> {
     const stats = side?.stats ?? null;
     return {
@@ -280,6 +325,37 @@ export class ReplayCalcService {
     };
   }
 
+  private mapReplaySummarySide(
+    turn: ReplayTurnEntry,
+    side: 'player' | 'opponent',
+  ): Record<string, unknown> {
+    const isPlayer = side === 'player';
+    const pets =
+      (isPlayer ? turn?.pets?.player : turn?.pets?.opponent) ?? [];
+    return {
+      Tur:
+        this.toFiniteNumber(turn?.turnNumber) ??
+        this.toFiniteNumber(turn?.turn) ??
+        1,
+      Vic: 0,
+      Back: 0,
+      GoSp: this.toFiniteNumber(
+        isPlayer ? turn?.playerGoldSpent : turn?.opponentGoldSpent,
+      ) ?? 0,
+      Rold: this.toFiniteNumber(
+        isPlayer ? turn?.playerRolls : turn?.opponentRolls,
+      ) ?? 0,
+      MiSu: this.toFiniteNumber(
+        isPlayer ? turn?.playerSummons : turn?.opponentSummons,
+      ) ?? 0,
+      MSFL: 0,
+      TrTT: 0,
+      Mins: {
+        Items: pets.map((pet) => this.mapReplaySummaryPet(pet)),
+      },
+    };
+  }
+
   private buildReplayBattleResponseFromTurns(
     turnsResponse: ReplayTurnsResponse,
     requestedTurn: number,
@@ -287,7 +363,9 @@ export class ReplayCalcService {
   ): ReplayBattleResponse {
     const turns = turnsResponse?.turns ?? [];
     const byTurn = turns.find(
-      (turn) => this.toFiniteNumber(turn?.turn) === requestedTurn,
+      (turn) =>
+        this.toFiniteNumber(turn?.turn) === requestedTurn ||
+        this.toFiniteNumber(turn?.turnNumber) === requestedTurn,
     );
     const byIndex = requestedTurn > 0 ? turns[requestedTurn - 1] : null;
     const selectedTurn = byTurn ?? byIndex;
@@ -301,10 +379,16 @@ export class ReplayCalcService {
       };
     }
 
+    const hasRawSides = Boolean(selectedTurn?.user || selectedTurn?.opponent);
+
     return {
       battle: {
-        UserBoard: this.mapReplayTurnsSide(selectedTurn.user),
-        OpponentBoard: this.mapReplayTurnsSide(selectedTurn.opponent),
+        UserBoard: hasRawSides
+          ? this.mapReplayTurnsSide(selectedTurn.user)
+          : this.mapReplaySummarySide(selectedTurn, 'player'),
+        OpponentBoard: hasRawSides
+          ? this.mapReplayTurnsSide(selectedTurn.opponent)
+          : this.mapReplaySummarySide(selectedTurn, 'opponent'),
       },
       genesisBuildModel: turnsResponse?.genesisBuildModel,
       abilityPetMap: turnsResponse?.abilityPetMap ?? null,

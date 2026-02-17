@@ -2,6 +2,64 @@ import { describe, expect, it } from 'vitest';
 import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
 
 describe('danger start battle stall regression', () => {
+  it('fires StartBattle abilities for Iriomote transformed pets', () => {
+    const baseConfig: SimulationConfig = {
+      playerPack: 'Danger',
+      opponentPack: 'Danger',
+      turn: 10,
+      playerGoldSpent: 0,
+      opponentGoldSpent: 0,
+      tokenPets: true,
+      mana: true,
+      logsEnabled: true,
+      simulationCount: 1,
+      captureRandomDecisions: true,
+      playerPets: [
+        { name: 'Ant', attack: 5, health: 5, exp: 0 },
+        { name: 'Iriomote Cat', attack: 10, health: 10, exp: 5 },
+        { name: 'Fish', attack: 5, health: 5, exp: 0 },
+      ],
+      opponentPets: [{ name: 'Pig', attack: 1, health: 50, exp: 0 }],
+    };
+
+    const warmup = runSimulation(baseConfig);
+    const iriomoteDecision = (warmup.randomDecisions ?? []).find(
+      (entry) => entry.key === 'pet.iriomote-cat-transform',
+    );
+    expect(iriomoteDecision).toBeDefined();
+
+    const blueDragonOption = iriomoteDecision?.options.find(
+      (option) => option.id === 'Blue Dragon',
+    );
+    expect(blueDragonOption).toBeDefined();
+
+    const forced = runSimulation({
+      ...baseConfig,
+      strictRandomOverrideValidation: true,
+      randomDecisionOverrides: [
+        {
+          index: iriomoteDecision!.index,
+          key: iriomoteDecision!.key,
+          optionId: blueDragonOption!.id,
+        },
+      ],
+    });
+
+    const logs = forced.battles?.[0]?.logs ?? [];
+    const transformLog = logs.find((log) =>
+      String(log?.message ?? '').includes(
+        'Iriomote Cat transformed into a Blue Dragon',
+      ),
+    );
+    const blueDragonStartBattleLog = logs.find((log) =>
+      String(log?.message ?? '').includes('Blue Dragon gave 1 friend ahead'),
+    );
+
+    expect(forced.randomOverrideError ?? null).toBeNull();
+    expect(transformLog).toBeDefined();
+    expect(blueDragonStartBattleLog).toBeDefined();
+  });
+
   it(
     'single simulation without logs completes quickly',
     () => {
