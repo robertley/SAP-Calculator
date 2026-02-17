@@ -33,11 +33,13 @@ SAP_EMAIL=you@example.com
 SAP_PASSWORD=yourpassword
 SAP_API_VERSION=44
 PORT=3000
+CORS_ALLOWED_ORIGIN=https://www.sap-calculator.com
 ```
 
 Notes:
 - `PORT` should match the upstream port used in Nginx.
 - `SAP_API_VERSION` defaults to `44` in `server/index.js`.
+- `CORS_ALLOWED_ORIGIN` must match your frontend origin exactly.
 
 ## 3) Start backend process
 
