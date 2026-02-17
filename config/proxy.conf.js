@@ -38,7 +38,7 @@ function loadEnvFile() {
 loadEnvFile();
 
 const replayApiTarget =
-  process.env.REPLAY_API_TARGET || 'https://sap-replay-bot-main.vercel.app';
+  process.env.REPLAY_API_TARGET || 'https://sap-library.vercel.app';
 
 module.exports = {
   '/api': {

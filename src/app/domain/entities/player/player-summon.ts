@@ -136,11 +136,40 @@ export const transformPet = (
 ): void => {
   const targetPlayer = originalPet?.parent ?? player;
 
+  const resolveTransformSlot = (): number => {
+    for (let index = 0; index <= 4; index++) {
+      if (targetPlayer.getPet(index) === originalPet) {
+        return index;
+      }
+    }
+
+    if (originalPet?.transformedInto) {
+      for (let index = 0; index <= 4; index++) {
+        if (targetPlayer.getPet(index) === originalPet.transformedInto) {
+          return index;
+        }
+      }
+    }
+
+    const fallbackSlot = Number(originalPet?.savedPosition);
+    if (Number.isInteger(fallbackSlot) && fallbackSlot >= 0 && fallbackSlot <= 4) {
+      return fallbackSlot;
+    }
+
+    for (let index = 0; index <= 4; index++) {
+      if (targetPlayer.getPet(index) == null) {
+        return index;
+      }
+    }
+
+    return 0;
+  };
+
   if (newPet.parent !== targetPlayer) {
     newPet.parent = targetPlayer as Player;
   }
 
-  targetPlayer.setPet(originalPet.position, newPet);
+  targetPlayer.setPet(resolveTransformSlot(), newPet);
   const isPlayer = targetPlayer === gameService.gameApi.player;
   if (isPlayer) {
     gameService.gameApi.playerTransformationAmount++;

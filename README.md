@@ -18,7 +18,7 @@ npm start
 ```
 This starts Angular dev server with the `/api` proxy from `config/proxy.conf.js`, reading `REPLAY_API_TARGET` from `.env`.
 
-By default, replay requests are proxied to `https://sap-replay-bot-main.vercel.app`. Set `REPLAY_API_TARGET=http://127.0.0.1:3000` if you want to use a local replay backend.
+By default, replay requests are proxied to `https://sap-library.vercel.app`. Set `REPLAY_API_TARGET=http://127.0.0.1:3000` if you want to use a local replay backend.
 
 Open `http://localhost:4200`.
 
