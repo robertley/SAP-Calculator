@@ -940,6 +940,12 @@
   position: relative;
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .drag-container.cdk-drag {
+    touch-action: pan-y !important;
+  }
+}
+
 .drag-container.pet-slot-active app-pet-selector .card {
   border-color: rgba(37, 99, 235, 0.8);
   box-shadow:

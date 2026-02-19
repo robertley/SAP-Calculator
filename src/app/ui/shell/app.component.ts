@@ -3,7 +3,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragDrop, DragDropModule, DragStartDelay } from '@angular/cdk/drag-drop';
 import { Modal } from 'bootstrap';
 import { Player } from 'app/domain/entities/player.class';
 import { Battle } from 'app/domain/interfaces/battle.interface';
@@ -188,6 +188,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   lastAutoSavedAt: Date | null = null;
   activePetSlot: { side: 'player' | 'opponent'; index: number } | null = null;
   petClipboard: Record<string, unknown> | null = null;
+  readonly petSlotDragStartDelay: DragStartDelay = { touch: 160, mouse: 0 };
 
   readonly trackByIndex = trackByIndexImpl;
   readonly trackByTeamId = trackByTeamIdImpl;
@@ -630,4 +631,3 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.statusTimer = null;
   }
 }
-

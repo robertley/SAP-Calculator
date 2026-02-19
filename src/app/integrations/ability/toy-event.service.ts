@@ -11,6 +11,7 @@ import { Toy } from 'app/domain/entities/toy.class';
 import { GameService } from 'app/runtime/state/game.service';
 import { LogService } from '../log.service';
 import { getRandomFloat } from 'app/runtime/random';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,9 @@ export class ToyEventService {
   constructor(
     private gameService: GameService,
     private logService: LogService,
-  ) {}
+  ) {
+    this.logService = coerceLogService(this.logService);
+  }
 
   private enqueueToyEvents(
     queue: AbilityEvent[],

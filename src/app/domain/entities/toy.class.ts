@@ -3,6 +3,7 @@ import { LogService } from 'app/integrations/log.service';
 import { ToyService } from 'app/integrations/toy/toy.service';
 import { Pet } from './pet.class';
 import { Player } from './player.class';
+import { installLogServiceFallback } from 'app/runtime/log-service-fallback';
 
 
 export class Toy {
@@ -52,6 +53,7 @@ export class Toy {
     parent: Player,
     level: number,
   ) {
+    installLogServiceFallback(this);
     this.parent = parent;
     this.level = level;
   }

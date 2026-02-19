@@ -5,6 +5,7 @@ import { AbilityService } from 'app/integrations/ability/ability.service';
 import { Ability } from 'app/domain/entities/ability.class';
 import { PetMemoryState } from 'app/domain/interfaces/pet-memory.interface';
 import { PetRuntimeFacade } from './pet/pet-runtime-facade';
+import { installLogServiceFallback } from 'app/runtime/log-service-fallback';
 
 
 export type Pack =
@@ -94,6 +95,7 @@ export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
     parent: Player,
   ) {
     super();
+    installLogServiceFallback(this);
     this.parent = parent;
   }
 

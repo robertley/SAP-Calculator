@@ -13,6 +13,7 @@ import {
   TOYS_NEEDING_ABILITY_SERVICE,
   SPECIAL_TOY_BUILDERS,
 } from './toy-registry';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,9 @@ export class ToyFactoryService {
     private petService?: PetService,
     private equipmentService?: EquipmentService,
     private gameService?: GameService,
-  ) {}
+  ) {
+    this.logService = coerceLogService(this.logService);
+  }
 
   createToy(
     toyName: string,

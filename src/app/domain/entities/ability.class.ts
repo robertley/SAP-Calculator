@@ -1,6 +1,7 @@
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { Pet } from './pet.class';
 import { minExpForLevel } from 'app/runtime/experience';
+import { installLogServiceFallback } from 'app/runtime/log-service-fallback';
 
 
 export type AbilityType = 'Pet' | 'Equipment';
@@ -187,6 +188,7 @@ export class Ability {
     ignoreRepeats?: boolean;
     alwaysIgnorePetLevel?: boolean;
   }) {
+    installLogServiceFallback(this);
     this.name = config.name;
     this.owner = config.owner;
     this.triggers = config.triggers;

@@ -25,6 +25,7 @@ import {
   finishRandomDecisionSession,
   startRandomDecisionSession,
 } from 'app/runtime/random-decision-state';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 export interface SimulationRunHooks {
   shouldAbort?: () => boolean;
@@ -63,8 +64,9 @@ export class SimulationRunner {
     protected equipmentService: EquipmentService,
     protected toyService: ToyService,
   ) {
-    this.player = new Player(logService, abilityService, gameService);
-    this.opponent = new Player(logService, abilityService, gameService);
+    this.logService = coerceLogService(this.logService);
+    this.player = new Player(this.logService, abilityService, gameService);
+    this.opponent = new Player(this.logService, abilityService, gameService);
     this.opponent.isOpponent = true;
     this.gameService.init(this.player, this.opponent);
 

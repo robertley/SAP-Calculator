@@ -28,6 +28,7 @@ import {
   SPECIAL_FORM_PET_BUILDERS,
 } from './pet-factory-registry';
 import { PetConstructor, PetRegistryMap } from './pet-registry.types';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +42,9 @@ export class PetFactoryService {
     private abilityService: AbilityService,
     private gameService: GameService,
     private equipmentService: EquipmentService,
-  ) { }
+  ) {
+    this.logService = coerceLogService(this.logService);
+  }
 
   /**
    * Creates a pet from a Pet instance (cloning). Used by createDefaultVersionOfPet.
