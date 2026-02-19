@@ -72,7 +72,7 @@ export class DoveAbility extends Ability {
     }
 
     for (let target of targets) {
-      if (target.equipment.name != 'Strawberry') {
+      if (target.equipment?.name != 'Strawberry') {
         continue;
       }
       this.logService.createLog({
@@ -84,9 +84,12 @@ export class DoveAbility extends Ability {
         pteranodon: pteranodon,
       });
 
-      let backMostPetResp = target.parent.getLastPet(null, target);
+      let backMostPetResp = target.parent.getLastPet(undefined, target);
       let backMostPet = backMostPetResp.pet;
-      let power = this.level + backMostPet.equipment.multiplier - 1;
+      if (!backMostPet) {
+        continue;
+      }
+      let power = this.level + (backMostPet.equipment?.multiplier ?? 1) - 1;
       backMostPet.increaseAttack(power);
       backMostPet.increaseHealth(power);
       this.logService.createLog({
