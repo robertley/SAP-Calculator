@@ -4,6 +4,7 @@ import { LogService } from '../log.service';
 import { AbilityService } from '../ability/ability.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { EquipmentFactoryService } from './equipment-factory.service';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,9 @@ export class EquipmentService {
     private abilityService: AbilityService,
     private gameService: GameService,
     private equipmentFactory: EquipmentFactoryService,
-  ) { }
+  ) {
+    this.logService = coerceLogService(this.logService);
+  }
 
   getInstanceOfAllEquipment() {
     if (!this.cachedEquipment) {

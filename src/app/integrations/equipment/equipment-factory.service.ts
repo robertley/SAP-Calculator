@@ -71,6 +71,7 @@ const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
 
 import * as foodJson from 'assets/data/food.json';
 import * as perksJson from 'assets/data/perks.json';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 const PERK_TRIGGER_PATTERNS: Array<{
   pattern: RegExp;
@@ -133,6 +134,7 @@ export class EquipmentFactoryService {
     private abilityService: AbilityService,
     private gameService: GameService,
   ) {
+    this.logService = coerceLogService(this.logService);
     this.initRandomEquipment();
   }
 

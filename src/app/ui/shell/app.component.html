@@ -70,7 +70,7 @@
                 let pet of playerPetsControls;
                 index as i;
                 trackBy: trackByIndex
-              " cdkDrag (mousedown)="setActivePetSlot('player', 4 - i)"
+              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay" (mousedown)="setActivePetSlot('player', 4 - i)"
               (focusin)="setActivePetSlot('player', 4 - i)"
               [class.pet-slot-active]="
                 activePetSlot?.side === 'player' && activePetSlot?.index === 4 - i
@@ -162,7 +162,7 @@
                 let pet of opponentPetsControls;
                 index as i;
                 trackBy: trackByIndex
-              " cdkDrag (mousedown)="setActivePetSlot('opponent', i)"
+              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay" (mousedown)="setActivePetSlot('opponent', i)"
               (focusin)="setActivePetSlot('opponent', i)"
               [class.pet-slot-active]="
                 activePetSlot?.side === 'opponent' && activePetSlot?.index === i

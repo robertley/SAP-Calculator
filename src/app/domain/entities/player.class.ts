@@ -8,6 +8,7 @@ import { alive as playerAlive, checkPetsAlive as checkPetsAliveImpl, createDeath
 import { makeRoomForSlot as makeRoomForSlotImpl, onionCheck as onionCheckImpl, pushBackwardFromSlot as pushBackwardFromSlotImpl, pushForwardFromSlot as pushForwardFromSlotImpl, pushPetsForward as pushPetsForwardImpl } from './player/player-movement';
 import { summonPet as summonPetImpl, transformPet as transformPetImpl } from './player/player-summon';
 import { PlayerSummonFacade } from './player/player-summon-facade';
+import { installLogServiceFallback } from 'app/runtime/log-service-fallback';
 
 
 export class Player extends PlayerSummonFacade {
@@ -58,6 +59,7 @@ export class Player extends PlayerSummonFacade {
     protected gameService: GameService,
   ) {
     super();
+    installLogServiceFallback(this);
   }
 
   alive(): boolean {

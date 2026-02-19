@@ -13,6 +13,7 @@ import { BASE_PACK_NAMES, BasePackName, PackName } from 'app/runtime/pack-names'
 import * as petJson from 'assets/data/pets.json';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 interface PetJsonEntry {
   Name: string;
@@ -65,6 +66,7 @@ export class PetService {
     private gameService: GameService,
     private petFactory: PetFactoryService,
   ) {
+    this.logService = coerceLogService(this.logService);
     this.basePackPetsByName = {
       Turtle: this.turtlePackPets,
       Puppy: this.puppyPackPets,

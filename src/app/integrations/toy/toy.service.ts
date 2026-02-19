@@ -19,6 +19,7 @@ import {
   applyManticoreMultiplier,
 } from 'app/domain/entities/combat/damage-reduction';
 import { getRandomFloat } from 'app/runtime/random';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 interface ToyJsonEntry {
   Name: string;
@@ -46,6 +47,7 @@ export class ToyService {
     private toyFactory: ToyFactoryService,
     private toyEventService?: ToyEventService,
   ) {
+    this.logService = coerceLogService(this.logService);
     this.setToys();
   }
 

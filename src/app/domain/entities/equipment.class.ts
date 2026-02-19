@@ -1,5 +1,6 @@
 import { Pet } from './pet.class';
 import { AbilityTrigger } from './ability.class';
+import { installLogServiceFallback } from 'app/runtime/log-service-fallback';
 
 
 export class Equipment {
@@ -24,6 +25,7 @@ export class Equipment {
   triggers?: AbilityTrigger[];
 
   constructor() {
+    installLogServiceFallback(this);
     this.originalPower = this.power;
     this.baseMultiplier = this.multiplier;
   }

@@ -11,6 +11,7 @@ import { AbilityQueueService } from './ability-queue.service';
 import { AttackEventService } from './attack-event.service';
 import { FaintEventService } from './faint-event.service';
 import { AbilityEventTriggers } from './ability-event-triggers';
+import { coerceLogService } from 'app/runtime/log-service-fallback';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,7 @@ export class AbilityService extends AbilityEventTriggers {
     protected faintEventService: FaintEventService,
   ) {
     super();
+    this.logService = coerceLogService(this.logService);
   }
 
   // --- Delegates to AbilityQueueService ---
