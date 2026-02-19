@@ -57,4 +57,32 @@ describe('Amami Rabbit and Dove null-safety regressions', () => {
       ),
     ).toBe(true);
   });
+
+  it('Spider should not error when dependent callers do not provide tier pool maps', () => {
+    const config = createBaseConfig('Custom');
+    config.playerPack = 'MissingPack';
+    config.opponentPack = 'MissingPack';
+    config.playerPets[0] = createPet('Spider', { attack: 1, health: 1 });
+    config.opponentPets[0] = createPet('Elephant', { attack: 50, health: 50 });
+
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    let errorText = '';
+    let logs: ReturnType<typeof runBattleLogs> = [];
+    try {
+      logs = runBattleLogs(config);
+      errorText = errorSpy.mock.calls.flat().map(String).join(' ');
+    } finally {
+      errorSpy.mockRestore();
+    }
+
+    expect(errorText).not.toContain('SpiderAbility');
+    expect(
+      logs.some(
+        (log) =>
+          log.type === 'ability' &&
+          typeof log.message === 'string' &&
+          log.message.includes('Spider spawned'),
+      ),
+    ).toBe(true);
+  });
 });
