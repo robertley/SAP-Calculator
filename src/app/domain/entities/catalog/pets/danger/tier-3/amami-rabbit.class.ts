@@ -92,8 +92,8 @@ export class AmamiRabbitAbility extends Ability {
           });
         }
       }
+      owner.jumpAttack(targetResp.pet, tiger, undefined, targetResp.random);
     }
-    owner.jumpAttack(targetResp.pet, tiger, undefined, targetResp.random);
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);
