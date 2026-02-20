@@ -63,14 +63,16 @@ export class SheepAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
+    const ramAttack = 2 * this.level;
+    const ramHealth = 2 * this.level;
 
     for (let i = 0; i < 2; i++) {
       let ram = new Ram(
         this.logService,
         this.abilityService,
         owner.parent,
-        null,
-        null,
+        ramHealth,
+        ramAttack,
         0,
         this.minExpForLevel,
       );

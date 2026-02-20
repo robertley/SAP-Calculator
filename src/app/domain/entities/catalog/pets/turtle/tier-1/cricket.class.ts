@@ -67,13 +67,15 @@ export class CricketAbility extends Ability {
     // Use ability level - Tiger system will override this.level during second execution
     const level = this.level;
     const exp = this.minExpForLevel;
+    const zombieAttack = level;
+    const zombieHealth = level;
 
     let zombie = new ZombieCricket(
       this.logService,
       this.abilityService,
       owner.parent,
-      null,
-      null,
+      zombieHealth,
+      zombieAttack,
       null,
       exp,
     );
