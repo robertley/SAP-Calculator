@@ -64,13 +64,15 @@ export class SmallerSlugAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
+    const slugAttack = this.level;
+    const slugHealth = this.level;
 
     let slug = new SmallestSlug(
       this.logService,
       this.abilityService,
       owner.parent,
-      null,
-      null,
+      slugHealth,
+      slugAttack,
       0,
       owner.minExpForLevel,
     );

@@ -66,13 +66,15 @@ export class DeerAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
+    const busAttack = 5 * this.level;
+    const busHealth = 3 * this.level;
 
     let bus = new Bus(
       this.logService,
       this.abilityService,
       owner.parent,
-      null,
-      null,
+      busHealth,
+      busAttack,
       null,
       this.minExpForLevel,
       new Chili(this.logService, this.abilityService),
