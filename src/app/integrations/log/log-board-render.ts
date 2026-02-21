@@ -60,5 +60,5 @@ function renderPetText(
       })()
     : '';
 
-  return `${label}${petDisplay}${equipmentDisplay}(${pet.attack}/${pet.health}) `;
+  return `${label}${petDisplay}${equipmentDisplay}(${pet.attack}/${pet.health}/${pet.exp}xp) `;
 }

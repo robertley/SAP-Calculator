@@ -64,6 +64,7 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     opponentTransformationAmount: new FormControl(0),
     showAdvanced: new FormControl(false),
     showTriggerNamesInLogs: new FormControl(false),
+    showPositionalArgsInLogs: new FormControl(true),
     ailmentEquipment: new FormControl(true),
     changeEquipmentUses: new FormControl(false),
     seed: new FormControl<number | null>(null),

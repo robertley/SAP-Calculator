@@ -153,6 +153,7 @@ export interface ReplayCalculatorState {
   foodsEaten?: boolean;
   showAdvanced: boolean;
   showTriggerNamesInLogs: boolean;
+  showPositionalArgsInLogs: boolean;
   showSwallowedLevels: boolean;
   ailmentEquipment: boolean;
 }
@@ -676,6 +677,7 @@ export class ReplayCalcParser {
       triggersConsumed: true,
       showAdvanced: true,
       showTriggerNamesInLogs: false,
+      showPositionalArgsInLogs: true,
       showSwallowedLevels: false,
       ailmentEquipment: false,
     };
@@ -890,6 +892,9 @@ export class ReplayCalcParser {
     }
     if (state.showTriggerNamesInLogs) {
       strippedState.showTriggerNamesInLogs = true;
+    }
+    if (state.showPositionalArgsInLogs === false) {
+      strippedState.showPositionalArgsInLogs = false;
     }
     if (state.showSwallowedLevels) {
       strippedState.showSwallowedLevels = true;

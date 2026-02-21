@@ -59,6 +59,7 @@ const SHARE_DEFAULTS: RecordShape = {
   triggersConsumed: false,
   showAdvanced: false,
   showTriggerNamesInLogs: false,
+  showPositionalArgsInLogs: true,
   showSwallowedLevels: false,
   ailmentEquipment: false,
   changeEquipmentUses: false,

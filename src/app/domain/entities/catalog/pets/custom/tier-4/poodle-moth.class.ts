@@ -46,6 +46,10 @@ export class PoodleMothAbility extends Ability {
       maxUses: owner.level,
       native: true,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        return !!triggerPet && triggerPet.parent === this.owner.parent;
+      },
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
@@ -55,8 +59,7 @@ export class PoodleMothAbility extends Ability {
     const { triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    if (!triggerPet || triggerPet.parent !== owner.parent) {
-      this.triggerTigerExecution(context);
+    if (!triggerPet) {
       return;
     }
 

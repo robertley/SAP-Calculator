@@ -4,6 +4,7 @@ import {
   FightAnimationPopup,
   buildFightAnimationFrames,
 } from './app.component.fight-animation';
+import { FormGroup } from '@angular/forms';
 
 export interface AppFightAnimationContext {
   fightAnimationFrames: FightAnimationFrame[];
@@ -12,15 +13,22 @@ export interface AppFightAnimationContext {
   fightAnimationSpeed: number;
   fightAnimationTimer: ReturnType<typeof setTimeout> | null;
   viewBattleLogs: Array<{ message?: string | null }>;
+  formGroup: FormGroup;
   markForCheck: () => void;
 }
+
+const DEFAULT_FIGHT_ANIMATION_SPEED = 1;
 
 export function refreshFightAnimationFromViewBattle(
   ctx: AppFightAnimationContext,
 ): void {
   pauseFightAnimation(ctx, false);
+  const includePositionPrefix = Boolean(
+    ctx.formGroup.get('showTriggerNamesInLogs')?.value,
+  ) && Boolean(ctx.formGroup.get('showPositionalArgsInLogs')?.value ?? true);
   ctx.fightAnimationFrames = buildFightAnimationFrames(
     ctx.viewBattleLogs as Parameters<typeof buildFightAnimationFrames>[0],
+    { includePositionPrefix },
   );
   ctx.fightAnimationFrameIndex = ctx.fightAnimationFrames.length > 0 ? 0 : -1;
   ctx.markForCheck();
@@ -74,7 +82,7 @@ export function setFightAnimationSpeed(
   ctx: AppFightAnimationContext,
   speed: number,
 ): void {
-  const normalized = speed === 0.5 || speed === 2 ? speed : 1;
+  const normalized = normalizeFightAnimationSpeed(speed);
   if (ctx.fightAnimationSpeed === normalized) {
     return;
   }
@@ -236,7 +244,7 @@ function scheduleFightAnimationTick(ctx: AppFightAnimationContext): void {
   if (!ctx.fightAnimationPlaying) {
     return;
   }
-  const intervalMs = Math.max(120, Math.round(700 / ctx.fightAnimationSpeed));
+  const intervalMs = getFightAnimationIntervalMs(ctx);
   ctx.fightAnimationTimer = setTimeout(() => {
     ctx.fightAnimationTimer = null;
     advanceFightAnimationTick(ctx);
@@ -268,4 +276,49 @@ function getCurrentFightAnimationFrame(
     return null;
   }
   return ctx.fightAnimationFrames[ctx.fightAnimationFrameIndex] ?? null;
+}
+
+function normalizeFightAnimationSpeed(speed: number): number {
+  if (speed === 0.5 || speed === 1 || speed === 1.5 || speed === 2) {
+    return speed;
+  }
+  return DEFAULT_FIGHT_ANIMATION_SPEED;
+}
+
+function getFightAnimationIntervalMs(ctx: AppFightAnimationContext): number {
+  const frame = getCurrentFightAnimationFrame(ctx);
+  const speed = normalizeFightAnimationSpeed(ctx.fightAnimationSpeed);
+  const baseMs = getFightAnimationBaseIntervalMs(frame);
+  return Math.max(120, Math.round(baseMs / speed));
+}
+
+function getFightAnimationBaseIntervalMs(
+  frame: FightAnimationFrame | null,
+): number {
+  if (!frame) {
+    return 680;
+  }
+
+  let baseMs = 480;
+  if (frame.type === 'board') {
+    baseMs = 240;
+  } else if (frame.type === 'attack') {
+    baseMs = 760;
+  } else if (frame.type === 'death') {
+    baseMs = 680;
+  } else if (frame.type === 'ability' || frame.type === 'equipment') {
+    baseMs = 620;
+  } else if (frame.type === 'move') {
+    baseMs = 560;
+  }
+
+  if (frame.randomEvent) {
+    baseMs += 90;
+  }
+
+  if (frame.impact || frame.death || frame.popups.length > 0) {
+    baseMs = Math.max(baseMs, 720);
+  }
+
+  return baseMs;
 }

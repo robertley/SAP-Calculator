@@ -1,58 +1,116 @@
-.player-stat,
-.opponent-stat {
-  justify-content: center;
+.battle-table-shell {
+  border: 1px solid #dce4ec;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
 }
 
-.results-row .results-bar {
-  display: inline-block;
-  margin: 0 auto;
-}
-
-.results-row .py-1 {
-  width: 100%;
+.battle-table-meta {
   display: flex;
-  justify-content: center;
-  align-self: stretch;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.battle-no {
-  width: 1%;
-  white-space: nowrap;
+.battle-table thead th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  padding: 0.55rem 0.6rem;
+}
+
+.battle-table tbody td {
+  padding: 0.5rem 0.6rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.battle-table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .table-battle-row {
   cursor: pointer;
+  transition: background-color 0.16s ease;
 }
 
-.results-bar,
-.draw-bar,
-.lose-bar {
-  display: inline-block;
+.table-battle-row td {
+  background: #ffffff;
 }
 
-.draw-bar,
-.lose-bar {
-  height: 100%;
-  position: absolute;
-  right: 0;
+.table-battle-row:hover td {
+  background: #f8fbff;
 }
 
-.results-bar {
-  max-width: 100%;
-  border: 0.2em solid black;
-  height: 2em;
-  width: 100%;
-  max-width: 420px;
-  background-color: lime;
-  position: relative;
+.table-battle-row.selected-battle td {
+  background: #eaf2ff;
 }
 
-.draw-bar {
-  background-color: lightgray;
+.table-battle-row.battle-win td:first-child {
+  border-left: 3px solid #16a34a;
 }
 
-.lose-bar {
-  background-color: red;
+.table-battle-row.battle-loss td:first-child {
+  border-left: 3px solid #dc2626;
+}
+
+.table-battle-row.battle-draw td:first-child {
+  border-left: 3px solid #64748b;
+}
+
+.battle-winner-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid #d3dce6;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.battle-winner-player {
+  background: rgba(22, 163, 74, 0.13);
+  border-color: rgba(22, 163, 74, 0.45);
+  color: #166534;
+}
+
+.battle-winner-opponent {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.45);
+  color: #991b1b;
+}
+
+.battle-winner-draw {
+  background: rgba(100, 116, 139, 0.14);
+  border-color: rgba(100, 116, 139, 0.45);
+  color: #475569;
+}
+
+.battle-random-cell {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #334155;
+}
+
+.battle-no-random {
+  color: #94a3b8;
+  font-style: italic;
 }
 
 ::ng-deep .log-pet-icon {
@@ -71,26 +129,39 @@
   margin: 0 3px 2px 3px;
 }
 
-.log-player {
-  background-color: rgb(228, 255, 224);
+.pane-top-shell {
+  border: 1px solid #dee5ee;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f8fafd 0%, #ffffff 100%);
+  padding: 0.55rem 0.6rem 0.65rem;
+  margin-bottom: 0.55rem;
 }
 
-.log-opponent {
-  background-color: rgb(255, 224, 224);
+.pane-title {
+  margin: 0;
+  font-size: 1.55rem;
+  line-height: 1.1;
+  color: #1e293b;
 }
 
-.battle-win td {
-  background-color: rgb(228, 255, 224);
+.pane-subtitle {
+  display: block;
+  margin: 0.4rem 0 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  color: #64748b;
 }
 
-.battle-loss td {
-  background-color: rgb(255, 224, 224);
+.logs-top-shell {
+  padding-bottom: 0.55rem;
 }
 
 .log-container {
-  display: flex;
-  align-content: flex-start;
+  display: block;
   padding-left: 0.35rem;
+  padding-right: 0.35rem;
 }
 
 .log-container.log-container-with-analysis {
@@ -98,18 +169,280 @@
   overflow-y: auto;
 }
 
-.log-container span {
-  color: #343a40;
-  font-size: 0.9rem;
-  line-height: 1.35;
-}
-
-.random-event {
-  color: purple;
-}
-
 .bold {
   font-weight: bold;
+}
+
+.log-event-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  align-items: center;
+}
+
+.log-event-filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  color: #64748b;
+  margin-right: 0.1rem;
+}
+
+.log-event-filter-btn {
+  border-radius: 999px;
+  border: 1px solid #d4dbe3;
+  background: #ffffff;
+  color: #495057;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    color 0.18s ease;
+
+  &.active {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #ffffff;
+  }
+}
+
+.log-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.log-group {
+  border: 1px solid #e2e8ef;
+  border-radius: 8px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.log-group-header {
+  width: 100%;
+  border: 0;
+  background: #f8fafc;
+  padding: 0.36rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: left;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.log-group-title {
+  flex: 1 1 auto;
+}
+
+.log-group-count {
+  color: #64748b;
+  font-size: 0.78rem;
+}
+
+.log-group-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.log-group-chevron {
+  color: #64748b;
+  font-size: 0.82rem;
+  line-height: 1;
+  transition: transform 0.16s ease;
+}
+
+.log-group-chevron.log-group-chevron-collapsed {
+  transform: rotate(-90deg);
+}
+
+.log-group-body {
+  padding: 0.2rem 0.35rem 0.4rem;
+}
+
+.log-group-body .log-row:first-child {
+  margin-top: 0;
+}
+
+.log-row {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.42rem 0.54rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  margin-top: 0.2rem;
+  background: #ffffff;
+}
+
+.log-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 6px 0 0 6px;
+  background: #c3cbd4;
+}
+
+.log-row.log-player::before {
+  background: #2f9e44;
+}
+
+.log-row.log-opponent::before {
+  background: #c92a2a;
+}
+
+.log-row.log-row-board {
+  background: #f8fafc;
+  border-color: #e2e8ef;
+  box-shadow: none;
+}
+
+.log-row.log-row-board .log-row-text {
+  font-family: var(--ui-font-main);
+  letter-spacing: 0.01em;
+  color: #64748b;
+}
+
+.log-row.log-type-attack {
+  border-color: rgba(14, 116, 144, 0.2);
+  background: #fcfdff;
+}
+
+.log-row.log-type-attack .log-row-text {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.log-row.log-type-ability,
+.log-row.log-type-equipment,
+.log-row.log-type-death {
+  border-color: rgba(30, 64, 175, 0.16);
+}
+
+.log-row.log-phase-marker {
+  border-color: #dbeafe;
+  background: #eff6ff;
+}
+
+.log-row.random-event {
+  box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.28);
+}
+
+.log-row-meta {
+  min-width: 7.8rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: flex-start;
+  gap: 0.25rem;
+  padding-top: 0.02rem;
+}
+
+.log-badge {
+  font-size: 0.72rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #d3dde7;
+  border-radius: 999px;
+  padding: 0.24rem 0.5rem;
+}
+
+.log-badge-side-player {
+  color: #166534;
+  border-color: rgba(34, 197, 94, 0.45);
+  background: rgba(34, 197, 94, 0.14);
+}
+
+.log-badge-side-opponent {
+  color: #991b1b;
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.14);
+}
+
+.log-badge-side-unknown {
+  color: #475569;
+}
+
+.log-badge-type-attack {
+  border-color: rgba(14, 116, 144, 0.4);
+  background: rgba(14, 116, 144, 0.12);
+  color: #0e7490;
+}
+
+.log-badge-type-ability,
+.log-badge-type-equipment {
+  border-color: rgba(30, 64, 175, 0.38);
+  background: rgba(30, 64, 175, 0.1);
+  color: #1d4ed8;
+}
+
+.log-badge-type-board {
+  border-color: rgba(71, 85, 105, 0.38);
+  background: rgba(71, 85, 105, 0.12);
+  color: #334155;
+}
+
+.log-badge-type-death {
+  border-color: rgba(185, 28, 28, 0.4);
+  background: rgba(185, 28, 28, 0.12);
+  color: #b91c1c;
+}
+
+.log-badge-type-move,
+.log-badge-type-trumpets {
+  border-color: rgba(100, 116, 139, 0.45);
+  background: rgba(100, 116, 139, 0.12);
+  color: #475569;
+}
+
+.log-badge-random {
+  border-color: rgba(234, 88, 12, 0.46);
+  background: rgba(234, 88, 12, 0.14);
+  color: #9a3412;
+}
+
+.log-badge-phase {
+  border-color: rgba(37, 99, 235, 0.4);
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.log-row-text {
+  color: #1f2937;
+  font-size: 0.98rem;
+  line-height: 1.42;
+  flex: 1 1 auto;
+}
+
+.log-row-text span {
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.log-empty-state {
+  border: 1px dashed #d0d7de;
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: #6c757d;
+  font-size: 0.86rem;
+  text-align: center;
+  background: #ffffff;
 }
 
 .flex-1 {
@@ -144,6 +477,38 @@
   margin-bottom: 0.35rem;
   padding: 0 0.1rem;
   white-space: nowrap;
+}
+
+.pane-switch-tabs {
+  display: none;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+}
+
+.pane-switch-tab {
+  border-radius: 999px;
+  border: 1px solid #d4dbe3;
+  background: #ffffff;
+  color: #495057;
+  padding: 0.34rem 0.85rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    color 0.18s ease;
+
+  &.active {
+    background: #0d6efd;
+    border-color: #0d6efd;
+    color: #ffffff;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--sap-btn-primary);
+    outline-offset: 2px;
+  }
 }
 
 .bottom-container .border {
@@ -359,15 +724,20 @@
 
 .battle-view-header {
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 }
 
 .fight-stage {
+  --fight-motion-scale: 1;
   border: 1px solid #e9ecef;
   border-radius: 8px;
   padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    'player opponent'
+    'event event';
+  align-items: start;
   gap: 0.45rem;
   background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
 }
@@ -386,7 +756,25 @@
   background-color: rgba(40, 167, 69, 0.08);
 }
 
+.fight-team-opponent {
+  grid-area: opponent;
+}
+
+.fight-team-player {
+  grid-area: player;
+}
+
+.fight-team-player-head-to-head {
+  direction: rtl;
+}
+
+.fight-team-player-head-to-head .fight-slot {
+  direction: ltr;
+  --fight-shift-direction: -1;
+}
+
 .fight-slot {
+  --fight-shift-direction: 1;
   border: 1px solid #dce4ec;
   border-radius: 8px;
   padding: 0.25rem;
@@ -396,6 +784,10 @@
   gap: 0.15rem;
   align-items: center;
   justify-content: space-between;
+  transition:
+    box-shadow calc(140ms * var(--fight-motion-scale, 1)) ease-out,
+    background-color calc(140ms * var(--fight-motion-scale, 1)) ease-out,
+    border-color calc(140ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
 .fight-slot.fight-slot-front {
@@ -420,6 +812,9 @@
   justify-content: center;
   position: relative;
   overflow: visible;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .fight-slot-icon {
@@ -456,9 +851,11 @@
 }
 
 .fight-slot-stats {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
-  gap: 0.15rem;
+  gap: 0.22rem;
   font-size: 0.74rem;
   font-weight: 700;
   color: #212529;
@@ -482,6 +879,7 @@
 }
 
 .fight-event {
+  grid-area: event;
   border: 1px solid #dce4ec;
   border-radius: 8px;
   background-color: #ffffff;
@@ -491,25 +889,57 @@
   gap: 0.15rem;
 }
 
+@keyframes fight-event-pulse-a {
+  0% {
+    transform: translateY(1px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fight-event-pulse-b {
+  0% {
+    transform: translateY(1px);
+    opacity: 0.88;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.fight-event.fight-event-phase-a {
+  animation:
+    fight-event-pulse-a calc(260ms * var(--fight-motion-scale, 1)) ease-out;
+}
+
+.fight-event.fight-event-phase-b {
+  animation:
+    fight-event-pulse-b calc(260ms * var(--fight-motion-scale, 1)) ease-out;
+}
+
 .fight-event.fight-event-random {
   border-left: 4px solid #6f42c1;
 }
 
 .fight-event-type {
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
   text-transform: uppercase;
   color: #6c757d;
 }
 
 .fight-event-text {
-  font-size: 0.84rem;
+  font-size: 0.92rem;
   color: #212529;
-  line-height: 1.25;
+  line-height: 1.35;
 }
 
 .fight-event-step {
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   color: #6c757d;
 }
 
@@ -606,49 +1036,80 @@
 .fight-team-player
   .fight-slot-attacker.fight-impact-phase-a
   .fight-slot-art {
-  animation: fight-lunge-player-a 360ms cubic-bezier(0.25, 0.65, 0.35, 1);
+  animation:
+    fight-lunge-player-a calc(360ms * var(--fight-motion-scale, 1))
+    cubic-bezier(0.25, 0.65, 0.35, 1);
 }
 
 .fight-team-player
   .fight-slot-attacker.fight-impact-phase-b
   .fight-slot-art {
-  animation: fight-lunge-player-b 360ms cubic-bezier(0.25, 0.65, 0.35, 1);
+  animation:
+    fight-lunge-player-b calc(360ms * var(--fight-motion-scale, 1))
+    cubic-bezier(0.25, 0.65, 0.35, 1);
 }
 
 .fight-team-opponent
   .fight-slot-attacker.fight-impact-phase-a
   .fight-slot-art {
-  animation: fight-lunge-opponent-a 360ms cubic-bezier(0.25, 0.65, 0.35, 1);
+  animation:
+    fight-lunge-opponent-a calc(360ms * var(--fight-motion-scale, 1))
+    cubic-bezier(0.25, 0.65, 0.35, 1);
 }
 
 .fight-team-opponent
   .fight-slot-attacker.fight-impact-phase-b
   .fight-slot-art {
-  animation: fight-lunge-opponent-b 360ms cubic-bezier(0.25, 0.65, 0.35, 1);
+  animation:
+    fight-lunge-opponent-b calc(360ms * var(--fight-motion-scale, 1))
+    cubic-bezier(0.25, 0.65, 0.35, 1);
 }
 
 .fight-slot-target.fight-impact-phase-a {
-  animation: fight-hit-shake-a 320ms ease-out;
+  animation:
+    fight-hit-shake-a calc(320ms * var(--fight-motion-scale, 1)) ease-out;
   box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.25);
 }
 
 .fight-slot-target.fight-impact-phase-b {
-  animation: fight-hit-shake-b 320ms ease-out;
+  animation:
+    fight-hit-shake-b calc(320ms * var(--fight-motion-scale, 1)) ease-out;
   box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.25);
 }
 
 .fight-slot.fight-slot-shifted {
-  animation: fight-shift-forward 260ms ease-out;
+  animation:
+    fight-shift-forward calc(260ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
 @keyframes fight-shift-forward {
   0% {
-    transform: translateX(calc(var(--fight-shift-steps, 1) * 18px));
+    transform: translateX(
+      calc(var(--fight-shift-steps, 1) * 18px * var(--fight-shift-direction, 1))
+    );
     opacity: 0.7;
   }
   100% {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .fight-stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'opponent'
+      'event'
+      'player';
+  }
+
+  .fight-team-player-head-to-head {
+    direction: ltr;
+  }
+
+  .fight-team-player-head-to-head .fight-slot {
+    --fight-shift-direction: 1;
   }
 }
 
@@ -668,6 +1129,9 @@
     0 0 4px rgba(255, 255, 255, 0.8);
   pointer-events: none;
   white-space: nowrap;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
 .fight-value-popup.fight-value-popup-damage,
@@ -714,11 +1178,13 @@
 }
 
 .fight-value-popup.fight-value-phase-a {
-  animation: fight-value-pop-a 620ms ease-out;
+  animation:
+    fight-value-pop-a calc(620ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
 .fight-value-popup.fight-value-phase-b {
-  animation: fight-value-pop-b 620ms ease-out;
+  animation:
+    fight-value-pop-b calc(620ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
 .fight-faint-ghost {
@@ -728,6 +1194,7 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  will-change: transform, opacity;
 }
 
 .fight-faint-icon {
@@ -772,11 +1239,13 @@
 }
 
 .fight-faint-ghost.fight-faint-phase-a {
-  animation: fight-faint-a 320ms ease-in forwards;
+  animation:
+    fight-faint-a calc(320ms * var(--fight-motion-scale, 1)) ease-in forwards;
 }
 
 .fight-faint-ghost.fight-faint-phase-b {
-  animation: fight-faint-b 320ms ease-in forwards;
+  animation:
+    fight-faint-b calc(320ms * var(--fight-motion-scale, 1)) ease-in forwards;
 }
 
 .fight-controls {
@@ -807,9 +1276,12 @@
 }
 
 .fight-log-row {
-  padding: 0.25rem 0.45rem;
+  padding: 0.3rem 0.45rem;
   border-bottom: 1px solid #f1f3f5;
-  font-size: 0.83rem;
+  font-size: 0.9rem;
+  scroll-margin-block: 1.4rem;
+  transition:
+    background-color calc(150ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
 .fight-log-row:last-child {
@@ -818,6 +1290,37 @@
 
 .fight-log-row.fight-log-row-active {
   background-color: rgba(13, 110, 253, 0.12);
+}
+
+.fight-log-row .log-row {
+  margin-top: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.fight-log-row .log-row::before {
+  display: none;
+}
+
+.fight-log-row .log-row-meta {
+  min-width: 7.1rem;
+}
+
+.fight-log-row .log-row-text {
+  font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fight-slot,
+  .fight-slot-art,
+  .fight-event,
+  .fight-value-popup,
+  .fight-faint-ghost,
+  .fight-log-row {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 .fight-empty-state {
@@ -1462,5 +1965,40 @@ body.custom-pack-editor-open .modal-backdrop.show {
     width: 100%;
     min-width: unset;
     max-width: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .pane-switch-tabs {
+    display: flex;
+  }
+
+  .bottom-container-scroll-hint {
+    display: none;
+  }
+
+  .bottom-container-scroll {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .bottom-container {
+    flex-direction: column;
+    min-width: 0;
+    row-gap: 0.75rem;
+  }
+
+  .bottom-container > .col-12,
+  .bottom-container > .battle-pane,
+  .bottom-container > .logs-pane {
+    flex: 1 1 auto;
+    max-width: 100%;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+  }
+
+  .bottom-container > .pane-hidden-single-column {
+    display: none;
   }
 }

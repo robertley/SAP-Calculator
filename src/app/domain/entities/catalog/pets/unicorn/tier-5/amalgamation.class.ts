@@ -48,6 +48,18 @@ export class AmalgamationAbility extends Ability {
       native: true,
       abilitylevel: owner.level,
       maxUses: 2,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        if (!triggerPet) {
+          return false;
+        }
+        const targetResp = resolveFriendSummonedTarget(
+          this.owner,
+          triggerPet,
+          (o, pet) => o.parent.getSpecificPet(o, pet),
+        );
+        return !!targetResp.pet;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -59,20 +71,15 @@ export class AmalgamationAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    if (!triggerPet) {
-      return;
-    }
-
     const targetResp = resolveFriendSummonedTarget(
       owner,
       triggerPet,
       (o, pet) => o.parent.getSpecificPet(o, pet),
     );
-    if (!targetResp.pet) {
+    const target = targetResp.pet;
+    if (!target) {
       return;
     }
-
-    const target = targetResp.pet;
     const attackAmount = this.level * 3;
     const manaAmount = this.level * 4;
 

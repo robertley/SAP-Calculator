@@ -9,7 +9,7 @@ import {
 describe('Fight animation frames', () => {
   it('parses board snapshots into player/opponent slots', () => {
     const message =
-      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant"><img src="assets/items/Garlic.png" class="log-inline-icon" alt="Garlic">(4/5) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant"><img src="assets/items/Garlic.png" class="log-inline-icon" alt="Garlic">(4/5/2xp) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4/1xp) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
 
     const state = parseFightAnimationBoardState(message);
 
@@ -18,6 +18,7 @@ describe('Fight animation frames', () => {
       isEmpty: false,
       attack: 4,
       health: 5,
+      exp: 2,
       petName: 'Ant',
       equipmentName: 'Garlic',
     });
@@ -25,6 +26,7 @@ describe('Fight animation frames', () => {
       isEmpty: false,
       attack: 3,
       health: 4,
+      exp: 1,
       petName: 'Fish',
     });
     expect(state?.playerSlots[1].isEmpty).toBe(true);
@@ -147,6 +149,33 @@ describe('Fight animation frames', () => {
     expect(frames[4].playerSlots[0]).toMatchObject({
       equipmentName: null,
       equipmentIconSrc: null,
+    });
+  });
+
+  it('applies experience changes and emits exp popups', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4/1xp) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8/0xp) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Fish gained +2 experience.',
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Fish',
+      exp: 3,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'exp',
+      delta: 2,
     });
   });
 

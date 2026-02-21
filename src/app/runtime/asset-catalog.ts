@@ -44,6 +44,7 @@ const petNameOverrides: Record<string, string> = {
   'Chimera Goat': 'ChimeraGoat',
   'Chimera Lion': 'ChimeraLion',
   'Chimera Snake': 'ChimeraSnake',
+  CrackedEgg: 'EggLadCracked',
   'Fake Nessie': 'FakeNessie',
   'Tand and Tand': 'ThorGoats',
 };

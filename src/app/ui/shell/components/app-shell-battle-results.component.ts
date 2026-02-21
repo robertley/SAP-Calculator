@@ -5,10 +5,13 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { AppComponent } from '../app.component';
+
+type TabletPane = 'battle' | 'logs';
 
 @Component({
   selector: 'app-shell-battle-results',
@@ -16,7 +19,9 @@ import type { AppComponent } from '../app.component';
   imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './app-shell-battle-results.component.html',
 })
-export class AppShellBattleResultsComponent implements AfterViewInit {
+export class AppShellBattleResultsComponent
+  implements AfterViewInit, OnInit
+{
   @Input({ required: true }) app: AppComponent;
 
   @ViewChild('battleSplitContainer')
@@ -39,7 +44,14 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
 
   timelineTopHeightPx: number | null = null;
 
+  isTabletTabsLayout = false;
+
+  activeTabletPane: TabletPane = 'battle';
+
   private readonly dividerStorageKey = 'sap.battleLogs.leftPaneWidthPx';
+
+  private readonly tabletMediaQuery =
+    '(min-width: 768px) and (max-width: 991.98px)';
 
   private readonly minPaneWidthPx = 320;
 
@@ -61,7 +73,13 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
 
   private analysisResizing = false;
 
+  ngOnInit(): void {
+    this.updateTabletTabsLayoutState();
+  }
+
   ngAfterViewInit(): void {
+    this.updateTabletTabsLayoutState();
+
     if (typeof window === 'undefined') {
       return;
     }
@@ -84,14 +102,14 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
 
   @HostListener('window:resize')
   onWindowResize(): void {
-    if (this.leftPaneWidthPx == null) {
-      return;
-    }
+    this.updateTabletTabsLayoutState();
 
-    this.leftPaneWidthPx = this.clampPaneWidth(
-      this.leftPaneWidthPx,
-      this.getSplitContainerWidth(),
-    );
+    if (this.leftPaneWidthPx != null) {
+      this.leftPaneWidthPx = this.clampPaneWidth(
+        this.leftPaneWidthPx,
+        this.getSplitContainerWidth(),
+      );
+    }
 
     if (this.animationTopHeightPx != null) {
       this.animationTopHeightPx = this.clampSectionHeight(
@@ -115,7 +133,15 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
     }
   }
 
+  setTabletActivePane(pane: TabletPane): void {
+    this.activeTabletPane = pane;
+  }
+
   onDividerPointerDown(event: PointerEvent): void {
+    if (this.isTabletTabsLayout) {
+      return;
+    }
+
     const divider = event.target as HTMLElement | null;
     const splitContainer = divider?.closest('.bottom-container') as HTMLElement | null;
     const leftPane = splitContainer?.querySelector(
@@ -164,6 +190,10 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
   }
 
   onPaneDividerKeyDown(event: KeyboardEvent): void {
+    if (this.isTabletTabsLayout) {
+      return;
+    }
+
     const nextWidth = this.getNextSizeFromKeyboard(
       event,
       this.leftPaneWidthPx,
@@ -390,6 +420,18 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
     );
   }
 
+  private updateTabletTabsLayoutState(): void {
+    this.isTabletTabsLayout = this.isTabletViewport();
+  }
+
+  private isTabletViewport(): boolean {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return false;
+    }
+
+    return window.matchMedia(this.tabletMediaQuery).matches;
+  }
+
   private clampPaneWidth(requestedWidth: number, containerWidth: number): number {
     if (!Number.isFinite(containerWidth) || containerWidth <= 0) {
       return Math.max(this.minPaneWidthPx, requestedWidth);
@@ -454,4 +496,5 @@ export class AppShellBattleResultsComponent implements AfterViewInit {
     event.preventDefault();
     return clamp(requested, containerSize);
   }
+
 }

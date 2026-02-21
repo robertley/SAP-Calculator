@@ -35,7 +35,38 @@ import { AppShellBattleResultsComponent } from './components/app-shell-battle-re
 import { BATTLE_BACKGROUNDS, LOG_FILTER_TABS } from './view/app.ui.constants';
 import { loadTeamPreset, saveTeamPreset } from './state/app.component.teams';
 import { InjectorService } from 'app/integrations/injector.service';
-import { BattleDiffScope, BattleDiffRow, BattleDiffSummary, BattleTimelineRow, buildApiResponse as buildApiResponseImpl, refreshBattleDiff as refreshBattleDiffImpl, getDrawPercent as getDrawPercentImpl, getDrawWidth as getDrawWidthImpl, getLosePercent as getLosePercentImpl, getLoseWidth as getLoseWidthImpl, getWinPercent as getWinPercentImpl, LogMessagePart, optimizePositioning as optimizePositioningImpl, refreshFilteredBattles as refreshFilteredBattlesImpl, refreshViewBattleTimeline as refreshViewBattleTimelineImpl, refreshViewBattleLogRows as refreshViewBattleLogRowsImpl, runSimulation as runSimulationImpl, cancelSimulation as cancelSimulationImpl, setBattleDiffLeft as setBattleDiffLeftImpl, setBattleDiffLeftScope as setBattleDiffLeftScopeImpl, setBattleDiffRight as setBattleDiffRightImpl, setBattleDiffRightScope as setBattleDiffRightScopeImpl, setViewBattle as setViewBattleImpl, simulate as simulateImpl, } from './simulation/app.component.simulation';
+import {
+  BattleDiffScope,
+  BattleDiffRow,
+  BattleDiffSummary,
+  BattleLogEventFilter,
+  BattleLogGroup,
+  BattleLogRow,
+  BattleTimelineRow,
+  LogMessagePart,
+  buildApiResponse as buildApiResponseImpl,
+  refreshBattleDiff as refreshBattleDiffImpl,
+  getDrawPercent as getDrawPercentImpl,
+  getDrawWidth as getDrawWidthImpl,
+  getLosePercent as getLosePercentImpl,
+  getLoseWidth as getLoseWidthImpl,
+  getWinPercent as getWinPercentImpl,
+  optimizePositioning as optimizePositioningImpl,
+  refreshFilteredBattles as refreshFilteredBattlesImpl,
+  refreshDebugLogPresentation as refreshDebugLogPresentationImpl,
+  refreshViewBattleTimeline as refreshViewBattleTimelineImpl,
+  refreshViewBattleLogRows as refreshViewBattleLogRowsImpl,
+  runSimulation as runSimulationImpl,
+  cancelSimulation as cancelSimulationImpl,
+  setBattleDiffLeft as setBattleDiffLeftImpl,
+  setBattleDiffLeftScope as setBattleDiffLeftScopeImpl,
+  setBattleDiffRight as setBattleDiffRightImpl,
+  setBattleDiffRightScope as setBattleDiffRightScopeImpl,
+  setViewBattle as setViewBattleImpl,
+  setViewBattleLogFilter as setViewBattleLogFilterImpl,
+  simulate as simulateImpl,
+  toggleViewBattleLogGroup as toggleViewBattleLogGroupImpl,
+} from './simulation/app.component.simulation';
 import {
   FightAnimationDeath,
   FightAnimationFrame,
@@ -149,18 +180,37 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   showExport = false;
   showReportABug = false;
   showBattleAnalysis = false;
-  battleViewMode: 'logs' | 'animate' = 'logs';
+  showRandomOverrides = true;
+  battleViewMode: 'logs' | 'animate' = 'animate';
   fightAnimationFrames: FightAnimationFrame[] = [];
   fightAnimationFrameIndex = -1;
   fightAnimationPlaying = false;
   fightAnimationSpeed = 1;
+  readonly fightAnimationSpeedOptions = [0.5, 1, 1.5, 2] as const;
+  readonly logEventFilterOptions: ReadonlyArray<{
+    value: BattleLogEventFilter;
+    label: string;
+  }> = [
+    { value: 'all', label: 'All' },
+    { value: 'board', label: 'Board' },
+    { value: 'attack', label: 'Attack' },
+    { value: 'ability', label: 'Ability' },
+    { value: 'equipment', label: 'Equipment' },
+    { value: 'death', label: 'Death' },
+    { value: 'random', label: 'Random' },
+  ];
   readonly fightAttackIconSrc = '/assets/art/Public/Public/Icons/fist-from-textmap.png';
   readonly fightHealthIconSrc = '/assets/art/Public/Public/Icons/heart-from-textmap.png';
+  readonly fightExpIconSrc =
+    '/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/xp.png';
 
   playerPetsControls: AbstractControl[] = [];
   opponentPetsControls: AbstractControl[] = [];
+  logEventFilter: BattleLogEventFilter = 'all';
   viewBattleLogs: Log[] = [];
-  viewBattleLogRows: Array<{ parts: LogMessagePart[]; classes: string[] }> = [];
+  viewBattleLogRows: BattleLogRow[] = [];
+  viewBattleLogGroups: BattleLogGroup[] = [];
+  collapsedLogGroupIds = new Set<string>();
   viewBattleTimelineRows: BattleTimelineRow[] = [];
   diffBattleLeftIndex = 0;
   diffBattleRightIndex = 0;
@@ -195,6 +245,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly trackByLogTab = trackByLogTabImpl;
   readonly toggleBattleAnalysis = () => {
     this.showBattleAnalysis = !this.showBattleAnalysis;
+  };
+  readonly toggleRandomOverrides = () => {
+    this.showRandomOverrides = !this.showRandomOverrides;
+    this.cdr.markForCheck();
   };
   readonly setBattleViewMode = (mode: 'logs' | 'animate') => {
     this.battleViewMode = mode;
@@ -474,6 +528,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentFightAnimationFrame?.logIndex ?? -1;
   }
 
+  get currentFightAnimationLogRow():
+    | BattleLogRow
+    | null {
+    const logIndex = this.currentFightAnimationLogIndex;
+    if (logIndex < 0 || logIndex >= this.viewBattleLogRows.length) {
+      return null;
+    }
+    return this.viewBattleLogRows[logIndex] ?? null;
+  }
+
+  get fightAnimationMotionScale(): number {
+    return 1 / this.fightAnimationSpeed;
+  }
+
   readonly setViewBattle = (battle: Battle) => setViewBattleImpl(this, battle);
   readonly refreshViewBattleTimeline = () =>
     refreshViewBattleTimelineImpl(this);
@@ -486,8 +554,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     setBattleDiffLeftScopeImpl(this, scope);
   readonly setBattleDiffRightScope = (scope: BattleDiffScope) =>
     setBattleDiffRightScopeImpl(this, scope);
+  readonly setViewBattleLogFilter = (filter: BattleLogEventFilter) =>
+    setViewBattleLogFilterImpl(this, filter);
+  readonly toggleViewBattleLogGroup = (groupId: string) =>
+    toggleViewBattleLogGroupImpl(this, groupId);
   readonly refreshViewBattleLogRows = () =>
     refreshViewBattleLogRowsImpl(this);
+  readonly refreshDebugLogPresentation = () =>
+    refreshDebugLogPresentationImpl(this);
   get drawWidth() {
     return getDrawWidthImpl(this);
   }
@@ -496,9 +570,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   saveTeam(side: 'player' | 'opponent') {
+    const normalizedTeamName = this.teamName?.trim() ?? '';
+    if (!normalizedTeamName) {
+      this.setStatus('Enter a team name before saving.', 'error');
+      return;
+    }
+
     const result = saveTeamPreset({
       side,
-      teamName: this.teamName,
+      teamName: normalizedTeamName,
       formGroup: this.formGroup,
       savedTeams: this.savedTeams,
       selectedTeamId: this.selectedTeamId,

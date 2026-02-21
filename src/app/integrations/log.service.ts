@@ -552,7 +552,7 @@ export class LogService {
     }
     const index = this.getFrontIndex(pet);
     const label = index != null ? `${pet.parent?.isOpponent ? 'O' : 'P'}${index}` : 'P?';
-    return `${label} ${pet.name}(${pet.attack}/${pet.health})`;
+    return `${label} ${pet.name}(${pet.attack}/${pet.health}/${pet.exp}xp)`;
   }
 
   printState(player: Player, opponent: Player, message?: string) {
@@ -578,7 +578,6 @@ export class LogService {
     });
   }
 }
-
 
 
 

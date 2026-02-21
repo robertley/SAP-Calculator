@@ -50,6 +50,10 @@ export class SilkieChickenAbility extends Ability {
       native: true,
       maxUses: 2,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const target = context.triggerPet;
+        return !!target && target.alive;
+      },
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
@@ -60,8 +64,7 @@ export class SilkieChickenAbility extends Ability {
     const owner = this.owner;
     const target = triggerPet;
 
-    if (!target || !target.alive) {
-      this.triggerTigerExecution(context);
+    if (!target) {
       return;
     }
 
@@ -70,7 +73,6 @@ export class SilkieChickenAbility extends Ability {
     const perks = equipmentService.getUsefulPerksByTier(1);
 
     if (perks.length === 0) {
-      this.triggerTigerExecution(context);
       return;
     }
 

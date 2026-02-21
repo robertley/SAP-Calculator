@@ -34,6 +34,44 @@ import type {
   LogMessagePart,
 } from './app.component.simulation-log';
 
+export type BattleLogEventFilter =
+  | 'all'
+  | 'board'
+  | 'attack'
+  | 'ability'
+  | 'equipment'
+  | 'death'
+  | 'random';
+
+export interface BattleLogBadge {
+  text: string;
+  className: string;
+}
+
+export interface BattleLogRow {
+  parts: LogMessagePart[];
+  classes: string[];
+  logIndex: number;
+  type: Log['type'];
+  typeLabel: string;
+  sideLabel: 'P' | 'O' | '-';
+  rawText: string;
+  randomEvent: boolean;
+  isBoard: boolean;
+  isPhaseMarker: boolean;
+  phaseTitle: string | null;
+  groupId: string;
+  groupTitle: string;
+  badges: BattleLogBadge[];
+}
+
+export interface BattleLogGroup {
+  id: string;
+  title: string;
+  rows: BattleLogRow[];
+  collapsed: boolean;
+}
+
 export interface AppSimulationContext {
   formGroup: FormGroup;
   localStorageService: LocalStorageService;
@@ -51,7 +89,10 @@ export interface AppSimulationContext {
   filteredBattlesCache: Battle[];
   viewBattle: Battle | null;
   viewBattleLogs: Log[];
-  viewBattleLogRows: Array<{ parts: LogMessagePart[]; classes: string[] }>;
+  viewBattleLogRows: BattleLogRow[];
+  viewBattleLogGroups: BattleLogGroup[];
+  logEventFilter: BattleLogEventFilter;
+  collapsedLogGroupIds: Set<string>;
   viewBattleTimelineRows: BattleTimelineRow[];
   diffBattleLeftIndex: number;
   diffBattleRightIndex: number;
@@ -73,6 +114,7 @@ export interface AppSimulationContext {
   setStatus?: (message: string, tone?: 'success' | 'error') => void;
   randomDecisions?: RandomDecisionCapture[];
   randomOverrideError?: string | null;
+  showRandomOverrides?: boolean;
   refreshFightAnimationFromViewBattle?: () => void;
 }
 
@@ -85,11 +127,124 @@ const viewBattleLogRowsCache = new WeakMap<
   Battle,
   {
     logs: Log[];
-    rows: Array<{ parts: LogMessagePart[]; classes: string[] }>;
+    rows: BattleLogRow[];
+    includePositionPrefix: boolean;
   }
 >();
 const PARSED_MESSAGE_CACHE_MAX = 1000;
 type StatusTone = 'success' | 'error';
+
+const LOG_TYPE_LABELS: Record<Log['type'], string> = {
+  attack: 'Attack',
+  move: 'Move',
+  board: 'Board',
+  death: 'Death',
+  ability: 'Ability',
+  equipment: 'Equipment',
+  trumpets: 'Trumpets',
+};
+
+function normalizeBattleLogFilter(
+  value: BattleLogEventFilter | string | null | undefined,
+): BattleLogEventFilter {
+  if (
+    value === 'board' ||
+    value === 'attack' ||
+    value === 'ability' ||
+    value === 'equipment' ||
+    value === 'death' ||
+    value === 'random'
+  ) {
+    return value;
+  }
+  return 'all';
+}
+
+function shouldShowPositionalArgsInLogs(ctx: Pick<AppSimulationContext, 'formGroup'>): boolean {
+  const showDebugInfo = Boolean(ctx.formGroup.get('showTriggerNamesInLogs')?.value);
+  if (!showDebugInfo) {
+    return false;
+  }
+  const positionalControl = ctx.formGroup.get('showPositionalArgsInLogs');
+  if (!positionalControl) {
+    return true;
+  }
+  return Boolean(positionalControl.value);
+}
+
+function toCssToken(value: string): string {
+  const token = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return token || 'unknown';
+}
+
+function getSideLabelFromClass(playerClass: string): 'P' | 'O' | '-' {
+  if (playerClass === 'log-player') {
+    return 'P';
+  }
+  if (playerClass === 'log-opponent') {
+    return 'O';
+  }
+  return '-';
+}
+
+function extractPhaseTitle(rawText: string): string | null {
+  const trimmed = `${rawText ?? ''}`.trim();
+  if (!/^Phase\s+\d+\s*:/i.test(trimmed)) {
+    return null;
+  }
+  return trimmed;
+}
+
+function buildLogBadges(
+  type: Log['type'],
+  sideLabel: 'P' | 'O' | '-',
+  randomEvent: boolean,
+  isPhaseMarker: boolean,
+): BattleLogBadge[] {
+  const sideClass =
+    sideLabel === 'P'
+      ? 'log-badge-side-player'
+      : sideLabel === 'O'
+        ? 'log-badge-side-opponent'
+        : 'log-badge-side-unknown';
+  const badges: BattleLogBadge[] = [
+    { text: sideLabel, className: `log-badge-side ${sideClass}` },
+    {
+      text: LOG_TYPE_LABELS[type] ?? type,
+      className: `log-badge-type log-badge-type-${toCssToken(type)}`,
+    },
+  ];
+  if (randomEvent) {
+    badges.push({
+      text: 'Random',
+      className: 'log-badge-random',
+    });
+  }
+  if (isPhaseMarker) {
+    badges.push({
+      text: 'Phase',
+      className: 'log-badge-phase',
+    });
+  }
+  return badges;
+}
+
+function matchesLogFilter(
+  row: BattleLogRow,
+  filter: BattleLogEventFilter,
+): boolean {
+  if (filter === 'all') {
+    return true;
+  }
+  if (filter === 'random') {
+    return row.randomEvent;
+  }
+  return row.type === filter;
+}
 
 function cacheParsedMessage(message: string, parts: LogMessagePart[]): void {
   parsedMessageCache.set(message, parts);
@@ -164,7 +319,13 @@ function applyDiffSummary(
   }
 }
 
-function buildLogPositionPrefix(log: Log): string {
+function buildLogPositionPrefix(
+  log: Log,
+  includePositionPrefix: boolean,
+): string {
+  if (!includePositionPrefix) {
+    return '';
+  }
   const raw = `${log.rawMessage ?? log.message ?? ''}`.replace(/<[^>]+>/g, '');
   if (/\b[PO][1-5]\b/.test(raw)) {
     return '';
@@ -183,6 +344,16 @@ function buildLogPositionPrefix(log: Log): string {
     return `[->${targetLabel}] `;
   }
   return '';
+}
+
+function normalizePositionBracketSpacing(message: string): string {
+  return message
+    .replace(
+      /\[\s*([PO])\s*([1-5])\s*->\s*([PO])\s*([1-5])\s*\]/g,
+      '[$1$2->$3$4]',
+    )
+    .replace(/\[\s*([PO])\s*([1-5])\s*\]/g, '[$1$2]')
+    .replace(/\[\s*->\s*([PO])\s*([1-5])\s*\]/g, '[->$1$2]');
 }
 
 function buildPositionLabel(
@@ -239,13 +410,15 @@ function getTargetIsOpponent(log: Log): boolean | null {
 function getLogMessageParts(
   log: Log,
   logService: LogService | null,
+  includePositionPrefix: boolean,
 ): LogMessagePart[] {
   if (logService) {
     logService.decorateLogIfNeeded(log);
   }
-  const prefix = buildLogPositionPrefix(log);
-  const message =
-    `${prefix}${log.message}` + (log.count > 1 ? ` (x${log.count})` : '');
+  const prefix = buildLogPositionPrefix(log, includePositionPrefix);
+  const message = normalizePositionBracketSpacing(
+    `${prefix}${log.message}` + (log.count > 1 ? ` (x${log.count})` : ''),
+  );
   const cached = logPartsCache.get(log);
   if (cached && cached.message === message) {
     return cached.parts;
@@ -259,6 +432,116 @@ function getLogMessageParts(
   logPartsCache.set(log, { message, parts });
   cacheParsedMessage(message, parts);
   return parts;
+}
+
+function buildBattleLogRows(
+  ctx: AppSimulationContext,
+  includePositionPrefix: boolean,
+): BattleLogRow[] {
+  let currentGroupId = 'phase-0';
+  let currentGroupTitle = 'Battle';
+  let phaseCount = 0;
+
+  return ctx.viewBattleLogs.map((log, logIndex) => {
+    const rawText = getPlainLogText(log);
+    const phaseTitle = extractPhaseTitle(rawText);
+    if (phaseTitle) {
+      phaseCount += 1;
+      currentGroupId = `phase-${phaseCount}`;
+      currentGroupTitle = phaseTitle;
+    }
+    const playerClass = getPlayerClass(log);
+    const sideLabel = getSideLabelFromClass(playerClass);
+    const randomEvent = log.randomEvent === true;
+    const isBoard = log.type === 'board';
+    const isPhaseMarker = Boolean(phaseTitle);
+    const typeClass = `log-type-${toCssToken(log.type)}`;
+    const classes = [
+      'log-entry',
+      playerClass,
+      typeClass,
+      randomEvent ? 'random-event' : '',
+      log.bold ? 'bold' : '',
+      isBoard ? 'log-row-board' : '',
+      isPhaseMarker ? 'log-phase-marker' : '',
+    ].filter(Boolean);
+
+    return {
+      parts: getLogMessageParts(log, ctx.logService, includePositionPrefix),
+      classes,
+      logIndex,
+      type: log.type,
+      typeLabel: LOG_TYPE_LABELS[log.type] ?? log.type,
+      sideLabel,
+      rawText,
+      randomEvent,
+      isBoard,
+      isPhaseMarker,
+      phaseTitle,
+      groupId: currentGroupId,
+      groupTitle: currentGroupTitle,
+      badges: buildLogBadges(log.type, sideLabel, randomEvent, isPhaseMarker),
+    };
+  });
+}
+
+export function refreshViewBattleLogGroups(ctx: AppSimulationContext): void {
+  ctx.logEventFilter = normalizeBattleLogFilter(ctx.logEventFilter);
+  if (!ctx.collapsedLogGroupIds) {
+    ctx.collapsedLogGroupIds = new Set<string>();
+  }
+  const filter = ctx.logEventFilter;
+  const collapsedGroupIds = ctx.collapsedLogGroupIds;
+  const groups: BattleLogGroup[] = [];
+  const groupsById = new Map<string, BattleLogGroup>();
+
+  for (const row of ctx.viewBattleLogRows) {
+    if (!matchesLogFilter(row, filter)) {
+      continue;
+    }
+    let group = groupsById.get(row.groupId);
+    if (!group) {
+      group = {
+        id: row.groupId,
+        title: row.groupTitle,
+        rows: [],
+        collapsed: collapsedGroupIds.has(row.groupId),
+      };
+      groupsById.set(row.groupId, group);
+      groups.push(group);
+    }
+    group.rows.push(row);
+  }
+
+  ctx.viewBattleLogGroups = groups;
+}
+
+export function setViewBattleLogFilter(
+  ctx: AppSimulationContext,
+  filter: BattleLogEventFilter,
+): void {
+  ctx.logEventFilter = normalizeBattleLogFilter(filter);
+  refreshViewBattleLogGroups(ctx);
+  ctx.markForCheck?.();
+}
+
+export function toggleViewBattleLogGroup(
+  ctx: AppSimulationContext,
+  groupId: string,
+): void {
+  if (!groupId) {
+    return;
+  }
+  if (!ctx.collapsedLogGroupIds) {
+    ctx.collapsedLogGroupIds = new Set<string>();
+  }
+  if (ctx.collapsedLogGroupIds.has(groupId)) {
+    ctx.collapsedLogGroupIds.delete(groupId);
+  } else {
+    ctx.collapsedLogGroupIds.add(groupId);
+  }
+  refreshViewBattleLogGroups(ctx);
+  ctx.markForCheck?.();
 }
 
 export function buildApiResponse(ctx: AppSimulationContext): void {
@@ -590,9 +873,14 @@ function applySimulationResult(
   ctx.opponentWinner = result.opponentWins;
   ctx.draw = result.draws;
   ctx.battles = result.battles || [];
+  const includePositionPrefix = shouldShowPositionalArgsInLogs(ctx);
   const randomEventsByBattle = new Map<Battle, LogMessagePart[]>();
   ctx.battleRandomEvents = ctx.battles.map((battle) => {
-    const parts = formatRandomEvents(battle, ctx.logService);
+    const parts = formatRandomEvents(
+      battle,
+      ctx.logService,
+      includePositionPrefix,
+    );
     randomEventsByBattle.set(battle, parts);
     return parts;
   });
@@ -600,6 +888,7 @@ function applySimulationResult(
   refreshFilteredBattles(ctx);
   ctx.viewBattle = result.battles?.[0] || null;
   ctx.viewBattleLogs = ctx.viewBattle?.logs ?? [];
+  ctx.collapsedLogGroupIds = new Set<string>();
   refreshViewBattleLogRows(ctx);
   refreshViewBattleTimeline(ctx);
   ctx.refreshFightAnimationFromViewBattle?.();
@@ -611,6 +900,7 @@ function applySimulationResult(
     (decision) => Array.isArray(decision.options) && decision.options.length > 1,
   );
   ctx.randomOverrideError = result.randomOverrideError ?? null;
+  ctx.showRandomOverrides = ctx.randomDecisions.length > 0;
 }
 
 export function setViewBattle(ctx: AppSimulationContext, battle: Battle): void {
@@ -622,26 +912,27 @@ export function setViewBattle(ctx: AppSimulationContext, battle: Battle): void {
 }
 
 export function refreshViewBattleLogRows(ctx: AppSimulationContext): void {
+  const includePositionPrefix = shouldShowPositionalArgsInLogs(ctx);
   if (ctx.viewBattle) {
     const cached = viewBattleLogRowsCache.get(ctx.viewBattle);
-    if (cached && cached.logs === ctx.viewBattleLogs) {
+    if (
+      cached &&
+      cached.logs === ctx.viewBattleLogs &&
+      cached.includePositionPrefix === includePositionPrefix
+    ) {
       ctx.viewBattleLogRows = cached.rows;
+      refreshViewBattleLogGroups(ctx);
       return;
     }
   }
-  const rows = ctx.viewBattleLogs.map((log) => ({
-    parts: getLogMessageParts(log, ctx.logService),
-    classes: [
-      getPlayerClass(log),
-      log.randomEvent ? 'random-event' : '',
-      log.bold ? 'bold' : '',
-    ].filter(Boolean),
-  }));
+  const rows = buildBattleLogRows(ctx, includePositionPrefix);
   ctx.viewBattleLogRows = rows;
+  refreshViewBattleLogGroups(ctx);
   if (ctx.viewBattle) {
     viewBattleLogRowsCache.set(ctx.viewBattle, {
       logs: ctx.viewBattleLogs,
       rows,
+      includePositionPrefix,
     });
   }
 }
@@ -743,6 +1034,7 @@ export function refreshFilteredBattles(ctx: AppSimulationContext): void {
 export function formatRandomEvents(
   battle: Battle,
   logService: LogService | null,
+  includePositionPrefix = false,
 ): LogMessagePart[] {
   const randomLogs = battle.logs.filter((log) => log.randomEvent === true);
   const parts: LogMessagePart[] = [];
@@ -756,12 +1048,30 @@ export function formatRandomEvents(
           : 'true random';
       parts.push({ type: 'text', text: `[${reason}] ` });
     }
-    parts.push(...getLogMessageParts(log, logService));
+    parts.push(...getLogMessageParts(log, logService, includePositionPrefix));
     if (index < randomLogs.length - 1) {
       parts.push({ type: 'br' });
     }
   });
   return parts;
+}
+
+export function refreshDebugLogPresentation(ctx: AppSimulationContext): void {
+  const includePositionPrefix = shouldShowPositionalArgsInLogs(ctx);
+  const randomEventsByBattle = new Map<Battle, LogMessagePart[]>();
+  ctx.battleRandomEvents = (ctx.battles ?? []).map((battle) => {
+    const parts = formatRandomEvents(
+      battle,
+      ctx.logService,
+      includePositionPrefix,
+    );
+    randomEventsByBattle.set(battle, parts);
+    return parts;
+  });
+  ctx.battleRandomEventsByBattle = randomEventsByBattle;
+  refreshViewBattleLogRows(ctx);
+  ctx.refreshFightAnimationFromViewBattle?.();
+  ctx.markForCheck?.();
 }
 
 function normalizeBattleIndex(ctx: AppSimulationContext, index: number): number {

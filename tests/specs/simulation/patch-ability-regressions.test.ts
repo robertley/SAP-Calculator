@@ -976,6 +976,201 @@ describe('Pet Ability Patch Regressions', () => {
         expect(onionIndex).toBeLessThan(fairyDustIndex);
     });
 
+    it('Fairy Dust should still trigger after a Mushroom refill resolves first', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Unicorn',
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 1,
+                    exp: 0,
+                    equipment: { name: 'Mushroom' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: { name: 'Fairy Dust' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Fish',
+                    attack: 3,
+                    health: 6,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+
+        const mushroomSpawnIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('Spawned Ant') &&
+                log.message.includes('(Mushroom)'),
+        );
+        const fairyDustLogs = logs.filter(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('mana(Fairy Dust)'),
+        );
+        const fairyDustIndex = logs.findIndex(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('mana(Fairy Dust)'),
+        );
+
+        expect(mushroomSpawnIndex).toBeGreaterThan(-1);
+        expect(fairyDustIndex).toBeGreaterThan(-1);
+        expect(fairyDustIndex).toBeGreaterThan(mushroomSpawnIndex);
+        expect(fairyDustLogs).toHaveLength(1);
+    });
+
+    it('Racket Tail should not consume use when its trigger pet died before resolving', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Custom',
+            opponentPack: 'Custom',
+            playerPets: [
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 5,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 10,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Racket Tail',
+                    attack: 2,
+                    health: 5,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Ant',
+                    attack: 10,
+                    health: 20,
+                    exp: 0,
+                    equipment: { name: 'Golden Egg' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 20,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const racketTailLogs = logs.filter(
+            (log: any) =>
+                log.type === 'ability' &&
+                typeof log.message === 'string' &&
+                log.message.includes('Racket Tail gave Ant Strawberry and +5 attack before attacking.'),
+        );
+
+        expect(racketTailLogs).toHaveLength(1);
+    });
+
     it('Sneaky Egg should faint before spawning a Cracked Egg', () => {
         const config: SimulationConfig = {
             ...baseConfig,
@@ -1107,7 +1302,5 @@ describe('Pet Ability Patch Regressions', () => {
         expect(noRoomLog).toBeUndefined();
     });
 });
-
-
 
 

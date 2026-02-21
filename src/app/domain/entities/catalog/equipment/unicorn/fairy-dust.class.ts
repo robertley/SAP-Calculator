@@ -24,11 +24,14 @@ export class FairyDustAbility extends Ability {
     super({
       name: 'FairyDustAbility',
       owner: owner,
-      triggers: ['EmptyFrontSpace'], 
+      triggers: ['EmptyFrontSpace'],
       abilityType: 'Equipment',
       native: true,
       maxUses: 1, // Fairy Dust is removed after one use
       abilitylevel: 1,
+      condition: () => {
+        return this.owner.parent.pet0 == null;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -39,10 +42,6 @@ export class FairyDustAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
-
-    if (owner.parent.pet0 != null) {
-      return;
-    }
 
     let multiplier = this.equipment.multiplier;
     let manaAmmt = 2 * multiplier;
