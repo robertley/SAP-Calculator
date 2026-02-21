@@ -27,12 +27,14 @@ interface ParsedTransformEvent {
   transformedName: string | null;
   attack: number | null;
   health: number | null;
+  exp: number | null;
   equipmentName: string | null;
 }
 
 interface ParsedStatChange {
   attackDelta: number;
   healthDelta: number;
+  expDelta: number;
 }
 
 interface SlotRef {
@@ -53,6 +55,7 @@ export interface FightAnimationSlot {
   isEmpty: boolean;
   attack: number | null;
   health: number | null;
+  exp: number | null;
   petIconSrc: string | null;
   petName: string | null;
   petCompanionIconSrc: string | null;
@@ -84,7 +87,7 @@ export interface FightAnimationImpact {
   damage: number | null;
 }
 
-export type FightAnimationPopupType = 'damage' | 'attack' | 'health';
+export type FightAnimationPopupType = 'damage' | 'attack' | 'health' | 'exp';
 
 export interface FightAnimationPopup {
   side: FightSide;
@@ -125,6 +128,7 @@ interface ParsedToken {
   isEmpty: boolean;
   attack: number | null;
   health: number | null;
+  exp: number | null;
   petIconSrc: string | null;
   petName: string | null;
   equipmentIconSrc: string | null;
@@ -132,8 +136,12 @@ interface ParsedToken {
   label: string | null;
 }
 
+export interface FightAnimationBuildOptions {
+  includePositionPrefix?: boolean;
+}
+
 const SIDE_TOKEN_REGEX =
-  /___ \(-\/-\)|(?:[PO]\d+\s+)?(?:<img\b[^>]*>\s*)*\(\d+\/\d+\)/g;
+  /___ \(-\/-\)|(?:[PO]\d+\s+)?(?:<img\b[^>]*>\s*)*\(\d+\/\d+(?:\/\d+(?:\s*xp)?)?\)/gi;
 const IMAGE_TAG_REGEX = /<img\b[^>]*>/gi;
 const PLAYER_FALLBACK_ORDER = [4, 3, 2, 1, 0];
 const OPPONENT_FALLBACK_ORDER = [0, 1, 2, 3, 4];
@@ -146,7 +154,7 @@ const SUBJECT_REGEX =
 const TO_SEGMENT_REGEX = /\bto\s+(.+?)(?:\.|$)/i;
 const TRANSFORM_TARGET_REGEX = /\btransformed\s+(.+?)\s+into\b/i;
 const TRANSFORM_INTO_SEGMENT_REGEX = /\binto\b([\s\S]*)$/i;
-const INLINE_STATS_REGEX = /(\d+)\s*\/\s*(\d+)/;
+const INLINE_STATS_REGEX = /(\d+)\s*\/\s*(\d+)(?:\s*\/\s*(\d+)(?:\s*xp)?)?/i;
 const POSSESSIVE_SPLIT_REGEX = /\s*(?:'|\u2019)s\s+/i;
 
 const ailmentNames = new Set(
@@ -155,11 +163,15 @@ const ailmentNames = new Set(
 const petPatterns = buildNamePatternSet(getAllPetNames());
 const equipmentPatterns = buildNamePatternSet(getAllEquipmentNames());
 
-export function buildFightAnimationFrames(logs: Log[]): FightAnimationFrame[] {
+export function buildFightAnimationFrames(
+  logs: Log[],
+  options: FightAnimationBuildOptions = {},
+): FightAnimationFrame[] {
   if (!Array.isArray(logs) || logs.length === 0) {
     return [];
   }
 
+  const includePositionPrefix = options.includePositionPrefix !== false;
   let boardState: FightAnimationBoardState | null = null;
   const frames: FightAnimationFrame[] = [];
 
@@ -188,7 +200,9 @@ export function buildFightAnimationFrames(logs: Log[]): FightAnimationFrame[] {
       log.type !== 'board'
         ? applyLogMutation(boardState, log, baseText)
         : createEmptyMutationResult();
-    const displayText = addPositionPrefix(baseText, log);
+    const displayText = includePositionPrefix
+      ? addPositionPrefix(baseText, log)
+      : normalizePositionBracketSpacing(baseText);
 
     frames.push({
       index: frames.length,
@@ -447,6 +461,14 @@ function applyTransformMutation(
     'health',
     transform.health,
   );
+  applyAbsoluteStatChange(
+    targetRef.value,
+    popups,
+    targetRef.side,
+    targetRef.slot,
+    'exp',
+    transform.exp,
+  );
   if (transform.equipmentName) {
     setSlotEquipment(targetRef.value, transform.equipmentName);
   }
@@ -462,7 +484,11 @@ function applyStatMutation(
   if (!statChange) {
     return;
   }
-  if (statChange.attackDelta === 0 && statChange.healthDelta === 0) {
+  if (
+    statChange.attackDelta === 0 &&
+    statChange.healthDelta === 0 &&
+    statChange.expDelta === 0
+  ) {
     return;
   }
 
@@ -505,6 +531,14 @@ function applyStatMutation(
     'health',
     statChange.healthDelta,
   );
+  applyDeltaStatChange(
+    targetRef.value,
+    popups,
+    targetRef.side,
+    targetRef.slot,
+    'exp',
+    statChange.expDelta,
+  );
 }
 
 function applyAbsoluteStatChange(
@@ -512,17 +546,20 @@ function applyAbsoluteStatChange(
   popups: FightAnimationPopup[],
   side: FightSide,
   slotIndex: number,
-  type: 'attack' | 'health',
+  type: 'attack' | 'health' | 'exp',
   value: number | null,
 ): void {
   if (value == null) {
     return;
   }
-  const previous = type === 'attack' ? slot.attack : slot.health;
+  const previous =
+    type === 'attack' ? slot.attack : type === 'health' ? slot.health : slot.exp;
   if (type === 'attack') {
     slot.attack = value;
-  } else {
+  } else if (type === 'health') {
     slot.health = value;
+  } else {
+    slot.exp = value;
   }
   const appliedDelta = previous != null ? value - previous : 0;
   pushStatPopup(popups, side, slotIndex, type, appliedDelta);
@@ -533,19 +570,26 @@ function applyDeltaStatChange(
   popups: FightAnimationPopup[],
   side: FightSide,
   slotIndex: number,
-  type: 'attack' | 'health',
+  type: 'attack' | 'health' | 'exp',
   delta: number,
 ): void {
   if (delta === 0) {
     return;
   }
 
-  const previous = type === 'attack' ? (slot.attack ?? 0) : (slot.health ?? 0);
+  const previous =
+    type === 'attack'
+      ? (slot.attack ?? 0)
+      : type === 'health'
+        ? (slot.health ?? 0)
+        : (slot.exp ?? 0);
   const next = Math.max(0, previous + delta);
   if (type === 'attack') {
     slot.attack = next;
-  } else {
+  } else if (type === 'health') {
     slot.health = next;
+  } else {
+    slot.exp = next;
   }
   pushStatPopup(popups, side, slotIndex, type, next - previous);
 }
@@ -554,7 +598,7 @@ function pushStatPopup(
   popups: FightAnimationPopup[],
   side: FightSide,
   slot: number,
-  type: 'attack' | 'health',
+  type: 'attack' | 'health' | 'exp',
   delta: number,
 ): void {
   if (!Number.isFinite(delta) || delta === 0) {
@@ -670,6 +714,7 @@ function parseSideSlots(
       isEmpty: parsed.isEmpty,
       attack: parsed.attack,
       health: parsed.health,
+      exp: parsed.exp,
       petIconSrc: petVisual.petIconSrc,
       petName: parsed.petName,
       petCompanionIconSrc: petVisual.petCompanionIconSrc,
@@ -691,6 +736,7 @@ function parseToken(token: string): ParsedToken {
       isEmpty: true,
       attack: null,
       health: null,
+      exp: null,
       petIconSrc: null,
       petName: null,
       equipmentIconSrc: null,
@@ -706,9 +752,10 @@ function parseToken(token: string): ParsedToken {
       ? Number(labelMatch[2]) - 1
       : null;
 
-  const statsMatch = /\((\d+)\/(\d+)\)/.exec(trimmed);
+  const statsMatch = /\((\d+)\/(\d+)(?:\/(\d+)(?:\s*xp)?)?\)/i.exec(trimmed);
   const attack = statsMatch ? Number(statsMatch[1]) : null;
   const health = statsMatch ? Number(statsMatch[2]) : null;
+  const exp = statsMatch?.[3] != null ? Number(statsMatch[3]) : null;
 
   let petIconSrc: string | null = null;
   let petName: string | null = null;
@@ -751,6 +798,7 @@ function parseToken(token: string): ParsedToken {
     isEmpty: false,
     attack,
     health,
+    exp,
     petIconSrc,
     petName,
     equipmentIconSrc,
@@ -826,6 +874,7 @@ function parseTransformEvent(text: string): ParsedTransformEvent {
   const statsMatch = INLINE_STATS_REGEX.exec(intoSegment);
   const attack = statsMatch ? Number(statsMatch[1]) : null;
   const health = statsMatch ? Number(statsMatch[2]) : null;
+  const exp = statsMatch?.[3] != null ? Number(statsMatch[3]) : null;
   const equipmentName =
     extractKnownNames(intoSegment, equipmentPatterns)[0] ?? null;
 
@@ -835,6 +884,7 @@ function parseTransformEvent(text: string): ParsedTransformEvent {
     transformedName,
     attack,
     health,
+    exp,
     equipmentName,
   };
 }
@@ -842,21 +892,24 @@ function parseTransformEvent(text: string): ParsedTransformEvent {
 function parseStatChange(text: string): ParsedStatChange | null {
   const hasAttack = /\battack\b/i.test(text);
   const hasHealth = /\bhealth\b/i.test(text);
-  if (!hasAttack && !hasHealth) {
+  const hasExp = /\b(?:xp|exp|experience)\b/i.test(text);
+  if (!hasAttack && !hasHealth && !hasExp) {
     return null;
   }
 
   const sign = /\blost\b/i.test(text) ? -1 : 1;
   const attackValue = extractStatValue(text, 'attack', sign);
   const healthValue = extractStatValue(text, 'health', sign);
+  const expValue = extractExpValue(text, sign);
 
-  if (attackValue == null && healthValue == null) {
+  if (attackValue == null && healthValue == null && expValue == null) {
     return null;
   }
 
   return {
     attackDelta: attackValue ?? 0,
     healthDelta: healthValue ?? 0,
+    expDelta: expValue ?? 0,
   };
 }
 
@@ -866,6 +919,23 @@ function extractStatValue(
   defaultSign: number,
 ): number | null {
   const regex = new RegExp(`([+-]?\\d+)\\s+${stat}\\b`, 'i');
+  const match = regex.exec(text);
+  if (!match) {
+    return null;
+  }
+  const raw = match[1];
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  if (raw.startsWith('+') || raw.startsWith('-')) {
+    return parsed;
+  }
+  return parsed * defaultSign;
+}
+
+function extractExpValue(text: string, defaultSign: number): number | null {
+  const regex = /([+-]?\d+)\s+(?:xp|exp(?:erience)?)\b/i;
   const match = regex.exec(text);
   if (!match) {
     return null;
@@ -1070,9 +1140,20 @@ function parseDamageValue(text: string): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+function normalizePositionBracketSpacing(message: string): string {
+  return message
+    .replace(
+      /\[\s*([PO])\s*([1-5])\s*->\s*([PO])\s*([1-5])\s*\]/g,
+      '[$1$2->$3$4]',
+    )
+    .replace(/\[\s*([PO])\s*([1-5])\s*\]/g, '[$1$2]')
+    .replace(/\[\s*->\s*([PO])\s*([1-5])\s*\]/g, '[->$1$2]');
+}
+
 function addPositionPrefix(text: string, log: Log): string {
-  if (/\b[PO][1-5]\b/.test(text)) {
-    return text;
+  const compactText = normalizePositionBracketSpacing(text);
+  if (/\b[PO][1-5]\b/.test(compactText)) {
+    return compactText;
   }
 
   const sourceLabel = formatPositionLabel(
@@ -1090,15 +1171,15 @@ function addPositionPrefix(text: string, log: Log): string {
   const targetLabel = formatPositionLabel(fallbackTargetSide, log.targetIndex);
 
   if (sourceLabel && targetLabel) {
-    return `[${sourceLabel}->${targetLabel}] ${text}`;
+    return `[${sourceLabel}->${targetLabel}] ${compactText}`;
   }
   if (sourceLabel) {
-    return `[${sourceLabel}] ${text}`;
+    return `[${sourceLabel}] ${compactText}`;
   }
   if (targetLabel) {
-    return `[->${targetLabel}] ${text}`;
+    return `[->${targetLabel}] ${compactText}`;
   }
-  return text;
+  return compactText;
 }
 
 function formatPositionLabel(
@@ -1259,6 +1340,7 @@ function clearSlot(slot: FightAnimationSlot): void {
   slot.isEmpty = true;
   slot.attack = null;
   slot.health = null;
+  slot.exp = null;
   slot.petIconSrc = null;
   slot.petName = null;
   slot.petCompanionIconSrc = null;
@@ -1426,6 +1508,7 @@ function buildEmptySlots(side: FightSide): FightAnimationSlot[] {
       isEmpty: true,
       attack: null,
       health: null,
+      exp: null,
       petIconSrc: null,
       petName: null,
       petCompanionIconSrc: null,

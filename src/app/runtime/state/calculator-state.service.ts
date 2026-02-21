@@ -114,6 +114,7 @@ export class CalculatorStateService {
       seed: null,
       showAdvanced: false,
       showTriggerNamesInLogs: false,
+      showPositionalArgsInLogs: true,
       showSwallowedLevels: false,
       ailmentEquipment: false,
     };

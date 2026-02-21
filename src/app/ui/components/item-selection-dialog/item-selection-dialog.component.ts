@@ -103,6 +103,7 @@ export class ItemSelectionDialogComponent
     return (
       this.type !== 'swallowed-pet' &&
       this.type !== 'pack' &&
+      this.type !== 'team' &&
       this.searchQuery.trim().length === 0
     );
   }
@@ -598,4 +599,3 @@ export class ItemSelectionDialogComponent
     return Number(match[1]);
   }
 }
-

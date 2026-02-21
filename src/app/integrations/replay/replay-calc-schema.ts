@@ -110,6 +110,7 @@ export const KEY_MAP: Record<string, string> = {
   triggersConsumed: 'tc',
   showAdvanced: 'sa',
   showTriggerNamesInLogs: 'stn',
+  showPositionalArgsInLogs: 'spa',
   showSwallowedLevels: 'swl',
   ailmentEquipment: 'ae',
   name: 'n',

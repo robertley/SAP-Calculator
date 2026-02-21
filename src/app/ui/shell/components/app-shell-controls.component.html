@@ -1,81 +1,86 @@
     <div class="top-controls card mb-3" [formGroup]="app.formGroup">
       <div class="top-controls-header">
-        <div class="top-controls-left">
+        <div class="top-toolbar-zone top-toolbar-zone-run">
+          <div class="zone-label">Run</div>
           <div class="simulate-controls">
             <div class="simulate-input-group">
               <button class="btn btn-primary" (click)="app.simulate(app.formGroup.get('simulations').value)"
                 [disabled]="app.simulationInProgress">
                 {{ app.simulationInProgress ? "Simulating..." : "Simulate" }}
               </button>
-              <button class="btn btn-outline-danger ms-1" *ngIf="app.simulationInProgress"
+              <button class="btn btn-outline-danger" *ngIf="app.simulationInProgress"
                 (click)="app.cancelSimulation()">
                 Cancel
               </button>
               <input class="form-control simulate-input" type="number" formControlName="simulations" min="1"
                 max="10000" />
             </div>
-            <div class="d-inline-flex align-items-center ms-1">
+            <div class="optimize-control-group">
               <button class="btn btn-outline-primary" (click)="app.optimizePositioning(optimizeSide)"
                 [disabled]="app.simulationInProgress">
                 Optimize
               </button>
-              <select class="form-select form-select-sm ms-1" [(ngModel)]="optimizeSide"
+              <select class="form-select form-select-sm" [(ngModel)]="optimizeSide"
+                [ngClass]="optimizeSide === 'player' ? 'side-select-player' : 'side-select-opponent'"
                 [ngModelOptions]="{ standalone: true }" [disabled]="app.simulationInProgress">
-                <option value="player">Player</option>
-                <option value="opponent">Opponent</option>
+                <option value="player" class="player-side-text">Player</option>
+                <option value="opponent" class="opponent-side-text">Opponent</option>
               </select>
             </div>
-            <button class="btn btn-secondary" (click)="app.randomize()">
-              Randomize
-            </button>
-            <button class="btn btn-secondary ms-1" *ngIf="app.undoState" (click)="app.undoRandomize()">
-              Undo Randomize
-            </button>
+            <div class="randomize-control-group">
+              <button class="btn btn-secondary" (click)="app.randomize()">
+                Randomize
+              </button>
+              <button class="btn btn-secondary" *ngIf="app.undoState" (click)="app.undoRandomize()">
+                Undo Randomize
+              </button>
+            </div>
           </div>
         </div>
-        <div class="top-controls-center">
+        <div class="top-toolbar-zone top-toolbar-zone-results">
+          <div class="zone-label">{{ app.simulated ? "Results" : "Simulate to see results" }}</div>
           <ng-container *ngIf="app.simulated; else resultsPlaceholder">
             <div class="results-row">
               <div class="stats">
                 <span class="stat-block player-stat">
-                  <span class="stat-label" style="color: #5fbf5f">Player Wins:</span><span>{{ app.playerWinner }} - {{ app.winPercent }}%</span>
+                  <span class="stat-label player-side-text">Player</span>
+                  <span class="stat-value">{{ app.playerWinner }} - {{ app.winPercent }}%</span>
                 </span>
                 <span class="stat-block draw-stat">
-                  <span class="stat-label">Draws:</span><span>{{ app.draw }} - {{ app.drawPercent }}%</span>
+                  <span class="stat-label">Draw</span>
+                  <span class="stat-value">{{ app.draw }} - {{ app.drawPercent }}%</span>
                 </span>
                 <span class="stat-block opponent-stat">
-                  <span class="stat-label" style="color: #e06a6a">Opponent Wins:</span><span>{{ app.opponentWinner }} - {{ app.losePercent }}%</span>
+                  <span class="stat-label opponent-side-text">Opponent</span>
+                  <span class="stat-value">{{ app.opponentWinner }} - {{ app.losePercent }}%</span>
                 </span>
               </div>
-              <div class="py-1">
-                <span class="results-bar">
-                  <span class="draw-bar" [style.width]="app.drawWidth"></span>
-                  <span class="lose-bar" [style.width]="app.loseWidth"></span>
-                </span>
+              <div class="results-bar modern-results-bar" aria-hidden="true">
+                <span class="results-segment results-segment-player" [style.width.%]="app.winPercent"></span>
+                <span class="results-segment results-segment-draw" [style.width.%]="app.drawPercent"></span>
+                <span class="results-segment results-segment-opponent" [style.width.%]="app.losePercent"></span>
               </div>
             </div>
           </ng-container>
           <ng-template #resultsPlaceholder>
             <div class="results-placeholder">
-              <span class="results-placeholder-text">Simulate to see results</span>
-              <span class="results-bar placeholder-bar"></span>
+              <span class="results-bar modern-results-bar placeholder-bar" aria-hidden="true"></span>
             </div>
           </ng-template>
         </div>
-        <div class="top-controls-right">
-          <div class="external-meta">
+        <div class="top-toolbar-zone top-toolbar-zone-actions">
+          <div class="zone-label zone-label-right">Actions</div>
+          <div class="external-buttons">
             <button
               type="button"
+              class="btn btn-secondary"
               data-bs-toggle="modal"
               data-bs-target="#info"
-              class="btn-link info-link"
               (click)="app.showInfo = true"
               aria-label="Open guide"
             >
               Guide
             </button>
-          </div>
-          <div class="external-buttons">
             <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug"
               (click)="app.showReportABug = true">
               Report A Bug
@@ -102,7 +107,7 @@
       >
         {{ app.statusMessage }}
       </div>
-      <div *ngIf="app.autoSaveLabel" class="px-3 pb-2 text-muted small">
+      <div *ngIf="app.autoSaveLabel" class="px-3 pb-2 text-muted small top-controls-meta-text">
         {{ app.autoSaveLabel }}
       </div>
       <div *ngIf="app.simulationInProgress" class="simulation-progress px-3 pb-2">
@@ -116,156 +121,196 @@
 
       <div class="top-controls-body">
         <div class="controls-grid">
-          <div class="controls-section teams-section">
-            <div class="team-column">
-              <input class="form-control team-name-input" [(ngModel)]="app.teamName" [ngModelOptions]="{ standalone: true }"
-                placeholder="Team name" />
-              <div class="team-name-actions">
-                <button class="btn btn-secondary btn-sm" (click)="app.saveTeam(saveSide)">
-                  Save
-                </button>
-                <select class="form-select form-select-sm" [(ngModel)]="saveSide"
-                  [ngModelOptions]="{ standalone: true }">
-                  <option value="player">Player</option>
-                  <option value="opponent">Opponent</option>
-                </select>
-              </div>
-            </div>
-            <div class="team-column">
-              <button class="selection-btn team-selection-btn" (click)="app.openSelectionDialog('team', 'none')">
-                <div class="team-preview" *ngIf="
-                    app.selectedTeamPreviewIcons.length;
-                    else teamPlaceholder
-                  ">
-                  <img *ngFor="
-                      let icon of app.selectedTeamPreviewIcons;
-                      let i = index
-                    " [ngSrc]="icon" width="28" height="28" loading="lazy" decoding="async" [alt]="app.selectedTeamName"
-                    class="team-preview-icon" />
-                </div>
-                <ng-template #teamPlaceholder>
-                  <span class="btn-placeholder">Saved teams</span>
-                </ng-template>
-                <span class="btn-text">{{ app.selectedTeamName }}</span>
-                <i class="fas fa-chevron-down ms-auto"></i>
-              </button>
-              <div class="team-name-actions load-actions">
-                <button class="btn btn-secondary btn-sm" (click)="app.loadTeam(loadSide)">
-                  Load
-                </button>
-                <select class="form-select form-select-sm" [(ngModel)]="loadSide"
-                  [ngModelOptions]="{ standalone: true }">
-                  <option value="player">Player</option>
-                  <option value="opponent">Opponent</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="controls-section packs-section">
-            <div class="form-group min-w-input">
-              <label>Player Pack</label>
-              <button class="selection-btn" (click)="app.openSelectionDialog('pack', 'player')">
-                <img *ngIf="
-                    app.getPackIconPath(app.formGroup.get('playerPack').value) &&
-                    !app.playerPackImageBroken
-                  " [ngSrc]="app.getPackIconPath(app.formGroup.get('playerPack').value)" class="btn-icon" width="24"
-                  height="24" loading="lazy" decoding="async" (error)="app.onPackImageError('player')" />
-                <span class="btn-text">{{
-                  app.formGroup.get("playerPack").value || "Select Pack"
-                  }}</span>
-                <i class="fas fa-chevron-down ms-auto"></i>
-              </button>
-            </div>
-            <div class="form-group min-w-input">
-              <label>Opponent Pack</label>
-              <button class="selection-btn" (click)="app.openSelectionDialog('pack', 'opponent')">
-                <img *ngIf="
-                    app.getPackIconPath(app.formGroup.get('opponentPack').value) &&
-                    !app.opponentPackImageBroken
-                  " [ngSrc]="app.getPackIconPath(app.formGroup.get('opponentPack').value)" class="btn-icon" width="24"
-                  height="24" loading="lazy" decoding="async" (error)="app.onPackImageError('opponent')" />
-                <span class="btn-text">{{
-                  app.formGroup.get("opponentPack").value || "Select Pack"
-                  }}</span>
-                <i class="fas fa-chevron-down ms-auto"></i>
-              </button>
-            </div>
-            <div class="form-check" title="All pets are included in the pet pool.">
-              <input class="form-check-input" type="checkbox" value="" id="allPets" formControlName="allPets" />
-              <label class="form-check-label" for="allPets">All Pets</label>
-            </div>
-          </div>
-
-          <div class="controls-section advanced-section">
-            <div class="advanced-panel-header">
+          <div class="controls-section unified-advanced-section">
+            <div class="unified-advanced-header">
               <button
                 type="button"
-                class="btn-link advanced-toggle-btn"
+                class="btn-link unified-advanced-toggle-btn"
                 (click)="app.toggleAdvanced()"
-                [attr.aria-expanded]="app.formGroup.get('showAdvanced').value"
-                aria-controls="advanced-settings-panel"
+                [attr.aria-expanded]="isUnifiedAdvancedExpanded"
+                aria-controls="advanced-overrides-panel"
               >
-                <span>Advanced Settings</span>
-                <span class="advanced-chevron" [class.expanded]="app.formGroup.get('showAdvanced').value" aria-hidden="true">▾</span>
+                <span class="section-title">Scenario Controls</span>
+                <span class="unified-advanced-count" *ngIf="activeAdvancedOverridesCount">
+                  {{ activeAdvancedOverridesCount }} active
+                </span>
+                <span class="unified-advanced-chevron" [class.expanded]="isUnifiedAdvancedExpanded" aria-hidden="true">&#9662;</span>
               </button>
             </div>
-            <ng-container *ngIf="app.formGroup.get('showAdvanced').value">
-              <div id="advanced-settings-panel" class="advanced-panel-body">
+
+            <div class="unified-advanced-summary" *ngIf="!isUnifiedAdvancedExpanded">
+              {{ unifiedAdvancedSummary }}
+            </div>
+
+            <div id="advanced-overrides-panel" class="unified-advanced-body" *ngIf="isUnifiedAdvancedExpanded">
+              <div class="controls-section nested-section packs-section">
+                <div class="section-title subsection-title">Pack Selection</div>
+                <div class="form-group min-w-input">
+                  <label><span class="player-side-text">Player</span> Pack</label>
+                  <button class="selection-btn" (click)="app.openSelectionDialog('pack', 'player')">
+                    <img *ngIf="
+                        app.getPackIconPath(app.formGroup.get('playerPack').value) &&
+                        !app.playerPackImageBroken
+                      " [ngSrc]="app.getPackIconPath(app.formGroup.get('playerPack').value)" class="btn-icon" width="24"
+                      height="24" loading="lazy" decoding="async" (error)="app.onPackImageError('player')" />
+                    <span class="btn-text">{{
+                      app.formGroup.get("playerPack").value || "Select Pack"
+                      }}</span>
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                  </button>
+                </div>
+                <div class="form-group min-w-input">
+                  <label><span class="opponent-side-text">Opponent</span> Pack</label>
+                  <button class="selection-btn" (click)="app.openSelectionDialog('pack', 'opponent')">
+                    <img *ngIf="
+                        app.getPackIconPath(app.formGroup.get('opponentPack').value) &&
+                        !app.opponentPackImageBroken
+                      " [ngSrc]="app.getPackIconPath(app.formGroup.get('opponentPack').value)" class="btn-icon" width="24"
+                      height="24" loading="lazy" decoding="async" (error)="app.onPackImageError('opponent')" />
+                    <span class="btn-text">{{
+                      app.formGroup.get("opponentPack").value || "Select Pack"
+                      }}</span>
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                  </button>
+                </div>
+                <div class="form-check" title="All pets are included in the pet pool.">
+                  <input class="form-check-input" type="checkbox" value="" id="allPets" formControlName="allPets" />
+                  <label class="form-check-label" for="allPets">All Pets</label>
+                </div>
+              </div>
+
+              <div class="controls-section nested-section teams-section">
+                <div class="section-title subsection-title">Save / Load Teams</div>
+                <div class="team-column">
+                  <input class="form-control team-name-input" [(ngModel)]="app.teamName" [ngModelOptions]="{ standalone: true }"
+                    placeholder="Team name" />
+                  <div class="team-name-actions">
+                    <button class="btn btn-secondary btn-sm" (click)="app.saveTeam(saveSide)">
+                      Save
+                    </button>
+                    <select class="form-select form-select-sm" [(ngModel)]="saveSide"
+                      [ngClass]="saveSide === 'player' ? 'side-select-player' : 'side-select-opponent'"
+                      [ngModelOptions]="{ standalone: true }">
+                      <option value="player" class="player-side-text">Player</option>
+                      <option value="opponent" class="opponent-side-text">Opponent</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="team-column">
+                  <button class="selection-btn team-selection-btn" (click)="app.openSelectionDialog('team', 'none')">
+                    <div class="team-preview" *ngIf="
+                        app.selectedTeamPreviewIcons.length;
+                        else teamPlaceholder
+                      ">
+                      <img *ngFor="
+                          let icon of app.selectedTeamPreviewIcons;
+                          let i = index
+                        " [ngSrc]="icon" width="28" height="28" loading="lazy" decoding="async" [alt]="app.selectedTeamName"
+                        class="team-preview-icon" />
+                    </div>
+                    <ng-template #teamPlaceholder>
+                      <span class="btn-placeholder">Saved teams</span>
+                    </ng-template>
+                    <span class="btn-text">{{ app.selectedTeamName }}</span>
+                    <i class="fas fa-chevron-down ms-auto"></i>
+                  </button>
+                  <div class="team-name-actions load-actions">
+                    <button class="btn btn-secondary btn-sm" (click)="app.loadTeam(loadSide)">
+                      Load
+                    </button>
+                    <select class="form-select form-select-sm" [(ngModel)]="loadSide"
+                      [ngClass]="loadSide === 'player' ? 'side-select-player' : 'side-select-opponent'"
+                      [ngModelOptions]="{ standalone: true }">
+                      <option value="player" class="player-side-text">Player</option>
+                      <option value="opponent" class="opponent-side-text">Opponent</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="advanced-panel-body">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                  <div class="section-title mb-0">Scenario Settings</div>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    (click)="resetScenarioSettings()"
+                    [disabled]="!app?.formGroup"
+                  >
+                    Reset Scenario Settings
+                  </button>
+                </div>
                 <div class="advanced-grid">
-                <div class="form-check" title="Shuffle pets in front of Komodo if present.">
-                  <input class="form-check-input" type="checkbox" value="" id="komodoShuffle"
-                    formControlName="komodoShuffle" />
-                  <label class="form-check-label advanced-label-with-icon" for="komodoShuffle">
-                    <span class="advanced-icon komodo-icon" aria-hidden="true"></span>
-                    Komodo Shuffle
-                  </label>
-                </div>
-                <div class="form-check" title="Enable changing equipment uses globally.">
-                  <input class="form-check-input" type="checkbox" value="" id="changeEquipmentUses"
-                    formControlName="changeEquipmentUses" />
-                  <label class="form-check-label advanced-label-with-icon" for="changeEquipmentUses">
-                    <span class="advanced-icon perk-icon" aria-hidden="true"></span>
-                    Change equipment uses
-                  </label>
-                </div>
-                <div class="form-check" title="Include Mana.">
-                  <input class="form-check-input" type="checkbox" value="" id="mana" formControlName="mana" />
-                  <label class="form-check-label advanced-label-with-icon" for="mana">
-                    <span class="advanced-icon mana-icon" aria-hidden="true"></span>
-                    Mana
-                  </label>
-                </div>
-                <div class="form-check" title="Disable battle logs for faster simulations.">
-                  <input class="form-check-input" type="checkbox" value="" id="logsEnabled"
-                    formControlName="logsEnabled" />
-                  <label class="form-check-label" for="logsEnabled">
-                    Enable logs
-                  </label>
-                </div>
-                <div class="form-check" title="Include Triggers Consumed.">
-                  <input class="form-check-input" type="checkbox" value="" id="triggersConsumed"
-                    formControlName="triggersConsumed" />
-                  <label class="form-check-label advanced-label-with-icon" for="triggersConsumed">
-                    <span class="advanced-icon pheasant-icon" aria-hidden="true"></span>
-                    Triggers Consumed
-                  </label>
-                </div>
+                  <div class="form-check" title="Shuffle pets in front of Komodo if present.">
+                    <input class="form-check-input" type="checkbox" value="" id="komodoShuffle"
+                      formControlName="komodoShuffle" />
+                    <label class="form-check-label advanced-label-with-icon" for="komodoShuffle">
+                      <span class="advanced-icon komodo-icon" aria-hidden="true"></span>
+                      Komodo Shuffle
+                    </label>
+                  </div>
+                  <div class="form-check" title="Enable changing equipment uses globally.">
+                    <input class="form-check-input" type="checkbox" value="" id="changeEquipmentUses"
+                      formControlName="changeEquipmentUses" />
+                    <label class="form-check-label advanced-label-with-icon" for="changeEquipmentUses">
+                      <span class="advanced-icon perk-icon" aria-hidden="true"></span>
+                      Change equipment uses
+                    </label>
+                  </div>
+                  <div class="form-check" title="Include Mana.">
+                    <input class="form-check-input" type="checkbox" value="" id="mana" formControlName="mana" />
+                    <label class="form-check-label advanced-label-with-icon" for="mana">
+                      <span class="advanced-icon mana-icon" aria-hidden="true"></span>
+                      Mana
+                    </label>
+                  </div>
+                  <div class="form-check" title="Disable battle logs for faster simulations.">
+                    <input class="form-check-input" type="checkbox" value="" id="logsEnabled"
+                      formControlName="logsEnabled" />
+                    <label class="form-check-label" for="logsEnabled">
+                      Enable logs
+                    </label>
+                  </div>
+                  <div class="form-check" title="Include Triggers Consumed.">
+                    <input class="form-check-input" type="checkbox" value="" id="triggersConsumed"
+                      formControlName="triggersConsumed" />
+                    <label class="form-check-label advanced-label-with-icon" for="triggersConsumed">
+                      <span class="advanced-icon pheasant-icon" aria-hidden="true"></span>
+                      Triggers Consumed
+                    </label>
+                  </div>
                 <div class="form-check" title="Show debug details: trigger names and random reason labels.">
                   <input class="form-check-input" type="checkbox" value="" id="showTriggerNamesInLogs"
-                    formControlName="showTriggerNamesInLogs" />
+                    formControlName="showTriggerNamesInLogs" (change)="app.refreshDebugLogPresentation()" />
                   <label class="form-check-label" for="showTriggerNamesInLogs">
                     Debug Info
                   </label>
                 </div>
-                <div class="form-check" title="Show swallowed pet level selection.">
-                  <input class="form-check-input" type="checkbox" value="" id="showSwallowedLevels"
-                    formControlName="showSwallowedLevels" />
-                  <label class="form-check-label advanced-label-with-icon" for="showSwallowedLevels">
-                    <span class="advanced-icon abomination-icon" aria-hidden="true"></span>
-                    Swallowed Levels
+                <div
+                  class="form-check debug-sub-toggle"
+                  *ngIf="app.formGroup.get('showTriggerNamesInLogs').value"
+                  title="Show [P#/O#] positional prefixes in logs and animation."
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    value=""
+                    id="showPositionalArgsInLogs"
+                    formControlName="showPositionalArgsInLogs"
+                    (change)="app.refreshDebugLogPresentation()"
+                  />
+                  <label class="form-check-label" for="showPositionalArgsInLogs">
+                    Positional Args
                   </label>
                 </div>
+                  <div class="form-check" title="Show swallowed pet level selection.">
+                    <input class="form-check-input" type="checkbox" value="" id="showSwallowedLevels"
+                      formControlName="showSwallowedLevels" />
+                    <label class="form-check-label advanced-label-with-icon" for="showSwallowedLevels">
+                      <span class="advanced-icon abomination-icon" aria-hidden="true"></span>
+                      Swallowed Levels
+                    </label>
+                  </div>
                 </div>
                 <div class="advanced-number-grid mt-2">
                   <div class="form-group small-w-input">
@@ -281,56 +326,56 @@
                   <div class="form-group advanced-input">
                     <label for="playerGoldSpent" title="Player Gold Spent" class="advanced-label-with-icon">
                       <span class="advanced-icon gold-icon" aria-hidden="true"></span>
-                      Player Gold Spent
+                      <span class="player-side-text">Player</span> Gold Spent
                     </label>
                     <input id="playerGoldSpent" class="form-control" type="number" formControlName="playerGoldSpent" max="99" />
                   </div>
                   <div class="form-group advanced-input">
                     <label for="opponentGoldSpent" title="Opponent Gold Spent" class="advanced-label-with-icon">
                       <span class="advanced-icon gold-icon" aria-hidden="true"></span>
-                      Opponent Gold Spent
+                      <span class="opponent-side-text">Opponent</span> Gold Spent
                     </label>
                     <input id="opponentGoldSpent" class="form-control" type="number" formControlName="opponentGoldSpent" max="99" />
                   </div>
                   <div class="form-group advanced-input" *ngIf="app.rollInputVisible">
                     <label for="playerRollAmount" title="Player Roll Amount" class="advanced-label-with-icon">
                       <span class="advanced-icon roll-icon" aria-hidden="true"></span>
-                      Player Roll Amount
+                      <span class="player-side-text">Player</span> Roll Amount
                     </label>
                     <input id="playerRollAmount" class="form-control" type="number" formControlName="playerRollAmount" max="99" />
                   </div>
                   <div class="form-group advanced-input" *ngIf="app.rollInputVisible">
                     <label for="opponentRollAmount" title="Opponent Roll Amount" class="advanced-label-with-icon">
                       <span class="advanced-icon roll-icon" aria-hidden="true"></span>
-                      Opponent Roll Amount
+                      <span class="opponent-side-text">Opponent</span> Roll Amount
                     </label>
                     <input id="opponentRollAmount" class="form-control" type="number" formControlName="opponentRollAmount" max="99" />
                   </div>
                   <div class="form-group advanced-input">
                     <label for="playerLevel3Sold" title="Player Level 3 Sold" class="advanced-label-with-icon">
                       <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
-                      Player Level 3 Sold
+                      <span class="player-side-text">Player</span> Level 3 Sold
                     </label>
                     <input id="playerLevel3Sold" class="form-control" type="number" formControlName="playerLevel3Sold" max="99" />
                   </div>
                   <div class="form-group advanced-input">
                     <label for="opponentLevel3Sold" title="Opponent Level 3 Sold" class="advanced-label-with-icon">
                       <span class="advanced-icon cycle-icon" aria-hidden="true"></span>
-                      Opponent Level 3 Sold
+                      <span class="opponent-side-text">Opponent</span> Level 3 Sold
                     </label>
                     <input id="opponentLevel3Sold" class="form-control" type="number" formControlName="opponentLevel3Sold" max="99" />
                   </div>
                   <div class="form-group advanced-input">
                     <label for="playerSummonedAmount" title="Player Summoned Amount" class="advanced-label-with-icon">
                       <span class="advanced-icon summon-icon" aria-hidden="true"></span>
-                      Player Summoned Amount
+                      <span class="player-side-text">Player</span> Summoned Amount
                     </label>
                     <input id="playerSummonedAmount" class="form-control" type="number" formControlName="playerSummonedAmount" max="99" />
                   </div>
                   <div class="form-group advanced-input">
                     <label for="opponentSummonedAmount" title="Opponent Summoned Amount" class="advanced-label-with-icon">
                       <span class="advanced-icon summon-icon" aria-hidden="true"></span>
-                      Opponent Summoned Amount
+                      <span class="opponent-side-text">Opponent</span> Summoned Amount
                     </label>
                     <input id="opponentSummonedAmount" class="form-control" type="number" formControlName="opponentSummonedAmount" max="99" />
                   </div>
@@ -338,7 +383,7 @@
                     <label for="playerTransformationAmount" title="Player Transformation Amount"
                       class="advanced-label-with-icon">
                       <span class="advanced-icon transform-icon" aria-hidden="true"></span>
-                      Player Transformation Amount
+                      <span class="player-side-text">Player</span> Transformation Amount
                     </label>
                     <input id="playerTransformationAmount" class="form-control" type="number" formControlName="playerTransformationAmount" max="99" />
                   </div>
@@ -346,104 +391,123 @@
                     <label for="opponentTransformationAmount" title="Opponent Transformation Amount"
                       class="advanced-label-with-icon">
                       <span class="advanced-icon transform-icon" aria-hidden="true"></span>
-                      Opponent Transformation Amount
+                      <span class="opponent-side-text">Opponent</span> Transformation Amount
                     </label>
                     <input id="opponentTransformationAmount" class="form-control" type="number" formControlName="opponentTransformationAmount" max="99" />
                   </div>
                 </div>
               </div>
-            </ng-container>
-          </div>
 
-          <div class="controls-section random-overrides-section">
-            <div class="random-overrides-header">
-              <span class="section-title">Random Overrides</span>
-              <div class="random-overrides-actions">
-                <button
-                  class="btn btn-secondary btn-sm"
-                  (click)="app.captureRandomEvents()"
-                  [disabled]="app.simulationInProgress"
-                  title="Runs one logged battle and captures random decision points."
-                >
-                  Capture Random Events
-                </button>
-                <button
-                  class="btn btn-primary btn-sm"
-                  (click)="app.runForcedRandomSimulation()"
-                  [disabled]="app.simulationInProgress || !app.randomDecisions.length"
-                  title="Runs one logged battle while forcing selected random options."
-                >
-                  Run Forced Simulation
-                </button>
-                <button
-                  class="btn btn-outline-danger btn-sm"
-                  (click)="app.clearRandomOverrides()"
-                  [disabled]="!app.randomDecisions.length"
-                >
-                  Clear
-                </button>
+              <div class="random-overrides-panel">
+                <div class="random-overrides-header">
+                  <button
+                    type="button"
+                    class="btn-link random-overrides-toggle"
+                    (click)="app.toggleRandomOverrides()"
+                    [attr.aria-expanded]="app.showRandomOverrides"
+                    aria-controls="random-overrides-panel"
+                  >
+                    <span class="section-title">Random Overrides</span>
+                    <span class="random-overrides-count" *ngIf="app.randomDecisions.length">
+                      {{ app.randomDecisions.length }} events
+                    </span>
+                    <span class="random-overrides-chevron" [class.expanded]="app.showRandomOverrides" aria-hidden="true">&#9662;</span>
+                  </button>
+                  <div class="random-overrides-actions" *ngIf="app.showRandomOverrides">
+                    <button
+                      class="btn btn-secondary btn-sm"
+                      (click)="app.captureRandomEvents()"
+                      [disabled]="app.simulationInProgress"
+                      title="Runs one logged battle and captures random decision points."
+                    >
+                      Capture Random Events
+                    </button>
+                    <button
+                      class="btn btn-primary btn-sm"
+                      (click)="app.runForcedRandomSimulation()"
+                      [disabled]="app.simulationInProgress || !app.randomDecisions.length"
+                      title="Runs one logged battle while forcing selected random options."
+                    >
+                      Run Forced Simulation
+                    </button>
+                    <button
+                      class="btn btn-outline-danger btn-sm"
+                      (click)="app.clearRandomOverrides()"
+                      [disabled]="!app.randomDecisions.length"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+
+                <div class="random-overrides-summary" *ngIf="!app.showRandomOverrides">
+                  {{ app.randomDecisions.length ? 'Overrides captured. Expand to inspect or force outcomes.' : 'Capture random events when needed.' }}
+                </div>
+
+                <div id="random-overrides-panel" *ngIf="app.showRandomOverrides" class="random-overrides-body">
+                  <div class="random-overrides-empty" *ngIf="!app.randomDecisions.length">
+                    Capture random events to populate override selectors.
+                  </div>
+
+                  <div class="random-overrides-error" *ngIf="app.randomOverrideError">
+                    {{ app.randomOverrideError }}
+                  </div>
+
+                  <div class="random-overrides-table-wrap" *ngIf="app.randomDecisions.length">
+                    <table class="table table-sm random-overrides-table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Step</th>
+                          <th scope="col">Event</th>
+                          <th scope="col">Forced Choice</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let decision of app.randomDecisions; trackBy: app.trackByIndex">
+                          <td>{{ decision.index + 1 }}</td>
+                          <td>
+                            <div class="decision-label">
+                              <ng-container *ngFor="let part of app.getRandomDecisionLabelParts(decision); trackBy: app.trackByIndex">
+                                <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
+                                  width="16" height="16" loading="lazy" decoding="async" />
+                                <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                                <br *ngIf="part.type === 'br'" />
+                              </ng-container>
+                            </div>
+                            <div class="decision-key">{{ decision.key }}</div>
+                          </td>
+                          <td>
+                            <div class="decision-choice-preview">
+                              <ng-container *ngFor="let part of app.getRandomDecisionSelectedOptionParts(decision); trackBy: app.trackByIndex">
+                                <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
+                                  width="16" height="16" loading="lazy" decoding="async" />
+                                <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                                <br *ngIf="part.type === 'br'" />
+                              </ng-container>
+                            </div>
+                            <select
+                              class="form-select form-select-sm"
+                              [ngModel]="app.getSelectedRandomDecisionOptionId(decision)"
+                              (ngModelChange)="app.onRandomDecisionChoiceChanged(decision, $event)"
+                              [ngModelOptions]="{ standalone: true }"
+                            >
+                              <option
+                                *ngFor="let option of decision.options; trackBy: app.trackByIndex"
+                                [ngValue]="option.id"
+                              >
+                                {{ option.label }}
+                              </option>
+                            </select>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div class="random-overrides-empty" *ngIf="!app.randomDecisions.length">
-              Capture random events to populate override selectors.
-            </div>
-
-            <div class="random-overrides-error" *ngIf="app.randomOverrideError">
-              {{ app.randomOverrideError }}
-            </div>
-
-            <div class="random-overrides-table-wrap" *ngIf="app.randomDecisions.length">
-              <table class="table table-sm random-overrides-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Step</th>
-                    <th scope="col">Event</th>
-                    <th scope="col">Forced Choice</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let decision of app.randomDecisions; trackBy: app.trackByIndex">
-                    <td>{{ decision.index + 1 }}</td>
-                    <td>
-                      <div class="decision-label">
-                        <ng-container *ngFor="let part of app.getRandomDecisionLabelParts(decision); trackBy: app.trackByIndex">
-                          <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
-                            width="16" height="16" loading="lazy" decoding="async" />
-                          <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                          <br *ngIf="part.type === 'br'" />
-                        </ng-container>
-                      </div>
-                      <div class="decision-key">{{ decision.key }}</div>
-                    </td>
-                    <td>
-                      <div class="decision-choice-preview">
-                        <ng-container *ngFor="let part of app.getRandomDecisionSelectedOptionParts(decision); trackBy: app.trackByIndex">
-                          <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
-                            width="16" height="16" loading="lazy" decoding="async" />
-                          <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                          <br *ngIf="part.type === 'br'" />
-                        </ng-container>
-                      </div>
-                      <select
-                        class="form-select form-select-sm"
-                        [ngModel]="app.getSelectedRandomDecisionOptionId(decision)"
-                        (ngModelChange)="app.onRandomDecisionChoiceChanged(decision, $event)"
-                        [ngModelOptions]="{ standalone: true }"
-                      >
-                        <option
-                          *ngFor="let option of decision.options; trackBy: app.trackByIndex"
-                          [ngValue]="option.id"
-                        >
-                          {{ option.label }}
-                        </option>
-                      </select>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
       </div>
     </div>
+

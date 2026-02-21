@@ -32,6 +32,10 @@ export class SquashAbility extends Ability {
       native: true,
       maxUses: 1, // Squash is removed after one use
       abilitylevel: 1,
+      condition: () => {
+        const frontEnemy = this.owner.parent.opponent.pet0;
+        return !!frontEnemy && frontEnemy.alive;
+      },
       abilityFunction: (context) => {
         this.executeAbility(context);
       },

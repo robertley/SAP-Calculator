@@ -17,7 +17,7 @@ export function saveTeamPreset(options: {
   selectedTeamId: string;
   teamPresetsService: TeamPresetsService;
 }): { savedTeams: TeamPreset[]; selectedTeamId: string; teamName: string } {
-  const name = options.teamName?.trim() || prompt('Team name?');
+  const name = options.teamName?.trim();
   if (!name) {
     return {
       savedTeams: options.savedTeams,
@@ -529,7 +529,6 @@ function resolvePresetToyLevel(
   }
   return 1;
 }
-
 
 
 

@@ -1,98 +1,144 @@
     <div class="bottom-container-scroll" *ngIf="app.simulated">
-      <div class="bottom-container-scroll-hint" aria-hidden="true">
-        Swipe or shift-scroll to view logs →
+      <div class="bottom-container-scroll-hint" aria-hidden="true" *ngIf="!isTabletTabsLayout">
+        Swipe or shift-scroll to view logs ->
       </div>
-      <div class="row flex-1 bottom-container g-0" #battleSplitContainer>
-        <div class="col-12 col-md-6 border h-100 flex-col pe-0 battle-pane"
-          [style.flex-basis.px]="leftPaneWidthPx"
-          [style.max-width.px]="leftPaneWidthPx"
-          [style.width.px]="leftPaneWidthPx">
-        <h3>Battles</h3>
-        <div class="row">
-          <div class="col-12">
-            <label for="logFilter" class="form-label">Filter Battles By Winner</label>
-          </div>
-          <div class="col-12">
-            <div class="log-filter-tabs" id="logFilter">
-              <button *ngFor="let tab of app.logFilterTabs; trackBy: app.trackByLogTab" type="button" class="log-filter-tab"
-                [class.active]="app.formGroup.get('logFilter').value === tab.value"
-                (click)="app.formGroup.get('logFilter').setValue(tab.value)">
-                {{ tab.label }}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="battle-container flex-1">
-          <table class="table">
-            <thead>
-              <tr>
-                <th class="battle-no">Battle No.</th>
-                <th>Winner</th>
-                <th>Random Events</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="
-                  let battle of app.filteredBattlesCache;
-                  index as i;
-                  trackBy: app.trackByIndex
-                " (click)="app.setViewBattle(battle)" class="table-battle-row" [ngClass]="
-                  battle.winner === 'player'
-                    ? 'battle-win'
-                    : battle.winner === 'opponent'
-                      ? 'battle-loss'
-                      : ''
-                " [class.selected-battle]="battle === app.viewBattle">
-                <td>{{ i }}</td>
-                <td>{{ battle.winner }}</td>
-                <td class="pre">
-                  <ng-container *ngFor="
-                      let part of (app.battleRandomEventsByBattle.get(battle) || []);
-                      trackBy: app.trackByIndex
-                    ">
-                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
-                      width="16" height="16" loading="lazy" decoding="async" />
-                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                    <br *ngIf="part.type === 'br'" />
-                  </ng-container>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="pane-switch-tabs" *ngIf="isTabletTabsLayout" role="tablist" aria-label="Battle results sections">
+        <button
+          type="button"
+          class="pane-switch-tab"
+          role="tab"
+          [class.active]="activeTabletPane === 'battle'"
+          [attr.aria-selected]="activeTabletPane === 'battle'"
+          (click)="setTabletActivePane('battle')"
+        >
+          Battles
+        </button>
+        <button
+          type="button"
+          class="pane-switch-tab"
+          role="tab"
+          [class.active]="activeTabletPane === 'logs'"
+          [attr.aria-selected]="activeTabletPane === 'logs'"
+          (click)="setTabletActivePane('logs')"
+        >
+          Logs
+        </button>
       </div>
-
-        <div class="battle-log-divider" role="separator" aria-label="Resize battle and logs panes"
-          aria-orientation="vertical" tabindex="0" (pointerdown)="onDividerPointerDown($event)"
-          (pointermove)="onDividerPointerMove($event)" (pointerup)="onDividerPointerUp($event)"
-          (pointercancel)="onDividerPointerUp($event)" (keydown)="onPaneDividerKeyDown($event)"></div>
-
-        <div class="col-12 col-md-6 border h-100 flex-col logs-pane">
-        <div class="d-flex align-items-center justify-content-between battle-view-header">
-          <h3>{{ app.battleViewMode === 'animate' ? 'Fight Animation' : 'Logs' }}</h3>
-          <div class="d-flex align-items-center gap-2">
-            <div class="btn-group btn-group-sm" role="group" aria-label="Battle view mode">
-              <button class="btn btn-outline-secondary" type="button" [class.active]="app.battleViewMode === 'logs'"
-                (click)="app.setBattleViewMode('logs')">
-                Logs
-              </button>
-              <button class="btn btn-outline-secondary" type="button" [class.active]="app.battleViewMode === 'animate'"
-                (click)="app.setBattleViewMode('animate')">
-                Animate
-              </button>
-            </div>
-            <button class="btn btn-sm btn-secondary" (click)="app.toggleBattleAnalysis()">
-              {{ app.showBattleAnalysis ? 'Hide' : 'Show' }} Analysis
+      <div class="row flex-1 bottom-container g-0" #battleSplitContainer
+        [class.bottom-container-single-column]="isTabletTabsLayout">
+        <div class="col-12 col-md-6 h-100 flex-col pe-0 battle-pane"
+          [class.pane-hidden-single-column]="isTabletTabsLayout && activeTabletPane !== 'battle'"
+          [style.flex-basis.px]="isTabletTabsLayout ? null : leftPaneWidthPx"
+          [style.max-width.px]="isTabletTabsLayout ? null : leftPaneWidthPx"
+          [style.width.px]="isTabletTabsLayout ? null : leftPaneWidthPx">
+        <div class="pane-top-shell battle-top-shell">
+          <h3 class="pane-title">Battles</h3>
+          <label for="logFilter" class="pane-subtitle">Filter battles by winner</label>
+          <div class="log-filter-tabs" id="logFilter">
+            <button *ngFor="let tab of app.logFilterTabs; trackBy: app.trackByLogTab" type="button" class="log-filter-tab"
+              [class.active]="app.formGroup.get('logFilter').value === tab.value"
+              [ngClass]="{
+                'player-side-text': tab.value === 'player',
+                'opponent-side-text': tab.value === 'opponent'
+              }"
+              (click)="app.formGroup.get('logFilter').setValue(tab.value)">
+              {{ tab.label }}
             </button>
           </div>
         </div>
 
-        <ng-container *ngIf="app.battleViewMode === 'animate'; else logsView">
-          <ng-container *ngIf="app.currentFightAnimationFrame as frame; else noAnimationFrames">
-            <div class="vertical-resizable-stack" #animationSplitContainer>
-              <div class="animation-top-pane" [style.flex-basis.px]="animationTopHeightPx" [style.max-height.px]="animationTopHeightPx"
-                [style.height.px]="animationTopHeightPx">
+        <div class="battle-container flex-1">
+          <div class="battle-table-shell">
+            <div class="battle-table-meta">
+              <span>{{ app.filteredBattlesCache.length }} battles</span>
+              <span *ngIf="app.viewBattle as selected">Viewing #{{ app.battles.indexOf(selected) }}</span>
+            </div>
+            <table class="table battle-table mb-0">
+              <thead>
+                <tr>
+                  <th>Winner</th>
+                  <th>Random Events</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="
+                    let battle of app.filteredBattlesCache;
+                    trackBy: app.trackByIndex
+                  " (click)="app.setViewBattle(battle)" class="table-battle-row" [ngClass]="
+                    battle.winner === 'player'
+                      ? 'battle-win'
+                      : battle.winner === 'opponent'
+                        ? 'battle-loss'
+                        : 'battle-draw'
+                  " [class.selected-battle]="battle === app.viewBattle">
+                  <td>
+                    <span class="battle-winner-chip" [ngClass]="{
+                      'battle-winner-player': battle.winner === 'player',
+                      'battle-winner-opponent': battle.winner === 'opponent',
+                      'battle-winner-draw': battle.winner === 'draw'
+                    }">
+                      {{ battle.winner }}
+                    </span>
+                  </td>
+                  <td class="battle-random-cell">
+                    <ng-container *ngIf="(app.battleRandomEventsByBattle.get(battle) || []).length > 0; else noRandomEvents">
+                      <ng-container *ngFor="
+                          let part of (app.battleRandomEventsByBattle.get(battle) || []);
+                          trackBy: app.trackByIndex
+                        ">
+                        <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
+                          width="16" height="16" loading="lazy" decoding="async" />
+                        <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                        <br *ngIf="part.type === 'br'" />
+                      </ng-container>
+                    </ng-container>
+                    <ng-template #noRandomEvents>
+                      <span class="battle-no-random">None</span>
+                    </ng-template>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+        <div *ngIf="!isTabletTabsLayout" class="battle-log-divider" role="separator" aria-label="Resize battle and logs panes"
+          aria-orientation="vertical" tabindex="0" (pointerdown)="onDividerPointerDown($event)"
+          (pointermove)="onDividerPointerMove($event)" (pointerup)="onDividerPointerUp($event)"
+          (pointercancel)="onDividerPointerUp($event)" (keydown)="onPaneDividerKeyDown($event)"></div>
+
+        <div class="col-12 col-md-6 h-100 flex-col logs-pane"
+          [class.pane-hidden-single-column]="isTabletTabsLayout && activeTabletPane !== 'logs'">
+        <div class="pane-top-shell logs-top-shell">
+          <div class="d-flex align-items-center justify-content-between battle-view-header">
+            <h3 class="pane-title">Fight Animation + Logs</h3>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-secondary" (click)="app.toggleBattleAnalysis()">
+                {{ app.showBattleAnalysis ? 'Hide' : 'Show' }} Analysis
+              </button>
+            </div>
+          </div>
+
+          <div class="log-event-filters">
+            <span class="log-event-filter-label">Event filter</span>
+            <button
+              type="button"
+              class="log-event-filter-btn"
+              *ngFor="let option of app.logEventFilterOptions; trackBy: app.trackByIndex"
+              [class.active]="app.logEventFilter === option.value"
+              (click)="app.setViewBattleLogFilter(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          </div>
+        </div>
+
+        <div class="vertical-resizable-stack" #animationSplitContainer
+          [style.--fight-motion-scale]="app.fightAnimationMotionScale">
+          <div class="animation-top-pane" [style.flex-basis.px]="animationTopHeightPx" [style.max-height.px]="animationTopHeightPx"
+            [style.height.px]="animationTopHeightPx">
+            <ng-container *ngIf="app.currentFightAnimationFrame as frame; else noAnimationFrames">
                 <div class="fight-stage">
               <div class="fight-team fight-team-opponent">
                 <div class="fight-slot" *ngFor="let slot of frame.opponentSlots; trackBy: app.trackByIndex"
@@ -121,8 +167,12 @@
                         [class.fight-value-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
                         [class.fight-value-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
                         [style.--fight-popup-index]="popupIndex">
-                        <img *ngIf="popup.type === 'attack' || popup.type === 'health'"
-                          [ngSrc]="popup.type === 'attack' ? app.fightAttackIconSrc : app.fightHealthIconSrc"
+                        <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp'"
+                          [ngSrc]="popup.type === 'attack'
+                            ? app.fightAttackIconSrc
+                            : popup.type === 'health'
+                              ? app.fightHealthIconSrc
+                              : app.fightExpIconSrc"
                           class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
                           decoding="async" />
                         <span class="fight-value-popup-number">{{ app.getFightPopupText(popup) }}</span>
@@ -139,31 +189,51 @@
                         decoding="async" />
                     </div>
                   </div>
-                  <div class="fight-slot-stats" *ngIf="slot.attack != null && slot.health != null">
-                    <span class="fight-slot-stat">
+                  <div class="fight-slot-stats" *ngIf="slot.attack != null || slot.health != null || slot.exp != null">
+                    <span class="fight-slot-stat" *ngIf="slot.attack != null">
                       <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
                       <span>{{ slot.attack }}</span>
                     </span>
-                    <span class="fight-slot-stat-divider">/</span>
-                    <span class="fight-slot-stat">
+                    <span class="fight-slot-stat" *ngIf="slot.health != null">
                       <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
                       <span>{{ slot.health }}</span>
+                    </span>
+                    <span class="fight-slot-stat" *ngIf="slot.exp != null">
+                      <img [ngSrc]="app.fightExpIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slot.exp }}</span>
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div class="fight-event" [class.fight-event-random]="frame.randomEvent">
+              <div class="fight-event" [class.fight-event-random]="frame.randomEvent"
+                [class.fight-event-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
+                [class.fight-event-phase-b]="app.fightAnimationFrameIndex % 2 === 1">
                 <div class="fight-event-type">{{ frame.type }}</div>
-                <div class="fight-event-text">{{ frame.text }}</div>
+                <div class="fight-event-text">
+                  <ng-container *ngIf="app.currentFightAnimationLogRow as logRow; else fallbackFightEventText">
+                    <span [ngClass]="logRow.classes">
+                      <ng-container *ngFor="let part of logRow.parts; trackBy: app.trackByIndex">
+                        <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt"
+                          width="18" height="18" loading="lazy" decoding="async" />
+                        <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                        <br *ngIf="part.type === 'br'" />
+                      </ng-container>
+                    </span>
+                  </ng-container>
+                  <ng-template #fallbackFightEventText>
+                    {{ frame.text }}
+                  </ng-template>
+                </div>
                 <div class="fight-event-step">
                   Step {{ app.fightAnimationFrameIndex + 1 }} / {{ app.fightAnimationFrames.length }}
                 </div>
               </div>
 
-              <div class="fight-team fight-team-player">
+              <div class="fight-team fight-team-player fight-team-player-head-to-head">
                 <div class="fight-slot" *ngFor="let slot of frame.playerSlots; trackBy: app.trackByIndex"
                   [class.fight-slot-front]="slot.slot === 0" [class.fight-slot-empty-card]="slot.isEmpty"
                   [class.fight-slot-attacker]="app.isFightAttackerSlot('player', slot.slot)"
@@ -190,8 +260,12 @@
                         [class.fight-value-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
                         [class.fight-value-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
                         [style.--fight-popup-index]="popupIndex">
-                        <img *ngIf="popup.type === 'attack' || popup.type === 'health'"
-                          [ngSrc]="popup.type === 'attack' ? app.fightAttackIconSrc : app.fightHealthIconSrc"
+                        <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp'"
+                          [ngSrc]="popup.type === 'attack'
+                            ? app.fightAttackIconSrc
+                            : popup.type === 'health'
+                              ? app.fightHealthIconSrc
+                              : app.fightExpIconSrc"
                           class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
                           decoding="async" />
                         <span class="fight-value-popup-number">{{ app.getFightPopupText(popup) }}</span>
@@ -208,17 +282,21 @@
                         decoding="async" />
                     </div>
                   </div>
-                  <div class="fight-slot-stats" *ngIf="slot.attack != null && slot.health != null">
-                    <span class="fight-slot-stat">
+                  <div class="fight-slot-stats" *ngIf="slot.attack != null || slot.health != null || slot.exp != null">
+                    <span class="fight-slot-stat" *ngIf="slot.attack != null">
                       <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
                       <span>{{ slot.attack }}</span>
                     </span>
-                    <span class="fight-slot-stat-divider">/</span>
-                    <span class="fight-slot-stat">
+                    <span class="fight-slot-stat" *ngIf="slot.health != null">
                       <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
                       <span>{{ slot.health }}</span>
+                    </span>
+                    <span class="fight-slot-stat" *ngIf="slot.exp != null">
+                      <img [ngSrc]="app.fightExpIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slot.exp }}</span>
                     </span>
                   </div>
                 </div>
@@ -246,17 +324,10 @@
               </div>
 
               <div class="btn-group btn-group-sm fight-speed-controls" role="group" aria-label="Animation speed">
-                <button class="btn btn-outline-secondary" type="button" [class.active]="app.fightAnimationSpeed === 0.5"
-                  (click)="app.setFightAnimationSpeed(0.5)">
-                  0.5x
-                </button>
-                <button class="btn btn-outline-secondary" type="button" [class.active]="app.fightAnimationSpeed === 1"
-                  (click)="app.setFightAnimationSpeed(1)">
-                  1x
-                </button>
-                <button class="btn btn-outline-secondary" type="button" [class.active]="app.fightAnimationSpeed === 2"
-                  (click)="app.setFightAnimationSpeed(2)">
-                  2x
+                <button *ngFor="let speed of app.fightAnimationSpeedOptions; trackBy: app.trackByIndex"
+                  class="btn btn-outline-secondary" type="button" [class.active]="app.fightAnimationSpeed === speed"
+                  (click)="app.setFightAnimationSpeed(speed)">
+                  {{ speed }}x
                 </button>
               </div>
                 </div>
@@ -265,29 +336,18 @@
                   <input class="form-range" type="range" [min]="0" [max]="app.fightAnimationFrames.length - 1"
                     [value]="app.fightAnimationFrameIndex" (input)="app.onFightAnimationScrub($any($event.target).value)" />
                 </div>
-              </div>
+            </ng-container>
+          </div>
 
-              <div class="horizontal-resize-divider" role="separator" aria-label="Resize animation and log stream"
-                aria-orientation="horizontal" tabindex="0" (pointerdown)="onAnimationDividerPointerDown($event)"
-                (pointermove)="onAnimationDividerPointerMove($event)" (pointerup)="onAnimationDividerPointerUp($event)"
-                (pointercancel)="onAnimationDividerPointerUp($event)" (keydown)="onAnimationDividerKeyDown($event)"></div>
+          <div class="horizontal-resize-divider" role="separator" aria-label="Resize animation and logs"
+            aria-orientation="horizontal" tabindex="0" (pointerdown)="onAnimationDividerPointerDown($event)"
+            (pointermove)="onAnimationDividerPointerMove($event)" (pointerup)="onAnimationDividerPointerUp($event)"
+            (pointercancel)="onAnimationDividerPointerUp($event)" (keydown)="onAnimationDividerKeyDown($event)"></div>
 
-              <div class="fight-log-stream scroll animation-bottom-pane">
-                <div class="fight-log-row" *ngFor="let log of app.viewBattleLogRows; index as i; trackBy: app.trackByIndex"
-                  [class.fight-log-row-active]="i === app.currentFightAnimationLogIndex">
-                  <span [ngClass]="log.classes">
-                    <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
-                      <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
-                        height="18" loading="lazy" decoding="async" />
-                      <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                      <br *ngIf="part.type === 'br'" />
-                    </ng-container>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-        </ng-container>
+          <div class="animation-bottom-pane">
+            <ng-container *ngTemplateOutlet="logsView"></ng-container>
+          </div>
+        </div>
 
         <ng-template #noAnimationFrames>
           <div class="fight-empty-state">
@@ -298,21 +358,12 @@
         <ng-template #logsView>
           <div *ngIf="app.showBattleAnalysis; else logsOnlyView" class="vertical-resizable-stack logs-analysis-stack"
             #logsAnalysisSplitContainer>
-            <div class="row log-container scroll logs-top-pane"
+            <div class="log-container scroll logs-top-pane"
               [style.flex-basis.px]="logsTopHeightPx"
               [style.max-height.px]="logsTopHeightPx"
               [style.height.px]="logsTopHeightPx"
               [class.log-container-with-analysis]="app.showBattleAnalysis">
-              <div class="col-12" *ngFor="let log of app.viewBattleLogRows; trackBy: app.trackByIndex">
-                <span [ngClass]="log.classes">
-                  <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
-                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
-                      height="18" loading="lazy" decoding="async" />
-                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                    <br *ngIf="part.type === 'br'" />
-                  </ng-container>
-                </span>
-              </div>
+              <ng-container *ngTemplateOutlet="groupedLogsTemplate"></ng-container>
             </div>
 
             <div class="horizontal-resize-divider" role="separator" aria-label="Resize logs and analysis"
@@ -379,8 +430,8 @@
                       <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleLeftScope"
                         (ngModelChange)="app.setBattleDiffLeftScope($event)" [ngModelOptions]="{ standalone: true }">
                         <option [ngValue]="'all'">All</option>
-                        <option [ngValue]="'player'">Player</option>
-                        <option [ngValue]="'opponent'">Opponent</option>
+                        <option [ngValue]="'player'" class="player-side-text">Player</option>
+                        <option [ngValue]="'opponent'" class="opponent-side-text">Opponent</option>
                       </select>
                     </label>
                     <label class="diff-label">
@@ -397,8 +448,8 @@
                       <select class="form-select form-select-sm diff-select" [ngModel]="app.diffBattleRightScope"
                         (ngModelChange)="app.setBattleDiffRightScope($event)" [ngModelOptions]="{ standalone: true }">
                         <option [ngValue]="'all'">All</option>
-                        <option [ngValue]="'player'">Player</option>
-                        <option [ngValue]="'opponent'">Opponent</option>
+                        <option [ngValue]="'player'" class="player-side-text">Player</option>
+                        <option [ngValue]="'opponent'" class="opponent-side-text">Opponent</option>
                       </select>
                     </label>
                   </div>
@@ -437,21 +488,55 @@
           </div>
 
           <ng-template #logsOnlyView>
-            <div class="row log-container flex-1 scroll">
-              <div class="col-12" *ngFor="let log of app.viewBattleLogRows; trackBy: app.trackByIndex">
-                <span [ngClass]="log.classes">
-                  <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
-                    <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
-                      height="18" loading="lazy" decoding="async" />
-                    <span *ngIf="part.type === 'text'">{{ part.text }}</span>
-                    <br *ngIf="part.type === 'br'" />
-                  </ng-container>
-                </span>
-              </div>
+            <div class="log-container flex-1 scroll">
+              <ng-container *ngTemplateOutlet="groupedLogsTemplate"></ng-container>
             </div>
           </ng-template>
+        </ng-template>
+
+        <ng-template #groupedLogsTemplate>
+          <div class="log-groups" *ngIf="app.viewBattleLogGroups.length; else noFilteredLogs">
+            <section class="log-group" *ngFor="let group of app.viewBattleLogGroups; trackBy: app.trackByIndex">
+              <button
+                type="button"
+                class="log-group-header"
+                [attr.aria-expanded]="!group.collapsed"
+                (click)="app.toggleViewBattleLogGroup(group.id)"
+              >
+                <span class="log-group-title">{{ group.title }}</span>
+                <span class="log-group-meta">
+                  <span class="log-group-count">{{ group.rows.length }} rows</span>
+                  <span class="log-group-chevron" [class.log-group-chevron-collapsed]="group.collapsed" aria-hidden="true">
+                    &#9662;
+                  </span>
+                </span>
+              </button>
+              <div class="log-group-body" *ngIf="!group.collapsed">
+                <div class="log-row" *ngFor="let log of group.rows; trackBy: app.trackByIndex" [ngClass]="log.classes">
+                  <div class="log-row-meta">
+                    <span class="log-badge" *ngFor="let badge of log.badges; trackBy: app.trackByIndex" [ngClass]="badge.className">
+                      {{ badge.text }}
+                    </span>
+                  </div>
+                  <div class="log-row-text">
+                    <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
+                      <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
+                        height="18" loading="lazy" decoding="async" />
+                      <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                      <br *ngIf="part.type === 'br'" />
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </ng-template>
+
+        <ng-template #noFilteredLogs>
+          <div class="log-empty-state">
+            No log rows match this filter.
+          </div>
         </ng-template>
         </div>
       </div>
     </div>
-

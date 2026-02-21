@@ -48,6 +48,14 @@ export class RacketTailAbility extends Ability {
       maxUses: owner.level,
       native: true,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const { triggerPet } = context;
+        return (
+          !!triggerPet &&
+          triggerPet.parent === this.owner.parent &&
+          triggerPet.alive
+        );
+      },
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
@@ -57,12 +65,7 @@ export class RacketTailAbility extends Ability {
     const { triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    if (
-      !triggerPet ||
-      triggerPet.parent !== owner.parent ||
-      !triggerPet.alive
-    ) {
-      this.triggerTigerExecution(context);
+    if (!triggerPet) {
       return;
     }
 
