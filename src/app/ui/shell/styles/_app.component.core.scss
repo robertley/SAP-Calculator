@@ -873,6 +873,49 @@
   object-fit: contain;
 }
 
+.fight-slot-exp {
+  gap: 0.18rem;
+}
+
+.fight-slot-exp-group {
+  width: 44px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.fight-slot-exp-levels {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  font-size: 0.42rem;
+  line-height: 1;
+  color: #6c757d;
+}
+
+.fight-slot-exp-level {
+  text-align: center;
+  font-weight: 700;
+}
+
+.fight-slot-exp-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+}
+
+.fight-slot-exp-segment {
+  height: 0.38rem;
+  border: 1px solid #212529;
+  border-radius: 2px;
+  background-color: #9c5900;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.fight-slot-exp-segment.selected {
+  background-color: #feb900;
+}
+
 .fight-slot-stat-divider {
   color: #6c757d;
   font-size: 0.66rem;
@@ -911,12 +954,14 @@
   }
 }
 
-.fight-event.fight-event-phase-a {
+.fight-event.fight-event-phase-a,
+.fight-stage.fight-phase-a .fight-event {
   animation:
     fight-event-pulse-a calc(260ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
-.fight-event.fight-event-phase-b {
+.fight-event.fight-event-phase-b,
+.fight-stage.fight-phase-b .fight-event {
   animation:
     fight-event-pulse-b calc(260ms * var(--fight-motion-scale, 1)) ease-out;
 }
@@ -1035,6 +1080,10 @@
 
 .fight-team-player
   .fight-slot-attacker.fight-impact-phase-a
+  .fight-slot-art,
+.fight-stage.fight-phase-a
+  .fight-team-player
+  .fight-slot-attacker
   .fight-slot-art {
   animation:
     fight-lunge-player-a calc(360ms * var(--fight-motion-scale, 1))
@@ -1043,6 +1092,10 @@
 
 .fight-team-player
   .fight-slot-attacker.fight-impact-phase-b
+  .fight-slot-art,
+.fight-stage.fight-phase-b
+  .fight-team-player
+  .fight-slot-attacker
   .fight-slot-art {
   animation:
     fight-lunge-player-b calc(360ms * var(--fight-motion-scale, 1))
@@ -1051,6 +1104,10 @@
 
 .fight-team-opponent
   .fight-slot-attacker.fight-impact-phase-a
+  .fight-slot-art,
+.fight-stage.fight-phase-a
+  .fight-team-opponent
+  .fight-slot-attacker
   .fight-slot-art {
   animation:
     fight-lunge-opponent-a calc(360ms * var(--fight-motion-scale, 1))
@@ -1059,22 +1116,125 @@
 
 .fight-team-opponent
   .fight-slot-attacker.fight-impact-phase-b
+  .fight-slot-art,
+.fight-stage.fight-phase-b
+  .fight-team-opponent
+  .fight-slot-attacker
   .fight-slot-art {
   animation:
     fight-lunge-opponent-b calc(360ms * var(--fight-motion-scale, 1))
     cubic-bezier(0.25, 0.65, 0.35, 1);
 }
 
-.fight-slot-target.fight-impact-phase-a {
+.fight-slot-target.fight-impact-phase-a,
+.fight-stage.fight-phase-a .fight-slot-target {
   animation:
     fight-hit-shake-a calc(320ms * var(--fight-motion-scale, 1)) ease-out;
   box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.25);
 }
 
-.fight-slot-target.fight-impact-phase-b {
+.fight-slot-target.fight-impact-phase-b,
+.fight-stage.fight-phase-b .fight-slot-target {
   animation:
     fight-hit-shake-b calc(320ms * var(--fight-motion-scale, 1)) ease-out;
   box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.25);
+}
+
+.fight-slot.fight-slot-stat-gain {
+  border-color: rgba(47, 158, 68, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(47, 158, 68, 0.25);
+}
+
+@keyframes fight-stat-gain-icon-a {
+  0% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+  44% {
+    transform: scale(1.13);
+    filter: brightness(1.2) saturate(1.18);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+}
+
+@keyframes fight-stat-gain-icon-b {
+  0% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+  42% {
+    transform: scale(1.11);
+    filter: brightness(1.18) saturate(1.15);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1) saturate(1);
+  }
+}
+
+@keyframes fight-stat-gain-stats-a {
+  0% {
+    transform: translateY(0);
+    color: #212529;
+  }
+  42% {
+    transform: translateY(-2px);
+    color: #2f9e44;
+  }
+  100% {
+    transform: translateY(0);
+    color: #212529;
+  }
+}
+
+@keyframes fight-stat-gain-stats-b {
+  0% {
+    transform: translateY(0);
+    color: #212529;
+  }
+  40% {
+    transform: translateY(-1px);
+    color: #2f9e44;
+  }
+  100% {
+    transform: translateY(0);
+    color: #212529;
+  }
+}
+
+.fight-slot.fight-slot-stat-gain.fight-impact-phase-a .fight-slot-icon,
+.fight-slot.fight-slot-stat-gain.fight-impact-phase-a .fight-slot-companion,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-stat-gain .fight-slot-icon,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-stat-gain .fight-slot-companion {
+  animation:
+    fight-stat-gain-icon-a calc(340ms * var(--fight-motion-scale, 1))
+    ease-out;
+}
+
+.fight-slot.fight-slot-stat-gain.fight-impact-phase-b .fight-slot-icon,
+.fight-slot.fight-slot-stat-gain.fight-impact-phase-b .fight-slot-companion,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-stat-gain .fight-slot-icon,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-stat-gain .fight-slot-companion {
+  animation:
+    fight-stat-gain-icon-b calc(340ms * var(--fight-motion-scale, 1))
+    ease-out;
+}
+
+.fight-slot.fight-slot-stat-gain.fight-impact-phase-a .fight-slot-stats,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-stat-gain .fight-slot-stats {
+  animation:
+    fight-stat-gain-stats-a calc(340ms * var(--fight-motion-scale, 1))
+    ease-out;
+}
+
+.fight-slot.fight-slot-stat-gain.fight-impact-phase-b .fight-slot-stats,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-stat-gain .fight-slot-stats {
+  animation:
+    fight-stat-gain-stats-b calc(340ms * var(--fight-motion-scale, 1))
+    ease-out;
 }
 
 .fight-slot.fight-slot-shifted {
@@ -1177,12 +1337,14 @@
   }
 }
 
-.fight-value-popup.fight-value-phase-a {
+.fight-value-popup.fight-value-phase-a,
+.fight-stage.fight-phase-a .fight-value-popup {
   animation:
     fight-value-pop-a calc(620ms * var(--fight-motion-scale, 1)) ease-out;
 }
 
-.fight-value-popup.fight-value-phase-b {
+.fight-value-popup.fight-value-phase-b,
+.fight-stage.fight-phase-b .fight-value-popup {
   animation:
     fight-value-pop-b calc(620ms * var(--fight-motion-scale, 1)) ease-out;
 }
@@ -1238,12 +1400,14 @@
   }
 }
 
-.fight-faint-ghost.fight-faint-phase-a {
+.fight-faint-ghost.fight-faint-phase-a,
+.fight-stage.fight-phase-a .fight-faint-ghost {
   animation:
     fight-faint-a calc(320ms * var(--fight-motion-scale, 1)) ease-in forwards;
 }
 
-.fight-faint-ghost.fight-faint-phase-b {
+.fight-faint-ghost.fight-faint-phase-b,
+.fight-stage.fight-phase-b .fight-faint-ghost {
   animation:
     fight-faint-b calc(320ms * var(--fight-motion-scale, 1)) ease-in forwards;
 }
@@ -1314,6 +1478,9 @@
 @media (prefers-reduced-motion: reduce) {
   .fight-slot,
   .fight-slot-art,
+  .fight-slot-icon,
+  .fight-slot-companion,
+  .fight-slot-stats,
   .fight-event,
   .fight-value-popup,
   .fight-faint-ghost,

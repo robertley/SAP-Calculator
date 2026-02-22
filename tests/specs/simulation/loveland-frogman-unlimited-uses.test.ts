@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
 
-describe('Loveland Frogman unlimited uses', () => {
-  it('can buff before friend attacks more than once at level 1', () => {
+describe('Loveland Frogman once per pet', () => {
+  it('buffs the same attacking friend only once', () => {
     const config: SimulationConfig = {
       playerPack: 'Unicorn',
       opponentPack: 'Unicorn',
@@ -89,6 +89,6 @@ describe('Loveland Frogman unlimited uses', () => {
         log.message.includes('Loveland Frogman gave Fish 1 attack and 2 health.'),
     );
 
-    expect(frogmanBuffLogs.length).toBeGreaterThan(1);
+    expect(frogmanBuffLogs.length).toBe(1);
   });
 });

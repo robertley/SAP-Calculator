@@ -138,6 +138,7 @@ interface ParsedToken {
 
 export interface FightAnimationBuildOptions {
   includePositionPrefix?: boolean;
+  includeBoardFrames?: boolean;
 }
 
 const SIDE_TOKEN_REGEX =
@@ -172,6 +173,7 @@ export function buildFightAnimationFrames(
   }
 
   const includePositionPrefix = options.includePositionPrefix !== false;
+  const includeBoardFrames = options.includeBoardFrames !== false;
   let boardState: FightAnimationBoardState | null = null;
   const frames: FightAnimationFrame[] = [];
 
@@ -188,6 +190,10 @@ export function buildFightAnimationFrames(
     }
 
     if (!boardState) {
+      return;
+    }
+
+    if (log.type === 'board' && !includeBoardFrames) {
       return;
     }
 
@@ -495,7 +501,11 @@ function applyStatMutation(
   const sourceSide = getLogPrimarySide(log);
   const sourceName = parseSubjectName(text);
   const targetName = parseTargetName(text, sourceName);
-  const isGiveMessage = /\bgave\b/i.test(text);
+  const shouldApplyToTarget = shouldApplyStatChangeToTarget(
+    text,
+    sourceName,
+    targetName,
+  );
   const targetSide = inferTargetSide(
     state,
     log,
@@ -506,13 +516,25 @@ function applyStatMutation(
   );
 
   const targetRef = resolveSlotRef(state, {
-    preferredSide: isGiveMessage ? targetSide : sourceSide,
-    explicitIndex: isGiveMessage ? log.targetIndex : log.sourceIndex,
-    expectedName: isGiveMessage ? targetName : sourceName,
+    preferredSide: shouldApplyToTarget ? targetSide : sourceSide,
+    explicitIndex: shouldApplyToTarget ? log.targetIndex : log.sourceIndex,
+    expectedName: shouldApplyToTarget ? targetName : sourceName,
     preferNonEmpty: true,
   });
   if (!targetRef) {
     return;
+  }
+
+  const sourcePetName = normalizeEntityToken(log.sourcePet?.name);
+  const targetPetName = normalizeEntityToken(log.targetPet?.name);
+  const transformedName = /\btransform(?:ed|ing)?\b/i.test(text)
+    ? parseTransformEvent(text).transformedName
+    : null;
+  const resolvedTargetName = shouldApplyToTarget
+    ? targetPetName ?? targetName ?? sourcePetName ?? sourceName
+    : transformedName ?? sourcePetName ?? sourceName;
+  if (resolvedTargetName) {
+    setSlotPet(targetRef.value, resolvedTargetName);
   }
 
   applyDeltaStatChange(
@@ -913,13 +935,44 @@ function parseStatChange(text: string): ParsedStatChange | null {
   };
 }
 
+function shouldApplyStatChangeToTarget(
+  text: string,
+  sourceName: string | null,
+  targetName: string | null,
+): boolean {
+  if (!targetName) {
+    return false;
+  }
+  if (/\bgave\b/i.test(text)) {
+    return true;
+  }
+  const sourceNormalized = normalizeComparableName(sourceName);
+  const targetNormalized = normalizeComparableName(targetName);
+  if (
+    sourceNormalized &&
+    targetNormalized &&
+    sourceNormalized === targetNormalized
+  ) {
+    return false;
+  }
+  return (
+    /\bincreased\b/i.test(text) ||
+    /\b(?:attack|health)\s+of\b/i.test(text) ||
+    /\b(?:attack|health)\s+by\b/i.test(text)
+  );
+}
+
 function extractStatValue(
   text: string,
   stat: 'attack' | 'health',
   defaultSign: number,
 ): number | null {
-  const regex = new RegExp(`([+-]?\\d+)\\s+${stat}\\b`, 'i');
-  const match = regex.exec(text);
+  const directRegex = new RegExp(`([+-]?\\d+)\\s+${stat}\\b`, 'i');
+  const byRegex = new RegExp(
+    `${stat}\\b(?:\\s+of\\s+[^.]+?)?\\s+by\\s+([+-]?\\d+)`,
+    'i',
+  );
+  const match = directRegex.exec(text) ?? byRegex.exec(text);
   if (!match) {
     return null;
   }

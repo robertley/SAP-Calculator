@@ -53,7 +53,11 @@ export class LovelandFrogmanAbility extends Ability {
         const owner = this.owner;
         const targetResp = resolveTriggerTargetAlive(owner, triggerPet);
         const target = targetResp.pet;
-        return !!target && target.alive;
+        return (
+          !!target &&
+          target.alive &&
+          !owner.targettedFriends.has(target)
+        );
       },
       abilityFunction: (context) => {
         this.executeAbility(context);
@@ -84,6 +88,7 @@ export class LovelandFrogmanAbility extends Ability {
 
     target.increaseAttack(power.attack);
     target.increaseHealth(power.health);
+    owner.targettedFriends.add(target);
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);

@@ -68,11 +68,9 @@ import {
   toggleViewBattleLogGroup as toggleViewBattleLogGroupImpl,
 } from './simulation/app.component.simulation';
 import {
-  FightAnimationDeath,
   FightAnimationFrame,
-  FightAnimationPopup,
 } from './simulation/app.component.fight-animation';
-import { clearFightAnimationTimer as clearFightAnimationTimerImpl, getFightDeathForSlot as getFightDeathForSlotImpl, getFightPopupText as getFightPopupTextImpl, getFightPopupsForSlot as getFightPopupsForSlotImpl, getFightShiftSteps as getFightShiftStepsImpl, isFightAttackerSlot as isFightAttackerSlotImpl, isFightDeathSlot as isFightDeathSlotImpl, isFightShiftedSlot as isFightShiftedSlotImpl, isFightTargetSlot as isFightTargetSlotImpl, onFightAnimationScrub as onFightAnimationScrubImpl, refreshFightAnimationFromViewBattle as refreshFightAnimationFromViewBattleImpl, resetFightAnimation as resetFightAnimationImpl, setFightAnimationSpeed as setFightAnimationSpeedImpl, stepFightAnimation as stepFightAnimationImpl, toggleFightAnimationPlayback as toggleFightAnimationPlaybackImpl, } from './simulation/app.component.fight-animation-controls';
+import { buildFightAnimationRenderFrame as buildFightAnimationRenderFrameImpl, clearFightAnimationTimer as clearFightAnimationTimerImpl, FightAnimationRenderFrameModel, onFightAnimationScrub as onFightAnimationScrubImpl, refreshFightAnimationFromViewBattle as refreshFightAnimationFromViewBattleImpl, resetFightAnimation as resetFightAnimationImpl, setFightAnimationSpeed as setFightAnimationSpeedImpl, stepFightAnimation as stepFightAnimationImpl, toggleFightAnimationPlayback as toggleFightAnimationPlaybackImpl, } from './simulation/app.component.fight-animation-controls';
 import { captureRandomEvents as captureRandomEventsImpl, clearRandomOverrides as clearRandomOverridesImpl, getRandomDecisionLabelParts as getRandomDecisionLabelPartsImpl, getRandomDecisionSelectedOptionParts as getRandomDecisionSelectedOptionPartsImpl, getSelectedRandomDecisionOptionId as getSelectedRandomDecisionOptionIdImpl, onRandomDecisionChoiceChanged as onRandomDecisionChoiceChangedImpl, runForcedRandomSimulation as runForcedRandomSimulationImpl, } from './simulation/app.component.random-decisions';
 import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCacheImpl, decrementToyLevel as decrementToyLevelImpl, drop as dropImpl, exportCalculator as exportCalculatorImpl, fixCustomPackSelect as fixCustomPackSelectImpl, generateShareLink as generateShareLinkImpl, getPackIcon as getPackIconImpl, getRandomEquipment as getRandomEquipmentImpl, getRollInputVisible as getRollInputVisibleImpl, getSelectedTeamName as getSelectedTeamNameImpl, getSelectedTeamPreviewIcons as getSelectedTeamPreviewIconsImpl, getToyIcon as getToyIconImpl, getToyIconPathValue as getToyIconPathValueImpl, getToyOptionStyle as getToyOptionStyleImpl, getValidCustomPacks as getValidCustomPacksImpl, importCalculator as importCalculatorImpl, incrementToyLevel as incrementToyLevelImpl, initApp as initAppImpl, initFormGroup as initFormGroupImpl, initGameApi as initGameApiImpl, initPetForms as initPetFormsImpl, initPlayerPets as initPlayerPetsImpl, initModals as initModalsImpl, loadLocalStorage as loadLocalStorageImpl, loadStateFromUrl as loadStateFromUrlImpl, makeFormGroup as makeFormGroupImpl, onItemSelected as onItemSelectedImpl, onPackImageError as onPackImageErrorImpl, openCustomPackEditor as openCustomPackEditorImpl, openSelectionDialog as openSelectionDialogImpl, printFormGroup as printFormGroupImpl, randomize as randomizeImpl, randomizePlayerPets as randomizePlayerPetsImpl, refreshPetFormArrays as refreshPetFormArraysImpl, removeHardToy as removeHardToyImpl, resetPackImageError as resetPackImageErrorImpl, resetPlayer as resetPlayerImpl, setDayNight as setDayNightImpl, setHardToyImage as setHardToyImageImpl, setRandomBackground as setRandomBackgroundImpl, setToyImage as setToyImageImpl, toggleAdvanced as toggleAdvancedImpl, trackByIndex as trackByIndexImpl, trackByLogTab as trackByLogTabImpl, trackByTeamId as trackByTeamIdImpl, updateGoldSpent as updateGoldSpentImpl, undoRandomize as undoRandomizeImpl, updatePlayerPack as updatePlayerPackImpl, updatePlayerToy as updatePlayerToyImpl, updatePreviousShopTier as updatePreviousShopTierImpl, updateToyLevel as updateToyLevelImpl, } from './view/app.component.ui';
 import { handlePetSlotClipboardShortcuts as handlePetSlotClipboardShortcutsImpl } from './view/app.component.pet-clipboard';
@@ -181,7 +179,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   showReportABug = false;
   showBattleAnalysis = false;
   showRandomOverrides = true;
-  battleViewMode: 'logs' | 'animate' = 'animate';
   fightAnimationFrames: FightAnimationFrame[] = [];
   fightAnimationFrameIndex = -1;
   fightAnimationPlaying = false;
@@ -232,6 +229,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
   fightAnimationTimer: ReturnType<typeof setTimeout> | null = null;
   private formAutoSaveSubscription: Subscription | null = null;
+  private fightAnimationRenderFrameCache: FightAnimationRenderFrameModel | null =
+    null;
+  private fightAnimationRenderFrameCacheSource: FightAnimationFrame | null = null;
+  private fightAnimationRenderFrameCacheIndex = -1;
 
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
@@ -250,10 +251,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showRandomOverrides = !this.showRandomOverrides;
     this.cdr.markForCheck();
   };
-  readonly setBattleViewMode = (mode: 'logs' | 'animate') => {
-    this.battleViewMode = mode;
-    this.cdr.markForCheck();
-  };
   readonly refreshFightAnimationFromViewBattle = () =>
     refreshFightAnimationFromViewBattleImpl(this);
   readonly toggleFightAnimationPlayback = () =>
@@ -265,27 +262,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     setFightAnimationSpeedImpl(this, speed);
   readonly onFightAnimationScrub = (rawValue: string | number) =>
     onFightAnimationScrubImpl(this, rawValue);
-  readonly isFightAttackerSlot = (side: 'player' | 'opponent', slot: number) =>
-    isFightAttackerSlotImpl(this, side, slot);
-  readonly isFightTargetSlot = (side: 'player' | 'opponent', slot: number) =>
-    isFightTargetSlotImpl(this, side, slot);
-  readonly getFightPopupsForSlot = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): FightAnimationPopup[] => getFightPopupsForSlotImpl(this, side, slot);
-  readonly getFightPopupText = (popup: FightAnimationPopup): string =>
-    getFightPopupTextImpl(popup);
-  readonly isFightDeathSlot = (side: 'player' | 'opponent', slot: number) =>
-    isFightDeathSlotImpl(this, side, slot);
-  readonly getFightDeathForSlot = (
-    side: 'player' | 'opponent',
-    slot: number,
-  ): FightAnimationDeath | null => getFightDeathForSlotImpl(this, side, slot);
-  readonly isFightShiftedSlot = (side: 'player' | 'opponent', slot: number) =>
-    isFightShiftedSlotImpl(this, side, slot);
-  readonly getFightShiftSteps = (side: 'player' | 'opponent', slot: number) =>
-    getFightShiftStepsImpl(this, side, slot);
-
   constructor(
     public logService: LogService,
     private injector: Injector,
@@ -522,6 +498,31 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
     return this.fightAnimationFrames[this.fightAnimationFrameIndex] ?? null;
+  }
+
+  get currentFightAnimationRenderFrame(): FightAnimationRenderFrameModel | null {
+    const frame = this.currentFightAnimationFrame;
+    if (!frame) {
+      this.fightAnimationRenderFrameCache = null;
+      this.fightAnimationRenderFrameCacheSource = null;
+      this.fightAnimationRenderFrameCacheIndex = -1;
+      return null;
+    }
+    if (
+      this.fightAnimationRenderFrameCache &&
+      this.fightAnimationRenderFrameCacheSource === frame &&
+      this.fightAnimationRenderFrameCacheIndex === this.fightAnimationFrameIndex
+    ) {
+      return this.fightAnimationRenderFrameCache;
+    }
+    const renderModel = buildFightAnimationRenderFrameImpl(
+      frame,
+      this.fightAnimationFrameIndex,
+    );
+    this.fightAnimationRenderFrameCache = renderModel;
+    this.fightAnimationRenderFrameCacheSource = frame;
+    this.fightAnimationRenderFrameCacheIndex = this.fightAnimationFrameIndex;
+    return renderModel;
   }
 
   get currentFightAnimationLogIndex(): number {
