@@ -161,7 +161,14 @@ export interface ReplayCalculatorState {
 type ReplayCustomPackCore = Omit<ReplayCustomPack, 'deckId'>;
 
 function toFiniteNumber(value: unknown): number | null {
-  return typeof value === 'number' && Number.isFinite(value) ? value : null;
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
 }
 
 function toNumberOrFallback(value: unknown, fallback: number): number {
@@ -477,46 +484,117 @@ export class ReplayCalcParser {
       petJson: ReplayPetJson,
     ): AbominationSwallowedState => {
       const abominationState = defaultAbominationSwallowedState();
-      const copiedAbilities = (petJson?.Abil ?? []).filter(
-        (ability): ability is ReplayAbilityJson =>
-          ability !== null && toReplayId(ability?.Enu) !== null,
-      );
+      const copiedAbilities = (petJson?.Abil ?? [])
+        .map((ability, index) => ({ ability, index }))
+        .filter(
+          (
+            abilityEntry,
+          ): abilityEntry is { ability: ReplayAbilityJson; index: number } =>
+            abilityEntry.ability !== null &&
+            toReplayId(abilityEntry.ability?.Enu) !== null,
+        );
 
       if (copiedAbilities.length === 0) {
         return abominationState;
       }
 
-      const groupedAbilities = new Map<number, ReplayAbilityJson[]>();
+      const groupedAbilities = new Map<
+        number,
+        { ability: ReplayAbilityJson; index: number }[]
+      >();
       const orderedGroupKeys: number[] = [];
-      copiedAbilities.forEach((ability) => {
-        const groupKey = toFiniteNumber(ability?.Grop) ?? 0;
+      copiedAbilities.forEach((abilityEntry) => {
+        const groupKey = toFiniteNumber(abilityEntry.ability?.Grop) ?? 0;
         if (!groupedAbilities.has(groupKey)) {
           groupedAbilities.set(groupKey, []);
           orderedGroupKeys.push(groupKey);
         }
-        groupedAbilities.get(groupKey)?.push(ability);
+        groupedAbilities.get(groupKey)?.push(abilityEntry);
       });
 
-      ABOMINATION_SLOT_FIELDS.forEach((slotFields, index) => {
-        const groupKey = orderedGroupKeys[index];
+      const usedAbilityIndexes = new Set<number>();
+      const unresolvedSlotIndexes: number[] = [];
+
+      ABOMINATION_SLOT_FIELDS.forEach((slotFields, slotIndex) => {
+        const groupKey = orderedGroupKeys[slotIndex];
         if (groupKey === undefined) {
+          unresolvedSlotIndexes.push(slotIndex);
           return;
         }
         const groupAbilities = groupedAbilities.get(groupKey);
         if (!groupAbilities || groupAbilities.length === 0) {
+          unresolvedSlotIndexes.push(slotIndex);
           return;
         }
 
-        const primaryAbility = groupAbilities[0];
-        const primaryAbilityId = toReplayId(primaryAbility?.Enu);
-        if (primaryAbilityId) {
-          abominationState[slotFields.pet] =
-            resolveAbilityOwnerPetName(primaryAbilityId);
+        let resolvedAbilityEntry:
+          | { ability: ReplayAbilityJson; index: number }
+          | null = null;
+        let resolvedPetName: string | null = null;
+
+        for (const abilityEntry of groupAbilities) {
+          const abilityId = toReplayId(abilityEntry.ability?.Enu);
+          if (!abilityId) {
+            continue;
+          }
+          const ownerPetName = resolveAbilityOwnerPetName(abilityId);
+          if (!ownerPetName) {
+            continue;
+          }
+          resolvedAbilityEntry = abilityEntry;
+          resolvedPetName = ownerPetName;
+          break;
         }
 
-        const inferredLevel = toFiniteNumber(primaryAbility?.Lvl);
+        if (!resolvedAbilityEntry || !resolvedPetName) {
+          unresolvedSlotIndexes.push(slotIndex);
+          return;
+        }
+
+        abominationState[slotFields.pet] = resolvedPetName;
+        const inferredLevel = toFiniteNumber(resolvedAbilityEntry.ability?.Lvl);
         if (inferredLevel !== null) {
           abominationState[slotFields.level] = inferredLevel;
+        }
+        usedAbilityIndexes.add(resolvedAbilityEntry.index);
+      });
+
+      if (unresolvedSlotIndexes.length === 0) {
+        return abominationState;
+      }
+
+      const fallbackResolvedAbilities = copiedAbilities
+        .filter((abilityEntry) => !usedAbilityIndexes.has(abilityEntry.index))
+        .map((abilityEntry) => {
+          const abilityId = toReplayId(abilityEntry.ability?.Enu);
+          if (!abilityId) {
+            return null;
+          }
+          const ownerPetName = resolveAbilityOwnerPetName(abilityId);
+          if (!ownerPetName) {
+            return null;
+          }
+          return {
+            ownerPetName,
+            level: toFiniteNumber(abilityEntry.ability?.Lvl),
+          };
+        })
+        .filter(
+          (
+            abilityEntry,
+          ): abilityEntry is { ownerPetName: string; level: number | null } =>
+            abilityEntry !== null,
+        );
+
+      unresolvedSlotIndexes.forEach((slotIndex, fallbackIndex) => {
+        const fallbackAbility = fallbackResolvedAbilities[fallbackIndex];
+        if (!fallbackAbility) {
+          return;
+        }
+        const slotFields = ABOMINATION_SLOT_FIELDS[slotIndex];
+        abominationState[slotFields.pet] = fallbackAbility.ownerPetName;
+        if (fallbackAbility.level !== null) {
+          abominationState[slotFields.level] = fallbackAbility.level;
         }
       });
 

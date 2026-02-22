@@ -5,6 +5,7 @@ import {
   buildFightAnimationFrames,
   parseFightAnimationBoardState,
 } from '../../../src/app/ui/shell/simulation/app.component.fight-animation';
+import { buildFightAnimationRenderFrame } from '../../../src/app/ui/shell/simulation/app.component.fight-animation-controls';
 
 describe('Fight animation frames', () => {
   it('parses board snapshots into player/opponent slots', () => {
@@ -83,6 +84,37 @@ describe('Fight animation frames', () => {
       logIndex: 5,
       type: 'board',
       text: 'Player is the winner',
+    });
+  });
+
+  it('can skip board logs while still applying board snapshots to state', () => {
+    const firstBoard =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(4/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: firstBoard },
+      {
+        type: 'attack',
+        message: 'Ant attacks Fish for 4.',
+        sourceIndex: 1,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any, {
+      includeBoardFrames: false,
+    });
+
+    expect(frames).toHaveLength(1);
+    expect(frames[0]).toMatchObject({
+      type: 'attack',
+      logIndex: 1,
+    });
+    expect(frames[0].impact).toMatchObject({
+      attackerSide: 'player',
+      targetSide: 'opponent',
+      targetSlot: 0,
+      damage: 4,
     });
   });
 
@@ -177,6 +209,45 @@ describe('Fight animation frames', () => {
       type: 'exp',
       delta: 2,
     });
+  });
+
+  it('updates the slot pet visual when a stat-gain log names a different pet', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Frog gained 2 attack and 1 health.',
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Frog',
+      petIconSrc: 'assets/art/Public/Public/Pets/Frog.png',
+      attack: 6,
+      health: 5,
+    });
+    expect(frames[1].popups).toEqual(
+      expect.arrayContaining([
+        {
+          side: 'player',
+          slot: 0,
+          type: 'attack',
+          delta: 2,
+        },
+        {
+          side: 'player',
+          slot: 0,
+          type: 'health',
+          delta: 1,
+        },
+      ]),
+    );
   });
 
   it('applies enemy ailment equipment to the correct side', () => {
@@ -290,6 +361,113 @@ describe('Fight animation frames', () => {
     });
     expect(frames[1].opponentSlots[0]).toMatchObject({
       petName: 'Pig',
+    });
+  });
+
+  it('precomputes slot render model classes and suppresses death ghost on shifted slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(2/2) O2 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(6/6) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'death',
+        message: 'Fish fainted.',
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 1);
+    const shiftedOpponentFront = renderFrame.opponentSlots[0];
+
+    expect(renderFrame.phase).toBe('b');
+    expect(shiftedOpponentFront.classMap['fight-slot-shifted']).toBe(true);
+    expect(shiftedOpponentFront.shiftSteps).toBe(1);
+    expect(shiftedOpponentFront.death).toBeNull();
+  });
+
+  it('applies per-slot impact phase classes for attacker lunge animations', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(4/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'attack',
+        message: 'Ant attacks Fish for 4.',
+        sourceIndex: 1,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 1);
+    const playerFront = renderFrame.playerSlots[0];
+    const opponentFront = renderFrame.opponentSlots[0];
+
+    expect(renderFrame.phase).toBe('b');
+    expect(playerFront.classMap['fight-slot-attacker']).toBe(true);
+    expect(playerFront.classMap['fight-impact-phase-b']).toBe(true);
+    expect(playerFront.classMap['fight-impact-phase-a']).toBe(false);
+    expect(opponentFront.classMap['fight-slot-target']).toBe(true);
+    expect(opponentFront.classMap['fight-impact-phase-b']).toBe(true);
+    expect(opponentFront.classMap['fight-impact-phase-a']).toBe(false);
+  });
+
+  it('precomputes stat-gain slot classes and popup grouping', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4/1xp) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8/0xp) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Fish gained +2 experience.',
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 0);
+    const playerFront = renderFrame.playerSlots[0];
+
+    expect(renderFrame.phase).toBe('a');
+    expect(playerFront.classMap['fight-slot-stat-gain']).toBe(true);
+    expect(playerFront.popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'exp',
+      delta: 2,
+    });
+  });
+
+  it('applies Armadillo-style "increased health of X by N" logs to the named target', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4) P1 <img src="assets/pets/Armadillo.png" class="log-pet-icon" alt="Armadillo">(4/8) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(6/6) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Armadillo increased health of Pig by 8.',
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      health: 14,
+    });
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Armadillo',
+      health: 8,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'opponent',
+      slot: 0,
+      type: 'health',
+      delta: 8,
     });
   });
 

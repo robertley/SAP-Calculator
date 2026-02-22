@@ -138,34 +138,26 @@
           [style.--fight-motion-scale]="app.fightAnimationMotionScale">
           <div class="animation-top-pane" [style.flex-basis.px]="animationTopHeightPx" [style.max-height.px]="animationTopHeightPx"
             [style.height.px]="animationTopHeightPx">
-            <ng-container *ngIf="app.currentFightAnimationFrame as frame; else noAnimationFrames">
-                <div class="fight-stage">
+            <ng-container *ngIf="app.currentFightAnimationRenderFrame as frameVm; else noAnimationFrames">
+                <div class="fight-stage" [class.fight-phase-a]="frameVm.phase === 'a'" [class.fight-phase-b]="frameVm.phase === 'b'">
               <div class="fight-team fight-team-opponent">
-                <div class="fight-slot" *ngFor="let slot of frame.opponentSlots; trackBy: app.trackByIndex"
-                  [class.fight-slot-front]="slot.slot === 0" [class.fight-slot-empty-card]="slot.isEmpty"
-                  [class.fight-slot-attacker]="app.isFightAttackerSlot('opponent', slot.slot)"
-                  [class.fight-slot-target]="app.isFightTargetSlot('opponent', slot.slot)"
-                  [class.fight-slot-shifted]="app.isFightShiftedSlot('opponent', slot.slot)"
-                  [class.fight-impact-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                  [class.fight-impact-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
-                  [style.--fight-shift-steps]="app.getFightShiftSteps('opponent', slot.slot)">
-                  <div class="fight-slot-label">{{ slot.label || ('O' + (slot.slot + 1)) }}</div>
+                <div class="fight-slot" *ngFor="let slotVm of frameVm.opponentSlots; trackBy: app.trackByIndex"
+                  [ngClass]="slotVm.classMap" [style.--fight-shift-steps]="slotVm.shiftSteps">
+                  <div class="fight-slot-label">{{ slotVm.slot.label || ('O' + (slotVm.slot.slot + 1)) }}</div>
                   <div class="fight-slot-art">
-                    <img *ngIf="slot.petIconSrc" [ngSrc]="slot.petIconSrc" class="fight-slot-icon"
-                      [alt]="slot.petName || 'Opponent pet'" width="42" height="42" loading="lazy" decoding="async" />
-                    <img *ngIf="slot.petCompanionIconSrc" [ngSrc]="slot.petCompanionIconSrc" class="fight-slot-companion"
-                      [alt]="slot.petCompanionName || 'Companion pet'" width="16" height="16" loading="lazy"
+                    <img *ngIf="slotVm.slot.petIconSrc" [ngSrc]="slotVm.slot.petIconSrc" class="fight-slot-icon"
+                      [alt]="slotVm.slot.petName || 'Opponent pet'" width="42" height="42" loading="lazy" decoding="async" />
+                    <img *ngIf="slotVm.slot.petCompanionIconSrc" [ngSrc]="slotVm.slot.petCompanionIconSrc" class="fight-slot-companion"
+                      [alt]="slotVm.slot.petCompanionName || 'Companion pet'" width="16" height="16" loading="lazy"
                       decoding="async" />
-                    <span *ngIf="!slot.petIconSrc" class="fight-slot-empty">___</span>
-                    <img *ngIf="slot.equipmentIconSrc" [ngSrc]="slot.equipmentIconSrc" class="fight-slot-equipment"
-                      [alt]="slot.equipmentName || 'Equipment'" width="16" height="16" loading="lazy" decoding="async" />
-                    <ng-container *ngFor="let popup of app.getFightPopupsForSlot('opponent', slot.slot); index as popupIndex; trackBy: app.trackByIndex">
+                    <span *ngIf="!slotVm.slot.petIconSrc" class="fight-slot-empty">___</span>
+                    <img *ngIf="slotVm.slot.equipmentIconSrc" [ngSrc]="slotVm.slot.equipmentIconSrc" class="fight-slot-equipment"
+                      [alt]="slotVm.slot.equipmentName || 'Equipment'" width="16" height="16" loading="lazy" decoding="async" />
+                    <ng-container *ngFor="let popup of slotVm.popups; index as popupIndex; trackBy: app.trackByIndex">
                       <span class="fight-value-popup"
                         [class.fight-value-popup-damage]="popup.type === 'damage'"
                         [class.fight-value-popup-buff]="popup.type !== 'damage' && popup.delta > 0"
                         [class.fight-value-popup-debuff]="popup.type !== 'damage' && popup.delta < 0"
-                        [class.fight-value-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                        [class.fight-value-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
                         [style.--fight-popup-index]="popupIndex">
                         <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp'"
                           [ngSrc]="popup.type === 'attack'
@@ -175,13 +167,10 @@
                               : app.fightExpIconSrc"
                           class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
                           decoding="async" />
-                        <span class="fight-value-popup-number">{{ app.getFightPopupText(popup) }}</span>
+                        <span class="fight-value-popup-number">{{ (popup.delta > 0 ? '+' : '-') + (popup.delta > 0 ? popup.delta : -popup.delta) }}</span>
                       </span>
                     </ng-container>
-                    <div class="fight-faint-ghost"
-                      *ngIf="app.getFightDeathForSlot('opponent', slot.slot) as death"
-                      [class.fight-faint-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                      [class.fight-faint-phase-b]="app.fightAnimationFrameIndex % 2 === 1">
+                    <div class="fight-faint-ghost" *ngIf="slotVm.death as death">
                       <img *ngIf="death.petIconSrc" [ngSrc]="death.petIconSrc" class="fight-faint-icon"
                         [alt]="death.petName || 'Fainted pet'" width="40" height="40" loading="lazy" decoding="async" />
                       <img *ngIf="death.petCompanionIconSrc" [ngSrc]="death.petCompanionIconSrc" class="fight-faint-companion"
@@ -189,30 +178,43 @@
                         decoding="async" />
                     </div>
                   </div>
-                  <div class="fight-slot-stats" *ngIf="slot.attack != null || slot.health != null || slot.exp != null">
-                    <span class="fight-slot-stat" *ngIf="slot.attack != null">
+                  <div class="fight-slot-stats" *ngIf="slotVm.slot.attack != null || slotVm.slot.health != null || slotVm.slot.exp != null">
+                    <span class="fight-slot-stat" *ngIf="slotVm.slot.attack != null">
                       <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
-                      <span>{{ slot.attack }}</span>
+                      <span>{{ slotVm.slot.attack }}</span>
                     </span>
-                    <span class="fight-slot-stat" *ngIf="slot.health != null">
+                    <span class="fight-slot-stat" *ngIf="slotVm.slot.health != null">
                       <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
-                      <span>{{ slot.health }}</span>
+                      <span>{{ slotVm.slot.health }}</span>
                     </span>
-                    <span class="fight-slot-stat" *ngIf="slot.exp != null">
+                    <span class="fight-slot-stat fight-slot-exp" *ngIf="slotVm.slot.exp != null">
                       <img [ngSrc]="app.fightExpIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
-                      <span>{{ slot.exp }}</span>
+                      <span class="fight-slot-exp-group">
+                        <span class="fight-slot-exp-levels" aria-hidden="true">
+                          <span class="fight-slot-exp-level">L1</span>
+                          <span></span>
+                          <span class="fight-slot-exp-level">L2</span>
+                          <span></span>
+                          <span class="fight-slot-exp-level">L3</span>
+                        </span>
+                        <span class="fight-slot-exp-bar" role="img" [attr.aria-label]="'XP: ' + slotVm.slot.exp + ' out of 5'">
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 1"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 2"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 3"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 4"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 5"></span>
+                        </span>
+                      </span>
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div class="fight-event" [class.fight-event-random]="frame.randomEvent"
-                [class.fight-event-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                [class.fight-event-phase-b]="app.fightAnimationFrameIndex % 2 === 1">
-                <div class="fight-event-type">{{ frame.type }}</div>
+              <div class="fight-event" [class.fight-event-random]="frameVm.frame.randomEvent">
+                <div class="fight-event-type">{{ frameVm.frame.type }}</div>
                 <div class="fight-event-text">
                   <ng-container *ngIf="app.currentFightAnimationLogRow as logRow; else fallbackFightEventText">
                     <span [ngClass]="logRow.classes">
@@ -225,7 +227,7 @@
                     </span>
                   </ng-container>
                   <ng-template #fallbackFightEventText>
-                    {{ frame.text }}
+                    {{ frameVm.frame.text }}
                   </ng-template>
                 </div>
                 <div class="fight-event-step">
@@ -234,31 +236,23 @@
               </div>
 
               <div class="fight-team fight-team-player fight-team-player-head-to-head">
-                <div class="fight-slot" *ngFor="let slot of frame.playerSlots; trackBy: app.trackByIndex"
-                  [class.fight-slot-front]="slot.slot === 0" [class.fight-slot-empty-card]="slot.isEmpty"
-                  [class.fight-slot-attacker]="app.isFightAttackerSlot('player', slot.slot)"
-                  [class.fight-slot-target]="app.isFightTargetSlot('player', slot.slot)"
-                  [class.fight-slot-shifted]="app.isFightShiftedSlot('player', slot.slot)"
-                  [class.fight-impact-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                  [class.fight-impact-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
-                  [style.--fight-shift-steps]="app.getFightShiftSteps('player', slot.slot)">
-                  <div class="fight-slot-label">{{ slot.label || ('P' + (slot.slot + 1)) }}</div>
+                <div class="fight-slot" *ngFor="let slotVm of frameVm.playerSlots; trackBy: app.trackByIndex"
+                  [ngClass]="slotVm.classMap" [style.--fight-shift-steps]="slotVm.shiftSteps">
+                  <div class="fight-slot-label">{{ slotVm.slot.label || ('P' + (slotVm.slot.slot + 1)) }}</div>
                   <div class="fight-slot-art">
-                    <img *ngIf="slot.petIconSrc" [ngSrc]="slot.petIconSrc" class="fight-slot-icon"
-                      [alt]="slot.petName || 'Player pet'" width="42" height="42" loading="lazy" decoding="async" />
-                    <img *ngIf="slot.petCompanionIconSrc" [ngSrc]="slot.petCompanionIconSrc" class="fight-slot-companion"
-                      [alt]="slot.petCompanionName || 'Companion pet'" width="16" height="16" loading="lazy"
+                    <img *ngIf="slotVm.slot.petIconSrc" [ngSrc]="slotVm.slot.petIconSrc" class="fight-slot-icon"
+                      [alt]="slotVm.slot.petName || 'Player pet'" width="42" height="42" loading="lazy" decoding="async" />
+                    <img *ngIf="slotVm.slot.petCompanionIconSrc" [ngSrc]="slotVm.slot.petCompanionIconSrc" class="fight-slot-companion"
+                      [alt]="slotVm.slot.petCompanionName || 'Companion pet'" width="16" height="16" loading="lazy"
                       decoding="async" />
-                    <span *ngIf="!slot.petIconSrc" class="fight-slot-empty">___</span>
-                    <img *ngIf="slot.equipmentIconSrc" [ngSrc]="slot.equipmentIconSrc" class="fight-slot-equipment"
-                      [alt]="slot.equipmentName || 'Equipment'" width="16" height="16" loading="lazy" decoding="async" />
-                    <ng-container *ngFor="let popup of app.getFightPopupsForSlot('player', slot.slot); index as popupIndex; trackBy: app.trackByIndex">
+                    <span *ngIf="!slotVm.slot.petIconSrc" class="fight-slot-empty">___</span>
+                    <img *ngIf="slotVm.slot.equipmentIconSrc" [ngSrc]="slotVm.slot.equipmentIconSrc" class="fight-slot-equipment"
+                      [alt]="slotVm.slot.equipmentName || 'Equipment'" width="16" height="16" loading="lazy" decoding="async" />
+                    <ng-container *ngFor="let popup of slotVm.popups; index as popupIndex; trackBy: app.trackByIndex">
                       <span class="fight-value-popup"
                         [class.fight-value-popup-damage]="popup.type === 'damage'"
                         [class.fight-value-popup-buff]="popup.type !== 'damage' && popup.delta > 0"
                         [class.fight-value-popup-debuff]="popup.type !== 'damage' && popup.delta < 0"
-                        [class.fight-value-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                        [class.fight-value-phase-b]="app.fightAnimationFrameIndex % 2 === 1"
                         [style.--fight-popup-index]="popupIndex">
                         <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp'"
                           [ngSrc]="popup.type === 'attack'
@@ -268,13 +262,10 @@
                               : app.fightExpIconSrc"
                           class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
                           decoding="async" />
-                        <span class="fight-value-popup-number">{{ app.getFightPopupText(popup) }}</span>
+                        <span class="fight-value-popup-number">{{ (popup.delta > 0 ? '+' : '-') + (popup.delta > 0 ? popup.delta : -popup.delta) }}</span>
                       </span>
                     </ng-container>
-                    <div class="fight-faint-ghost"
-                      *ngIf="app.getFightDeathForSlot('player', slot.slot) as death"
-                      [class.fight-faint-phase-a]="app.fightAnimationFrameIndex % 2 === 0"
-                      [class.fight-faint-phase-b]="app.fightAnimationFrameIndex % 2 === 1">
+                    <div class="fight-faint-ghost" *ngIf="slotVm.death as death">
                       <img *ngIf="death.petIconSrc" [ngSrc]="death.petIconSrc" class="fight-faint-icon"
                         [alt]="death.petName || 'Fainted pet'" width="40" height="40" loading="lazy" decoding="async" />
                       <img *ngIf="death.petCompanionIconSrc" [ngSrc]="death.petCompanionIconSrc" class="fight-faint-companion"
@@ -282,21 +273,36 @@
                         decoding="async" />
                     </div>
                   </div>
-                  <div class="fight-slot-stats" *ngIf="slot.attack != null || slot.health != null || slot.exp != null">
-                    <span class="fight-slot-stat" *ngIf="slot.attack != null">
+                  <div class="fight-slot-stats" *ngIf="slotVm.slot.attack != null || slotVm.slot.health != null || slotVm.slot.exp != null">
+                    <span class="fight-slot-stat" *ngIf="slotVm.slot.attack != null">
                       <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
-                      <span>{{ slot.attack }}</span>
+                      <span>{{ slotVm.slot.attack }}</span>
                     </span>
-                    <span class="fight-slot-stat" *ngIf="slot.health != null">
+                    <span class="fight-slot-stat" *ngIf="slotVm.slot.health != null">
                       <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
-                      <span>{{ slot.health }}</span>
+                      <span>{{ slotVm.slot.health }}</span>
                     </span>
-                    <span class="fight-slot-stat" *ngIf="slot.exp != null">
+                    <span class="fight-slot-stat fight-slot-exp" *ngIf="slotVm.slot.exp != null">
                       <img [ngSrc]="app.fightExpIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
-                      <span>{{ slot.exp }}</span>
+                      <span class="fight-slot-exp-group">
+                        <span class="fight-slot-exp-levels" aria-hidden="true">
+                          <span class="fight-slot-exp-level">L1</span>
+                          <span></span>
+                          <span class="fight-slot-exp-level">L2</span>
+                          <span></span>
+                          <span class="fight-slot-exp-level">L3</span>
+                        </span>
+                        <span class="fight-slot-exp-bar" role="img" [attr.aria-label]="'XP: ' + slotVm.slot.exp + ' out of 5'">
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 1"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 2"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 3"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 4"></span>
+                          <span class="fight-slot-exp-segment" [class.selected]="(slotVm.slot.exp ?? 0) >= 5"></span>
+                        </span>
+                      </span>
                     </span>
                   </div>
                 </div>

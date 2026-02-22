@@ -22,4 +22,41 @@ describe('imported state regression', () => {
       }),
     ).not.toThrow();
   });
+
+  it('expands compact JSON keys for abomination swallowed pets', () => {
+    const payload = JSON.stringify({
+      pP: 'Unicorn',
+      oP: 'Turtle',
+      p: [
+        {
+          n: 'Abomination',
+          a: 11,
+          h: 12,
+          aSP1: 'Behemoth',
+          aSP1L: 3,
+          aSP2: 'Vampire Bat',
+          aSP2L: 2,
+          aSP3: 'Worm of Sand',
+          aSP3L: 1,
+        },
+      ],
+      o: [],
+      m: true,
+      tc: true,
+      sa: true,
+    });
+
+    const expanded = expandCompactCalculatorState(
+      parseImportPayload(payload),
+    ) as SimulationConfig;
+    const abomination = expanded.playerPets?.[0];
+
+    expect(abomination?.name).toBe('Abomination');
+    expect(abomination?.abominationSwallowedPet1).toBe('Behemoth');
+    expect(abomination?.abominationSwallowedPet1Level).toBe(3);
+    expect(abomination?.abominationSwallowedPet2).toBe('Vampire Bat');
+    expect(abomination?.abominationSwallowedPet2Level).toBe(2);
+    expect(abomination?.abominationSwallowedPet3).toBe('Worm of Sand');
+    expect(abomination?.abominationSwallowedPet3Level).toBe(1);
+  });
 });

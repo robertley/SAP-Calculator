@@ -2,6 +2,7 @@ import {
   FightAnimationDeath,
   FightAnimationFrame,
   FightAnimationPopup,
+  FightAnimationSlot,
   buildFightAnimationFrames,
 } from './app.component.fight-animation';
 import { FormGroup } from '@angular/forms';
@@ -17,7 +18,23 @@ export interface AppFightAnimationContext {
   markForCheck: () => void;
 }
 
+export interface FightAnimationSlotRenderModel {
+  slot: FightAnimationSlot;
+  classMap: Record<string, boolean>;
+  shiftSteps: number | null;
+  popups: FightAnimationPopup[];
+  death: FightAnimationDeath | null;
+}
+
+export interface FightAnimationRenderFrameModel {
+  frame: FightAnimationFrame;
+  phase: 'a' | 'b';
+  playerSlots: FightAnimationSlotRenderModel[];
+  opponentSlots: FightAnimationSlotRenderModel[];
+}
+
 const DEFAULT_FIGHT_ANIMATION_SPEED = 1;
+const EMPTY_POPUPS: FightAnimationPopup[] = [];
 
 export function refreshFightAnimationFromViewBattle(
   ctx: AppFightAnimationContext,
@@ -28,7 +45,7 @@ export function refreshFightAnimationFromViewBattle(
   ) && Boolean(ctx.formGroup.get('showPositionalArgsInLogs')?.value ?? true);
   ctx.fightAnimationFrames = buildFightAnimationFrames(
     ctx.viewBattleLogs as Parameters<typeof buildFightAnimationFrames>[0],
-    { includePositionPrefix },
+    { includePositionPrefix, includeBoardFrames: false },
   );
   ctx.fightAnimationFrameIndex = ctx.fightAnimationFrames.length > 0 ? 0 : -1;
   ctx.markForCheck();
@@ -93,6 +110,75 @@ export function setFightAnimationSpeed(
   ctx.markForCheck();
 }
 
+export function buildFightAnimationRenderFrame(
+  frame: FightAnimationFrame,
+  frameIndex: number,
+): FightAnimationRenderFrameModel {
+  const phase: 'a' | 'b' = frameIndex % 2 === 0 ? 'a' : 'b';
+  const popupsBySlot = new Map<string, FightAnimationPopup[]>();
+  const shiftStepsBySlot = new Map<string, number>();
+  const shiftedSlots = new Set<string>();
+
+  for (const popup of frame.popups) {
+    const key = slotKey(popup.side, popup.slot);
+    const existing = popupsBySlot.get(key);
+    if (existing) {
+      existing.push(popup);
+    } else {
+      popupsBySlot.set(key, [popup]);
+    }
+  }
+
+  for (const shift of frame.shifts) {
+    const key = slotKey(shift.side, shift.slot);
+    shiftedSlots.add(key);
+    shiftStepsBySlot.set(key, Math.max(1, shift.fromSlot - shift.slot));
+  }
+
+  const attackerKey = frame.impact
+    ? slotKey(frame.impact.attackerSide, frame.impact.attackerSlot)
+    : null;
+  const targetKey = frame.impact
+    ? slotKey(frame.impact.targetSide, frame.impact.targetSlot)
+    : null;
+  const deathKey = frame.death ? slotKey(frame.death.side, frame.death.slot) : null;
+  const visibleDeathKey =
+    deathKey && !shiftedSlots.has(deathKey) ? deathKey : null;
+
+  const toSlotRenderModel = (
+    slot: FightAnimationSlot,
+  ): FightAnimationSlotRenderModel => {
+    const key = slotKey(slot.side, slot.slot);
+    const popups = popupsBySlot.get(key) ?? EMPTY_POPUPS;
+    const hasStatGain = popups.some(
+      (popup) => popup.type !== 'damage' && popup.delta > 0,
+    );
+    return {
+      slot,
+      classMap: {
+        'fight-slot-front': slot.slot === 0,
+        'fight-slot-empty-card': slot.isEmpty,
+        'fight-slot-attacker': attackerKey === key,
+        'fight-slot-target': targetKey === key,
+        'fight-slot-shifted': shiftedSlots.has(key),
+        'fight-slot-stat-gain': hasStatGain,
+        'fight-impact-phase-a': phase === 'a',
+        'fight-impact-phase-b': phase === 'b',
+      },
+      shiftSteps: shiftStepsBySlot.get(key) ?? null,
+      popups,
+      death: visibleDeathKey === key ? frame.death : null,
+    };
+  };
+
+  return {
+    frame,
+    phase,
+    playerSlots: frame.playerSlots.map(toSlotRenderModel),
+    opponentSlots: frame.opponentSlots.map(toSlotRenderModel),
+  };
+}
+
 export function onFightAnimationScrub(
   ctx: AppFightAnimationContext,
   rawValue: string | number,
@@ -143,6 +229,21 @@ export function getFightPopupsForSlot(
   return popups.filter((popup) => popup.side === side && popup.slot === slot);
 }
 
+export function isFightStatGainSlot(
+  ctx: AppFightAnimationContext,
+  side: 'player' | 'opponent',
+  slot: number,
+): boolean {
+  const popups = getCurrentFightAnimationFrame(ctx)?.popups ?? [];
+  return popups.some(
+    (popup) =>
+      popup.side === side &&
+      popup.slot === slot &&
+      popup.type !== 'damage' &&
+      popup.delta > 0,
+  );
+}
+
 export function getFightPopupText(popup: FightAnimationPopup): string {
   const absDelta = Math.abs(popup.delta);
   const sign = popup.delta > 0 ? '+' : '-';
@@ -154,8 +255,14 @@ export function isFightDeathSlot(
   side: 'player' | 'opponent',
   slot: number,
 ): boolean {
-  const death = getCurrentFightAnimationFrame(ctx)?.death;
+  const frame = getCurrentFightAnimationFrame(ctx);
+  const death = frame?.death;
   if (!death) {
+    return false;
+  }
+  if (
+    frame?.shifts?.some((shift) => shift.side === side && shift.slot === slot)
+  ) {
     return false;
   }
   return death.side === side && death.slot === slot;
@@ -166,11 +273,17 @@ export function getFightDeathForSlot(
   side: 'player' | 'opponent',
   slot: number,
 ): FightAnimationDeath | null {
-  const death = getCurrentFightAnimationFrame(ctx)?.death;
+  const frame = getCurrentFightAnimationFrame(ctx);
+  const death = frame?.death;
   if (!death) {
     return null;
   }
   if (death.side !== side || death.slot !== slot) {
+    return null;
+  }
+  if (
+    frame?.shifts?.some((shift) => shift.side === side && shift.slot === slot)
+  ) {
     return null;
   }
   return death;
@@ -276,6 +389,10 @@ function getCurrentFightAnimationFrame(
     return null;
   }
   return ctx.fightAnimationFrames[ctx.fightAnimationFrameIndex] ?? null;
+}
+
+function slotKey(side: 'player' | 'opponent', slot: number): string {
+  return `${side}:${slot}`;
 }
 
 function normalizeFightAnimationSpeed(speed: number): number {

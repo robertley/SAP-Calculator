@@ -419,7 +419,14 @@ export function parseImportPayload(payload: string): unknown {
     return expandKeys(parsedCompressed);
   }
 
-  return JSON.parse(raw) as unknown;
+  const parsed = JSON.parse(raw) as unknown;
+  if (
+    (typeof parsed === 'object' && parsed !== null) ||
+    Array.isArray(parsed)
+  ) {
+    return expandKeys(parsed);
+  }
+  return parsed;
 }
 
 export function buildShareableLink(

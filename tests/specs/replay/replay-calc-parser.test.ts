@@ -53,6 +53,112 @@ describe('ReplayCalcParser', () => {
     expect(abomination?.abominationSwallowedPet2).toBe('Vampire Bat');
   });
 
+  it('uses first resolvable ability in each abomination group', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 6,
+        Mins: {
+          Items: [
+            {
+              Enu: 373,
+              Lvl: 2,
+              Poi: { x: 0 },
+              At: { Perm: 12 },
+              Hp: { Perm: 12 },
+              Abil: [
+                { Enu: 9901, Lvl: 3, Grop: 1 },
+                { Enu: 9001, Lvl: 2, Grop: 1 },
+                { Enu: 9902, Lvl: 1, Grop: 2 },
+                { Enu: 9002, Lvl: 3, Grop: 2 },
+              ],
+            },
+          ],
+        },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: {
+          Items: [],
+        },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(
+      battleJson,
+      undefined,
+      undefined,
+      {
+        abilityPetMap: {
+          '9001': 'Brain Cramp',
+          '9002': 'Vampire Bat',
+        },
+      },
+    );
+
+    const abomination = state.playerPets.find((pet) => pet?.name === 'Abomination');
+
+    expect(abomination).toBeTruthy();
+    expect(abomination?.abominationSwallowedPet1).toBe('Brain Cramp');
+    expect(abomination?.abominationSwallowedPet1Level).toBe(2);
+    expect(abomination?.abominationSwallowedPet2).toBe('Vampire Bat');
+    expect(abomination?.abominationSwallowedPet2Level).toBe(3);
+  });
+
+  it('falls back to ability order when abomination group metadata is missing', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 6,
+        Mins: {
+          Items: [
+            {
+              Enu: 373,
+              Lvl: 2,
+              Poi: { x: 0 },
+              At: { Perm: 12 },
+              Hp: { Perm: 12 },
+              Abil: [
+                { Enu: 9101, Lvl: 1 },
+                { Enu: 9102, Lvl: 2 },
+                { Enu: 9103, Lvl: 3 },
+              ],
+            },
+          ],
+        },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: {
+          Items: [],
+        },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(
+      battleJson,
+      undefined,
+      undefined,
+      {
+        abilityPetMap: {
+          '9101': 'Brain Cramp',
+          '9102': 'Vampire Bat',
+          '9103': 'Leopard',
+        },
+      },
+    );
+
+    const abomination = state.playerPets.find((pet) => pet?.name === 'Abomination');
+
+    expect(abomination).toBeTruthy();
+    expect(abomination?.abominationSwallowedPet1).toBe('Brain Cramp');
+    expect(abomination?.abominationSwallowedPet2).toBe('Vampire Bat');
+    expect(abomination?.abominationSwallowedPet3).toBe('Leopard');
+    expect(abomination?.abominationSwallowedPet1Level).toBe(1);
+    expect(abomination?.abominationSwallowedPet2Level).toBe(2);
+    expect(abomination?.abominationSwallowedPet3Level).toBe(3);
+  });
+
   it('selects battle action by explicit turn before index fallback', () => {
     const actions = [
       {
