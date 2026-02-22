@@ -79,6 +79,18 @@ export function decorateInlineIcons(
     'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/xp.png';
   const expRegex = /(?<![A-Za-z0-9])(?:xp|exp)(?![A-Za-z0-9])/gi;
   updated = replaceMatchesWithIconsOutsideTags(updated, expRegex, () => expIcon);
+  const goldIcon =
+    'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/gold.png';
+  const goldRegex = /(?<![A-Za-z0-9])gold(?![A-Za-z0-9])/gi;
+  updated = replaceMatchesWithIconsOutsideTags(updated, goldRegex, () => goldIcon);
+  const trumpetIcon =
+    'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/trumpet.png';
+  const trumpetRegex = /(?<![A-Za-z0-9])trumpets?(?![A-Za-z0-9])/gi;
+  updated = replaceMatchesWithIconsOutsideTags(
+    updated,
+    trumpetRegex,
+    () => trumpetIcon,
+  );
   return updated;
 }
 

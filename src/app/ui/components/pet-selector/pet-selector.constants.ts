@@ -32,6 +32,35 @@ export const PARROT_COPY_TARGETS = new Set<SwallowedPetTarget>([
   'parrot-abomination-parrot-abomination-beluga',
 ]);
 
+export const TIMES_HURT_SUPPORTED_PETS = new Set<string>(['sabertooth tiger', 'tuna']);
+
+function toNormalizedPetName(petValue: unknown): string | null {
+  if (typeof petValue === 'string') {
+    const normalized = petValue.trim().toLowerCase();
+    return normalized.length > 0 ? normalized : null;
+  }
+  if (
+    petValue &&
+    typeof petValue === 'object' &&
+    typeof (petValue as { name?: unknown }).name === 'string'
+  ) {
+    const normalized = (petValue as { name: string }).name.trim().toLowerCase();
+    return normalized.length > 0 ? normalized : null;
+  }
+  return null;
+}
+
+export function supportsTimesHurtPet(petValue: unknown): boolean {
+  const normalizedName = toNormalizedPetName(petValue);
+  if (!normalizedName) {
+    return false;
+  }
+  if (TIMES_HURT_SUPPORTED_PETS.has(normalizedName)) {
+    return true;
+  }
+  return normalizedName.includes('sabertooth');
+}
+
 export const TOKEN_PETS: string[] = [
   'Adult Flounder',
   'Angry Pygmy Hog',

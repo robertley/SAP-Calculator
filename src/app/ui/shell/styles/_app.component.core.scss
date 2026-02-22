@@ -435,6 +435,14 @@
   line-height: inherit;
 }
 
+.log-position-prefix {
+  font-family: var(--ui-font-main);
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: "kern" 0, "liga" 0;
+  letter-spacing: normal;
+}
+
 .log-empty-state {
   border: 1px dashed #d0d7de;
   border-radius: 8px;
@@ -799,6 +807,20 @@
   opacity: 0.8;
 }
 
+.fight-slot.fight-slot-fainted-ghost {
+  border-color: rgba(73, 80, 87, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(73, 80, 87, 0.22);
+}
+
+.fight-slot.fight-slot-fainted-ghost .fight-slot-art {
+  opacity: 0.68;
+  filter: grayscale(0.72) saturate(0.58);
+}
+
+.fight-slot.fight-slot-fainted-ghost .fight-slot-stats {
+  opacity: 0.72;
+}
+
 .fight-slot-label {
   font-size: 0.68rem;
   font-weight: 700;
@@ -839,6 +861,35 @@
   position: absolute;
   right: -6px;
   bottom: -4px;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.fight-equipment-ghost {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
+.fight-equipment-ghost-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.fight-equipment-gain-ghost {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity, filter;
+}
+
+.fight-equipment-gain-icon {
   width: 16px;
   height: 16px;
   object-fit: contain;
@@ -1140,6 +1191,74 @@
   box-shadow: inset 0 0 0 1px rgba(198, 40, 40, 0.25);
 }
 
+.fight-snipe-impact {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.fight-snipe-impact-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0;
+  filter: drop-shadow(0 0 2px rgba(51, 65, 85, 0.45));
+  will-change: transform, opacity, filter;
+}
+
+@keyframes fight-snipe-hit-a {
+  0% {
+    opacity: 0;
+    transform: translate(14px, -12px) scale(0.58) rotate(-24deg);
+    filter: brightness(1);
+  }
+  42% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.08) rotate(0deg);
+    filter: brightness(1.22);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-3px, 2px) scale(0.82) rotate(8deg);
+    filter: brightness(0.96);
+  }
+}
+
+@keyframes fight-snipe-hit-b {
+  0% {
+    opacity: 0;
+    transform: translate(-14px, -11px) scale(0.56) rotate(22deg);
+    filter: brightness(1);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1.07) rotate(0deg);
+    filter: brightness(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(2px, 2px) scale(0.8) rotate(-7deg);
+    filter: brightness(0.96);
+  }
+}
+
+.fight-slot-snipe-target.fight-impact-phase-a .fight-snipe-impact-icon,
+.fight-stage.fight-phase-a .fight-slot-snipe-target .fight-snipe-impact-icon {
+  animation:
+    fight-snipe-hit-a calc(330ms * var(--fight-motion-scale, 1)) ease-out
+    forwards;
+}
+
+.fight-slot-snipe-target.fight-impact-phase-b .fight-snipe-impact-icon,
+.fight-stage.fight-phase-b .fight-slot-snipe-target .fight-snipe-impact-icon {
+  animation:
+    fight-snipe-hit-b calc(330ms * var(--fight-motion-scale, 1)) ease-out
+    forwards;
+}
+
 .fight-slot.fight-slot-stat-gain {
   border-color: rgba(47, 158, 68, 0.55);
   box-shadow: inset 0 0 0 1px rgba(47, 158, 68, 0.25);
@@ -1237,6 +1356,482 @@
     ease-out;
 }
 
+.fight-slot.fight-slot-equipment-removed {
+  border-color: rgba(230, 73, 45, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(230, 73, 45, 0.25);
+}
+
+@keyframes fight-equipment-remove-a {
+  0% {
+    opacity: 0.95;
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+  48% {
+    opacity: 0.78;
+    transform: translateY(-6px) scale(1.18) rotate(-7deg);
+    filter: brightness(1.16) saturate(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.72) rotate(10deg);
+    filter: brightness(0.9);
+  }
+}
+
+@keyframes fight-equipment-remove-b {
+  0% {
+    opacity: 0.95;
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+  45% {
+    opacity: 0.76;
+    transform: translateY(-5px) scale(1.16) rotate(6deg);
+    filter: brightness(1.14) saturate(1.12);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-13px) scale(0.74) rotate(-9deg);
+    filter: brightness(0.9);
+  }
+}
+
+.fight-slot.fight-slot-equipment-removed.fight-impact-phase-a
+  .fight-equipment-ghost,
+.fight-stage.fight-phase-a
+  .fight-slot.fight-slot-equipment-removed
+  .fight-equipment-ghost {
+  animation:
+    fight-equipment-remove-a calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-equipment-removed.fight-impact-phase-b
+  .fight-equipment-ghost,
+.fight-stage.fight-phase-b
+  .fight-slot.fight-slot-equipment-removed
+  .fight-equipment-ghost {
+  animation:
+    fight-equipment-remove-b calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-equipment-added {
+  border-color: rgba(46, 125, 50, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(46, 125, 50, 0.22);
+}
+
+@keyframes fight-equipment-add-a {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.72);
+    filter: brightness(0.9);
+  }
+  55% {
+    opacity: 0.96;
+    transform: translateY(-2px) scale(1.16);
+    filter: brightness(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes fight-equipment-add-b {
+  0% {
+    opacity: 0;
+    transform: translateY(5px) scale(0.74);
+    filter: brightness(0.9);
+  }
+  52% {
+    opacity: 0.94;
+    transform: translateY(-2px) scale(1.14);
+    filter: brightness(1.13);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+}
+
+.fight-slot.fight-slot-equipment-added.fight-impact-phase-a:not(
+    .fight-slot-equipment-transfer-in
+  )
+  .fight-equipment-gain-ghost,
+.fight-stage.fight-phase-a
+  .fight-slot.fight-slot-equipment-added:not(.fight-slot-equipment-transfer-in)
+  .fight-equipment-gain-ghost {
+  animation:
+    fight-equipment-add-a calc(340ms * var(--fight-motion-scale, 1)) ease-out
+    forwards;
+}
+
+.fight-slot.fight-slot-equipment-added.fight-impact-phase-b:not(
+    .fight-slot-equipment-transfer-in
+  )
+  .fight-equipment-gain-ghost,
+.fight-stage.fight-phase-b
+  .fight-slot.fight-slot-equipment-added:not(.fight-slot-equipment-transfer-in)
+  .fight-equipment-gain-ghost {
+  animation:
+    fight-equipment-add-b calc(340ms * var(--fight-motion-scale, 1)) ease-out
+    forwards;
+}
+
+.fight-slot.fight-slot-transform {
+  border-color: rgba(126, 34, 206, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(126, 34, 206, 0.22);
+}
+
+@keyframes fight-transform-morph-a {
+  0% {
+    transform: scale(0.92);
+    filter: hue-rotate(0deg) brightness(0.95);
+  }
+  45% {
+    transform: scale(1.14);
+    filter: hue-rotate(18deg) brightness(1.18);
+  }
+  100% {
+    transform: scale(1);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+}
+
+@keyframes fight-transform-morph-b {
+  0% {
+    transform: scale(0.93);
+    filter: hue-rotate(0deg) brightness(0.95);
+  }
+  40% {
+    transform: scale(1.12);
+    filter: hue-rotate(-14deg) brightness(1.16);
+  }
+  100% {
+    transform: scale(1);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+}
+
+.fight-slot.fight-slot-transform.fight-impact-phase-a .fight-slot-icon,
+.fight-slot.fight-slot-transform.fight-impact-phase-a .fight-slot-companion,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-transform .fight-slot-icon,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-transform .fight-slot-companion {
+  animation:
+    fight-transform-morph-a calc(360ms * var(--fight-motion-scale, 1))
+    ease-out;
+}
+
+.fight-slot.fight-slot-transform.fight-impact-phase-b .fight-slot-icon,
+.fight-slot.fight-slot-transform.fight-impact-phase-b .fight-slot-companion,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-transform .fight-slot-icon,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-transform .fight-slot-companion {
+  animation:
+    fight-transform-morph-b calc(360ms * var(--fight-motion-scale, 1))
+    ease-out;
+}
+
+.fight-slot.fight-slot-summoned {
+  border-color: rgba(15, 118, 110, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.25);
+}
+
+@keyframes fight-summon-bounce-a {
+  0% {
+    opacity: 0;
+    transform: translateY(13px) scale(0.66);
+    filter: saturate(0.9) brightness(0.9);
+  }
+  62% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.12);
+    filter: saturate(1.2) brightness(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@keyframes fight-summon-bounce-b {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.68);
+    filter: saturate(0.9) brightness(0.9);
+  }
+  58% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.1);
+    filter: saturate(1.18) brightness(1.14);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+.fight-slot.fight-slot-summoned.fight-impact-phase-a .fight-slot-art,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-summoned .fight-slot-art {
+  animation:
+    fight-summon-bounce-a calc(360ms * var(--fight-motion-scale, 1)) ease-out;
+}
+
+.fight-slot.fight-slot-summoned.fight-impact-phase-b .fight-slot-art,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-summoned .fight-slot-art {
+  animation:
+    fight-summon-bounce-b calc(360ms * var(--fight-motion-scale, 1)) ease-out;
+}
+
+.fight-slot.fight-slot-ailment-applied {
+  border-color: rgba(217, 119, 6, 0.58);
+  box-shadow: inset 0 0 0 1px rgba(217, 119, 6, 0.24);
+}
+
+.fight-slot.fight-slot-ailment-cleansed {
+  border-color: rgba(2, 132, 199, 0.56);
+  box-shadow: inset 0 0 0 1px rgba(2, 132, 199, 0.22);
+}
+
+@keyframes fight-ailment-apply-a {
+  0% {
+    opacity: 0;
+    transform: scale(0.65) rotate(-14deg);
+    filter: saturate(1.4) brightness(1.3);
+  }
+  48% {
+    opacity: 0.98;
+    transform: scale(1.18) rotate(8deg);
+    filter: saturate(1.3) brightness(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@keyframes fight-ailment-apply-b {
+  0% {
+    opacity: 0;
+    transform: scale(0.68) rotate(12deg);
+    filter: saturate(1.35) brightness(1.28);
+  }
+  45% {
+    opacity: 0.98;
+    transform: scale(1.16) rotate(-7deg);
+    filter: saturate(1.28) brightness(1.18);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@keyframes fight-ailment-cleanse-a {
+  0% {
+    opacity: 0.96;
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  45% {
+    opacity: 0.84;
+    transform: scale(1.18) rotate(-8deg);
+    filter: hue-rotate(24deg) brightness(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.72) rotate(12deg);
+    filter: hue-rotate(45deg) brightness(0.88);
+  }
+}
+
+@keyframes fight-ailment-cleanse-b {
+  0% {
+    opacity: 0.96;
+    transform: scale(1) rotate(0deg);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  42% {
+    opacity: 0.82;
+    transform: scale(1.16) rotate(7deg);
+    filter: hue-rotate(-18deg) brightness(1.18);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.74) rotate(-11deg);
+    filter: hue-rotate(-38deg) brightness(0.88);
+  }
+}
+
+.fight-slot.fight-slot-ailment-applied.fight-impact-phase-a .fight-slot-equipment,
+.fight-slot.fight-slot-ailment-applied.fight-impact-phase-a
+  .fight-equipment-gain-ghost,
+.fight-stage.fight-phase-a .fight-slot.fight-slot-ailment-applied .fight-slot-equipment,
+.fight-stage.fight-phase-a
+  .fight-slot.fight-slot-ailment-applied
+  .fight-equipment-gain-ghost {
+  animation:
+    fight-ailment-apply-a calc(360ms * var(--fight-motion-scale, 1)) ease-out;
+}
+
+.fight-slot.fight-slot-ailment-applied.fight-impact-phase-b .fight-slot-equipment,
+.fight-slot.fight-slot-ailment-applied.fight-impact-phase-b
+  .fight-equipment-gain-ghost,
+.fight-stage.fight-phase-b .fight-slot.fight-slot-ailment-applied .fight-slot-equipment,
+.fight-stage.fight-phase-b
+  .fight-slot.fight-slot-ailment-applied
+  .fight-equipment-gain-ghost {
+  animation:
+    fight-ailment-apply-b calc(360ms * var(--fight-motion-scale, 1)) ease-out;
+}
+
+.fight-slot.fight-slot-ailment-cleansed.fight-impact-phase-a .fight-equipment-ghost,
+.fight-stage.fight-phase-a
+  .fight-slot.fight-slot-ailment-cleansed
+  .fight-equipment-ghost {
+  animation:
+    fight-ailment-cleanse-a calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-ailment-cleansed.fight-impact-phase-b .fight-equipment-ghost,
+.fight-stage.fight-phase-b
+  .fight-slot.fight-slot-ailment-cleansed
+  .fight-equipment-ghost {
+  animation:
+    fight-ailment-cleanse-b calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-equipment-transfer-out {
+  border-color: rgba(225, 29, 72, 0.58);
+  box-shadow: inset 0 0 0 1px rgba(225, 29, 72, 0.24);
+}
+
+.fight-slot.fight-slot-equipment-transfer-in {
+  border-color: rgba(5, 150, 105, 0.58);
+  box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.24);
+}
+
+@keyframes fight-equipment-transfer-out-a {
+  0% {
+    opacity: 0.96;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  45% {
+    opacity: 0.88;
+    transform: translate(8px, -3px) scale(1.1) rotate(-8deg);
+    filter: brightness(1.16);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(20px, -10px) scale(0.68) rotate(12deg);
+    filter: brightness(0.9);
+  }
+}
+
+@keyframes fight-equipment-transfer-out-b {
+  0% {
+    opacity: 0.96;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  42% {
+    opacity: 0.86;
+    transform: translate(-8px, -3px) scale(1.1) rotate(8deg);
+    filter: brightness(1.14);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-20px, -10px) scale(0.7) rotate(-12deg);
+    filter: brightness(0.9);
+  }
+}
+
+@keyframes fight-equipment-transfer-in-a {
+  0% {
+    opacity: 0;
+    transform: translate(-18px, -10px) scale(0.62) rotate(-8deg);
+    filter: brightness(0.88);
+  }
+  55% {
+    opacity: 0.98;
+    transform: translate(2px, -1px) scale(1.18) rotate(6deg);
+    filter: brightness(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+}
+
+@keyframes fight-equipment-transfer-in-b {
+  0% {
+    opacity: 0;
+    transform: translate(18px, -10px) scale(0.62) rotate(8deg);
+    filter: brightness(0.88);
+  }
+  52% {
+    opacity: 0.98;
+    transform: translate(-2px, -1px) scale(1.16) rotate(-6deg);
+    filter: brightness(1.18);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+}
+
+.fight-slot.fight-slot-equipment-transfer-out.fight-impact-phase-a
+  .fight-equipment-ghost,
+.fight-stage.fight-phase-a
+  .fight-slot.fight-slot-equipment-transfer-out
+  .fight-equipment-ghost {
+  animation:
+    fight-equipment-transfer-out-a calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-equipment-transfer-out.fight-impact-phase-b
+  .fight-equipment-ghost,
+.fight-stage.fight-phase-b
+  .fight-slot.fight-slot-equipment-transfer-out
+  .fight-equipment-ghost {
+  animation:
+    fight-equipment-transfer-out-b calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-equipment-transfer-in.fight-impact-phase-a
+  .fight-equipment-gain-ghost,
+.fight-stage.fight-phase-a
+  .fight-slot.fight-slot-equipment-transfer-in
+  .fight-equipment-gain-ghost {
+  animation:
+    fight-equipment-transfer-in-a calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
+.fight-slot.fight-slot-equipment-transfer-in.fight-impact-phase-b
+  .fight-equipment-gain-ghost,
+.fight-stage.fight-phase-b
+  .fight-slot.fight-slot-equipment-transfer-in
+  .fight-equipment-gain-ghost {
+  animation:
+    fight-equipment-transfer-in-b calc(340ms * var(--fight-motion-scale, 1))
+    ease-out forwards;
+}
+
 .fight-slot.fight-slot-shifted {
   animation:
     fight-shift-forward calc(260ms * var(--fight-motion-scale, 1)) ease-out;
@@ -1303,10 +1898,32 @@
   color: #2f9e44;
 }
 
+.fight-value-popup.fight-value-popup-trumpets {
+  color: #b45309;
+}
+
 .fight-value-popup-icon {
   width: 14px;
   height: 14px;
   object-fit: contain;
+}
+
+.fight-value-popup.fight-value-popup-trumpets .fight-value-popup-icon {
+  animation:
+    fight-trumpet-icon-pop calc(360ms * var(--fight-motion-scale, 1)) ease-out;
+  filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.5));
+}
+
+@keyframes fight-trumpet-icon-pop {
+  0% {
+    transform: scale(0.86) rotate(-8deg);
+  }
+  45% {
+    transform: scale(1.2) rotate(6deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
 }
 
 @keyframes fight-value-pop-a {
@@ -1477,12 +2094,18 @@
 
 @media (prefers-reduced-motion: reduce) {
   .fight-slot,
-  .fight-slot-art,
   .fight-slot-icon,
   .fight-slot-companion,
   .fight-slot-stats,
   .fight-event,
   .fight-value-popup,
+  .fight-value-popup-icon,
+  .fight-snipe-impact,
+  .fight-snipe-impact-icon,
+  .fight-equipment-ghost,
+  .fight-equipment-ghost-icon,
+  .fight-equipment-gain-ghost,
+  .fight-equipment-gain-icon,
   .fight-faint-ghost,
   .fight-log-row {
     animation: none !important;

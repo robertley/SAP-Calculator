@@ -277,33 +277,41 @@ export function loadTeamPreset(options: {
         : 'opponentTransformationAmount';
     options.formGroup.get(transformControl).setValue(team.transformationAmount);
   }
-  const playerToyName = resolvePresetToyName(
-    team.playerToyName,
-    team.toyName,
-    team.opponentToyName,
+  const playerToy = resolvePresetToy(
+    {
+      name: team.playerToyName,
+      level: team.playerToyLevel,
+    },
+    {
+      name: team.toyName,
+      level: team.toyLevel,
+    },
+    {
+      name: team.opponentToyName,
+      level: team.opponentToyLevel,
+    },
   );
-  const playerToyLevel = resolvePresetToyLevel(
-    team.playerToyLevel,
-    team.toyLevel,
-    team.opponentToyLevel,
-  );
-  const opponentToyName = resolvePresetToyName(
-    team.opponentToyName,
-    team.toyName,
-    team.playerToyName,
-  );
-  const opponentToyLevel = resolvePresetToyLevel(
-    team.opponentToyLevel,
-    team.toyLevel,
-    team.playerToyLevel,
+  const opponentToy = resolvePresetToy(
+    {
+      name: team.opponentToyName,
+      level: team.opponentToyLevel,
+    },
+    {
+      name: team.toyName,
+      level: team.toyLevel,
+    },
+    {
+      name: team.playerToyName,
+      level: team.playerToyLevel,
+    },
   );
 
   if (options.side === 'player') {
-    options.formGroup.get('playerToy').setValue(playerToyName);
-    options.formGroup.get('playerToyLevel').setValue(playerToyLevel);
+    options.formGroup.get('playerToy').setValue(playerToy.name);
+    options.formGroup.get('playerToyLevel').setValue(playerToy.level);
   } else {
-    options.formGroup.get('opponentToy').setValue(opponentToyName);
-    options.formGroup.get('opponentToyLevel').setValue(opponentToyLevel);
+    options.formGroup.get('opponentToy').setValue(opponentToy.name);
+    options.formGroup.get('opponentToyLevel').setValue(opponentToy.level);
   }
 
   if (team.playerHardToy != null) {
@@ -505,31 +513,39 @@ function applyTeamEquipmentUses(
   }
 }
 
-function resolvePresetToyName(
-  ...candidates: Array<string | null | undefined>
-): string | null {
+function resolvePresetToy(
+  ...candidates: Array<{ name?: string | null; level?: unknown }>
+): { name: string | null; level: number } {
   for (const candidate of candidates) {
-    if (typeof candidate !== 'string') {
+    const name = resolvePresetToyName(candidate.name);
+    if (!name) {
       continue;
     }
-    if (candidate.trim().length > 0) {
-      return candidate;
-    }
+    return {
+      name,
+      level: resolvePresetToyLevel(candidate.level),
+    };
   }
-  return null;
+  return {
+    name: null,
+    level: 1,
+  };
 }
 
-function resolvePresetToyLevel(
-  ...candidates: Array<number | null | undefined>
-): number {
-  for (const candidate of candidates) {
-    if (Number.isFinite(candidate)) {
-      return Number(candidate);
-    }
+function resolvePresetToyName(candidate: string | null | undefined): string | null {
+  if (typeof candidate !== 'string') {
+    return null;
   }
-  return 1;
+  return candidate.trim().length > 0 ? candidate : null;
 }
 
+function resolvePresetToyLevel(candidate: unknown): number {
+  const parsedLevel = Number(candidate);
+  if (!Number.isFinite(parsedLevel)) {
+    return 1;
+  }
+  return Math.max(1, Math.min(3, Math.trunc(parsedLevel)));
+}
 
 
 

@@ -2,7 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
-import { buildExportPayload } from 'app/ui/shell/state/app.component.share';
+import {
+  ExportPayloadFormat,
+  buildExportPayload,
+} from 'app/ui/shell/state/app.component.share';
 
 @Component({
   selector: 'app-export-calculator',
@@ -15,6 +18,7 @@ export class ExportCalculatorComponent implements OnInit {
   @Input()
   formGroup: FormGroup;
 
+  exportFormat: ExportPayloadFormat = 'compressed';
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
   private statusTimer: ReturnType<typeof setTimeout> | null = null;
@@ -23,12 +27,21 @@ export class ExportCalculatorComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  get isLegacyJsonExport(): boolean {
+    return this.exportFormat === 'legacyJson';
+  }
+
+  onExportFormatChange(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    this.exportFormat = target?.checked ? 'legacyJson' : 'compressed';
+  }
+
   formGroupValueString() {
     if (!this.formGroup) {
       return '';
     }
     try {
-      return buildExportPayload(this.formGroup);
+      return buildExportPayload(this.formGroup, this.exportFormat);
     } catch (e) {
       console.error('Error creating export string:', e);
       return 'Error: Could not generate the export data.';

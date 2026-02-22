@@ -1,6 +1,9 @@
 import { Directive } from '@angular/core';
 import { Pet } from 'app/domain/entities/pet.class';
-import { PARROT_COPY_ABOMINATION_SWALLOWED_FIELDS } from './pet-selector.constants';
+import {
+  PARROT_COPY_ABOMINATION_SWALLOWED_FIELDS,
+  supportsTimesHurtPet,
+} from './pet-selector.constants';
 import { PetSelectorPackFiltering } from './pet-selector-pack-filtering';
 
 @Directive()
@@ -83,8 +86,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     const control = this.formGroup.get(
       `abominationSwallowedPet${outerIndex}ParrotCopyPetAbominationSwallowedPet${innerIndex}`,
     );
-    const name = control?.value;
-    return name === 'Sabertooth Tiger' || name === 'Tuna';
+    return supportsTimesHurtPet(control?.value);
   }
 
   setParrotCopyPetAbominationSwallowedPets(_value: unknown) {
@@ -242,16 +244,14 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     const control = this.formGroup.get(
       `parrotCopyPetAbominationSwallowedPet${outerIndex}ParrotCopyPetAbominationSwallowedPet${innerIndex}`,
     );
-    const name = control?.value;
-    return name === 'Sabertooth Tiger' || name === 'Tuna';
+    return supportsTimesHurtPet(control?.value);
   }
 
   shouldShowParrotCopyPetAbominationTimesHurt(index: number): boolean {
     const control = this.formGroup.get(
       `parrotCopyPetAbominationSwallowedPet${index + 1}`,
     );
-    const name = control?.value;
-    return name === 'Sabertooth Tiger' || name === 'Tuna';
+    return supportsTimesHurtPet(control?.value);
   }
 
   setSarcasticFringeheadSwallowedPet(value: string) {
@@ -299,8 +299,7 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
 
   shouldShowAbominationSwallowTimesHurt(index: number): boolean {
     const control = this.formGroup.get(`abominationSwallowedPet${index + 1}`);
-    const name = control?.value;
-    return name === 'Sabertooth Tiger' || name === 'Tuna';
+    return supportsTimesHurtPet(control?.value);
   }
 
   setBattlesFought(value: number) {

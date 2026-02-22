@@ -1,6 +1,21 @@
 <div class="form-group">
-  <div class="text-muted mb-2">
+  <div class="form-check form-switch mb-2">
+    <input
+      id="legacyJsonExportToggle"
+      class="form-check-input"
+      type="checkbox"
+      [checked]="isLegacyJsonExport"
+      (change)="onExportFormatChange($event)"
+    />
+    <label class="form-check-label" for="legacyJsonExportToggle">
+      Use legacy .json export format
+    </label>
+  </div>
+  <div class="text-muted mb-2" *ngIf="!isLegacyJsonExport">
     Compressed export code. Paste this into Import to restore the calculator.
+  </div>
+  <div class="text-muted mb-2" *ngIf="isLegacyJsonExport">
+    Legacy JSON export. Paste this into Import to restore the calculator.
   </div>
   <textarea
     class="form-control mb-2 calc-textarea"

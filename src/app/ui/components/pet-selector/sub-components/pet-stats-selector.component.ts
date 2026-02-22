@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { supportsTimesHurtPet } from '../pet-selector.constants';
 
 @Component({
   selector: 'app-pet-stats-selector',
@@ -8,8 +9,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <ng-container [formGroup]="formGroup">
-      <!-- Tuna specific -->
-      <div class="col-12 mb-2" *ngIf="petName === 'Tuna'">
+      <!-- Times Hurt -->
+      <div class="col-12 mb-2" *ngIf="shouldShowTimesHurtInput()">
         <label for="timesHurt">Times Hurt</label>
         <input
           class="form-control"
@@ -153,6 +154,11 @@ export class PetStatsSelectorComponent {
       return false;
     }
     return this.foodsEatenPets.has(this.petName);
+  }
+
+  shouldShowTimesHurtInput(): boolean {
+    const currentName = this.petName ?? this.formGroup?.get('name')?.value;
+    return supportsTimesHurtPet(currentName);
   }
 
   getFriendsDiedMax(): number {

@@ -142,5 +142,67 @@ describe('Foods Eaten seed values', () => {
 
     expect(beetleLog).toBeDefined();
   });
+
+  it('Locust summons by level and feeds per food eaten', () => {
+    const config: SimulationConfig = {
+      ...baseConfig,
+      playerPets: [
+        {
+          name: 'Locust',
+          attack: 2,
+          health: 1,
+          exp: 0,
+          equipment: null,
+          belugaSwallowedPet: null,
+          mana: 0,
+          triggersConsumed: 0,
+          foodsEaten: 3,
+          abominationSwallowedPet1: null,
+          abominationSwallowedPet2: null,
+          abominationSwallowedPet3: null,
+          battlesFought: 0,
+          timesHurt: 0,
+        },
+        null,
+        null,
+        null,
+        null,
+      ],
+      opponentPets: [
+        {
+          name: 'Fish',
+          attack: 6,
+          health: 20,
+          exp: 0,
+          equipment: null,
+          belugaSwallowedPet: null,
+          mana: 0,
+          triggersConsumed: 0,
+          abominationSwallowedPet1: null,
+          abominationSwallowedPet2: null,
+          abominationSwallowedPet3: null,
+          battlesFought: 0,
+          timesHurt: 0,
+        },
+        null,
+        null,
+        null,
+        null,
+      ],
+    };
+
+    const result = runSimulation(config);
+    const logs = result.battles?.[0]?.logs ?? [];
+    const locustLog = logs.find(
+      (log: any) =>
+        log.type === 'ability' &&
+        typeof log.message === 'string' &&
+        log.message.includes('Locust summoned'),
+    );
+
+    expect(locustLog).toBeDefined();
+    expect(String(locustLog.message)).toContain('Locust summoned 1 friend');
+    expect(String(locustLog.message)).not.toContain('Locust summoned 3 friend');
+  });
 });
 

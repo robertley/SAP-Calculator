@@ -60,7 +60,7 @@
     </div>
 
     <!-- Stats & Mana/Triggers -->
-    <app-pet-stats-selector [formGroup]="formGroup" [petName]="pet?.name" [mana]="mana"
+    <app-pet-stats-selector [formGroup]="formGroup" [petName]="formGroup.get('name')?.value" [mana]="mana"
       [triggersConsumed]="triggersConsumed" [attackHealthMax]="attackHealthMax">
     </app-pet-stats-selector>
 
