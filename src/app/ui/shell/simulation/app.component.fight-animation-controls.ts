@@ -1,11 +1,13 @@
 import {
   FightAnimationDeath,
+  FightAnimationEquipmentChange,
   FightAnimationFrame,
   FightAnimationPopup,
   FightAnimationSlot,
   buildFightAnimationFrames,
 } from './app.component.fight-animation';
 import { FormGroup } from '@angular/forms';
+import { AILMENT_CATEGORIES } from 'app/integrations/equipment/equipment-categories';
 
 export interface AppFightAnimationContext {
   fightAnimationFrames: FightAnimationFrame[];
@@ -24,6 +26,9 @@ export interface FightAnimationSlotRenderModel {
   shiftSteps: number | null;
   popups: FightAnimationPopup[];
   death: FightAnimationDeath | null;
+  removedEquipment: FightAnimationEquipmentVisual | null;
+  addedEquipment: FightAnimationEquipmentVisual | null;
+  showSnipeImpact: boolean;
 }
 
 export interface FightAnimationRenderFrameModel {
@@ -33,16 +38,26 @@ export interface FightAnimationRenderFrameModel {
   opponentSlots: FightAnimationSlotRenderModel[];
 }
 
+export interface FightAnimationEquipmentVisual {
+  equipmentName: string | null;
+  equipmentIconSrc: string | null;
+}
+
 const DEFAULT_FIGHT_ANIMATION_SPEED = 1;
 const EMPTY_POPUPS: FightAnimationPopup[] = [];
+const ailmentNames = new Set(
+  Object.values(AILMENT_CATEGORIES)
+    .flat()
+    .filter(Boolean)
+    .map((name) => normalizeName(name)),
+);
 
 export function refreshFightAnimationFromViewBattle(
   ctx: AppFightAnimationContext,
 ): void {
   pauseFightAnimation(ctx, false);
-  const includePositionPrefix = Boolean(
-    ctx.formGroup.get('showTriggerNamesInLogs')?.value,
-  ) && Boolean(ctx.formGroup.get('showPositionalArgsInLogs')?.value ?? true);
+  const includePositionPrefix =
+    ctx.formGroup.get('showPositionalArgsInLogs')?.value !== false;
   ctx.fightAnimationFrames = buildFightAnimationFrames(
     ctx.viewBattleLogs as Parameters<typeof buildFightAnimationFrames>[0],
     { includePositionPrefix, includeBoardFrames: false },
@@ -113,11 +128,16 @@ export function setFightAnimationSpeed(
 export function buildFightAnimationRenderFrame(
   frame: FightAnimationFrame,
   frameIndex: number,
+  previousFrame: FightAnimationFrame | null = null,
 ): FightAnimationRenderFrameModel {
   const phase: 'a' | 'b' = frameIndex % 2 === 0 ? 'a' : 'b';
   const popupsBySlot = new Map<string, FightAnimationPopup[]>();
   const shiftStepsBySlot = new Map<string, number>();
   const shiftedSlots = new Set<string>();
+  const removedEquipmentBySlot = new Map<string, FightAnimationEquipmentVisual>();
+  const addedEquipmentBySlot = new Map<string, FightAnimationEquipmentVisual>();
+  const ailmentAppliedSlots = new Set<string>();
+  const ailmentCleansedSlots = new Set<string>();
 
   for (const popup of frame.popups) {
     const key = slotKey(popup.side, popup.slot);
@@ -135,12 +155,34 @@ export function buildFightAnimationRenderFrame(
     shiftStepsBySlot.set(key, Math.max(1, shift.fromSlot - shift.slot));
   }
 
+  for (const equipmentChange of frame.equipmentChanges) {
+    const key = slotKey(equipmentChange.side, equipmentChange.slot);
+    const visual = mapEquipmentChangeToVisual(equipmentChange);
+    if (equipmentChange.action === 'removed') {
+      removedEquipmentBySlot.set(key, visual);
+      if (isAilmentEquipmentName(equipmentChange.equipmentName)) {
+        ailmentCleansedSlots.add(key);
+      }
+      continue;
+    }
+    addedEquipmentBySlot.set(key, visual);
+    if (isAilmentEquipmentName(equipmentChange.equipmentName)) {
+      ailmentAppliedSlots.add(key);
+    }
+  }
+  const { transferInSlots, transferOutSlots } =
+    buildEquipmentTransferSlotSets(frame.equipmentChanges);
+  const transformedSlots = buildTransformedSlotSet(frame, previousFrame);
+  const summonedSlots = buildSummonedSlotSet(frame, previousFrame);
+
   const attackerKey = frame.impact
     ? slotKey(frame.impact.attackerSide, frame.impact.attackerSlot)
     : null;
   const targetKey = frame.impact
     ? slotKey(frame.impact.targetSide, frame.impact.targetSlot)
     : null;
+  const isSnipeImpact = frame.impact?.isSnipe === true;
+  const snipeTargetKey = isSnipeImpact ? targetKey : null;
   const deathKey = frame.death ? slotKey(frame.death.side, frame.death.slot) : null;
   const visibleDeathKey =
     deathKey && !shiftedSlots.has(deathKey) ? deathKey : null;
@@ -158,16 +200,29 @@ export function buildFightAnimationRenderFrame(
       classMap: {
         'fight-slot-front': slot.slot === 0,
         'fight-slot-empty-card': slot.isEmpty,
-        'fight-slot-attacker': attackerKey === key,
+        'fight-slot-attacker': attackerKey === key && !isSnipeImpact,
         'fight-slot-target': targetKey === key,
+        'fight-slot-snipe-target': snipeTargetKey === key,
         'fight-slot-shifted': shiftedSlots.has(key),
+        'fight-slot-fainted-ghost': slot.pendingRemoval,
         'fight-slot-stat-gain': hasStatGain,
+        'fight-slot-equipment-removed': removedEquipmentBySlot.has(key),
+        'fight-slot-equipment-added': addedEquipmentBySlot.has(key),
+        'fight-slot-equipment-transfer-out': transferOutSlots.has(key),
+        'fight-slot-equipment-transfer-in': transferInSlots.has(key),
+        'fight-slot-transform': transformedSlots.has(key),
+        'fight-slot-summoned': summonedSlots.has(key),
+        'fight-slot-ailment-applied': ailmentAppliedSlots.has(key),
+        'fight-slot-ailment-cleansed': ailmentCleansedSlots.has(key),
         'fight-impact-phase-a': phase === 'a',
         'fight-impact-phase-b': phase === 'b',
       },
       shiftSteps: shiftStepsBySlot.get(key) ?? null,
       popups,
       death: visibleDeathKey === key ? frame.death : null,
+      removedEquipment: removedEquipmentBySlot.get(key) ?? null,
+      addedEquipment: addedEquipmentBySlot.get(key) ?? null,
+      showSnipeImpact: snipeTargetKey === key,
     };
   };
 
@@ -391,8 +446,187 @@ function getCurrentFightAnimationFrame(
   return ctx.fightAnimationFrames[ctx.fightAnimationFrameIndex] ?? null;
 }
 
+function mapEquipmentChangeToVisual(
+  equipmentChange: FightAnimationEquipmentChange,
+): FightAnimationEquipmentVisual {
+  return {
+    equipmentName: equipmentChange.equipmentName,
+    equipmentIconSrc: equipmentChange.equipmentIconSrc,
+  };
+}
+
 function slotKey(side: 'player' | 'opponent', slot: number): string {
   return `${side}:${slot}`;
+}
+
+function isAilmentEquipmentName(equipmentName: string | null): boolean {
+  if (!equipmentName) {
+    return false;
+  }
+  return ailmentNames.has(normalizeName(equipmentName));
+}
+
+function buildEquipmentTransferSlotSets(
+  equipmentChanges: FightAnimationEquipmentChange[],
+): {
+  transferInSlots: Set<string>;
+  transferOutSlots: Set<string>;
+} {
+  const removedByToken = new Map<string, FightAnimationEquipmentChange[]>();
+  const transferInSlots = new Set<string>();
+  const transferOutSlots = new Set<string>();
+
+  for (const change of equipmentChanges) {
+    if (change.action !== 'removed') {
+      continue;
+    }
+    const token = getEquipmentTransferToken(change);
+    if (!token) {
+      continue;
+    }
+    const bucket = removedByToken.get(token);
+    if (bucket) {
+      bucket.push(change);
+    } else {
+      removedByToken.set(token, [change]);
+    }
+  }
+
+  for (const change of equipmentChanges) {
+    if (change.action !== 'added') {
+      continue;
+    }
+    const token = getEquipmentTransferToken(change);
+    if (!token) {
+      continue;
+    }
+    const removedBucket = removedByToken.get(token);
+    if (!removedBucket || removedBucket.length === 0) {
+      continue;
+    }
+    const removedChange = removedBucket.shift();
+    if (!removedChange) {
+      continue;
+    }
+    const fromKey = slotKey(removedChange.side, removedChange.slot);
+    const toKey = slotKey(change.side, change.slot);
+    if (fromKey === toKey) {
+      continue;
+    }
+    transferOutSlots.add(fromKey);
+    transferInSlots.add(toKey);
+  }
+
+  return {
+    transferInSlots,
+    transferOutSlots,
+  };
+}
+
+function getEquipmentTransferToken(
+  equipmentChange: FightAnimationEquipmentChange,
+): string | null {
+  const normalizedName = normalizeName(equipmentChange.equipmentName);
+  if (normalizedName) {
+    return `name:${normalizedName}`;
+  }
+  const normalizedIcon = normalizeName(equipmentChange.equipmentIconSrc);
+  if (normalizedIcon) {
+    return `icon:${normalizedIcon}`;
+  }
+  return null;
+}
+
+function buildTransformedSlotSet(
+  frame: FightAnimationFrame,
+  previousFrame: FightAnimationFrame | null,
+): Set<string> {
+  const transformedSlots = new Set<string>();
+  if (!previousFrame || !/\btransform(?:ed|ing)?\b/i.test(frame.text)) {
+    return transformedSlots;
+  }
+
+  addChangedPetSlots(
+    transformedSlots,
+    frame.playerSlots,
+    previousFrame.playerSlots,
+    (current, previous) =>
+      !current.isEmpty &&
+      !previous.isEmpty &&
+      didPetIdentityChange(previous, current),
+  );
+  addChangedPetSlots(
+    transformedSlots,
+    frame.opponentSlots,
+    previousFrame.opponentSlots,
+    (current, previous) =>
+      !current.isEmpty &&
+      !previous.isEmpty &&
+      didPetIdentityChange(previous, current),
+  );
+
+  return transformedSlots;
+}
+
+function buildSummonedSlotSet(
+  frame: FightAnimationFrame,
+  previousFrame: FightAnimationFrame | null,
+): Set<string> {
+  const summonedSlots = new Set<string>();
+  if (!previousFrame || !/\b(?:summoned|spawned)\b/i.test(frame.text)) {
+    return summonedSlots;
+  }
+
+  addChangedPetSlots(
+    summonedSlots,
+    frame.playerSlots,
+    previousFrame.playerSlots,
+    (current, previous) => !current.isEmpty && previous.isEmpty,
+  );
+  addChangedPetSlots(
+    summonedSlots,
+    frame.opponentSlots,
+    previousFrame.opponentSlots,
+    (current, previous) => !current.isEmpty && previous.isEmpty,
+  );
+
+  return summonedSlots;
+}
+
+function addChangedPetSlots(
+  changedSlots: Set<string>,
+  currentSlots: FightAnimationSlot[],
+  previousSlots: FightAnimationSlot[],
+  shouldInclude: (current: FightAnimationSlot, previous: FightAnimationSlot) => boolean,
+): void {
+  const slotCount = Math.min(currentSlots.length, previousSlots.length);
+  for (let index = 0; index < slotCount; index += 1) {
+    const current = currentSlots[index];
+    const previous = previousSlots[index];
+    if (!current || !previous) {
+      continue;
+    }
+    if (!shouldInclude(current, previous)) {
+      continue;
+    }
+    changedSlots.add(slotKey(current.side, current.slot));
+  }
+}
+
+function didPetIdentityChange(
+  previous: FightAnimationSlot,
+  current: FightAnimationSlot,
+): boolean {
+  const previousName = normalizeName(previous.petName);
+  const currentName = normalizeName(current.petName);
+  if (previousName || currentName) {
+    return previousName !== currentName;
+  }
+  return normalizeName(previous.petIconSrc) !== normalizeName(current.petIconSrc);
+}
+
+function normalizeName(value: string | null | undefined): string {
+  return (value ?? '').trim().toLowerCase();
 }
 
 function normalizeFightAnimationSpeed(speed: number): number {

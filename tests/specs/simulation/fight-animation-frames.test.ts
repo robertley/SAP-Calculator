@@ -10,7 +10,7 @@ import { buildFightAnimationRenderFrame } from '../../../src/app/ui/shell/simula
 describe('Fight animation frames', () => {
   it('parses board snapshots into player/opponent slots', () => {
     const message =
-      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant"><img src="assets/items/Garlic.png" class="log-inline-icon" alt="Garlic">(4/5/2xp) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4/1xp) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant"><img src="assets/items/Garlic.png" class="log-inline-icon" alt="Garlic">(4/5/2xp/6mana) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4/1xp/2mana) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
 
     const state = parseFightAnimationBoardState(message);
 
@@ -20,6 +20,7 @@ describe('Fight animation frames', () => {
       attack: 4,
       health: 5,
       exp: 2,
+      mana: 6,
       petName: 'Ant',
       equipmentName: 'Garlic',
     });
@@ -28,6 +29,7 @@ describe('Fight animation frames', () => {
       attack: 3,
       health: 4,
       exp: 1,
+      mana: 2,
       petName: 'Fish',
     });
     expect(state?.playerSlots[1].isEmpty).toBe(true);
@@ -79,12 +81,95 @@ describe('Fight animation frames', () => {
       type: 'damage',
       delta: -4,
     });
-    expect(frames[2].opponentSlots[0].isEmpty).toBe(true);
+    expect(frames[2].opponentSlots[0]).toMatchObject({
+      isEmpty: false,
+      petName: 'Fish',
+      health: 0,
+      pendingRemoval: true,
+    });
     expect(frames[4]).toMatchObject({
       logIndex: 5,
       type: 'board',
       text: 'Player is the winner',
     });
+  });
+
+  it('normalizes positional prefixes that contain extra whitespace', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(4/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'attack',
+        message: '[P4->O3   ] Ant attacks Fish for 2.',
+        sourceIndex: 1,
+        targetIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames[1].text).toBe('[P4->O3] Ant attacks Fish for 2.');
+  });
+
+  it('normalizes positional prefixes containing unicode/entity spacing noise', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(4/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'attack',
+        message: `[O1->P4\u2007\u2007] Fish attacks Ant for 2.`,
+        sourceIndex: 1,
+        targetIndex: 1,
+      },
+      {
+        type: 'attack',
+        message: '[O1->P4&nbsp;&nbsp;] Fish attacks Ant for 2.',
+        sourceIndex: 1,
+        targetIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames[1].text).toBe('[O1->P4] Fish attacks Ant for 2.');
+    expect(frames[2].text).toBe('[O1->P4] Fish attacks Ant for 2.');
+  });
+
+  it('marks sniped attacks and exposes snipe impact on the target slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'attack',
+        message: 'Ant sniped Pig for 3.',
+        sourceIndex: 1,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 0);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].impact).toMatchObject({
+      attackerSide: 'player',
+      attackerSlot: 0,
+      targetSide: 'opponent',
+      targetSlot: 0,
+      damage: 3,
+      isSnipe: true,
+    });
+    expect(renderFrame.opponentSlots[0].showSnipeImpact).toBe(true);
+    expect(renderFrame.opponentSlots[0].classMap['fight-slot-snipe-target']).toBe(
+      true,
+    );
+    expect(renderFrame.playerSlots[0].classMap['fight-slot-attacker']).toBe(
+      false,
+    );
   });
 
   it('can skip board logs while still applying board snapshots to state', () => {
@@ -211,6 +296,132 @@ describe('Fight animation frames', () => {
     });
   });
 
+  it('applies mana gain logs and emits mana popups on the target slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Roc.png" class="log-pet-icon" alt="Roc">(6/7/0xp/0mana) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(3/4/1xp/5mana) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8/0xp/0mana) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Roc gave Ant 2 mana.',
+        sourceIndex: 2,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Ant',
+      mana: 7,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'mana',
+      delta: 2,
+    });
+  });
+
+  it('applies mana spend logs to the source slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Sea-Serpent.png" class="log-pet-icon" alt="Sea Serpent">(9/9/0xp/6mana) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8/0xp/0mana) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Sea Serpent spent 3 mana.',
+        sourceIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Sea Serpent',
+      mana: 3,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'mana',
+      delta: -3,
+    });
+  });
+
+  it('applies "took mana from" logs to the drained target slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Kitsune.png" class="log-pet-icon" alt="Kitsune">(6/6/0xp/0mana) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4/0xp/6mana) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8/0xp/0mana) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Kitsune took 4 mana from Ant.',
+        sourceIndex: 2,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Ant',
+      mana: 2,
+    });
+    expect(frames[1].playerSlots[1]).toMatchObject({
+      petName: 'Kitsune',
+      mana: 0,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'mana',
+      delta: -4,
+    });
+  });
+
+  it('emits trumpet popups for gain and spend trumpet logs', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'trumpets',
+        message: 'Ant gained 3 trumpets. (3)',
+        sourceIndex: 1,
+        playerIsOpponent: false,
+      },
+      {
+        type: 'trumpets',
+        message: 'Ant spent 1 trumpets. (2)',
+        sourceIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(3);
+    expect(frames[1].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'trumpets',
+      delta: 3,
+    });
+    expect(frames[2].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'trumpets',
+      delta: -1,
+    });
+  });
+
   it('updates the slot pet visual when a stat-gain log names a different pet', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
@@ -274,6 +485,231 @@ describe('Fight animation frames', () => {
     expect(frames[1].playerSlots[0].equipmentName).toBeNull();
   });
 
+  it('applies "removed X from Y" logs as equipment removal with render metadata', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Darwins-Fox.png" class="log-pet-icon" alt="Darwin\'s Fox">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig"><img src="assets/items/Churros.png" class="log-inline-icon" alt="Churros">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'equipment',
+        message: "Darwin's Fox removed Churros from Pig (Baguette).",
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 0);
+    const removedChange = frames[1].equipmentChanges.find(
+      (change) => change.action === 'removed',
+    );
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      equipmentName: null,
+      equipmentIconSrc: null,
+    });
+    expect(removedChange).toMatchObject({
+      side: 'opponent',
+      slot: 0,
+      action: 'removed',
+      equipmentName: 'Churros',
+    });
+    expect(removedChange?.equipmentIconSrc).toContain('Churros');
+    expect(renderFrame.opponentSlots[0].classMap['fight-slot-equipment-removed']).toBe(
+      true,
+    );
+    expect(renderFrame.opponentSlots[0].removedEquipment?.equipmentName).toBe(
+      'Churros',
+    );
+  });
+
+  it('uses the gave-clause equipment when a log removes then gives equipment', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Frigatebird.png" class="log-pet-icon" alt="Frigatebird">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig"><img src="assets/items/Garlic.png" class="log-inline-icon" alt="Garlic">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Frigatebird removed Garlic from Pig and gave Pig Rice.',
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const removedChange = frames[1].equipmentChanges.find(
+      (change) => change.action === 'removed',
+    );
+    const addedChange = frames[1].equipmentChanges.find(
+      (change) => change.action === 'added',
+    );
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      equipmentName: 'Rice',
+    });
+    expect(removedChange?.equipmentName).toBe('Garlic');
+    expect(addedChange?.equipmentName).toBe('Rice');
+  });
+
+  it('marks stole-equipment logs as transfer-out and transfer-in slot animations', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Darwins-Fox.png" class="log-pet-icon" alt="Darwin\'s Fox">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig"><img src="assets/items/Churros.png" class="log-inline-icon" alt="Churros">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'equipment',
+        message: "Darwin's Fox stole Churros equipment from Pig.",
+        sourceIndex: 1,
+        targetIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(
+      frames[1],
+      0,
+      frames[0],
+    );
+    const removedChange = frames[1].equipmentChanges.find(
+      (change) => change.action === 'removed',
+    );
+    const addedChange = frames[1].equipmentChanges.find(
+      (change) => change.action === 'added',
+    );
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0].equipmentName).toBe('Churros');
+    expect(frames[1].opponentSlots[0].equipmentName).toBeNull();
+    expect(removedChange).toMatchObject({
+      side: 'opponent',
+      slot: 0,
+      action: 'removed',
+      equipmentName: 'Churros',
+    });
+    expect(addedChange).toMatchObject({
+      side: 'player',
+      slot: 0,
+      action: 'added',
+      equipmentName: 'Churros',
+    });
+    expect(
+      renderFrame.opponentSlots[0].classMap['fight-slot-equipment-transfer-out'],
+    ).toBe(true);
+    expect(
+      renderFrame.playerSlots[0].classMap['fight-slot-equipment-transfer-in'],
+    ).toBe(true);
+    expect(renderFrame.playerSlots[0].addedEquipment?.equipmentName).toBe(
+      'Churros',
+    );
+  });
+
+  it('flags transformed slots for morph animations', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Tadpole.png" class="log-pet-icon" alt="Tadpole">(2/1) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Tadpole transformed into a level 1 Frog.',
+        sourceIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(
+      frames[1],
+      0,
+      frames[0],
+    );
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0].petName).toBe('Frog');
+    expect(renderFrame.playerSlots[0].classMap['fight-slot-transform']).toBe(
+      true,
+    );
+  });
+
+  it('flags newly occupied summoned slots for spawn bounce animations', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Roc.png" class="log-pet-icon" alt="Roc">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Roc summoned Ant (2/2).',
+        sourceIndex: 1,
+        targetIndex: 2,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(
+      frames[1],
+      0,
+      frames[0],
+    );
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[1]).toMatchObject({
+      petName: 'Ant',
+      attack: 2,
+      health: 2,
+    });
+    expect(renderFrame.playerSlots[1].classMap['fight-slot-summoned']).toBe(
+      true,
+    );
+  });
+
+  it('flags ailment apply and cleanse equipment changes for badge pop animations', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Kakapo.png" class="log-pet-icon" alt="Kakapo">(8/8) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Kakapo gave Pig Spooked.',
+        sourceIndex: 1,
+        targetIndex: 1,
+      },
+      {
+        type: 'equipment',
+        message: 'Kakapo removed Spooked from Pig.',
+        sourceIndex: 1,
+        targetIndex: 1,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const appliedRenderFrame = buildFightAnimationRenderFrame(
+      frames[1],
+      0,
+      frames[0],
+    );
+    const cleansedRenderFrame = buildFightAnimationRenderFrame(
+      frames[2],
+      1,
+      frames[1],
+    );
+
+    expect(frames).toHaveLength(3);
+    expect(frames[1].opponentSlots[0].equipmentName).toBe('Spooked');
+    expect(frames[2].opponentSlots[0].equipmentName).toBeNull();
+    expect(
+      appliedRenderFrame.opponentSlots[0].classMap['fight-slot-ailment-applied'],
+    ).toBe(true);
+    expect(
+      cleansedRenderFrame.opponentSlots[0].classMap['fight-slot-ailment-cleansed'],
+    ).toBe(true);
+    expect(appliedRenderFrame.opponentSlots[0].addedEquipment?.equipmentName).toBe(
+      'Spooked',
+    );
+    expect(
+      cleansedRenderFrame.opponentSlots[0].removedEquipment?.equipmentName,
+    ).toBe('Spooked');
+  });
+
   it('keeps same-side attack targets on their own side', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/5) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(7/7) O2 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(7/7) ___ (-/-) ___ (-/-) ___ (-/-)';
@@ -334,7 +770,7 @@ describe('Fight animation frames', () => {
     });
   });
 
-  it('captures faint and shift-forward effects when front units die', () => {
+  it('captures faint state and defers front-unit removal until move phase', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(2/2) O2 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(6/6) ___ (-/-) ___ (-/-) ___ (-/-)';
     const logs: any[] = [
@@ -354,17 +790,18 @@ describe('Fight animation frames', () => {
       slot: 0,
       petName: 'Fish',
     });
-    expect(frames[1].shifts).toContainEqual({
-      side: 'opponent',
-      slot: 0,
-      fromSlot: 1,
-    });
+    expect(frames[1].shifts).toHaveLength(0);
     expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Fish',
+      health: 0,
+      pendingRemoval: true,
+    });
+    expect(frames[1].opponentSlots[1]).toMatchObject({
       petName: 'Pig',
     });
   });
 
-  it('precomputes slot render model classes and suppresses death ghost on shifted slot', () => {
+  it('precomputes fainted ghost classes before removal and keeps death overlay on source slot', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(2/2) O2 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(6/6) ___ (-/-) ___ (-/-) ___ (-/-)';
     const logs: any[] = [
@@ -381,9 +818,59 @@ describe('Fight animation frames', () => {
     const shiftedOpponentFront = renderFrame.opponentSlots[0];
 
     expect(renderFrame.phase).toBe('b');
-    expect(shiftedOpponentFront.classMap['fight-slot-shifted']).toBe(true);
-    expect(shiftedOpponentFront.shiftSteps).toBe(1);
-    expect(shiftedOpponentFront.death).toBeNull();
+    expect(shiftedOpponentFront.classMap['fight-slot-shifted']).toBe(false);
+    expect(shiftedOpponentFront.classMap['fight-slot-fainted-ghost']).toBe(true);
+    expect(shiftedOpponentFront.shiftSteps).toBeNull();
+    expect(shiftedOpponentFront.death?.petName).toBe('Fish');
+  });
+
+  it('lets fainted units snipe before removal and clears them on move', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(2/2) O2 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(6/6) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'death',
+        message: 'Fish fainted.',
+        sourceIndex: 1,
+        playerIsOpponent: true,
+      },
+      {
+        type: 'attack',
+        message: 'Fish sniped Ant for 1.',
+        sourceIndex: 1,
+        targetIndex: 1,
+        playerIsOpponent: true,
+      },
+      {
+        type: 'move',
+        message: 'Units moved.',
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(4);
+    expect(frames[2].impact).toMatchObject({
+      attackerSide: 'opponent',
+      attackerSlot: 0,
+      targetSide: 'player',
+      targetSlot: 0,
+      isSnipe: true,
+    });
+    expect(frames[2].opponentSlots[0]).toMatchObject({
+      petName: 'Fish',
+      pendingRemoval: true,
+    });
+    expect(frames[3].shifts).toContainEqual({
+      side: 'opponent',
+      slot: 0,
+      fromSlot: 1,
+    });
+    expect(frames[3].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      pendingRemoval: false,
+    });
   });
 
   it('applies per-slot impact phase classes for attacker lunge animations', () => {

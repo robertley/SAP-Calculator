@@ -3,7 +3,10 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Pet } from 'app/domain/entities/pet.class';
 import { getPetIconPath } from 'app/runtime/asset-catalog';
-import { SwallowedPetTarget } from '../pet-selector.constants';
+import {
+    supportsTimesHurtPet,
+    SwallowedPetTarget,
+} from '../pet-selector.constants';
 
 @Component({
     selector: 'app-swallowed-pet-selector',
@@ -39,7 +42,7 @@ export class SwallowedPetSelectorComponent {
     }
 
     private supportsTimesHurt(petName: string | null | undefined): boolean {
-        return petName === 'Tuna' || petName === 'Sabertooth Tiger';
+        return supportsTimesHurtPet(petName);
     }
 
     shouldShowParrotCopyPetAbominationParrotAbominationTimesHurt(i: number, k: number): boolean {

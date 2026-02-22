@@ -170,42 +170,44 @@ export class LocustAbility extends Ability {
     const petService = InjectorService.getInjector().get(PetService);
     const statFoods = STAT_FOODS;
 
-    for (let i = 0; i < foodCount; i++) {
-      for (let j = 0; j < this.level; j++) {
-        const randomPet = petService
-          ? petService.getRandomPet(owner.parent)
-          : null;
-        if (!randomPet) {
+    for (let i = 0; i < this.level; i++) {
+      const randomPet = petService
+        ? petService.getRandomPet(owner.parent)
+        : null;
+      if (!randomPet) {
+        break;
+      }
+      const result = owner.parent.summonPet(
+        randomPet,
+        spawnIndex,
+        false,
+        owner,
+      );
+      if (!result.success) {
+        break;
+      }
+
+      summoned++;
+
+      for (let foodIndex = 0; foodIndex < foodCount; foodIndex++) {
+        if (statFoods.length === 0) {
           break;
         }
-        const result = owner.parent.summonPet(
+        const statFood =
+          statFoods[getRandomInt(0, statFoods.length - 1)];
+        if (!statFood) {
+          continue;
+        }
+        if (statFood.attack) {
+          randomPet.increaseAttack(statFood.attack);
+        }
+        if (statFood.health) {
+          randomPet.increaseHealth(statFood.health);
+        }
+        this.abilityService?.triggerFoodEvents(
           randomPet,
-          spawnIndex,
-          false,
-          owner,
+          statFood.name.toLowerCase(),
         );
-        if (!result.success) {
-          break;
-        }
-
-        summoned++;
-
-        if (statFoods.length > 0) {
-          const statFood =
-            statFoods[getRandomInt(0, statFoods.length - 1)];
-          if (statFood) {
-            if (statFood.attack) {
-              randomPet.increaseAttack(statFood.attack);
-            }
-            if (statFood.health) {
-              randomPet.increaseHealth(statFood.health);
-            }
-            this.abilityService?.triggerFoodEvents(
-              randomPet,
-              statFood.name.toLowerCase(),
-            );
-          }
-        }
       }
     }
 

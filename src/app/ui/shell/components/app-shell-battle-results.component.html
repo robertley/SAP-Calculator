@@ -88,7 +88,7 @@
                         ">
                         <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
                           width="16" height="16" loading="lazy" decoding="async" />
-                        <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                        <span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span>
                         <br *ngIf="part.type === 'br'" />
                       </ng-container>
                     </ng-container>
@@ -153,18 +153,37 @@
                     <span *ngIf="!slotVm.slot.petIconSrc" class="fight-slot-empty">___</span>
                     <img *ngIf="slotVm.slot.equipmentIconSrc" [ngSrc]="slotVm.slot.equipmentIconSrc" class="fight-slot-equipment"
                       [alt]="slotVm.slot.equipmentName || 'Equipment'" width="16" height="16" loading="lazy" decoding="async" />
+                    <div class="fight-equipment-ghost" *ngIf="slotVm.removedEquipment as removedEquipment">
+                      <img *ngIf="removedEquipment.equipmentIconSrc" [ngSrc]="removedEquipment.equipmentIconSrc"
+                        class="fight-equipment-ghost-icon" [alt]="(removedEquipment.equipmentName || 'Equipment') + ' removed'" width="16"
+                        height="16" loading="lazy" decoding="async" />
+                    </div>
+                    <div class="fight-equipment-gain-ghost" *ngIf="slotVm.addedEquipment as addedEquipment">
+                      <img *ngIf="addedEquipment.equipmentIconSrc" [ngSrc]="addedEquipment.equipmentIconSrc"
+                        class="fight-equipment-gain-icon" [alt]="(addedEquipment.equipmentName || 'Equipment') + ' added'" width="16"
+                        height="16" loading="lazy" decoding="async" />
+                    </div>
+                    <div class="fight-snipe-impact" *ngIf="slotVm.showSnipeImpact">
+                      <img [ngSrc]="app.fightSnipeIconSrc" class="fight-snipe-impact-icon" alt="" aria-hidden="true"
+                        width="20" height="20" loading="lazy" decoding="async" />
+                    </div>
                     <ng-container *ngFor="let popup of slotVm.popups; index as popupIndex; trackBy: app.trackByIndex">
                       <span class="fight-value-popup"
                         [class.fight-value-popup-damage]="popup.type === 'damage'"
+                        [class.fight-value-popup-trumpets]="popup.type === 'trumpets'"
                         [class.fight-value-popup-buff]="popup.type !== 'damage' && popup.delta > 0"
                         [class.fight-value-popup-debuff]="popup.type !== 'damage' && popup.delta < 0"
                         [style.--fight-popup-index]="popupIndex">
-                        <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp'"
+                        <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp' || popup.type === 'mana' || popup.type === 'trumpets'"
                           [ngSrc]="popup.type === 'attack'
                             ? app.fightAttackIconSrc
                             : popup.type === 'health'
                               ? app.fightHealthIconSrc
-                              : app.fightExpIconSrc"
+                              : popup.type === 'exp'
+                                ? app.fightExpIconSrc
+                                : popup.type === 'mana'
+                                  ? app.fightManaIconSrc
+                                  : app.fightTrumpetIconSrc"
                           class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
                           decoding="async" />
                         <span class="fight-value-popup-number">{{ (popup.delta > 0 ? '+' : '-') + (popup.delta > 0 ? popup.delta : -popup.delta) }}</span>
@@ -178,7 +197,7 @@
                         decoding="async" />
                     </div>
                   </div>
-                  <div class="fight-slot-stats" *ngIf="slotVm.slot.attack != null || slotVm.slot.health != null || slotVm.slot.exp != null">
+                  <div class="fight-slot-stats" *ngIf="slotVm.slot.attack != null || slotVm.slot.health != null || slotVm.slot.exp != null || slotVm.slot.mana != null">
                     <span class="fight-slot-stat" *ngIf="slotVm.slot.attack != null">
                       <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
@@ -188,6 +207,11 @@
                       <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
                       <span>{{ slotVm.slot.health }}</span>
+                    </span>
+                    <span class="fight-slot-stat" *ngIf="slotVm.slot.mana != null">
+                      <img [ngSrc]="app.fightManaIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slotVm.slot.mana }}</span>
                     </span>
                     <span class="fight-slot-stat fight-slot-exp" *ngIf="slotVm.slot.exp != null">
                       <img [ngSrc]="app.fightExpIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
@@ -221,7 +245,7 @@
                       <ng-container *ngFor="let part of logRow.parts; trackBy: app.trackByIndex">
                         <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt"
                           width="18" height="18" loading="lazy" decoding="async" />
-                        <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                        <span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span>
                         <br *ngIf="part.type === 'br'" />
                       </ng-container>
                     </span>
@@ -248,18 +272,37 @@
                     <span *ngIf="!slotVm.slot.petIconSrc" class="fight-slot-empty">___</span>
                     <img *ngIf="slotVm.slot.equipmentIconSrc" [ngSrc]="slotVm.slot.equipmentIconSrc" class="fight-slot-equipment"
                       [alt]="slotVm.slot.equipmentName || 'Equipment'" width="16" height="16" loading="lazy" decoding="async" />
+                    <div class="fight-equipment-ghost" *ngIf="slotVm.removedEquipment as removedEquipment">
+                      <img *ngIf="removedEquipment.equipmentIconSrc" [ngSrc]="removedEquipment.equipmentIconSrc"
+                        class="fight-equipment-ghost-icon" [alt]="(removedEquipment.equipmentName || 'Equipment') + ' removed'" width="16"
+                        height="16" loading="lazy" decoding="async" />
+                    </div>
+                    <div class="fight-equipment-gain-ghost" *ngIf="slotVm.addedEquipment as addedEquipment">
+                      <img *ngIf="addedEquipment.equipmentIconSrc" [ngSrc]="addedEquipment.equipmentIconSrc"
+                        class="fight-equipment-gain-icon" [alt]="(addedEquipment.equipmentName || 'Equipment') + ' added'" width="16"
+                        height="16" loading="lazy" decoding="async" />
+                    </div>
+                    <div class="fight-snipe-impact" *ngIf="slotVm.showSnipeImpact">
+                      <img [ngSrc]="app.fightSnipeIconSrc" class="fight-snipe-impact-icon" alt="" aria-hidden="true"
+                        width="20" height="20" loading="lazy" decoding="async" />
+                    </div>
                     <ng-container *ngFor="let popup of slotVm.popups; index as popupIndex; trackBy: app.trackByIndex">
                       <span class="fight-value-popup"
                         [class.fight-value-popup-damage]="popup.type === 'damage'"
+                        [class.fight-value-popup-trumpets]="popup.type === 'trumpets'"
                         [class.fight-value-popup-buff]="popup.type !== 'damage' && popup.delta > 0"
                         [class.fight-value-popup-debuff]="popup.type !== 'damage' && popup.delta < 0"
                         [style.--fight-popup-index]="popupIndex">
-                        <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp'"
+                        <img *ngIf="popup.type === 'attack' || popup.type === 'health' || popup.type === 'exp' || popup.type === 'mana' || popup.type === 'trumpets'"
                           [ngSrc]="popup.type === 'attack'
                             ? app.fightAttackIconSrc
                             : popup.type === 'health'
                               ? app.fightHealthIconSrc
-                              : app.fightExpIconSrc"
+                              : popup.type === 'exp'
+                                ? app.fightExpIconSrc
+                                : popup.type === 'mana'
+                                  ? app.fightManaIconSrc
+                                  : app.fightTrumpetIconSrc"
                           class="fight-value-popup-icon" alt="" aria-hidden="true" width="14" height="14" loading="lazy"
                           decoding="async" />
                         <span class="fight-value-popup-number">{{ (popup.delta > 0 ? '+' : '-') + (popup.delta > 0 ? popup.delta : -popup.delta) }}</span>
@@ -273,7 +316,7 @@
                         decoding="async" />
                     </div>
                   </div>
-                  <div class="fight-slot-stats" *ngIf="slotVm.slot.attack != null || slotVm.slot.health != null || slotVm.slot.exp != null">
+                  <div class="fight-slot-stats" *ngIf="slotVm.slot.attack != null || slotVm.slot.health != null || slotVm.slot.exp != null || slotVm.slot.mana != null">
                     <span class="fight-slot-stat" *ngIf="slotVm.slot.attack != null">
                       <img [ngSrc]="app.fightAttackIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
@@ -283,6 +326,11 @@
                       <img [ngSrc]="app.fightHealthIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
                         width="14" height="14" loading="lazy" decoding="async" />
                       <span>{{ slotVm.slot.health }}</span>
+                    </span>
+                    <span class="fight-slot-stat" *ngIf="slotVm.slot.mana != null">
+                      <img [ngSrc]="app.fightManaIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
+                        width="14" height="14" loading="lazy" decoding="async" />
+                      <span>{{ slotVm.slot.mana }}</span>
                     </span>
                     <span class="fight-slot-stat fight-slot-exp" *ngIf="slotVm.slot.exp != null">
                       <img [ngSrc]="app.fightExpIconSrc" class="fight-slot-stat-icon" alt="" aria-hidden="true"
@@ -528,7 +576,7 @@
                     <ng-container *ngFor="let part of log.parts; trackBy: app.trackByIndex">
                       <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-pet-icon" [alt]="part.alt" width="18"
                         height="18" loading="lazy" decoding="async" />
-                      <span *ngIf="part.type === 'text'">{{ part.text }}</span>
+                      <span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span>
                       <br *ngIf="part.type === 'br'" />
                     </ng-container>
                   </div>

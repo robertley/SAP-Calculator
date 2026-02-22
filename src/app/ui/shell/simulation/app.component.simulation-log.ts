@@ -132,7 +132,7 @@ export function getLoseWidth(ctx: AppSimulationContext): string {
 }
 
 export type LogMessagePart =
-  | { type: 'text'; text: string }
+  | { type: 'text'; text: string; className?: string }
   | { type: 'img'; src: string; alt: string }
   | { type: 'br' };
 
@@ -207,12 +207,38 @@ function pushTextParts(parts: LogMessagePart[], text: string): void {
   const segments = stripped.split('\n');
   segments.forEach((segment, index) => {
     if (segment) {
-      parts.push({ type: 'text', text: segment });
+      pushSegmentWithOptionalPositionPrefix(parts, segment);
     }
     if (index < segments.length - 1) {
       parts.push({ type: 'br' });
     }
   });
+}
+
+function pushSegmentWithOptionalPositionPrefix(
+  parts: LogMessagePart[],
+  segment: string,
+): void {
+  const prefixMatch =
+    /^(\[(?:[PO][1-5](?:->[PO][1-5])?|->[PO][1-5])\]\s*)([\s\S]*)$/.exec(
+      segment,
+    );
+  if (!prefixMatch) {
+    parts.push({ type: 'text', text: segment });
+    return;
+  }
+  const prefix = prefixMatch[1] ?? '';
+  const rest = prefixMatch[2] ?? '';
+  if (prefix) {
+    parts.push({
+      type: 'text',
+      text: prefix,
+      className: 'log-position-prefix',
+    });
+  }
+  if (rest) {
+    parts.push({ type: 'text', text: rest });
+  }
 }
 
 const ATTACK_ICON_SRC =

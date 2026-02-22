@@ -58,7 +58,7 @@ export class RaccoonAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { tiger, pteranodon } = context;
     const owner = this.owner;
 
     let opponent = owner.parent.opponent;
@@ -69,6 +69,9 @@ export class RaccoonAbility extends Ability {
     if (target.equipment == null) {
       return;
     }
+    if (this.isAilmentEquipment(target.equipment)) {
+      return;
+    }
     this.logService.createLog({
       message: `${owner.name} stole ${target.name}'s equipment. (${target.equipment.name})`,
       type: 'ability',
@@ -77,10 +80,18 @@ export class RaccoonAbility extends Ability {
       pteranodon: pteranodon,
     });
     owner.givePetEquipment(target.equipment);
-    target.removePerk();
+    target.removePerk(true);
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);
+  }
+
+  private isAilmentEquipment(equipment: Equipment): boolean {
+    return (
+      equipment.equipmentClass === 'ailment-attack' ||
+      equipment.equipmentClass === 'ailment-defense' ||
+      equipment.equipmentClass === 'ailment-other'
+    );
   }
 
   copy(newOwner: Pet): RaccoonAbility {

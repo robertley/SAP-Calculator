@@ -23,6 +23,7 @@ type ParrotAbomSlot = [
 ];
 
 type RecordShape = Record<string, unknown>;
+export type ExportPayloadFormat = 'compressed' | 'legacyJson';
 
 const SHARE_DEFAULTS: RecordShape = {
   playerPack: 'Turtle',
@@ -306,6 +307,35 @@ function cleanPetForShare(rawPet: unknown): RecordShape | null {
   return rawPet;
 }
 
+function cleanPetForLegacyJson(rawPet: unknown): RecordShape | null {
+  if (!isRecord(rawPet)) {
+    return null;
+  }
+
+  const petName = rawPet.name;
+  if (typeof petName !== 'string' || petName.trim().length === 0) {
+    return null;
+  }
+
+  delete rawPet.parent;
+  delete rawPet.logService;
+  delete rawPet.abilityService;
+  delete rawPet.gameService;
+  delete rawPet.petService;
+
+  if (rawPet.equipment) {
+    const equipmentName =
+      typeof rawPet.equipment === 'string'
+        ? rawPet.equipment
+        : isRecord(rawPet.equipment) && typeof rawPet.equipment.name === 'string'
+          ? rawPet.equipment.name
+          : null;
+    rawPet.equipment = equipmentName ? { name: equipmentName } : null;
+  }
+
+  return rawPet;
+}
+
 function decodeParrotAbomSwallowed(pet: RecordShape): void {
   const slots = pet[PARROT_ABOM_SWALLOWED_KEY];
   if (!Array.isArray(slots)) {
@@ -403,7 +433,28 @@ function buildCompressedStateToken(rawValue: unknown): string {
   return `${EXPORT_TOKEN_PREFIX}${toBase64Url(calculatorStateString)}`;
 }
 
-export function buildExportPayload(formGroup: FormGroup): string {
+function buildLegacyJsonPayload(rawValue: unknown): string {
+  const cleanValue = cloneDeep(rawValue) as RecordShape;
+  const playerPets = Array.isArray(cleanValue.playerPets)
+    ? cleanValue.playerPets
+    : [];
+  const opponentPets = Array.isArray(cleanValue.opponentPets)
+    ? cleanValue.opponentPets
+    : [];
+  cleanValue.playerPets = playerPets.map((pet) => cleanPetForLegacyJson(pet));
+  cleanValue.opponentPets = opponentPets.map((pet) =>
+    cleanPetForLegacyJson(pet),
+  );
+  return JSON.stringify(cleanValue, null, 2);
+}
+
+export function buildExportPayload(
+  formGroup: FormGroup,
+  format: ExportPayloadFormat = 'compressed',
+): string {
+  if (format === 'legacyJson') {
+    return buildLegacyJsonPayload(formGroup.value);
+  }
   return buildCompressedStateToken(formGroup.value);
 }
 

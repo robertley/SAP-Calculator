@@ -161,15 +161,11 @@ function normalizeBattleLogFilter(
 }
 
 function shouldShowPositionalArgsInLogs(ctx: Pick<AppSimulationContext, 'formGroup'>): boolean {
-  const showDebugInfo = Boolean(ctx.formGroup.get('showTriggerNamesInLogs')?.value);
-  if (!showDebugInfo) {
-    return false;
-  }
   const positionalControl = ctx.formGroup.get('showPositionalArgsInLogs');
   if (!positionalControl) {
     return true;
   }
-  return Boolean(positionalControl.value);
+  return positionalControl.value !== false;
 }
 
 function toCssToken(value: string): string {
@@ -347,13 +343,28 @@ function buildLogPositionPrefix(
 }
 
 function normalizePositionBracketSpacing(message: string): string {
-  return message
-    .replace(
-      /\[\s*([PO])\s*([1-5])\s*->\s*([PO])\s*([1-5])\s*\]/g,
-      '[$1$2->$3$4]',
-    )
-    .replace(/\[\s*([PO])\s*([1-5])\s*\]/g, '[$1$2]')
-    .replace(/\[\s*->\s*([PO])\s*([1-5])\s*\]/g, '[->$1$2]');
+  return message.replace(/\[([^\]]+)\]/g, (full, inner: string) => {
+    const compact = `${inner ?? ''}`
+      .replace(/&[a-z0-9#]+;/gi, '')
+      .replace(/[\s\u200b-\u200d\u2060\ufeff]+/gi, '')
+      .toUpperCase();
+    if (!compact) {
+      return full;
+    }
+    const directionalMatch = /^([PO][1-5])->([PO][1-5])$/.exec(compact);
+    if (directionalMatch) {
+      return `[${directionalMatch[1]}->${directionalMatch[2]}]`;
+    }
+    const sourceOnlyMatch = /^([PO][1-5])$/.exec(compact);
+    if (sourceOnlyMatch) {
+      return `[${sourceOnlyMatch[1]}]`;
+    }
+    const targetOnlyMatch = /^->([PO][1-5])$/.exec(compact);
+    if (targetOnlyMatch) {
+      return `[->${targetOnlyMatch[1]}]`;
+    }
+    return full;
+  });
 }
 
 function buildPositionLabel(
