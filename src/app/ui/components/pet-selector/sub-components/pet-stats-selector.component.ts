@@ -35,6 +35,18 @@ import { supportsTimesHurtPet } from '../pet-selector.constants';
         />
       </div>
 
+      <!-- Battles Fought -->
+      <div class="col-12 mb-2" *ngIf="shouldShowBattlesFoughtInput()">
+        <label for="battlesFought">Battles Fought</label>
+        <input
+          class="form-control"
+          formControlName="battlesFought"
+          type="number"
+          min="0"
+          max="99"
+        />
+      </div>
+
       <!-- Mana and Triggers -->
       <ng-container *ngIf="mana || triggersConsumed">
         <div class="col-12" *ngIf="mana && !triggersConsumed">
@@ -144,6 +156,7 @@ export class PetStatsSelectorComponent {
     'Dung Beetle',
     'Locust',
   ]);
+  private battlesFoughtPets = new Set<string>(['Slime']);
 
   shouldShowFriendsDiedInput(): boolean {
     return this.petName ? this.friendsDiedCaps.has(this.petName) : false;
@@ -154,6 +167,13 @@ export class PetStatsSelectorComponent {
       return false;
     }
     return this.foodsEatenPets.has(this.petName);
+  }
+
+  shouldShowBattlesFoughtInput(): boolean {
+    if (!this.petName) {
+      return false;
+    }
+    return this.battlesFoughtPets.has(this.petName);
   }
 
   shouldShowTimesHurtInput(): boolean {

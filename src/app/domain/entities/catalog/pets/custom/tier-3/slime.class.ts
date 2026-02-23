@@ -15,7 +15,7 @@ export class Slime extends Pet {
   health = 3;
 
   override initAbilities(): void {
-    this.addAbility(new SlimeAbility(this, this.logService));
+    this.addAbility(new SlimeAbility(this, this.logService, this.abilityService));
     super.initAbilities();
   }
 
@@ -38,8 +38,9 @@ export class Slime extends Pet {
 
 export class SlimeAbility extends Ability {
   private logService: LogService;
+  private abilityService: AbilityService;
 
-  constructor(owner: Pet, logService: LogService) {
+  constructor(owner: Pet, logService: LogService, abilityService: AbilityService) {
     super({
       name: 'Slime Ability',
       owner: owner,
@@ -50,6 +51,7 @@ export class SlimeAbility extends Ability {
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
+    this.abilityService = abilityService;
   }
 
   private executeAbility(context: AbilityContext): void {
@@ -67,17 +69,19 @@ export class SlimeAbility extends Ability {
     let summoned = 0;
 
     for (let i = 0; i < slimesToSpawn; i++) {
-      const ownerWithAbilityService = owner as Pet & {
-        abilityService: AbilityService;
-      };
       const slime = new SmallerSlime(
         this.logService,
-        ownerWithAbilityService.abilityService,
+        this.abilityService,
         owner.parent,
         stats,
         stats,
       );
-      const summonResult = owner.parent.summonPet(slime, owner.position);
+      const summonResult = owner.parent.summonPet(
+        slime,
+        owner.savedPosition,
+        false,
+        owner,
+      );
 
       if (summonResult.success) {
         summoned++;
@@ -100,7 +104,7 @@ export class SlimeAbility extends Ability {
   }
 
   override copy(newOwner: Pet): SlimeAbility {
-    return new SlimeAbility(newOwner, this.logService);
+    return new SlimeAbility(newOwner, this.logService, this.abilityService);
   }
 }
 
