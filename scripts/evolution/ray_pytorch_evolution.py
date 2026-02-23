@@ -87,7 +87,6 @@ REVERSE_EXPORT_KEY_MAP: Dict[str, str] = {
     "tc": "triggersConsumed",
     "sa": "showAdvanced",
     "stn": "showTriggerNamesInLogs",
-    "swl": "showSwallowedLevels",
     "ae": "ailmentEquipment",
     "cEU": "changeEquipmentUses",
     "lE": "logsEnabled",

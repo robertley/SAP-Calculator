@@ -18,7 +18,7 @@
     </div>
 
     <!-- Swallowed Pet Settings -->
-    <app-swallowed-pet-selector [formGroup]="formGroup" [pet]="pet" [showSwallowedLevels]="showSwallowedLevels"
+    <app-swallowed-pet-selector [formGroup]="formGroup" [pet]="pet"
       (openSelection)="openSelectionDialog($event.type, $event.index, $event.target, $event.parentIndex)">
     </app-swallowed-pet-selector>
 
@@ -51,7 +51,8 @@
             let swallowedArt of abominationSwallowedPetArt;
             trackBy: trackByIndex
           ">
-          <img [ngSrc]="swallowedArt.image" width="32" height="32" loading="lazy" decoding="async" alt="Swallowed Pet" />
+          <img [ngSrc]="swallowedArt.image" width="32" height="32" loading="lazy" decoding="async"
+            alt="Swallowed Pet" />
           <img class="swallowed-beluga-nested" *ngIf="swallowedArt.belugaSwallowedImage"
             [ngSrc]="swallowedArt.belugaSwallowedImage" width="16" height="16" loading="lazy" decoding="async"
             alt="Beluga Swallowed Pet" />
@@ -68,6 +69,7 @@
 </div>
 
 <app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType"
-  [showAllPets]="allPets || forceShowAllPets" [currentPack]="player?.pack" (select)="onItemSelected($event)"
+  [showAllPets]="allPets || forceShowAllPets" [currentPack]="player?.pack"
+  [lockAbilityLevel]="lockSelectionLevel" [initialLevel]="lockedSelectionLevel" (select)="onItemSelected($event)"
   (close)="closeSelectionDialog()">
 </app-item-selection-dialog>

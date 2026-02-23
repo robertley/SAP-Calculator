@@ -13,9 +13,13 @@ import {
 } from 'app/integrations/equipment/equipment-categories';
 import { PACK_NAMES } from 'app/runtime/pack-names';
 import {
+  getAllEquipmentNames,
+  getAllPetNames,
+  getAllToyNames,
   getEquipmentIconPath,
   getPetIconFileName,
   getPetIconPath,
+  getToyIconPath,
 } from 'app/runtime/asset-catalog';
 import {
   PARROT_COPY_TARGETS,
@@ -24,11 +28,25 @@ import {
 import { resolveSwallowedPetControlPath } from './pet-selector-control-paths';
 import { PetSelectorFormSubscriptions } from './pet-selector-form-subscriptions';
 
+const PET_NAME_LOOKUP = new Map(
+  getAllPetNames().map((name) => [name.toLowerCase(), name]),
+);
+const TOY_NAME_LOOKUP = new Map(
+  getAllToyNames().map((name) => [name.toLowerCase(), name]),
+);
+const EQUIPMENT_NAME_LOOKUP = new Map(
+  getAllEquipmentNames().map((name) => [name.toLowerCase(), name]),
+);
+const AILMENT_NAME_SET = new Set(
+  Object.values(AILMENT_CATEGORIES)
+    .flat()
+    .map((name) => `${name}`.toLowerCase()),
+);
+
 @Directive()
 export class PetSelectorFormSync
   extends PetSelectorFormSubscriptions
-  implements OnInit, OnDestroy, OnChanges
-{
+  implements OnInit, OnDestroy, OnChanges {
   get abominationSwallowedPetArt(): Array<{
     image: string;
     belugaSwallowedImage: string | null;
@@ -65,14 +83,14 @@ export class PetSelectorFormSync
       if (!value.name) {
         continue;
       }
-      const image = this.getPetImagePath(value.name);
+      const image = this.getSelectionImagePath(value.name);
       if (!image) {
         continue;
       }
 
       const belugaSwallowedImage =
         value.name === 'Beluga Whale' && value.belugaSwallowed
-          ? this.getPetImagePath(value.belugaSwallowed)
+          ? this.getSelectionImagePath(value.belugaSwallowed)
           : null;
 
       art.push({
@@ -126,7 +144,7 @@ export class PetSelectorFormSync
   }
 
   openSelectionDialog(
-    type: 'pet' | 'equipment' | 'swallowed-pet',
+    type: 'pet' | 'equipment' | 'swallowed-pet' | 'ability',
     index?: number,
     target: SwallowedPetTarget = 'pet',
     parentIndex?: number,
@@ -135,8 +153,13 @@ export class PetSelectorFormSync
     this.swallowedPetIndex = index;
     this.swallowedPetTarget = target;
     this.swallowedPetParentIndex = parentIndex;
+    const isParrotCopyTarget = this.isParrotCopyTarget(target);
     this.forceShowAllPets =
-      type === 'swallowed-pet' && this.isParrotCopyTarget(target);
+      (type === 'swallowed-pet' || type === 'ability') && isParrotCopyTarget;
+    this.lockSelectionLevel = type === 'ability' && isParrotCopyTarget;
+    this.lockedSelectionLevel = this.lockSelectionLevel
+      ? this.getCurrentPetLevel()
+      : 1;
     this.showSelectionDialog = true;
   }
 
@@ -152,12 +175,16 @@ export class PetSelectorFormSync
         typeof item === 'string'
           ? item
           : item &&
-              typeof item === 'object' &&
-              typeof (item as { name?: unknown }).name === 'string'
+            typeof item === 'object' &&
+            typeof (item as { name?: unknown }).name === 'string'
             ? (item as { name: string }).name
             : null;
       this.formGroup.get('equipment').setValue(equipmentName);
-    } else if (this.selectionType === 'swallowed-pet') {
+    } else if (this.selectionType === 'swallowed-pet' || this.selectionType === 'ability') {
+      const isObjectData = typeof item === 'object' && item !== null && 'name' in item && 'level' in item;
+      const itemName = isObjectData ? (item as { name: string }).name : item;
+      const itemLevel = isObjectData ? (item as { level: number }).level : undefined;
+
       const controlPath = resolveSwallowedPetControlPath({
         target: this.swallowedPetTarget,
         swallowedPetIndex: this.swallowedPetIndex,
@@ -168,7 +195,15 @@ export class PetSelectorFormSync
         this.closeSelectionDialog();
         return;
       }
-      this.formGroup.get(controlPath)?.setValue(item);
+      this.formGroup.get(controlPath)?.setValue(itemName);
+
+      if (itemLevel !== undefined) {
+        const levelControlPath = `${controlPath}Level`;
+        const levelControl = this.formGroup.get(levelControlPath);
+        if (levelControl) {
+          levelControl.setValue(itemLevel);
+        }
+      }
     }
     this.closeSelectionDialog();
   }
@@ -176,6 +211,8 @@ export class PetSelectorFormSync
   closeSelectionDialog() {
     this.showSelectionDialog = false;
     this.forceShowAllPets = false;
+    this.lockSelectionLevel = false;
+    this.lockedSelectionLevel = 1;
   }
 
   setExp(amt: number) {
@@ -205,12 +242,12 @@ export class PetSelectorFormSync
   get swallowedPetImageSrc(): string | null {
     const name = this.formGroup?.get('name')?.value;
     if (name === 'Beluga Whale') {
-      return this.getPetImagePath(
+      return this.getSelectionImagePath(
         this.formGroup.get('belugaSwallowedPet')?.value,
       );
     }
     if (name === 'Sarcastic Fringehead') {
-      return this.getPetImagePath(
+      return this.getSelectionImagePath(
         this.formGroup.get('sarcasticFringeheadSwallowedPet')?.value,
       );
     }
@@ -219,9 +256,9 @@ export class PetSelectorFormSync
         'parrotCopyPetBelugaSwallowedPet',
       )?.value;
       if (belugaSwallowed) {
-        return this.getPetImagePath(belugaSwallowed);
+        return this.getSelectionImagePath(belugaSwallowed);
       }
-      return this.getPetImagePath(this.formGroup.get('parrotCopyPet')?.value);
+      return this.getSelectionImagePath(this.formGroup.get('parrotCopyPet')?.value);
     }
     return null;
   }
@@ -288,8 +325,49 @@ export class PetSelectorFormSync
     return `assets/art/Public/Public/Pets/${fileName}.png`;
   }
 
+  private getSelectionImagePath(itemName?: string | null): string | null {
+    if (!itemName) {
+      return null;
+    }
+    const normalizedName = itemName.trim().toLowerCase();
+
+    const petName = PET_NAME_LOOKUP.get(normalizedName);
+    if (petName) {
+      return this.getPetImagePath(petName);
+    }
+
+    const toyName = TOY_NAME_LOOKUP.get(normalizedName);
+    if (toyName) {
+      return getToyIconPath(toyName);
+    }
+
+    const equipmentName = EQUIPMENT_NAME_LOOKUP.get(normalizedName);
+    if (equipmentName) {
+      return getEquipmentIconPath(
+        equipmentName,
+        AILMENT_NAME_SET.has(normalizedName),
+      );
+    }
+
+    return null;
+  }
+
   private isParrotCopyTarget(target: SwallowedPetTarget): boolean {
     return PARROT_COPY_TARGETS.has(target);
+  }
+
+  private getCurrentPetLevel(): number {
+    const expValue = Number(this.formGroup?.get('exp')?.value ?? 0);
+    if (!Number.isFinite(expValue)) {
+      return 1;
+    }
+    if (expValue >= 5) {
+      return 3;
+    }
+    if (expValue >= 2) {
+      return 2;
+    }
+    return 1;
   }
 
   private initPets() {

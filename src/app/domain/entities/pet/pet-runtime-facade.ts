@@ -235,33 +235,37 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     }
   }
 
-  increaseAttack(amt: number) {
+  increaseAttack(amt: number): number {
     let max = 50;
     if (this.name == 'Behemoth') {
       max = 100;
     }
     if (amt > 0 && this.equipment?.name === 'Sad') {
-      return;
+      return 0;
     }
     if (!this.alive) {
-      return;
+      return 0;
     }
+    const oldAttack = this.attack;
     this.attack = Math.min(Math.max(this.attack + amt, 1), max);
+    return this.attack - oldAttack;
   }
 
-  increaseHealth(amt: number) {
+  increaseHealth(amt: number): number {
     let max = 50;
     if (this.name == 'Behemoth' || this.name == 'Giant Tortoise') {
       max = 100;
     }
     if (amt > 0 && this.equipment?.name === 'Sad') {
-      return;
+      return 0;
     }
     if (!this.alive) {
-      return;
+      return 0;
     }
+    const oldHealth = this.health;
     this.health = Math.min(Math.max(this.health + amt, 1), max);
     this.abilityService.triggerFriendGainsHealthEvents(this as unknown as Pet);
+    return this.health - oldHealth;
   }
 
   increaseSellValue(amt: number) {

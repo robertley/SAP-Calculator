@@ -12,6 +12,12 @@ export class Panther extends Pet {
   pack: Pack = 'Puppy';
   attack = 3;
   health = 5;
+
+  initAbilities(): void {
+    this.addAbility(new PantherAbility(this, this.logService, this.abilityService));
+    super.initAbilities();
+  }
+
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

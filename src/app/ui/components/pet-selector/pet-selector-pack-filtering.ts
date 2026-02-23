@@ -46,8 +46,6 @@ export class PetSelectorPackFiltering {
   flipImage = false;
   @Input()
   allowEquipmentUseOverrides: boolean;
-  @Input()
-  showSwallowedLevels = false;
 
   equipment: Map<string, Equipment>;
   ailmentEquipment: Map<string, Equipment>;
@@ -82,18 +80,20 @@ export class PetSelectorPackFiltering {
   @Input()
   showTokenPets = false;
   showSelectionDialog = false;
-  selectionType: 'pet' | 'equipment' | 'swallowed-pet' = 'pet';
+  selectionType: 'pet' | 'equipment' | 'swallowed-pet' | 'ability' = 'pet';
   swallowedPetIndex?: number;
   swallowedPetParentIndex?: number;
   swallowedPetTarget: SwallowedPetTarget = 'pet';
   forceShowAllPets = false;
+  lockSelectionLevel = false;
+  lockedSelectionLevel = 1;
   tokenPets: string[] = TOKEN_PETS;
 
   constructor(
     protected petService: PetService,
     protected equipmentService: EquipmentService,
     protected cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   optionHidden(option: string) {
     if (this.allPets) {

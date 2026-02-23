@@ -28,7 +28,6 @@ export interface TeamPreset {
   mana?: boolean;
   seed?: number | null;
   triggersConsumed?: boolean;
-  showSwallowedLevels?: boolean;
   changeEquipmentUses?: boolean;
   playerRollAmount?: number;
   opponentRollAmount?: number;
@@ -94,14 +93,7 @@ export class TeamPresetsService {
       if (team?.id !== 'default-ability-removal') {
         return team;
       }
-      if (team.showSwallowedLevels != null) {
-        return team;
-      }
-      changed = true;
-      return {
-        ...team,
-        showSwallowedLevels: true,
-      };
+      return team;
     });
 
     const filtered = migrated.filter((team) => {

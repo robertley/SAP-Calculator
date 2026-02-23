@@ -9,7 +9,7 @@ type CalculatorStateInput = Record<string, unknown> | null | undefined;
   providedIn: 'root',
 })
 export class CalculatorStateService {
-  constructor(private gameService: GameService) {}
+  constructor(private gameService: GameService) { }
 
   applyCalculatorState(
     formGroup: FormGroup,
@@ -115,7 +115,6 @@ export class CalculatorStateService {
       showAdvanced: false,
       showTriggerNamesInLogs: false,
       showPositionalArgsInLogs: true,
-      showSwallowedLevels: false,
       ailmentEquipment: false,
     };
   }

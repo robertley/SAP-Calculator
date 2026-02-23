@@ -2,11 +2,34 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Pet } from 'app/domain/entities/pet.class';
-import { getPetIconPath } from 'app/runtime/asset-catalog';
+import {
+    getAllEquipmentNames,
+    getAllPetNames,
+    getAllToyNames,
+    getEquipmentIconPath,
+    getPetIconPath,
+    getToyIconPath,
+} from 'app/runtime/asset-catalog';
+import { AILMENT_CATEGORIES } from 'app/integrations/equipment/equipment-categories';
 import {
     supportsTimesHurtPet,
     SwallowedPetTarget,
 } from '../pet-selector.constants';
+
+const PET_NAME_LOOKUP = new Map(
+    getAllPetNames().map((name) => [name.toLowerCase(), name]),
+);
+const TOY_NAME_LOOKUP = new Map(
+    getAllToyNames().map((name) => [name.toLowerCase(), name]),
+);
+const EQUIPMENT_NAME_LOOKUP = new Map(
+    getAllEquipmentNames().map((name) => [name.toLowerCase(), name]),
+);
+const AILMENT_NAME_SET = new Set(
+    Object.values(AILMENT_CATEGORIES)
+        .flat()
+        .map((name) => `${name}`.toLowerCase()),
+);
 
 @Component({
     selector: 'app-swallowed-pet-selector',
@@ -19,10 +42,9 @@ import {
 export class SwallowedPetSelectorComponent {
     @Input() formGroup!: FormGroup;
     @Input() pet: Pet | null = null;
-    @Input() showSwallowedLevels = false;
 
     @Output() openSelection = new EventEmitter<{
-        type: 'pet' | 'equipment' | 'swallowed-pet',
+        type: 'pet' | 'equipment' | 'swallowed-pet' | 'ability',
         index?: number,
         target: SwallowedPetTarget,
         parentIndex?: number
@@ -32,13 +54,74 @@ export class SwallowedPetSelectorComponent {
         return getPetIconPath(name);
     }
 
+    getAbilityImagePath(name: string | null | undefined): string | null {
+        if (!name) {
+            return null;
+        }
+        const normalizedName = name.trim().toLowerCase();
+
+        const petName = PET_NAME_LOOKUP.get(normalizedName);
+        if (petName) {
+            return getPetIconPath(petName);
+        }
+
+        const toyName = TOY_NAME_LOOKUP.get(normalizedName);
+        if (toyName) {
+            return getToyIconPath(toyName);
+        }
+
+        const equipmentName = EQUIPMENT_NAME_LOOKUP.get(normalizedName);
+        if (equipmentName) {
+            return getEquipmentIconPath(
+                equipmentName,
+                AILMENT_NAME_SET.has(normalizedName),
+            );
+        }
+
+        return null;
+    }
+
     trackByIndex(index: number): number {
         return index;
     }
 
     getParrotCopyAbominationSlotCount(): number {
-        const level = this.formGroup.get('parrotCopyPetAbominationLevel')?.value || 1;
-        return level;
+        return 3;
+    }
+
+    getAbominationAbilityLevel(index: number): number {
+        return this.getLevelValue(`abominationSwallowedPet${index + 1}Level`);
+    }
+
+    getNestedAbominationAbilityLevel(parentIndex: number, nestedIndex: number): number {
+        return this.getLevelValue(
+            `abominationSwallowedPet${parentIndex + 1}ParrotCopyPetAbominationSwallowedPet${nestedIndex + 1}Level`,
+        );
+    }
+
+    getParrotAbominationAbilityLevel(index: number): number {
+        return this.getLevelValue(`parrotCopyPetAbominationSwallowedPet${index + 1}Level`);
+    }
+
+    getAbilityTitle(index: number): string {
+        const slot = index + 1;
+        const level = this.getLevelValue(`abominationSwallowedPet${slot}Level`);
+        return `Ability ${slot} - Level ${level}`;
+    }
+
+    getNestedAbominationAbilityTitle(parentIndex: number, nestedIndex: number): string {
+        const parentSlot = parentIndex + 1;
+        const nestedSlot = nestedIndex + 1;
+        const level = this.getLevelValue(
+            `abominationSwallowedPet${parentSlot}ParrotCopyPetAbominationSwallowedPet${nestedSlot}Level`,
+        );
+        return `Nested Slot ${nestedSlot} - Level ${level}`;
+    }
+
+    getParrotAbominationAbilityTitle(index: number): string {
+        const slot = index + 1;
+        const level = this.getLevelValue(`parrotCopyPetAbominationSwallowedPet${slot}Level`);
+        return `Ability ${slot} - Level ${level}`;
     }
 
     private supportsTimesHurt(petName: string | null | undefined): boolean {
@@ -65,8 +148,17 @@ export class SwallowedPetSelectorComponent {
         return this.supportsTimesHurt(petName);
     }
 
+    private getLevelValue(controlName: string): number {
+        const rawValue = this.formGroup.get(controlName)?.value;
+        const parsed = Number(rawValue);
+        if (!Number.isFinite(parsed) || parsed < 1 || parsed > 3) {
+            return 1;
+        }
+        return parsed;
+    }
+
     openSelectionDialog(
-        type: 'swallowed-pet',
+        type: 'swallowed-pet' | 'ability',
         index?: number,
         target: SwallowedPetTarget = 'pet',
         parentIndex?: number

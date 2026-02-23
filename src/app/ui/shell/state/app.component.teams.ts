@@ -59,9 +59,6 @@ export function saveTeamPreset(options: {
   const triggersConsumed = Boolean(
     options.formGroup.get('triggersConsumed').value,
   );
-  const showSwallowedLevels = Boolean(
-    options.formGroup.get('showSwallowedLevels').value,
-  );
   const changeEquipmentUses = Boolean(
     options.formGroup.get('changeEquipmentUses').value,
   );
@@ -113,7 +110,6 @@ export function saveTeamPreset(options: {
     existing.mana = mana;
     existing.seed = Number.isFinite(seed) ? Math.trunc(seed) : null;
     existing.triggersConsumed = triggersConsumed;
-    existing.showSwallowedLevels = showSwallowedLevels;
     existing.changeEquipmentUses = changeEquipmentUses;
     existing.playerRollAmount = playerRollAmount;
     existing.opponentRollAmount = opponentRollAmount;
@@ -147,7 +143,6 @@ export function saveTeamPreset(options: {
       mana,
       seed: Number.isFinite(seed) ? Math.trunc(seed) : null,
       triggersConsumed,
-      showSwallowedLevels,
       changeEquipmentUses,
       playerRollAmount,
       opponentRollAmount,
@@ -211,11 +206,6 @@ export function loadTeamPreset(options: {
   }
   if (team.triggersConsumed != null) {
     options.formGroup.get('triggersConsumed').setValue(team.triggersConsumed);
-  }
-  if (team.showSwallowedLevels != null) {
-    options.formGroup
-      .get('showSwallowedLevels')
-      .setValue(team.showSwallowedLevels);
   }
   if (team.changeEquipmentUses != null) {
     options.formGroup

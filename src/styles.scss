@@ -164,3 +164,8 @@ body {
   pointer-events: none;
 }
 
+/* Ensure positional args and code-like elements render right bracket correctly */
+.positional-args, .positional-arg, .args, code, pre, kbd {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+

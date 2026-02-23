@@ -9,6 +9,12 @@ export function buildBoardStateMessage(
   isAilmentName: (name: string) => boolean,
 ): string {
   let playerState = '';
+  if (player.toy) {
+    playerState += `{{toy:${player.toy.name}}} `;
+  }
+  if (player.hardToy) {
+    playerState += `{{hardtoy:${player.hardToy.name}}} `;
+  }
   playerState += renderPetText(player.pet4, getFrontIndex, isAilmentName);
   playerState += renderPetText(player.pet3, getFrontIndex, isAilmentName);
   playerState += renderPetText(player.pet2, getFrontIndex, isAilmentName);
@@ -21,6 +27,12 @@ export function buildBoardStateMessage(
   opponentState += renderPetText(opponent.pet2, getFrontIndex, isAilmentName);
   opponentState += renderPetText(opponent.pet3, getFrontIndex, isAilmentName);
   opponentState += renderPetText(opponent.pet4, getFrontIndex, isAilmentName);
+  if (opponent.toy) {
+    opponentState += `{{toy:${opponent.toy.name}}} `;
+  }
+  if (opponent.hardToy) {
+    opponentState += `{{hardtoy:${opponent.hardToy.name}}} `;
+  }
 
   return `${playerState}| ${opponentState}`;
 }
@@ -45,19 +57,19 @@ function renderPetText(
       : null;
   const equipmentDisplay = equipmentName
     ? (() => {
-        const isAilment = isAilmentName(equipmentName);
-        const primary =
-          getEquipmentIconPath(equipmentName, isAilment) ??
-          getEquipmentIconPath(equipmentName, !isAilment);
-        if (!primary) {
-          return '';
-        }
-        const secondary = getEquipmentIconPath(equipmentName, !isAilment);
-        const secondaryAttr = secondary
-          ? `this.dataset.step='1';this.src='${secondary}';`
-          : `this.dataset.step='1';`;
-        return `<img src="${primary}" class="log-inline-icon" alt="${equipmentName}" onerror="if(!this.dataset.step){${secondaryAttr}return;}this.remove()">`;
-      })()
+      const isAilment = isAilmentName(equipmentName);
+      const primary =
+        getEquipmentIconPath(equipmentName, isAilment) ??
+        getEquipmentIconPath(equipmentName, !isAilment);
+      if (!primary) {
+        return '';
+      }
+      const secondary = getEquipmentIconPath(equipmentName, !isAilment);
+      const secondaryAttr = secondary
+        ? `this.dataset.step='1';this.src='${secondary}';`
+        : `this.dataset.step='1';`;
+      return `<img src="${primary}" class="log-inline-icon" alt="${equipmentName}" onerror="if(!this.dataset.step){${secondaryAttr}return;}this.remove()">`;
+    })()
     : '';
   const manaValue = Number.isFinite(pet.mana) ? Math.max(0, Math.trunc(pet.mana)) : 0;
   const manaSuffix = manaValue > 0 ? `/${manaValue}mana` : '';

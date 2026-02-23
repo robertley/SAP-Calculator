@@ -5,7 +5,8 @@ export type SelectionType =
   | 'toy'
   | 'hard-toy'
   | 'pack'
-  | 'team';
+  | 'team'
+  | 'ability';
 
 export type SelectionItemType =
   | 'pet'
@@ -28,4 +29,6 @@ export interface SelectionItem {
   type: SelectionItemType;
   category?: string;
   item?: unknown;
+  /** When true, item is shown greyed out (warns user it's a non-vanilla feature) */
+  isDisabled?: boolean;
 }

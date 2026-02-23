@@ -148,6 +148,32 @@
   font-size: 0.62rem;
 }
 
+.selection-icon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.4rem;
+}
+
+.selection-level-badge {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fff;
+  font-size: 0.56rem;
+  line-height: 12px;
+  text-align: center;
+  font-weight: 700;
+  text-shadow: none;
+}
+
 .swallowed-nested {
   background: rgba(0, 0, 0, 0.28);
   border-radius: 10px;

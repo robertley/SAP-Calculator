@@ -53,7 +53,6 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     komodoShuffle: new FormControl(false),
     mana: new FormControl(false),
     triggersConsumed: new FormControl(false),
-    showSwallowedLevels: new FormControl(false),
     playerRollAmount: new FormControl(4),
     opponentRollAmount: new FormControl(4),
     playerLevel3Sold: new FormControl(0),

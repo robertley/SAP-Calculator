@@ -21,8 +21,8 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
   abstract equipment?: Equipment;
   abstract lastLostEquipment?: Equipment;
   abstract getSparrowLevel(): number;
-  abstract increaseAttack(amt: number): void;
-  abstract increaseHealth(amt: number): void;
+  abstract increaseAttack(amt: number): number;
+  abstract increaseHealth(amt: number): number;
 
   givePetEquipment(equipment: Equipment, pandorasBoxLevel: number = 1) {
     if (equipment == null) {
@@ -115,14 +115,15 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
     let multiplier = baseMultiplier;
     let messages: string[] = [];
 
+    const pantherAbilityLevel = this.getPantherEquipmentMultiplierLevel();
     if (
-      this.name === 'Panther' &&
+      pantherAbilityLevel > 0 &&
       this.equipment.equipmentClass !== 'ailment-attack' &&
       this.equipment.equipmentClass !== 'ailment-defense' &&
       this.equipment.equipmentClass !== 'ailment-other'
     ) {
-      multiplier += this.level;
-      messages.push(`x${this.level + 1} (Panther)`);
+      multiplier += pantherAbilityLevel;
+      messages.push(`x${pantherAbilityLevel + 1} (Panther)`);
     }
 
     if (pandorasBoxLevel && pandorasBoxLevel > 1) {
@@ -133,6 +134,19 @@ export abstract class PetEquipmentFacade extends PetAbilityFacade {
     this.equipment.multiplier = multiplier;
     this.equipment.multiplierMessage =
       messages.length > 0 ? ` ${messages.join(' ')}` : '';
+  }
+
+  private getPantherEquipmentMultiplierLevel(): number {
+    const pantherLevels = this.abilityList
+      .filter((ability) => ability.name === 'PantherAbility')
+      .map((ability) => Number(ability.abilityLevel))
+      .filter((level) => Number.isFinite(level) && level > 0);
+
+    if (pantherLevels.length === 0) {
+      return 0;
+    }
+
+    return Math.max(...pantherLevels);
   }
 
   private handleCorncobEquipment(equipment: Equipment): boolean {
