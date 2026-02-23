@@ -126,6 +126,7 @@ export class PetFactoryService {
       exp,
       triggersConsumed,
       foodsEaten,
+      battlesFought,
     } = normalizedPetForm;
     let hasRandomEvents = normalizedPetForm.hasRandomEvents;
     if (
@@ -158,6 +159,12 @@ export class PetFactoryService {
       if (plan.hasTimesHurt && normalizedPetForm.timesHurt != null) {
         pet.timesHurt = normalizedPetForm.timesHurt;
         pet.originalTimesHurt = normalizedPetForm.timesHurt;
+      }
+      if (battlesFought != null) {
+        const value = Number(battlesFought);
+        if (Number.isFinite(value)) {
+          pet.battlesFought = Math.max(0, Math.floor(value));
+        }
       }
       if (hasRandomEvents) {
         pet.hasRandomEvents = true;

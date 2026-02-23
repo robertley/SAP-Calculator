@@ -3,7 +3,7 @@ import { Equipment, EquipmentClass } from '../../../equipment.class';
 
 export class MapleSyrup extends Equipment {
   name = 'Maple Syrup';
-  tier = 5;
+  tier = 4;
   equipmentClass = 'shield' as EquipmentClass;
   power = 0;
   originalPower = 0;

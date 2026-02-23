@@ -80,7 +80,7 @@ export class EquipmentService {
     ['Lemon', 5],
     ['Durian', 5],
     ['Honeydew Melon', 5],
-    ['Maple Syrup', 5],
+    ['Maple Syrup', 4],
     ['Cocoa Bean', 5],
     ['White Okra', 5],
     // T6
