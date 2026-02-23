@@ -39,7 +39,6 @@ import {
     clearPendingRemovalSlots,
     clearSlotEquipment,
     getSlot,
-    normalizeComparableName,
     normalizeEntityToken,
     normalizeSlot,
     pushSideForward,
