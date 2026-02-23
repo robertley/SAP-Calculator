@@ -3,14 +3,16 @@
     <div class="col-12 mb-2" *ngIf="pet?.name === 'Abomination'">
         <div *ngFor="let a of [].constructor(pet.level); index as i; trackBy: trackByIndex">
             <div class="swallowed-slot mb-2">
-                <label class="swallowed-label">Swallowed Pet {{ i + 1 }}</label>
+                <label class="swallowed-label">{{ getAbilityTitle(i) }}</label>
                 <div class="d-flex align-items-center gap-2">
                     <button type="button" class="btn selection-btn flex-grow-1 d-flex align-items-center"
-                        (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination')">
-                        <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1))?.value)"
-                            class="selection-icon"
-                            [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1))?.value)!"
-                            width="24" height="24" loading="lazy" decoding="async" alt="Swallowed Pet" />
+                        (click)="openSelectionDialog('ability', i + 1, 'abomination')">
+                        <span class="selection-icon-wrap"
+                            *ngIf="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1))?.value) as abilityIcon">
+                            <img class="selection-icon" [ngSrc]="abilityIcon" width="24" height="24" loading="lazy"
+                                decoding="async" alt="Ability" />
+                            <span class="selection-level-badge">{{ getAbominationAbilityLevel(i) }}</span>
+                        </span>
                         <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1))?.value ||
                             'None' }}</span>
                         <i class="fas fa-chevron-down ms-auto"></i>
@@ -20,23 +22,14 @@
                 <div class="swallowed-nested mt-2 ps-3 border-start" *ngIf="
                     formGroup.get('abominationSwallowedPet' + (i + 1))?.value &&
                     (
-                      showSwallowedLevels ||
+                      true ||
+                      pet?.name === 'Abomination' ||
                       shouldShowAbominationSwallowTimesHurt(i) ||
                       formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Beluga Whale' ||
+                      formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Sarcastic Fringehead' ||
                       formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Parrot'
                     )
                   ">
-                    <!-- Nested Level for Swallowed Pet -->
-                    <div class="form-group small-w-input mb-2" *ngIf="showSwallowedLevels || pet?.name === 'Abomination'">
-                        <label class="swallowed-label-small">Level</label>
-                        <select class="form-control form-control-sm"
-                            [formControlName]="'abominationSwallowedPet' + (i + 1) + 'Level'">
-                            <option [ngValue]="1">1</option>
-                            <option [ngValue]="2">2</option>
-                            <option [ngValue]="3">3</option>
-                        </select>
-                    </div>
-
                     <!-- Times Hurt (Tuna) -->
                     <div class="form-group small-w-input mb-2" *ngIf="shouldShowAbominationSwallowTimesHurt(i)">
                         <label class="swallowed-label-small">Times Hurt</label>
@@ -50,9 +43,9 @@
                         <label class="swallowed-label-small">Swallowed by Beluga</label>
                         <button type="button" class="btn selection-btn btn-sm w-100 d-flex align-items-center"
                             (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination-beluga')">
-                            <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'BelugaSwallowedPet')?.value)"
+                            <img *ngIf="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'BelugaSwallowedPet')?.value)"
                                 class="selection-icon"
-                                [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'BelugaSwallowedPet')?.value)!"
+                                [ngSrc]="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'BelugaSwallowedPet')?.value)!"
                                 width="20" height="20" loading="lazy" decoding="async" alt="Beluga Swallowed Pet" />
                             <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1) +
                                 'BelugaSwallowedPet')?.value || 'None' }}</span>
@@ -66,9 +59,9 @@
                         <label class="swallowed-label-small">Swallowed by Fringehead</label>
                         <button type="button" class="btn selection-btn btn-sm w-100 d-flex align-items-center"
                             (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination-sarcastic')">
-                            <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'SarcasticFringeheadSwallowedPet')?.value)"
+                            <img *ngIf="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'SarcasticFringeheadSwallowedPet')?.value)"
                                 class="selection-icon"
-                                [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'SarcasticFringeheadSwallowedPet')?.value)!"
+                                [ngSrc]="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'SarcasticFringeheadSwallowedPet')?.value)!"
                                 width="20" height="20" loading="lazy" decoding="async" alt="Fringehead Swallowed Pet" />
                             <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1) +
                                 'SarcasticFringeheadSwallowedPet')?.value || 'None' }}</span>
@@ -81,10 +74,10 @@
                         *ngIf="formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Parrot'">
                         <label class="swallowed-label-small">Parrot Copy</label>
                         <button type="button" class="btn selection-btn btn-sm w-100 d-flex align-items-center"
-                            (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination-parrot')">
-                            <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPet')?.value)"
+                            (click)="openSelectionDialog('ability', i + 1, 'abomination-parrot')">
+                            <img *ngIf="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPet')?.value)"
                                 class="selection-icon"
-                                [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPet')?.value)!"
+                                [ngSrc]="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPet')?.value)!"
                                 width="20" height="20" loading="lazy" decoding="async" alt="Parrot Copy Pet" />
                             <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1) +
                                 'ParrotCopyPet')?.value || 'None' }}</span>
@@ -97,9 +90,9 @@
                             <label class="swallowed-label-small">Then Beluga Swallow</label>
                             <button type="button" class="btn selection-btn btn-sm w-100 d-flex align-items-center"
                                 (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination-parrot-beluga')">
-                                <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetBelugaSwallowedPet')?.value)"
+                                <img *ngIf="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetBelugaSwallowedPet')?.value)"
                                     class="selection-icon"
-                                    [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetBelugaSwallowedPet')?.value)!"
+                                    [ngSrc]="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetBelugaSwallowedPet')?.value)!"
                                     width="20" height="20" loading="lazy" decoding="async" alt="Nested Beluga" />
                                 <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1) +
                                     'ParrotCopyPetBelugaSwallowedPet')?.value || 'None' }}</span>
@@ -110,25 +103,17 @@
                         <!-- Nested Abomination inside Parrot inside Abomination -->
                         <div class="mt-2 ps-2 border-start"
                             *ngIf="formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPet')?.value === 'Abomination'">
-                            <div class="form-group small-w-input mb-2">
-                                <label class="swallowed-label-small">Nested Abom Level</label>
-                                <select class="form-control form-control-sm"
-                                    [formControlName]="'abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetAbominationLevel'">
-                                    <option [ngValue]="1">1</option>
-                                    <option [ngValue]="2">2</option>
-                                    <option [ngValue]="3">3</option>
-                                </select>
-                            </div>
-                            <div
-                                *ngFor="let b of [].constructor(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetAbominationLevel')?.value || 1); index as j; trackBy: trackByIndex">
-                                <label class="swallowed-label-small">Nested Slot {{ j + 1 }}</label>
+                            <div *ngFor="let b of [].constructor(3); index as j; trackBy: trackByIndex">
+                                <label class="swallowed-label-small">{{ getNestedAbominationAbilityTitle(i, j) }}</label>
                                 <button type="button"
                                     class="btn selection-btn btn-sm w-100 d-flex align-items-center mb-1"
-                                    (click)="openSelectionDialog('swallowed-pet', i + 1, 'abomination-parrot-abomination', j + 1)">
-                                    <img *ngIf="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetAbominationSwallowedPet' + (j + 1))?.value)"
-                                        class="selection-icon"
-                                        [ngSrc]="getPetImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetAbominationSwallowedPet' + (j + 1))?.value)!"
-                                        width="20" height="20" loading="lazy" decoding="async" alt="Nested Abom Slot" />
+                                    (click)="openSelectionDialog('ability', i + 1, 'abomination-parrot-abomination', j + 1)">
+                                    <span class="selection-icon-wrap"
+                                        *ngIf="getAbilityImagePath(formGroup.get('abominationSwallowedPet' + (i + 1) + 'ParrotCopyPetAbominationSwallowedPet' + (j + 1))?.value) as nestedAbilityIcon">
+                                        <img class="selection-icon" [ngSrc]="nestedAbilityIcon" width="20" height="20"
+                                            loading="lazy" decoding="async" alt="Nested Abom Slot" />
+                                        <span class="selection-level-badge">{{ getNestedAbominationAbilityLevel(i, j) }}</span>
+                                    </span>
                                     <span class="selection-text">{{ formGroup.get('abominationSwallowedPet' + (i + 1) +
                                         'ParrotCopyPetAbominationSwallowedPet' + (j + 1))?.value || 'None' }}</span>
                                     <i class="fas fa-chevron-down ms-auto"></i>
@@ -153,8 +138,8 @@
             <label class="swallowed-label">Swallowed by Beluga</label>
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                 (click)="openSelectionDialog('swallowed-pet', undefined, 'pet')">
-                <img *ngIf="getPetImagePath(formGroup.get('belugaSwallowedPet')?.value)" class="selection-icon"
-                    [ngSrc]="getPetImagePath(formGroup.get('belugaSwallowedPet')?.value)!" width="24" height="24"
+                <img *ngIf="getAbilityImagePath(formGroup.get('belugaSwallowedPet')?.value)" class="selection-icon"
+                    [ngSrc]="getAbilityImagePath(formGroup.get('belugaSwallowedPet')?.value)!" width="24" height="24"
                     loading="lazy" decoding="async" alt="Beluga Swallowed" />
                 <span class="selection-text">{{ formGroup.get('belugaSwallowedPet')?.value || 'Select Pet' }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
@@ -164,9 +149,9 @@
         <div *ngIf="pet?.name === 'Parrot'">
             <label class="swallowed-label">Parrot Copy</label>
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
-                (click)="openSelectionDialog('swallowed-pet', undefined, 'parrot')">
-                <img *ngIf="getPetImagePath(formGroup.get('parrotCopyPet')?.value)" class="selection-icon"
-                    [ngSrc]="getPetImagePath(formGroup.get('parrotCopyPet')?.value)!" width="24" height="24"
+                (click)="openSelectionDialog('ability', undefined, 'parrot')">
+                <img *ngIf="getAbilityImagePath(formGroup.get('parrotCopyPet')?.value)" class="selection-icon"
+                    [ngSrc]="getAbilityImagePath(formGroup.get('parrotCopyPet')?.value)!" width="24" height="24"
                     loading="lazy" decoding="async" alt="Parrot Copy" />
                 <span class="selection-text">{{ formGroup.get('parrotCopyPet')?.value || 'Select Pet' }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
@@ -177,9 +162,9 @@
                 <label class="swallowed-label">Then Beluga Swallow</label>
                 <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                     (click)="openSelectionDialog('swallowed-pet', undefined, 'parrot-beluga')">
-                    <img *ngIf="getPetImagePath(formGroup.get('parrotCopyPetBelugaSwallowedPet')?.value)"
+                    <img *ngIf="getAbilityImagePath(formGroup.get('parrotCopyPetBelugaSwallowedPet')?.value)"
                         class="selection-icon"
-                        [ngSrc]="getPetImagePath(formGroup.get('parrotCopyPetBelugaSwallowedPet')?.value)!" width="24"
+                        [ngSrc]="getAbilityImagePath(formGroup.get('parrotCopyPetBelugaSwallowedPet')?.value)!" width="24"
                         height="24" loading="lazy" decoding="async" alt="Nested Beluga" />
                     <span class="selection-text">{{ formGroup.get('parrotCopyPetBelugaSwallowedPet')?.value || 'Select
                         Pet' }}</span>
@@ -189,23 +174,17 @@
 
             <!-- Abomination inside Parrot -->
             <div class="mt-2 ps-3 border-start" *ngIf="formGroup.get('parrotCopyPet')?.value === 'Abomination'">
-                <div class="form-group small-w-input mb-2">
-                    <label class="swallowed-label">Abom Level</label>
-                    <select class="form-control" formControlName="parrotCopyPetAbominationLevel">
-                        <option [ngValue]="1">1</option>
-                        <option [ngValue]="2">2</option>
-                        <option [ngValue]="3">3</option>
-                    </select>
-                </div>
                 <div
                     *ngFor="let foo of [].constructor(getParrotCopyAbominationSlotCount()); index as i; trackBy: trackByIndex">
-                    <label class="swallowed-label">Swallowed Pet {{ i+1 }}</label>
+                    <label class="swallowed-label">{{ getParrotAbominationAbilityTitle(i) }}</label>
                     <button type="button" class="btn selection-btn w-100 d-flex align-items-center mb-2"
-                        (click)="openSelectionDialog('swallowed-pet', i+1, 'parrot-abomination')">
-                        <img *ngIf="getPetImagePath(formGroup.get('parrotCopyPetAbominationSwallowedPet' + (i+1))?.value)"
-                            class="selection-icon"
-                            [ngSrc]="getPetImagePath(formGroup.get('parrotCopyPetAbominationSwallowedPet' + (i+1))?.value)!"
-                            width="24" height="24" loading="lazy" decoding="async" alt="Nested Abom Slot" />
+                        (click)="openSelectionDialog('ability', i+1, 'parrot-abomination')">
+                        <span class="selection-icon-wrap"
+                            *ngIf="getAbilityImagePath(formGroup.get('parrotCopyPetAbominationSwallowedPet' + (i+1))?.value) as parrotAbomAbilityIcon">
+                            <img class="selection-icon" [ngSrc]="parrotAbomAbilityIcon" width="24" height="24"
+                                loading="lazy" decoding="async" alt="Nested Abom Slot" />
+                            <span class="selection-level-badge">{{ getParrotAbominationAbilityLevel(i) }}</span>
+                        </span>
                         <span class="selection-text">{{ formGroup.get('parrotCopyPetAbominationSwallowedPet' +
                             (i+1))?.value || 'None' }}</span>
                         <i class="fas fa-chevron-down ms-auto"></i>
@@ -224,9 +203,9 @@
             <label class="swallowed-label">Swallowed by Fringehead</label>
             <button type="button" class="btn selection-btn w-100 d-flex align-items-center"
                 (click)="openSelectionDialog('swallowed-pet', undefined, 'pet')">
-                <img *ngIf="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet')?.value)"
+                <img *ngIf="getAbilityImagePath(formGroup.get('sarcasticFringeheadSwallowedPet')?.value)"
                     class="selection-icon"
-                    [ngSrc]="getPetImagePath(formGroup.get('sarcasticFringeheadSwallowedPet')?.value)!" width="24"
+                    [ngSrc]="getAbilityImagePath(formGroup.get('sarcasticFringeheadSwallowedPet')?.value)!" width="24"
                     height="24" loading="lazy" decoding="async" alt="Fringehead Swallowed" />
                 <span class="selection-text">{{ formGroup.get('sarcasticFringeheadSwallowedPet')?.value || 'Select Pet'
                     }}</span>

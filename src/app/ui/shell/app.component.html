@@ -2,7 +2,8 @@
   <div id="apiResponse">{{ apiResponse }}</div>
 </ng-container>
 <ng-container *ngIf="!api">
-  <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" [ngClass]="lapsusTypographyStageClass" #container>
+  <div class="container-fluid app-wrapper flex-col" [formGroup]="formGroup" [ngClass]="lapsusTypographyStageClass"
+    #container>
     <div class="row battle-row pb-5 pt-3" [style.background-image]="
         battleBackgroundUrl ? 'url(' + battleBackgroundUrl + ')' : ''
       ">
@@ -21,23 +22,13 @@
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="toy-level-controls inline" *ngIf="playerToyImageUrl">
-                  <button
-                    type="button"
-                    class="toy-level-btn"
-                    (click)="decrementToyLevel('player')"
-                    title="Decrease level"
-                    aria-label="Decrease player toy level"
-                  >
+                  <button type="button" class="toy-level-btn" (click)="decrementToyLevel('player')"
+                    title="Decrease level" aria-label="Decrease player toy level">
                     <i class="fas fa-minus"></i>
                   </button>
                   <span class="toy-level-label">Lv{{ formGroup.get("playerToyLevel").value }}</span>
-                  <button
-                    type="button"
-                    class="toy-level-btn"
-                    (click)="incrementToyLevel('player')"
-                    title="Increase level"
-                    aria-label="Increase player toy level"
-                  >
+                  <button type="button" class="toy-level-btn" (click)="incrementToyLevel('player')"
+                    title="Increase level" aria-label="Increase player toy level">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -70,33 +61,31 @@
                 let pet of playerPetsControls;
                 index as i;
                 trackBy: trackByIndex
-              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay" (mousedown)="setActivePetSlot('player', 4 - i)"
-              (focusin)="setActivePetSlot('player', 4 - i)"
+              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay"
+              (mousedown)="setActivePetSlot('player', 4 - i)" (focusin)="setActivePetSlot('player', 4 - i)"
               [class.pet-slot-active]="
                 activePetSlot?.side === 'player' && activePetSlot?.index === 4 - i
               ">
               <div class="pet-slot-actions">
                 <button type="button" class="pet-clear-btn"
-                  (click)="playerPetSelector.removePet(); $event.stopPropagation()"
-                  title="Clear this pet selector" aria-label="Clear this pet selector">
+                  (click)="playerPetSelector.removePet(); $event.stopPropagation()" title="Clear this pet selector"
+                  aria-label="Clear this pet selector">
                   X
                 </button>
               </div>
               <app-pet-selector [pet]="player.getPet(4 - i)" [player]="player" [opponent]="opponent" [index]="4 - i"
-                #playerPetSelector
-                [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
-                [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
-                [allowEquipmentUseOverrides]="
+                #playerPetSelector [formGroup]="makeFormGroup(pet)" [ailments]="true"
+                [allPets]="formGroup.get('allPets').value" [mana]="formGroup.get('mana').value"
+                [triggersConsumed]="formGroup.get('triggersConsumed').value" [allowEquipmentUseOverrides]="
                   formGroup.get('changeEquipmentUses').value
                 " [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="true"
-                [customPacks]="formGroup.get('customPacks')" [showSwallowedLevels]="
-                  formGroup.get('showSwallowedLevels').value
-                "></app-pet-selector>
+                [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
             </div>
           </div>
           <!-- <div class="front">FRONT</div> -->
         </div>
       </div>
+
       <div class="col-12 col-xl-6 px-4">
         <div class="d-flex justify-content-between">
           <div class="d-flex align-items-center toy-wrap">
@@ -112,23 +101,13 @@
                   <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="toy-level-controls inline" *ngIf="opponentToyImageUrl">
-                  <button
-                    type="button"
-                    class="toy-level-btn"
-                    (click)="decrementToyLevel('opponent')"
-                    title="Decrease level"
-                    aria-label="Decrease opponent toy level"
-                  >
+                  <button type="button" class="toy-level-btn" (click)="decrementToyLevel('opponent')"
+                    title="Decrease level" aria-label="Decrease opponent toy level">
                     <i class="fas fa-minus"></i>
                   </button>
                   <span class="toy-level-label">Lv{{ formGroup.get("opponentToyLevel").value }}</span>
-                  <button
-                    type="button"
-                    class="toy-level-btn"
-                    (click)="incrementToyLevel('opponent')"
-                    title="Increase level"
-                    aria-label="Increase opponent toy level"
-                  >
+                  <button type="button" class="toy-level-btn" (click)="incrementToyLevel('opponent')"
+                    title="Increase level" aria-label="Increase opponent toy level">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
@@ -162,28 +141,25 @@
                 let pet of opponentPetsControls;
                 index as i;
                 trackBy: trackByIndex
-              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay" (mousedown)="setActivePetSlot('opponent', i)"
-              (focusin)="setActivePetSlot('opponent', i)"
+              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay"
+              (mousedown)="setActivePetSlot('opponent', i)" (focusin)="setActivePetSlot('opponent', i)"
               [class.pet-slot-active]="
                 activePetSlot?.side === 'opponent' && activePetSlot?.index === i
               ">
               <div class="pet-slot-actions">
                 <button type="button" class="pet-clear-btn"
-                  (click)="opponentPetSelector.removePet(); $event.stopPropagation()"
-                  title="Clear this pet selector" aria-label="Clear this pet selector">
+                  (click)="opponentPetSelector.removePet(); $event.stopPropagation()" title="Clear this pet selector"
+                  aria-label="Clear this pet selector">
                   X
                 </button>
               </div>
               <app-pet-selector [pet]="opponent.getPet(i)" [player]="opponent" [opponent]="player" [index]="i"
-                #opponentPetSelector
-                [formGroup]="makeFormGroup(pet)" [ailments]="true" [allPets]="formGroup.get('allPets').value"
-                [mana]="formGroup.get('mana').value" [triggersConsumed]="formGroup.get('triggersConsumed').value"
-                [allowEquipmentUseOverrides]="
+                #opponentPetSelector [formGroup]="makeFormGroup(pet)" [ailments]="true"
+                [allPets]="formGroup.get('allPets').value" [mana]="formGroup.get('mana').value"
+                [triggersConsumed]="formGroup.get('triggersConsumed').value" [allowEquipmentUseOverrides]="
                   formGroup.get('changeEquipmentUses').value
-                " [showTokenPets]="formGroup.get('tokenPets').value" [customPacks]="formGroup.get('customPacks')"
-                [showSwallowedLevels]="
-                  formGroup.get('showSwallowedLevels').value
-                "></app-pet-selector>
+                " [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="false"
+                [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
             </div>
           </div>
           <!-- <div class="back">BACK</div> -->
@@ -194,96 +170,97 @@
     <app-shell-controls [app]="app"></app-shell-controls>
 
     <app-shell-battle-results [app]="app"></app-shell-battle-results>
-  </div>
-  <!-- Custom Pack -->
-  <div class="modal fade custom-pack-editor-modal" id="customPackEditor" tabindex="-1" aria-labelledby="customPackEditorLabel" aria-hidden="true"
-    #customPackEditor>
-    <div class="modal-dialog modal-lg custom-pack-editor-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="customPackEditorLabel">
-            Custom Pack Editor
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <app-custom-pack-editor [formGroup]="formGroup"></app-custom-pack-editor>
+
+    <!-- Custom Pack -->
+    <div class="modal fade custom-pack-editor-modal" id="customPackEditor" tabindex="-1"
+      aria-labelledby="customPackEditorLabel" aria-hidden="true" #customPackEditor>
+      <div class="modal-dialog modal-lg custom-pack-editor-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="customPackEditorLabel">
+              Custom Pack Editor
+            </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <app-custom-pack-editor [formGroup]="formGroup"></app-custom-pack-editor>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Guide</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          @defer (when showInfo) {
-          <app-info></app-info>
-          } @placeholder {
-          <div class="text-muted">Loading info…</div>
-          }
+    <div class="modal fade" id="info" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Guide</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            @defer (when showInfo) {
+            <app-info></app-info>
+            } @placeholder {
+            <div class="text-muted">Loading info…</div>
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="import" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="importModalLabel">
-            Import
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          @defer (when showImport) {
-          <app-import-calculator [importFunc]="importForDialog"></app-import-calculator>
-          } @placeholder {
-          <div class="text-muted">Loading import tools…</div>
-          }
+    <div class="modal fade" id="import" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="importModalLabel">
+              Import
+            </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            @defer (when showImport) {
+            <app-import-calculator [importFunc]="importForDialog"></app-import-calculator>
+            } @placeholder {
+            <div class="text-muted">Loading import tools…</div>
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exportModalLabel">
-            Export
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          @defer (when showExport) {
-          <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
-          } @placeholder {
-          <div class="text-muted">Loading export tools…</div>
-          }
+    <div class="modal fade" id="export" tabindex="-1" aria-labelledby="exportModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exportModalLabel">
+              Export
+            </h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            @defer (when showExport) {
+            <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
+            } @placeholder {
+            <div class="text-muted">Loading export tools…</div>
+            }
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABugLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="reportABugLabel">Report A Bug</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          @defer (when showReportABug) {
-          <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
-          } @placeholder {
-          <div class="text-muted">Loading report form…</div>
-          }
+    <div class="modal fade" id="reportABug" tabindex="-1" aria-labelledby="reportABugLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="reportABugLabel">Report A Bug</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            @defer (when showReportABug) {
+            <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
+            } @placeholder {
+            <div class="text-muted">Loading report form…</div>
+            }
+          </div>
         </div>
       </div>
     </div>
@@ -294,4 +271,3 @@
   [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')" [savedTeams]="savedTeams"
   (select)="onItemSelected($event)" (close)="showSelectionDialog = false">
 </app-item-selection-dialog>
-

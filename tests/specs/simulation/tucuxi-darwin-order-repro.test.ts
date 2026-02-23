@@ -46,7 +46,6 @@ describe('Tucuxi vs Darwin ordering', () => {
       komodoShuffle: false,
       mana: true,
       showAdvanced: true,
-      showSwallowedLevels: false,
       showTriggerNamesInLogs: true,
       ailmentEquipment: false,
       changeEquipmentUses: false,

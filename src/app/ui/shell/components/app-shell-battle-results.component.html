@@ -141,6 +141,12 @@
             <ng-container *ngIf="app.currentFightAnimationRenderFrame as frameVm; else noAnimationFrames">
                 <div class="fight-stage" [class.fight-phase-a]="frameVm.phase === 'a'" [class.fight-phase-b]="frameVm.phase === 'b'">
               <div class="fight-team fight-team-opponent">
+                <div class="fight-team-toy-wrap">
+                  <img *ngIf="frameVm.frame.opponentToyName" [ngSrc]="app.getToyIconPath(frameVm.frame.opponentToyName)"
+                    class="fight-team-toy" [alt]="frameVm.frame.opponentToyName + ' toy'" width="24" height="24" loading="lazy" decoding="async" />
+                  <img *ngIf="frameVm.frame.opponentHardToyName" [ngSrc]="app.getToyIconPath(frameVm.frame.opponentHardToyName)"
+                    class="fight-team-toy fight-team-toy-hard" [alt]="frameVm.frame.opponentHardToyName + ' hard toy'" width="24" height="24" loading="lazy" decoding="async" />
+                </div>
                 <div class="fight-slot" *ngFor="let slotVm of frameVm.opponentSlots; trackBy: app.trackByIndex"
                   [ngClass]="slotVm.classMap" [style.--fight-shift-steps]="slotVm.shiftSteps">
                   <div class="fight-slot-label">{{ slotVm.slot.label || ('O' + (slotVm.slot.slot + 1)) }}</div>
@@ -260,6 +266,12 @@
               </div>
 
               <div class="fight-team fight-team-player fight-team-player-head-to-head">
+                <div class="fight-team-toy-wrap">
+                  <img *ngIf="frameVm.frame.playerToyName" [ngSrc]="app.getToyIconPath(frameVm.frame.playerToyName)"
+                    class="fight-team-toy" [alt]="frameVm.frame.playerToyName + ' toy'" width="24" height="24" loading="lazy" decoding="async" />
+                  <img *ngIf="frameVm.frame.playerHardToyName" [ngSrc]="app.getToyIconPath(frameVm.frame.playerHardToyName)"
+                    class="fight-team-toy fight-team-toy-hard" [alt]="frameVm.frame.playerHardToyName + ' hard toy'" width="24" height="24" loading="lazy" decoding="async" />
+                </div>
                 <div class="fight-slot" *ngFor="let slotVm of frameVm.playerSlots; trackBy: app.trackByIndex"
                   [ngClass]="slotVm.classMap" [style.--fight-shift-steps]="slotVm.shiftSteps">
                   <div class="fight-slot-label">{{ slotVm.slot.label || ('P' + (slotVm.slot.slot + 1)) }}</div>

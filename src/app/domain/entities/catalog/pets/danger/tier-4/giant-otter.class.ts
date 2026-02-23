@@ -137,19 +137,19 @@ export class GiantOtterAbility extends Ability {
     let friends = targetResp.pets;
 
     for (let friend of friends) {
+      const actualAttack = friend.increaseAttack(statBonus.attack);
+      const actualHealth = friend.increaseHealth(statBonus.health);
+
       const existing = this.buffedFriends.get(friend);
       if (existing) {
-        existing.attack += statBonus.attack;
-        existing.health += statBonus.health;
+        existing.attack += actualAttack;
+        existing.health += actualHealth;
       } else {
         this.buffedFriends.set(friend, {
-          attack: statBonus.attack,
-          health: statBonus.health,
+          attack: actualAttack,
+          health: actualHealth,
         });
       }
-
-      friend.increaseAttack(statBonus.attack);
-      friend.increaseHealth(statBonus.health);
 
       this.logService.createLog({
         message: `${owner.name} gave ${friend.name} +${statBonus.attack} attack and +${statBonus.health} health`,

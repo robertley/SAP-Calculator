@@ -52,14 +52,15 @@ export type {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemSelectionDialogComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+  implements OnInit, OnDestroy, AfterViewInit {
   @Input() type: SelectionType = 'pet';
   @Input() currentPack: string = 'Turtle';
   @Input() showTokenPets = false;
   @Input() showAllPets = false;
   @Input() customPacks: AbstractControl | null = null;
   @Input() savedTeams: TeamPreset[] = [];
+  @Input() lockAbilityLevel = false;
+  @Input() initialLevel = 1;
 
   @Output() select = new EventEmitter<unknown>();
   @Output() close = new EventEmitter<void>();
@@ -71,6 +72,7 @@ export class ItemSelectionDialogComponent
   availablePacks = ['All', ...PACK_NAMES, 'Tokens'];
   selectedItemCategory = 'All';
   availableItemCategories = ['All'];
+  selectedLevel = 1;
 
   items: SelectionItem[] = [];
   filteredItems: SelectionItem[] = [];
@@ -102,6 +104,7 @@ export class ItemSelectionDialogComponent
   get shouldShowNoneCard(): boolean {
     return (
       this.type !== 'swallowed-pet' &&
+      this.type !== 'ability' &&
       this.type !== 'pack' &&
       this.type !== 'team' &&
       this.searchQuery.trim().length === 0
@@ -112,9 +115,10 @@ export class ItemSelectionDialogComponent
     private petService: PetService,
     private equipmentService: EquipmentService,
     private toyService: ToyService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.selectedLevel = this.clampLevel(this.initialLevel);
     this.updateAvailablePacks();
 
     if (this.customPacks && this.customPacks instanceof FormArray) {
@@ -185,6 +189,8 @@ export class ItemSelectionDialogComponent
       this.loadPacks();
     } else if (this.type === 'team') {
       this.loadTeams();
+    } else if (this.type === 'ability') {
+      this.loadAbilities();
     }
     this.updateAvailableItemCategories();
     this.filterItems();
@@ -418,6 +424,24 @@ export class ItemSelectionDialogComponent
       }
     }
 
+    if (this.type === 'ability' && this.selectedPack !== 'All') {
+      if (this.selectedPack === 'Tokens') {
+        filtered = filtered.filter((item) => item.pack === 'Tokens');
+      } else if (this.selectedPack === 'Equipment') {
+        filtered = filtered.filter(
+          (item) => item.type === 'equipment' || item.type === 'ailment',
+        );
+      } else if (this.selectedPack === 'Toys') {
+        filtered = filtered.filter(
+          (item) => item.type === 'toy' || item.type === 'hard-toy',
+        );
+      } else {
+        filtered = filtered.filter(
+          (item) => item.pack === this.selectedPack || item.isDisabled,
+        );
+      }
+    }
+
     if (
       (this.type === 'equipment' || this.type === 'toy' || this.type === 'hard-toy') &&
       this.selectedItemCategory !== 'All'
@@ -437,6 +461,17 @@ export class ItemSelectionDialogComponent
     }
 
     this.filteredItems = [...filtered].sort((a, b) => {
+      // In ability mode: pets first, then equipment/ailments, then toys
+      if (this.type === 'ability') {
+        const abilityGroupOrder = (item: SelectionItem) => {
+          if (item.type === 'pet') return 0;
+          if (item.type === 'equipment' || item.type === 'ailment') return 1;
+          return 2; // toys
+        };
+        const groupDiff = abilityGroupOrder(a) - abilityGroupOrder(b);
+        if (groupDiff !== 0) return groupDiff;
+      }
+
       if (a.category === 'Ailments' && b.category !== 'Ailments') return 1;
       if (a.category !== 'Ailments' && b.category === 'Ailments') return -1;
 
@@ -510,7 +545,13 @@ export class ItemSelectionDialogComponent
       this.type === 'swallowed-pet' ||
       this.type === 'pack'
     ) {
-      this.select.emit(item.name);
+      if (this.type === 'swallowed-pet') {
+        this.select.emit({ name: item.name, level: this.selectedLevel });
+      } else {
+        this.select.emit(item.name);
+      }
+    } else if (this.type === 'ability') {
+      this.select.emit({ name: item.name, level: this.selectedLevel });
     } else {
       this.select.emit(item.item);
     }
@@ -555,6 +596,83 @@ export class ItemSelectionDialogComponent
     return tokenItems;
   }
 
+  /** Loads all pets, equipment, and toys for the ability selector mode */
+  private loadAbilities(): void {
+    // --- Pets ---
+    const petItems: SelectionItem[] = [];
+    if (!this.basePetItems) {
+      const basePets: SelectionItem[] = [];
+      for (const pack of PACK_NAMES) {
+        const packPets = this.petService.basePackPetsByName[pack];
+        if (packPets) {
+          for (const [tier, pets] of packPets) {
+            pets.forEach((name) => {
+              basePets.push({
+                name,
+                displayName: name,
+                tier,
+                pack,
+                icon: getPetIconPath(name),
+                tooltip: getPetAbilityText(name),
+                type: 'pet',
+                category: `Tier ${tier}`,
+              });
+            });
+          }
+        }
+      }
+      this.basePetItems = basePets;
+    }
+
+    const allPets: SelectionItem[] = [];
+    allPets.push(...this.basePetItems);
+    allPets.push(...this.buildTokenItems());
+
+    const byName = new Map<string, SelectionItem>();
+    allPets.forEach((item) => {
+      const existing = byName.get(item.name);
+      if (!existing) {
+        byName.set(item.name, item);
+        return;
+      }
+      const existingIsToken = existing.pack === 'Tokens';
+      const incomingIsToken = item.pack === 'Tokens';
+      if (existingIsToken && !incomingIsToken) {
+        byName.set(item.name, item);
+      }
+    });
+
+    petItems.push(...Array.from(byName.values()));
+
+    // --- Equipment (non-pet, greyed out) ---
+    if (!this.equipmentItems) {
+      this.loadEquipment(); // populates this.equipmentItems
+    }
+    const equipItems: SelectionItem[] = (this.equipmentItems ?? []).map((item) => ({
+      ...item,
+      isDisabled: true,
+      category: item.type === 'ailment' ? 'Ailments' : (item.category ?? 'Equipment'),
+    }));
+
+    // --- Toys (non-pet, greyed out) ---
+    if (!this.toyItems) {
+      this.loadToys(false);
+    }
+    if (!this.hardToyItems) {
+      this.loadToys(true);
+    }
+    const toyItems: SelectionItem[] = [
+      ...(this.toyItems ?? []),
+      ...(this.hardToyItems ?? []),
+    ].map((item) => ({
+      ...item,
+      isDisabled: true,
+      category: item.type === 'hard-toy' ? `Hard Toy Tier ${item.tier}` : `Toy Tier ${item.tier}`,
+    }));
+
+    this.items = [...petItems, ...equipItems, ...toyItems];
+  }
+
   private updateAvailableItemCategories(): void {
     if (
       this.type !== 'equipment' &&
@@ -591,11 +709,25 @@ export class ItemSelectionDialogComponent
     }
   }
 
+  /** Pack filter options for 'ability' mode */
+  get abilityPackFilters(): string[] {
+    if (this.type !== 'ability') return [];
+    return ['All', ...PACK_NAMES, 'Tokens', 'Equipment', 'Toys'];
+  }
+
   private extractTierNumber(category: string): number | null {
     const match = /^Tier\s+(\d+)$/i.exec(category);
     if (!match) {
       return null;
     }
     return Number(match[1]);
+  }
+
+  private clampLevel(value: unknown): number {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return 1;
+    }
+    return Math.max(1, Math.min(3, Math.trunc(parsed)));
   }
 }

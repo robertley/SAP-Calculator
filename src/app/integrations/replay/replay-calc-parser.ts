@@ -154,7 +154,6 @@ export interface ReplayCalculatorState {
   showAdvanced: boolean;
   showTriggerNamesInLogs: boolean;
   showPositionalArgsInLogs: boolean;
-  showSwallowedLevels: boolean;
   ailmentEquipment: boolean;
 }
 
@@ -756,7 +755,6 @@ export class ReplayCalcParser {
       showAdvanced: true,
       showTriggerNamesInLogs: false,
       showPositionalArgsInLogs: true,
-      showSwallowedLevels: false,
       ailmentEquipment: false,
     };
   }
@@ -973,9 +971,6 @@ export class ReplayCalcParser {
     }
     if (state.showPositionalArgsInLogs === false) {
       strippedState.showPositionalArgsInLogs = false;
-    }
-    if (state.showSwallowedLevels) {
-      strippedState.showSwallowedLevels = true;
     }
     if (state.ailmentEquipment) {
       strippedState.ailmentEquipment = true;

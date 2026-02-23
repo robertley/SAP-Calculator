@@ -14,7 +14,7 @@ export class AbilityEngine {
     private toyService: ToyService,
     private player: Player,
     private opponent: Player,
-  ) {}
+  ) { }
 
   applyPreBattleFriendDeathCounts() {
     const teams = [this.player, this.opponent];
@@ -158,6 +158,9 @@ export class AbilityEngine {
 
       this.toyService.setStartOfBattleEvent({
         callback: () => {
+          if (player.toy !== toy && player.hardToy !== toy) {
+            return;
+          }
           startOfBattle.call(toy, this.gameService.gameApi);
           const toyLevel = toy.level;
           for (const pet of player.petArray) {

@@ -256,6 +256,58 @@
   }
 }
 
+.item-card.item-card-disabled {
+  opacity: 0.65;
+  cursor: pointer;
+  border: 1.5px solid #f0a500;
+  background: rgba(240, 165, 0, 0.05);
+
+  &:hover {
+    background: rgba(240, 165, 0, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .item-name {
+    color: #7a6200;
+  }
+}
+
+:host-context(.night) .item-card.item-card-disabled {
+  border-color: #c98f00;
+  background: rgba(200, 150, 0, 0.08);
+
+  &:hover {
+    background: rgba(200, 150, 0, 0.16);
+  }
+
+  .item-name {
+    color: #d4aa30;
+  }
+}
+
+.ability-mode-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(240, 165, 0, 0.1);
+  border: 1px solid rgba(240, 165, 0, 0.4);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #7a5e00;
+
+  .notice-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+}
+
+:host-context(.night) .ability-mode-notice {
+  background: rgba(200, 150, 0, 0.12);
+  border-color: rgba(200, 150, 0, 0.4);
+  color: #d4aa30;
+}
+
 .item-card.team-card {
   align-items: stretch;
   width: 100%;

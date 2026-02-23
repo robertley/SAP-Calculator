@@ -759,6 +759,83 @@ describe('Pet Ability Patch Regressions', () => {
         expect(pancakesLog).toBeDefined();
     });
 
+    it('Abomination copied Panther should multiply equipped Pancakes by copied level', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPack: 'Unicorn',
+            opponentPack: 'Turtle',
+            playerPets: [
+                {
+                    name: 'Abomination',
+                    attack: 6,
+                    health: 5,
+                    exp: 0,
+                    equipment: { name: 'Pancakes' },
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: 'Panther',
+                    abominationSwallowedPet1Level: 1,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 2,
+                    health: 1,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Fish',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const pancakesMessages = logs
+            .filter((log: any) => log.type === 'equipment' && typeof log.message === 'string')
+            .map((log: any) => log.message)
+            .filter((message: string) => message.includes('(Pancakes)'));
+
+        expect(pancakesMessages.length).toBeGreaterThan(0);
+        expect(pancakesMessages[0]).toBe(
+            'Ant gained 4 attack and 4 health (Pancakes) x2 (Panther)'
+        );
+    });
+
     it('Donkey should push the last enemy to the enemy front', () => {
         const config: SimulationConfig = {
             ...baseConfig,

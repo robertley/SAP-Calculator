@@ -1,25 +1,24 @@
 <div class="selection-overlay" (click)="onCancel()">
-  <div
-    class="selection-dialog card shadow-lg"
-    (click)="$event.stopPropagation()"
-  >
+  <div class="selection-dialog card shadow-lg" (click)="$event.stopPropagation()">
     <div class="dialog-header">
       <h3>
         Select
         {{
-          type === "pet"
-            ? "Pet"
-            : type === "swallowed-pet"
-              ? "Swallowed Pet"
-              : type === "equipment"
-                ? "Equipment"
-                : type === "toy"
-                  ? "Toy"
-                  : type === "hard-toy"
-                    ? "Hard Toy"
-                    : type === "team"
-                      ? "Team"
-                      : "Pack"
+        type === "pet"
+        ? "Pet"
+        : type === "swallowed-pet"
+        ? "Swallowed Pet"
+        : type === "equipment"
+        ? "Equipment"
+        : type === "toy"
+        ? "Toy"
+        : type === "hard-toy"
+        ? "Hard Toy"
+        : type === "team"
+        ? "Team"
+        : type === "ability"
+        ? "Ability"
+        : "Pack"
         }}
       </h3>
       <button class="btn-close" (click)="onCancel()"></button>
@@ -27,124 +26,98 @@
 
     <div class="dialog-body">
       <div class="search-container">
-        <input
-          type="text"
-          class="form-control search-input"
-          placeholder="Search..."
-          [(ngModel)]="searchQuery"
-          (ngModelChange)="onSearchChange()"
-          #searchInput
-        />
+        <input type="text" class="form-control search-input" placeholder="Search..." [(ngModel)]="searchQuery"
+          (ngModelChange)="onSearchChange()" #searchInput />
       </div>
 
-      <div
-        class="pack-filters"
-        *ngIf="type === 'pet' || type === 'swallowed-pet'"
-      >
-        <button
-          *ngFor="let pack of availablePacks; trackBy: trackByPack"
-          class="btn btn-sm"
-          [class.btn-primary]="selectedPack === pack"
-          [class.btn-outline-primary]="selectedPack !== pack"
-          (click)="selectPack(pack)"
-        >
+      <div class="pack-filters" *ngIf="type === 'pet' || type === 'swallowed-pet'">
+        <button *ngFor="let pack of availablePacks; trackBy: trackByPack" class="btn btn-sm"
+          [class.btn-primary]="selectedPack === pack" [class.btn-outline-primary]="selectedPack !== pack"
+          (click)="selectPack(pack)">
           <span class="pack-filter-content">
-            <img
-              *ngIf="getPackFilterIcon(pack) as packIcon"
-              [ngSrc]="packIcon"
-              width="18"
-              height="18"
-              loading="lazy"
-              decoding="async"
-              [alt]="pack"
-              class="pack-filter-icon"
-            />
+            <img *ngIf="getPackFilterIcon(pack) as packIcon" [ngSrc]="packIcon" width="18" height="18" loading="lazy"
+              decoding="async" [alt]="pack" class="pack-filter-icon" />
             <span>{{ pack }}</span>
           </span>
         </button>
       </div>
 
-      <div
-        class="pack-filters"
-        *ngIf="type === 'equipment' || type === 'toy' || type === 'hard-toy'"
-      >
-        <button
-          *ngFor="let category of availableItemCategories; trackBy: trackByCategory"
-          class="btn btn-sm"
+      <!-- Ability mode pack/category filter -->
+      <div class="pack-filters" *ngIf="type === 'ability'">
+        <button *ngFor="let pack of abilityPackFilters; trackBy: trackByPack" class="btn btn-sm"
+          [class.btn-primary]="selectedPack === pack" [class.btn-outline-primary]="selectedPack !== pack"
+          (click)="selectPack(pack)">
+          <span class="pack-filter-content">
+            <img *ngIf="getPackFilterIcon(pack) as packIcon" [ngSrc]="packIcon" width="18" height="18" loading="lazy"
+              decoding="async" [alt]="pack" class="pack-filter-icon" />
+            <span>{{ pack }}</span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Ability Level Selector -->
+      <div class="ability-level-selector mt-2 text-center" *ngIf="type === 'ability' && !lockAbilityLevel">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Ability Level Selector">
+          <input type="radio" class="btn-check" name="abilityLevel" id="abilityLevel1" [checked]="selectedLevel === 1"
+            (change)="selectedLevel = 1" />
+          <label class="btn btn-outline-primary" for="abilityLevel1">Lv. 1</label>
+
+          <input type="radio" class="btn-check" name="abilityLevel" id="abilityLevel2" [checked]="selectedLevel === 2"
+            (change)="selectedLevel = 2" />
+          <label class="btn btn-outline-primary" for="abilityLevel2">Lv. 2</label>
+
+          <input type="radio" class="btn-check" name="abilityLevel" id="abilityLevel3" [checked]="selectedLevel === 3"
+            (change)="selectedLevel = 3" />
+          <label class="btn btn-outline-primary" for="abilityLevel3">Lv. 3</label>
+        </div>
+      </div>
+
+      <div class="pack-filters" *ngIf="type === 'equipment' || type === 'toy' || type === 'hard-toy'">
+        <button *ngFor="let category of availableItemCategories; trackBy: trackByCategory" class="btn btn-sm"
           [class.btn-primary]="selectedItemCategory === category"
-          [class.btn-outline-primary]="selectedItemCategory !== category"
-          (click)="selectItemCategory(category)"
-        >
+          [class.btn-outline-primary]="selectedItemCategory !== category" (click)="selectItemCategory(category)">
           {{ category }}
         </button>
       </div>
 
+      <!-- Non-vanilla warning for ability mode -->
+      <div class="ability-mode-notice" *ngIf="type === 'ability'">
+        <span class="notice-icon">⚠</span>
+        <span>Equipment &amp; Toys are <strong>non-vanilla</strong> features and are indicated by a yellow
+          border.</span>
+      </div>
+
       <div class="items-grid scroll" [class.team-grid]="type === 'team'">
-        <div
-          class="item-card none-card"
-          *ngIf="shouldShowNoneCard"
-          (click)="onItemClick(null)"
-        >
+        <div class="item-card none-card" *ngIf="shouldShowNoneCard" (click)="onItemClick(null)">
           <div class="item-icon-container">
             <span class="none-icon">None</span>
           </div>
           <div class="item-name">None</div>
         </div>
 
-        <ng-container
-          *ngFor="
+        <ng-container *ngFor="
             let item of filteredItems;
             let i = index;
             trackBy: trackByItem
-          "
-        >
-          <div
-            class="category-header"
-            *ngIf="i === 0 || filteredItems[i - 1].category !== item.category"
-          >
+          ">
+          <div class="category-header" *ngIf="i === 0 || filteredItems[i - 1].category !== item.category">
             {{ item.category }}
           </div>
-          <div
-            class="item-card"
-            [class.team-card]="type === 'team'"
-            (click)="onItemClick(item)"
-            [appTooltip]="item.tooltip || item.displayName || item.name"
-          >
-            <div
-              class="item-icon-container"
-              [class.team-container]="type === 'team'"
-            >
+          <div class="item-card" [class.item-card-disabled]="item.isDisabled" [class.team-card]="type === 'team'"
+            (click)="onItemClick(item)" [appTooltip]="item.tooltip || item.displayName || item.name">
+            <div class="item-icon-container" [class.team-container]="type === 'team'">
               <ng-container *ngIf="type !== 'team'; else teamIcons">
-                <img
-                  *ngIf="item.icon"
-                  [ngSrc]="item.icon"
-                  width="48"
-                  height="48"
-                  loading="lazy"
-                  decoding="async"
-                  [alt]="item.name"
-                  class="item-icon"
-                />
-                <div
-                  *ngIf="item.tier > 0 && type !== 'hard-toy'"
-                  class="tier-badge"
-                  [ngClass]="'tier-badge-tier-' + item.tier"
-                >
+                <img *ngIf="item.icon" [ngSrc]="item.icon" width="48" height="48" loading="lazy" decoding="async"
+                  [alt]="item.name" class="item-icon" />
+                <div *ngIf="item.tier > 0 && type !== 'hard-toy'" class="tier-badge"
+                  [ngClass]="'tier-badge-tier-' + item.tier">
                   {{ item.tier }}
                 </div>
               </ng-container>
               <ng-template #teamIcons>
                 <div class="team-icon-strip">
-                  <img
-                    *ngFor="let icon of item.icons; trackBy: trackByIndex"
-                    [ngSrc]="icon"
-                    width="32"
-                    height="32"
-                    loading="lazy"
-                    decoding="async"
-                    [alt]="item.name"
-                    class="team-icon"
-                  />
+                  <img *ngFor="let icon of item.icons; trackBy: trackByIndex" [ngSrc]="icon" width="32" height="32"
+                    loading="lazy" decoding="async" [alt]="item.name" class="team-icon" />
                 </div>
               </ng-template>
             </div>
