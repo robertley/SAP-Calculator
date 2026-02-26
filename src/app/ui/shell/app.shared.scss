@@ -2,12 +2,14 @@ $day: #85ddf2;
 $night: #33377a;
 
 :root {
+  color-scheme: light;
   --ui-space-1: 4px;
   --ui-space-2: 8px;
   --ui-space-3: 12px;
   --ui-space-4: 16px;
   --ui-space-5: 24px;
   --ui-font-main: "Lapsus Pro", Roboto, "Helvetica Neue", sans-serif;
+  --ui-font-main-letter-spacing: 0.0125em;
   --ui-surface-0: #ffffff;
   --ui-surface-1: #f8fafc;
   --ui-surface-2: #f1f5f9;
@@ -24,9 +26,26 @@ $night: #33377a;
   --ui-opponent-soft: #e06a6a;
 }
 
+.theme-dark {
+  color-scheme: dark;
+  --ui-surface-0: #111827;
+  --ui-surface-1: #1f2937;
+  --ui-surface-2: #273548;
+  --ui-border-1: #334155;
+  --ui-text-1: #f8fafc;
+  --ui-text-2: #cbd5e1;
+  --ui-text-3: #94a3b8;
+  --ui-brand: #3b82f6;
+  --ui-brand-weak: rgba(59, 130, 246, 0.22);
+  --ui-success: #22c55e;
+  --ui-danger: #f87171;
+  --ui-draw: #94a3b8;
+}
+
 .app-wrapper {
   min-height: 100vh;
   font-family: var(--ui-font-main);
+  letter-spacing: var(--ui-font-main-letter-spacing);
 }
 
 .day-night-container {
@@ -443,6 +462,7 @@ $night: #33377a;
   &:hover {
     background: #f1f3f5;
     border-color: #adb5bd;
+    color: inherit;
     transform: translateY(-1px);
   }
 
@@ -450,6 +470,11 @@ $night: #33377a;
     outline: 3px solid var(--sap-btn-primary);
     outline-offset: 2px;
     border-color: var(--sap-btn-primary);
+    color: inherit;
+  }
+
+  &:active {
+    color: inherit;
   }
 
   .btn-icon {

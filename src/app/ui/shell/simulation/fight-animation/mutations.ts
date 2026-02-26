@@ -340,11 +340,21 @@ export function applyStatMutation(
     const sourceSide = getLogPrimarySide(log);
     const sourceName = parseSubjectName(text);
     const targetName = parseTargetName(text, sourceName);
+    const transformEvent = /\btransform(?:ed|ing)?\b/i.test(text)
+        ? parseTransformEvent(text)
+        : null;
     const shouldApplyToTarget = shouldApplyStatChangeToTarget(
         text,
         sourceName,
         targetName,
     );
+    const shouldApplyToTransformTarget =
+        !shouldApplyToTarget &&
+        Boolean(
+            transformEvent &&
+                !/\bgave\b/i.test(text) &&
+                (transformEvent.transformedName || transformEvent.targetName),
+        );
     const targetSide = inferTargetSide(
         state,
         log,
@@ -356,24 +366,40 @@ export function applyStatMutation(
 
     const sourcePetName = normalizeEntityToken(log.sourcePet?.name);
     const targetPetName = normalizeEntityToken(log.targetPet?.name);
-    const transformedName = /\btransform(?:ed|ing)?\b/i.test(text)
-        ? parseTransformEvent(text).transformedName
-        : null;
+    const transformedName = transformEvent?.transformedName ?? null;
     const hasPrimaryStatDelta =
         statChange.attackDelta !== 0 ||
         statChange.healthDelta !== 0 ||
         statChange.expDelta !== 0;
     if (hasPrimaryStatDelta) {
         const statRef = resolveSlotRef(state, {
-            preferredSide: shouldApplyToTarget ? targetSide : sourceSide,
-            explicitIndex: shouldApplyToTarget ? log.targetIndex : log.sourceIndex,
-            expectedName: shouldApplyToTarget ? targetName : sourceName,
+            preferredSide:
+                shouldApplyToTarget || shouldApplyToTransformTarget
+                    ? targetSide
+                    : sourceSide,
+            explicitIndex: shouldApplyToTarget
+                ? log.targetIndex
+                : shouldApplyToTransformTarget
+                    ? log.targetIndex
+                    : log.sourceIndex,
+            expectedName: shouldApplyToTarget
+                ? targetName
+                : shouldApplyToTransformTarget
+                    ? transformedName ?? transformEvent?.targetName ?? targetName
+                    : sourceName,
             preferNonEmpty: true,
         });
         if (statRef) {
             const resolvedTargetName = shouldApplyToTarget
                 ? targetPetName ?? targetName ?? sourcePetName ?? sourceName
-                : transformedName ?? sourcePetName ?? sourceName;
+                : shouldApplyToTransformTarget
+                    ? transformedName ??
+                      targetPetName ??
+                      transformEvent?.targetName ??
+                      targetName ??
+                      sourcePetName ??
+                      sourceName
+                    : transformedName ?? sourcePetName ?? sourceName;
             if (resolvedTargetName) {
                 setSlotPet(statRef.value, resolvedTargetName);
             }
@@ -411,10 +437,28 @@ export function applyStatMutation(
             sourceName,
             targetName,
         );
+        const shouldApplyManaToTransformTarget =
+            !shouldApplyManaToTarget &&
+            Boolean(
+                transformEvent &&
+                    !/\b(?:spent|took)\b/i.test(text) &&
+                    (transformEvent.transformedName || transformEvent.targetName),
+            );
         const manaRef = resolveSlotRef(state, {
-            preferredSide: shouldApplyManaToTarget ? targetSide : sourceSide,
-            explicitIndex: shouldApplyManaToTarget ? log.targetIndex : log.sourceIndex,
-            expectedName: shouldApplyManaToTarget ? targetName : sourceName,
+            preferredSide:
+                shouldApplyManaToTarget || shouldApplyManaToTransformTarget
+                    ? targetSide
+                    : sourceSide,
+            explicitIndex: shouldApplyManaToTarget
+                ? log.targetIndex
+                : shouldApplyManaToTransformTarget
+                    ? log.targetIndex
+                    : log.sourceIndex,
+            expectedName: shouldApplyManaToTarget
+                ? targetName
+                : shouldApplyManaToTransformTarget
+                    ? transformedName ?? transformEvent?.targetName ?? targetName
+                    : sourceName,
             preferNonEmpty: true,
         });
         if (!manaRef) {
@@ -422,7 +466,14 @@ export function applyStatMutation(
         }
         const resolvedManaName = shouldApplyManaToTarget
             ? targetPetName ?? targetName ?? sourcePetName ?? sourceName
-            : sourcePetName ?? sourceName ?? transformedName;
+            : shouldApplyManaToTransformTarget
+                ? transformedName ??
+                  targetPetName ??
+                  transformEvent?.targetName ??
+                  targetName ??
+                  sourcePetName ??
+                  sourceName
+                : sourcePetName ?? sourceName ?? transformedName;
         if (resolvedManaName) {
             setSlotPet(manaRef.value, resolvedManaName);
         }

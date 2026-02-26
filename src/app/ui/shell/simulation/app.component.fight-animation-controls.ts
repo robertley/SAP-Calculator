@@ -192,6 +192,9 @@ export function buildFightAnimationRenderFrame(
   ): FightAnimationSlotRenderModel => {
     const key = slotKey(slot.side, slot.slot);
     const popups = popupsBySlot.get(key) ?? EMPTY_POPUPS;
+    const slotIsFainted =
+      slot.pendingRemoval ||
+      (!slot.isEmpty && slot.health != null && slot.health <= 0);
     const hasStatGain = popups.some(
       (popup) => popup.type !== 'damage' && popup.delta > 0,
     );
@@ -204,7 +207,7 @@ export function buildFightAnimationRenderFrame(
         'fight-slot-target': targetKey === key,
         'fight-slot-snipe-target': snipeTargetKey === key,
         'fight-slot-shifted': shiftedSlots.has(key),
-        'fight-slot-fainted-ghost': slot.pendingRemoval,
+        'fight-slot-fainted-ghost': slotIsFainted,
         'fight-slot-stat-gain': hasStatGain,
         'fight-slot-equipment-removed': removedEquipmentBySlot.has(key),
         'fight-slot-equipment-added': addedEquipmentBySlot.has(key),

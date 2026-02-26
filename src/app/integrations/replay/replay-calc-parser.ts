@@ -7,9 +7,21 @@ import {
   PACK_MAP,
   PERKS_BY_ID,
   PETS_BY_ID,
+  PET_IDS_BY_NAME,
   PETS_META_BY_ID,
   TOYS_BY_ID,
 } from './replay-calc-schema';
+import {
+  resolvePetIdFromUnknown,
+  getTimesHurtFromRawPet,
+  getTriggersConsumedFromRawPet,
+  // other helpers available for future wiring
+  resolveToyId,
+  getToyName,
+  buildRelicItems,
+  buildAbominationMemory,
+  inferAbominationAbilityEnumsFromSwallowedPets,
+} from './replay-calc-parser-utils';
 
 interface ReplayAbilityJson {
   Enu?: number | string | null;
@@ -43,6 +55,7 @@ interface ReplayPetJson {
       WhiteWhaleAbility?: ReplayPetJson[] | null;
     } | null;
   } | null;
+  [key: string]: any;
 }
 
 interface ReplayToyJson {
@@ -96,6 +109,11 @@ export interface ReplayActionJson {
   Build?: string | null;
   Battle?: string | null;
   Mode?: string | null;
+}
+
+export interface ReplayActionsContainerJson {
+  Actions?: ReadonlyArray<ReplayActionJson> | null;
+  GenesisBuildModel?: ReplayBuildModelJson | null;
 }
 
 export interface ReplayCustomPack extends CustomPackConfig {
@@ -352,6 +370,51 @@ export function buildReplayAbilityPetMapFromActions(
   return buildReplayAbilityPetMapFromCounts(abilityOwnerCounts);
 }
 
+export function parseReplayForCalculatorFromActions(
+  actions: ReadonlyArray<ReplayActionJson> | null | undefined,
+  turnNumber: number,
+  buildModel?: ReplayBuildModelJson | null,
+  metaBoards?: ReplayMetaBoards,
+  options?: ReplayParseOptions,
+): ReplayCalculatorState | null {
+  const battleJson = selectReplayBattleFromActions(actions, turnNumber);
+  if (!battleJson) {
+    return null;
+  }
+
+  const inferredAbilityPetMap = buildReplayAbilityPetMapFromActions(actions);
+  const mergedAbilityPetMap = {
+    ...inferredAbilityPetMap,
+    ...(options?.abilityPetMap ?? {}),
+  };
+
+  const parser = new ReplayCalcParser();
+  return parser.parseReplayForCalculator(
+    battleJson,
+    buildModel ?? undefined,
+    metaBoards,
+    {
+      ...options,
+      abilityPetMap: mergedAbilityPetMap,
+    },
+  );
+}
+
+export function parseTeamwoodReplayForCalculator(
+  replay: ReplayActionsContainerJson | null | undefined,
+  turnNumber: number,
+  metaBoards?: ReplayMetaBoards,
+  options?: ReplayParseOptions,
+): ReplayCalculatorState | null {
+  return parseReplayForCalculatorFromActions(
+    replay?.Actions,
+    turnNumber,
+    replay?.GenesisBuildModel ?? undefined,
+    metaBoards,
+    options,
+  );
+}
+
 function defaultAbominationSwallowedState(): AbominationSwallowedState {
   return {
     abominationSwallowedPet1: null,
@@ -370,6 +433,7 @@ export class ReplayCalcParser {
     metaBoards?: ReplayMetaBoards,
     options?: ReplayParseOptions,
   ): ReplayCalculatorState {
+    console.log(`[ReplayCalcParser] PETS_BY_ID size: ${PETS_BY_ID.size}`);
     const userBoard = battleJson?.UserBoard ?? metaBoards?.userBoard;
     const opponentBoard = battleJson?.OpponentBoard ?? metaBoards?.opponentBoard;
 
@@ -394,13 +458,32 @@ export class ReplayCalcParser {
         if (!abilityId) {
           return;
         }
-        const mappedPetId =
+        let mappedPetId =
           typeof petIdOrName === 'number' || typeof petIdOrName === 'string'
             ? String(petIdOrName)
             : null;
+
+        // If the mapped pet id is numeric but not found in PETS_BY_ID,
+        // try a legacy offset fallback (pet id - 30) which some backends
+        // emit. This ensures ability->pet mappings using the -30 scheme
+        // still resolve to known pet ids.
+        if (mappedPetId && !PETS_BY_ID.has(mappedPetId)) {
+          const asNum = Number(mappedPetId);
+          if (Number.isInteger(asNum)) {
+            const fallbackNum = asNum - 30;
+            if (Number.isInteger(fallbackNum) && fallbackNum > 0) {
+              const fallbackId = String(fallbackNum);
+              if (PETS_BY_ID.has(fallbackId)) {
+                mappedPetId = fallbackId;
+              }
+            }
+          }
+        }
+
         const mappedPetName =
           (mappedPetId ? PETS_BY_ID.get(mappedPetId) : null) ||
           (typeof petIdOrName === 'string' ? petIdOrName : null);
+
         if (mappedPetName) {
           abilityPetNameByAbilityId.set(abilityId, mappedPetName);
         }
@@ -476,7 +559,7 @@ export class ReplayCalcParser {
     };
 
     const getTimesHurt = (petJson: ReplayPetJson): number | null => {
-      return toFiniteNumber(petJson?.Pow?.SabertoothTigerAbility);
+      return getTimesHurtFromRawPet(petJson);
     };
 
     const parseAbominationSwallowedState = (
@@ -605,15 +688,28 @@ export class ReplayCalcParser {
         return null;
       }
 
-      const rawPetRef = petJson.Enu;
-      const petId = String(rawPetRef ?? 0);
+      // Build helper maps for more advanced inference (used for Abomination memory)
+      const maps: any = { PET_IDS_BY_NAME };
+
+      const rawPetRef = petJson.Enu ?? (petJson as any).enu ?? (petJson as any).Id ?? (petJson as any).id;
+      const resolvedPetId = resolvePetIdFromUnknown(rawPetRef, maps);
+      const petId = resolvedPetId !== null ? String(resolvedPetId) : String(rawPetRef ?? 0);
+
       const petName =
         PETS_BY_ID.get(petId) ||
+        (petJson as any).name ||
+        (petJson as any).Name ||
         (typeof rawPetRef === 'string' && rawPetRef.trim().length > 0
           ? rawPetRef.trim()
-          : null);
-      const petTempAtk = toNumberOrFallback(petJson.At?.Temp, 0);
-      const petTempHp = toNumberOrFallback(petJson.Hp?.Temp, 0);
+          : `Pet #${petId}`);
+
+      console.log(`[ReplayCalcParser] Pet Enu:${rawPetRef} -> Id:${petId} -> Name:${petName}`);
+
+      const atJson = petJson.At ?? (petJson as any).at;
+      const hpJson = petJson.Hp ?? (petJson as any).hp;
+
+      const petTempAtk = toNumberOrFallback(atJson?.Temp ?? (atJson as any)?.temp, 0);
+      const petTempHp = toNumberOrFallback(hpJson?.Temp ?? (hpJson as any)?.temp, 0);
 
       let belugaSwallowedPet: string | null = null;
       if (petId === '182') {
@@ -629,23 +725,47 @@ export class ReplayCalcParser {
           ? parseAbominationSwallowedState(petJson)
           : defaultAbominationSwallowedState();
 
+      // abilityPetIdByAbilityId is a Map<abilityId, petId>
+      // We invert it into abilityIdsByPetId: { [petId]: [abilityId, ...] }
+      const abilityIdsByPetId: Record<string, string[]> = {};
+      for (const [abilityId, mappedPetId] of abilityPetIdByAbilityId.entries()) {
+        const pid = String(mappedPetId);
+        abilityIdsByPetId[pid] = abilityIdsByPetId[pid] || [];
+        abilityIdsByPetId[pid].push(String(abilityId));
+      }
+      maps.abilityIdsByPetId = abilityIdsByPetId;
+
       const timesHurt = getTimesHurt(petJson);
-      const abilityTriggersConsumed = (petJson?.Abil ?? [])
-        .map((ability) => toFiniteNumber(ability?.TrCo))
-        .filter((value): value is number => value !== null);
+      const abilityTriggersConsumed = (() => {
+        const v = getTriggersConsumedFromRawPet(petJson);
+        return v === null ? [] : [v];
+      })();
 
       const perkValue = petJson.Perk;
       const perkName =
         perkValue !== null && perkValue !== undefined
           ? PERKS_BY_ID.get(String(perkValue)) ||
-            (typeof perkValue === 'string' ? perkValue : 'Unknown Perk')
+          (typeof perkValue === 'string' ? perkValue : 'Unknown Perk')
           : null;
 
       const parsedPet: PetConfig = {
         name: petName,
-        attack: toNumberOrFallback(petJson.At?.Perm, 0) + petTempAtk,
-        health: toNumberOrFallback(petJson.Hp?.Perm, 0) + petTempHp,
-        exp: toNumberOrFallback(petJson.Exp, 0),
+        attack: toNumberOrFallback(atJson?.Perm ?? (atJson as any)?.perm ?? (petJson as any)?.attack, 0) + petTempAtk,
+        health: toNumberOrFallback(hpJson?.Perm ?? (hpJson as any)?.perm ?? (petJson as any)?.health, 0) + petTempHp,
+        exp: (() => {
+          const exp = toFiniteNumber(petJson.Exp);
+          if (exp !== null && exp > 0) {
+            return exp;
+          }
+          const lvl = toFiniteNumber(petJson.Lvl);
+          if (lvl === 2) {
+            return 2;
+          }
+          if (lvl === 3) {
+            return 5;
+          }
+          return exp ?? 0;
+        })(),
         equipment: perkName ? { name: perkName } : null,
         mana: toNumberOrFallback(petJson.Mana, 0),
         belugaSwallowedPet,
@@ -658,6 +778,21 @@ export class ReplayCalcParser {
             : 0,
       };
 
+      // If this is an Abomination, attempt to attach inferred memory/abilities
+      if (String(petId) === '373') {
+        try {
+          const mem = buildAbominationMemory(petJson as any, Number(petId), maps);
+          if (mem) {
+            (parsedPet as any).abominationMemory = mem;
+            const inferredEnums = inferAbominationAbilityEnumsFromSwallowedPets(petJson as any, maps);
+            if (Array.isArray(inferredEnums) && inferredEnums.length > 0) {
+              (parsedPet as any).abominationInferredAbilityEnums = inferredEnums;
+            }
+          }
+        } catch (e) {
+          /* best-effort only */
+        }
+      }
       if (timesHurt !== null) {
         parsedPet.timesHurt = timesHurt;
       }
@@ -668,14 +803,14 @@ export class ReplayCalcParser {
     const parseBoardPets = (
       boardJson: ReplayBoardJson | null | undefined,
     ): (PetConfig | null)[] => {
-      const pets = (boardJson?.Mins?.Items ?? []).filter(
-        (pet): pet is ReplayPetJson => pet !== null,
-      );
+      const items = boardJson?.Mins?.Items ?? [];
       const petArray: (PetConfig | null)[] = Array(5).fill(null);
-
-      pets.forEach((pet, index) => {
-        let pos = toFiniteNumber(pet.Poi?.x);
-        if (pos === null) {
+      items.forEach((pet, index) => {
+        if (!pet) {
+          return;
+        }
+        let pos = toNumberOrFallback(pet.Poi?.x, -1);
+        if (pos === -1) {
           pos = index;
         }
         if (pos >= 0 && pos < 5) {
@@ -687,12 +822,13 @@ export class ReplayCalcParser {
     };
 
     const getToy = (boardJson: ReplayBoardJson | null | undefined): ReplayParsedToy => {
-      const toyItem = (boardJson?.Rel?.Items ?? []).find((item) => Boolean(item?.Enu));
+      const toyItem = (boardJson?.Rel?.Items ?? []).find((item) => Boolean(item));
       if (toyItem) {
-        const toyId = String(toyItem.Enu);
+        const toyId = resolveToyId(toyItem as any) ?? null;
+        const toyName = toyId ? TOYS_BY_ID.get(String(toyId)) : getToyName(toyItem as any);
         return {
-          name: TOYS_BY_ID.get(toyId) || null,
-          level: toNumberOrFallback(toyItem.Lvl, 1),
+          name: toyName || null,
+          level: toNumberOrFallback((toyItem as any).Lvl, 1),
         };
       }
       return { name: null, level: 1 };

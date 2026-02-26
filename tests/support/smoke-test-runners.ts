@@ -301,7 +301,7 @@ const petScenarioForAbility = (abilityText?: string | null): PetBehaviorScenario
     return 'summon';
   }
   if (
-    /\bfriend ahead|friendly attacked|friend attacked|adjacent friend attacked|friend hurt|friend faints|friends faint|anyone behind hurt|anyone hurt\b/.test(
+    /\bfriend ahead|pet ahead|nearest pet ahead|friendly attacked|friend attacked|adjacent friend attacked|friend hurt|friend faints|friends faint|anyone behind hurt|anyone hurt\b/.test(
       text,
     )
   ) {

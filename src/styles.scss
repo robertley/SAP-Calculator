@@ -169,3 +169,157 @@ body {
   font-family: Arial, Helvetica, sans-serif !important;
 }
 
+.theme-dark body {
+  background: #0b1220;
+  color: #e2e8f0;
+}
+
+body.theme-dark {
+  background: #0b1220;
+  color: #e2e8f0;
+}
+
+.theme-dark .top-controls,
+.theme-dark .pane-top-shell,
+.theme-dark .battle-table-shell {
+  background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+  border-color: #334155;
+}
+
+.theme-dark .top-toolbar-zone,
+.theme-dark .controls-section,
+.theme-dark .battle-table-meta,
+.theme-dark .battle-table thead th,
+.theme-dark .log-group-header,
+.theme-dark .log-row.log-row-board {
+  background: #111827;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.theme-dark .table-battle-row td,
+.theme-dark .log-group,
+.theme-dark .log-row,
+.theme-dark .log-event-filter-btn,
+.theme-dark .pane-switch-tab,
+.theme-dark .battle-winner-chip {
+  background: #0f172a;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.theme-dark .table-battle-row:hover td {
+  background: #1e293b;
+}
+
+.theme-dark .table-battle-row.selected-battle td {
+  background: #1d3557;
+}
+
+.theme-dark .results-placeholder .placeholder-bar,
+.theme-dark .modern-results-bar {
+  background: #111827;
+  border-color: #334155;
+}
+
+.theme-dark .form-control,
+.theme-dark .form-select,
+.theme-dark .selection-btn,
+.theme-dark .team-selection-btn {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.theme-dark .modal-content {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.theme-dark .modal-header,
+.theme-dark .modal-footer {
+  border-color: #334155;
+}
+
+.theme-dark .btn-close {
+  filter: invert(1) grayscale(100%);
+}
+
+.theme-dark .pane-title,
+.theme-dark .pane-subtitle,
+.theme-dark .battle-table-meta,
+.theme-dark .battle-table thead th,
+.theme-dark .log-event-filter-label,
+.theme-dark .log-group-title,
+.theme-dark .log-group-count,
+.theme-dark .log-row-text,
+.theme-dark .fight-log-row .log-row-text,
+.theme-dark .bottom-container-scroll-hint {
+  color: #e2e8f0;
+}
+
+.theme-dark .battle-random-cell,
+.theme-dark .log-badge {
+  color: #cbd5e1;
+}
+
+.theme-dark .animation-top-pane,
+.theme-dark .animation-bottom-pane {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.theme-dark .fight-stage {
+  background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+  border-color: #334155;
+}
+
+.theme-dark .fight-event {
+  background: #111827;
+  border-color: #334155;
+}
+
+.theme-dark .fight-slot {
+  border-color: #475569;
+}
+
+.theme-dark .fight-team-player .fight-slot {
+  background-color: rgba(34, 197, 94, 0.14);
+}
+
+.theme-dark .fight-team-opponent .fight-slot {
+  background-color: rgba(239, 68, 68, 0.14);
+}
+
+.theme-dark .fight-slot-label,
+.theme-dark .fight-slot-stats,
+.theme-dark .fight-event-type,
+.theme-dark .fight-event-text,
+.theme-dark .fight-event-step,
+.theme-dark .fight-slot-exp-levels,
+.theme-dark .fight-slot-stat-divider,
+.theme-dark .fight-empty-state {
+  color: #e2e8f0;
+}
+
+.theme-dark .fight-log-stream,
+.theme-dark .analysis-table-wrap {
+  background-color: #0f172a;
+  border-color: #334155;
+}
+
+.theme-dark .fight-log-row {
+  border-bottom-color: #1f2937;
+}
+
+.theme-dark .fight-slot-companion,
+.theme-dark .fight-faint-companion {
+  background-color: #111827;
+}
+
+.theme-dark .fight-value-popup {
+  text-shadow:
+    0 1px 0 rgba(15, 23, 42, 0.8),
+    0 0 4px rgba(15, 23, 42, 0.7);
+}

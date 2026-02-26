@@ -472,7 +472,6 @@ function buildBattleLogRows(
       playerClass,
       typeClass,
       randomEvent ? 'random-event' : '',
-      log.bold ? 'bold' : '',
       isBoard ? 'log-row-board' : '',
       isPhaseMarker ? 'log-phase-marker' : '',
     ].filter(Boolean);

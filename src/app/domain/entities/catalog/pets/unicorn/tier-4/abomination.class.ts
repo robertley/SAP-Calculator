@@ -315,7 +315,6 @@ export class AbominationAbility extends Ability {
       owner.removeAbility('AbominationAbility');
       const abilityCountBefore = owner.abilityList.length;
       owner.gainAbilities(copyPet, 'Pet', swallowedPet.level ?? 1);
-      owner.initAbilityUses();
 
       if (swallowedName === 'Parrot') {
         const newParrotAbilities = owner.abilityList
@@ -335,5 +334,4 @@ export class AbominationAbility extends Ability {
     return new AbominationAbility(newOwner, this.logService, this.petService);
   }
 }
-
 

@@ -269,6 +269,45 @@ describe('Fight animation frames', () => {
     });
   });
 
+  it('applies transform-with-stat popups to the transformed target slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Basilisk.png" class="log-pet-icon" alt="Basilisk">(5/2/0xp) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(2/2/0xp) | ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Basilisk transformed Ant into a Rock with +5 health.',
+        sourceIndex: 2,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].playerSlots[0]).toMatchObject({
+      petName: 'Rock',
+      health: 7,
+    });
+    expect(frames[1].playerSlots[1]).toMatchObject({
+      petName: 'Basilisk',
+      health: 2,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'health',
+      delta: 5,
+    });
+    expect(frames[1].popups).not.toContainEqual({
+      side: 'player',
+      slot: 1,
+      type: 'health',
+      delta: 5,
+    });
+  });
+
   it('applies experience changes and emits exp popups', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(3/4/1xp) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8/0xp) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
@@ -822,6 +861,33 @@ describe('Fight animation frames', () => {
     expect(shiftedOpponentFront.classMap['fight-slot-fainted-ghost']).toBe(true);
     expect(shiftedOpponentFront.shiftSteps).toBeNull();
     expect(shiftedOpponentFront.death?.petName).toBe('Fish');
+  });
+
+  it('grays out zero-health slots even before death logs mark pending removal', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(4/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'attack',
+        message: 'Ant attacks Fish for 4.',
+        sourceIndex: 1,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 0);
+
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Fish',
+      health: 0,
+      pendingRemoval: false,
+    });
+    expect(renderFrame.opponentSlots[0].classMap['fight-slot-fainted-ghost']).toBe(
+      true,
+    );
   });
 
   it('lets fainted units snipe before removal and clears them on move', () => {

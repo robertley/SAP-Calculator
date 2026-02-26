@@ -69,6 +69,9 @@
     <div class="top-toolbar-zone top-toolbar-zone-actions">
       <div class="zone-label zone-label-right">Actions</div>
       <div class="external-buttons">
+        <button class="btn btn-secondary" (click)="app.toggleTheme()">
+          {{ app.theme === "dark" ? "Light Theme" : "Dark Theme" }}
+        </button>
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#info"
           (click)="app.showInfo = true" aria-label="Open guide">
           Guide
@@ -88,6 +91,9 @@
         <button class="btn btn-primary" (click)="app.generateShareLink()">
           Generate Link
         </button>
+      </div>
+      <div class="external-meta top-controls-meta-text">
+        Shortcuts: Alt+S simulate, Alt+R randomize, Alt+P/O optimize, Alt+A controls, Alt+T theme
       </div>
     </div>
   </div>

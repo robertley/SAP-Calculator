@@ -1,23 +1,33 @@
 import { Pet } from '../../../../pet.class';
+import { Pack } from '../../../../pet.class';
 import { LogService } from 'app/integrations/log.service';
 import { AbilityService } from 'app/integrations/ability/ability.service';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { Rock } from 'app/domain/entities/catalog/pets/hidden/rock.class';
+import { Equipment } from 'app/domain/entities/equipment.class';
 
 
 export class Basilisk extends Pet {
+  name = 'Basilisk';
+  tier = 3;
+  pack: Pack = 'Custom';
+  attack = 5;
+  health = 2;
+
   constructor(
     logService: LogService,
     abilityService: AbilityService,
     parent: Player,
+    health?: number,
+    attack?: number,
+    mana?: number,
+    exp?: number,
+    equipment?: Equipment,
+    triggersConsumed?: number,
   ) {
     super(logService, abilityService, parent);
-    this.name = 'Basilisk';
-    this.tier = 3;
-    this.pack = 'Custom';
-    this.attack = 5;
-    this.health = 2;
+    this.initPet(exp, health, attack, mana, equipment, triggersConsumed);
   }
 
   override initAbilities(): void {
@@ -59,12 +69,17 @@ export class BasiliskAbility extends Ability {
 
     if (friendAhead && friendAhead.alive) {
       const hpBonus = this.level * 5;
+      const transformedAttack = Math.max(1, friendAhead.attack ?? 1);
+      const transformedHealth = Math.max(1, friendAhead.health ?? 1) + hpBonus;
       const rock = new Rock(
         this.logService,
         this.abilityService,
         friendAhead.parent,
+        transformedHealth,
+        transformedAttack,
+        friendAhead.mana,
+        friendAhead.exp,
       );
-      rock.initPet(0, 1 + hpBonus, 0, 0, null);
 
       owner.parent.transformPet(friendAhead, rock);
 
