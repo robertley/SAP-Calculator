@@ -39,6 +39,7 @@ This file gives coding agents project context for `SAP-Calculator`.
 - Keep layer boundaries intact (`domain` -> `gameplay` -> `integrations`/`runtime` -> `ui`).
 - Keep root clean; place temporary files under `tmp/` (see `docs/ROOT_LAYOUT.md`).
 - Prefer focused edits and targeted tests for touched areas.
+- Do not use TypeScript `any`; it violates lint rules (`@typescript-eslint/no-explicit-any`).
 - Do not edit generated outputs in `dist/` or dependencies in `node_modules/`.
 
 ## Source of Truth (Content Data)

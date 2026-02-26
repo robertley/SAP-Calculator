@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   parseReplayForCalculatorFromActions,
+  parseTeamwoodReplayForCalculator,
   ReplayBattleJson,
   ReplayCalcParser,
   selectReplayBattleFromActions,
@@ -259,5 +260,121 @@ describe('ReplayCalcParser', () => {
 
     expect(selected?.UserBoard?.Tur).toBe(2);
     expect(selected?.UserBoard?.Rold).toBe(5);
+  });
+
+  it('accepts action payloads where Battle is already parsed JSON', () => {
+    const actions = [
+      {
+        Type: 0,
+        Turn: 1,
+        Battle: {
+          UserBoard: {
+            Tur: 1,
+            GoSp: 10,
+            Mins: {
+              Items: [
+                {
+                  Enu: 628,
+                  Poi: { x: 0 },
+                  At: { Perm: 1, Temp: 0 },
+                  Hp: { Perm: 4, Temp: 0 },
+                  Lvl: 1,
+                  Abil: [{ Enu: 649, Lvl: 1 }],
+                },
+              ],
+            },
+          },
+          OpponentBoard: {
+            Tur: 1,
+            GoSp: 9,
+            Mins: { Items: [] },
+          },
+        },
+      },
+    ];
+
+    const state = parseReplayForCalculatorFromActions(actions, 1);
+    const playerPet = state?.playerPets.find((pet) => pet !== null) ?? null;
+
+    expect(state).toBeTruthy();
+    expect(state?.turn).toBe(1);
+    expect(state?.playerGoldSpent).toBe(10);
+    expect(state?.opponentGoldSpent).toBe(9);
+    expect(playerPet?.attack).toBe(1);
+    expect(playerPet?.health).toBe(4);
+  });
+
+  it('parses replaybot turns payload format via teamwood helper', () => {
+    const replay = {
+      turns: [
+        {
+          turn: 1,
+          user: {
+            stats: {
+              turn: 1,
+              goldSpent: 10,
+              rolls: 1,
+              summons: 3,
+              level3Sold: null,
+              transformed: null,
+            },
+            pets: [
+              {
+                slot: 0,
+                id: '628',
+                level: 1,
+                experience: null,
+                perkId: null,
+                attack: {
+                  permanent: 1,
+                  temporary: null,
+                },
+                health: {
+                  permanent: 4,
+                  temporary: null,
+                },
+                mana: null,
+                abilities: [
+                  {
+                    id: '649',
+                    level: 1,
+                    group: null,
+                    triggersConsumed: null,
+                  },
+                ],
+              },
+            ],
+          },
+          opponent: {
+            stats: {
+              turn: 1,
+              goldSpent: 9,
+              rolls: 2,
+              summons: 2,
+              level3Sold: null,
+              transformed: null,
+            },
+            pets: [],
+          },
+        },
+      ],
+      abilityPetMap: {
+        '649': '628',
+      },
+      replayMeta: {
+        pack: 'Unicorn',
+        opponent_pack: 'Puppy',
+      },
+    };
+
+    const state = parseTeamwoodReplayForCalculator(replay, 1);
+    const playerPet = state?.playerPets.find((pet) => pet !== null) ?? null;
+
+    expect(state).toBeTruthy();
+    expect(state?.turn).toBe(1);
+    expect(state?.playerGoldSpent).toBe(10);
+    expect(state?.opponentRollAmount).toBe(2);
+    expect(playerPet?.attack).toBe(1);
+    expect(playerPet?.health).toBe(4);
   });
 });

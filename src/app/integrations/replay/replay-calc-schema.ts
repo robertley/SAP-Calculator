@@ -10,12 +10,36 @@ export const PETS_META_BY_ID = new Map<
 
 export const PET_IDS_BY_NAME = new Map<string, string>();
 
-const petListRaw = (petsByTier as any).default ?? petsByTier;
+type ReplayDataPet = {
+  Id?: string | number;
+  id?: string | number;
+  Tier?: number | string;
+  tier?: number | string;
+  Name?: string;
+  name?: string;
+};
+
+type ReplayDataContainer<T> = {
+  default?: T;
+};
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object';
+}
+
+const petsModule = petsByTier as unknown as ReplayDataContainer<unknown>;
+const petListRaw = petsModule.default ?? petsByTier;
 const petList = Array.isArray(petListRaw)
   ? petListRaw
-  : Object.values(petListRaw).filter(v => typeof v === 'object' && v !== null && ('Id' in v || 'id' in v));
+  : isObjectRecord(petListRaw)
+    ? Object.values(petListRaw).filter(v => typeof v === 'object' && v !== null && ('Id' in v || 'id' in v))
+    : [];
 
-petList.forEach((pet: any) => {
+petList.forEach((petUnknown) => {
+  if (!isObjectRecord(petUnknown)) {
+    return;
+  }
+  const pet = petUnknown as ReplayDataPet;
   const petId = String(pet.Id ?? pet.id);
   const tierValue = Number(pet.Tier ?? pet.tier);
   const name = pet.Name ?? pet.name;
