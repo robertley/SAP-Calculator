@@ -38,6 +38,14 @@ interface ReplayImportPayload {
   OpponentBoard?: ReplayBoardJson;
   GenesisBuildModel?: ReplayBuildModelJson;
   AbilityPetMap?: Record<string, string | number> | null;
+  turns?: unknown[] | null;
+  replay?: {
+    id?: string | null;
+  } | null;
+}
+
+interface ReplayTurnsLikePayload extends ReplayImportPayload {
+  turns: unknown[];
 }
 
 @Component({
@@ -71,6 +79,12 @@ export class ImportCalculatorComponent implements OnInit {
   ) { }
 
   ngOnInit(): void { }
+
+  private isReplayTurnsPayload(
+    value: ReplayImportPayload,
+  ): value is ReplayTurnsLikePayload {
+    return Array.isArray(value.turns);
+  }
 
   submit() {
     this.errorMessage = '';
@@ -235,7 +249,7 @@ export class ImportCalculatorComponent implements OnInit {
       return;
     }
 
-    if ((parsedInput as any)?.turns) {
+    if (this.isReplayTurnsPayload(parsedInput)) {
       const turnNumber = Number(this.formGroup.get('turn').value);
       if (!Number.isFinite(turnNumber) || turnNumber <= 0) {
         this.errorMessage = 'Enter a valid turn number.';
@@ -243,10 +257,17 @@ export class ImportCalculatorComponent implements OnInit {
       }
 
       try {
-        const response = this.replayCalcService['buildReplayBattleResponseFromTurns'](
-          parsedInput as any,
+        const replayServiceWithTurnsBuilder = this.replayCalcService as unknown as {
+          buildReplayBattleResponseFromTurns: (
+            turnsResponse: unknown,
+            requestedTurn: number,
+            replayId: string,
+          ) => ReplayBattleResponse;
+        };
+        const response = replayServiceWithTurnsBuilder.buildReplayBattleResponseFromTurns(
+          parsedInput,
           turnNumber,
-          (parsedInput as any)?.replay?.id || 'manual-import',
+          parsedInput?.replay?.id || 'manual-import',
         );
         if (response?.battle) {
           this.importReplayBattle(
@@ -258,7 +279,8 @@ export class ImportCalculatorComponent implements OnInit {
           );
           return;
         }
-      } catch (e) {
+      } catch (error) {
+        void error;
         this.errorMessage = 'Failed to process turns JSON.';
         return;
       }
@@ -393,4 +415,3 @@ export class ImportCalculatorComponent implements OnInit {
     }, 3000);
   }
 }
-

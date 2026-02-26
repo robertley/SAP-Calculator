@@ -18,9 +18,9 @@ import {
   // other helpers available for future wiring
   resolveToyId,
   getToyName,
-  buildRelicItems,
   buildAbominationMemory,
   inferAbominationAbilityEnumsFromSwallowedPets,
+  ReplayParserLookupMaps,
 } from './replay-calc-parser-utils';
 
 interface ReplayAbilityJson {
@@ -55,7 +55,7 @@ interface ReplayPetJson {
       WhiteWhaleAbility?: ReplayPetJson[] | null;
     } | null;
   } | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface ReplayToyJson {
@@ -106,14 +106,70 @@ export interface ReplayParseOptions {
 export interface ReplayActionJson {
   Type?: number | null;
   Turn?: number | string | null;
-  Build?: string | null;
-  Battle?: string | null;
-  Mode?: string | null;
+  Build?: string | Record<string, unknown> | null;
+  Battle?: string | Record<string, unknown> | null;
+  Mode?: string | Record<string, unknown> | null;
 }
 
 export interface ReplayActionsContainerJson {
   Actions?: ReadonlyArray<ReplayActionJson> | null;
   GenesisBuildModel?: ReplayBuildModelJson | null;
+}
+
+interface ReplayBotTurnAbilityJson {
+  id?: number | string | null;
+  level?: number | null;
+  group?: number | null;
+  triggersConsumed?: number | null;
+}
+
+interface ReplayBotTurnStatBlockJson {
+  permanent?: number | null;
+  temporary?: number | null;
+}
+
+interface ReplayBotTurnPetJson {
+  slot?: number | null;
+  id?: number | string | null;
+  level?: number | null;
+  experience?: number | null;
+  perkId?: number | string | null;
+  attack?: ReplayBotTurnStatBlockJson | null;
+  health?: ReplayBotTurnStatBlockJson | null;
+  mana?: number | null;
+  abilities?: ReplayBotTurnAbilityJson[] | null;
+}
+
+interface ReplayBotTurnStatsJson {
+  turn?: number | null;
+  goldSpent?: number | null;
+  rolls?: number | null;
+  summons?: number | null;
+  level3Sold?: number | null;
+  transformed?: number | null;
+}
+
+interface ReplayBotTurnSideJson {
+  stats?: ReplayBotTurnStatsJson | null;
+  pets?: ReplayBotTurnPetJson[] | null;
+}
+
+interface ReplayBotTurnJson {
+  turn?: number | string | null;
+  user?: ReplayBotTurnSideJson | null;
+  opponent?: ReplayBotTurnSideJson | null;
+}
+
+interface ReplayBotReplayMetaJson {
+  pack?: number | string | null;
+  opponent_pack?: number | string | null;
+}
+
+export interface ReplayBotTurnsContainerJson {
+  turns?: ReadonlyArray<ReplayBotTurnJson> | null;
+  genesisBuildModel?: ReplayBuildModelJson | null;
+  abilityPetMap?: Record<string, string | number> | null;
+  replayMeta?: ReplayBotReplayMetaJson | null;
 }
 
 export interface ReplayCustomPack extends CustomPackConfig {
@@ -195,6 +251,10 @@ function toNumberOrFallback(value: unknown, fallback: number): number {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return isRecord(value) ? value : null;
 }
 
 const COPY_SOURCE_PET_IDS = new Set<string>([
@@ -315,6 +375,9 @@ function buildReplayAbilityPetMapFromCounts(
 }
 
 function parseJsonValue(raw: unknown): unknown {
+  if (isRecord(raw) || Array.isArray(raw)) {
+    return raw;
+  }
   if (typeof raw !== 'string' || raw.length === 0) {
     return null;
   }
@@ -331,6 +394,137 @@ function parseBattleAction(raw: unknown): ReplayBattleJson | null {
     return null;
   }
   return parsed as ReplayBattleJson;
+}
+
+function buildPackIdByNameLookup(): Map<string, number> {
+  const lookup = new Map<string, number>();
+  Object.entries(PACK_MAP).forEach(([packIdRaw, packName]) => {
+    if (typeof packName !== 'string') {
+      return;
+    }
+    const packId = Number(packIdRaw);
+    if (!Number.isFinite(packId)) {
+      return;
+    }
+    lookup.set(packName.toLowerCase(), packId);
+  });
+  return lookup;
+}
+
+const PACK_ID_BY_NAME = buildPackIdByNameLookup();
+
+function resolvePackIdFromUnknown(value: unknown): number | null {
+  const numeric = toFiniteNumber(value);
+  if (numeric !== null) {
+    return numeric;
+  }
+  if (typeof value === 'string') {
+    const byName = PACK_ID_BY_NAME.get(value.toLowerCase());
+    if (byName !== undefined) {
+      return byName;
+    }
+  }
+  return null;
+}
+
+function parseTurnPetToReplayPet(
+  rawPet: ReplayBotTurnPetJson | null | undefined,
+): ReplayPetJson | null {
+  if (!rawPet) {
+    return null;
+  }
+
+  const petId = toReplayId(rawPet.id);
+  if (!petId) {
+    return null;
+  }
+
+  const slot = toFiniteNumber(rawPet.slot);
+  const abilities = (rawPet.abilities ?? [])
+    .map((ability): ReplayAbilityJson | null => {
+      const abilityId = toReplayId(ability?.id);
+      if (!abilityId) {
+        return null;
+      }
+      return {
+        Enu: abilityId,
+        Lvl: toFiniteNumber(ability?.level),
+        Grop: toFiniteNumber(ability?.group),
+        TrCo: toFiniteNumber(ability?.triggersConsumed),
+      };
+    })
+    .filter((ability): ability is ReplayAbilityJson => ability !== null);
+
+  return {
+    Enu: petId,
+    Lvl: toFiniteNumber(rawPet.level),
+    Exp: toFiniteNumber(rawPet.experience),
+    Perk: toReplayId(rawPet.perkId),
+    Mana: toFiniteNumber(rawPet.mana),
+    At: {
+      Perm: toFiniteNumber(rawPet.attack?.permanent),
+      Temp: toFiniteNumber(rawPet.attack?.temporary),
+    },
+    Hp: {
+      Perm: toFiniteNumber(rawPet.health?.permanent),
+      Temp: toFiniteNumber(rawPet.health?.temporary),
+    },
+    Poi: {
+      x: slot,
+    },
+    Abil: abilities,
+  };
+}
+
+function parseTurnSideToReplayBoard(
+  side: ReplayBotTurnSideJson | null | undefined,
+  fallbackTurn: number,
+  packRaw?: unknown,
+): ReplayBoardJson {
+  return {
+    Tur: toNumberOrFallback(side?.stats?.turn, fallbackTurn),
+    GoSp: toNumberOrFallback(side?.stats?.goldSpent, 0),
+    Rold: toNumberOrFallback(side?.stats?.rolls, 0),
+    MiSu: toNumberOrFallback(side?.stats?.summons, 0),
+    MSFL: toNumberOrFallback(side?.stats?.level3Sold, 0),
+    TrTT: toNumberOrFallback(side?.stats?.transformed, 0),
+    Pack: resolvePackIdFromUnknown(packRaw),
+    Mins: {
+      Items: (side?.pets ?? []).map((pet) => parseTurnPetToReplayPet(pet)),
+    },
+  };
+}
+
+function selectReplayBattleFromTurns(
+  turns: ReadonlyArray<ReplayBotTurnJson> | null | undefined,
+  turnNumber: number,
+  replayMeta?: ReplayBotReplayMetaJson | null,
+): ReplayBattleJson | null {
+  if (!Number.isFinite(turnNumber) || turnNumber <= 0) {
+    return null;
+  }
+
+  const turnEntry =
+    (turns ?? []).find((entry) => Number(entry?.turn) === turnNumber) ??
+    (turns ?? [])[turnNumber - 1] ??
+    null;
+  if (!turnEntry) {
+    return null;
+  }
+
+  const fallbackTurn = toNumberOrFallback(turnEntry.turn, turnNumber);
+  return {
+    UserBoard: parseTurnSideToReplayBoard(
+      turnEntry.user,
+      fallbackTurn,
+      replayMeta?.pack,
+    ),
+    OpponentBoard: parseTurnSideToReplayBoard(
+      turnEntry.opponent,
+      fallbackTurn,
+      replayMeta?.opponent_pack,
+    ),
+  };
 }
 
 export function selectReplayBattleFromActions(
@@ -401,15 +595,48 @@ export function parseReplayForCalculatorFromActions(
 }
 
 export function parseTeamwoodReplayForCalculator(
-  replay: ReplayActionsContainerJson | null | undefined,
+  replay:
+    | ReplayActionsContainerJson
+    | ReplayBotTurnsContainerJson
+    | null
+    | undefined,
   turnNumber: number,
   metaBoards?: ReplayMetaBoards,
   options?: ReplayParseOptions,
 ): ReplayCalculatorState | null {
+  const replayRecord = asRecord(replay);
+  const hasTurnPayload = Array.isArray(replayRecord?.['turns']);
+  if (hasTurnPayload) {
+    const turnsReplay = replay as ReplayBotTurnsContainerJson;
+    const battleJson = selectReplayBattleFromTurns(
+      turnsReplay.turns,
+      turnNumber,
+      turnsReplay.replayMeta,
+    );
+    if (!battleJson) {
+      return null;
+    }
+    const mergedAbilityPetMap = {
+      ...(turnsReplay.abilityPetMap ?? {}),
+      ...(options?.abilityPetMap ?? {}),
+    };
+    const parser = new ReplayCalcParser();
+    return parser.parseReplayForCalculator(
+      battleJson,
+      turnsReplay.genesisBuildModel ?? undefined,
+      metaBoards,
+      {
+        ...options,
+        abilityPetMap: mergedAbilityPetMap,
+      },
+    );
+  }
+
   return parseReplayForCalculatorFromActions(
-    replay?.Actions,
+    (replay as ReplayActionsContainerJson | null | undefined)?.Actions,
     turnNumber,
-    replay?.GenesisBuildModel ?? undefined,
+    (replay as ReplayActionsContainerJson | null | undefined)?.GenesisBuildModel ??
+      undefined,
     metaBoards,
     options,
   );
@@ -689,27 +916,40 @@ export class ReplayCalcParser {
       }
 
       // Build helper maps for more advanced inference (used for Abomination memory)
-      const maps: any = { PET_IDS_BY_NAME };
+      const petRecord = asRecord(petJson);
+      const maps: ReplayParserLookupMaps = { PET_IDS_BY_NAME };
 
-      const rawPetRef = petJson.Enu ?? (petJson as any).enu ?? (petJson as any).Id ?? (petJson as any).id;
+      const rawPetRef =
+        petJson.Enu ??
+        petRecord?.['enu'] ??
+        petRecord?.['Id'] ??
+        petRecord?.['id'];
       const resolvedPetId = resolvePetIdFromUnknown(rawPetRef, maps);
       const petId = resolvedPetId !== null ? String(resolvedPetId) : String(rawPetRef ?? 0);
 
       const petName =
         PETS_BY_ID.get(petId) ||
-        (petJson as any).name ||
-        (petJson as any).Name ||
+        (typeof petRecord?.['name'] === 'string' ? petRecord['name'] : null) ||
+        (typeof petRecord?.['Name'] === 'string' ? petRecord['Name'] : null) ||
         (typeof rawPetRef === 'string' && rawPetRef.trim().length > 0
           ? rawPetRef.trim()
           : `Pet #${petId}`);
 
       console.log(`[ReplayCalcParser] Pet Enu:${rawPetRef} -> Id:${petId} -> Name:${petName}`);
 
-      const atJson = petJson.At ?? (petJson as any).at;
-      const hpJson = petJson.Hp ?? (petJson as any).hp;
+      const atJson = petJson.At ?? asRecord(petRecord?.['at']);
+      const hpJson = petJson.Hp ?? asRecord(petRecord?.['hp']);
+      const atJsonRecord = asRecord(atJson);
+      const hpJsonRecord = asRecord(hpJson);
 
-      const petTempAtk = toNumberOrFallback(atJson?.Temp ?? (atJson as any)?.temp, 0);
-      const petTempHp = toNumberOrFallback(hpJson?.Temp ?? (hpJson as any)?.temp, 0);
+      const petTempAtk = toNumberOrFallback(
+        atJson?.Temp ?? atJsonRecord?.['temp'],
+        0,
+      );
+      const petTempHp = toNumberOrFallback(
+        hpJson?.Temp ?? hpJsonRecord?.['temp'],
+        0,
+      );
 
       let belugaSwallowedPet: string | null = null;
       if (petId === '182') {
@@ -750,8 +990,16 @@ export class ReplayCalcParser {
 
       const parsedPet: PetConfig = {
         name: petName,
-        attack: toNumberOrFallback(atJson?.Perm ?? (atJson as any)?.perm ?? (petJson as any)?.attack, 0) + petTempAtk,
-        health: toNumberOrFallback(hpJson?.Perm ?? (hpJson as any)?.perm ?? (petJson as any)?.health, 0) + petTempHp,
+        attack:
+          toNumberOrFallback(
+            atJson?.Perm ?? atJsonRecord?.['perm'] ?? petRecord?.['attack'],
+            0,
+          ) + petTempAtk,
+        health:
+          toNumberOrFallback(
+            hpJson?.Perm ?? hpJsonRecord?.['perm'] ?? petRecord?.['health'],
+            0,
+          ) + petTempHp,
         exp: (() => {
           const exp = toFiniteNumber(petJson.Exp);
           if (exp !== null && exp > 0) {
@@ -781,15 +1029,23 @@ export class ReplayCalcParser {
       // If this is an Abomination, attempt to attach inferred memory/abilities
       if (String(petId) === '373') {
         try {
-          const mem = buildAbominationMemory(petJson as any, Number(petId), maps);
+          const mem = buildAbominationMemory(petJson, Number(petId), maps);
           if (mem) {
-            (parsedPet as any).abominationMemory = mem;
-            const inferredEnums = inferAbominationAbilityEnumsFromSwallowedPets(petJson as any, maps);
+            const abominationPet = parsedPet as PetConfig & {
+              abominationMemory?: unknown;
+              abominationInferredAbilityEnums?: number[];
+            };
+            abominationPet.abominationMemory = mem;
+            const inferredEnums = inferAbominationAbilityEnumsFromSwallowedPets(
+              petJson,
+              maps,
+            );
             if (Array.isArray(inferredEnums) && inferredEnums.length > 0) {
-              (parsedPet as any).abominationInferredAbilityEnums = inferredEnums;
+              abominationPet.abominationInferredAbilityEnums = inferredEnums;
             }
           }
-        } catch (e) {
+        } catch (error) {
+          void error;
           /* best-effort only */
         }
       }
@@ -824,11 +1080,12 @@ export class ReplayCalcParser {
     const getToy = (boardJson: ReplayBoardJson | null | undefined): ReplayParsedToy => {
       const toyItem = (boardJson?.Rel?.Items ?? []).find((item) => Boolean(item));
       if (toyItem) {
-        const toyId = resolveToyId(toyItem as any) ?? null;
-        const toyName = toyId ? TOYS_BY_ID.get(String(toyId)) : getToyName(toyItem as any);
+        const toyRecord = asRecord(toyItem);
+        const toyId = resolveToyId(toyItem) ?? null;
+        const toyName = toyId ? TOYS_BY_ID.get(String(toyId)) : getToyName(toyItem);
         return {
           name: toyName || null,
-          level: toNumberOrFallback((toyItem as any).Lvl, 1),
+          level: toNumberOrFallback(toyRecord?.['Lvl'], 1),
         };
       }
       return { name: null, level: 1 };

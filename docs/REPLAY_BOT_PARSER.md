@@ -36,6 +36,53 @@ Only these fields are required:
 }
 ```
 
+Also supported (ReplayBot normalized turns response):
+
+```ts
+{
+  turns: Array<{
+    turn?: number;
+    user?: {
+      stats?: {
+        turn?: number;
+        goldSpent?: number;
+        rolls?: number;
+        summons?: number;
+        level3Sold?: number;
+        transformed?: number;
+      };
+      pets?: Array<{
+        slot?: number;
+        id?: string | number;
+        level?: number;
+        experience?: number;
+        perkId?: string | number;
+        attack?: { permanent?: number; temporary?: number };
+        health?: { permanent?: number; temporary?: number };
+        mana?: number;
+        abilities?: Array<{
+          id?: string | number;
+          level?: number;
+          group?: number;
+          triggersConsumed?: number;
+        }>;
+      }>;
+    };
+    opponent?: { /* same shape as user */ };
+  }>;
+  genesisBuildModel?: object; // optional
+  abilityPetMap?: Record<string, string | number>; // optional
+  replayMeta?: {
+    pack?: string | number;          // optional
+    opponent_pack?: string | number; // optional
+  };
+}
+```
+
+Notes:
+- `Actions[]` format and `turns[]` format are both accepted by `parseTeamwoodReplayForCalculator(...)`.
+- In `Actions[]`, `Battle`/`Build`/`Mode` can be JSON strings or already-parsed objects.
+
 ## ReplayBot example
 
 ```ts

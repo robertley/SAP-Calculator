@@ -115,18 +115,41 @@ interface ReplaySummaryPet {
   perk?: string | number | null;
   abilities?: ReplayTurnsAbility[] | null;
   experience?: number | null;
-  [key: string]: any;
+  id?: string | number | null;
+  [key: string]: unknown;
 }
+
+interface ReplayTurnActionLike {
+  Type?: number | null;
+  Turn?: number | string | null;
+  turn?: number | string | null;
+  turnNumber?: number | string | null;
+  Build?: string | null;
+  Battle?: string | null;
+  Mode?: string | null;
+  OpponentGoldSpent?: number | null;
+  user?: ReplayTurnsSide | null;
+  opponent?: ReplayTurnsSide | null;
+  playerPets?: ReplaySummaryPet[] | null;
+  opponentPets?: ReplaySummaryPet[] | null;
+  replay?: {
+    id?: string | null;
+  } | null;
+}
+
+type ReplayJsonObject = Record<string, unknown>;
 
 interface ReplayTurnsResponse {
   replayId?: string;
   replay?: {
     id?: string;
     raw_json?: {
-      Actions?: any[];
+      Actions?: ReplayTurnActionLike[];
+      GenesisBuildModel?: ReplayBuildModelJson;
     };
+    GenesisBuildModel?: ReplayBuildModelJson;
   } | null;
-  turns?: ReplayTurnEntry[] | null;
+  turns?: ReplayTurnActionLike[] | null;
   genesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
   error?: string;
@@ -322,6 +345,22 @@ export class ReplayCalcService {
     return null;
   }
 
+  private isRecord(value: unknown): value is ReplayJsonObject {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  private parseJsonObject(raw: unknown): ReplayJsonObject | null {
+    if (typeof raw !== 'string' || raw.trim().length === 0) {
+      return null;
+    }
+    try {
+      const parsed = JSON.parse(raw) as unknown;
+      return this.isRecord(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
   private mapReplayTurnsPet(pet: ReplayTurnsPet): Record<string, unknown> {
     const abilities = (pet?.abilities ?? [])
       .map((ability) => {
@@ -424,7 +463,7 @@ export class ReplayCalcService {
   private mapReplaySummarySide(
     turn: ReplayTurnEntry,
     side: 'player' | 'opponent',
-    buildJson?: any,
+    buildJson?: ReplayJsonObject | null,
   ): Record<string, unknown> {
     if (buildJson && side === 'player') {
       // If we have direct Build JSON (for player), return it
@@ -436,7 +475,7 @@ export class ReplayCalcService {
       (isPlayer ? turn?.pets?.player : turn?.pets?.opponent) ?? [];
     return {
       Tur:
-        this.toFiniteNumber((turn as any)?.Turn) ??
+        this.toFiniteNumber((turn as { Turn?: unknown })?.Turn) ??
         this.toFiniteNumber(turn?.turnNumber) ??
         this.toFiniteNumber(turn?.turn) ??
         1,
@@ -466,15 +505,15 @@ export class ReplayCalcService {
   ): ReplayBattleResponse {
     const turns = turnsResponse?.turns ?? [];
 
-    const byTurnActions = turns.filter((action: any) => {
+    const byTurnActions = turns.filter((action) => {
       const turnNum = this.toFiniteNumber(action?.Turn) ?? this.toFiniteNumber(action?.turn) ?? this.toFiniteNumber(action?.turnNumber);
       return turnNum === requestedTurn;
     });
 
     // Prefer Battle (Type 1) because it typically contains both UserBoard and OpponentBoard in its Battle JSON.
     // Build (Type 0) often only has the player's 'Bor' state.
-    const selectedTurn = byTurnActions.find((a: any) => a.Type === 1) ??
-      byTurnActions.find((a: any) => a.Type === 0) ??
+    const selectedTurn = byTurnActions.find((a) => a.Type === 1) ??
+      byTurnActions.find((a) => a.Type === 0) ??
       byTurnActions[0] ??
       (requestedTurn > 0 && requestedTurn <= turns.length ? turns[requestedTurn - 1] : null);
 
@@ -487,48 +526,46 @@ export class ReplayCalcService {
       };
     }
 
-    const hasRawSides = Boolean((selectedTurn as any)?.user || (selectedTurn as any)?.opponent);
-    let buildJson: any = null;
-    let battleJson: any = null;
+    const hasRawSides = Boolean(selectedTurn?.user || selectedTurn?.opponent);
+    let buildJson: ReplayJsonObject | null = null;
+    let battleJson: ReplayJsonObject | null = null;
 
     if (!hasRawSides) {
       // Try to find Build and Battle data across ALL actions for this turn
-      const buildAction = byTurnActions.find((a: any) => a.Build);
+      const buildAction = byTurnActions.find((a) => a.Build);
       if (buildAction) {
-        try {
-          const parsed = JSON.parse((buildAction as any).Build);
-          buildJson = parsed?.Bor ?? parsed;
-        } catch (e) { }
+        const parsed = this.parseJsonObject(buildAction.Build);
+        const bor = this.isRecord(parsed?.Bor) ? parsed.Bor : null;
+        buildJson = bor ?? parsed;
       }
 
-      const battleAction = byTurnActions.find((a: any) => a.Battle);
+      const battleAction = byTurnActions.find((a) => a.Battle);
       if (battleAction) {
-        try {
-          const parsed = JSON.parse((battleAction as any).Battle);
-          battleJson = parsed?.UserBoard || parsed?.OpponentBoard ? parsed : null;
-        } catch (e) { }
+        const parsed = this.parseJsonObject(battleAction.Battle);
+        if (parsed?.UserBoard || parsed?.OpponentBoard) {
+          battleJson = parsed;
+        }
       }
 
       // If opponent board is still missing, try the Mode string (common in summarized replays)
       if (!battleJson?.OpponentBoard) {
-        const modeAction = byTurnActions.find((a: any) => a.Mode);
+        const modeAction = byTurnActions.find((a) => a.Mode);
         if (modeAction) {
-          try {
-            const parsed = JSON.parse((modeAction as any).Mode);
-            const opp = parsed?.Opponents?.[0];
-            if (opp) {
-              if (!battleJson) {
-                battleJson = {};
-              }
-              battleJson.OpponentBoard = {
-                Mins: { Items: opp.Minions },
-                Rel: { Items: opp.Relics },
-                Pack: opp.Pack,
-                Tur: requestedTurn,
-                GoSp: (modeAction as any).OpponentGoldSpent ?? 0,
-              };
+          const parsed = this.parseJsonObject(modeAction.Mode);
+          const opponents = Array.isArray(parsed?.Opponents) ? parsed.Opponents : [];
+          const opp = this.isRecord(opponents[0]) ? opponents[0] : null;
+          if (opp) {
+            if (!battleJson) {
+              battleJson = {};
             }
-          } catch (e) { }
+            battleJson.OpponentBoard = {
+              Mins: { Items: opp.Minions },
+              Rel: { Items: opp.Relics },
+              Pack: opp.Pack,
+              Tur: requestedTurn,
+              GoSp: modeAction.OpponentGoldSpent ?? 0,
+            };
+          }
         }
       }
     }
@@ -538,28 +575,42 @@ export class ReplayCalcService {
       abilityPetMap = buildReplayAbilityPetMapFromActions(
         turnsResponse.replay.raw_json.Actions,
       );
-      // If we still have nothing, check if any action in the turn HAS pre-parsed pets (common in some API versions)
-      const turnWithPets = byTurnActions.find((a: any) => a.playerPets || a.opponentPets) || selectedTurn;
-      if (!buildJson && (turnWithPets as any).playerPets) {
-        buildJson = { Mins: { Items: (turnWithPets as any).playerPets } };
+      // If we still have nothing, check if an action in the turn has pre-parsed pets.
+      const turnWithPets =
+        byTurnActions.find((a) => a.playerPets || a.opponentPets) ?? selectedTurn;
+      if (!buildJson && turnWithPets?.playerPets) {
+        buildJson = { Mins: { Items: turnWithPets.playerPets } };
       }
-      if (!battleJson?.OpponentBoard && (turnWithPets as any).opponentPets) {
-        if (!battleJson) battleJson = {};
-        battleJson.OpponentBoard = { Mins: { Items: (turnWithPets as any).opponentPets } };
+      if (!battleJson?.OpponentBoard && turnWithPets?.opponentPets) {
+        if (!battleJson) {
+          battleJson = {};
+        }
+        battleJson.OpponentBoard = { Mins: { Items: turnWithPets.opponentPets } };
       }
     }
 
     return {
       battle: hasRawSides
         ? {
-          UserBoard: this.mapReplayTurnsSide((selectedTurn as any)?.user),
-          OpponentBoard: this.mapReplayTurnsSide((selectedTurn as any)?.opponent),
+          UserBoard: this.mapReplayTurnsSide(selectedTurn?.user),
+          OpponentBoard: this.mapReplayTurnsSide(selectedTurn?.opponent),
         }
         : {
-          UserBoard: this.mapReplaySummarySide(selectedTurn as any, 'player', buildJson || battleJson?.UserBoard),
-          OpponentBoard: this.mapReplaySummarySide(selectedTurn as any, 'opponent', battleJson?.OpponentBoard),
+          UserBoard: this.mapReplaySummarySide(
+            selectedTurn as ReplayTurnEntry,
+            'player',
+            buildJson ?? (this.isRecord(battleJson?.UserBoard) ? battleJson.UserBoard : null),
+          ),
+          OpponentBoard: this.mapReplaySummarySide(
+            selectedTurn as ReplayTurnEntry,
+            'opponent',
+            this.isRecord(battleJson?.OpponentBoard) ? battleJson.OpponentBoard : null,
+          ),
         },
-      genesisBuildModel: (turnsResponse as any)?.genesisBuildModel ?? (turnsResponse?.replay?.raw_json as any)?.GenesisBuildModel ?? (turnsResponse as any)?.replay?.GenesisBuildModel,
+      genesisBuildModel:
+        turnsResponse?.genesisBuildModel ??
+        turnsResponse?.replay?.raw_json?.GenesisBuildModel ??
+        turnsResponse?.replay?.GenesisBuildModel,
       abilityPetMap,
     };
   }
