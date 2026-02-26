@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, timeout } from 'rxjs/operators';
 
@@ -10,6 +10,7 @@ import {
   ReplayCalculatorState,
   ReplayMetaBoards,
   ReplayParseOptions,
+  buildReplayAbilityPetMapFromActions,
 } from './replay-calc-parser';
 import { getReplayApiUrl, getReplayTurnsApiUrl } from './replay-api-endpoints';
 
@@ -110,11 +111,21 @@ interface ReplaySummaryPet {
   level?: number | null;
   attack?: number | null;
   health?: number | null;
+  mana?: number | null;
   perk?: string | number | null;
+  abilities?: ReplayTurnsAbility[] | null;
+  experience?: number | null;
+  [key: string]: any;
 }
 
 interface ReplayTurnsResponse {
   replayId?: string;
+  replay?: {
+    id?: string;
+    raw_json?: {
+      Actions?: any[];
+    };
+  } | null;
   turns?: ReplayTurnEntry[] | null;
   genesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
@@ -127,7 +138,7 @@ interface ReplayTurnsResponse {
 export class ReplayCalcService {
   private parser = new ReplayCalcParser();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   parseReplayForCalculator(
     battleJson: ReplayBattleJson,
@@ -158,75 +169,88 @@ export class ReplayCalcService {
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
-    return this.fetchReplayBattleFromTurnsApi(payload, timeoutMs).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error?.status !== 404 && error?.status !== 405) {
-          return throwError(error);
-        }
-
-        return this.fetchReplayBattleFromReplayBattleApi(payload, timeoutMs);
-      }),
-    );
+    return this.fetchReplayBattleFromTurnsApi(payload, timeoutMs);
   }
 
-  private fetchReplayBattleFromReplayBattleApi(
-    payload: ReplayBattleRequest,
-    timeoutMs: number,
-  ): Observable<ReplayBattleResponse> {
-    return this.http
-      .post<ReplayBattleResponse>(getReplayApiUrl('/replay-battle'), payload)
-      .pipe(
-        timeout(timeoutMs),
-      );
-  }
 
   private fetchReplayBattleFromTurnsApi(
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
-    return this.http
-      .post<ReplayIndexResponse>(getReplayApiUrl('/replays'), {
-        participationId: payload.Pid,
-      })
-      .pipe(
-        timeout(timeoutMs),
-        switchMap((indexResponse) => {
-          const replayId = indexResponse?.replayId;
-          if (!replayId) {
-            return throwError({
-              error: {
-                error:
-                  'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
-              },
-              status: 400,
-            });
-          }
+    const participationId = String(payload.Pid);
 
-          return this.http.get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId)).pipe(
+    return this.fetchReplayBattleByReplayId(
+      participationId,
+      payload.T,
+      timeoutMs,
+    ).pipe(
+      catchError((directGetError) => {
+        if (directGetError?.status !== 404) {
+          return this.normalizeReplayFetchError(directGetError);
+        }
+
+        return this.http
+          .post<ReplayIndexResponse>(getReplayApiUrl('/replays'), {
+            Pid: participationId,
+            participationId,
+          })
+          .pipe(
             timeout(timeoutMs),
-            map((turnsResponse) =>
-              this.buildReplayBattleResponseFromTurns(
-                turnsResponse,
+            switchMap((indexResponse) => {
+              const replayId = indexResponse?.replayId;
+              if (!replayId) {
+                return throwError({
+                  error: {
+                    error:
+                      'Replay indexing did not return a replayId.',
+                  },
+                  status: 400,
+                });
+              }
+              return this.fetchReplayBattleByReplayId(
+                String(replayId),
                 payload.T,
-                replayId,
-              ),
+                timeoutMs,
+              );
+            }),
+            catchError((fallbackError) =>
+              this.normalizeReplayFetchError(fallbackError),
             ),
           );
-        }),
-        catchError((fallbackError) => {
-          if (fallbackError?.status === 404 || fallbackError?.status === 400) {
-            return throwError(fallbackError);
-          }
+      }),
+    );
+  }
 
-          return throwError({
-            error: {
-              error:
-                'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
-            },
-            status: 400,
-          });
-        }),
-      );
+  private fetchReplayBattleByReplayId(
+    replayId: string,
+    requestedTurn: number,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
+    return this.http.get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId)).pipe(
+      timeout(timeoutMs),
+      map((turnsResponse) =>
+        this.buildReplayBattleResponseFromTurns(
+          turnsResponse,
+          requestedTurn,
+          replayId,
+        ),
+      ),
+    );
+  }
+
+  private normalizeReplayFetchError(error: unknown): Observable<never> {
+    const status = (error as { status?: number } | null)?.status;
+    if (status === 404 || status === 400) {
+      return throwError(error);
+    }
+
+    return throwError({
+      error: {
+        error:
+          'This replay API does not expose turn battle JSON. Configure a replay backend that supports /api/replay-battle or /api/replays/:id/turns.',
+      },
+      status: 400,
+    });
   }
 
   async checkReplayApiHealth(timeoutMs: number): Promise<ReplayApiHealthStatus> {
@@ -335,14 +359,30 @@ export class ReplayCalcService {
         x: this.toFiniteNumber(pet?.slot) ?? 0,
       },
       Abil: abilities,
+      ...pet,
     };
   }
 
   private mapReplaySummaryPet(pet: ReplaySummaryPet): Record<string, unknown> {
+    const abilities = (pet?.abilities ?? [])
+      .map((ability) => {
+        const abilityId = this.toReplayId(ability?.id);
+        if (!abilityId) {
+          return null;
+        }
+        return {
+          Enu: abilityId,
+          Lvl: this.toFiniteNumber(ability?.level) ?? 1,
+          Grop: this.toFiniteNumber(ability?.group) ?? 0,
+          TrCo: this.toFiniteNumber(ability?.triggersConsumed) ?? 0,
+        };
+      })
+      .filter((ability): ability is ReplayMappedAbility => ability !== null);
+
     return {
-      Enu: this.toReplayId(pet?.petName),
+      Enu: this.toReplayId(pet?.petName) || this.toReplayId(pet?.id),
       Lvl: this.toFiniteNumber(pet?.level) ?? 1,
-      Exp: 0,
+      Exp: this.toFiniteNumber(pet?.experience) ?? 0,
       Perk: this.toReplayId(pet?.perk),
       At: {
         Perm: this.toFiniteNumber(pet?.attack) ?? 0,
@@ -354,12 +394,13 @@ export class ReplayCalcService {
         Temp: 0,
         Max: null,
       },
-      Mana: 0,
+      Mana: this.toFiniteNumber(pet?.mana) ?? 0,
       Cosm: 0,
       Poi: {
         x: this.toFiniteNumber(pet?.position) ?? 0,
       },
-      Abil: [],
+      Abil: abilities,
+      ...pet,
     };
   }
 
@@ -383,12 +424,19 @@ export class ReplayCalcService {
   private mapReplaySummarySide(
     turn: ReplayTurnEntry,
     side: 'player' | 'opponent',
+    buildJson?: any,
   ): Record<string, unknown> {
+    if (buildJson && side === 'player') {
+      // If we have direct Build JSON (for player), return it
+      return buildJson;
+    }
+
     const isPlayer = side === 'player';
     const pets =
       (isPlayer ? turn?.pets?.player : turn?.pets?.opponent) ?? [];
     return {
       Tur:
+        this.toFiniteNumber((turn as any)?.Turn) ??
         this.toFiniteNumber(turn?.turnNumber) ??
         this.toFiniteNumber(turn?.turn) ??
         1,
@@ -417,13 +465,18 @@ export class ReplayCalcService {
     replayId: string,
   ): ReplayBattleResponse {
     const turns = turnsResponse?.turns ?? [];
-    const byTurn = turns.find(
-      (turn) =>
-        this.toFiniteNumber(turn?.turn) === requestedTurn ||
-        this.toFiniteNumber(turn?.turnNumber) === requestedTurn,
-    );
-    const byIndex = requestedTurn > 0 ? turns[requestedTurn - 1] : null;
-    const selectedTurn = byTurn ?? byIndex;
+
+    const byTurnActions = turns.filter((action: any) => {
+      const turnNum = this.toFiniteNumber(action?.Turn) ?? this.toFiniteNumber(action?.turn) ?? this.toFiniteNumber(action?.turnNumber);
+      return turnNum === requestedTurn;
+    });
+
+    // Prefer Battle (Type 1) because it typically contains both UserBoard and OpponentBoard in its Battle JSON.
+    // Build (Type 0) often only has the player's 'Bor' state.
+    const selectedTurn = byTurnActions.find((a: any) => a.Type === 1) ??
+      byTurnActions.find((a: any) => a.Type === 0) ??
+      byTurnActions[0] ??
+      (requestedTurn > 0 && requestedTurn <= turns.length ? turns[requestedTurn - 1] : null);
 
     if (!selectedTurn) {
       throw {
@@ -434,19 +487,80 @@ export class ReplayCalcService {
       };
     }
 
-    const hasRawSides = Boolean(selectedTurn?.user || selectedTurn?.opponent);
+    const hasRawSides = Boolean((selectedTurn as any)?.user || (selectedTurn as any)?.opponent);
+    let buildJson: any = null;
+    let battleJson: any = null;
+
+    if (!hasRawSides) {
+      // Try to find Build and Battle data across ALL actions for this turn
+      const buildAction = byTurnActions.find((a: any) => a.Build);
+      if (buildAction) {
+        try {
+          const parsed = JSON.parse((buildAction as any).Build);
+          buildJson = parsed?.Bor ?? parsed;
+        } catch (e) { }
+      }
+
+      const battleAction = byTurnActions.find((a: any) => a.Battle);
+      if (battleAction) {
+        try {
+          const parsed = JSON.parse((battleAction as any).Battle);
+          battleJson = parsed?.UserBoard || parsed?.OpponentBoard ? parsed : null;
+        } catch (e) { }
+      }
+
+      // If opponent board is still missing, try the Mode string (common in summarized replays)
+      if (!battleJson?.OpponentBoard) {
+        const modeAction = byTurnActions.find((a: any) => a.Mode);
+        if (modeAction) {
+          try {
+            const parsed = JSON.parse((modeAction as any).Mode);
+            const opp = parsed?.Opponents?.[0];
+            if (opp) {
+              if (!battleJson) {
+                battleJson = {};
+              }
+              battleJson.OpponentBoard = {
+                Mins: { Items: opp.Minions },
+                Rel: { Items: opp.Relics },
+                Pack: opp.Pack,
+                Tur: requestedTurn,
+                GoSp: (modeAction as any).OpponentGoldSpent ?? 0,
+              };
+            }
+          } catch (e) { }
+        }
+      }
+    }
+
+    let abilityPetMap = turnsResponse?.abilityPetMap ?? null;
+    if (!abilityPetMap && turnsResponse?.replay?.raw_json?.Actions) {
+      abilityPetMap = buildReplayAbilityPetMapFromActions(
+        turnsResponse.replay.raw_json.Actions,
+      );
+      // If we still have nothing, check if any action in the turn HAS pre-parsed pets (common in some API versions)
+      const turnWithPets = byTurnActions.find((a: any) => a.playerPets || a.opponentPets) || selectedTurn;
+      if (!buildJson && (turnWithPets as any).playerPets) {
+        buildJson = { Mins: { Items: (turnWithPets as any).playerPets } };
+      }
+      if (!battleJson?.OpponentBoard && (turnWithPets as any).opponentPets) {
+        if (!battleJson) battleJson = {};
+        battleJson.OpponentBoard = { Mins: { Items: (turnWithPets as any).opponentPets } };
+      }
+    }
 
     return {
-      battle: {
-        UserBoard: hasRawSides
-          ? this.mapReplayTurnsSide(selectedTurn.user)
-          : this.mapReplaySummarySide(selectedTurn, 'player'),
-        OpponentBoard: hasRawSides
-          ? this.mapReplayTurnsSide(selectedTurn.opponent)
-          : this.mapReplaySummarySide(selectedTurn, 'opponent'),
-      },
-      genesisBuildModel: turnsResponse?.genesisBuildModel,
-      abilityPetMap: turnsResponse?.abilityPetMap ?? null,
+      battle: hasRawSides
+        ? {
+          UserBoard: this.mapReplayTurnsSide((selectedTurn as any)?.user),
+          OpponentBoard: this.mapReplayTurnsSide((selectedTurn as any)?.opponent),
+        }
+        : {
+          UserBoard: this.mapReplaySummarySide(selectedTurn as any, 'player', buildJson || battleJson?.UserBoard),
+          OpponentBoard: this.mapReplaySummarySide(selectedTurn as any, 'opponent', battleJson?.OpponentBoard),
+        },
+      genesisBuildModel: (turnsResponse as any)?.genesisBuildModel ?? (turnsResponse?.replay?.raw_json as any)?.GenesisBuildModel ?? (turnsResponse as any)?.replay?.GenesisBuildModel,
+      abilityPetMap,
     };
   }
 }

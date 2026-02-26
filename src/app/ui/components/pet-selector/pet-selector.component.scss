@@ -138,6 +138,7 @@
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
 }
 
 .swallowed-label-small {
@@ -228,6 +229,7 @@ input[type="number"] {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: white !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
   padding: 8px 12px;
   transition: all 0.2s ease;
 
@@ -274,10 +276,13 @@ label:not(.swallowed-label) {
   &:hover {
     background: rgba(0, 0, 0, 0.32);
     border-color: rgba(255, 255, 255, 0.45);
+    color: #ffffff !important;
     transform: translateY(-1px);
   }
 
+  &:focus-visible,
   &:active {
+    color: #ffffff !important;
     transform: translateY(0);
   }
 
@@ -285,6 +290,7 @@ label:not(.swallowed-label) {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   }
 
+  .selection-text,
   .btn-text {
     font-size: 0.95rem;
     line-height: 1.15;

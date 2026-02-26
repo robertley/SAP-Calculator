@@ -68,9 +68,9 @@ export class ImportCalculatorComponent implements OnInit {
   constructor(
     private replayCalcService: ReplayCalcService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   submit() {
     this.errorMessage = '';
@@ -234,6 +234,36 @@ export class ImportCalculatorComponent implements OnInit {
       });
       return;
     }
+
+    if ((parsedInput as any)?.turns) {
+      const turnNumber = Number(this.formGroup.get('turn').value);
+      if (!Number.isFinite(turnNumber) || turnNumber <= 0) {
+        this.errorMessage = 'Enter a valid turn number.';
+        return;
+      }
+
+      try {
+        const response = this.replayCalcService['buildReplayBattleResponseFromTurns'](
+          parsedInput as any,
+          turnNumber,
+          (parsedInput as any)?.replay?.id || 'manual-import',
+        );
+        if (response?.battle) {
+          this.importReplayBattle(
+            response.battle,
+            response.genesisBuildModel,
+            undefined,
+            { abilityPetMap: response.abilityPetMap ?? null },
+            { resetBattle: true },
+          );
+          return;
+        }
+      } catch (e) {
+        this.errorMessage = 'Failed to process turns JSON.';
+        return;
+      }
+    }
+
 
     if (this.importFunc(rawInput)) {
       this.setStatus('Import successful.', 'success');

@@ -8,24 +8,26 @@ export const PETS_META_BY_ID = new Map<
   { name: string; tier: number }
 >();
 
-const petList =
-  (
-    petsByTier as unknown as {
-      default?: Array<{ Id: string; Name: string; Tier: string | number }>;
-    }
-  ).default ??
-  (petsByTier as unknown as Array<{
-    Id: string;
-    Name: string;
-    Tier: string | number;
-  }>);
+export const PET_IDS_BY_NAME = new Map<string, string>();
 
-petList.forEach((pet) => {
-  const petId = String(pet.Id);
-  const tierValue = Number(pet.Tier);
-  PETS_BY_ID.set(petId, pet.Name);
-  if (Number.isFinite(tierValue)) {
-    PETS_META_BY_ID.set(petId, { name: pet.Name, tier: tierValue });
+const petListRaw = (petsByTier as any).default ?? petsByTier;
+const petList = Array.isArray(petListRaw)
+  ? petListRaw
+  : Object.values(petListRaw).filter(v => typeof v === 'object' && v !== null && ('Id' in v || 'id' in v));
+
+petList.forEach((pet: any) => {
+  const petId = String(pet.Id ?? pet.id);
+  const tierValue = Number(pet.Tier ?? pet.tier);
+  const name = pet.Name ?? pet.name;
+
+  if (name) {
+    PETS_BY_ID.set(petId, name);
+    const normalizedName = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    PET_IDS_BY_NAME.set(normalizedName, petId);
+  }
+
+  if (Number.isFinite(tierValue) && name) {
+    PETS_META_BY_ID.set(petId, { name, tier: tierValue });
   }
 });
 

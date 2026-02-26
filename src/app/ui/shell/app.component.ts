@@ -74,6 +74,7 @@ import { buildFightAnimationRenderFrame as buildFightAnimationRenderFrameImpl, c
 import { captureRandomEvents as captureRandomEventsImpl, clearRandomOverrides as clearRandomOverridesImpl, getRandomDecisionLabelParts as getRandomDecisionLabelPartsImpl, getRandomDecisionSelectedOptionParts as getRandomDecisionSelectedOptionPartsImpl, getSelectedRandomDecisionOptionId as getSelectedRandomDecisionOptionIdImpl, onRandomDecisionChoiceChanged as onRandomDecisionChoiceChangedImpl, runForcedRandomSimulation as runForcedRandomSimulationImpl, } from './simulation/app.component.random-decisions';
 import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCacheImpl, decrementToyLevel as decrementToyLevelImpl, drop as dropImpl, exportCalculator as exportCalculatorImpl, fixCustomPackSelect as fixCustomPackSelectImpl, generateShareLink as generateShareLinkImpl, getPackIcon as getPackIconImpl, getRandomEquipment as getRandomEquipmentImpl, getRollInputVisible as getRollInputVisibleImpl, getSelectedTeamName as getSelectedTeamNameImpl, getSelectedTeamPreviewIcons as getSelectedTeamPreviewIconsImpl, getToyIcon as getToyIconImpl, getToyIconPathValue as getToyIconPathValueImpl, getToyOptionStyle as getToyOptionStyleImpl, getValidCustomPacks as getValidCustomPacksImpl, importCalculator as importCalculatorImpl, incrementToyLevel as incrementToyLevelImpl, initApp as initAppImpl, initFormGroup as initFormGroupImpl, initGameApi as initGameApiImpl, initPetForms as initPetFormsImpl, initPlayerPets as initPlayerPetsImpl, initModals as initModalsImpl, loadLocalStorage as loadLocalStorageImpl, loadStateFromUrl as loadStateFromUrlImpl, makeFormGroup as makeFormGroupImpl, onItemSelected as onItemSelectedImpl, onPackImageError as onPackImageErrorImpl, openCustomPackEditor as openCustomPackEditorImpl, openSelectionDialog as openSelectionDialogImpl, printFormGroup as printFormGroupImpl, randomize as randomizeImpl, randomizePlayerPets as randomizePlayerPetsImpl, refreshPetFormArrays as refreshPetFormArraysImpl, removeHardToy as removeHardToyImpl, resetPackImageError as resetPackImageErrorImpl, resetPlayer as resetPlayerImpl, setDayNight as setDayNightImpl, setHardToyImage as setHardToyImageImpl, setRandomBackground as setRandomBackgroundImpl, setToyImage as setToyImageImpl, toggleAdvanced as toggleAdvancedImpl, trackByIndex as trackByIndexImpl, trackByLogTab as trackByLogTabImpl, trackByTeamId as trackByTeamIdImpl, updateGoldSpent as updateGoldSpentImpl, undoRandomize as undoRandomizeImpl, updatePlayerPack as updatePlayerPackImpl, updatePlayerToy as updatePlayerToyImpl, updatePreviousShopTier as updatePreviousShopTierImpl, updateToyLevel as updateToyLevelImpl, } from './view/app.component.ui';
 import { handlePetSlotClipboardShortcuts as handlePetSlotClipboardShortcutsImpl } from './view/app.component.pet-clipboard';
+import { handleGlobalKeyboardShortcuts as handleGlobalKeyboardShortcutsImpl } from './view/app.component.shortcuts';
 
 @Component({
   selector: 'app-root',
@@ -102,6 +103,7 @@ import { handlePetSlotClipboardShortcuts as handlePetSlotClipboardShortcutsImpl 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly app = this;
   readonly lapsusTypographyStage: 1 | 2 | 3 = 1;
+  private readonly uiThemeStorageKey = 'sapTheme';
 
   get lapsusTypographyStageClass(): string {
     return `lapsus-stage-${this.lapsusTypographyStage}`;
@@ -156,6 +158,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   previousPackOpponent: string | null = null;
 
   dayNight = true;
+  theme: 'light' | 'dark' = 'light';
   battleBackgroundUrl = '';
   playerToyImageUrl = '';
   opponentToyImageUrl = '';
@@ -312,6 +315,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly printFormGroup = () => printFormGroupImpl(this);
 
   ngOnInit(): void {
+    this.loadThemePreference();
     this.isLoadedFromUrl = this.loadStateFromUrl(true);
 
     if (!this.isLoadedFromUrl) {
@@ -336,6 +340,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
       });
   }
+
+  readonly toggleTheme = () => {
+    this.applyTheme(this.theme === 'dark' ? 'light' : 'dark', true);
+  };
 
   get autoSaveLabel(): string {
     if (!this.lastAutoSavedAt) {
@@ -393,8 +401,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   @HostListener('document:keydown', ['$event'])
-  handlePetSlotClipboardShortcuts(event: KeyboardEvent): void {
+  handleKeyboardShortcuts(event: KeyboardEvent): void {
     handlePetSlotClipboardShortcutsImpl(this, event);
+    if (!event.defaultPrevented) {
+      handleGlobalKeyboardShortcutsImpl(this, event);
+    }
   }
 
   initFormGroup() {
@@ -721,5 +732,26 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     clearTimeout(this.statusTimer);
     this.statusTimer = null;
+  }
+
+  private loadThemePreference(): void {
+    const savedTheme = window.localStorage.getItem(this.uiThemeStorageKey);
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      this.applyTheme(savedTheme, false);
+      return;
+    }
+    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')
+      ?.matches;
+    this.applyTheme(prefersDark ? 'dark' : 'light', false);
+  }
+
+  private applyTheme(theme: 'light' | 'dark', persist: boolean): void {
+    this.theme = theme;
+    document.documentElement.setAttribute('data-bs-theme', theme);
+    document.body.classList.toggle('theme-dark', theme === 'dark');
+    if (persist) {
+      window.localStorage.setItem(this.uiThemeStorageKey, theme);
+    }
+    this.cdr.markForCheck();
   }
 }

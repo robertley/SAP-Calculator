@@ -1,11 +1,63 @@
 import { describe, expect, it } from 'vitest';
 import {
+  parseReplayForCalculatorFromActions,
   ReplayBattleJson,
   ReplayCalcParser,
   selectReplayBattleFromActions,
 } from '../../../src/app/integrations/replay/replay-calc-parser';
 
 describe('ReplayCalcParser', () => {
+  it('parses calculator state directly from actions for replaybot usage', () => {
+    const actions = [
+      {
+        Type: 0,
+        Turn: 5,
+        Battle: JSON.stringify({
+          UserBoard: {
+            Pack: 6,
+            Tur: 5,
+            Mins: {
+              Items: [
+                {
+                  Enu: 349,
+                  Lvl: 2,
+                  Poi: { x: 1 },
+                  At: { Perm: 8 },
+                  Hp: { Perm: 8 },
+                  Abil: [{ Enu: 9101, Lvl: 2 }],
+                },
+                {
+                  Enu: 373,
+                  Lvl: 2,
+                  Poi: { x: 0 },
+                  At: { Perm: 12 },
+                  Hp: { Perm: 12 },
+                  Abil: [{ Enu: 9101, Lvl: 2, Grop: 1 }],
+                },
+              ],
+            },
+          },
+          OpponentBoard: {
+            Pack: 0,
+            Mins: {
+              Items: [],
+            },
+          },
+        }),
+      },
+    ];
+
+    const state = parseReplayForCalculatorFromActions(actions, 5);
+    const abomination = state?.playerPets.find(
+      (pet) => pet?.name === 'Abomination',
+    );
+
+    expect(state).toBeTruthy();
+    expect(abomination).toBeTruthy();
+    expect(abomination?.abominationSwallowedPet1).toBe('Brain Cramp');
+    expect(abomination?.abominationSwallowedPet1Level).toBe(2);
+  });
+
   it('infers missing copied-ability owner from nearby mapped abilities', () => {
     const parser = new ReplayCalcParser();
     const battleJson: ReplayBattleJson = {
