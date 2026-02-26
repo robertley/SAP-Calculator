@@ -3,6 +3,11 @@ const https = require("https");
 const { URL } = require("url");
 const fs = require("fs");
 const path = require("path");
+const {
+  parseReplayCalculatorState,
+  generateReplayCalculatorLink,
+  runReplayOddsFromCalculatorState,
+} = require("../simulation/dist/index.js");
 
 function loadEnvFile(envPath) {
   if (!fs.existsSync(envPath)) {
@@ -41,6 +46,8 @@ const SAP_EMAIL = process.env.SAP_EMAIL;
 const SAP_PASSWORD = process.env.SAP_PASSWORD;
 const CORS_ALLOWED_ORIGIN =
   process.env.CORS_ALLOWED_ORIGIN || "https://www.sap-calculator.com";
+const CALCULATOR_PUBLIC_BASE_URL =
+  process.env.CALCULATOR_PUBLIC_BASE_URL || "https://sap-calculator.com/";
 
 const authCache = new Map();
 
@@ -60,6 +67,68 @@ function sendJson(res, statusCode, payload) {
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   });
   res.end(body);
+}
+
+function toPositiveInteger(value) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  const intValue = Math.trunc(parsed);
+  return intValue > 0 ? intValue : null;
+}
+
+function toReplayPayload(body) {
+  if (!body || typeof body !== "object") {
+    return null;
+  }
+  if (body.replay && typeof body.replay === "object") {
+    return body.replay;
+  }
+  if (Array.isArray(body.Actions) || Array.isArray(body.turns)) {
+    return body;
+  }
+  return null;
+}
+
+function parseReplayCalculatorStateFromBody(body) {
+  const replayPayload = toReplayPayload(body);
+  if (!replayPayload) {
+    throw makeError(
+      "Replay payload is required. Provide `replay`, `Actions`, or `turns`.",
+      400,
+    );
+  }
+
+  const turnNumber =
+    toPositiveInteger(body?.turnNumber) ??
+    toPositiveInteger(body?.turn) ??
+    toPositiveInteger(body?.T);
+  if (!turnNumber) {
+    throw makeError(
+      "A positive turn number is required (`turnNumber`, `turn`, or `T`).",
+      400,
+    );
+  }
+
+  const options =
+    body?.abilityPetMap && typeof body.abilityPetMap === "object"
+      ? { abilityPetMap: body.abilityPetMap }
+      : undefined;
+  const parsedState = parseReplayCalculatorState(
+    replayPayload,
+    turnNumber,
+    undefined,
+    options,
+  );
+  if (!parsedState) {
+    throw makeError(`No battle found for turn ${turnNumber}.`, 404);
+  }
+
+  return {
+    parsedState,
+    turnNumber,
+  };
 }
 
 function readJsonBody(req) {
@@ -630,6 +699,65 @@ const server = http.createServer(async (req, res) => {
       const statusCode = error.statusCode || 500;
       sendJson(res, statusCode, {
         error: error.message || "Replay debug lookup failed.",
+      });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/replay/parse-link") {
+    try {
+      const body = await readJsonBody(req);
+      const { parsedState, turnNumber } = parseReplayCalculatorStateFromBody(body);
+      const linkBaseUrl =
+        typeof body?.baseUrl === "string" && body.baseUrl.length > 0
+          ? body.baseUrl
+          : CALCULATOR_PUBLIC_BASE_URL;
+      const calculatorLink = generateReplayCalculatorLink(parsedState, linkBaseUrl);
+
+      sendJson(res, 200, {
+        turnNumber,
+        link: calculatorLink,
+        calculatorState: parsedState,
+      });
+    } catch (error) {
+      const statusCode = error.statusCode || 500;
+      sendJson(res, statusCode, {
+        error: error.message || "Failed to parse replay into calculator link.",
+      });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/replay/odds") {
+    try {
+      const body = await readJsonBody(req);
+      const { parsedState, turnNumber } = parseReplayCalculatorStateFromBody(body);
+      const simulationCount = toPositiveInteger(body?.simulationCount) || 1000;
+      const result = runReplayOddsFromCalculatorState(parsedState, simulationCount);
+      const totalBattles = result.playerWins + result.opponentWins + result.draws;
+      const toPercent = (value) =>
+        totalBattles > 0
+          ? Number(((value / totalBattles) * 100).toFixed(2))
+          : 0;
+
+      sendJson(res, 200, {
+        turnNumber,
+        simulationCount,
+        parsedState,
+        odds: {
+          playerWins: result.playerWins,
+          opponentWins: result.opponentWins,
+          draws: result.draws,
+          totalBattles,
+          playerWinPercent: toPercent(result.playerWins),
+          opponentWinPercent: toPercent(result.opponentWins),
+          drawPercent: toPercent(result.draws),
+        },
+      });
+    } catch (error) {
+      const statusCode = error.statusCode || 500;
+      sendJson(res, statusCode, {
+        error: error.message || "Failed to parse replay odds.",
       });
     }
     return;

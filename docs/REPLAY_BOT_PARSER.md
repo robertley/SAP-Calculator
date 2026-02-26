@@ -129,6 +129,89 @@ export function parseReplaybotTeamwoodResponse(
 - Returns `ReplayCalculatorState` on success.
 - Returns `null` if no valid battle is found for that turn.
 
+## Calculator-side API endpoints
+
+If your bot should call calculator-side parsing directly, use:
+
+### `POST /api/replay/parse-link`
+
+Parses replay + turn with calculator logic and returns a final calculator URL.
+
+Request body:
+
+```json
+{
+  "replay": {
+    "Actions": []
+  },
+  "turnNumber": 12,
+  "abilityPetMap": {
+    "379": "349"
+  },
+  "baseUrl": "https://sap-calculator.com/"
+}
+```
+
+Response:
+
+```json
+{
+  "turnNumber": 12,
+  "link": "https://sap-calculator.com/?c=...",
+  "calculatorState": {
+    "playerPack": "Custom Pack",
+    "opponentPack": "Turtle"
+  }
+}
+```
+
+Notes:
+- `replay` can be omitted if the top-level payload itself is an `Actions[]` or `turns[]` container.
+- Accepted turn keys: `turnNumber`, `turn`, or `T`.
+- `abilityPetMap` is optional and merged as parser override input.
+
+### `POST /api/replay/odds`
+
+Parses replay + turn using the same pipeline, then runs calculator simulation odds.
+
+Request body:
+
+```json
+{
+  "replay": {
+    "Actions": []
+  },
+  "turnNumber": 12,
+  "simulationCount": 1000
+}
+```
+
+Response:
+
+```json
+{
+  "turnNumber": 12,
+  "simulationCount": 1000,
+  "parsedState": {
+    "playerPack": "Custom Pack",
+    "opponentPack": "Turtle"
+  },
+  "odds": {
+    "playerWins": 617,
+    "opponentWins": 335,
+    "draws": 48,
+    "totalBattles": 1000,
+    "playerWinPercent": 61.7,
+    "opponentWinPercent": 33.5,
+    "drawPercent": 4.8
+  }
+}
+```
+
+Notes:
+- `simulationCount` defaults to `1000` if omitted.
+- This endpoint is intended for `!odds` parity with calculator parser behavior.
+
 ## Notes
 
 - Abomination support is handled on calc side through copied-ability owner inference.
