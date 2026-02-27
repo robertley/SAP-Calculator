@@ -15,6 +15,7 @@ import {
     inferSummonedSide,
     parseInlineStatsFromSegment,
     getEquipmentNameAfterVerb,
+    parsePositionLabelAfterVerb,
 } from './log-parsers';
 import {
     getLogPrimarySide,
@@ -23,6 +24,7 @@ import {
     resolveSummonSlot,
     resolveTrumpetPopupSlot,
     getOppositeSide,
+    resolveSideFromIsOpponent,
 } from './slot-resolver';
 import {
     FightAnimationBoardState,
@@ -39,6 +41,7 @@ import {
     clearPendingRemovalSlots,
     clearSlotEquipment,
     getSlot,
+    normalizeComparableName,
     normalizeEntityToken,
     normalizeSlot,
     pushSideForward,
@@ -634,11 +637,21 @@ export function applyEquipmentMutation(
     const fallbackEquipmentName = mentionedEquipment[0] ?? null;
     const removedEquipmentName = getEquipmentNameBetween(text, 'removed', 'from');
     const gaveEquipmentName = getEquipmentNameAfterGave(text);
+    const gavePositionLabel = parsePositionLabelAfterVerb(text, 'gave');
     const gainedEquipmentName = getEquipmentNameAfterVerb(text, 'gained');
     const withEquipmentName = getEquipmentNameAfterVerb(text, 'with');
     const sourceSide = getLogPrimarySide(log);
     const sourceName = parseSubjectName(text);
     const targetName = parseTargetName(text, sourceName);
+    const sourcePetName = normalizeEntityToken(log.sourcePet?.name);
+    const targetMatchesSourcePet =
+        normalizeComparableName(targetName) !== '' &&
+        normalizeComparableName(targetName) ===
+            normalizeComparableName(sourcePetName);
+    const subjectMatchesSourcePet =
+        normalizeComparableName(sourceName) !== '' &&
+        normalizeComparableName(sourceName) ===
+            normalizeComparableName(sourcePetName);
     const targetSide = inferTargetSide(
         state,
         log,
@@ -777,9 +790,21 @@ export function applyEquipmentMutation(
         if (!equipmentName) {
             return;
         }
+        const inferredTargetIndex =
+            log.targetIndex ??
+            gavePositionLabel?.index ??
+            (targetMatchesSourcePet && !subjectMatchesSourcePet
+                ? log.sourceIndex
+                : undefined);
+        const inferredTargetSide =
+            gavePositionLabel?.side ??
+            (targetMatchesSourcePet && !subjectMatchesSourcePet
+                ? resolveSideFromIsOpponent(log.sourcePet?.parent?.isOpponent)
+                : null) ??
+            targetSide;
         const targetRef = resolveSlotRef(state, {
-            preferredSide: targetSide,
-            explicitIndex: log.targetIndex,
+            preferredSide: inferredTargetSide,
+            explicitIndex: inferredTargetIndex,
             expectedName: targetName,
             preferNonEmpty: true,
         });
@@ -884,6 +909,13 @@ export function applySummonMutation(
 
     const targetSlot = getSlot(state, summonedSide, summonSlot);
     setSlotPet(targetSlot, summonedPetName);
+    // Summons replace the slot occupant; avoid inheriting faint/old stats state.
+    targetSlot.pendingRemoval = false;
+    targetSlot.attack = null;
+    targetSlot.health = null;
+    targetSlot.exp = null;
+    targetSlot.mana = null;
+    clearSlotEquipment(targetSlot);
 
     const inlineStats = parseInlineStatsFromSegment(summonSegment);
     if (inlineStats.attack != null) {
@@ -899,7 +931,10 @@ export function applySummonMutation(
         targetSlot.mana = inlineStats.mana;
     }
 
-    const summonEquipmentName = getEquipmentNameAfterVerb(summonSegment, 'with');
+    const summonEquipmentName =
+        getEquipmentNameAfterVerb(summonSegment, 'with') ??
+        extractKnownNames(summonSegment, equipmentPatterns)[0] ??
+        null;
     if (summonEquipmentName) {
         setSlotEquipment(targetSlot, summonEquipmentName);
     }

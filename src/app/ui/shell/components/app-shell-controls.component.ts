@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import type { AppComponent } from '../app.component';
 
@@ -55,6 +55,7 @@ const SCENARIO_CONTROL_RESET_VALUES: Readonly<Record<string, boolean | number | 
 })
 export class AppShellControlsComponent {
   @Input({ required: true }) app: AppComponent;
+  @ViewChild('soundMenuRoot') soundMenuRoot?: ElementRef<HTMLElement>;
 
   optimizeSide: 'player' | 'opponent' = 'player';
   saveSide: 'player' | 'opponent' = 'player';
@@ -100,6 +101,25 @@ export class AppShellControlsComponent {
 
   private get randomOverrideCount(): number {
     return this.app?.randomDecisions?.length ?? 0;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.app?.soundMenuOpen) {
+      return;
+    }
+    const target = event.target as Node | null;
+    const root = this.soundMenuRoot?.nativeElement;
+    if (!target || !root) {
+      this.app.soundMenuOpen = false;
+      this.app.markForCheck();
+      return;
+    }
+    if (root.contains(target)) {
+      return;
+    }
+    this.app.soundMenuOpen = false;
+    this.app.markForCheck();
   }
 
   resetScenarioSettings(): void {

@@ -91,7 +91,6 @@ export const EQUIPMENT_CATEGORIES: { [key: string]: string[] } = {
     'Nachos',
     'Oyster Mushroom',
     'Pineapple',
-    'Pumpkin',
     'Radish',
     'Sardinian Currant',
     'Sausage',

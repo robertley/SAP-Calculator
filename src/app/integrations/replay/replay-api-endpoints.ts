@@ -4,7 +4,10 @@ function trimTrailingSlash(value: string): string {
   return value.endsWith('/') ? value.slice(0, -1) : value;
 }
 
-type ReplayApiPath = '/health' | '/replay-battle' | '/replays';
+type ReplayApiPath =
+  | '/health'
+  | '/replay-battle'
+  | '/replays';
 
 export function getReplayApiUrl(
   path: ReplayApiPath,

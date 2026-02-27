@@ -19,9 +19,9 @@ import {
 
 export function getLogPrimarySide(log: Log): FightSide {
     return (
+        resolveSideFromIsOpponent(log.sourcePet?.parent?.isOpponent) ??
         resolveSideFromIsOpponent(log.player?.isOpponent) ??
         resolveSideFromIsOpponent(log.playerIsOpponent) ??
-        resolveSideFromIsOpponent(log.sourcePet?.parent?.isOpponent) ??
         'player'
     );
 }

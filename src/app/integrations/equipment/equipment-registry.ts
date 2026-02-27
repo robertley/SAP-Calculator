@@ -59,7 +59,6 @@ import { Blueberry } from 'app/domain/entities/catalog/equipment/custom/blueberr
 import { Donut } from 'app/domain/entities/catalog/equipment/custom/donut.class';
 import { CashewNut } from 'app/domain/entities/catalog/equipment/custom/cashew-nut.class';
 import { Nachos } from 'app/domain/entities/catalog/equipment/custom/nachos.class';
-import { Pumpkin } from 'app/domain/entities/catalog/equipment/custom/pumpkin.class';
 import { Kiwifruit } from 'app/domain/entities/catalog/equipment/custom/kiwifruit.class';
 import { Pineapple } from 'app/domain/entities/catalog/equipment/custom/pineapple.class';
 import { Guava } from 'app/domain/entities/catalog/equipment/custom/guava.class';
@@ -151,7 +150,6 @@ export const NO_ARG_EQUIPMENT: Record<string, NoArgEquipmentConstructor> = {
   'Fortune Cookie': FortuneCookie,
   Blueberry: Blueberry,
   Donut: Donut,
-  Pumpkin: Pumpkin,
   Kiwifruit: Kiwifruit,
   Pineapple: Pineapple,
   Guava: Guava,

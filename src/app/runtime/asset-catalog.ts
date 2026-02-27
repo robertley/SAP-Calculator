@@ -1,4 +1,5 @@
 import * as petsJson from 'assets/data/pets.json';
+import * as petSoundsJson from 'assets/data/pet-sounds.json';
 import * as toysJson from 'assets/data/toys.json';
 import * as perksJson from 'assets/data/perks.json';
 
@@ -23,6 +24,11 @@ interface ToyAbilityEntry extends NameIdEntry {
 
 interface EquipmentAbilityEntry extends NameIdEntry {
   Ability?: string;
+}
+
+interface PetSoundMapData {
+  byNameId?: Record<string, string>;
+  byPetId?: Record<string, string>;
 }
 
 const getNameList = (entries: NameIdEntry[]): string[] =>
@@ -127,6 +133,28 @@ const petNameIds = buildNameIdMap(
   (petsJson as unknown as { default?: NameIdEntry[] }).default ??
     (petsJson as unknown as NameIdEntry[]) ??
     [],
+);
+const petIdByName = new Map<string, string>();
+const petIdEntries =
+  (petsJson as unknown as { default?: Array<NameIdEntry & { Id?: string }> })
+    .default ??
+  (petsJson as unknown as Array<NameIdEntry & { Id?: string }>) ??
+  [];
+for (const entry of petIdEntries) {
+  if (!entry?.Name || !entry?.Id) {
+    continue;
+  }
+  petIdByName.set(entry.Name, entry.Id);
+}
+const petSoundData =
+  (petSoundsJson as unknown as { default?: PetSoundMapData }).default ??
+  (petSoundsJson as unknown as PetSoundMapData) ??
+  {};
+const petSoundsByNameId = new Map<string, string>(
+  Object.entries(petSoundData.byNameId ?? {}),
+);
+const petSoundsByPetId = new Map<string, string>(
+  Object.entries(petSoundData.byPetId ?? {}),
 );
 const petAbilityMap = new Map<string, string>();
 const petAbilityEntries =
@@ -239,6 +267,41 @@ export function getPetAbilityText(petName?: string): string | null {
     return null;
   }
   return petAbilityMap.get(petName) ?? null;
+}
+
+export function getPetSoundPathByNameId(nameId?: string | null): string | null {
+  if (!nameId) {
+    return null;
+  }
+  const fileName = petSoundsByNameId.get(nameId);
+  if (!fileName) {
+    return null;
+  }
+  return `assets/sounds/pets/${fileName}`;
+}
+
+export function getPetSoundPathByPetId(petId?: string | number | null): string | null {
+  if (petId == null) {
+    return null;
+  }
+  const fileName = petSoundsByPetId.get(String(petId));
+  if (!fileName) {
+    return null;
+  }
+  return `assets/sounds/pets/${fileName}`;
+}
+
+export function getPetSoundPath(petName?: string): string | null {
+  if (!petName) {
+    return null;
+  }
+  const nameId = petNameIds.get(petName);
+  const byNameIdPath = getPetSoundPathByNameId(nameId);
+  if (byNameIdPath) {
+    return byNameIdPath;
+  }
+  const petId = petIdByName.get(petName);
+  return getPetSoundPathByPetId(petId);
 }
 
 export function getAllPetNames(): string[] {

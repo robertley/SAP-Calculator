@@ -39,6 +39,18 @@ export const BATTLE_BACKGROUNDS = [
   'WizardSchoolBattle.png',
 ] as const;
 
+export const DARK_BATTLE_BACKGROUNDS = [
+  'DungeonBattle.png',
+  'ScaryForestBattle.png',
+] as const;
+
+export const LIGHT_BATTLE_BACKGROUNDS = BATTLE_BACKGROUNDS.filter(
+  (background) =>
+    !DARK_BATTLE_BACKGROUNDS.includes(
+      background as (typeof DARK_BATTLE_BACKGROUNDS)[number],
+    ),
+) as readonly string[];
+
 export const LOG_FILTER_TABS: ReadonlyArray<{
   label: string;
   value: LogFilterTabValue;

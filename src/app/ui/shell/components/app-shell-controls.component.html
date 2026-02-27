@@ -58,6 +58,14 @@
             <span class="results-segment results-segment-draw" [style.width.%]="app.drawPercent"></span>
             <span class="results-segment results-segment-opponent" [style.width.%]="app.losePercent"></span>
           </div>
+          <div class="optimization-delta" *ngIf="app.positioningDeltaSummary">
+            <span class="optimization-delta-label">{{ app.positioningDeltaSideLabel }} optimize delta:</span>
+            <span class="optimization-delta-value optimization-delta-value-win">Win {{ app.formatSignedPercentDelta(app.positioningDeltaSummary.winDeltaPercent) }}pp</span>
+            <span class="optimization-delta-separator">&#183;</span>
+            <span class="optimization-delta-value">Draw {{ app.formatSignedPercentDelta(app.positioningDeltaSummary.drawDeltaPercent) }}pp</span>
+            <span class="optimization-delta-separator">&#183;</span>
+            <span class="optimization-delta-value optimization-delta-value-loss">Loss {{ app.formatSignedPercentDelta(app.positioningDeltaSummary.lossDeltaPercent) }}pp</span>
+          </div>
         </div>
       </ng-container>
       <ng-template #resultsPlaceholder>
@@ -72,6 +80,27 @@
         <button class="btn btn-secondary" (click)="app.toggleTheme()">
           {{ app.theme === "dark" ? "Light Theme" : "Dark Theme" }}
         </button>
+        <div class="sound-menu" #soundMenuRoot>
+          <button class="btn btn-secondary" (click)="app.toggleSoundMenu()">
+            Sound
+          </button>
+          <div class="sound-menu-panel" *ngIf="app.soundMenuOpen">
+            <div class="sound-menu-title">Volume: {{ app.soundVolumePercent }}%</div>
+            <input
+              class="form-range sound-menu-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              [ngModel]="app.soundVolume"
+              (ngModelChange)="app.setSoundVolume($event)"
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <button class="btn btn-secondary btn-sm sound-menu-mute-btn" (click)="app.toggleSoundMuted()">
+              {{ app.soundMuted ? "Unmute" : "Mute" }}
+            </button>
+          </div>
+        </div>
         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#info"
           (click)="app.showInfo = true" aria-label="Open guide">
           Guide

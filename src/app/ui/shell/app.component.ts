@@ -32,7 +32,11 @@ import { ReportABugComponent } from 'app/ui/components/report-a-bug/report-a-bug
 import { ExportCalculatorComponent } from 'app/ui/components/export-calculator/export-calculator.component';
 import { AppShellControlsComponent } from './components/app-shell-controls.component';
 import { AppShellBattleResultsComponent } from './components/app-shell-battle-results.component';
-import { BATTLE_BACKGROUNDS, LOG_FILTER_TABS } from './view/app.ui.constants';
+import {
+  DARK_BATTLE_BACKGROUNDS,
+  LIGHT_BATTLE_BACKGROUNDS,
+  LOG_FILTER_TABS,
+} from './view/app.ui.constants';
 import { loadTeamPreset, saveTeamPreset } from './state/app.component.teams';
 import { InjectorService } from 'app/integrations/injector.service';
 import {
@@ -43,6 +47,8 @@ import {
   BattleLogGroup,
   BattleLogRow,
   BattleTimelineRow,
+  PositioningDeltaSummary,
+  PositioningOptimizationBaseline,
   LogMessagePart,
   buildApiResponse as buildApiResponseImpl,
   refreshBattleDiff as refreshBattleDiffImpl,
@@ -75,6 +81,12 @@ import { captureRandomEvents as captureRandomEventsImpl, clearRandomOverrides as
 import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCacheImpl, decrementToyLevel as decrementToyLevelImpl, drop as dropImpl, exportCalculator as exportCalculatorImpl, fixCustomPackSelect as fixCustomPackSelectImpl, generateShareLink as generateShareLinkImpl, getPackIcon as getPackIconImpl, getRandomEquipment as getRandomEquipmentImpl, getRollInputVisible as getRollInputVisibleImpl, getSelectedTeamName as getSelectedTeamNameImpl, getSelectedTeamPreviewIcons as getSelectedTeamPreviewIconsImpl, getToyIcon as getToyIconImpl, getToyIconPathValue as getToyIconPathValueImpl, getToyOptionStyle as getToyOptionStyleImpl, getValidCustomPacks as getValidCustomPacksImpl, importCalculator as importCalculatorImpl, incrementToyLevel as incrementToyLevelImpl, initApp as initAppImpl, initFormGroup as initFormGroupImpl, initGameApi as initGameApiImpl, initPetForms as initPetFormsImpl, initPlayerPets as initPlayerPetsImpl, initModals as initModalsImpl, loadLocalStorage as loadLocalStorageImpl, loadStateFromUrl as loadStateFromUrlImpl, makeFormGroup as makeFormGroupImpl, onItemSelected as onItemSelectedImpl, onPackImageError as onPackImageErrorImpl, openCustomPackEditor as openCustomPackEditorImpl, openSelectionDialog as openSelectionDialogImpl, printFormGroup as printFormGroupImpl, randomize as randomizeImpl, randomizePlayerPets as randomizePlayerPetsImpl, refreshPetFormArrays as refreshPetFormArraysImpl, removeHardToy as removeHardToyImpl, resetPackImageError as resetPackImageErrorImpl, resetPlayer as resetPlayerImpl, setDayNight as setDayNightImpl, setHardToyImage as setHardToyImageImpl, setRandomBackground as setRandomBackgroundImpl, setToyImage as setToyImageImpl, toggleAdvanced as toggleAdvancedImpl, trackByIndex as trackByIndexImpl, trackByLogTab as trackByLogTabImpl, trackByTeamId as trackByTeamIdImpl, updateGoldSpent as updateGoldSpentImpl, undoRandomize as undoRandomizeImpl, updatePlayerPack as updatePlayerPackImpl, updatePlayerToy as updatePlayerToyImpl, updatePreviousShopTier as updatePreviousShopTierImpl, updateToyLevel as updateToyLevelImpl, } from './view/app.component.ui';
 import { handlePetSlotClipboardShortcuts as handlePetSlotClipboardShortcutsImpl } from './view/app.component.pet-clipboard';
 import { handleGlobalKeyboardShortcuts as handleGlobalKeyboardShortcutsImpl } from './view/app.component.shortcuts';
+import {
+  getSoundVolume,
+  isSoundMuted,
+  setSoundMuted,
+  setSoundVolume,
+} from 'app/runtime/sound-preferences';
 
 @Component({
   selector: 'app-root',
@@ -137,6 +149,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   simulationCancelRequested = false;
   simulationWorker: Worker | null = null;
   simulationRunId = 0;
+  pendingPositioningOptimizationBaseline: PositioningOptimizationBaseline | null = null;
+  positioningDeltaSummary: PositioningDeltaSummary | null = null;
   battles: Battle[] = [];
   battleRandomEvents: LogMessagePart[][] = [];
   battleRandomEventsByBattle = new Map<Battle, LogMessagePart[]>();
@@ -159,6 +173,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dayNight = true;
   theme: 'light' | 'dark' = 'light';
+  soundMuted = false;
+  soundMenuOpen = false;
+  soundVolume = 1;
   battleBackgroundUrl = '';
   playerToyImageUrl = '';
   opponentToyImageUrl = '';
@@ -167,7 +184,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   savedTeams: TeamPreset[] = [];
   selectedTeamId = '';
   teamName = '';
-  battleBackgrounds = [...BATTLE_BACKGROUNDS];
+  battleBackgrounds = [...LIGHT_BATTLE_BACKGROUNDS];
   logFilterTabs = [...LOG_FILTER_TABS];
   api = false;
   apiResponse: string | null = null;
@@ -316,6 +333,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadThemePreference();
+    this.loadSoundPreference();
     this.isLoadedFromUrl = this.loadStateFromUrl(true);
 
     if (!this.isLoadedFromUrl) {
@@ -345,6 +363,38 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.applyTheme(this.theme === 'dark' ? 'light' : 'dark', true);
   };
 
+  readonly toggleSoundMuted = () => {
+    this.soundMuted = !this.soundMuted;
+    if (!this.soundMuted && this.soundVolume <= 0) {
+      this.soundVolume = 0.5;
+      setSoundVolume(this.soundVolume);
+    }
+    setSoundMuted(this.soundMuted);
+    this.cdr.markForCheck();
+  };
+
+  readonly toggleSoundMenu = () => {
+    this.soundMenuOpen = !this.soundMenuOpen;
+    this.cdr.markForCheck();
+  };
+
+  readonly setSoundVolume = (value: number | string) => {
+    const parsed = Number(value);
+    const normalized = Number.isFinite(parsed)
+      ? Math.min(1, Math.max(0, parsed))
+      : 1;
+    this.soundVolume = normalized;
+    setSoundVolume(normalized);
+    if (normalized <= 0 && !this.soundMuted) {
+      this.soundMuted = true;
+      setSoundMuted(true);
+    } else if (normalized > 0 && this.soundMuted) {
+      this.soundMuted = false;
+      setSoundMuted(false);
+    }
+    this.cdr.markForCheck();
+  };
+
   get autoSaveLabel(): string {
     if (!this.lastAutoSavedAt) {
       return '';
@@ -354,6 +404,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       minute: '2-digit',
       second: '2-digit',
     })}`;
+  }
+
+  get soundVolumePercent(): number {
+    return Math.round(this.soundVolume * 100);
   }
 
   readonly loadStateFromUrl = (
@@ -668,6 +722,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return getLosePercentImpl(this);
   }
 
+  get positioningDeltaSideLabel(): 'Player' | 'Opponent' {
+    return this.positioningDeltaSummary?.side === 'opponent'
+      ? 'Opponent'
+      : 'Player';
+  }
+
+  formatSignedPercentDelta(value: number): string {
+    const normalized = Number.isFinite(value) ? value : 0;
+    const sign = normalized >= 0 ? '+' : '-';
+    return `${sign}${Math.abs(normalized).toFixed(2)}`;
+  }
+
   get validCustomPacks() {
     return getValidCustomPacksImpl(this);
   }
@@ -745,8 +811,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.applyTheme(prefersDark ? 'dark' : 'light', false);
   }
 
+  private loadSoundPreference(): void {
+    this.soundMuted = isSoundMuted();
+    this.soundVolume = getSoundVolume();
+  }
+
   private applyTheme(theme: 'light' | 'dark', persist: boolean): void {
     this.theme = theme;
+    this.battleBackgrounds =
+      theme === 'dark'
+        ? [...DARK_BATTLE_BACKGROUNDS]
+        : [...LIGHT_BATTLE_BACKGROUNDS];
+    this.setRandomBackground();
     document.documentElement.setAttribute('data-bs-theme', theme);
     document.body.classList.toggle('theme-dark', theme === 'dark');
     if (persist) {

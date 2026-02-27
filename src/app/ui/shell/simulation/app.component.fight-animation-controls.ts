@@ -8,6 +8,7 @@ import {
 } from './app.component.fight-animation';
 import { FormGroup } from '@angular/forms';
 import { AILMENT_CATEGORIES } from 'app/integrations/equipment/equipment-categories';
+import { getSoundVolume, isSoundMuted } from 'app/runtime/sound-preferences';
 
 export interface AppFightAnimationContext {
   fightAnimationFrames: FightAnimationFrame[];
@@ -16,6 +17,7 @@ export interface AppFightAnimationContext {
   fightAnimationSpeed: number;
   fightAnimationTimer: ReturnType<typeof setTimeout> | null;
   viewBattleLogs: Array<{ message?: string | null }>;
+  viewBattle?: { winner: 'player' | 'opponent' | 'draw' } | null;
   formGroup: FormGroup;
   markForCheck: () => void;
 }
@@ -45,6 +47,13 @@ export interface FightAnimationEquipmentVisual {
 
 const DEFAULT_FIGHT_ANIMATION_SPEED = 1;
 const EMPTY_POPUPS: FightAnimationPopup[] = [];
+const PUNCH2_SOUND_PATH = 'assets/sounds/pets/Punch2-sharedassets1.assets-3882.ogg';
+const ENABLE_PUNCH_SOUND_EFFECTS = false;
+const TALLY_VICTORY_SOUND_PATH =
+  'assets/sounds/pets/TallyVictory-sharedassets1.assets-3517.ogg';
+const TALLY_DEFEAT_SOUND_PATH =
+  'assets/sounds/pets/TallyDefeat-sharedassets1.assets-3836.ogg';
+const TALLY_DRAW_SOUND_PATH = 'assets/sounds/pets/TallyDraw-sharedassets1.assets-3577.ogg';
 const ailmentNames = new Set(
   Object.values(AILMENT_CATEGORIES)
     .flat()
@@ -433,6 +442,20 @@ function advanceFightAnimationTick(ctx: AppFightAnimationContext): void {
     return;
   }
   ctx.fightAnimationFrameIndex += 1;
+  const frame = getCurrentFightAnimationFrame(ctx);
+  if (
+    ENABLE_PUNCH_SOUND_EFFECTS &&
+    frame?.type === 'attack' &&
+    frame.impact &&
+    !frame.impact.isSnipe
+  ) {
+    playUiSound(PUNCH2_SOUND_PATH);
+  }
+  if (ctx.fightAnimationFrameIndex >= maxIndex) {
+    playBattleResultSound(ctx);
+    pauseFightAnimation(ctx);
+    return;
+  }
   ctx.markForCheck();
   scheduleFightAnimationTick(ctx);
 }
@@ -675,4 +698,39 @@ function getFightAnimationBaseIntervalMs(
   }
 
   return baseMs;
+}
+
+function playBattleResultSound(ctx: AppFightAnimationContext): void {
+  const winner = ctx.viewBattle?.winner;
+  if (winner === 'player') {
+    playUiSound(TALLY_VICTORY_SOUND_PATH);
+    return;
+  }
+  if (winner === 'opponent') {
+    playUiSound(TALLY_DEFEAT_SOUND_PATH);
+    return;
+  }
+  if (winner === 'draw') {
+    playUiSound(TALLY_DRAW_SOUND_PATH);
+  }
+}
+
+function playUiSound(soundPath: string): void {
+  if (isSoundMuted() || typeof Audio === 'undefined') {
+    return;
+  }
+  const volume = getSoundVolume();
+  if (volume <= 0) {
+    return;
+  }
+  try {
+    const audio = new Audio(soundPath);
+    audio.volume = volume;
+    const playback = audio.play();
+    if (playback && typeof playback.catch === 'function') {
+      void playback.catch(() => {});
+    }
+  } catch {
+    // Ignore playback failures in unsupported/blocked environments.
+  }
 }

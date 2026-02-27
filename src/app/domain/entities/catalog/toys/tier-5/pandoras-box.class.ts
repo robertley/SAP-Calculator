@@ -195,6 +195,7 @@ export class PandorasBoxAbility extends Ability {
         message: logMessage(pet, equipment),
         type: 'ability',
         player: logPlayer,
+        sourcePet: pet,
         tiger: logMeta?.tiger,
         pteranodon: logMeta?.pteranodon,
         randomEvent: logMeta?.randomEvent,

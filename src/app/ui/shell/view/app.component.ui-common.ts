@@ -4,7 +4,11 @@ import { Modal } from 'bootstrap';
 import { TeamPreset } from 'app/integrations/team-presets.service';
 import { Battle } from 'app/domain/interfaces/battle.interface';
 import { Log } from 'app/domain/interfaces/log.interface';
-import { LogMessagePart } from '../simulation/app.component.simulation';
+import {
+  LogMessagePart,
+  PositioningDeltaSummary,
+  PositioningOptimizationBaseline,
+} from '../simulation/app.component.simulation';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
 import { UrlStateService } from 'app/runtime/state/url-state.service';
 import { CalculatorStateService } from 'app/runtime/state/calculator-state.service';
@@ -65,6 +69,8 @@ export interface AppUiContext {
   playerWinner?: number;
   opponentWinner?: number;
   draw?: number;
+  pendingPositioningOptimizationBaseline?: PositioningOptimizationBaseline | null;
+  positioningDeltaSummary?: PositioningDeltaSummary | null;
   apiResponse?: string | null;
   battleStarted?: boolean;
   currBattle?: Battle | null;

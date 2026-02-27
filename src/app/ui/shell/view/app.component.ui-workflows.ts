@@ -390,6 +390,8 @@ function resetSimulationState(ctx: AppUiContext): void {
   ctx.playerWinner = 0;
   ctx.opponentWinner = 0;
   ctx.draw = 0;
+  ctx.pendingPositioningOptimizationBaseline = null;
+  ctx.positioningDeltaSummary = null;
   ctx.apiResponse = null;
   ctx.battleStarted = false;
   ctx.currBattle = null;
@@ -410,7 +412,6 @@ export function generateShareLink(ctx: AppUiContext): void {
       ctx.setStatus?.('Failed to copy link. See console for details.', 'error');
     });
 }
-
 
 
 

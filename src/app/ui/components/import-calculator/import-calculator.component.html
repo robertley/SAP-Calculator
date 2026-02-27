@@ -24,9 +24,74 @@
         formControlName="turn"
       />
     </div>
+    <div>
+      <label for="oddsSimulations" class="form-label">Odds Simulations</label>
+      <input
+        id="oddsSimulations"
+        type="number"
+        class="form-control"
+        min="1"
+        formControlName="oddsSimulations"
+      />
+    </div>
+    <div>
+      <label for="positioningSide" class="form-label">Positioning Side</label>
+      <select
+        id="positioningSide"
+        class="form-select"
+        formControlName="positioningSide"
+      >
+        <option value="player">Player</option>
+        <option value="opponent">Opponent</option>
+      </select>
+    </div>
     <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
       {{ loading ? "Fetching..." : "Import" }}
     </button>
+    <button
+      class="btn btn-outline-primary"
+      (click)="buildOddsImage()"
+      [disabled]="oddsImageLoading"
+    >
+      {{ oddsImageLoading ? "Building Preview..." : "Build !odds Preview" }}
+    </button>
+    <button
+      class="btn btn-outline-success"
+      (click)="buildPositioningImage()"
+      [disabled]="positioningImageLoading"
+    >
+      {{
+        positioningImageLoading
+          ? "Building Positioning..."
+          : "Build Positioning Image"
+      }}
+    </button>
+  </div>
+  <div *ngIf="positioningImageLoading" class="mb-2">
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <div class="small text-muted">
+        {{ positioningProgressMessage || "Building positioning image..." }}
+      </div>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        (click)="cancelPositioningBuild()"
+      >
+        Cancel
+      </button>
+    </div>
+    <div class="progress">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [style.width.%]="positioningProgressPercent"
+        [attr.aria-valuenow]="positioningProgressPercent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        {{ positioningProgressPercent }}%
+      </div>
+    </div>
   </div>
   <div class="warning mb-2">
     Warning: This will overwrite any existing custom packs. Any custom packs in
@@ -42,6 +107,44 @@
     }"
   >
     {{ statusMessage }}
+  </div>
+  <div *ngIf="oddsImagePreviewUrl" class="odds-preview mb-3">
+    <div class="odds-preview-header">
+      <strong>Odds Image Preview</strong>
+      <span class="text-muted small">{{ oddsImageFileName }}</span>
+    </div>
+    <img
+      class="odds-preview-image"
+      [src]="oddsImagePreviewUrl"
+      alt="Replay odds preview"
+    />
+    <div class="odds-preview-actions mt-2">
+      <button class="btn btn-primary me-2" (click)="downloadOddsImage()">
+        Download PNG
+      </button>
+      <button class="btn btn-outline-secondary" (click)="clearOddsPreview()">
+        Clear Preview
+      </button>
+    </div>
+  </div>
+  <div *ngIf="positioningImagePreviewUrl" class="odds-preview mb-3">
+    <div class="odds-preview-header">
+      <strong>Positioning Image Preview</strong>
+      <span class="text-muted small">{{ positioningImageFileName }}</span>
+    </div>
+    <img
+      class="odds-preview-image"
+      [src]="positioningImagePreviewUrl"
+      alt="Replay positioning preview"
+    />
+    <div class="odds-preview-actions mt-2">
+      <button class="btn btn-success me-2" (click)="downloadPositioningImage()">
+        Download PNG
+      </button>
+      <button class="btn btn-outline-secondary" (click)="clearPositioningPreview()">
+        Clear Preview
+      </button>
+    </div>
   </div>
   <div *ngIf="errorMessage" class="text-danger mb-2">{{ errorMessage }}</div>
 </div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, map, switchMap, timeout } from 'rxjs/operators';
+import { catchError, map, shareReplay, switchMap, tap, timeout } from 'rxjs/operators';
 
 import {
   ReplayBattleJson,
@@ -19,6 +19,7 @@ export interface ReplayBattleRequest {
   T: number;
   SapEmail?: string;
   SapPassword?: string;
+  onReplayIndexUploadStatus?: (status: ReplayIndexUploadStatus) => void;
 }
 
 export interface ReplayBattleResponse {
@@ -26,6 +27,12 @@ export interface ReplayBattleResponse {
   genesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
   error?: string;
+}
+
+export interface ReplayIndexUploadStatus {
+  outcome: 'success' | 'unsupported' | 'error';
+  message: string;
+  statusCode?: number;
 }
 
 export interface ReplayApiHealthStatus {
@@ -139,7 +146,7 @@ interface ReplayTurnActionLike {
 
 type ReplayJsonObject = Record<string, unknown>;
 
-interface ReplayTurnsResponse {
+export interface ReplayTurnsResponse {
   replayId?: string;
   replay?: {
     id?: string;
@@ -195,12 +202,72 @@ export class ReplayCalcService {
     return this.fetchReplayBattleFromTurnsApi(payload, timeoutMs);
   }
 
+  fetchReplayBattleDirect(
+    payload: ReplayBattleRequest,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
+    return this.http
+      .post<ReplayBattleResponse>(getReplayApiUrl('/replay-battle'), payload)
+      .pipe(timeout(timeoutMs));
+  }
+
+  fetchReplayTurns(
+    payload: ReplayBattleRequest,
+    timeoutMs: number,
+  ): Observable<ReplayTurnsResponse> {
+    const participationId = String(payload.Pid);
+    const indexUploadRequest$ = this.requestReplayIndex(
+      participationId,
+      timeoutMs,
+      payload,
+    ).pipe(shareReplay(1));
+    indexUploadRequest$.subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
+
+    return this.fetchReplayTurnsByReplayId(participationId, timeoutMs).pipe(
+      catchError((directGetError) => {
+        if (directGetError?.status !== 404) {
+          return this.normalizeReplayFetchError(directGetError);
+        }
+
+        return indexUploadRequest$.pipe(
+          switchMap((indexResponse) => {
+            const replayId = indexResponse?.replayId;
+            if (!replayId) {
+              return throwError({
+                error: {
+                  error:
+                    'Replay indexing did not return a replayId.',
+                },
+                status: 400,
+              });
+            }
+            return this.fetchReplayTurnsByReplayId(String(replayId), timeoutMs);
+          }),
+          catchError((fallbackError) =>
+            this.normalizeReplayFetchError(fallbackError),
+          ),
+        );
+      }),
+    );
+  }
 
   private fetchReplayBattleFromTurnsApi(
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
     const participationId = String(payload.Pid);
+    const indexUploadRequest$ = this.requestReplayIndex(
+      participationId,
+      timeoutMs,
+      payload,
+    ).pipe(shareReplay(1));
+    indexUploadRequest$.subscribe({
+      next: () => void 0,
+      error: () => void 0,
+    });
 
     return this.fetchReplayBattleByReplayId(
       participationId,
@@ -212,36 +279,86 @@ export class ReplayCalcService {
           return this.normalizeReplayFetchError(directGetError);
         }
 
-        return this.http
-          .post<ReplayIndexResponse>(getReplayApiUrl('/replays'), {
-            Pid: participationId,
-            participationId,
-          })
-          .pipe(
-            timeout(timeoutMs),
-            switchMap((indexResponse) => {
-              const replayId = indexResponse?.replayId;
-              if (!replayId) {
-                return throwError({
-                  error: {
-                    error:
-                      'Replay indexing did not return a replayId.',
-                  },
-                  status: 400,
-                });
-              }
-              return this.fetchReplayBattleByReplayId(
-                String(replayId),
-                payload.T,
-                timeoutMs,
-              );
-            }),
-            catchError((fallbackError) =>
-              this.normalizeReplayFetchError(fallbackError),
-            ),
-          );
+        return indexUploadRequest$.pipe(
+          switchMap((indexResponse) => {
+            const replayId = indexResponse?.replayId;
+            if (!replayId) {
+              return throwError({
+                error: {
+                  error:
+                    'Replay indexing did not return a replayId.',
+                },
+                status: 400,
+              });
+            }
+            return this.fetchReplayBattleByReplayId(
+              String(replayId),
+              payload.T,
+              timeoutMs,
+            );
+          }),
+          catchError((fallbackError) =>
+            this.normalizeReplayFetchError(fallbackError),
+          ),
+        );
       }),
     );
+  }
+
+  private requestReplayIndex(
+    participationId: string,
+    timeoutMs: number,
+    payload?: ReplayBattleRequest,
+  ): Observable<ReplayIndexResponse> {
+    return this.http
+      .post<ReplayIndexResponse>(getReplayApiUrl('/replays'), {
+        Pid: participationId,
+        participationId,
+      })
+      .pipe(
+        timeout(timeoutMs),
+        tap(() => {
+          this.notifyReplayIndexUploadStatus(payload, {
+            outcome: 'success',
+            message: 'Replay uploaded to SAP Library.',
+          });
+        }),
+        catchError((error: unknown) => {
+          const status = this.toReplayIndexUploadErrorStatus(error);
+          this.notifyReplayIndexUploadStatus(payload, status);
+          if (status.outcome === 'error') {
+            console.warn('[replay] replay index upload failed', error);
+          }
+          return throwError(error);
+        }),
+      );
+  }
+
+  private notifyReplayIndexUploadStatus(
+    payload: ReplayBattleRequest | undefined,
+    status: ReplayIndexUploadStatus,
+  ): void {
+    if (!payload?.onReplayIndexUploadStatus) {
+      return;
+    }
+    payload.onReplayIndexUploadStatus(status);
+  }
+
+  private toReplayIndexUploadErrorStatus(error: unknown): ReplayIndexUploadStatus {
+    const status = (error as { status?: number } | null)?.status;
+    if (status === 400 || status === 404) {
+      return {
+        outcome: 'unsupported',
+        message: 'SAP Library upload is not available on this replay API.',
+        statusCode: status,
+      };
+    }
+
+    return {
+      outcome: 'error',
+      message: 'Failed to upload replay to SAP Library.',
+      statusCode: typeof status === 'number' ? status : undefined,
+    };
   }
 
   private fetchReplayBattleByReplayId(
@@ -258,6 +375,15 @@ export class ReplayCalcService {
           replayId,
         ),
       ),
+    );
+  }
+
+  private fetchReplayTurnsByReplayId(
+    replayId: string,
+    timeoutMs: number,
+  ): Observable<ReplayTurnsResponse> {
+    return this.http.get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId)).pipe(
+      timeout(timeoutMs),
     );
   }
 
@@ -510,10 +636,10 @@ export class ReplayCalcService {
       return turnNum === requestedTurn;
     });
 
-    // Prefer Battle (Type 1) because it typically contains both UserBoard and OpponentBoard in its Battle JSON.
-    // Build (Type 0) often only has the player's 'Bor' state.
-    const selectedTurn = byTurnActions.find((a) => a.Type === 1) ??
-      byTurnActions.find((a) => a.Type === 0) ??
+    // Prefer battle actions (Type 0) first to keep parity with replay-bot handling.
+    // Some turns payloads include Type 1 entries with mirrored/opponent perspective data.
+    const selectedTurn = byTurnActions.find((a) => a.Type === 0) ??
+      byTurnActions.find((a) => a.Type === 1) ??
       byTurnActions[0] ??
       (requestedTurn > 0 && requestedTurn <= turns.length ? turns[requestedTurn - 1] : null);
 
@@ -589,29 +715,168 @@ export class ReplayCalcService {
       }
     }
 
+    const battleFromTurn: ReplayJsonObject = hasRawSides
+      ? {
+        UserBoard: this.mapReplayTurnsSide(selectedTurn?.user),
+        OpponentBoard: this.mapReplayTurnsSide(selectedTurn?.opponent),
+      }
+      : {
+        UserBoard: this.mapReplaySummarySide(
+          selectedTurn as ReplayTurnEntry,
+          'player',
+          buildJson ?? (this.isRecord(battleJson?.UserBoard) ? battleJson.UserBoard : null),
+        ),
+        OpponentBoard: this.mapReplaySummarySide(
+          selectedTurn as ReplayTurnEntry,
+          'opponent',
+          this.isRecord(battleJson?.OpponentBoard) ? battleJson.OpponentBoard : null,
+        ),
+      };
+
+    const parsedBattleOutcome = this.resolveBattleOutcomeFromSources(
+      turns,
+      selectedTurn,
+      requestedTurn,
+      battleJson,
+    );
+    if (parsedBattleOutcome !== null) {
+      battleFromTurn.Outcome = parsedBattleOutcome;
+    }
+
+    if (this.isRecord(battleJson?.User)) {
+      battleFromTurn.User = battleJson.User;
+    }
+    if (this.isRecord(battleJson?.Opponent)) {
+      battleFromTurn.Opponent = battleJson.Opponent;
+    }
+
     return {
-      battle: hasRawSides
-        ? {
-          UserBoard: this.mapReplayTurnsSide(selectedTurn?.user),
-          OpponentBoard: this.mapReplayTurnsSide(selectedTurn?.opponent),
-        }
-        : {
-          UserBoard: this.mapReplaySummarySide(
-            selectedTurn as ReplayTurnEntry,
-            'player',
-            buildJson ?? (this.isRecord(battleJson?.UserBoard) ? battleJson.UserBoard : null),
-          ),
-          OpponentBoard: this.mapReplaySummarySide(
-            selectedTurn as ReplayTurnEntry,
-            'opponent',
-            this.isRecord(battleJson?.OpponentBoard) ? battleJson.OpponentBoard : null,
-          ),
-        },
+      battle: battleFromTurn as ReplayBattleJson,
       genesisBuildModel:
         turnsResponse?.genesisBuildModel ??
         turnsResponse?.replay?.raw_json?.GenesisBuildModel ??
         turnsResponse?.replay?.GenesisBuildModel,
       abilityPetMap,
     };
+  }
+
+  private resolveBattleOutcomeFromSources(
+    turns: ReplayTurnActionLike[],
+    selectedTurn: ReplayTurnActionLike,
+    requestedTurn: number,
+    battleJson: ReplayJsonObject | null,
+  ): number | null {
+    const fromBattleJson = this.toOutcomeValue(
+      this.toFiniteNumber((battleJson?.Outcome ?? battleJson?.outcome) as unknown),
+    );
+    if (fromBattleJson !== null) {
+      return fromBattleJson;
+    }
+
+    const selectedRecord = selectedTurn as unknown as ReplayJsonObject;
+    const directOutcome = this.toOutcomeValue(
+      this.toFiniteNumber(
+        selectedRecord['Outcome'] ??
+        selectedRecord['outcome'] ??
+        selectedRecord['Result'] ??
+        selectedRecord['result'],
+      ),
+    );
+    if (directOutcome !== null) {
+      return directOutcome;
+    }
+
+    const turnNumberForSelected =
+      this.toFiniteNumber(selectedTurn?.Turn) ??
+      this.toFiniteNumber(selectedTurn?.turn) ??
+      this.toFiniteNumber(selectedTurn?.turnNumber) ??
+      requestedTurn;
+
+    const previousTurn =
+      turns.find((action) => {
+        const turnNum =
+          this.toFiniteNumber(action?.Turn) ??
+          this.toFiniteNumber(action?.turn) ??
+          this.toFiniteNumber(action?.turnNumber);
+        return turnNum === (turnNumberForSelected ?? requestedTurn) - 1;
+      }) ??
+      (requestedTurn > 1 ? turns[requestedTurn - 2] : null) ??
+      null;
+
+    const selectedUserVictories = this.readTurnsSideStat(
+      selectedTurn?.user,
+      'victories',
+    );
+    const selectedOpponentVictories = this.readTurnsSideStat(
+      selectedTurn?.opponent,
+      'victories',
+    );
+    const previousUserVictories = this.readTurnsSideStat(
+      previousTurn?.user,
+      'victories',
+    );
+    const previousOpponentVictories = this.readTurnsSideStat(
+      previousTurn?.opponent,
+      'victories',
+    );
+    const selectedUserWins = this.toNonNegativeIntOrZero(selectedUserVictories);
+    const selectedOpponentWins = this.toNonNegativeIntOrZero(selectedOpponentVictories);
+    const previousUserWins = this.toNonNegativeIntOrZero(previousUserVictories);
+    const previousOpponentWins = this.toNonNegativeIntOrZero(previousOpponentVictories);
+
+    if (selectedUserWins > previousUserWins) {
+      return 1;
+    }
+    if (selectedOpponentWins > previousOpponentWins) {
+      return 2;
+    }
+
+    const selectedUserHealth = this.readTurnsSideStat(selectedTurn?.user, 'health');
+    const selectedOpponentHealth = this.readTurnsSideStat(
+      selectedTurn?.opponent,
+      'health',
+    );
+    const previousUserHealth = this.readTurnsSideStat(previousTurn?.user, 'health');
+    const previousOpponentHealth = this.readTurnsSideStat(
+      previousTurn?.opponent,
+      'health',
+    );
+    if (
+      selectedOpponentHealth !== null &&
+      previousOpponentHealth !== null &&
+      selectedOpponentHealth < previousOpponentHealth
+    ) {
+      return 1;
+    }
+    if (
+      selectedUserHealth !== null &&
+      previousUserHealth !== null &&
+      selectedUserHealth < previousUserHealth
+    ) {
+      return 2;
+    }
+
+    return 3;
+  }
+
+  private readTurnsSideStat(
+    side: ReplayTurnsSide | null | undefined,
+    key: 'victories' | 'health',
+  ): number | null {
+    return this.toFiniteNumber(side?.stats?.[key] ?? null);
+  }
+
+  private toOutcomeValue(value: number | null): number | null {
+    if (value === 1 || value === 2 || value === 3) {
+      return value;
+    }
+    return null;
+  }
+
+  private toNonNegativeIntOrZero(value: number | null): number {
+    if (value === null || !Number.isFinite(value)) {
+      return 0;
+    }
+    return Math.max(0, Math.trunc(value));
   }
 }

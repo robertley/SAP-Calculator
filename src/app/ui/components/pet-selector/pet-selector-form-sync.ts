@@ -19,8 +19,10 @@ import {
   getEquipmentIconPath,
   getPetIconFileName,
   getPetIconPath,
+  getPetSoundPath,
   getToyIconPath,
 } from 'app/runtime/asset-catalog';
+import { getSoundVolume, isSoundMuted } from 'app/runtime/sound-preferences';
 import {
   PARROT_COPY_TARGETS,
   SwallowedPetTarget,
@@ -169,6 +171,9 @@ export class PetSelectorFormSync
       return;
     }
     if (this.selectionType === 'pet') {
+      if (typeof item === 'string') {
+        this.playSelectedPetSound(item);
+      }
       this.formGroup.get('name').setValue(item);
     } else if (this.selectionType === 'equipment') {
       const equipmentName =
@@ -442,6 +447,30 @@ export class PetSelectorFormSync
       'background-size': '24px 24px',
       'padding-left': '2.5rem',
     };
+  }
+
+  private playSelectedPetSound(petName: string): void {
+    if (isSoundMuted()) {
+      return;
+    }
+    const volume = getSoundVolume();
+    if (volume <= 0) {
+      return;
+    }
+    const soundPath = getPetSoundPath(petName);
+    if (!soundPath || typeof Audio === 'undefined') {
+      return;
+    }
+    try {
+      const audio = new Audio(soundPath);
+      audio.volume = volume;
+      const playback = audio.play();
+      if (playback && typeof playback.catch === 'function') {
+        void playback.catch(() => {});
+      }
+    } catch {
+      // Ignore playback errors (unsupported environment or blocked autoplay).
+    }
   }
 
 }

@@ -701,6 +701,46 @@ describe('Fight animation frames', () => {
     );
   });
 
+  it('does not keep spawned pets greyed-out when replacing a pending-removal slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(1/1) P1 <img src="assets/pets/Abomination.png" class="log-pet-icon" alt="Abomination">(50/50) | ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'death',
+        message: 'Ant fainted.',
+        sourceIndex: 2,
+        playerIsOpponent: false,
+      },
+      {
+        type: 'ability',
+        message:
+          "[->P2] Abomination Spawned Monkey (Banana) x3 (Pandora's Box)",
+        sourceIndex: 1,
+        targetIndex: 2,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(
+      frames[2],
+      2,
+      frames[1],
+    );
+
+    expect(frames).toHaveLength(3);
+    expect(frames[2].playerSlots[1]).toMatchObject({
+      petName: 'Monkey',
+      pendingRemoval: false,
+      health: null,
+      equipmentName: 'Banana',
+    });
+    expect(renderFrame.playerSlots[1].classMap['fight-slot-fainted-ghost']).toBe(
+      false,
+    );
+  });
+
   it('flags ailment apply and cleanse equipment changes for badge pop animations', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Kakapo.png" class="log-pet-icon" alt="Kakapo">(8/8) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';

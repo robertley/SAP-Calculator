@@ -523,6 +523,22 @@ export function getEquipmentNameAfterVerb(text: string, verb: string): string | 
     return getEquipmentNameFromSegment(segment);
 }
 
+export function parsePositionLabelAfterVerb(
+    text: string,
+    verb: string,
+): { side: FightSide; index: number } | null {
+    const segment = new RegExp(`\\b${verb}\\b([\\s\\S]*)$`, 'i').exec(text)?.[1] ?? '';
+    const match = /\b([PO])([1-5])\b/i.exec(segment);
+    if (!match) {
+        return null;
+    }
+
+    return {
+        side: match[1].toUpperCase() === 'O' ? 'opponent' : 'player',
+        index: Number(match[2]),
+    };
+}
+
 // ---------------------------------------------------------------------------
 // Summon helpers
 // ---------------------------------------------------------------------------

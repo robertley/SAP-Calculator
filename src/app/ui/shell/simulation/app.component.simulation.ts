@@ -13,6 +13,7 @@ import {
 import {
   PositioningOptimizationResult,
   PositioningOptimizationSide,
+  PositioningPermutationStats,
 } from 'app/integrations/simulation/positioning-optimizer';
 import { buildApiResponse as buildApiResponsePayload } from '../state/app.component.share';
 import {
@@ -72,6 +73,21 @@ export interface BattleLogGroup {
   collapsed: boolean;
 }
 
+export interface PositioningOptimizationBaseline {
+  side: PositioningOptimizationSide;
+  playerWins: number;
+  opponentWins: number;
+  draws: number;
+  totalBattles: number;
+}
+
+export interface PositioningDeltaSummary {
+  side: PositioningOptimizationSide;
+  winDeltaPercent: number;
+  drawDeltaPercent: number;
+  lossDeltaPercent: number;
+}
+
 export interface AppSimulationContext {
   formGroup: FormGroup;
   localStorageService: LocalStorageService;
@@ -116,6 +132,8 @@ export interface AppSimulationContext {
   randomOverrideError?: string | null;
   showRandomOverrides?: boolean;
   refreshFightAnimationFromViewBattle?: () => void;
+  pendingPositioningOptimizationBaseline?: PositioningOptimizationBaseline | null;
+  positioningDeltaSummary?: PositioningDeltaSummary | null;
 }
 
 const logPartsCache = new WeakMap<
@@ -379,6 +397,13 @@ function buildPositionLabel(
 }
 
 function getSourceIsOpponent(log: Log): boolean | null {
+  const sourceSide = log.sourcePet?.parent?.isOpponent;
+  if (sourceSide === true) {
+    return true;
+  }
+  if (sourceSide === false) {
+    return false;
+  }
   if (log.player?.isOpponent === true) {
     return true;
   }
@@ -389,13 +414,6 @@ function getSourceIsOpponent(log: Log): boolean | null {
     return true;
   }
   if (log.playerIsOpponent === false) {
-    return false;
-  }
-  const sourceSide = log.sourcePet?.parent?.isOpponent;
-  if (sourceSide === true) {
-    return true;
-  }
-  if (sourceSide === false) {
     return false;
   }
   return null;
@@ -564,6 +582,8 @@ export function buildApiResponse(ctx: AppSimulationContext): void {
 
 export function simulate(ctx: AppSimulationContext, count: number = 1000): void {
   try {
+    ctx.pendingPositioningOptimizationBaseline = null;
+    ctx.positioningDeltaSummary = null;
     if (ctx.api) {
       runSimulation(ctx, count);
       return;
@@ -580,6 +600,8 @@ export function runSimulation(
   count: number = 1000,
   configOverrides?: Partial<SimulationConfig>,
 ): void {
+  ctx.pendingPositioningOptimizationBaseline = null;
+  ctx.positioningDeltaSummary = null;
   ctx.simulationBattleAmt = count;
   ctx.localStorageService.setFormStorage(ctx.formGroup);
 
@@ -672,6 +694,8 @@ export function cancelSimulation(ctx: AppSimulationContext): void {
   cleanupWorker(ctx);
   ctx.simulationInProgress = false;
   ctx.simulationCancelRequested = false;
+  ctx.pendingPositioningOptimizationBaseline = null;
+  ctx.positioningDeltaSummary = null;
   ctx.setStatus?.('Simulation cancelled.', 'error');
   ctx.markForCheck?.();
 }
@@ -686,6 +710,9 @@ export function optimizePositioning(
   }
 
   const maxSimulationsPerPermutation = Math.max(1, Math.trunc(count || 1));
+  ctx.positioningDeltaSummary = null;
+  ctx.pendingPositioningOptimizationBaseline =
+    buildOptimizationBaselineFromCurrentResults(ctx, side);
 
   const runId = startAsyncRun(
     ctx,
@@ -719,6 +746,9 @@ export function optimizePositioning(
         }
         cleanupWorker(ctx);
         applyOptimizedLineup(ctx, result);
+        ctx.pendingPositioningOptimizationBaseline =
+          ctx.pendingPositioningOptimizationBaseline ??
+          buildOptimizationBaselineFromOptimizerResult(result);
         ctx.simulationInProgress = false;
         ctx.simulationCancelRequested = false;
         ctx.simulationProgress = 100;
@@ -740,6 +770,8 @@ export function optimizePositioning(
         if (result.bestPermutation) {
           applyOptimizedLineup(ctx, result);
         }
+        ctx.pendingPositioningOptimizationBaseline = null;
+        ctx.positioningDeltaSummary = null;
         endAsyncRun(ctx, 'Positioning optimization cancelled.', 'error');
       },
       onError: (message) => {
@@ -747,6 +779,8 @@ export function optimizePositioning(
           return;
         }
         cleanupWorker(ctx);
+        ctx.pendingPositioningOptimizationBaseline = null;
+        ctx.positioningDeltaSummary = null;
         endAsyncRun(
           ctx,
           message || 'Positioning optimization failed.',
@@ -868,6 +902,136 @@ function capitalizeSide(side: PositioningOptimizationSide): string {
   return side.charAt(0).toUpperCase() + side.slice(1);
 }
 
+function countTotalBattles(
+  playerWins: number,
+  opponentWins: number,
+  draws: number,
+): number {
+  return playerWins + opponentWins + draws;
+}
+
+function toPercent(part: number, total: number): number {
+  if (total <= 0) {
+    return 0;
+  }
+  return (part / total) * 100;
+}
+
+function roundToNearestCent(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function buildOptimizationBaselineFromCurrentResults(
+  ctx: AppSimulationContext,
+  side: PositioningOptimizationSide,
+): PositioningOptimizationBaseline | null {
+  if (!ctx.simulated) {
+    return null;
+  }
+  const totalBattles = countTotalBattles(
+    ctx.playerWinner,
+    ctx.opponentWinner,
+    ctx.draw,
+  );
+  if (totalBattles <= 0) {
+    return null;
+  }
+  return {
+    side,
+    playerWins: ctx.playerWinner,
+    opponentWins: ctx.opponentWinner,
+    draws: ctx.draw,
+    totalBattles,
+  };
+}
+
+function findIdentityPermutationStats(
+  permutations: PositioningPermutationStats[],
+): PositioningPermutationStats | null {
+  const identityPermutation = permutations.find((permutation) =>
+    permutation.order.every((value, index) => value === index),
+  );
+  if (identityPermutation) {
+    return identityPermutation;
+  }
+  return permutations.find((permutation) => permutation.simulations > 0) ?? null;
+}
+
+function buildOptimizationBaselineFromOptimizerResult(
+  result: PositioningOptimizationResult,
+): PositioningOptimizationBaseline | null {
+  const baselinePermutation = findIdentityPermutationStats(
+    result.rankedPermutations,
+  );
+  if (!baselinePermutation || baselinePermutation.simulations <= 0) {
+    return null;
+  }
+
+  if (result.side === 'player') {
+    return {
+      side: result.side,
+      playerWins: baselinePermutation.wins,
+      opponentWins: baselinePermutation.losses,
+      draws: baselinePermutation.draws,
+      totalBattles: baselinePermutation.simulations,
+    };
+  }
+
+  return {
+    side: result.side,
+    playerWins: baselinePermutation.losses,
+    opponentWins: baselinePermutation.wins,
+    draws: baselinePermutation.draws,
+    totalBattles: baselinePermutation.simulations,
+  };
+}
+
+function buildPositioningDeltaSummary(
+  baseline: PositioningOptimizationBaseline,
+  result: {
+    playerWins: number;
+    opponentWins: number;
+    draws: number;
+  },
+): PositioningDeltaSummary | null {
+  const optimizedTotalBattles = countTotalBattles(
+    result.playerWins,
+    result.opponentWins,
+    result.draws,
+  );
+  if (optimizedTotalBattles <= 0 || baseline.totalBattles <= 0) {
+    return null;
+  }
+
+  const baselineWinsForSide =
+    baseline.side === 'player' ? baseline.playerWins : baseline.opponentWins;
+  const optimizedWinsForSide =
+    baseline.side === 'player' ? result.playerWins : result.opponentWins;
+  const baselineLossesForSide =
+    baseline.side === 'player' ? baseline.opponentWins : baseline.playerWins;
+  const optimizedLossesForSide =
+    baseline.side === 'player' ? result.opponentWins : result.playerWins;
+  const winDeltaPercent = roundToNearestCent(
+    toPercent(optimizedWinsForSide, optimizedTotalBattles) -
+      toPercent(baselineWinsForSide, baseline.totalBattles),
+  );
+  const drawDeltaPercent = roundToNearestCent(
+    toPercent(result.draws, optimizedTotalBattles) -
+      toPercent(baseline.draws, baseline.totalBattles),
+  );
+  const lossDeltaPercent = roundToNearestCent(
+    toPercent(optimizedLossesForSide, optimizedTotalBattles) -
+      toPercent(baselineLossesForSide, baseline.totalBattles),
+  );
+
+  return {
+    side: baseline.side,
+    winDeltaPercent,
+    drawDeltaPercent,
+    lossDeltaPercent,
+  };
+}
+
 function applySimulationResult(
   ctx: AppSimulationContext,
   result: {
@@ -879,6 +1043,11 @@ function applySimulationResult(
     randomOverrideError?: string | null;
   },
 ): void {
+  const baseline = ctx.pendingPositioningOptimizationBaseline ?? null;
+  ctx.pendingPositioningOptimizationBaseline = null;
+  ctx.positioningDeltaSummary = baseline
+    ? buildPositioningDeltaSummary(baseline, result)
+    : null;
   ctx.playerWinner = result.playerWins;
   ctx.opponentWinner = result.opponentWins;
   ctx.draw = result.draws;

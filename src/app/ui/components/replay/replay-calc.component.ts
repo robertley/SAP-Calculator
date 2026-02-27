@@ -10,6 +10,7 @@ import { finalize } from 'rxjs/operators';
 import {
   ReplayCalcService,
   ReplayBattleResponse,
+  ReplayIndexUploadStatus,
 } from 'app/integrations/replay/replay-calc.service';
 import {
   ReplayBattleJson,
@@ -138,10 +139,12 @@ export class ReplayCalcComponent implements OnInit {
           this.replayCalcService
             .fetchReplayBattle(
               {
-              Pid: parsedInput.Pid,
-              T: turnNumber,
-              SapEmail: sapEmail || undefined,
-              SapPassword: sapPassword || undefined,
+                Pid: parsedInput.Pid,
+                T: turnNumber,
+                SapEmail: sapEmail || undefined,
+                SapPassword: sapPassword || undefined,
+                onReplayIndexUploadStatus: (status: ReplayIndexUploadStatus) =>
+                  this.handleReplayIndexUploadStatus(status),
               },
               this.replayTimeoutMs,
             )
@@ -326,5 +329,14 @@ export class ReplayCalcComponent implements OnInit {
     this.loading = value;
     this.cdr.markForCheck();
   }
-}
 
+  private handleReplayIndexUploadStatus(status: ReplayIndexUploadStatus): void {
+    if (status.outcome === 'success') {
+      this.setStatus(status.message, 'success');
+      this.cdr.markForCheck();
+      return;
+    }
+    this.setStatus(status.message, 'warning');
+    this.cdr.markForCheck();
+  }
+}

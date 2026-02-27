@@ -22,8 +22,6 @@
                 <div class="swallowed-nested mt-2 ps-3 border-start" *ngIf="
                     formGroup.get('abominationSwallowedPet' + (i + 1))?.value &&
                     (
-                      true ||
-                      pet?.name === 'Abomination' ||
                       shouldShowAbominationSwallowTimesHurt(i) ||
                       formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Beluga Whale' ||
                       formGroup.get('abominationSwallowedPet' + (i + 1))?.value === 'Sarcastic Fringehead' ||

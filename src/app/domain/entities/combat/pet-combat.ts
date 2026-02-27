@@ -69,6 +69,32 @@ function appendDamageReductionMessages(
   return updated;
 }
 
+function getAlbatrossAuraBonusFromPet(pet: Pet | null | undefined): number {
+  if (!pet || !pet.alive) {
+    return 0;
+  }
+  if (!pet.hasTrigger(undefined, 'Pet', 'Albatross Ability')) {
+    return 0;
+  }
+  let bonus = 0;
+  for (const ability of pet.abilityList) {
+    if (ability.name === 'Albatross Ability') {
+      bonus += ability.level * 3;
+    }
+  }
+  return bonus;
+}
+
+function getAdjacentAlbatrossAuraBonus(self: Pet): number {
+  if ((self.tier ?? Number.POSITIVE_INFINITY) > 4) {
+    return 0;
+  }
+  let totalBonus = 0;
+  totalBonus += getAlbatrossAuraBonusFromPet(self.petAhead);
+  totalBonus += getAlbatrossAuraBonusFromPet(self.petBehind());
+  return totalBonus;
+}
+
 
 export function attackPet(
   self: Pet,
@@ -251,14 +277,9 @@ export function snipePet(
   logVerb: 'sniped' | 'attacked' = 'sniped',
   basePowerForLog?: number,
 ): number {
-  let albatross = false;
-  if (self.petAhead?.name == 'Albatross' && pet.tier <= 4) {
-    power += self.petAhead.level * 3;
-    albatross = true;
-  }
-  if (self.petBehind()?.name == 'Albatross' && pet.tier <= 4) {
-    power += self.petBehind().level * 3;
-    albatross = true;
+  const albatrossBonus = getAdjacentAlbatrossAuraBonus(self);
+  if (albatrossBonus > 0) {
+    power += albatrossBonus;
   }
 
   let damageResp = calculateDamage(
@@ -323,19 +344,17 @@ export function snipePet(
       sign = '+';
     }
     message += ` (${attackEquipment.name} ${sign}${power})`;
-  }
-
-  // Add equipment multiplier message support (like Pandora's Box)
-  if (self.equipment?.multiplier && self.equipment.multiplier > 1) {
-    message += self.equipment.multiplierMessage;
+    if (self.equipment?.multiplier && self.equipment.multiplier > 1) {
+      message += self.equipment.multiplierMessage;
+    }
   }
 
   if (tiger) {
     message += ' (Tiger)';
   }
 
-  if (albatross) {
-    message += ' (Albatross)';
+  if (albatrossBonus > 0) {
+    message += ` (+${albatrossBonus} Albatross)`;
   }
 
   if (equipment && self.equipment) {
