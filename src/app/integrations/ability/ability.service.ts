@@ -114,6 +114,25 @@ export class AbilityService extends AbilityEventTriggers {
     }
   }
 
+  triggerEndTurnEvents() {
+    this.gameApi = this.gameService.gameApi;
+
+    for (const pet of this.gameApi.player.petArray) {
+      if (pet.hasTrigger('EndTurn')) {
+        this.abilityQueueService.triggerAbility(pet, 'EndTurn');
+      }
+    }
+    for (const pet of this.gameApi.opponent.petArray) {
+      if (pet.hasTrigger('EndTurn')) {
+        this.abilityQueueService.triggerAbility(pet, 'EndTurn');
+      }
+    }
+  }
+
+  executeEndTurnEvents() {
+    this.processPhaseWithInterleaving(new Set(['EndTurn']));
+  }
+
   // Before start of battle
   triggerBeforeStartOfBattleEvents() {
     this.gameApi = this.gameService.gameApi;

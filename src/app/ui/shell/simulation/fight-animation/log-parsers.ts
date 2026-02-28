@@ -296,7 +296,11 @@ export function parseStatChange(text: string): ParsedStatChange | null {
         return null;
     }
 
-    const sign = /\b(?:lost|spent|took|drain(?:ed)?)\b/i.test(text) ? -1 : 1;
+    const sign = /\b(?:lost|spent|took|drain(?:ed)?|reduce(?:d)?|decrease(?:d)?|lower(?:ed)?)\b/i.test(
+        text,
+    )
+        ? -1
+        : 1;
     const attackValue = extractStatValue(text, 'attack', sign);
     const healthValue = extractStatValue(text, 'health', sign);
     const expValue = extractExpValue(text, sign);

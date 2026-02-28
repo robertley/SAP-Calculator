@@ -250,6 +250,8 @@ export class SimulationService {
         confidenceZ: options.confidenceZ,
         minSamplesBeforeElimination: options.minSamplesBeforeElimination,
       },
+      projectEndTurnLineup: ({ lineup }) =>
+        runner.projectLineupAfterEndTurn(config, options.side, lineup),
       simulateBatch: (batchConfig) => runner.run(batchConfig),
     });
 

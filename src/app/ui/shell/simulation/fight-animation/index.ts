@@ -6,6 +6,7 @@ export * from './slot-utils';
 export * from './log-parsers';
 export * from './slot-resolver';
 export * from './mutations';
+export * from './director';
 
 import { Log } from 'app/domain/interfaces/log.interface';
 import { FightAnimationBuildOptions, FightAnimationFrame, FightAnimationBoardState } from './types';

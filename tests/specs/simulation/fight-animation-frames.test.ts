@@ -670,6 +670,33 @@ describe('Fight animation frames', () => {
     );
   });
 
+  it('applies duplicated-name transform logs to the indexed target slot', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) | O1 <img src="assets/pets/Silky-Sifaka.png" class="log-pet-icon" alt="Silky Sifaka">(4/6) O2 <img src="assets/pets/Red-Dragon.png" class="log-pet-icon" alt="Red Dragon">(8/8) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message:
+          '[O1->O2] Silky Sifaka Silky Sifaka transformed Red Dragon Red Dragon into level 2 Mammoth Mammoth',
+        playerIsOpponent: true,
+        targetIsOpponent: true,
+        sourceIndex: 1,
+        targetIndex: 2,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Silky Sifaka',
+    });
+    expect(frames[1].opponentSlots[1]).toMatchObject({
+      petName: 'Mammoth',
+    });
+  });
+
   it('flags newly occupied summoned slots for spawn bounce animations', () => {
     const board =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Roc.png" class="log-pet-icon" alt="Roc">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
@@ -1061,6 +1088,33 @@ describe('Fight animation frames', () => {
       slot: 0,
       type: 'health',
       delta: 8,
+    });
+  });
+
+  it('applies "reduced health of X by N" logs as negative health on the target', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Snow-Leopard.png" class="log-pet-icon" alt="Snow Leopard">(7/7) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(6/24) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Snow Leopard reduced health of Pig by 12.',
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      health: 12,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'opponent',
+      slot: 0,
+      type: 'health',
+      delta: -12,
     });
   });
 

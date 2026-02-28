@@ -49,6 +49,8 @@ export interface SimulationConfig {
   opponentLevel3Sold?: number;
   playerTransformationAmount?: number;
   opponentTransformationAmount?: number;
+  playerLostLastBattle?: boolean;
+  opponentLostLastBattle?: boolean;
   playerPets: (PetConfig | null)[];
   opponentPets: (PetConfig | null)[];
   customPacks?: CustomPackConfig[];

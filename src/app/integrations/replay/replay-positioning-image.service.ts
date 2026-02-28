@@ -232,10 +232,18 @@ export class ReplayPositioningImageService {
         undefined,
         { abilityPetMap },
       );
-      const baseConfig = this.createSimulationConfigFromCalculatorState(
-        calculatorState,
-        input.simulationCount,
-      );
+      const previousOutcome =
+        turnIndex > 0
+          ? this.getBattleOutcome(turnRows[turnIndex - 1].battle)
+          : null;
+      const baseConfig: SimulationConfig = {
+        ...this.createSimulationConfigFromCalculatorState(
+          calculatorState,
+          input.simulationCount,
+        ),
+        playerLostLastBattle: previousOutcome === 2,
+        opponentLostLastBattle: previousOutcome === 1,
+      };
       const baselineResult = this.runLocalSimulation(baseConfig);
       const optimizationResult = await this.runOptimization(
         baseConfig,

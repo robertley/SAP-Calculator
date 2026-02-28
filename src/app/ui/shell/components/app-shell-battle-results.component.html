@@ -139,7 +139,19 @@
           <div class="animation-top-pane" [style.flex-basis.px]="animationTopHeightPx" [style.max-height.px]="animationTopHeightPx"
             [style.height.px]="animationTopHeightPx">
             <ng-container *ngIf="app.currentFightAnimationRenderFrame as frameVm; else noAnimationFrames">
-                <div class="fight-stage" [class.fight-phase-a]="frameVm.phase === 'a'" [class.fight-phase-b]="frameVm.phase === 'b'">
+                <div
+                  class="fight-stage"
+                  [class.fight-phase-a]="frameVm.phase === 'a'"
+                  [class.fight-phase-b]="frameVm.phase === 'b'"
+                  [class.fight-frame-attack]="frameVm.frame.type === 'attack'"
+                  [class.fight-frame-contact-freeze]="frameVm.frame.type === 'attack' && frameVm.frame.impact && !frameVm.frame.impact.isSnipe"
+                  [class.fight-frame-ability]="frameVm.frame.type === 'ability' || frameVm.frame.type === 'equipment'"
+                  [class.fight-frame-heavy-impact]="app.currentFightAnimationIsHeavyImpactFrame"
+                  [class.fight-frame-burst]="app.currentFightAnimationIsBurstFrame"
+                  [class.fight-frame-resolution]="app.currentFightAnimationIsResolutionFrame"
+                  [style.--fight-frame-cadence]="app.currentFightAnimationCadenceScale"
+                  [style.--fight-impact-scale]="app.currentFightAnimationImpactScale"
+                >
               <div class="fight-team fight-team-opponent">
                 <div class="fight-team-toy-wrap">
                   <img *ngIf="frameVm.frame.opponentToyName" [ngSrc]="app.getToyIconPath(frameVm.frame.opponentToyName)"

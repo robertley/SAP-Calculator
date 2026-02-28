@@ -75,12 +75,14 @@ export class RolowayMonkeyAbility extends Ability {
     const petNames = DANGERS_AND_USEFUL_POOLS.rolowayMonkey;
 
     for (let target of targetResp.pets) {
+      const sourcePositionLabel = this.formatPositionArg(owner);
+      const targetPositionLabel = this.formatPositionArg(target);
       const choice = chooseRandomOption(
         {
           key: 'pet.roloway-monkey-transform',
           label: formatPetScopedRandomLabel(
             owner,
-            `Roloway Monkey transform for P${target.savedPosition + 1} ${target.name}`,
+            `Roloway Monkey transform for ${targetPositionLabel} ${target.name}`,
           ),
           options: petNames.map((name) => ({ id: name, label: name })),
         },
@@ -103,9 +105,12 @@ export class RolowayMonkeyAbility extends Ability {
       owner.parent.transformPet(target, newPet);
 
       this.logService.createLog({
-        message: `${owner.name} transformed ${target.name} into a ${newPet.attack}/${newPet.health} ${newPet.name}.`,
+        message: `[${sourcePositionLabel}->${targetPositionLabel}] ${owner.name} transformed ${target.name} into a ${newPet.attack}/${newPet.health} ${newPet.name}.`,
         type: 'ability',
         player: owner.parent,
+        sourceIndex: owner.savedPosition + 1,
+        targetIndex: target.savedPosition + 1,
+        targetIsOpponent: target.parent?.isOpponent,
         tiger: tiger,
         randomEvent: choice.randomEvent,
       });
@@ -117,6 +122,15 @@ export class RolowayMonkeyAbility extends Ability {
 
   copy(newOwner: Pet): RolowayMonkeyAbility {
     return new RolowayMonkeyAbility(newOwner, this.logService, this.petService);
+  }
+
+  private formatPositionArg(pet: Pet): string {
+    const side = pet.parent?.isOpponent ? 'O' : 'P';
+    const savedPosition = Number.isFinite(pet.savedPosition)
+      ? Math.trunc(pet.savedPosition) + 1
+      : 1;
+    const slot = Math.min(Math.max(savedPosition, 1), 5);
+    return `${side}${slot}`;
   }
 }
 

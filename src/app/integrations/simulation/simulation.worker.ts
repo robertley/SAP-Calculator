@@ -208,6 +208,8 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
         onProgress: (progress) => {
           postMessage({ type: 'positioning-progress', progress });
         },
+        projectEndTurnLineup: ({ lineup }) =>
+          runner.projectLineupAfterEndTurn(config, options.side, lineup),
         simulateBatch: (batchConfig) =>
           runner.run(batchConfig, {
             shouldAbort: () => cancelRequested,

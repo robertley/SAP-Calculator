@@ -75,6 +75,8 @@ import {
 } from './simulation/app.component.simulation';
 import {
   FightAnimationFrame,
+  FightAnimationTimeline,
+  FightAnimationTimelineStep,
 } from './simulation/app.component.fight-animation';
 import { buildFightAnimationRenderFrame as buildFightAnimationRenderFrameImpl, clearFightAnimationTimer as clearFightAnimationTimerImpl, FightAnimationRenderFrameModel, onFightAnimationScrub as onFightAnimationScrubImpl, refreshFightAnimationFromViewBattle as refreshFightAnimationFromViewBattleImpl, resetFightAnimation as resetFightAnimationImpl, setFightAnimationSpeed as setFightAnimationSpeedImpl, stepFightAnimation as stepFightAnimationImpl, toggleFightAnimationPlayback as toggleFightAnimationPlaybackImpl, } from './simulation/app.component.fight-animation-controls';
 import { captureRandomEvents as captureRandomEventsImpl, clearRandomOverrides as clearRandomOverridesImpl, getRandomDecisionLabelParts as getRandomDecisionLabelPartsImpl, getRandomDecisionSelectedOptionParts as getRandomDecisionSelectedOptionPartsImpl, getSelectedRandomDecisionOptionId as getSelectedRandomDecisionOptionIdImpl, onRandomDecisionChoiceChanged as onRandomDecisionChoiceChangedImpl, runForcedRandomSimulation as runForcedRandomSimulationImpl, } from './simulation/app.component.random-decisions';
@@ -200,6 +202,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   showBattleAnalysis = false;
   showRandomOverrides = true;
   fightAnimationFrames: FightAnimationFrame[] = [];
+  fightAnimationTimeline: FightAnimationTimeline | null = null;
   fightAnimationFrameIndex = -1;
   fightAnimationPlaying = false;
   fightAnimationSpeed = 1;
@@ -619,6 +622,79 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return 1 / this.fightAnimationSpeed;
   }
 
+  get currentFightAnimationCadenceScale(): number {
+    const step = this.getCurrentFightAnimationTimelineStep();
+    const frame = this.currentFightAnimationFrame;
+    if (!step || !frame) {
+      return 1;
+    }
+    const baselineMs =
+      frame.type === 'attack'
+        ? 520
+        : frame.type === 'death'
+          ? 420
+          : frame.type === 'move'
+            ? 320
+            : frame.type === 'board'
+              ? 240
+              : 360;
+    const ratio = step.durationMs / baselineMs;
+    return Math.min(1.35, Math.max(0.72, Number.isFinite(ratio) ? ratio : 1));
+  }
+
+  get currentFightAnimationImpactScale(): number {
+    const frame = this.currentFightAnimationFrame;
+    if (!frame) {
+      return 1;
+    }
+
+    const impactDamage = frame.impact?.damage ?? 0;
+    const popupMagnitude = frame.popups.reduce(
+      (sum, popup) => sum + Math.abs(popup.delta),
+      0,
+    );
+    const impactScore =
+      impactDamage * 0.035 +
+      popupMagnitude * 0.008 +
+      (frame.death ? 0.28 : 0) +
+      (frame.shifts.length > 0 ? 0.08 : 0);
+    return Math.min(1.45, Math.max(1, 1 + impactScore));
+  }
+
+  get currentFightAnimationIsHeavyImpactFrame(): boolean {
+    const frame = this.currentFightAnimationFrame;
+    if (!frame) {
+      return false;
+    }
+    return (
+      (frame.impact?.damage ?? 0) >= 12 ||
+      frame.popups.some(
+        (popup) => popup.type === 'damage' && Math.abs(popup.delta) >= 12,
+      ) ||
+      frame.death != null
+    );
+  }
+
+  get currentFightAnimationIsBurstFrame(): boolean {
+    const frame = this.currentFightAnimationFrame;
+    if (!frame) {
+      return false;
+    }
+    return (
+      frame.popups.length >= 3 ||
+      frame.equipmentChanges.length >= 2 ||
+      frame.toyChanges.length >= 1
+    );
+  }
+
+  get currentFightAnimationIsResolutionFrame(): boolean {
+    const frame = this.currentFightAnimationFrame;
+    if (!frame) {
+      return false;
+    }
+    return frame.type === 'death' || frame.type === 'move' || frame.shifts.length > 0;
+  }
+
   readonly setViewBattle = (battle: Battle) => setViewBattleImpl(this, battle);
   readonly refreshViewBattleTimeline = () =>
     refreshViewBattleTimelineImpl(this);
@@ -769,6 +845,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly removeHardToy = (side: 'player' | 'opponent') =>
     removeHardToyImpl(this, side);
   readonly getToyIconPath = getToyIconPathValueImpl;
+
+  private getCurrentFightAnimationTimelineStep():
+    | FightAnimationTimelineStep
+    | null {
+    const timeline = this.fightAnimationTimeline;
+    if (!timeline) {
+      return null;
+    }
+    const idx = this.fightAnimationFrameIndex;
+    if (idx < 0 || idx >= timeline.steps.length) {
+      return null;
+    }
+    return timeline.steps[idx] ?? null;
+  }
 
   private clearFightAnimationTimer(): void {
     clearFightAnimationTimerImpl(this);

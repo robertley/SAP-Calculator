@@ -217,6 +217,51 @@ export class SimulationRunner {
     return simulationResult;
   }
 
+  public projectLineupAfterEndTurn(
+    baseConfig: SimulationConfig,
+    side: 'player' | 'opponent',
+    lineup: (PetConfig | null)[],
+  ): (PetConfig | null)[] {
+    const config: SimulationConfig = {
+      ...baseConfig,
+      playerPets:
+        side === 'player' ? normalizeLineupLength(lineup, 5) : baseConfig.playerPets,
+      opponentPets:
+        side === 'opponent'
+          ? normalizeLineupLength(lineup, 5)
+          : baseConfig.opponentPets,
+      simulationCount: 1,
+      logsEnabled: false,
+      maxLoggedBattles: 0,
+      captureRandomDecisions: false,
+      randomDecisionOverrides: [],
+    };
+
+    const wasLoggingEnabled = this.logService.isEnabled();
+    const wasDeferringDecorations = this.logService.isDeferDecorations();
+    this.logService.setEnabled(false);
+    this.logService.setDeferDecorations(true);
+
+    try {
+      this.logService.reset();
+      this.abilityService.clearGlobalEventQueue();
+      this.setupGameEnvironment(config);
+      this.clearPlayers();
+      this.createPets(this.player, config.playerPets);
+      this.createPets(this.opponent, config.opponentPets);
+      this.applyPreBattleFriendDeathCounts();
+      this.abilityService.triggerEndTurnEvents();
+      this.abilityService.executeEndTurnEvents();
+
+      return side === 'player'
+        ? this.captureProjectedLineup(config.playerPets, this.player)
+        : this.captureProjectedLineup(config.opponentPets, this.opponent);
+    } finally {
+      this.logService.setEnabled(wasLoggingEnabled);
+      this.logService.setDeferDecorations(wasDeferringDecorations);
+    }
+  }
+
   protected resetSimulation() {
     this.playerWinner = 0;
     this.opponentWinner = 0;
@@ -251,6 +296,10 @@ export class SimulationRunner {
     this.gameService.gameApi.playerLevel3Sold = config.playerLevel3Sold ?? 0;
     this.gameService.gameApi.opponentLevel3Sold =
       config.opponentLevel3Sold ?? 0;
+    this.gameService.gameApi.playerLostLastBattle =
+      config.playerLostLastBattle ?? false;
+    this.gameService.gameApi.opponentLostLastBattle =
+      config.opponentLostLastBattle ?? false;
     this.petService.setCustomPackPools(config.customPacks ?? []);
 
     // Packs
@@ -543,8 +592,77 @@ export class SimulationRunner {
   protected resetClearFrontFlags() {
     this.abilityEngine.resetClearFrontFlags();
   }
+
+  private captureProjectedLineup(
+    sourceLineup: (PetConfig | null)[],
+    player: Player,
+  ): (PetConfig | null)[] {
+    const projected: (PetConfig | null)[] = [];
+    for (let slot = 0; slot < sourceLineup.length; slot += 1) {
+      const sourcePet = sourceLineup[slot] ?? null;
+      const runtimePet = player.getPetAtPosition(slot);
+      if (!sourcePet || !runtimePet) {
+        projected.push(null);
+        continue;
+      }
+
+      const projectedPet: PetConfig = {
+        ...sourcePet,
+        name: runtimePet.name ?? sourcePet.name ?? null,
+        attack: runtimePet.attack ?? sourcePet.attack ?? 0,
+        health: runtimePet.health ?? sourcePet.health ?? 0,
+        exp: runtimePet.exp ?? sourcePet.exp ?? 0,
+        mana: runtimePet.mana ?? sourcePet.mana ?? 0,
+        triggersConsumed:
+          runtimePet.triggersConsumed ?? sourcePet.triggersConsumed ?? 0,
+        foodsEaten: runtimePet.foodsEaten ?? sourcePet.foodsEaten ?? 0,
+        battlesFought: runtimePet.battlesFought ?? sourcePet.battlesFought ?? 0,
+        timesHurt: runtimePet.timesHurt ?? sourcePet.timesHurt ?? 0,
+        friendsDiedBeforeBattle:
+          runtimePet.friendsDiedBeforeBattle ??
+          sourcePet.friendsDiedBeforeBattle ??
+          0,
+        equipment: runtimePet.equipment?.name
+          ? { name: runtimePet.equipment.name }
+          : null,
+        equipmentUses:
+          runtimePet.equipment?.uses ?? sourcePet.equipmentUses ?? null,
+      };
+      projected.push(projectedPet);
+    }
+    return projected;
+  }
+
+  private clearPlayers(): void {
+    this.clearPlayer(this.player);
+    this.clearPlayer(this.opponent);
+  }
+
+  private clearPlayer(player: Player): void {
+    player.pet0 = undefined;
+    player.pet1 = undefined;
+    player.pet2 = undefined;
+    player.pet3 = undefined;
+    player.pet4 = undefined;
+    player.orignalPet0 = undefined;
+    player.orignalPet1 = undefined;
+    player.orignalPet2 = undefined;
+    player.orignalPet3 = undefined;
+    player.orignalPet4 = undefined;
+  }
 }
 
+
+function normalizeLineupLength(
+  lineup: (PetConfig | null)[],
+  length: number,
+): (PetConfig | null)[] {
+  const normalized = lineup.slice(0, length);
+  while (normalized.length < length) {
+    normalized.push(null);
+  }
+  return normalized;
+}
 
 
 

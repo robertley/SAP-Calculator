@@ -1,10 +1,13 @@
 import {
+  FightAnimationTimeline,
   FightAnimationDeath,
   FightAnimationEquipmentChange,
   FightAnimationFrame,
   FightAnimationPopup,
   FightAnimationSlot,
   buildFightAnimationFrames,
+  buildFightAnimationTimeline,
+  getDirectedIntervalMs,
 } from './app.component.fight-animation';
 import { FormGroup } from '@angular/forms';
 import { AILMENT_CATEGORIES } from 'app/integrations/equipment/equipment-categories';
@@ -16,6 +19,7 @@ export interface AppFightAnimationContext {
   fightAnimationPlaying: boolean;
   fightAnimationSpeed: number;
   fightAnimationTimer: ReturnType<typeof setTimeout> | null;
+  fightAnimationTimeline: FightAnimationTimeline | null;
   viewBattleLogs: Array<{ message?: string | null }>;
   viewBattle?: { winner: 'player' | 'opponent' | 'draw' } | null;
   formGroup: FormGroup;
@@ -70,6 +74,9 @@ export function refreshFightAnimationFromViewBattle(
   ctx.fightAnimationFrames = buildFightAnimationFrames(
     ctx.viewBattleLogs as Parameters<typeof buildFightAnimationFrames>[0],
     { includePositionPrefix, includeBoardFrames: false },
+  );
+  ctx.fightAnimationTimeline = buildFightAnimationTimeline(
+    ctx.fightAnimationFrames,
   );
   ctx.fightAnimationFrameIndex = ctx.fightAnimationFrames.length > 0 ? 0 : -1;
   ctx.markForCheck();
@@ -190,6 +197,8 @@ export function buildFightAnimationRenderFrame(
   const targetKey = frame.impact
     ? slotKey(frame.impact.targetSide, frame.impact.targetSlot)
     : null;
+  const heavyImpactDamage = frame.impact?.damage ?? 0;
+  const hasHeavyImpact = heavyImpactDamage >= 12;
   const isSnipeImpact = frame.impact?.isSnipe === true;
   const snipeTargetKey = isSnipeImpact ? targetKey : null;
   const deathKey = frame.death ? slotKey(frame.death.side, frame.death.slot) : null;
@@ -204,6 +213,18 @@ export function buildFightAnimationRenderFrame(
     const slotIsFainted =
       slot.pendingRemoval ||
       (!slot.isEmpty && slot.health != null && slot.health <= 0);
+    const popupMagnitude = popups.reduce(
+      (sum, popup) => sum + Math.abs(popup.delta),
+      0,
+    );
+    const hasStackedPopups = popups.length >= 2 || popupMagnitude >= 14;
+    const isImpactTarget = targetKey === key;
+    const isLethalImpactTarget = isImpactTarget && frame.impact != null && slotIsFainted;
+    const isContactPair =
+      frame.type === 'attack' &&
+      frame.impact != null &&
+      !frame.impact.isSnipe &&
+      (attackerKey === key || isImpactTarget);
     const hasStatGain = popups.some(
       (popup) => popup.type !== 'damage' && popup.delta > 0,
     );
@@ -215,6 +236,12 @@ export function buildFightAnimationRenderFrame(
         'fight-slot-attacker': attackerKey === key && !isSnipeImpact,
         'fight-slot-target': targetKey === key,
         'fight-slot-snipe-target': snipeTargetKey === key,
+        'fight-slot-impact-heavy':
+          hasHeavyImpact &&
+          ((attackerKey === key && !isSnipeImpact) || isImpactTarget),
+        'fight-slot-impact-lethal': isLethalImpactTarget,
+        'fight-slot-contact-pair': isContactPair,
+        'fight-slot-popup-stack': hasStackedPopups,
         'fight-slot-shifted': shiftedSlots.has(key),
         'fight-slot-fainted-ghost': slotIsFainted,
         'fight-slot-stat-gain': hasStatGain,
@@ -665,8 +692,23 @@ function normalizeFightAnimationSpeed(speed: number): number {
 function getFightAnimationIntervalMs(ctx: AppFightAnimationContext): number {
   const frame = getCurrentFightAnimationFrame(ctx);
   const speed = normalizeFightAnimationSpeed(ctx.fightAnimationSpeed);
-  const baseMs = getFightAnimationBaseIntervalMs(frame);
-  return Math.max(120, Math.round(baseMs / speed));
+  const directedMs = getDirectedIntervalMs(
+    ctx.fightAnimationTimeline,
+    ctx.fightAnimationFrameIndex,
+  );
+  let baseMs = directedMs ?? getFightAnimationBaseIntervalMs(frame);
+  if (frame?.type === 'attack' && frame.impact && !frame.impact.isSnipe) {
+    baseMs = Math.round(baseMs * 0.9);
+  } else if (frame?.type === 'death') {
+    baseMs = Math.round(baseMs * 0.74);
+  } else if (
+    frame?.type === 'ability' &&
+    frame.popups.length >= 3 &&
+    frame.equipmentChanges.length === 0
+  ) {
+    baseMs = Math.round(baseMs * 0.92);
+  }
+  return Math.max(90, Math.round((baseMs / speed) * 2));
 }
 
 function getFightAnimationBaseIntervalMs(
@@ -680,9 +722,9 @@ function getFightAnimationBaseIntervalMs(
   if (frame.type === 'board') {
     baseMs = 240;
   } else if (frame.type === 'attack') {
-    baseMs = 760;
+    baseMs = 580;
   } else if (frame.type === 'death') {
-    baseMs = 680;
+    baseMs = 420;
   } else if (frame.type === 'ability' || frame.type === 'equipment') {
     baseMs = 620;
   } else if (frame.type === 'move') {
@@ -693,8 +735,14 @@ function getFightAnimationBaseIntervalMs(
     baseMs += 90;
   }
 
-  if (frame.impact || frame.death || frame.popups.length > 0) {
-    baseMs = Math.max(baseMs, 720);
+  if (frame.impact) {
+    baseMs = Math.max(baseMs, 560);
+  }
+  if (frame.popups.length > 0) {
+    baseMs = Math.max(baseMs, 520);
+  }
+  if (frame.death) {
+    baseMs = Math.max(baseMs, 390);
   }
 
   return baseMs;

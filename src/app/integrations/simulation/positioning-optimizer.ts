@@ -48,6 +48,7 @@ export interface PositioningOptimizationResult {
 
 interface CandidateState extends PositioningPermutationStats {
   rounds: number;
+  simulationLineup: (PetConfig | null)[];
 }
 
 interface RunPositioningOptimizationParams {
@@ -58,6 +59,11 @@ interface RunPositioningOptimizationParams {
   shouldAbort?: () => boolean;
   onProgress?: (progress: PositioningOptimizerProgress) => void;
   simulateBatch: (config: SimulationConfig) => SimulationResult;
+  projectEndTurnLineup?: (params: {
+    baseConfig: SimulationConfig;
+    side: PositioningOptimizationSide;
+    lineup: (PetConfig | null)[];
+  }) => (PetConfig | null)[];
 }
 
 const DEFAULT_MAX_SIMULATIONS_PER_PERMUTATION = 250;
@@ -69,7 +75,13 @@ const DEFAULT_BASE_SEED = 123456789;
 export function runPositioningOptimization(
   params: RunPositioningOptimizationParams,
 ): PositioningOptimizationResult {
-  const { baseConfig, simulateBatch, shouldAbort, onProgress } = params;
+  const {
+    baseConfig,
+    simulateBatch,
+    shouldAbort,
+    onProgress,
+    projectEndTurnLineup,
+  } = params;
   const side = params.options.side;
 
   const maxSimulationsPerPermutation = Math.max(
@@ -105,9 +117,22 @@ export function runPositioningOptimization(
 
   const petsKey = side === 'player' ? 'playerPets' : 'opponentPets';
   const sidePets = (baseConfig[petsKey] ?? []).slice();
+  const baselineLineupDeltas = projectEndTurnLineup
+    ? computeLineupNumericDeltas(
+        sidePets,
+        normalizeLineupLength(
+          projectEndTurnLineup({
+            baseConfig,
+            side,
+            lineup: sidePets,
+          }),
+          sidePets.length,
+        ),
+      )
+    : null;
   const permutations = generateIndexPermutations(sidePets);
   const candidates: CandidateState[] = permutations.map((order) => ({
-    order,
+    order: [...order],
     lineup: applyOrder(sidePets, order),
     simulations: 0,
     wins: 0,
@@ -118,6 +143,16 @@ export function runPositioningOptimization(
     upperBound: 1,
     eliminated: false,
     rounds: 0,
+    simulationLineup: baselineLineupDeltas
+      ? buildProjectedCandidateLineup(
+          baseConfig,
+          side,
+          sidePets,
+          order,
+          baselineLineupDeltas,
+          projectEndTurnLineup,
+        )
+      : applyOrder(sidePets, order),
   }));
 
   let completedBattles = 0;
@@ -162,7 +197,7 @@ export function runPositioningOptimization(
       ranAnyBatch = true;
       const batchConfig = {
         ...baseConfig,
-        [petsKey]: candidate.lineup,
+        [petsKey]: candidate.simulationLineup,
         simulationCount: simulationsToRun,
         logsEnabled: false,
         maxLoggedBattles: 0,
@@ -305,6 +340,132 @@ function scoreFromTallies(
 
 function applyOrder<T>(source: T[], order: number[]): T[] {
   return order.map((index) => source[index]);
+}
+
+function buildProjectedCandidateLineup(
+  baseConfig: SimulationConfig,
+  side: PositioningOptimizationSide,
+  sidePets: (PetConfig | null)[],
+  order: number[],
+  baselineLineupDeltas: Array<Record<string, number>>,
+  projectEndTurnLineup: NonNullable<
+    RunPositioningOptimizationParams['projectEndTurnLineup']
+  >,
+): (PetConfig | null)[] {
+  const candidateLineup = applyOrder(sidePets, order);
+  const projectedCandidateLineup = normalizeLineupLength(
+    projectEndTurnLineup({
+      baseConfig,
+      side,
+      lineup: candidateLineup,
+    }),
+    candidateLineup.length,
+  );
+  const candidateLineupDeltas = computeLineupNumericDeltas(
+    candidateLineup,
+    projectedCandidateLineup,
+  );
+
+  return candidateLineup.map((pet, targetIndex) => {
+    if (!pet) {
+      return null;
+    }
+    const sourceIndex = order[targetIndex] ?? targetIndex;
+    const baselineDelta = baselineLineupDeltas[sourceIndex] ?? {};
+    const candidateDelta = candidateLineupDeltas[targetIndex] ?? {};
+    const numericKeys = new Set<string>([
+      ...Object.keys(candidateDelta),
+      ...Object.keys(baselineDelta),
+    ]);
+    if (numericKeys.size <= 0) {
+      return pet;
+    }
+
+    const petRecord = pet as unknown as Record<string, unknown>;
+    const projectedPet: Record<string, unknown> = {
+      ...petRecord,
+      equipment:
+        petRecord.equipment && typeof petRecord.equipment === 'object'
+          ? { ...(petRecord.equipment as Record<string, unknown>) }
+          : petRecord.equipment ?? null,
+    };
+
+    for (const key of numericKeys) {
+      const currentValue = toFiniteNumber(petRecord[key]) ?? 0;
+      const projectedValue =
+        currentValue + (candidateDelta[key] ?? 0) - (baselineDelta[key] ?? 0);
+      projectedPet[key] = projectedValue;
+    }
+
+    return projectedPet as unknown as PetConfig;
+  });
+}
+
+function computeLineupNumericDeltas(
+  beforeLineup: (PetConfig | null)[],
+  afterLineup: (PetConfig | null)[],
+): Array<Record<string, number>> {
+  const maxLength = Math.max(beforeLineup.length, afterLineup.length);
+  const deltas: Array<Record<string, number>> = [];
+  for (let index = 0; index < maxLength; index += 1) {
+    deltas.push(
+      computePetNumericDelta(
+        beforeLineup[index] ?? null,
+        afterLineup[index] ?? null,
+      ),
+    );
+  }
+  return deltas;
+}
+
+function computePetNumericDelta(
+  beforePet: PetConfig | null,
+  afterPet: PetConfig | null,
+): Record<string, number> {
+  if (!beforePet || !afterPet) {
+    return {};
+  }
+
+  const beforeRecord = beforePet as unknown as Record<string, unknown>;
+  const afterRecord = afterPet as unknown as Record<string, unknown>;
+  const numericKeys = new Set<string>();
+
+  Object.entries(beforeRecord).forEach(([key, value]) => {
+    if (toFiniteNumber(value) != null) {
+      numericKeys.add(key);
+    }
+  });
+  Object.entries(afterRecord).forEach(([key, value]) => {
+    if (toFiniteNumber(value) != null) {
+      numericKeys.add(key);
+    }
+  });
+
+  const delta: Record<string, number> = {};
+  for (const key of numericKeys) {
+    const beforeValue = toFiniteNumber(beforeRecord[key]) ?? 0;
+    const afterValue = toFiniteNumber(afterRecord[key]) ?? 0;
+    const difference = afterValue - beforeValue;
+    if (difference !== 0) {
+      delta[key] = difference;
+    }
+  }
+  return delta;
+}
+
+function normalizeLineupLength(
+  lineup: (PetConfig | null)[],
+  length: number,
+): (PetConfig | null)[] {
+  const normalized = lineup.slice(0, length);
+  while (normalized.length < length) {
+    normalized.push(null);
+  }
+  return normalized;
+}
+
+function toFiniteNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null;
 }
 
 function generateIndexPermutations<T>(source: T[]): number[][] {

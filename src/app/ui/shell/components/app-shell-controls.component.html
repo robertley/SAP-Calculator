@@ -11,7 +11,7 @@
           <button class="btn btn-outline-danger" *ngIf="app.simulationInProgress" (click)="app.cancelSimulation()">
             Cancel
           </button>
-          <input class="form-control simulate-input" type="number" formControlName="simulations" min="1" max="10000" />
+          <input class="form-control simulate-input" type="number" formControlName="simulations" min="1" />
         </div>
         <div class="optimize-control-group">
           <button class="btn btn-outline-primary" (click)="app.optimizePositioning(optimizeSide)"

@@ -83,6 +83,8 @@ export class SilkySifakaAbility extends Ability {
     let petsBehind = targetsResp.pets;
 
     for (let targetPet of petsBehind) {
+      const sourcePositionLabel = this.formatPositionArg(owner);
+      const targetPositionLabel = this.formatPositionArg(targetPet);
       const choice = chooseRandomOption(
         {
           key: 'pet.silky-sifaka-transform',
@@ -110,9 +112,12 @@ export class SilkySifakaAbility extends Ability {
       owner.parent.transformPet(targetPet, newPet);
 
       this.logService.createLog({
-        message: `${owner.name} transformed ${targetPet.name} into level ${owner.level} ${newPet.name}`,
+        message: `[${sourcePositionLabel}->${targetPositionLabel}] ${owner.name} transformed ${targetPet.name} into level ${owner.level} ${newPet.name}`,
         type: 'ability',
         player: owner.parent,
+        sourceIndex: owner.savedPosition + 1,
+        targetIndex: targetPet.savedPosition + 1,
+        targetIsOpponent: targetPet.parent?.isOpponent,
         tiger: tiger,
         randomEvent: choice.randomEvent,
       });
@@ -124,6 +129,15 @@ export class SilkySifakaAbility extends Ability {
 
   copy(newOwner: Pet): SilkySifakaAbility {
     return new SilkySifakaAbility(newOwner, this.logService, this.petService);
+  }
+
+  private formatPositionArg(pet: Pet): string {
+    const side = pet.parent?.isOpponent ? 'O' : 'P';
+    const savedPosition = Number.isFinite(pet.savedPosition)
+      ? Math.trunc(pet.savedPosition) + 1
+      : 1;
+    const slot = Math.min(Math.max(savedPosition, 1), 5);
+    return `${side}${slot}`;
   }
 }
 
