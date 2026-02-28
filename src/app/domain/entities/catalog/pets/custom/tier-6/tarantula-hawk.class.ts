@@ -73,11 +73,18 @@ export class TarantulaHawkAbility extends Ability {
     // Apply damage to all enemies, repeated per 10 attack
     for (let i = 0; i < repeats; i++) {
       for (let enemy of enemies) {
+        const sourcePositionLabel = this.formatPositionArg(owner);
+        const targetPositionLabel = this.formatPositionArg(enemy);
         enemy.increaseHealth(-this.level);
         this.logService.createLog({
-          message: `${owner.name} removed ${this.level} health from ${enemy.name}`,
+          message: `[${sourcePositionLabel}->${targetPositionLabel}] ${owner.name} removed ${this.level} health from ${enemy.name}.`,
           type: 'ability',
           player: owner.parent,
+          sourcePet: owner,
+          targetPet: enemy,
+          sourceIndex: owner.savedPosition + 1,
+          targetIndex: enemy.savedPosition + 1,
+          targetIsOpponent: enemy.parent?.isOpponent,
           tiger: tiger,
           pteranodon: pteranodon,
         });
@@ -90,6 +97,15 @@ export class TarantulaHawkAbility extends Ability {
 
   copy(newOwner: Pet): TarantulaHawkAbility {
     return new TarantulaHawkAbility(newOwner, this.logService);
+  }
+
+  private formatPositionArg(pet: Pet): string {
+    const side = pet.parent?.isOpponent ? 'O' : 'P';
+    const savedPosition = Number.isFinite(pet.savedPosition)
+      ? Math.trunc(pet.savedPosition) + 1
+      : 1;
+    const slot = Math.min(Math.max(savedPosition, 1), 5);
+    return `${side}${slot}`;
   }
 }
 

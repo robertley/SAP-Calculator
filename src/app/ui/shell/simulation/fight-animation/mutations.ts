@@ -2,6 +2,7 @@ import { Log } from 'app/domain/interfaces/log.interface';
 import { extractKnownNames, equipmentPatterns } from './name-patterns';
 import {
     parseAttackEvent,
+    parseRangedDamageEvent,
     parseSubjectName,
     parseTargetName,
     parseTransformEvent,
@@ -77,6 +78,15 @@ export function applyLogMutation(
         return result;
     }
     if (log.type === 'ability' || log.type === 'equipment') {
+        const rangedImpact = applyRangedDamageMutation(
+            state,
+            log,
+            text,
+            result.popups,
+        );
+        if (rangedImpact) {
+            result.impact = rangedImpact;
+        }
         applyTransformMutation(state, log, text, result.popups);
         applyStatMutation(state, log, text, result.popups);
         applyEquipmentMutation(state, log, text, result.equipmentChanges);
@@ -315,6 +325,92 @@ export function applyTransformMutation(
     if (transform.equipmentName) {
         setSlotEquipment(targetRef.value, transform.equipmentName);
     }
+}
+
+export function applyRangedDamageMutation(
+    state: FightAnimationBoardState,
+    log: Log,
+    text: string,
+    popups: FightAnimationPopup[],
+): FightAnimationImpact | null {
+    const parsedAttack = parseRangedDamageEvent(text);
+    if (!parsedAttack || parsedAttack.damage == null || parsedAttack.damage < 0) {
+        return null;
+    }
+
+    const sourceSide = getLogPrimarySide(log);
+    const sourceRef = resolveSlotRef(state, {
+        preferredSide: sourceSide,
+        explicitIndex: log.sourceIndex,
+        expectedName: parsedAttack.attackerName,
+        preferNonEmpty: true,
+    });
+    if (sourceRef && parsedAttack.attackerName) {
+        setSlotPet(sourceRef.value, parsedAttack.attackerName);
+    }
+
+    const resolvedSourceSide = sourceRef?.side ?? sourceSide;
+    const targetSide = inferTargetSide(
+        state,
+        log,
+        text,
+        resolvedSourceSide,
+        parsedAttack.targetName,
+        'opposite',
+    );
+    const targetRef = resolveSlotRef(state, {
+        preferredSide: targetSide,
+        explicitIndex: log.targetIndex,
+        expectedName: parsedAttack.targetName,
+        preferNonEmpty: true,
+    });
+    if (!targetRef) {
+        if (parsedAttack.damage > 0) {
+            popups.push({
+                side: targetSide,
+                slot: normalizeSlot((log.targetIndex ?? 1) - 1),
+                type: 'damage',
+                delta: -parsedAttack.damage,
+            });
+        }
+        return {
+            attackerSide: resolvedSourceSide,
+            attackerSlot:
+                sourceRef?.slot ?? normalizeSlot((log.sourceIndex ?? 1) - 1),
+            targetSide,
+            targetSlot: normalizeSlot((log.targetIndex ?? 1) - 1),
+            damage: parsedAttack.damage,
+            isSnipe: true,
+        };
+    }
+
+    if (parsedAttack.targetName) {
+        setSlotPet(targetRef.value, parsedAttack.targetName);
+    }
+    if (targetRef.value.health != null) {
+        targetRef.value.health = Math.max(
+            0,
+            targetRef.value.health - parsedAttack.damage,
+        );
+    }
+    if (parsedAttack.damage > 0) {
+        popups.push({
+            side: targetRef.side,
+            slot: targetRef.slot,
+            type: 'damage',
+            delta: -parsedAttack.damage,
+        });
+    }
+
+    return {
+        attackerSide: resolvedSourceSide,
+        attackerSlot:
+            sourceRef?.slot ?? normalizeSlot((log.sourceIndex ?? 1) - 1),
+        targetSide: targetRef.side,
+        targetSlot: targetRef.slot,
+        damage: parsedAttack.damage,
+        isSnipe: true,
+    };
 }
 
 // ---------------------------------------------------------------------------

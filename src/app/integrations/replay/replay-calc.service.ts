@@ -50,6 +50,9 @@ interface ReplayTurnsStats {
   turn?: number | null;
   victories?: number | null;
   health?: number | null;
+  lives?: number | null;
+  rawVictories?: number | null;
+  rawBack?: number | null;
   goldSpent?: number | null;
   rolls?: number | null;
   summons?: number | null;
@@ -134,6 +137,11 @@ interface ReplayTurnActionLike {
   Build?: string | null;
   Battle?: string | null;
   Mode?: string | null;
+  outcome?: {
+    id?: number | null;
+    user?: string | null;
+    opponent?: string | null;
+  } | null;
   OpponentGoldSpent?: number | null;
   user?: ReplayTurnsSide | null;
   opponent?: ReplayTurnsSide | null;
@@ -571,10 +579,24 @@ export class ReplayCalcService {
 
   private mapReplayTurnsSide(side?: ReplayTurnsSide | null): Record<string, unknown> {
     const stats = side?.stats ?? null;
+    const victories =
+      this.toFiniteNumber(stats?.victories) ??
+      this.toFiniteNumber(stats?.rawVictories) ??
+      0;
+    const lives =
+      this.toFiniteNumber(stats?.lives) ??
+      this.toFiniteNumber(stats?.health) ??
+      null;
+    const rawBack =
+      this.toFiniteNumber(stats?.rawBack) ??
+      this.toFiniteNumber(stats?.health) ??
+      lives ??
+      0;
     return {
       Tur: this.toFiniteNumber(stats?.turn) ?? 1,
-      Vic: this.toFiniteNumber(stats?.victories) ?? 0,
-      Back: this.toFiniteNumber(stats?.health) ?? 0,
+      Vic: victories,
+      Back: rawBack,
+      Lives: lives ?? rawBack,
       GoSp: this.toFiniteNumber(stats?.goldSpent) ?? 0,
       Rold: this.toFiniteNumber(stats?.rolls) ?? 0,
       MiSu: this.toFiniteNumber(stats?.summons) ?? 0,
@@ -766,21 +788,19 @@ export class ReplayCalcService {
     requestedTurn: number,
     battleJson: ReplayJsonObject | null,
   ): number | null {
-    const fromBattleJson = this.toOutcomeValue(
-      this.toFiniteNumber((battleJson?.Outcome ?? battleJson?.outcome) as unknown),
+    const fromBattleJson = this.resolveOutcomeIdFromUnknown(
+      (battleJson?.Outcome ?? battleJson?.outcome) as unknown,
     );
     if (fromBattleJson !== null) {
       return fromBattleJson;
     }
 
     const selectedRecord = selectedTurn as unknown as ReplayJsonObject;
-    const directOutcome = this.toOutcomeValue(
-      this.toFiniteNumber(
-        selectedRecord['Outcome'] ??
-        selectedRecord['outcome'] ??
-        selectedRecord['Result'] ??
-        selectedRecord['result'],
-      ),
+    const directOutcome = this.resolveOutcomeIdFromUnknown(
+      selectedRecord['Outcome'] ??
+      selectedRecord['outcome'] ??
+      selectedRecord['Result'] ??
+      selectedRecord['result'],
     );
     if (directOutcome !== null) {
       return directOutcome;
@@ -803,22 +823,10 @@ export class ReplayCalcService {
       (requestedTurn > 1 ? turns[requestedTurn - 2] : null) ??
       null;
 
-    const selectedUserVictories = this.readTurnsSideStat(
-      selectedTurn?.user,
-      'victories',
-    );
-    const selectedOpponentVictories = this.readTurnsSideStat(
-      selectedTurn?.opponent,
-      'victories',
-    );
-    const previousUserVictories = this.readTurnsSideStat(
-      previousTurn?.user,
-      'victories',
-    );
-    const previousOpponentVictories = this.readTurnsSideStat(
-      previousTurn?.opponent,
-      'victories',
-    );
+    const selectedUserVictories = this.readTurnsSideVictories(selectedTurn?.user);
+    const selectedOpponentVictories = this.readTurnsSideVictories(selectedTurn?.opponent);
+    const previousUserVictories = this.readTurnsSideVictories(previousTurn?.user);
+    const previousOpponentVictories = this.readTurnsSideVictories(previousTurn?.opponent);
     const selectedUserWins = this.toNonNegativeIntOrZero(selectedUserVictories);
     const selectedOpponentWins = this.toNonNegativeIntOrZero(selectedOpponentVictories);
     const previousUserWins = this.toNonNegativeIntOrZero(previousUserVictories);
@@ -831,15 +839,13 @@ export class ReplayCalcService {
       return 2;
     }
 
-    const selectedUserHealth = this.readTurnsSideStat(selectedTurn?.user, 'health');
-    const selectedOpponentHealth = this.readTurnsSideStat(
+    const selectedUserHealth = this.readTurnsSideLivesOrHealth(selectedTurn?.user);
+    const selectedOpponentHealth = this.readTurnsSideLivesOrHealth(
       selectedTurn?.opponent,
-      'health',
     );
-    const previousUserHealth = this.readTurnsSideStat(previousTurn?.user, 'health');
-    const previousOpponentHealth = this.readTurnsSideStat(
+    const previousUserHealth = this.readTurnsSideLivesOrHealth(previousTurn?.user);
+    const previousOpponentHealth = this.readTurnsSideLivesOrHealth(
       previousTurn?.opponent,
-      'health',
     );
     if (
       selectedOpponentHealth !== null &&
@@ -859,16 +865,75 @@ export class ReplayCalcService {
     return 3;
   }
 
-  private readTurnsSideStat(
+  private readTurnsSideVictories(side: ReplayTurnsSide | null | undefined): number | null {
+    return (
+      this.toFiniteNumber(side?.stats?.victories ?? null) ??
+      this.toFiniteNumber(side?.stats?.rawVictories ?? null)
+    );
+  }
+
+  private readTurnsSideLivesOrHealth(
     side: ReplayTurnsSide | null | undefined,
-    key: 'victories' | 'health',
   ): number | null {
-    return this.toFiniteNumber(side?.stats?.[key] ?? null);
+    return (
+      this.toFiniteNumber(side?.stats?.lives ?? null) ??
+      this.toFiniteNumber(side?.stats?.health ?? null) ??
+      this.toFiniteNumber(side?.stats?.rawBack ?? null)
+    );
   }
 
   private toOutcomeValue(value: number | null): number | null {
     if (value === 1 || value === 2 || value === 3) {
       return value;
+    }
+    return null;
+  }
+
+  private resolveOutcomeIdFromUnknown(value: unknown): number | null {
+    const numericOutcome = this.toOutcomeValue(this.toFiniteNumber(value));
+    if (numericOutcome !== null) {
+      return numericOutcome;
+    }
+    if (!this.isRecord(value)) {
+      return null;
+    }
+
+    const idOutcome = this.toOutcomeValue(this.toFiniteNumber(value['id']));
+    if (idOutcome !== null) {
+      return idOutcome;
+    }
+
+    const userTextOutcome = this.toOutcomeValueFromText(value['user']);
+    if (userTextOutcome !== null) {
+      return userTextOutcome;
+    }
+
+    const opponentTextOutcome = this.toOutcomeValueFromText(value['opponent']);
+    if (opponentTextOutcome === 1) {
+      return 2;
+    }
+    if (opponentTextOutcome === 2) {
+      return 1;
+    }
+    if (opponentTextOutcome === 3) {
+      return 3;
+    }
+    return null;
+  }
+
+  private toOutcomeValueFromText(value: unknown): number | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+    const normalized = value.trim().toLowerCase();
+    if (normalized === 'win') {
+      return 1;
+    }
+    if (normalized === 'loss') {
+      return 2;
+    }
+    if (normalized === 'tie' || normalized === 'draw') {
+      return 3;
     }
     return null;
   }

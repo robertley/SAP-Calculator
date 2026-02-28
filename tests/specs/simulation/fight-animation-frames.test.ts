@@ -172,6 +172,82 @@ describe('Fight animation frames', () => {
     );
   });
 
+  it('treats "dealt damage to" ability logs as snipe impacts', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(6/6) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Ant dealt 3 damage to Pig.',
+        sourceIndex: 1,
+        targetIndex: 1,
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 0);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].impact).toMatchObject({
+      attackerSide: 'player',
+      attackerSlot: 0,
+      targetSide: 'opponent',
+      targetSlot: 0,
+      damage: 3,
+      isSnipe: true,
+    });
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      health: 5,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'opponent',
+      slot: 0,
+      type: 'damage',
+      delta: -3,
+    });
+    expect(renderFrame.opponentSlots[0].showSnipeImpact).toBe(true);
+    expect(renderFrame.opponentSlots[0].classMap['fight-slot-snipe-target']).toBe(
+      true,
+    );
+  });
+
+  it('keeps snipe impact visuals for zero-damage ability snipes', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) P2 <img src="assets/pets/Snake.png" class="log-pet-icon" alt="Snake">(6/6) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | ___ (-/-) ___ (-/-) ___ (-/-) O2 <img src="assets/pets/Hydra.png" class="log-pet-icon" alt="Hydra">(20/20) O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: '[P2->O2] Snake sniped Hydra for 0. ( Melon -20)',
+        sourceIndex: 2,
+        targetIndex: 2,
+        playerIsOpponent: false,
+        targetIsOpponent: true,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+    const renderFrame = buildFightAnimationRenderFrame(frames[1], 0);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].impact).toMatchObject({
+      attackerSide: 'player',
+      attackerSlot: 1,
+      targetSide: 'opponent',
+      targetSlot: 1,
+      damage: 0,
+      isSnipe: true,
+    });
+    expect(frames[1].popups).toHaveLength(0);
+    expect(renderFrame.opponentSlots[1].showSnipeImpact).toBe(true);
+    expect(renderFrame.opponentSlots[1].classMap['fight-slot-snipe-target']).toBe(
+      true,
+    );
+  });
+
   it('can skip board logs while still applying board snapshots to state', () => {
     const firstBoard =
       '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Ant.png" class="log-pet-icon" alt="Ant">(4/4) | O1 <img src="assets/pets/Fish.png" class="log-pet-icon" alt="Fish">(4/4) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
@@ -1115,6 +1191,39 @@ describe('Fight animation frames', () => {
       slot: 0,
       type: 'health',
       delta: -12,
+    });
+  });
+
+  it('applies "removed health from X" logs as negative health on the target', () => {
+    const board =
+      '___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-) P1 <img src="assets/pets/Tarantula-Hawk.png" class="log-pet-icon" alt="Tarantula Hawk">(10/2) | O1 <img src="assets/pets/Pig.png" class="log-pet-icon" alt="Pig">(8/8) ___ (-/-) ___ (-/-) ___ (-/-) ___ (-/-)';
+    const logs: any[] = [
+      { type: 'board', message: board },
+      {
+        type: 'ability',
+        message: 'Tarantula Hawk removed 1 health from Pig.',
+        playerIsOpponent: false,
+      },
+    ];
+
+    const frames = buildFightAnimationFrames(logs as any);
+
+    expect(frames).toHaveLength(2);
+    expect(frames[1].opponentSlots[0]).toMatchObject({
+      petName: 'Pig',
+      health: 7,
+    });
+    expect(frames[1].popups).toContainEqual({
+      side: 'opponent',
+      slot: 0,
+      type: 'health',
+      delta: -1,
+    });
+    expect(frames[1].popups).not.toContainEqual({
+      side: 'player',
+      slot: 0,
+      type: 'health',
+      delta: 1,
     });
   });
 

@@ -761,11 +761,11 @@ export class ReplayOddsImageService {
       return null;
     }
     const direct =
+      board['Lives'] ??
+      board['lives'] ??
       board['Back'] ??
       board['health'] ??
-      board['Health'] ??
-      board['Lives'] ??
-      board['lives'];
+      board['Health'];
     const parsed = this.toPositiveInt(direct);
     return parsed;
   }

@@ -3,6 +3,7 @@ import {
     FAINT_REGEX,
     IMAGE_TAG_REGEX,
     INLINE_STATS_REGEX,
+    RANGED_DAMAGE_REGEX,
     SIDE_TOKEN_REGEX,
     SNIPE_REGEX,
     SUBJECT_REGEX,
@@ -296,7 +297,7 @@ export function parseStatChange(text: string): ParsedStatChange | null {
         return null;
     }
 
-    const sign = /\b(?:lost|spent|took|drain(?:ed)?|reduce(?:d)?|decrease(?:d)?|lower(?:ed)?)\b/i.test(
+    const sign = /\b(?:lost|spent|took|drain(?:ed)?|remove(?:d)?|reduce(?:d)?|decrease(?:d)?|lower(?:ed)?)\b/i.test(
         text,
     )
         ? -1
@@ -390,9 +391,34 @@ export function shouldApplyStatChangeToTarget(
     }
     return (
         /\bincreased\b/i.test(text) ||
+        (/\bremoved?\b/i.test(text) && /\bfrom\b/i.test(text)) ||
         /\b(?:attack|health)\s+of\b/i.test(text) ||
         /\b(?:attack|health)\s+by\b/i.test(text)
     );
+}
+
+export function parseRangedDamageEvent(text: string): ParsedAttackEvent | null {
+    const snipeMatch = SNIPE_REGEX.exec(text);
+    if (snipeMatch) {
+        return {
+            attackerName: normalizeEntityToken(snipeMatch[1]),
+            targetName: normalizeEntityToken(snipeMatch[2]),
+            damage: Number(snipeMatch[3]),
+            isSnipe: true,
+        };
+    }
+
+    const rangedDamageMatch = RANGED_DAMAGE_REGEX.exec(text);
+    if (!rangedDamageMatch) {
+        return null;
+    }
+
+    return {
+        attackerName: normalizeEntityToken(rangedDamageMatch[1]),
+        targetName: normalizeEntityToken(rangedDamageMatch[3]),
+        damage: Number(rangedDamageMatch[2]),
+        isSnipe: true,
+    };
 }
 
 export function shouldApplyManaChangeToTarget(

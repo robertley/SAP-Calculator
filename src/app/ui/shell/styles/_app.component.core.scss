@@ -1176,12 +1176,17 @@
   0% {
     transform: translateX(0) scale(1);
   }
-  16% {
-    transform: translateX(calc(-3px * var(--fight-impact-scale, 1))) scale(0.985);
+  12% {
+    transform: translateX(calc(-4px * var(--fight-impact-scale, 1))) scale(0.982);
   }
-  50%,
-  58% {
+  36% {
+    transform: translateX(calc(16px * var(--fight-impact-scale, 1))) scale(1.05);
+  }
+  50% {
     transform: translateX(calc(15px * var(--fight-impact-scale, 1))) scale(1.045);
+  }
+  72% {
+    transform: translateX(calc(-1px * var(--fight-impact-scale, 1))) scale(0.995);
   }
   100% {
     transform: translateX(0) scale(1);
@@ -1192,12 +1197,17 @@
   0% {
     transform: translateX(0) scale(1);
   }
-  15% {
-    transform: translateX(calc(-2px * var(--fight-impact-scale, 1))) scale(0.988);
+  12% {
+    transform: translateX(calc(-3px * var(--fight-impact-scale, 1))) scale(0.984);
   }
-  48%,
-  56% {
+  35% {
+    transform: translateX(calc(15px * var(--fight-impact-scale, 1))) scale(1.048);
+  }
+  49% {
     transform: translateX(calc(14px * var(--fight-impact-scale, 1))) scale(1.04);
+  }
+  72% {
+    transform: translateX(calc(-1px * var(--fight-impact-scale, 1))) scale(0.995);
   }
   100% {
     transform: translateX(0) scale(1);
@@ -1208,12 +1218,17 @@
   0% {
     transform: translateX(0) scale(1);
   }
-  16% {
-    transform: translateX(calc(3px * var(--fight-impact-scale, 1))) scale(0.985);
+  12% {
+    transform: translateX(calc(4px * var(--fight-impact-scale, 1))) scale(0.982);
   }
-  50%,
-  58% {
+  36% {
+    transform: translateX(calc(-16px * var(--fight-impact-scale, 1))) scale(1.05);
+  }
+  50% {
     transform: translateX(calc(-15px * var(--fight-impact-scale, 1))) scale(1.045);
+  }
+  72% {
+    transform: translateX(calc(1px * var(--fight-impact-scale, 1))) scale(0.995);
   }
   100% {
     transform: translateX(0) scale(1);
@@ -1224,12 +1239,17 @@
   0% {
     transform: translateX(0) scale(1);
   }
-  15% {
-    transform: translateX(calc(2px * var(--fight-impact-scale, 1))) scale(0.988);
+  12% {
+    transform: translateX(calc(3px * var(--fight-impact-scale, 1))) scale(0.984);
   }
-  48%,
-  56% {
+  35% {
+    transform: translateX(calc(-15px * var(--fight-impact-scale, 1))) scale(1.048);
+  }
+  49% {
     transform: translateX(calc(-14px * var(--fight-impact-scale, 1))) scale(1.04);
+  }
+  72% {
+    transform: translateX(calc(1px * var(--fight-impact-scale, 1))) scale(0.995);
   }
   100% {
     transform: translateX(0) scale(1);
@@ -1241,16 +1261,16 @@
     transform: translateX(0);
     filter: brightness(1);
   }
-  18% {
+  16% {
     transform: translateX(calc(-3px * var(--fight-impact-scale, 1))) scale(1.01);
     filter: brightness(1.16);
   }
-  40%,
-  54% {
+  34%,
+  48% {
     transform: translateX(calc(4px * var(--fight-impact-scale, 1))) scale(0.985);
-    filter: brightness(1.28);
+    filter: brightness(1.3);
   }
-  72% {
+  82% {
     transform: translateX(calc(-2px * var(--fight-impact-scale, 1)));
   }
   100% {
@@ -1264,16 +1284,16 @@
     transform: translateX(0);
     filter: brightness(1);
   }
-  18% {
+  16% {
     transform: translateX(calc(3px * var(--fight-impact-scale, 1))) scale(1.01);
     filter: brightness(1.16);
   }
-  40%,
-  54% {
+  34%,
+  48% {
     transform: translateX(calc(-4px * var(--fight-impact-scale, 1))) scale(0.985);
-    filter: brightness(1.28);
+    filter: brightness(1.3);
   }
-  72% {
+  82% {
     transform: translateX(calc(2px * var(--fight-impact-scale, 1)));
   }
   100% {
@@ -1331,13 +1351,13 @@
     opacity: 0;
     transform: scale(0.98);
   }
-  34% {
+  24% {
+    opacity: 0.98;
+    transform: scale(calc(1.03 * var(--fight-impact-scale, 1)));
+  }
+  44% {
     opacity: 0.98;
     transform: scale(calc(1.02 * var(--fight-impact-scale, 1)));
-  }
-  52% {
-    opacity: 0.98;
-    transform: scale(calc(1.01 * var(--fight-impact-scale, 1)));
   }
   100% {
     opacity: 0;
@@ -1350,17 +1370,49 @@
     opacity: 0;
     transform: scale(0.98);
   }
-  32% {
+  22% {
+    opacity: 0.96;
+    transform: scale(calc(1.028 * var(--fight-impact-scale, 1)));
+  }
+  42% {
     opacity: 0.96;
     transform: scale(calc(1.018 * var(--fight-impact-scale, 1)));
-  }
-  50% {
-    opacity: 0.96;
-    transform: scale(calc(1.008 * var(--fight-impact-scale, 1)));
   }
   100% {
     opacity: 0;
     transform: scale(1);
+  }
+}
+
+@keyframes fight-contact-hitstop-a {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  38%,
+  56% {
+    transform: scale(calc(1.08 * var(--fight-impact-scale, 1)));
+    filter: brightness(1.24);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes fight-contact-hitstop-b {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  36%,
+  54% {
+    transform: scale(calc(1.075 * var(--fight-impact-scale, 1)));
+    filter: brightness(1.22);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
   }
 }
 
@@ -1447,7 +1499,7 @@
   .fight-slot-contact-pair
   .fight-slot-art::after {
   animation:
-    fight-contact-flash-a calc(190ms * var(--fight-motion, 1))
+    fight-contact-flash-a calc(205ms * var(--fight-motion, 1))
     cubic-bezier(0.25, 0.72, 0.25, 1) forwards;
 }
 
@@ -1458,8 +1510,30 @@
   .fight-slot-contact-pair
   .fight-slot-art::after {
   animation:
-    fight-contact-flash-b calc(190ms * var(--fight-motion, 1))
+    fight-contact-flash-b calc(205ms * var(--fight-motion, 1))
     cubic-bezier(0.25, 0.72, 0.25, 1) forwards;
+}
+
+.fight-stage.fight-frame-contact-freeze.fight-phase-a
+  .fight-slot-contact-pair
+  .fight-slot-icon,
+.fight-stage.fight-frame-contact-freeze.fight-phase-a
+  .fight-slot-contact-pair
+  .fight-slot-companion {
+  animation:
+    fight-contact-hitstop-a calc(190ms * var(--fight-motion, 1))
+    cubic-bezier(0.2, 0.78, 0.2, 1);
+}
+
+.fight-stage.fight-frame-contact-freeze.fight-phase-b
+  .fight-slot-contact-pair
+  .fight-slot-icon,
+.fight-stage.fight-frame-contact-freeze.fight-phase-b
+  .fight-slot-contact-pair
+  .fight-slot-companion {
+  animation:
+    fight-contact-hitstop-b calc(190ms * var(--fight-motion, 1))
+    cubic-bezier(0.2, 0.78, 0.2, 1);
 }
 
 .fight-snipe-impact {

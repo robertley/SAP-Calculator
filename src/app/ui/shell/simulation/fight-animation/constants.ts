@@ -6,9 +6,11 @@ export const OPPONENT_FALLBACK_ORDER = [0, 1, 2, 3, 4];
 export const ATTACK_REGEX =
     /^(.+?)\s+(?:jump-)?attacks?\s+(.+?)\s+for\s+(\d+)/i;
 export const SNIPE_REGEX = /^(.+?)\s+sniped\s+(.+?)\s+for\s+(\d+)/i;
+export const RANGED_DAMAGE_REGEX =
+    /^(.+?)\s+(?:deal(?:s|t)|inflict(?:s|ed)|did|does)\s+(\d+)\s+damage\s+to\s+(.+?)(?:\.|$)/i;
 export const FAINT_REGEX = /^(.+?)\s+fainted\./i;
 export const SUBJECT_REGEX =
-    /^(.+?)\s+(?:attacks?|sniped|fainted|gave|gained|lost|removed|transformed|destroyed|consumed|moved)\b/i;
+    /^(.+?)\s+(?:attacks?|sniped|deal(?:s|t)|inflict(?:s|ed)|did|does|fainted|gave|gained|lost|removed|transformed|destroyed|consumed|moved)\b/i;
 export const TO_SEGMENT_REGEX = /\bto\s+(.+?)(?:\.|$)/i;
 export const TRANSFORM_TARGET_REGEX = /\btransformed\s+(.+?)\s+into\b/i;
 export const TRANSFORM_INTO_SEGMENT_REGEX = /\binto\b([\s\S]*)$/i;

@@ -1080,11 +1080,11 @@ export class ReplayPositioningImageService {
       return null;
     }
     const direct =
+      board['Lives'] ??
+      board['lives'] ??
       board['Back'] ??
       board['health'] ??
-      board['Health'] ??
-      board['Lives'] ??
-      board['lives'];
+      board['Health'];
     return this.toPositiveInt(direct);
   }
 
