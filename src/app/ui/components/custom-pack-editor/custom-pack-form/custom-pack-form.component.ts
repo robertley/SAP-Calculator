@@ -12,6 +12,8 @@ import { getPetIconPath } from 'app/runtime/asset-catalog';
   styleUrls: ['./custom-pack-form.component.scss'],
 })
 export class CustomPackFormComponent implements OnInit {
+  readonly tiers: number[] = [1, 2, 3, 4, 5, 6];
+
   @Input()
   formGroup: FormGroup;
 

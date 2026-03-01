@@ -27,6 +27,7 @@ import {
   ReplayPositioningImageProgress,
   ReplayPositioningImageService,
 } from 'app/integrations/replay/replay-positioning-image.service';
+import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 interface ReplayActionEntry {
   Type?: number;
@@ -110,7 +111,20 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private readonly replayTimeoutMs = 10000;
   private readonly replayHealthTimeoutMs = 2500;
   private readonly maxPositioningSimulations = 50;
-  private statusTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly statusController = new TimedStatusController<
+    'success' | 'error' | 'warning'
+  >(
+    (message) => {
+      this.statusMessage = message;
+    },
+    (tone) => {
+      this.statusTone = tone;
+    },
+    3000,
+    () => {
+      this.cdr.markForCheck();
+    },
+  );
 
   constructor(
     private replayCalcService: ReplayCalcService,
@@ -125,6 +139,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed = true;
+    this.statusController.dispose();
     this.cancelPositioningBuild();
     this.clearOddsPreview();
     this.clearPositioningPreview();
@@ -1224,22 +1239,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   }
 
   private clearStatus() {
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-      this.statusTimer = null;
-    }
-    this.statusMessage = '';
+    this.statusController.clear();
   }
 
   private setStatus(message: string, tone: 'success' | 'error' | 'warning') {
-    this.statusMessage = message;
-    this.statusTone = tone;
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-    }
-    this.statusTimer = setTimeout(() => {
-      this.statusMessage = '';
-      this.statusTimer = null;
-    }, 3000);
+    this.statusController.set(message, tone);
   }
 }

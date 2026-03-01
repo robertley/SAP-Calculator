@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -21,6 +21,7 @@ import {
   selectReplayBattleFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 import { buildReplayCode } from 'app/integrations/replay/replay-code';
+import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 interface ReplayActionEntry {
   Type?: number;
@@ -47,7 +48,7 @@ interface ReplayCalcPayload {
   templateUrl: './replay-calc.component.html',
   styleUrls: ['./replay-calc.component.scss'],
 })
-export class ReplayCalcComponent implements OnInit {
+export class ReplayCalcComponent implements OnInit, OnDestroy {
   private readonly sapCredentialsKey = 'sapCredentials';
 
   formGroup = new FormGroup({
@@ -65,7 +66,20 @@ export class ReplayCalcComponent implements OnInit {
   loading = false;
   private readonly replayTimeoutMs = 10000;
   private readonly replayHealthTimeoutMs = 2500;
-  private statusTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly statusController = new TimedStatusController<
+    'success' | 'error' | 'warning'
+  >(
+    (message) => {
+      this.statusMessage = message;
+    },
+    (tone) => {
+      this.statusTone = tone;
+    },
+    3000,
+    () => {
+      this.cdr.markForCheck();
+    },
+  );
 
   constructor(
     private replayCalcService: ReplayCalcService,
@@ -80,6 +94,10 @@ export class ReplayCalcComponent implements OnInit {
         sapPassword: saved.password || '',
       });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.statusController.dispose();
   }
 
   generate() {
@@ -306,23 +324,11 @@ export class ReplayCalcComponent implements OnInit {
   }
 
   private clearStatus() {
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-      this.statusTimer = null;
-    }
-    this.statusMessage = '';
+    this.statusController.clear();
   }
 
   private setStatus(message: string, tone: 'success' | 'error' | 'warning') {
-    this.statusMessage = message;
-    this.statusTone = tone;
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-    }
-    this.statusTimer = setTimeout(() => {
-      this.statusMessage = '';
-      this.statusTimer = null;
-    }, 3000);
+    this.statusController.set(message, tone);
   }
 
   private setLoading(value: boolean) {

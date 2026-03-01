@@ -9,194 +9,23 @@
     </div>
   </div>
 
-  <div class="row mb-4" [formGroup]="getCheckboxFormGroup(1)">
+  <div
+    class="row mb-4"
+    *ngFor="let tier of tiers"
+    [formGroup]="getCheckboxFormGroup(tier)"
+  >
     <div class="col-12">
       <h3>
-        Tier 1 Pets
-        <span [class]="getCount(1) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(1) }}/10</span
+        Tier {{ tier }} Pets
+        <span [class]="getCount(tier) == 10 ? 'valid' : 'invalid'"
+          >{{ getCount(tier) }}/10</span
         >
       </h3>
       <div class="row">
         <div class="col-12 editor-grid">
           <div
             class="form-check"
-            *ngFor="let pet of getPets(1); trackBy: trackByPetName"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              [id]="pet"
-              [formControlName]="pet"
-            />
-            <label class="form-check-label pet-label" [for]="pet">
-              <img
-                class="pet-icon"
-                [src]="getPetIcon(pet)"
-                [alt]="pet + ' icon'"
-                (error)="handlePetIconError($event)"
-              />
-              {{ pet }}
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4" [formGroup]="getCheckboxFormGroup(2)">
-    <div class="col-12">
-      <h3>
-        Tier 2 Pets
-        <span [class]="getCount(2) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(2) }}/10</span
-        >
-      </h3>
-      <div class="row">
-        <div class="col-12 editor-grid">
-          <div
-            class="form-check"
-            *ngFor="let pet of getPets(2); trackBy: trackByPetName"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              [id]="pet"
-              [formControlName]="pet"
-            />
-            <label class="form-check-label pet-label" [for]="pet">
-              <img
-                class="pet-icon"
-                [src]="getPetIcon(pet)"
-                [alt]="pet + ' icon'"
-                (error)="handlePetIconError($event)"
-              />
-              {{ pet }}
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4" [formGroup]="getCheckboxFormGroup(3)">
-    <div class="col-12">
-      <h3>
-        Tier 3 Pets
-        <span [class]="getCount(3) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(3) }}/10</span
-        >
-      </h3>
-      <div class="row">
-        <div class="col-12 editor-grid">
-          <div
-            class="form-check"
-            *ngFor="let pet of getPets(3); trackBy: trackByPetName"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              [id]="pet"
-              [formControlName]="pet"
-            />
-            <label class="form-check-label pet-label" [for]="pet">
-              <img
-                class="pet-icon"
-                [src]="getPetIcon(pet)"
-                [alt]="pet + ' icon'"
-                (error)="handlePetIconError($event)"
-              />
-              {{ pet }}
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4" [formGroup]="getCheckboxFormGroup(4)">
-    <div class="col-12">
-      <h3>
-        Tier 4 Pets
-        <span [class]="getCount(4) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(4) }}/10</span
-        >
-      </h3>
-      <div class="row">
-        <div class="col-12 editor-grid">
-          <div
-            class="form-check"
-            *ngFor="let pet of getPets(4); trackBy: trackByPetName"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              [id]="pet"
-              [formControlName]="pet"
-            />
-            <label class="form-check-label pet-label" [for]="pet">
-              <img
-                class="pet-icon"
-                [src]="getPetIcon(pet)"
-                [alt]="pet + ' icon'"
-                (error)="handlePetIconError($event)"
-              />
-              {{ pet }}
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4" [formGroup]="getCheckboxFormGroup(5)">
-    <div class="col-12">
-      <h3>
-        Tier 5 Pets
-        <span [class]="getCount(5) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(5) }}/10</span
-        >
-      </h3>
-      <div class="row">
-        <div class="col-12 editor-grid">
-          <div
-            class="form-check"
-            *ngFor="let pet of getPets(5); trackBy: trackByPetName"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              [id]="pet"
-              [formControlName]="pet"
-            />
-            <label class="form-check-label pet-label" [for]="pet">
-              <img
-                class="pet-icon"
-                [src]="getPetIcon(pet)"
-                [alt]="pet + ' icon'"
-                (error)="handlePetIconError($event)"
-              />
-              {{ pet }}
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-4" [formGroup]="getCheckboxFormGroup(6)">
-    <div class="col-12">
-      <h3>
-        Tier 6 Pets
-        <span [class]="getCount(6) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(6) }}/10</span
-        >
-      </h3>
-      <div class="row">
-        <div class="col-12 editor-grid">
-          <div
-            class="form-check"
-            *ngFor="let pet of getPets(6); trackBy: trackByPetName"
+            *ngFor="let pet of getPets(tier); trackBy: trackByPetName"
           >
             <input
               class="form-check-input"

@@ -12,6 +12,11 @@ import {
   MapleSyrup,
   MapleSyrupAttack,
 } from 'app/domain/entities/catalog/equipment/golden/maple-syrup.class';
+import {
+  appendSnipeContextAndReductionMessages,
+  appendSnipeDefenseEquipmentMessage,
+  getStrawberrySparrowBlockAmount,
+} from './combat-snipe-utils';
 import { calculateDamage } from './pet-combat-damage';
 export { calculateDamage } from './pet-combat-damage';
 
@@ -209,9 +214,10 @@ export function attackPet(
       if (defenseEquipment.name === 'Coconut') {
         message += ` (${defenseEquipment.name} block)`;
       } else if (defenseEquipment.name === 'Strawberry') {
-        let sparrowLevel = pet.getSparrowLevel();
-        if (sparrowLevel > 0) {
-          power = sparrowLevel * 5;
+        const strawberryBlockAmount =
+          defenseEquipment.power ?? getStrawberrySparrowBlockAmount(pet);
+        if (strawberryBlockAmount > 0) {
+          power = strawberryBlockAmount;
           message += ` (Strawberry -${power} (Sparrow))`;
         }
       } else if (defenseEquipment instanceof Pepper) {
@@ -312,27 +318,11 @@ export function snipePet(
   ) {
     message += ` (${basePowerForLog}*${self.equipment.multiplier})`;
   }
-  if (defenseEquipment != null) {
-    pet.useDefenseEquipment(true);
-    const defensePower = defenseEquipment.power ?? 0;
-    let power = Math.abs(defensePower);
-    let sign = '-';
-    if (defensePower < 0) {
-      sign = '+';
-    }
-    if (defenseEquipment.name === 'Coconut') {
-      message += ` (${defenseEquipment.name} block)`;
-    } else if (defenseEquipment.name === 'Strawberry') {
-      let sparrowLevel = pet.getSparrowLevel();
-      if (sparrowLevel > 0) {
-        power = sparrowLevel * 5;
-        message += ` (Strawberry -${power} (Sparrow))`;
-      }
-    } else {
-      message += ` (${defenseEquipment.name} ${sign}${power})`;
-    }
-    message += defenseEquipment.multiplierMessage;
-  }
+  message = appendSnipeDefenseEquipmentMessage(message, pet, defenseEquipment, {
+    consumeDefenseEquipment: true,
+    includeMultiplierMessage: true,
+    coconutAsBlock: true,
+  });
   if (
     attackEquipment != null &&
     attackEquipment.equipmentClass == 'attack-snipe'
@@ -365,9 +355,12 @@ export function snipePet(
     message += ' (Mana)';
   }
 
-  message = appendIckyMessage(message, pet);
-  message = appendManticoreMessage(message, self, pet);
-  message = appendDamageReductionMessages(message, damageResp, false);
+  message = appendSnipeContextAndReductionMessages(
+    message,
+    pet,
+    self.getManticoreMult(),
+    damageResp,
+  );
 
   self.createLog({
     message: message,

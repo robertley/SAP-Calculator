@@ -223,42 +223,10 @@ export class ReplayCalcService {
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayTurnsResponse> {
-    const participationId = String(payload.Pid);
-    const indexUploadRequest$ = this.requestReplayIndex(
-      participationId,
-      timeoutMs,
+    return this.fetchWithReplayIndexFallback(
       payload,
-    ).pipe(shareReplay(1));
-    indexUploadRequest$.subscribe({
-      next: () => void 0,
-      error: () => void 0,
-    });
-
-    return this.fetchReplayTurnsByReplayId(participationId, timeoutMs).pipe(
-      catchError((directGetError) => {
-        if (directGetError?.status !== 404) {
-          return this.normalizeReplayFetchError(directGetError);
-        }
-
-        return indexUploadRequest$.pipe(
-          switchMap((indexResponse) => {
-            const replayId = indexResponse?.replayId;
-            if (!replayId) {
-              return throwError({
-                error: {
-                  error:
-                    'Replay indexing did not return a replayId.',
-                },
-                status: 400,
-              });
-            }
-            return this.fetchReplayTurnsByReplayId(String(replayId), timeoutMs);
-          }),
-          catchError((fallbackError) =>
-            this.normalizeReplayFetchError(fallbackError),
-          ),
-        );
-      }),
+      timeoutMs,
+      (replayId) => this.fetchReplayTurnsByReplayId(replayId, timeoutMs),
     );
   }
 
@@ -266,6 +234,18 @@ export class ReplayCalcService {
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
+    return this.fetchWithReplayIndexFallback(
+      payload,
+      timeoutMs,
+      (replayId) => this.fetchReplayBattleByReplayId(replayId, payload.T, timeoutMs),
+    );
+  }
+
+  private fetchWithReplayIndexFallback<TResponse>(
+    payload: ReplayBattleRequest,
+    timeoutMs: number,
+    fetchByReplayId: (replayId: string) => Observable<TResponse>,
+  ): Observable<TResponse> {
     const participationId = String(payload.Pid);
     const indexUploadRequest$ = this.requestReplayIndex(
       participationId,
@@ -277,13 +257,10 @@ export class ReplayCalcService {
       error: () => void 0,
     });
 
-    return this.fetchReplayBattleByReplayId(
-      participationId,
-      payload.T,
-      timeoutMs,
-    ).pipe(
+    return fetchByReplayId(participationId).pipe(
       catchError((directGetError) => {
-        if (directGetError?.status !== 404) {
+        const status = (directGetError as { status?: number } | null)?.status;
+        if (status !== 404) {
           return this.normalizeReplayFetchError(directGetError);
         }
 
@@ -299,11 +276,7 @@ export class ReplayCalcService {
                 status: 400,
               });
             }
-            return this.fetchReplayBattleByReplayId(
-              String(replayId),
-              payload.T,
-              timeoutMs,
-            );
+            return fetchByReplayId(String(replayId));
           }),
           catchError((fallbackError) =>
             this.normalizeReplayFetchError(fallbackError),
@@ -495,8 +468,10 @@ export class ReplayCalcService {
     }
   }
 
-  private mapReplayTurnsPet(pet: ReplayTurnsPet): Record<string, unknown> {
-    const abilities = (pet?.abilities ?? [])
+  private mapReplayAbilities(
+    abilities: ReplayTurnsAbility[] | null | undefined,
+  ): ReplayMappedAbility[] {
+    return (abilities ?? [])
       .map((ability) => {
         const abilityId = this.toReplayId(ability?.id);
         if (!abilityId) {
@@ -510,6 +485,10 @@ export class ReplayCalcService {
         };
       })
       .filter((ability): ability is ReplayMappedAbility => ability !== null);
+  }
+
+  private mapReplayTurnsPet(pet: ReplayTurnsPet): Record<string, unknown> {
+    const abilities = this.mapReplayAbilities(pet?.abilities);
 
     return {
       Enu: this.toReplayId(pet?.id),
@@ -537,20 +516,7 @@ export class ReplayCalcService {
   }
 
   private mapReplaySummaryPet(pet: ReplaySummaryPet): Record<string, unknown> {
-    const abilities = (pet?.abilities ?? [])
-      .map((ability) => {
-        const abilityId = this.toReplayId(ability?.id);
-        if (!abilityId) {
-          return null;
-        }
-        return {
-          Enu: abilityId,
-          Lvl: this.toFiniteNumber(ability?.level) ?? 1,
-          Grop: this.toFiniteNumber(ability?.group) ?? 0,
-          TrCo: this.toFiniteNumber(ability?.triggersConsumed) ?? 0,
-        };
-      })
-      .filter((ability): ability is ReplayMappedAbility => ability !== null);
+    const abilities = this.mapReplayAbilities(pet?.abilities);
 
     return {
       Enu: this.toReplayId(pet?.petName) || this.toReplayId(pet?.id),

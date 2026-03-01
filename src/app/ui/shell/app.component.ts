@@ -33,11 +33,15 @@ import { ExportCalculatorComponent } from 'app/ui/components/export-calculator/e
 import { AppShellControlsComponent } from './components/app-shell-controls.component';
 import { AppShellBattleResultsComponent } from './components/app-shell-battle-results.component';
 import {
-  DARK_BATTLE_BACKGROUNDS,
   LIGHT_BATTLE_BACKGROUNDS,
   LOG_FILTER_TABS,
 } from './view/app.ui.constants';
-import { loadTeamPreset, saveTeamPreset } from './state/app.component.teams';
+import {
+  AppTeamStateContext,
+  loadTeam as loadTeamImpl,
+  loadTeamPresets as loadTeamPresetsImpl,
+  saveTeam as saveTeamImpl,
+} from './state/app.component.team-state';
 import { InjectorService } from 'app/integrations/injector.service';
 import {
   BattleDiffScope,
@@ -84,11 +88,16 @@ import { applyCalculatorState as applyCalculatorStateImpl, clearCache as clearCa
 import { handlePetSlotClipboardShortcuts as handlePetSlotClipboardShortcutsImpl } from './view/app.component.pet-clipboard';
 import { handleGlobalKeyboardShortcuts as handleGlobalKeyboardShortcutsImpl } from './view/app.component.shortcuts';
 import {
-  getSoundVolume,
-  isSoundMuted,
-  setSoundMuted,
-  setSoundVolume,
-} from 'app/runtime/sound-preferences';
+  loadSoundPreference as loadSoundPreferenceImpl,
+  setSoundVolume as setSoundVolumeImpl,
+  toggleSoundMenu as toggleSoundMenuImpl,
+  toggleSoundMuted as toggleSoundMutedImpl,
+} from './state/app.component.sound';
+import {
+  loadThemePreference as loadThemePreferenceImpl,
+  toggleTheme as toggleThemeImpl,
+} from './state/app.component.theme';
+import { createStatusStateController } from './state/app.component.status';
 
 @Component({
   selector: 'app-root',
@@ -117,7 +126,6 @@ import {
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly app = this;
   readonly lapsusTypographyStage: 1 | 2 | 3 = 1;
-  private readonly uiThemeStorageKey = 'sapTheme';
 
   get lapsusTypographyStageClass(): string {
     return `lapsus-stage-${this.lapsusTypographyStage}`;
@@ -255,13 +263,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   undoState: unknown = null;
 
   private isLoadedFromUrl = false;
-  private statusTimer: ReturnType<typeof setTimeout> | null = null;
   fightAnimationTimer: ReturnType<typeof setTimeout> | null = null;
   private formAutoSaveSubscription: Subscription | null = null;
   private fightAnimationRenderFrameCache: FightAnimationRenderFrameModel | null =
     null;
   private fightAnimationRenderFrameCacheSource: FightAnimationFrame | null = null;
   private fightAnimationRenderFrameCacheIndex = -1;
+  private readonly statusStateController = createStatusStateController(this);
 
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
@@ -363,39 +371,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   readonly toggleTheme = () => {
-    this.applyTheme(this.theme === 'dark' ? 'light' : 'dark', true);
+    toggleThemeImpl(this);
   };
 
   readonly toggleSoundMuted = () => {
-    this.soundMuted = !this.soundMuted;
-    if (!this.soundMuted && this.soundVolume <= 0) {
-      this.soundVolume = 0.5;
-      setSoundVolume(this.soundVolume);
-    }
-    setSoundMuted(this.soundMuted);
-    this.cdr.markForCheck();
+    toggleSoundMutedImpl(this);
   };
 
   readonly toggleSoundMenu = () => {
-    this.soundMenuOpen = !this.soundMenuOpen;
-    this.cdr.markForCheck();
+    toggleSoundMenuImpl(this);
   };
 
   readonly setSoundVolume = (value: number | string) => {
-    const parsed = Number(value);
-    const normalized = Number.isFinite(parsed)
-      ? Math.min(1, Math.max(0, parsed))
-      : 1;
-    this.soundVolume = normalized;
-    setSoundVolume(normalized);
-    if (normalized <= 0 && !this.soundMuted) {
-      this.soundMuted = true;
-      setSoundMuted(true);
-    } else if (normalized > 0 && this.soundMuted) {
-      this.soundMuted = false;
-      setSoundMuted(false);
-    }
-    this.cdr.markForCheck();
+    setSoundVolumeImpl(this, value);
   };
 
   get autoSaveLabel(): string {
@@ -432,10 +420,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.formAutoSaveSubscription?.unsubscribe();
     this.clearFightAnimationTimer();
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-      this.statusTimer = null;
-    }
+    this.statusStateController.dispose();
   }
 
   readonly loadLocalStorage = () => loadLocalStorageImpl(this);
@@ -722,42 +707,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     return getLoseWidthImpl(this);
   }
 
-  saveTeam(side: 'player' | 'opponent') {
-    const normalizedTeamName = this.teamName?.trim() ?? '';
-    if (!normalizedTeamName) {
-      this.setStatus('Enter a team name before saving.', 'error');
-      return;
-    }
+  readonly saveTeam = (side: 'player' | 'opponent') =>
+    saveTeamImpl(this.getTeamStateContext(), side);
 
-    const result = saveTeamPreset({
-      side,
-      teamName: normalizedTeamName,
-      formGroup: this.formGroup,
-      savedTeams: this.savedTeams,
-      selectedTeamId: this.selectedTeamId,
-      teamPresetsService: this.teamPresetsService,
-    });
-    this.savedTeams = result.savedTeams;
-    this.selectedTeamId = result.selectedTeamId;
-    this.teamName = result.teamName;
-  }
+  readonly loadTeam = (side: 'player' | 'opponent') =>
+    loadTeamImpl(this.getTeamStateContext(), side);
 
-  loadTeam(side: 'player' | 'opponent') {
-    loadTeamPreset({
-      side,
-      selectedTeamId: this.selectedTeamId,
-      savedTeams: this.savedTeams,
-      formGroup: this.formGroup,
-      player: this.player,
-      opponent: this.opponent,
-      petService: this.petService,
-      equipmentService: this.equipmentService,
-      initPetForms: () => this.initPetForms(),
-    });
-  }
-
-  private loadTeamPresets() {
-    this.savedTeams = this.teamPresetsService.loadTeams();
+  private loadTeamPresets(): void {
+    loadTeamPresetsImpl(this.getTeamStateContext());
   }
 
   /**
@@ -865,59 +822,35 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setStatus(message: string, tone: 'success' | 'error' = 'success') {
-    this.statusMessage = message;
-    this.statusTone = tone;
-    this.cdr.markForCheck();
-    this.clearStatusTimer();
-    this.statusTimer = setTimeout(() => {
-      this.statusMessage = '';
-      this.statusTimer = null;
-      this.cdr.markForCheck();
-    }, 3000);
+    this.statusStateController.setStatus(message, tone);
   }
 
   clearStatus() {
-    this.clearStatusTimer();
-    this.statusMessage = '';
-    this.cdr.markForCheck();
-  }
-
-  private clearStatusTimer(): void {
-    if (!this.statusTimer) {
-      return;
-    }
-    clearTimeout(this.statusTimer);
-    this.statusTimer = null;
+    this.statusStateController.clearStatus();
   }
 
   private loadThemePreference(): void {
-    const savedTheme = window.localStorage.getItem(this.uiThemeStorageKey);
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      this.applyTheme(savedTheme, false);
-      return;
-    }
-    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)')
-      ?.matches;
-    this.applyTheme(prefersDark ? 'dark' : 'light', false);
+    loadThemePreferenceImpl(this);
   }
 
   private loadSoundPreference(): void {
-    this.soundMuted = isSoundMuted();
-    this.soundVolume = getSoundVolume();
+    loadSoundPreferenceImpl(this);
   }
 
-  private applyTheme(theme: 'light' | 'dark', persist: boolean): void {
-    this.theme = theme;
-    this.battleBackgrounds =
-      theme === 'dark'
-        ? [...DARK_BATTLE_BACKGROUNDS]
-        : [...LIGHT_BATTLE_BACKGROUNDS];
-    this.setRandomBackground();
-    document.documentElement.setAttribute('data-bs-theme', theme);
-    document.body.classList.toggle('theme-dark', theme === 'dark');
-    if (persist) {
-      window.localStorage.setItem(this.uiThemeStorageKey, theme);
-    }
-    this.cdr.markForCheck();
+  private getTeamStateContext(): AppTeamStateContext {
+    return {
+      teamName: this.teamName,
+      formGroup: this.formGroup,
+      savedTeams: this.savedTeams,
+      selectedTeamId: this.selectedTeamId,
+      teamPresetsService: this.teamPresetsService,
+      player: this.player,
+      opponent: this.opponent,
+      petService: this.petService,
+      equipmentService: this.equipmentService,
+      initPetForms: () => this.initPetForms(),
+      setStatus: (message: string, tone?: 'success' | 'error') =>
+        this.setStatus(message, tone),
+    };
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -15,6 +15,7 @@ import * as petJson from 'assets/data/pets.json';
 import { PACK_NAMES } from 'app/runtime/pack-names';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CustomPackFormComponent } from './custom-pack-form/custom-pack-form.component';
+import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 @Component({
   selector: 'app-custom-pack-editor',
@@ -23,7 +24,7 @@ import { CustomPackFormComponent } from './custom-pack-form/custom-pack-form.com
   templateUrl: './custom-pack-editor.component.html',
   styleUrls: ['./custom-pack-editor.component.scss'],
 })
-export class CustomPackEditorComponent implements OnInit {
+export class CustomPackEditorComponent implements OnInit, OnDestroy {
   @Input()
   formGroup: FormGroup;
   customPacks: FormArray;
@@ -40,7 +41,17 @@ export class CustomPackEditorComponent implements OnInit {
 
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
-  private statusTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly statusController = new TimedStatusController<
+    'success' | 'error'
+  >(
+    (message) => {
+      this.statusMessage = message;
+    },
+    (tone) => {
+      this.statusTone = tone;
+    },
+    4000,
+  );
 
   constructor(
     private petService: PetService,
@@ -52,6 +63,10 @@ export class CustomPackEditorComponent implements OnInit {
     this.buildPetPackMap();
     this.buildPetNameToTierMap();
     this.buildPetIdLookup();
+  }
+
+  ngOnDestroy(): void {
+    this.statusController.dispose();
   }
 
   buildPetPackMap() {
@@ -355,23 +370,11 @@ export class CustomPackEditorComponent implements OnInit {
   }
 
   private clearStatus() {
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-      this.statusTimer = null;
-    }
-    this.statusMessage = '';
+    this.statusController.clear();
   }
 
   private setStatus(message: string, tone: 'success' | 'error') {
-    this.statusMessage = message;
-    this.statusTone = tone;
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-    }
-    this.statusTimer = setTimeout(() => {
-      this.statusMessage = '';
-      this.statusTimer = null;
-    }, 4000);
+    this.statusController.set(message, tone);
   }
 }
 

@@ -14,10 +14,16 @@ import { ToyEventService } from '../ability/toy-event.service';
 import { RandomEventReason } from 'app/domain/interfaces/log.interface';
 import * as toysJson from 'assets/data/toys.json';
 import {
+  calculateIncomingDamageBeforeReductions,
+  prepareDefenseForIncomingDamage,
+} from 'app/domain/entities/combat/defense-damage-calculation';
+import {
   applyDamageReductions,
-  applyIckyMultiplier,
-  applyManticoreMultiplier,
 } from 'app/domain/entities/combat/damage-reduction';
+import {
+  appendSnipeContextAndReductionMessages,
+  appendSnipeDefenseEquipmentMessage,
+} from 'app/domain/entities/combat/combat-snipe-utils';
 import { getRandomFloat } from 'app/runtime/random';
 import { coerceLogService } from 'app/runtime/log-service-fallback';
 
@@ -163,51 +169,17 @@ export class ToyService {
     this.dealDamage(pet, damage, parent);
 
     let message = `${toyName} sniped ${pet.name} for ${damage}.`;
-    if (defenseEquipment != null) {
-      pet.useDefenseEquipment(true);
-      let power = Math.abs(defenseEquipment.power ?? 0);
-      let sign = '-';
-      if ((defenseEquipment.power ?? 0) < 0) {
-        sign = '+';
-      }
-      if (defenseEquipment.name === 'Strawberry') {
-        let sparrowLevel = pet.getSparrowLevel();
-        if (sparrowLevel > 0) {
-          power = sparrowLevel * 5;
-          message += ` (Strawberry -${power} (Sparrow))`;
-        }
-      } else {
-        message += ` (${defenseEquipment.name} ${sign}${power})`;
-      }
-      message += defenseEquipment.multiplierMessage ?? '';
-    }
-    if (pet.equipment?.name == 'Icky') {
-      message += 'x2 (Icky)';
-      if (pet.equipment.multiplier > 1) {
-        message += pet.equipment.multiplierMessage;
-      }
-    }
-    let manticoreMult = parent.getManticoreMult();
-    let manticoreAilments = ['Weak', 'Cold', 'Icky', 'Spooked'];
-    let hasAilment = manticoreAilments.includes(pet.equipment?.name);
-    if (manticoreMult.length > 0 && hasAilment) {
-      for (let mult of manticoreMult) {
-        message += ` x${mult + 1} (Manticore)`;
-      }
-    }
-
-    if (damageResp.nurikabe > 0) {
-      message += ` -${damageResp.nurikabe} (Nurikabe)`;
-    }
-    if (damageResp.fairyBallReduction > 0) {
-      message += ` -${damageResp.fairyBallReduction} (Fairy Ball)`;
-    }
-    if (damageResp.fanMusselReduction > 0) {
-      message += ` -${damageResp.fanMusselReduction} (Fan Mussel)`;
-    }
-    if (damageResp.ghostKittenReduction > 0) {
-      message += ` -${damageResp.ghostKittenReduction} (Ghost Kitten)`;
-    }
+    message = appendSnipeDefenseEquipmentMessage(message, pet, defenseEquipment, {
+      consumeDefenseEquipment: true,
+      includeMultiplierMessage: true,
+      coconutAsBlock: false,
+    });
+    message = appendSnipeContextAndReductionMessages(
+      message,
+      pet,
+      parent.getManticoreMult(),
+      damageResp,
+    );
     if (puma) {
       message += ` (Puma)`;
     }
@@ -232,67 +204,29 @@ export class ToyService {
     fanMusselReduction?: number;
     ghostKittenReduction?: number;
   } {
-    let defenseMultiplier = pet.equipment?.multiplier ?? 1;
-    const manticoreDefenseAilments = ['Cold', 'Weak', 'Spooked'];
-    const isGuavaDefense = pet.equipment?.name === 'Guava';
-    let defenseEquipment: Equipment | null =
-      pet.equipment?.equipmentClass == 'defense' ||
-        pet.equipment?.equipmentClass == 'shield' ||
-        pet.equipment?.equipmentClass == 'ailment-defense' ||
-        pet.equipment?.equipmentClass == 'shield-snipe'
-        ? pet.equipment
-        : null;
-    if (defenseEquipment == null && isGuavaDefense) {
-      defenseEquipment = pet.equipment;
-    }
-
-    if (defenseEquipment != null) {
-      if (defenseEquipment.name == 'Maple Syrup') {
-        defenseEquipment = null;
-      } else {
-        defenseMultiplier = applyManticoreMultiplier(
-          defenseMultiplier,
-          defenseEquipment.name,
-          manticoreMult,
-          manticoreDefenseAilments,
-        );
-        const basePower =
-          defenseEquipment.originalPower ?? defenseEquipment.power ?? 0;
-        defenseEquipment.power = basePower * defenseMultiplier;
-      }
-    }
-
-    let defenseAmt = defenseEquipment?.power ? defenseEquipment.power : 0;
-    let sparrowLevel = pet.getSparrowLevel();
-    if (pet.equipment?.name === 'Strawberry' && sparrowLevel > 0) {
-      defenseAmt += sparrowLevel * 5;
-    }
-
-    power = applyIckyMultiplier(power ?? 0, pet.equipment, manticoreMult);
-    let min =
-      defenseEquipment?.equipmentClass == 'shield' ||
-        defenseEquipment?.equipmentClass == 'shield-snipe'
-        ? 0
-        : 1;
-    //check garlic
-    if (defenseEquipment?.minimumDamage !== undefined) {
-      min = defenseEquipment.minimumDamage;
-    }
-    let damage: number;
-    const incomingPower = power ?? 0;
-    if (incomingPower <= min && defenseAmt > 0) {
-      damage = Math.max(incomingPower, 0);
-    } else {
-      damage = Math.max(min, incomingPower - defenseAmt);
-    }
-    const reductionResult = applyDamageReductions(pet, damage, {
+    const preparedDefense = prepareDefenseForIncomingDamage(
+      pet,
+      manticoreMult,
+      {
+        includeShieldSnipe: true,
+        nullifyMapleSyrupDefense: true,
+      },
+    );
+    const defenseEquipment = preparedDefense.defenseEquipment;
+    const damageBeforeReductions = calculateIncomingDamageBeforeReductions(
+      pet,
+      power ?? 0,
+      defenseEquipment,
+      manticoreMult,
+    );
+    const reductionResult = applyDamageReductions(pet, damageBeforeReductions, {
       includeGhostKitten: true,
       fairyMinimumOne: false,
       fairyRequiresPositiveDamage: true,
       nurikabeConsumesOnZeroHit: true,
       fanMusselConsumesOnZeroHit: true,
     });
-    damage = reductionResult.damage;
+    const damage = reductionResult.damage;
     const fairyBallReduction = reductionResult.fairyBallReduction;
     const nurikabe = reductionResult.nurikabe;
     const fanMusselReduction = reductionResult.fanMusselReduction;

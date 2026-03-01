@@ -6,6 +6,44 @@ import {
 } from './pet-selector.constants';
 import { PetSelectorPackFiltering } from './pet-selector-pack-filtering';
 
+type SlotIndex = 1 | 2 | 3;
+
+interface AbominationSwallowedSlotDescriptor {
+  index: SlotIndex;
+  nameField: string;
+  belugaField: string;
+  sarcasticField: string;
+  levelField: string;
+  timesHurtField: string;
+}
+
+interface ParrotCopyAbominationSlotDescriptor {
+  index: SlotIndex;
+  petField: string;
+  belugaField: string;
+  levelField: string;
+  timesHurtField: string;
+}
+
+const ABOMINATION_SWALLOWED_SLOT_DESCRIPTORS: ReadonlyArray<AbominationSwallowedSlotDescriptor> =
+  [1, 2, 3].map((index) => ({
+    index: index as SlotIndex,
+    nameField: `abominationSwallowedPet${index}`,
+    belugaField: `abominationSwallowedPet${index}BelugaSwallowedPet`,
+    sarcasticField: `abominationSwallowedPet${index}SarcasticFringeheadSwallowedPet`,
+    levelField: `abominationSwallowedPet${index}Level`,
+    timesHurtField: `abominationSwallowedPet${index}TimesHurt`,
+  }));
+
+const PARROT_COPY_ABOMINATION_SLOT_DESCRIPTORS: ReadonlyArray<ParrotCopyAbominationSlotDescriptor> =
+  [1, 2, 3].map((index) => ({
+    index: index as SlotIndex,
+    petField: `parrotCopyPetAbominationSwallowedPet${index}`,
+    belugaField: `parrotCopyPetAbominationSwallowedPet${index}BelugaSwallowedPet`,
+    levelField: `parrotCopyPetAbominationSwallowedPet${index}Level`,
+    timesHurtField: `parrotCopyPetAbominationSwallowedPet${index}TimesHurt`,
+  }));
+
 @Directive()
 export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
   protected substitutePet(_nameChange = false): void {}
@@ -94,79 +132,30 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     if (pet == null) {
       return;
     }
-    const pet1 = this.formGroup.get(
-      'parrotCopyPetAbominationSwallowedPet1',
-    )?.value;
-    const pet2 = this.formGroup.get(
-      'parrotCopyPetAbominationSwallowedPet2',
-    )?.value;
-    const pet3 = this.formGroup.get(
-      'parrotCopyPetAbominationSwallowedPet3',
-    )?.value;
-    const beluga1 =
-      this.formGroup.get(
-        'parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet',
-      )?.value ?? null;
-    const beluga2 =
-      this.formGroup.get(
-        'parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet',
-      )?.value ?? null;
-    const beluga3 =
-      this.formGroup.get(
-        'parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet',
-      )?.value ?? null;
-    const level1 = Number(
-      this.formGroup.get('parrotCopyPetAbominationSwallowedPet1Level')?.value ??
-      1,
-    );
-    const level2 = Number(
-      this.formGroup.get('parrotCopyPetAbominationSwallowedPet2Level')?.value ??
-      1,
-    );
-    const level3 = Number(
-      this.formGroup.get('parrotCopyPetAbominationSwallowedPet3Level')?.value ??
-      1,
-    );
 
-    pet.parrotCopyPetAbominationSwallowedPet1 = pet1 ?? null;
-    pet.parrotCopyPetAbominationSwallowedPet2 = pet2 ?? null;
-    pet.parrotCopyPetAbominationSwallowedPet3 = pet3 ?? null;
-    pet.parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet =
-      pet1 === 'Beluga Whale' ? beluga1 : null;
-    pet.parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet =
-      pet2 === 'Beluga Whale' ? beluga2 : null;
-    pet.parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet =
-      pet3 === 'Beluga Whale' ? beluga3 : null;
-    if (pet1 !== 'Beluga Whale') {
-      this.formGroup
-        .get('parrotCopyPetAbominationSwallowedPet1BelugaSwallowedPet')
-        ?.setValue(null, { emitEvent: false });
-    }
-    if (pet2 !== 'Beluga Whale') {
-      this.formGroup
-        .get('parrotCopyPetAbominationSwallowedPet2BelugaSwallowedPet')
-        ?.setValue(null, { emitEvent: false });
-    }
-    if (pet3 !== 'Beluga Whale') {
-      this.formGroup
-        .get('parrotCopyPetAbominationSwallowedPet3BelugaSwallowedPet')
-        ?.setValue(null, { emitEvent: false });
-    }
-    pet.parrotCopyPetAbominationSwallowedPet1Level = level1 || 1;
-    pet.parrotCopyPetAbominationSwallowedPet2Level = level2 || 1;
-    pet.parrotCopyPetAbominationSwallowedPet3Level = level3 || 1;
-    pet.parrotCopyPetAbominationSwallowedPet1TimesHurt =
-      this.getParrotAbominationTimesHurtValue(
-        'parrotCopyPetAbominationSwallowedPet1TimesHurt',
+    for (const slot of PARROT_COPY_ABOMINATION_SLOT_DESCRIPTORS) {
+      const petName = this.formGroup.get(slot.petField)?.value ?? null;
+      const beluga = this.formGroup.get(slot.belugaField)?.value ?? null;
+      const level = Number(this.formGroup.get(slot.levelField)?.value ?? 1);
+
+      this.setPetField(pet, slot.petField, petName);
+      this.setPetField(
+        pet,
+        slot.belugaField,
+        petName === 'Beluga Whale' ? beluga : null,
       );
-    pet.parrotCopyPetAbominationSwallowedPet2TimesHurt =
-      this.getParrotAbominationTimesHurtValue(
-        'parrotCopyPetAbominationSwallowedPet2TimesHurt',
+      if (petName !== 'Beluga Whale') {
+        this.formGroup.get(slot.belugaField)?.setValue(null, { emitEvent: false });
+      }
+
+      this.setPetField(pet, slot.levelField, level || 1);
+      this.setPetField(
+        pet,
+        slot.timesHurtField,
+        this.getParrotAbominationTimesHurtValue(slot.timesHurtField),
       );
-    pet.parrotCopyPetAbominationSwallowedPet3TimesHurt =
-      this.getParrotAbominationTimesHurtValue(
-        'parrotCopyPetAbominationSwallowedPet3TimesHurt',
-      );
+    }
+
     this.setParrotCopyPetAbominationParrotSettings(null);
   }
 
@@ -269,30 +258,19 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
     }
     const slots = this.normalizeAbominationSwallowedSlots(pet);
 
-    pet.abominationSwallowedPet1 = slots[0].name;
-    pet.abominationSwallowedPet2 = slots[1].name;
-    pet.abominationSwallowedPet3 = slots[2].name;
-    pet.abominationSwallowedPet1BelugaSwallowedPet = slots[0].beluga;
-    pet.abominationSwallowedPet2BelugaSwallowedPet = slots[1].beluga;
-    pet.abominationSwallowedPet3BelugaSwallowedPet = slots[2].beluga;
-    pet.abominationSwallowedPet1SarcasticFringeheadSwallowedPet =
-      slots[0].sarcastic;
-    pet.abominationSwallowedPet2SarcasticFringeheadSwallowedPet =
-      slots[1].sarcastic;
-    pet.abominationSwallowedPet3SarcasticFringeheadSwallowedPet =
-      slots[2].sarcastic;
-    pet.abominationSwallowedPet1Level = slots[0].level;
-    pet.abominationSwallowedPet2Level = slots[1].level;
-    pet.abominationSwallowedPet3Level = slots[2].level;
-    pet.abominationSwallowedPet1TimesHurt = this.getAbominationTimesHurtValue(
-      'abominationSwallowedPet1TimesHurt',
-    );
-    pet.abominationSwallowedPet2TimesHurt = this.getAbominationTimesHurtValue(
-      'abominationSwallowedPet2TimesHurt',
-    );
-    pet.abominationSwallowedPet3TimesHurt = this.getAbominationTimesHurtValue(
-      'abominationSwallowedPet3TimesHurt',
-    );
+    for (const slot of slots) {
+      const descriptor = ABOMINATION_SWALLOWED_SLOT_DESCRIPTORS[slot.index - 1];
+      this.setPetField(pet, descriptor.nameField, slot.name);
+      this.setPetField(pet, descriptor.belugaField, slot.beluga);
+      this.setPetField(pet, descriptor.sarcasticField, slot.sarcastic);
+      this.setPetField(pet, descriptor.levelField, slot.level);
+      this.setPetField(
+        pet,
+        descriptor.timesHurtField,
+        this.getAbominationTimesHurtValue(descriptor.timesHurtField),
+      );
+    }
+
     this.setAbominationParrotCopySettings(null);
     this.substitutePet(false);
   }
@@ -459,58 +437,22 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
   }
 
   private normalizeAbominationSwallowedSlots(pet: Pet): Array<{
-    index: 1 | 2 | 3;
+    index: SlotIndex;
     name: string | null;
     beluga: string | null;
     sarcastic: string | null;
     level: number;
   }> {
-    const slots: Array<{
-      index: 1 | 2 | 3;
-      name: string | null;
-      beluga: string | null;
-      sarcastic: string | null;
-      level: number;
-    }> = [
-      {
-        index: 1,
-        name: this.formGroup.get('abominationSwallowedPet1')?.value ?? null,
-        beluga:
-          this.formGroup.get('abominationSwallowedPet1BelugaSwallowedPet')
-            ?.value ?? null,
-        sarcastic:
-          this.formGroup.get(
-            'abominationSwallowedPet1SarcasticFringeheadSwallowedPet',
-          )?.value ?? null,
-        level: Number(this.formGroup.get('abominationSwallowedPet1Level')?.value ?? 1) || 1,
-      },
-      {
-        index: 2,
-        name: this.formGroup.get('abominationSwallowedPet2')?.value ?? null,
-        beluga:
-          this.formGroup.get('abominationSwallowedPet2BelugaSwallowedPet')
-            ?.value ?? null,
-        sarcastic:
-          this.formGroup.get(
-            'abominationSwallowedPet2SarcasticFringeheadSwallowedPet',
-          )?.value ?? null,
-        level: Number(this.formGroup.get('abominationSwallowedPet2Level')?.value ?? 1) || 1,
-      },
-      {
-        index: 3,
-        name: this.formGroup.get('abominationSwallowedPet3')?.value ?? null,
-        beluga:
-          this.formGroup.get('abominationSwallowedPet3BelugaSwallowedPet')
-            ?.value ?? null,
-        sarcastic:
-          this.formGroup.get(
-            'abominationSwallowedPet3SarcasticFringeheadSwallowedPet',
-          )?.value ?? null,
-        level: Number(this.formGroup.get('abominationSwallowedPet3Level')?.value ?? 1) || 1,
-      },
-    ];
+    const slots = ABOMINATION_SWALLOWED_SLOT_DESCRIPTORS.map((descriptor) => ({
+      index: descriptor.index,
+      name: this.formGroup.get(descriptor.nameField)?.value ?? null,
+      beluga: this.formGroup.get(descriptor.belugaField)?.value ?? null,
+      sarcastic: this.formGroup.get(descriptor.sarcasticField)?.value ?? null,
+      level: Number(this.formGroup.get(descriptor.levelField)?.value ?? 1) || 1,
+    }));
 
     for (const slot of slots) {
+      const descriptor = ABOMINATION_SWALLOWED_SLOT_DESCRIPTORS[slot.index - 1];
       const normalizedName =
         typeof slot.name === 'string' && slot.name.trim().length > 0
           ? slot.name
@@ -520,13 +462,9 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
       if (!normalizedName) {
         slot.beluga = null;
         slot.sarcastic = null;
+        this.formGroup.get(descriptor.belugaField)?.setValue(null, { emitEvent: false });
         this.formGroup
-          .get(`abominationSwallowedPet${slot.index}BelugaSwallowedPet`)
-          ?.setValue(null, { emitEvent: false });
-        this.formGroup
-          .get(
-            `abominationSwallowedPet${slot.index}SarcasticFringeheadSwallowedPet`,
-          )
+          .get(descriptor.sarcasticField)
           ?.setValue(null, { emitEvent: false });
         this.clearAbominationParrotCopySettings(pet, slot.index);
         continue;
@@ -534,16 +472,12 @@ export class PetSelectorSwallowingAbomination extends PetSelectorPackFiltering {
 
       if (normalizedName !== 'Beluga Whale') {
         slot.beluga = null;
-        this.formGroup
-          .get(`abominationSwallowedPet${slot.index}BelugaSwallowedPet`)
-          ?.setValue(null, { emitEvent: false });
+        this.formGroup.get(descriptor.belugaField)?.setValue(null, { emitEvent: false });
       }
       if (normalizedName !== 'Sarcastic Fringehead') {
         slot.sarcastic = null;
         this.formGroup
-          .get(
-            `abominationSwallowedPet${slot.index}SarcasticFringeheadSwallowedPet`,
-          )
+          .get(descriptor.sarcasticField)
           ?.setValue(null, { emitEvent: false });
       }
       if (normalizedName !== 'Parrot') {

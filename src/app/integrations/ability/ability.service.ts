@@ -19,6 +19,7 @@ import { coerceLogService } from 'app/runtime/log-service-fallback';
 export class AbilityService extends AbilityEventTriggers {
   declare public gameApi: GameAPI;
   declare protected lastLoggedTrigger?: AbilityTrigger;
+  private nonPhaseExecutionLock: Set<string> | null = null;
 
   constructor(
     protected gameService: GameService,
@@ -178,7 +179,7 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeStartBattleEvents() {
-    this.processPhaseWithInterleaving(new Set(['StartBattle']));
+    this.processPhaseWithInterleaving(new Set(['StartBattle']), false, true);
   }
 
   // Before Attack
@@ -187,6 +188,9 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeBeforeAttackEvents() {
+    if (this.nonPhaseExecutionLock) {
+      return;
+    }
     const beforeAttackTriggers = new Set([
       'BeforeFriendlyAttack',
       'BeforeThisAttacks',
@@ -207,6 +211,9 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeBeforeAttackTriggerOnly() {
+    if (this.nonPhaseExecutionLock) {
+      return;
+    }
     const beforeAttackTriggers = new Set([
       'BeforeFriendlyAttack',
       'BeforeThisAttacks',
@@ -227,6 +234,9 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeAfterAttackEvents() {
+    if (this.nonPhaseExecutionLock) {
+      return;
+    }
     const afterAttackTriggers = new Set([
       'FriendlyAttacked',
       'FriendAttacked',
@@ -327,19 +337,48 @@ export class AbilityService extends AbilityEventTriggers {
     return event ?? null;
   }
 
-  private processPhaseWithInterleaving(allowedTriggers: Set<string>) {
-    while (true) {
-      const event = this.takeNextPhaseEvent(allowedTriggers);
-      if (!event) {
-        break;
-      }
-      this.logTriggerHeader(event);
-      this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
+  private processPhaseWithInterleaving(
+    allowedTriggers: Set<string>,
+    interleaveNonPhaseEvents: boolean = true,
+    lockNonPhaseExecution: boolean = false,
+  ) {
+    const executeNonPhaseEvents = () => {
       this.abilityQueueService.processQueue(this.gameService.gameApi, {
         filter: (evt) => !allowedTriggers.has(evt.abilityType as string),
         onExecute: (evt) => this.logTriggerHeader(evt),
       });
+    };
+
+    const runPhaseEvents = () => {
+      while (true) {
+        const event = this.takeNextPhaseEvent(allowedTriggers);
+        if (!event) {
+          break;
+        }
+        this.logTriggerHeader(event);
+        this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
+        if (interleaveNonPhaseEvents) {
+          executeNonPhaseEvents();
+        }
+      }
+    };
+
+    const previousNonPhaseLock = this.nonPhaseExecutionLock;
+    if (lockNonPhaseExecution) {
+      this.nonPhaseExecutionLock = allowedTriggers;
     }
+    try {
+      runPhaseEvents();
+    } finally {
+      if (lockNonPhaseExecution) {
+        this.nonPhaseExecutionLock = previousNonPhaseLock;
+      }
+    }
+
+    if (!interleaveNonPhaseEvents) {
+      executeNonPhaseEvents();
+    }
+
     this.lastLoggedTrigger = undefined;
   }
 

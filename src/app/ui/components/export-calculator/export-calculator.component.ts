@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
@@ -6,6 +6,7 @@ import {
   ExportPayloadFormat,
   buildExportPayload,
 } from 'app/ui/shell/state/app.component.share';
+import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 @Component({
   selector: 'app-export-calculator',
@@ -14,18 +15,31 @@ import {
   templateUrl: './export-calculator.component.html',
   styleUrls: ['./export-calculator.component.scss'],
 })
-export class ExportCalculatorComponent implements OnInit {
+export class ExportCalculatorComponent implements OnInit, OnDestroy {
   @Input()
   formGroup: FormGroup;
 
   exportFormat: ExportPayloadFormat = 'compressed';
   statusMessage = '';
   statusTone: 'success' | 'error' = 'success';
-  private statusTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly statusController = new TimedStatusController<
+    'success' | 'error'
+  >(
+    (message) => {
+      this.statusMessage = message;
+    },
+    (tone) => {
+      this.statusTone = tone;
+    },
+  );
 
   constructor(private localStorageService: LocalStorageService) {}
 
   ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.statusController.dispose();
+  }
 
   get isLegacyJsonExport(): boolean {
     return this.exportFormat === 'legacyJson';
@@ -74,23 +88,11 @@ export class ExportCalculatorComponent implements OnInit {
   }
 
   private clearStatus() {
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-      this.statusTimer = null;
-    }
-    this.statusMessage = '';
+    this.statusController.clear();
   }
 
   private setStatus(message: string, tone: 'success' | 'error') {
-    this.statusMessage = message;
-    this.statusTone = tone;
-    if (this.statusTimer) {
-      clearTimeout(this.statusTimer);
-    }
-    this.statusTimer = setTimeout(() => {
-      this.statusMessage = '';
-      this.statusTimer = null;
-    }, 3000);
+    this.statusController.set(message, tone);
   }
 }
 

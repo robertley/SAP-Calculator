@@ -12,9 +12,12 @@ import {
 } from 'app/domain/entities/catalog/equipment/golden/honeydew-melon.class';
 import {
   applyDamageReductions,
-  applyIckyMultiplier,
   applyManticoreMultiplier,
 } from './damage-reduction';
+import {
+  calculateIncomingDamageBeforeReductions,
+  prepareDefenseForIncomingDamage,
+} from './defense-damage-calculation';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 
@@ -38,43 +41,14 @@ export function calculateDamage(
   snipe = false,
 ): CombatDamageResponse {
   let attackMultiplier = self.equipment?.multiplier ?? 1;
-  let defenseMultiplier = pet.equipment?.multiplier ?? 1;
-
-  const manticoreDefenseAilments = ['Cold', 'Weak', 'Spooked'];
+  let defenseMultiplier: number;
   const manticoreAttackAilments = ['Inked'];
-
-  let defenseEquipment: Equipment | null =
-    pet.equipment?.equipmentClass == 'defense' ||
-    pet.equipment?.equipmentClass == 'shield' ||
-    pet.equipment?.equipmentClass == 'ailment-defense' ||
-    (snipe && pet.equipment?.equipmentClass == 'shield-snipe')
-      ? pet.equipment
-      : null;
-
-  if (defenseEquipment != null) {
-    if (defenseEquipment.name === 'Strawberry') {
-      const sparrowLevel = pet.getSparrowLevel();
-      if (
-        sparrowLevel <= 0 ||
-        (defenseEquipment.uses != null && defenseEquipment.uses <= 0)
-      ) {
-        defenseEquipment = null;
-      } else {
-        defenseEquipment.power = sparrowLevel * 5;
-      }
-    } else {
-      const defenseEquipName = defenseEquipment?.name ?? '';
-      defenseMultiplier = applyManticoreMultiplier(
-        defenseMultiplier,
-        defenseEquipName,
-        manticoreMult,
-        manticoreDefenseAilments,
-      );
-      const basePower =
-        defenseEquipment.originalPower ?? defenseEquipment.power ?? 0;
-      defenseEquipment.power = basePower * defenseMultiplier;
-    }
-  }
+  const preparedDefense = prepareDefenseForIncomingDamage(pet, manticoreMult, {
+    includeShieldSnipe: snipe,
+    nullifyMapleSyrupDefense: snipe,
+  });
+  let defenseEquipment = preparedDefense.defenseEquipment;
+  defenseMultiplier = preparedDefense.defenseMultiplier;
 
   let attackEquipment: Equipment | null;
   let attackAmt: number;
@@ -83,9 +57,6 @@ export function calculateDamage(
       self.equipment?.equipmentClass == 'attack-snipe' ? self.equipment : null;
     const basePower = power ?? 0;
     attackAmt = basePower + (attackEquipment?.power ?? 0);
-    if (defenseEquipment instanceof MapleSyrup) {
-      defenseEquipment = null;
-    }
   } else {
     if (self.equipment instanceof HoneydewMelon) {
       attackEquipment = new HoneydewMelonAttack();
@@ -121,13 +92,6 @@ export function calculateDamage(
     const equipmentBonus = attackEquipment?.power ?? 0;
     attackAmt = baseAttack + equipmentBonus;
   }
-  let defenseAmt = defenseEquipment?.power ?? 0;
-
-  let sparrowLevel = pet.getSparrowLevel();
-  if (pet.equipment?.name === 'Strawberry' && sparrowLevel > 0) {
-    defenseAmt += sparrowLevel * 5;
-  }
-
   let mapleSyrupReduction = 0;
   if (pet.equipment instanceof MapleSyrup && pet.equipment.uses > 0 && !snipe) {
     attackAmt = Math.floor(attackAmt * Math.pow(0.5, defenseMultiplier));
@@ -164,22 +128,12 @@ export function calculateDamage(
     attackAmt = Math.max(15, attackAmt);
   }
 
-  attackAmt = applyIckyMultiplier(attackAmt, pet.equipment, manticoreMult);
-  let min =
-    defenseEquipment?.equipmentClass == 'shield' ||
-    defenseEquipment?.equipmentClass == 'shield-snipe'
-      ? 0
-      : 1;
-  if (defenseEquipment?.minimumDamage !== undefined) {
-    min = defenseEquipment.minimumDamage;
-  }
-
-  let damage: number;
-  if (attackAmt <= min && defenseAmt > 0) {
-    damage = Math.max(attackAmt, 0);
-  } else {
-    damage = Math.max(min, attackAmt - defenseAmt);
-  }
+  let damage = calculateIncomingDamageBeforeReductions(
+    pet,
+    attackAmt,
+    defenseEquipment,
+    manticoreMult,
+  );
 
   if (self.equipment?.name === 'Inked' && damage > 0) {
     damage = Math.max(0, damage - 3);

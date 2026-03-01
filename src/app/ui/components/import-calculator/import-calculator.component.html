@@ -1,21 +1,25 @@
 <div class="form-group" [formGroup]="formGroup">
-  <div class="text-muted mb-2">
-    Paste calculator export code (compressed), replay export code, calculator
-    JSON, or replay JSON.
-    Replay inputs can include Actions, a single battle JSON, or a Pid lookup.
-  </div>
-  <div class="text-muted mb-2">
-    Example Pid: <code>{{ pidExample }}</code>
+  <label for="calcCode" class="form-label fw-semibold">Import Input</label>
+  <div class="text-muted small mb-1">Supported formats:</div>
+  <ul class="text-muted small ps-3 mb-2">
+    <li>Compressed calculator export code</li>
+    <li>Replay export code</li>
+    <li>Calculator JSON</li>
+    <li>Replay JSON (Actions, single battle JSON, or PID lookup)</li>
+  </ul>
+  <div class="text-muted small mb-2">
+    PID example: <code>{{ pidExample }}</code>
   </div>
   <textarea
     class="form-control mb-2 calc-textarea"
     id="calcCode"
     rows="8"
     formControlName="calcCode"
+    placeholder="Paste calculator or replay payload here..."
   ></textarea>
   <div class="d-flex align-items-end gap-3 flex-wrap mb-2">
     <div>
-      <label for="turnNumber" class="form-label">Turn (1-based)</label>
+      <label for="turnNumber" class="form-label">Battle Turn</label>
       <input
         id="turnNumber"
         type="number"
@@ -23,9 +27,10 @@
         min="1"
         formControlName="turn"
       />
+      <div class="text-muted small mt-1">1-based turn index</div>
     </div>
     <div>
-      <label for="oddsSimulations" class="form-label">Odds Simulations</label>
+      <label for="oddsSimulations" class="form-label">Image Simulations</label>
       <input
         id="oddsSimulations"
         type="number"
@@ -33,6 +38,9 @@
         min="1"
         formControlName="oddsSimulations"
       />
+      <div class="text-muted small mt-1">
+        Used for both odds and positioning image builds (positioning max 50)
+      </div>
     </div>
     <div>
       <label for="positioningSide" class="form-label">Positioning Side</label>
@@ -44,16 +52,19 @@
         <option value="player">Player</option>
         <option value="opponent">Opponent</option>
       </select>
+      <div class="text-muted small mt-1">Used for positioning image builds</div>
     </div>
+  </div>
+  <div class="d-flex align-items-end gap-2 flex-wrap mb-2">
     <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
-      {{ loading ? "Fetching..." : "Import" }}
+      {{ loading ? "Fetching..." : "Import Data" }}
     </button>
     <button
       class="btn btn-outline-primary"
       (click)="buildOddsImage()"
       [disabled]="oddsImageLoading"
     >
-      {{ oddsImageLoading ? "Building Preview..." : "Build !odds Preview" }}
+      {{ oddsImageLoading ? "Building Odds Image..." : "Build Odds Image" }}
     </button>
     <button
       class="btn btn-outline-success"
