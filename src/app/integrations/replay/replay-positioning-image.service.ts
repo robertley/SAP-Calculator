@@ -378,6 +378,8 @@ export class ReplayPositioningImageService {
           );
           onProgress?.(percent);
         },
+        projectEndTurnLineup: ({ baseConfig: config, side, lineup }) =>
+          this.projectLocalEndTurnLineup(config, side, lineup),
         simulateBatch: (config) => this.runLocalSimulation(config),
       }),
     );
@@ -477,6 +479,7 @@ export class ReplayPositioningImageService {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
           batchSize: Math.max(10, Math.min(25, simulationCount)),
+          projectEndTurnLineup: true,
         },
       });
     });
@@ -836,6 +839,39 @@ export class ReplayPositioningImageService {
     ctx.textAlign = 'left';
   }
 
+  private projectLocalEndTurnLineup(
+    config: SimulationConfig,
+    side: 'player' | 'opponent',
+    lineup: (PetConfig | null)[],
+  ): (PetConfig | null)[] {
+    const previousGameApi = this.gameService.gameApi
+      ? ({ ...this.gameService.gameApi } as GameAPI)
+      : null;
+    const wasEnabled = this.logService.isEnabled();
+    const wasDeferDecorations = this.logService.isDeferDecorations();
+    const wasShowTriggerNames = this.logService.isShowTriggerNamesInLogs();
+
+    const runner = new SimulationRunner(
+      this.logService,
+      this.gameService,
+      this.abilityService,
+      this.petService,
+      this.equipmentService,
+      this.toyService,
+    );
+
+    try {
+      return runner.projectLineupAfterEndTurn(config, side, lineup);
+    } finally {
+      if (previousGameApi) {
+        this.gameService.gameApi = previousGameApi;
+      }
+      this.logService.setEnabled(wasEnabled);
+      this.logService.setDeferDecorations(wasDeferDecorations);
+      this.logService.setShowTriggerNamesInLogs(wasShowTriggerNames);
+    }
+  }
+
   private runLocalSimulation(config: SimulationConfig): SimulationResult {
     const previousGameApi = this.gameService.gameApi
       ? ({ ...this.gameService.gameApi } as GameAPI)
@@ -1183,3 +1219,6 @@ export class ReplayPositioningImageService {
     return 3 + Math.min(95, done + inTurn);
   }
 }
+
+
+

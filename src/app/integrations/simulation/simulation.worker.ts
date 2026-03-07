@@ -37,6 +37,7 @@ type OptimizePositioningStartMessage = {
     maxSimulationsPerPermutation?: number;
     confidenceZ?: number;
     minSamplesBeforeElimination?: number;
+    projectEndTurnLineup?: boolean;
   };
 };
 
@@ -208,8 +209,11 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
         onProgress: (progress) => {
           postMessage({ type: 'positioning-progress', progress });
         },
-        projectEndTurnLineup: ({ lineup }) =>
-          runner.projectLineupAfterEndTurn(config, options.side, lineup),
+        projectEndTurnLineup:
+          options.projectEndTurnLineup === true
+            ? ({ lineup }) =>
+                runner.projectLineupAfterEndTurn(config, options.side, lineup)
+            : undefined,
         simulateBatch: (batchConfig) =>
           runner.run(batchConfig, {
             shouldAbort: () => cancelRequested,
@@ -259,4 +263,5 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
     });
   }
 });
+
 

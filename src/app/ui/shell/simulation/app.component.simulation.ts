@@ -794,6 +794,7 @@ export function optimizePositioning(
       batchSize: Math.min(25, maxSimulationsPerPermutation),
       minSamplesBeforeElimination: Math.min(50, maxSimulationsPerPermutation),
       confidenceZ: 1.96,
+      projectEndTurnLineup: true,
     },
   );
 
@@ -818,6 +819,10 @@ function applyOptimizedLineup(
   }
 
   reorderFormArrayByLineup(formArray, result.bestPermutation.lineup);
+  applyProjectedLineupToFormArray(
+    formArray,
+    result.bestPermutation.simulationLineup,
+  );
   ctx.afterPositioningApplied?.();
 }
 
@@ -843,6 +848,57 @@ function reorderFormArrayByLineup(
     formArray.setControl(targetIndex, controls[sourceIndex]);
   }
   formArray.updateValueAndValidity();
+}
+
+function applyProjectedLineupToFormArray(
+  formArray: FormArray,
+  lineup: (PetConfig | null)[],
+): void {
+  for (let index = 0; index < formArray.length; index += 1) {
+    const control = formArray.at(index) as FormGroup | null;
+    if (!control) {
+      continue;
+    }
+    control.patchValue(
+      buildPetFormPatch(control.value as Record<string, unknown>, lineup[index] ?? null),
+      { emitEvent: false },
+    );
+  }
+  formArray.updateValueAndValidity({ emitEvent: false });
+}
+
+function buildPetFormPatch(
+  currentValue: Record<string, unknown>,
+  pet: PetConfig | null,
+): Record<string, unknown> {
+  if (!pet || !pet.name) {
+    return currentValue;
+  }
+
+  const rawEquipment = pet.equipment;
+  const equipmentName =
+    rawEquipment && typeof rawEquipment === 'object'
+      ? typeof (rawEquipment as { name?: unknown }).name === 'string'
+        ? (rawEquipment as { name: string }).name
+        : null
+      : typeof rawEquipment === 'string'
+        ? rawEquipment
+        : null;
+  const equipmentUses =
+    typeof pet.equipmentUses === 'number'
+      ? pet.equipmentUses
+      : rawEquipment && typeof rawEquipment === 'object'
+        ? typeof (rawEquipment as { uses?: unknown }).uses === 'number'
+          ? ((rawEquipment as { uses?: unknown }).uses as number | null | undefined) ?? null
+          : null
+        : null;
+
+  return {
+    ...currentValue,
+    ...pet,
+    equipment: equipmentName,
+    equipmentUses,
+  };
 }
 
 function findNextMatchingSourceIndex(
@@ -1285,3 +1341,6 @@ export {
   parseLogMessage,
   summarizeBattleForDiff,
 } from './app.component.simulation-log';
+
+
+

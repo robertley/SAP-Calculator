@@ -26,6 +26,7 @@ export interface PositioningOptimizerProgress {
 export interface PositioningPermutationStats {
   order: number[];
   lineup: (PetConfig | null)[];
+  simulationLineup: (PetConfig | null)[];
   simulations: number;
   wins: number;
   draws: number;
@@ -299,6 +300,7 @@ function cloneCandidateStats(candidate: CandidateState): PositioningPermutationS
   return {
     order: [...candidate.order],
     lineup: [...candidate.lineup],
+    simulationLineup: [...candidate.simulationLineup],
     simulations: candidate.simulations,
     wins: candidate.wins,
     draws: candidate.draws,
@@ -613,3 +615,4 @@ function valuesAreEquivalent(left: unknown, right: unknown): boolean {
 
   return true;
 }
+

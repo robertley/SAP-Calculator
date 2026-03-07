@@ -117,6 +117,7 @@ export class SimulationService {
       maxSimulationsPerPermutation?: number;
       confidenceZ?: number;
       minSamplesBeforeElimination?: number;
+      projectEndTurnLineup?: boolean;
     },
     configOverrides?: Partial<SimulationConfig>,
   ): Worker | null {
@@ -223,6 +224,7 @@ export class SimulationService {
       maxSimulationsPerPermutation?: number;
       confidenceZ?: number;
       minSamplesBeforeElimination?: number;
+      projectEndTurnLineup?: boolean;
     },
     configOverrides?: Partial<SimulationConfig>,
   ): PositioningOptimizationResult {
@@ -250,8 +252,11 @@ export class SimulationService {
         confidenceZ: options.confidenceZ,
         minSamplesBeforeElimination: options.minSamplesBeforeElimination,
       },
-      projectEndTurnLineup: ({ lineup }) =>
-        runner.projectLineupAfterEndTurn(config, options.side, lineup),
+      projectEndTurnLineup:
+        options.projectEndTurnLineup === true
+          ? ({ lineup }) =>
+              runner.projectLineupAfterEndTurn(config, options.side, lineup)
+          : undefined,
       simulateBatch: (batchConfig) => runner.run(batchConfig),
     });
 
@@ -447,5 +452,6 @@ export class SimulationService {
   }
 
 }
+
 
 

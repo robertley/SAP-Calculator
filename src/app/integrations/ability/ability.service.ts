@@ -155,7 +155,11 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeBeforeStartOfBattleEvents() {
-    this.processPhaseWithInterleaving(new Set(['BeforeStartBattle']));
+    this.processPhaseWithInterleaving(
+      new Set(['BeforeStartBattle']),
+      false,
+      true,
+    );
   }
 
   // Counter
@@ -384,3 +388,4 @@ export class AbilityService extends AbilityEventTriggers {
 
 
 }
+
