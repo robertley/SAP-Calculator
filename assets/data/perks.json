@@ -132,7 +132,14 @@
     "NameId": "Churros"
   },
   {
-    "Ability": "Before attack: Transform into an exact copy of a random enemy, once.",
+    "Ability": "End turn: Gain +7 health until next turn.",
+    "Positive": true,
+    "Id": "124",
+    "Name": "Bread",
+    "NameId": "Bread"
+  },
+  {
+    "Ability": "Before attack: Transform into a random summon pet.",
     "Positive": true,
     "Id": "94",
     "Name": "Cocoa Bean",

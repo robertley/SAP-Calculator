@@ -1709,15 +1709,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Break: Summon one 6/6 friend that sells for 3 gold."
+        "About": "Break: Summon one 7/7 Gold Fish that sells for 4 gold."
       },
       {
         "Level": 2,
-        "About": "Break: Summon one 12/12 friend that sells for 6 gold."
+        "About": "Break: Summon one 14/14 Gold Fish that sells for 8 gold."
       },
       {
         "Level": 3,
-        "About": "Break: Summon one 18/18 friend that sells for 9 gold."
+        "About": "Break: Summon one 21/21 Gold Fish that sells for 12 gold."
       }
     ],
     "Type": 1,
