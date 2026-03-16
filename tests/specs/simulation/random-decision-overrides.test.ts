@@ -253,7 +253,7 @@ describe('random decision overrides', () => {
     expect(leafGeckoMessage).toContain(')');
   });
 
-  it('captures and applies Cocoa Bean transform overrides and flags random logs', () => {
+  it('captures and applies Cocoa Bean summon transform overrides and flags random logs', () => {
     const baseConfig: SimulationConfig = {
       playerPack: 'Danger',
       opponentPack: 'Danger',
@@ -310,7 +310,7 @@ describe('random decision overrides', () => {
     );
     expect(cocoaLog?.randomEvent).toBe(true);
 
-    const forcedOption = decision!.options.find((option) => option.id.includes(':Fish')) ?? decision!.options[0];
+    const forcedOption = decision!.options[0];
     const forcedResult = runSimulation({
       ...baseConfig,
       randomDecisionOverrides: [
@@ -330,7 +330,7 @@ describe('random decision overrides', () => {
     expect(forcedDecision?.forced).toBe(true);
   });
 
-  it('captures Cocoa Bean transform random event in the user shared SAPC1 case', () => {
+  it('captures Cocoa Bean summon transform random event in the user shared SAPC1 case', () => {
     const config: SimulationConfig = {
       playerPack: 'Danger',
       opponentPack: 'Unicorn',

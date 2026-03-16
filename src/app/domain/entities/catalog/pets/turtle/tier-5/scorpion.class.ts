@@ -12,7 +12,7 @@ export class Scorpion extends Pet {
   tier = 5;
   pack: Pack = 'Turtle';
   attack = 1;
-  health = 1;
+  health = 3;
 
   initAbilities(): void {
     this.addAbility(new ScorpionAbility(this, this.logService));

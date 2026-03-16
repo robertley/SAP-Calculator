@@ -11,7 +11,7 @@ export class Pigeon extends Pet {
   tier = 1;
   pack: Pack = 'Turtle';
   attack = 3;
-  health = 1;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new PigeonAbility(this, this.logService));
     super.initAbilities();

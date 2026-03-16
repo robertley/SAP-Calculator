@@ -177,4 +177,31 @@ describe('positioning optimizer end-turn remap', () => {
 
     expect(result.bestPermutation.lineup[3]?.name).toBe('Snail');
   });
+
+  it('keeps existing buff recipients when keepSameBuffTargets is enabled', () => {
+    const config = baseConfig([
+      { name: 'Fish', attack: 7, health: 9, exp: 1, equipment: null },
+      { name: 'Monkey', attack: 1, health: 2, exp: 1, equipment: null },
+      { name: 'Ant', attack: 4, health: 4, exp: 1, equipment: null },
+    ]);
+
+    const result = runPositioningOptimization({
+      baseConfig: config,
+      options: {
+        side: 'player',
+        maxSimulationsPerPermutation: 20,
+        batchSize: 20,
+        minSamplesBeforeElimination: 20,
+        keepSameBuffTargets: true,
+      },
+      projectEndTurnLineup: ({ baseConfig: cfg, side, lineup }) =>
+        projectFakeEndTurnLineup(cfg, side, lineup),
+      simulateBatch: (batchConfig) => scoreFromFrontAttack(batchConfig),
+    });
+
+    expect(result.bestPermutation.lineup[0]?.name).toBe('Fish');
+    expect(result.bestPermutation.simulationLineup[0]?.name).toBe('Fish');
+    expect(result.bestPermutation.simulationLineup[0]?.attack).toBe(7);
+    expect(result.bestPermutation.simulationLineup[0]?.health).toBe(9);
+  });
 });

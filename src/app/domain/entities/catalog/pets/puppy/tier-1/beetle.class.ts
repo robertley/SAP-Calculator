@@ -61,10 +61,9 @@ export class BeetleAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let equipment;
+    let equipment: Walnut;
     switch (this.level) {
       case 1:
         equipment = new Walnut();
@@ -80,22 +79,12 @@ export class BeetleAbility extends Ability {
         equipment.originalPower = 6;
         break;
     }
-    let excludePets = owner.parent.getPetsWithEquipment(equipment.name);
-    let targetsBehindResp = owner.parent.nearestPetsBehind(
-      1,
-      owner,
-      excludePets,
-    );
-    if (targetsBehindResp.pets.length === 0) {
-      return;
-    }
-    let targetPet = targetsBehindResp.pets[0];
+    const targetPet = owner;
     this.logService.createLog({
-      message: `${owner.name} gave ${targetPet.name} ${equipment.name}.`,
+      message: `${owner.name} gained ${equipment.name}.`,
       type: 'ability',
       player: owner.parent,
-      tiger: tiger,
-      randomEvent: targetsBehindResp.random,
+      tiger: context.tiger,
     });
     targetPet.givePetEquipment(equipment);
 

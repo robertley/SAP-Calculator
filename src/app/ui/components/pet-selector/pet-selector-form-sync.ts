@@ -19,9 +19,9 @@ import {
   getEquipmentIconPath,
   getPetIconFileName,
   getPetIconPath,
-  getPetSoundPath,
   getToyIconPath,
 } from 'app/runtime/asset-catalog';
+import { getPetSoundPath } from 'app/runtime/asset-sound-catalog';
 import { getSoundVolume, isSoundMuted } from 'app/runtime/sound-preferences';
 import {
   PARROT_COPY_TARGETS,
@@ -449,7 +449,7 @@ export class PetSelectorFormSync
     };
   }
 
-  private playSelectedPetSound(petName: string): void {
+  private async playSelectedPetSound(petName: string): Promise<void> {
     if (isSoundMuted()) {
       return;
     }
@@ -457,7 +457,7 @@ export class PetSelectorFormSync
     if (volume <= 0) {
       return;
     }
-    const soundPath = getPetSoundPath(petName);
+    const soundPath = await getPetSoundPath(petName);
     if (!soundPath || typeof Audio === 'undefined') {
       return;
     }

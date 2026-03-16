@@ -8,7 +8,7 @@ const PILOT_TOYS = [
   { name: 'Balloon', behavior: 'Break: Give the front-most friend +1 attack and +1 health.' },
   { name: 'Camera', behavior: 'Start of battle: Remove 30% attack from the highest attack enemy.' },
   { name: 'Candelabra', behavior: 'Three friends bought: Break and give all friends permanent +1 attack and +1 health.' },
-  { name: 'Cash Register', behavior: 'Break: Summon one 6/6 friend that sells for 3 gold.' },
+  { name: 'Cash Register', behavior: 'Break: Summon one 7/7 Gold Fish that sells for 4 gold.' },
   { name: 'Chocolate Box', behavior: 'Start of battle: Give +1 experience to friends and +2 experience to enemies.' },
   { name: 'Crystal Ball', behavior: 'Start of battle: Give the front-most friend +2 mana.' },
   { name: 'Dice Cup', behavior: 'Start of battle: Shuffle positions of all friends.' },

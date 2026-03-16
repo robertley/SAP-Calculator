@@ -10,8 +10,8 @@ export class EthiopianWolf extends Pet {
   name = 'Ethiopian Wolf';
   tier = 1;
   pack: Pack = 'Danger';
-  attack = 2;
-  health = 3;
+  attack = 3;
+  health = 2;
   initAbilities(): void {
     this.addAbility(new EthiopianWolfAbility(this, this.logService));
     super.initAbilities();

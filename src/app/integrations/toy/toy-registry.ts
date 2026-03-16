@@ -123,7 +123,6 @@ export const STANDARD_TOYS: Record<string, StandardToyConstructor> = {
   'Foam Sword': FoamSword,
   'Toy Gun': ToyGun,
   'Toy Mouse': ToyMouse,
-  'Cash Register': CashRegister,
   'Camera': Camera,
   'Flashlight': Flashlight,
   'Stinky Sock': StinkySock,
@@ -202,6 +201,14 @@ export const SPECIAL_TOY_BUILDERS: {
       deps.level,
       deps.petService,
       deps.gameService,
+    ),
+  'Cash Register': (deps) =>
+    new CashRegister(
+      deps.logService,
+      deps.toyService,
+      deps.petService!,
+      deps.parent,
+      deps.level,
     ),
 };
 

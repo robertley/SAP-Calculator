@@ -68,8 +68,10 @@
   </form>
 </div>
 
+@defer (when showSelectionDialog) {
 <app-item-selection-dialog *ngIf="showSelectionDialog" [type]="selectionType"
   [showAllPets]="allPets || forceShowAllPets" [currentPack]="player?.pack"
   [lockAbilityLevel]="lockSelectionLevel" [initialLevel]="lockedSelectionLevel" (select)="onItemSelected($event)"
   (close)="closeSelectionDialog()">
 </app-item-selection-dialog>
+}

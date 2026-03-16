@@ -14,8 +14,8 @@ export class Gharial extends Pet {
   name = 'Gharial';
   tier = 3;
   pack: Pack = 'Puppy';
-  attack = 5;
-  health = 2;
+  attack = 4;
+  health = 3;
   initAbilities(): void {
     this.addAbility(
       new GharialAbility(this, this.logService, this.abilityService),

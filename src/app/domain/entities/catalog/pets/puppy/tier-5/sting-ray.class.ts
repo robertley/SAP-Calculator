@@ -14,7 +14,7 @@ export class StingRay extends Pet {
   name = 'Sting Ray';
   tier = 5;
   pack: Pack = 'Puppy';
-  attack = 5;
+  attack = 4;
   health = 7;
   initAbilities(): void {
     this.addAbility(

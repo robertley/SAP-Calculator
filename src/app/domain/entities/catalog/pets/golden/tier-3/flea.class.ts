@@ -11,8 +11,8 @@ export class Flea extends Pet {
   name = 'Flea';
   tier = 3;
   pack: Pack = 'Golden';
-  attack = 3;
-  health = 2;
+  attack = 4;
+  health = 3;
   initAbilities(): void {
     this.addAbility(new FleaAbility(this, this.logService));
     super.initAbilities();
@@ -53,7 +53,6 @@ export class FleaAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
     let excludePets = owner.parent.getPetsWithEquipmentWithSillyFallback(
@@ -61,21 +60,24 @@ export class FleaAbility extends Ability {
       owner,
     );
     let targetsResp = owner.parent.opponent.getHighestHealthPets(
-      this.level,
+      1,
       excludePets,
       owner,
     );
 
     for (let target of targetsResp.pets) {
+      const equipment = new Weak();
+      equipment.power *= this.level;
+      equipment.originalPower = equipment.power;
       this.logService.createLog({
         message: `${owner.name} gave ${target.name} Weak.`,
         type: 'ability',
         player: owner.parent,
-        tiger: tiger,
-        pteranodon: pteranodon,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
         randomEvent: targetsResp.random,
       });
-      target.givePetEquipment(new Weak());
+      target.givePetEquipment(equipment);
     }
 
     // Tiger system: trigger Tiger execution at the end

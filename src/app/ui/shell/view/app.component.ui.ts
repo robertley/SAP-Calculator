@@ -5,6 +5,7 @@ import {
   createAppFormGroup,
   initPetForms as initPetFormsForm,
 } from '../state/app.component.forms';
+import { syncGameApiFromForm } from 'app/runtime/state/simulation-form-mapper';
 
 
 
@@ -182,15 +183,6 @@ export function initApp(ctx: AppUiContext): void {
   );
   updatePlayerToy(ctx, ctx.player, ctx.formGroup.get('playerToy').value);
   updatePlayerToy(ctx, ctx.opponent, ctx.formGroup.get('opponentToy').value);
-  ctx.gameService.gameApi.playerHardToy =
-    ctx.formGroup.get('playerHardToy').value;
-  ctx.gameService.gameApi.playerHardToyLevel =
-    ctx.formGroup.get('playerHardToyLevel').value;
-  ctx.gameService.gameApi.opponentHardToy =
-    ctx.formGroup.get('opponentHardToy').value;
-  ctx.gameService.gameApi.opponentHardToyLevel = ctx.formGroup.get(
-    'opponentHardToyLevel',
-  ).value;
   setHardToyImage(ctx, ctx.player, ctx.formGroup.get('playerHardToy').value);
   setHardToyImage(ctx, ctx.opponent, ctx.formGroup.get('opponentHardToy').value);
   ctx.previousPackOpponent = ctx.opponent.pack;
@@ -198,31 +190,7 @@ export function initApp(ctx: AppUiContext): void {
 }
 
 export function initGameApi(ctx: AppUiContext): void {
-  ctx.gameService.gameApi.day = ctx.dayNight;
-  ctx.gameService.gameApi.oldStork = ctx.formGroup.get('oldStork').value;
-  ctx.gameService.gameApi.komodoShuffle =
-    ctx.formGroup.get('komodoShuffle').value;
-  ctx.gameService.gameApi.mana = ctx.formGroup.get('mana').value;
-  ctx.gameService.gameApi.playerRollAmount =
-    ctx.formGroup.get('playerRollAmount').value;
-  ctx.gameService.gameApi.opponentRollAmount =
-    ctx.formGroup.get('opponentRollAmount').value;
-  ctx.gameService.gameApi.playerLevel3Sold =
-    ctx.formGroup.get('playerLevel3Sold').value;
-  ctx.gameService.gameApi.opponentLevel3Sold =
-    ctx.formGroup.get('opponentLevel3Sold').value;
-  ctx.gameService.gameApi.playerSummonedAmount = ctx.formGroup.get(
-    'playerSummonedAmount',
-  ).value;
-  ctx.gameService.gameApi.opponentSummonedAmount = ctx.formGroup.get(
-    'opponentSummonedAmount',
-  ).value;
-  ctx.gameService.gameApi.playerTransformationAmount = ctx.formGroup.get(
-    'playerTransformationAmount',
-  ).value;
-  ctx.gameService.gameApi.opponentTransformationAmount = ctx.formGroup.get(
-    'opponentTransformationAmount',
-  ).value;
+  syncGameApiFromForm(ctx.gameService, ctx.formGroup, { dayNight: ctx.dayNight });
 }
 
 export function initPlayerPets(ctx: AppUiContext): void {

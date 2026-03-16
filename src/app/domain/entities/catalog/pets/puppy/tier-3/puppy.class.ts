@@ -15,7 +15,7 @@ export class Puppy extends Pet {
   tier = 4;
   pack: Pack = 'Puppy';
   attack = 3;
-  health = 6;
+  health = 5;
   initAbilities(): void {
     this.addAbility(
       new PuppyAbility(this, this.logService, this.abilityService),

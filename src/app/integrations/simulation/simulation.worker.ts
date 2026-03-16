@@ -38,6 +38,7 @@ type OptimizePositioningStartMessage = {
     confidenceZ?: number;
     minSamplesBeforeElimination?: number;
     projectEndTurnLineup?: boolean;
+    keepSameBuffTargets?: boolean;
   };
 };
 
@@ -204,6 +205,7 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
           maxSimulationsPerPermutation: options.maxSimulationsPerPermutation,
           confidenceZ: options.confidenceZ,
           minSamplesBeforeElimination: options.minSamplesBeforeElimination,
+          keepSameBuffTargets: options.keepSameBuffTargets,
         },
         shouldAbort: () => cancelRequested,
         onProgress: (progress) => {

@@ -18,11 +18,11 @@ import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { ToyService } from 'app/integrations/toy/toy.service';
 import { PetSelectorComponent } from 'app/ui/components/pet-selector/pet-selector.component';
-import { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
 import { Player } from 'app/domain/entities/player.class';
 import { shouldShowRollInputs } from '../state/app.component.rolls';
 import { BATTLE_BACKGROUND_BASE } from './app.ui.constants';
 import * as foodJson from 'assets/data/food.json';
+import { AppShellOverlayStateService } from '../state/app-shell-overlay-state.service';
 
 export interface AppUiContext {
   formGroup: FormGroup;
@@ -30,9 +30,7 @@ export interface AppUiContext {
   opponent: Player;
   logService: LogService;
   petSelectors: QueryList<PetSelectorComponent>;
-  selectionType: SelectionType;
-  selectionSide: 'player' | 'opponent' | 'none';
-  showSelectionDialog: boolean;
+  overlayState: AppShellOverlayStateService;
   selectedTeamId: string;
   savedTeams: TeamPreset[];
   playerPackImageBroken: boolean;

@@ -1913,6 +1913,22 @@
     "CustomArchetypes": []
   },
   {
+    "Ability": "Give one pet the Bread perk.",
+    "Id": "252",
+    "Name": "Bread",
+    "NameId": "Bread",
+    "Tier": 4,
+    "Packs": [
+      "Pack1"
+    ],
+    "PacksRequired": [
+      "Pack1"
+    ],
+    "Rollable": true,
+    "PerkNote": "End turn: Gain +7 health until next turn.",
+    "CustomArchetypes": []
+  },
+  {
     "Ability": "Give one pet the Cocoa Bean perk.",
     "Id": "190",
     "Name": "Cocoa Bean",
@@ -1925,7 +1941,7 @@
       "Danger"
     ],
     "Rollable": true,
-    "PerkNote": "Before attack: Transform into an exact copy of a random enemy, once.",
+    "PerkNote": "Before attack: Transform into a random summon pet.",
     "CustomArchetypes": [],
     "Random": true
   },

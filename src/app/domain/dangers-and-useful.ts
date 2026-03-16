@@ -109,7 +109,15 @@ export const DANGERS_AND_USEFUL_POOLS: DangersAndUsefulPools = {
       'Cod Roe',
     ],
     3: ['Garlic', 'Squash', 'Seaweed', 'Fig', 'Brussels Sprout'],
-    4: ['Fortune Cookie', 'Salt', 'Baguette', 'Cheese', 'Banana', 'Ambrosia'],
+    4: [
+      'Fortune Cookie',
+      'Salt',
+      'Baguette',
+      'Cheese',
+      'Banana',
+      'Bread',
+      'Ambrosia',
+    ],
     5: ['Chili', 'Lemon', 'Pepper', 'Durian', 'Honeydew Melon', 'Easter Egg'],
     6: [
       'Steak',

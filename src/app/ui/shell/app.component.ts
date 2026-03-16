@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, signal, } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -24,7 +24,8 @@ import { CalculatorStateService } from 'app/runtime/state/calculator-state.servi
 import { SimulationService } from 'app/integrations/simulation/simulation.service';
 import { TeamPresetsService, TeamPreset, } from 'app/integrations/team-presets.service';
 import { PetSelectorComponent } from 'app/ui/components/pet-selector/pet-selector.component';
-import { ItemSelectionDialogComponent, SelectionType, } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
+import { ItemSelectionDialogComponent } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
+import type { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.types';
 import { CustomPackEditorComponent } from 'app/ui/components/custom-pack-editor/custom-pack-editor.component';
 import { InfoComponent } from 'app/ui/components/info/info.component';
 import { ImportCalculatorComponent } from 'app/ui/components/import-calculator/import-calculator.component';
@@ -32,6 +33,9 @@ import { ReportABugComponent } from 'app/ui/components/report-a-bug/report-a-bug
 import { ExportCalculatorComponent } from 'app/ui/components/export-calculator/export-calculator.component';
 import { AppShellControlsComponent } from './components/app-shell-controls.component';
 import { AppShellBattleResultsComponent } from './components/app-shell-battle-results.component';
+import { createAppShellControlsFacade } from './components/app-shell-controls.facade';
+import { createAppShellBattleResultsFacade } from './components/app-shell-battle-results.facade';
+import { createAppShellBoardFacade } from './components/app-shell-board.facade';
 import {
   LIGHT_BATTLE_BACKGROUNDS,
   LOG_FILTER_TABS,
@@ -98,6 +102,7 @@ import {
   toggleTheme as toggleThemeImpl,
 } from './state/app.component.theme';
 import { createStatusStateController } from './state/app.component.status';
+import { AppShellOverlayStateService } from './state/app-shell-overlay-state.service';
 
 @Component({
   selector: 'app-root',
@@ -125,6 +130,10 @@ import { createStatusStateController } from './state/app.component.status';
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly app = this;
+  readonly controlsFacade = createAppShellControlsFacade(this);
+  readonly battleResultsFacade = createAppShellBattleResultsFacade(this);
+  readonly boardFacade = createAppShellBoardFacade(this);
+  readonly shellRenderEpoch = signal(0);
   readonly lapsusTypographyStage: 1 | 2 | 3 = 1;
 
   get lapsusTypographyStageClass(): string {
@@ -199,14 +208,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   api = false;
   apiResponse: string | null = null;
 
-  showSelectionDialog = false;
-  selectionType: SelectionType = 'pet';
-  selectionSide: 'player' | 'opponent' | 'none' = 'none';
-
-  showInfo = false;
-  showImport = false;
-  showExport = false;
-  showReportABug = false;
   showBattleAnalysis = false;
   showRandomOverrides = true;
   fightAnimationFrames: FightAnimationFrame[] = [];
@@ -283,10 +284,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly trackByLogTab = trackByLogTabImpl;
   readonly toggleBattleAnalysis = () => {
     this.showBattleAnalysis = !this.showBattleAnalysis;
+    this.markForCheck();
   };
   readonly toggleRandomOverrides = () => {
     this.showRandomOverrides = !this.showRandomOverrides;
-    this.cdr.markForCheck();
+    this.markForCheck();
   };
   readonly refreshFightAnimationFromViewBattle = () =>
     refreshFightAnimationFromViewBattleImpl(this);
@@ -313,6 +315,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     public calculatorStateService: CalculatorStateService,
     public simulationService: SimulationService,
     private teamPresetsService: TeamPresetsService,
+    public overlayState: AppShellOverlayStateService,
   ) {
     InjectorService.setInjector(this.injector);
     this.player = new Player(logService, abilityService, gameService);
@@ -521,7 +524,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   };
-  readonly markForCheck = () => this.cdr.markForCheck();
+  readonly markForCheck = () => {
+    this.shellRenderEpoch.update((value) => value + 1);
+    this.cdr.markForCheck();
+  };
 
   readonly captureRandomEvents = () => captureRandomEventsImpl(this);
 

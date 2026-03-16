@@ -313,6 +313,26 @@ export class PetService {
     return faintMap;
   }
 
+  getFaintPetNamesByTiers(tiers: number[]): string[] {
+    if (!this.faintPetsByTier?.size) {
+      this.faintPetsByTier = this.buildFaintPetsByTier(
+        this.getPetEntriesFromJson(),
+      );
+    }
+    return [
+      ...new Set(
+        tiers.flatMap((tier) => this.faintPetsByTier.get(tier) ?? []),
+      ),
+    ];
+  }
+
+  getSummonPetNames(): string[] {
+    if (!this.tokenPetsMap?.size) {
+      this.init();
+    }
+    return [...new Set(Array.from(this.tokenPetsMap.values()).flat())];
+  }
+
   init() {
     this.resetPackMaps();
     const pets = this.getPetEntriesFromJson();

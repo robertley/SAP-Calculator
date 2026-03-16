@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { createPack } from 'app/runtime/custom-pack-form';
 import { GameService } from './game.service';
+import { syncGameApiFromForm } from './simulation-form-mapper';
 
 type CalculatorStateInput = Record<string, unknown> | null | undefined;
 
@@ -41,32 +42,7 @@ export class CalculatorStateService {
       setTimeout(() => fixCustomPackSelect());
     }
 
-    this.gameService.gameApi.oldStork = formGroup.get('oldStork').value;
-    this.gameService.gameApi.komodoShuffle =
-      formGroup.get('komodoShuffle').value;
-    this.gameService.gameApi.mana = formGroup.get('mana').value;
-    this.gameService.gameApi.playerRollAmount =
-      formGroup.get('playerRollAmount').value;
-    this.gameService.gameApi.opponentRollAmount =
-      formGroup.get('opponentRollAmount').value;
-    this.gameService.gameApi.playerLevel3Sold =
-      formGroup.get('playerLevel3Sold').value;
-    this.gameService.gameApi.opponentLevel3Sold =
-      formGroup.get('opponentLevel3Sold').value;
-    this.gameService.gameApi.playerSummonedAmount = formGroup.get(
-      'playerSummonedAmount',
-    ).value;
-    this.gameService.gameApi.opponentSummonedAmount = formGroup.get(
-      'opponentSummonedAmount',
-    ).value;
-    this.gameService.gameApi.playerTransformationAmount = formGroup.get(
-      'playerTransformationAmount',
-    ).value;
-    this.gameService.gameApi.opponentTransformationAmount = formGroup.get(
-      'opponentTransformationAmount',
-    ).value;
-    this.gameService.gameApi.day = dayNight;
-    this.gameService.gameApi.turnNumber = formGroup.get('turn').value;
+    syncGameApiFromForm(this.gameService, formGroup, { dayNight });
   }
 
   loadCustomPacks(formGroup: FormGroup, customPacks: unknown): void {
@@ -115,6 +91,7 @@ export class CalculatorStateService {
       showAdvanced: false,
       showTriggerNamesInLogs: false,
       showPositionalArgsInLogs: true,
+      keepSameBuffTargetsOnOptimization: false,
       ailmentEquipment: false,
     };
   }
@@ -162,7 +139,5 @@ export class CalculatorStateService {
     return null;
   }
 }
-
-
 
 

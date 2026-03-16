@@ -267,15 +267,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Give Walnut perk to nearest friend behind."
+        "About": "Start of battle: Gain the Walnut perk."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Give Walnut perk with double effect to nearest friend behind."
+        "About": "Start of battle: Gain the Walnut perk with double effect."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Give Walnut perk with triple effect to nearest friend behind."
+        "About": "Start of battle: Gain the Walnut perk with triple effect."
       }
     ],
     "Id": "88",
@@ -960,8 +960,8 @@
     ]
   },
   {
-    "Attack": 2,
-    "Health": 3,
+    "Attack": 3,
+    "Health": 2,
     "Abilities": [
       {
         "Level": 1,
@@ -2421,7 +2421,7 @@
   },
   {
     "Attack": 3,
-    "Health": 1,
+    "Health": 2,
     "Abilities": [
       {
         "Level": 1,
@@ -4580,7 +4580,7 @@
   },
   {
     "Attack": 3,
-    "Health": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -5444,7 +5444,7 @@
   },
   {
     "Attack": 2,
-    "Health": 2,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -5587,11 +5587,11 @@
       },
       {
         "Level": 2,
-        "About": "Faint: Spend 1 trumpet to make the two first enemies Inked."
+        "About": "Faint: Spend 1 trumpet to make the first enemy Inked with double effect."
       },
       {
         "Level": 3,
-        "About": "Faint: Spend 1 trumpet to make the three first enemies Inked."
+        "About": "Faint: Spend 1 trumpet to make the first enemy Inked with triple effect."
       }
     ],
     "Id": "177",
@@ -7198,8 +7198,8 @@
     ]
   },
   {
-    "Attack": 3,
-    "Health": 2,
+    "Attack": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -7207,11 +7207,11 @@
       },
       {
         "Level": 2,
-        "About": "Faint: Make the two most healthy enemies Weak."
+        "About": "Faint: Make the most healthy enemy Weak with double effect."
       },
       {
         "Level": 3,
-        "About": "Faint: Make the three most healthy enemies Weak."
+        "About": "Faint: Make the most healthy enemy Weak with triple effect."
       }
     ],
     "Id": "225",
@@ -7402,8 +7402,8 @@
     ]
   },
   {
-    "Attack": 5,
-    "Health": 2,
+    "Attack": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -7910,19 +7910,19 @@
   },
   {
     "Attack": 3,
-    "Health": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Anyone behind hurt: Give two random friendly pets +1 attack and +2 health. Works 2 times per battle."
+        "About": "Anyone behind hurt: Give two random friendly pets +1 attack and +1 health. Works 3 times per battle."
       },
       {
         "Level": 2,
-        "About": "Anyone behind hurt: Give two random friendly pets +2 attack and +4 health. Works 2 times per battle."
+        "About": "Anyone behind hurt: Give two random friendly pets +2 attack and +2 health. Works 3 times per battle."
       },
       {
         "Level": 3,
-        "About": "Anyone behind hurt: Give two random friendly pets +3 attack and +6 health. Works 2 times per battle."
+        "About": "Anyone behind hurt: Give two random friendly pets +3 attack and +3 health. Works 3 times per battle."
       }
     ],
     "Id": "422",
@@ -8602,20 +8602,20 @@
     ]
   },
   {
-    "Attack": 2,
-    "Health": 5,
+    "Attack": 1,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Transform two friends ahead into ANY useful level 1 <b>Hurt</b> pets from tier 3 or lower."
+        "About": "Start of battle: Transform the two friends ahead into level 1 <b>Faint</b> pets from tier 2 and 3."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Transform two friends ahead into ANY useful level 2 <b>Hurt</b> pets from tier 3 or lower."
+        "About": "Start of battle: Transform the two friends ahead into level 2 <b>Faint</b> pets from tier 2 and 3."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Transform two friends ahead into ANY useful level 3 <b>Hurt</b> pets from tier 3 or lower."
+        "About": "Start of battle: Transform the two friends ahead into level 3 <b>Faint</b> pets from tier 2 and 3."
       }
     ],
     "Id": "429",
@@ -8632,7 +8632,7 @@
     "Rollable": true,
     "CustomArchetypes": [
       "Transform",
-      "Hurt"
+      "Faint"
     ]
   },
   {
@@ -9565,15 +9565,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "End turn: If this has a level 3 friend, gain +1 attack and +2 health."
+        "About": "End turn: If this has a level 3 friend, gain +2 attack and +2 health. Works for 1 Bison."
       },
       {
         "Level": 2,
-        "About": "End turn: If this has a level 3 friend, gain +2 attack and +4 health."
+        "About": "End turn: If this has a level 3 friend, gain +4 attack and +4 health. Works for 1 Bison."
       },
       {
         "Level": 3,
-        "About": "End turn: If this has a level 3 friend, gain +3 attack and +6 health."
+        "About": "End turn: If this has a level 3 friend, gain +6 attack and +6 health. Works for 1 Bison."
       }
     ],
     "Id": "5",
@@ -11605,7 +11605,7 @@
   },
   {
     "Attack": 3,
-    "Health": 6,
+    "Health": 5,
     "Abilities": [
       {
         "Level": 1,
@@ -12370,15 +12370,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Make the lowest attack enemy 5x\u00a0Spooked and jump-attack it."
+        "About": "Start of battle: Make the lowest attack enemy 5x Spooked and jump-attack it."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Make the lowest attack enemy 10x\u00a0Spooked and jump-attack it."
+        "About": "Start of battle: Make the lowest attack enemy 10x Spooked and jump-attack it."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Make the lowest attack enemy 15x\u00a0Spooked and jump-attack it."
+        "About": "Start of battle: Make the lowest attack enemy 15x Spooked and jump-attack it."
       }
     ],
     "Id": "437",
@@ -14927,7 +14927,7 @@
   },
   {
     "Attack": 1,
-    "Health": 1,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -15297,7 +15297,7 @@
     ]
   },
   {
-    "Attack": 5,
+    "Attack": 4,
     "Health": 7,
     "Abilities": [
       {

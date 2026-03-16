@@ -1,6 +1,7 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   HostListener,
@@ -9,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import type { AppComponent } from '../app.component';
+import type { AppShellBattleResultsFacade } from './app-shell-battle-results.facade';
 
 type TabletPane = 'battle' | 'logs';
 
@@ -18,11 +19,14 @@ type TabletPane = 'battle' | 'logs';
   standalone: true,
   imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './app-shell-battle-results.component.html',
+  styleUrl: './app-shell-battle-results.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellBattleResultsComponent
   implements AfterViewInit, OnInit
 {
-  @Input({ required: true }) app: AppComponent;
+  @Input({ required: true }) app: AppShellBattleResultsFacade;
+  @Input() renderEpoch = 0;
 
   @ViewChild('battleSplitContainer')
   private battleSplitContainer?: ElementRef<HTMLElement>;

@@ -710,6 +710,8 @@ export function optimizePositioning(
   }
 
   const maxSimulationsPerPermutation = Math.max(1, Math.trunc(count || 1));
+  const keepSameBuffTargets =
+    ctx.formGroup.get('keepSameBuffTargetsOnOptimization')?.value === true;
   ctx.positioningDeltaSummary = null;
   ctx.pendingPositioningOptimizationBaseline =
     buildOptimizationBaselineFromCurrentResults(ctx, side);
@@ -795,6 +797,7 @@ export function optimizePositioning(
       minSamplesBeforeElimination: Math.min(50, maxSimulationsPerPermutation),
       confidenceZ: 1.96,
       projectEndTurnLineup: true,
+      keepSameBuffTargets,
     },
   );
 

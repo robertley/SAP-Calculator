@@ -12,7 +12,7 @@ export class MonkeyFacedBat extends Pet {
   tier = 3;
   pack: Pack = 'Danger';
   attack = 3;
-  health = 4;
+  health = 3;
   initAbilities(): void {
     this.addAbility(new MonkeyFacedBatAbility(this, this.logService));
     super.initAbilities();
@@ -46,7 +46,7 @@ export class MonkeyFacedBatAbility extends Ability {
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
-      maxUses: 2,
+      maxUses: 3,
       abilityFunction: (context) => {
         this.executeAbility(context);
       },
@@ -62,16 +62,16 @@ export class MonkeyFacedBatAbility extends Ability {
 
     for (let target of targetsResp.pets) {
       if (target != null) {
-        let power: Power = { attack: this.level, health: this.level * 2 };
+        let power: Power = { attack: this.level, health: this.level };
         target.increaseAttack(power.attack);
         target.increaseHealth(power.health);
 
         this.logService.createLog({
-          message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health`,
+          message: `${owner.name} gave ${target.name} +${power.attack} attack and +${power.health} health.`,
           type: 'ability',
           player: owner.parent,
           randomEvent: targetsResp.random,
-          tiger: tiger,
+          tiger: context.tiger,
         });
       }
     }

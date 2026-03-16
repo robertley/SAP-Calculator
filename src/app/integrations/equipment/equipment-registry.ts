@@ -1,6 +1,7 @@
 import { Equipment } from 'app/domain/entities/equipment.class';
 import { Garlic } from 'app/domain/entities/catalog/equipment/turtle/garlic.class';
 import { Cake } from 'app/domain/entities/catalog/equipment/turtle/cake.class';
+import { Bread } from 'app/domain/entities/catalog/equipment/turtle/bread.class';
 import { MeatBone } from 'app/domain/entities/catalog/equipment/turtle/meat-bone.class';
 import { Steak } from 'app/domain/entities/catalog/equipment/turtle/steak.class';
 import { Melon } from 'app/domain/entities/catalog/equipment/turtle/melon.class';
@@ -173,6 +174,7 @@ export const NO_ARG_EQUIPMENT: Record<string, NoArgEquipmentConstructor> = {
 // LogService-only equipment
 export const LOG_ONLY_EQUIPMENT: Record<string, LogOnlyEquipmentConstructor> = {
   Cake: Cake,
+  Bread: Bread,
   Egg: Egg,
   Squash: Squash,
   Pie: Pie,

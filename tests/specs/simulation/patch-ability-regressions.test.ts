@@ -158,9 +158,13 @@ describe('Pet Ability Patch Regressions', () => {
         expect(roadrunnerLog).toBeDefined();
     });
 
-    it('Cocoa Bean should transform pet into random enemy before attack', () => {
-        const config: SimulationConfig = {
+    it('Cocoa Bean should transform pet into a random summon pet before attack', () => {
+        const captureConfig: SimulationConfig = {
             ...baseConfig,
+            playerPack: 'Danger',
+            opponentPack: 'Danger',
+            captureRandomDecisions: true,
+            maxLoggedBattles: 1,
             playerPets: [
                 {
                     name: 'Ant',
@@ -205,20 +209,41 @@ describe('Pet Ability Patch Regressions', () => {
             ],
         };
 
-        const result = runSimulation(config);
+        const captureResult = runSimulation(captureConfig);
+        const decision = (captureResult.randomDecisions ?? []).find((entry: any) =>
+            entry.key === 'equipment.cocoa-bean-transform'
+        );
+
+        expect(decision).toBeDefined();
+
+        const forcedOption = decision!.options[0];
+        const result = runSimulation({
+            ...captureConfig,
+            randomDecisionOverrides: [
+                {
+                    index: decision!.index,
+                    optionId: forcedOption.id,
+                },
+            ],
+            strictRandomOverrideValidation: true,
+        });
         const logs = result.battles?.[0]?.logs ?? [];
         const cocoaBeanLog = logs.find((log: any) =>
             log.type === 'equipment' &&
             typeof log.message === 'string' &&
-            log.message.includes('transformed into Elephant (Cocoa Bean)')
+            log.message.includes(`transformed into ${forcedOption.label} (Cocoa Bean)`)
         );
 
         expect(cocoaBeanLog).toBeDefined();
     });
 
-    it('Cocoa Bean transform should not copy enemy equipment', () => {
-        const config: SimulationConfig = {
+    it('Cocoa Bean transform should no longer use the enemy-copy pool', () => {
+        const captureConfig: SimulationConfig = {
             ...baseConfig,
+            playerPack: 'Danger',
+            opponentPack: 'Danger',
+            captureRandomDecisions: true,
+            maxLoggedBattles: 1,
             playerPets: [
                 {
                     name: 'Ant',
@@ -263,19 +288,32 @@ describe('Pet Ability Patch Regressions', () => {
             ],
         };
 
-        const result = runSimulation(config);
-        const logs = result.battles?.[0]?.logs ?? [];
-        const playerAttackLogs = logs.filter((log: any) =>
-            log.type === 'attack' &&
-            (log.sourcePet?.parent?.isOpponent === false || log.player?.isOpponent === false) &&
-            typeof log.message === 'string' &&
-            log.message.includes('attacks')
+        const captureResult = runSimulation(captureConfig);
+        const decision = (captureResult.randomDecisions ?? []).find((entry: any) =>
+            entry.key === 'equipment.cocoa-bean-transform'
         );
+        expect(decision).toBeDefined();
 
-        const playerUsedSalt = playerAttackLogs.some((log: any) =>
-            String(log.message).includes('(Salt')
+        const forcedOption =
+            decision!.options.find((option: any) => option.id !== 'Ant') ?? decision!.options[0];
+        const result = runSimulation({
+            ...captureConfig,
+            randomDecisionOverrides: [
+                {
+                    index: decision!.index,
+                    optionId: forcedOption.id,
+                },
+            ],
+            strictRandomOverrideValidation: true,
+        });
+        const logs = result.battles?.[0]?.logs ?? [];
+        const cocoaBeanLog = logs.find((log: any) =>
+            log.type === 'equipment' &&
+            typeof log.message === 'string' &&
+            log.message.includes(`transformed into ${forcedOption.label} (Cocoa Bean)`)
         );
-        expect(playerUsedSalt).toBe(false);
+        expect(cocoaBeanLog).toBeDefined();
+        expect(String(cocoaBeanLog?.message ?? '')).not.toContain('Elephant');
     });
 
     it('Mana Hound logs should not leak onerror text when decorated', () => {
@@ -1379,5 +1417,4 @@ describe('Pet Ability Patch Regressions', () => {
         expect(noRoomLog).toBeUndefined();
     });
 });
-
 

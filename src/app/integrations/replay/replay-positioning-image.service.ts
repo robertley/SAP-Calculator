@@ -32,6 +32,7 @@ export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
   simulationCount: number;
   optimizationSide: 'player' | 'opponent';
+  keepSameBuffTargets?: boolean;
   abilityPetMap?: Record<string, string | number> | null;
   abortSignal?: AbortSignal;
   onProgress?: (progress: ReplayPositioningImageProgress) => void;
@@ -249,6 +250,7 @@ export class ReplayPositioningImageService {
         baseConfig,
         input.simulationCount,
         input.optimizationSide,
+        input.keepSameBuffTargets === true,
         input.abortSignal,
         (turnPercent) => {
           this.emitProgress(
@@ -340,6 +342,7 @@ export class ReplayPositioningImageService {
     baseConfig: SimulationConfig,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
+    keepSameBuffTargets: boolean,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
@@ -348,6 +351,7 @@ export class ReplayPositioningImageService {
         baseConfig,
         simulationCount,
         optimizationSide,
+        keepSameBuffTargets,
         abortSignal,
         onProgress,
       );
@@ -363,6 +367,7 @@ export class ReplayPositioningImageService {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
           batchSize: Math.max(10, Math.min(25, simulationCount)),
+          keepSameBuffTargets,
         },
         shouldAbort: () => Boolean(abortSignal?.aborted),
         onProgress: (progress) => {
@@ -389,6 +394,7 @@ export class ReplayPositioningImageService {
     baseConfig: SimulationConfig,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
+    keepSameBuffTargets: boolean,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
@@ -480,6 +486,7 @@ export class ReplayPositioningImageService {
           maxSimulationsPerPermutation: simulationCount,
           batchSize: Math.max(10, Math.min(25, simulationCount)),
           projectEndTurnLineup: true,
+          keepSameBuffTargets,
         },
       });
     });

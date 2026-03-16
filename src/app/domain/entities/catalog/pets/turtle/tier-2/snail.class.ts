@@ -10,7 +10,7 @@ export class Snail extends Pet {
   name = 'Snail';
   tier = 2;
   pack: Pack = 'Turtle';
-  health = 2;
+  health = 3;
   attack = 2;
   initAbilities(): void {
     this.addAbility(new SnailAbility(this, this.logService));

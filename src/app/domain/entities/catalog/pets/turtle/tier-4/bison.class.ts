@@ -59,7 +59,20 @@ export class BisonAbility extends Ability {
     if (!hasLevel3Friend) {
       return;
     }
-    const attackGain = this.level;
+    const eligibleBisons = owner.parent.petArray.filter(
+      (pet) =>
+        pet?.alive &&
+        pet.name === 'Bison' &&
+        pet.parent === owner.parent &&
+        owner.parent.petArray.some(
+          (friend) => friend && friend !== pet && friend.level >= 3,
+        ),
+    );
+    if (eligibleBisons[0] !== owner) {
+      return;
+    }
+
+    const attackGain = this.level * 2;
     const healthGain = this.level * 2;
     owner.increaseAttack(attackGain);
     owner.increaseHealth(healthGain);

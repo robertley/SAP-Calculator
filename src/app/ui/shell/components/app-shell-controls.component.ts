@@ -1,7 +1,14 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import type { AppComponent } from '../app.component';
+import type { AppShellControlsFacade } from './app-shell-controls.facade';
 
 const ADVANCED_CONTROL_DEFAULTS: Readonly<Record<string, boolean | number | null>> = {
   komodoShuffle: false,
@@ -52,9 +59,12 @@ const SCENARIO_CONTROL_RESET_VALUES: Readonly<Record<string, boolean | number | 
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgOptimizedImage],
   templateUrl: './app-shell-controls.component.html',
+  styleUrl: './app-shell-controls.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppShellControlsComponent {
-  @Input({ required: true }) app: AppComponent;
+  @Input({ required: true }) app: AppShellControlsFacade;
+  @Input() renderEpoch = 0;
   @ViewChild('soundMenuRoot') soundMenuRoot?: ElementRef<HTMLElement>;
 
   optimizeSide: 'player' | 'opponent' = 'player';

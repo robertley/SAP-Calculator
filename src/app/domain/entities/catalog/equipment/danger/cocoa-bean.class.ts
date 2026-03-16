@@ -63,17 +63,13 @@ export class CocoaBeanAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
+    const summonPool = this.petService.getSummonPetNames();
+    if (summonPool.length === 0) {
+      owner.removePerk();
+      return;
+    }
 
     for (let i = 0; i < this.equipment.multiplier; i++) {
-      // Get random enemy
-      let enemies = owner.parent.opponent.petArray.filter(
-        (enemy) => enemy.alive,
-      );
-      if (enemies.length == 0) {
-        owner.removePerk();
-        return;
-      }
-
       const choice = chooseRandomOption(
         {
           key: 'equipment.cocoa-bean-transform',
@@ -83,50 +79,27 @@ export class CocoaBeanAbility extends Ability {
             'transform',
             i + 1,
           ),
-          options: enemies.map((enemy) => ({
-            id: `${enemy.savedPosition + 1}:${enemy.name}`,
-            label: `O${enemy.savedPosition + 1} ${enemy.name}`,
+          options: summonPool.map((petName) => ({
+            id: petName,
+            label: petName,
           })),
         },
-        () => getRandomInt(0, enemies.length - 1),
+        () => getRandomInt(0, summonPool.length - 1),
       );
-      let randomEnemy = enemies[choice.index];
+      const summonPetName = summonPool[choice.index];
 
-      // Create proper Pet instance
       let transformedPet = this.petService.createPet(
         {
-          name: randomEnemy.name,
-          attack: randomEnemy.attack,
-          health: randomEnemy.health,
+          name: summonPetName,
+          attack: null,
+          health: null,
           mana: owner.mana,
-          exp: randomEnemy.exp,
+          exp: 0,
           equipment: null,
         },
         owner.parent,
       );
       transformedPet.mana = owner.mana;
-
-      // Copy special state that needs to be preserved
-      if (randomEnemy.swallowedPets && randomEnemy.swallowedPets.length > 0) {
-        transformedPet.swallowedPets = [];
-        // Recreate swallowed pets with correct parent
-        for (let swallowedPet of randomEnemy.swallowedPets) {
-          let newSwallowedPet = this.petService.createPet(
-            {
-              name: swallowedPet.name,
-              attack: swallowedPet.attack,
-              health: swallowedPet.health,
-              mana: swallowedPet.mana,
-              exp: swallowedPet.exp,
-              equipment: swallowedPet.equipment,
-            },
-            owner.parent,
-          );
-          transformedPet.swallowedPets.push(newSwallowedPet);
-        }
-      }
-
-      transformedPet.copyAbilities(randomEnemy, 'Pet');
       let multiplierMessage = i > 0 ? this.equipment.multiplierMessage : '';
       this.logService.createLog({
         message: `${owner.name} transformed into ${transformedPet.name} (Cocoa Bean)${multiplierMessage}`,

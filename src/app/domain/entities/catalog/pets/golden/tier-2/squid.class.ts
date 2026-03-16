@@ -61,7 +61,6 @@ export class SquidAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
     let hasTarget = false;
@@ -70,7 +69,7 @@ export class SquidAbility extends Ability {
       owner,
     );
     let targetResp = owner.parent.opponent.getFurthestUpPets(
-      this.level,
+      1,
       excludePets,
       owner,
     );
@@ -81,19 +80,22 @@ export class SquidAbility extends Ability {
         break;
       }
       hasTarget = true;
-      target.givePetEquipment(new Inked());
+      const equipment = new Inked();
+      equipment.power *= this.level;
+      equipment.originalPower = equipment.power;
+      target.givePetEquipment(equipment);
       this.logService.createLog({
         message: `${owner.name} gave ${target.name} Inked.`,
         type: 'ability',
         player: owner.parent,
-        tiger: tiger,
-        pteranodon: pteranodon,
+        tiger: context.tiger,
+        pteranodon: context.pteranodon,
         randomEvent: targetResp.random,
       });
     }
 
     if (hasTarget) {
-      owner.parent.spendTrumpets(1, owner, pteranodon);
+      owner.parent.spendTrumpets(1, owner, context.pteranodon);
     }
 
     // Tiger system: trigger Tiger execution at the end

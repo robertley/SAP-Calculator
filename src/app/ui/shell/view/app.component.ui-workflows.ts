@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormArray } from '@angular/forms';
 import { Modal } from 'bootstrap';
 import { Player } from 'app/domain/entities/player.class';
-import { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.component';
+import type { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.types';
 import { getPackIconPath, getToyIconPath } from 'app/runtime/asset-catalog';
 import {
   buildExportPayload,
@@ -24,23 +24,23 @@ export function openSelectionDialog(
   type: SelectionType,
   side: 'player' | 'opponent' | 'none',
 ): void {
-  ctx.selectionType = type;
-  ctx.selectionSide = side;
-  ctx.showSelectionDialog = true;
+  ctx.overlayState.openSelectionDialog(type, side);
 }
 
 export function onItemSelected(ctx: AppUiContext, item: unknown): void {
   if (item instanceof Event) {
-    ctx.showSelectionDialog = false;
-    ctx.selectionSide = 'none';
+    ctx.overlayState.closeSelectionDialog();
     return;
   }
   const itemRecord =
     item && typeof item === 'object'
       ? (item as { id?: unknown; name?: unknown; item?: unknown })
       : null;
-  if (!ctx.selectionSide || ctx.selectionSide === 'none') {
-    if (ctx.selectionType === 'team') {
+  if (
+    !ctx.overlayState.selectionSide ||
+    ctx.overlayState.selectionSide === 'none'
+  ) {
+    if (ctx.overlayState.selectionType === 'team') {
       ctx.selectedTeamId =
         typeof item === 'string'
           ? item
@@ -50,13 +50,12 @@ export function onItemSelected(ctx: AppUiContext, item: unknown): void {
               ? itemRecord.name
               : '';
     }
-    ctx.showSelectionDialog = false;
-    ctx.selectionSide = 'none';
+    ctx.overlayState.closeSelectionDialog();
     return;
   }
 
-  const side = ctx.selectionSide;
-  const type = ctx.selectionType;
+  const side = ctx.overlayState.selectionSide;
+  const type = ctx.overlayState.selectionType;
 
   if (type === 'pack') {
     const packName =
@@ -115,8 +114,7 @@ export function onItemSelected(ctx: AppUiContext, item: unknown): void {
             : '';
   }
 
-  ctx.showSelectionDialog = false;
-  ctx.selectionSide = 'none';
+  ctx.overlayState.closeSelectionDialog();
 }
 
 export function getPackIcon(packName?: string): string | null {
@@ -412,8 +410,6 @@ export function generateShareLink(ctx: AppUiContext): void {
       ctx.setStatus?.('Failed to copy link. See console for details.', 'error');
     });
 }
-
-
 
 
 

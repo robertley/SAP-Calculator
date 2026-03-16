@@ -1,6 +1,10 @@
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Player } from 'app/domain/entities/player.class';
 import { GameService } from 'app/runtime/state/game.service';
+import {
+  applyGameApiFormControlValue,
+  GameApiFormControlName,
+} from 'app/runtime/state/simulation-form-mapper';
 import { ToyService } from 'app/integrations/toy/toy.service';
 import { initPetForms } from './app.component.pet-forms';
 
@@ -64,6 +68,7 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     showAdvanced: new FormControl(false),
     showTriggerNamesInLogs: new FormControl(false),
     showPositionalArgsInLogs: new FormControl(true),
+    keepSameBuffTargetsOnOptimization: new FormControl(false),
     ailmentEquipment: new FormControl(true),
     changeEquipmentUses: new FormControl(false),
     seed: new FormControl<number | null>(null),
@@ -72,6 +77,22 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
   });
 
   initPetForms(formGroup, ctx.player, ctx.opponent);
+
+  const bindGameApiControl = <T>(
+    controlName: GameApiFormControlName,
+    options?: {
+      allowNull?: boolean;
+      afterSync?: (value: T | null | undefined) => void;
+    },
+  ): void => {
+    formGroup.get(controlName)!.valueChanges.subscribe((value: T | null | undefined) => {
+      if (value == null && options?.allowNull !== true) {
+        return;
+      }
+      applyGameApiFormControlValue(ctx.gameService, controlName, value);
+      options?.afterSync?.(value);
+    });
+  };
 
   formGroup
     .get('playerPack')!
@@ -133,37 +154,16 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
       ctx.updateToyLevel(ctx.opponent, value);
     });
 
-  formGroup
-    .get('playerHardToy')!
-    .valueChanges.subscribe((value: string | null | undefined) => {
-      ctx.gameService.gameApi.playerHardToy = value ?? null;
-      ctx.setHardToyImage(ctx.player, value ?? null);
-    });
-
-  formGroup
-    .get('playerHardToyLevel')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.playerHardToyLevel = value;
-    });
-
-  formGroup
-    .get('opponentHardToy')!
-    .valueChanges.subscribe((value: string | null | undefined) => {
-      ctx.gameService.gameApi.opponentHardToy = value ?? null;
-      ctx.setHardToyImage(ctx.opponent, value ?? null);
-    });
-
-  formGroup
-    .get('opponentHardToyLevel')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.opponentHardToyLevel = value;
-    });
+  bindGameApiControl<string>('playerHardToy', {
+    allowNull: true,
+    afterSync: (value) => ctx.setHardToyImage(ctx.player, value ?? null),
+  });
+  bindGameApiControl<number>('playerHardToyLevel');
+  bindGameApiControl<string>('opponentHardToy', {
+    allowNull: true,
+    afterSync: (value) => ctx.setHardToyImage(ctx.opponent, value ?? null),
+  });
+  bindGameApiControl<number>('opponentHardToyLevel');
 
   formGroup.get('turn')!.valueChanges.subscribe((value: number | null) => {
     if (value == null) {
@@ -191,103 +191,18 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
       ctx.updateGoldSpent(null, value);
     });
 
-  formGroup.get('oldStork')!.valueChanges.subscribe((value: boolean | null) => {
-    if (value == null) {
-      return;
-    }
-    ctx.gameService.gameApi.oldStork = value;
-  });
-
-  formGroup
-    .get('komodoShuffle')!
-    .valueChanges.subscribe((value: boolean | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.komodoShuffle = value;
-    });
-
-  formGroup.get('mana')!.valueChanges.subscribe((value: boolean | null) => {
-    if (value == null) {
-      return;
-    }
-    ctx.gameService.gameApi.mana = value;
-  });
-
-  formGroup
-    .get('playerRollAmount')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.playerRollAmount = value;
-    });
-
-  formGroup
-    .get('opponentRollAmount')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.opponentRollAmount = value;
-    });
-
-  formGroup
-    .get('playerLevel3Sold')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.playerLevel3Sold = value;
-    });
-
-  formGroup
-    .get('opponentLevel3Sold')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.opponentLevel3Sold = value;
-    });
-
-  formGroup
-    .get('playerSummonedAmount')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.playerSummonedAmount = value;
-    });
-
-  formGroup
-    .get('opponentSummonedAmount')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.opponentSummonedAmount = value;
-    });
-
-  formGroup
-    .get('playerTransformationAmount')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.playerTransformationAmount = value;
-    });
-
-  formGroup
-    .get('opponentTransformationAmount')!
-    .valueChanges.subscribe((value: number | null) => {
-      if (value == null) {
-        return;
-      }
-      ctx.gameService.gameApi.opponentTransformationAmount = value;
-    });
+  bindGameApiControl<boolean>('oldStork');
+  bindGameApiControl<boolean>('komodoShuffle');
+  bindGameApiControl<boolean>('mana');
+  bindGameApiControl<number>('playerRollAmount');
+  bindGameApiControl<number>('opponentRollAmount');
+  bindGameApiControl<number>('playerLevel3Sold');
+  bindGameApiControl<number>('opponentLevel3Sold');
+  bindGameApiControl<number>('playerSummonedAmount');
+  bindGameApiControl<number>('opponentSummonedAmount');
+  bindGameApiControl<number>('playerTransformationAmount');
+  bindGameApiControl<number>('opponentTransformationAmount');
 
   return formGroup;
 }
-
-
 

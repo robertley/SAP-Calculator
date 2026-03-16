@@ -11,19 +11,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { PetService } from 'app/integrations/pet/pet.service';
-import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import {
-  getPetAbilityText,
-  getPetIconPath,
-  getEquipmentAbilityText,
-  getEquipmentIconPath,
-  getToyAbilityText,
-  getToyIconPath,
   getPackIconPath,
+  getPetIconPath,
 } from 'app/runtime/asset-catalog';
 import { PACK_NAMES } from 'app/runtime/pack-names';
-import { ToyService } from 'app/integrations/toy/toy.service';
 import { AbstractControl, FormArray, FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { TooltipPositionDirective } from './tooltip-position.directive';
@@ -32,6 +24,10 @@ import {
   SelectionItem,
   SelectionType,
 } from './item-selection-dialog.types';
+import {
+  IndexedSelectionItem,
+  ItemSelectionCatalogService,
+} from './item-selection-catalog.service';
 export type {
   SelectionItem,
   SelectionItemType,
@@ -74,15 +70,10 @@ export class ItemSelectionDialogComponent
   availableItemCategories = ['All'];
   selectedLevel = 1;
 
-  items: SelectionItem[] = [];
-  filteredItems: SelectionItem[] = [];
+  items: IndexedSelectionItem[] = [];
+  filteredItems: IndexedSelectionItem[] = [];
 
   private customPacksSubscription: Subscription | null = null;
-  private basePetItems: SelectionItem[] | null = null;
-  private tokenItems: SelectionItem[] = [];
-  private equipmentItems: SelectionItem[] | null = null;
-  private toyItems: SelectionItem[] | null = null;
-  private hardToyItems: SelectionItem[] | null = null;
   private searchDebounceHandle: ReturnType<typeof setTimeout> | null = null;
 
   trackByPack(index: number, pack: string): string {
@@ -112,9 +103,7 @@ export class ItemSelectionDialogComponent
   }
 
   constructor(
-    private petService: PetService,
-    private equipmentService: EquipmentService,
-    private toyService: ToyService,
+    private catalogService: ItemSelectionCatalogService,
   ) { }
 
   ngOnInit(): void {
@@ -177,236 +166,12 @@ export class ItemSelectionDialogComponent
   }
 
   loadItems() {
-    if (this.type === 'pet' || this.type === 'swallowed-pet') {
-      this.loadPets();
-    } else if (this.type === 'equipment') {
-      this.loadEquipment();
-    } else if (this.type === 'toy') {
-      this.loadToys(false);
-    } else if (this.type === 'hard-toy') {
-      this.loadToys(true);
-    } else if (this.type === 'pack') {
-      this.loadPacks();
-    } else if (this.type === 'team') {
-      this.loadTeams();
-    } else if (this.type === 'ability') {
-      this.loadAbilities();
-    }
+    this.items = this.catalogService.getItems(this.type, {
+      customPacks: this.customPacks,
+      savedTeams: this.savedTeams,
+    });
     this.updateAvailableItemCategories();
     this.filterItems();
-  }
-
-  loadPets() {
-    const allPets: SelectionItem[] = [];
-
-    if (!this.basePetItems) {
-      const basePets: SelectionItem[] = [];
-      for (const pack of PACK_NAMES) {
-        const packPets = this.petService.basePackPetsByName[pack];
-        if (packPets) {
-          for (const [tier, pets] of packPets) {
-            pets.forEach((name) => {
-              basePets.push({
-                name,
-                displayName: name,
-                tier,
-                pack,
-                icon: getPetIconPath(name),
-                tooltip: getPetAbilityText(name),
-                type: 'pet',
-                category: `Tier ${tier}`,
-              });
-            });
-          }
-        }
-      }
-      this.basePetItems = basePets;
-    }
-    allPets.push(...this.basePetItems);
-
-    if (this.customPacks && this.customPacks instanceof FormArray) {
-      const customPacksArray = this.customPacks as FormArray;
-      for (const control of customPacksArray.controls) {
-        const packName = control.get('name')?.value;
-        if (!packName || !control.valid) continue;
-
-        const customPackPets =
-          this.petService.playerCustomPackPets.get(packName);
-        if (customPackPets) {
-          for (const [tier, pets] of customPackPets) {
-            pets.forEach((name) => {
-              allPets.push({
-                name,
-                displayName: name,
-                tier,
-                pack: packName,
-                icon: getPetIconPath(name),
-                tooltip: getPetAbilityText(name),
-                type: 'pet',
-                category: `Tier ${tier}`,
-              });
-            });
-          }
-        }
-      }
-    }
-
-    this.tokenItems = this.buildTokenItems();
-    allPets.push(...this.tokenItems);
-
-    const byName = new Map<string, SelectionItem>();
-    allPets.forEach((item) => {
-      const existing = byName.get(item.name);
-      if (!existing) {
-        byName.set(item.name, item);
-        return;
-      }
-      const existingIsToken = existing.pack === 'Tokens';
-      const incomingIsToken = item.pack === 'Tokens';
-      if (existingIsToken && !incomingIsToken) {
-        byName.set(item.name, item);
-      }
-    });
-    this.items = Array.from(byName.values());
-  }
-
-  loadEquipment() {
-    if (!this.equipmentItems) {
-      const allEquip: SelectionItem[] = [];
-      const equipmentMap = this.equipmentService.getInstanceOfAllEquipment();
-      const ailmentMap = this.equipmentService.getInstanceOfAllAilments();
-
-      equipmentMap.forEach((equip, name) => {
-        if (equip?.name === 'Corncob' || equip?.name === 'Mana Potion') {
-          return;
-        }
-        allEquip.push({
-          name,
-          displayName: equip.name,
-          tier: equip.tier || 0,
-          icon: getEquipmentIconPath(equip.name),
-          tooltip: getEquipmentAbilityText(equip.name),
-          type: 'equipment',
-          category: equip.tier ? `Tier ${equip.tier}` : 'Perks',
-          item: equip,
-        });
-      });
-
-      ailmentMap.forEach((ailment, name) => {
-        allEquip.push({
-          name,
-          displayName: ailment.name,
-          tier: 0,
-          icon: getEquipmentIconPath(ailment.name, true),
-          tooltip: getEquipmentAbilityText(ailment.name),
-          type: 'ailment',
-          category: 'Ailments',
-          item: ailment,
-        });
-      });
-
-      this.equipmentItems = allEquip;
-    }
-    this.items = this.equipmentItems;
-  }
-
-  private loadTeams() {
-    const teams = Array.isArray(this.savedTeams) ? this.savedTeams : [];
-    this.items = teams.map<SelectionItem>((team) => {
-      const petNames = (team.pets || [])
-        .map((p) => p?.name)
-        .filter(Boolean)
-        .slice(0, 5);
-      const icons = petNames.map((name) => getPetIconPath(name));
-      return {
-        id: team.id,
-        name: team.name,
-        displayName: team.name,
-        tier: 0,
-        icon: null,
-        icons,
-        tooltip: petNames.join(', '),
-        type: 'team',
-        category: 'Saved Teams',
-      };
-    });
-  }
-
-  loadToys(isHard: boolean) {
-    const cache = isHard ? this.hardToyItems : this.toyItems;
-    if (!cache) {
-      const allToys: SelectionItem[] = [];
-      const toyMap = this.toyService.getToysByType(isHard ? 1 : 0);
-
-      toyMap.forEach((toyNames, tier) => {
-        toyNames.forEach((name) => {
-          allToys.push({
-            name,
-            displayName: name,
-            tier,
-            icon: getToyIconPath(name),
-            tooltip: getToyAbilityText(name),
-            type: isHard ? 'hard-toy' : 'toy',
-            category: `Tier ${tier}`,
-            item: name,
-          });
-        });
-      });
-
-      if (isHard) {
-        this.hardToyItems = allToys;
-      } else {
-        this.toyItems = allToys;
-      }
-    }
-    this.items = isHard ? this.hardToyItems : this.toyItems;
-  }
-
-  loadPacks() {
-    const packItems: SelectionItem[] = [];
-
-    for (const name of PACK_NAMES) {
-      if (name === 'Custom') continue;
-      packItems.push({
-        name,
-        displayName: name,
-        tier: 0,
-        icon: getPackIconPath(name),
-        type: 'pack',
-        category: 'Packs',
-      });
-    }
-
-    if (this.customPacks && this.customPacks instanceof FormArray) {
-      const customPacksArray = this.customPacks as FormArray;
-      for (const control of customPacksArray.controls) {
-        const packName = control.get('name')?.value;
-        if (packName && control.valid) {
-          const firstPet = this.getFirstCustomPackPet(control);
-          packItems.push({
-            name: packName,
-            displayName: packName,
-            tier: 0,
-            icon: firstPet
-              ? getPetIconPath(firstPet)
-              : getPackIconPath(packName),
-            type: 'pack',
-            category: 'Custom Packs',
-          });
-        }
-      }
-    }
-
-    packItems.push({
-      name: 'Add Custom Pack',
-      displayName: '+ Add Custom Pack',
-      tier: 0,
-      icon: getPetIconPath('White Tiger'),
-      type: 'pack',
-      category: 'Custom Packs',
-    });
-
-    this.items = packItems;
   }
 
   filterItems() {
@@ -414,7 +179,7 @@ export class ItemSelectionDialogComponent
 
     if (this.type === 'pet' || this.type === 'swallowed-pet') {
       if (this.selectedPack === 'Tokens') {
-        filtered = this.tokenItems;
+        filtered = filtered.filter((item) => item.pack === 'Tokens');
       } else if (this.selectedPack !== 'All') {
         filtered = filtered.filter(
           (item) =>
@@ -455,31 +220,12 @@ export class ItemSelectionDialogComponent
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(
         (item) =>
-          item.name.toLowerCase().includes(query) ||
-          (item.displayName && item.displayName.toLowerCase().includes(query)),
+          item.searchName.includes(query) ||
+          item.searchDisplayName.includes(query),
       );
     }
 
-    this.filteredItems = [...filtered].sort((a, b) => {
-      // In ability mode: pets first, then equipment/ailments, then toys
-      if (this.type === 'ability') {
-        const abilityGroupOrder = (item: SelectionItem) => {
-          if (item.type === 'pet') return 0;
-          if (item.type === 'equipment' || item.type === 'ailment') return 1;
-          return 2; // toys
-        };
-        const groupDiff = abilityGroupOrder(a) - abilityGroupOrder(b);
-        if (groupDiff !== 0) return groupDiff;
-      }
-
-      if (a.category === 'Ailments' && b.category !== 'Ailments') return 1;
-      if (a.category !== 'Ailments' && b.category === 'Ailments') return -1;
-
-      if (a.category !== b.category)
-        return a.category.localeCompare(b.category);
-      if (a.tier !== b.tier) return a.tier - b.tier;
-      return a.name.localeCompare(b.name);
-    });
+    this.filteredItems = filtered;
   }
 
   onSearchChange() {
@@ -575,102 +321,6 @@ export class ItemSelectionDialogComponent
       }
     }
     return null;
-  }
-
-  private buildTokenItems(): SelectionItem[] {
-    const tokenItems: SelectionItem[] = [];
-    for (const [tier, pets] of this.petService.tokenPetsMap) {
-      pets.forEach((name) => {
-        tokenItems.push({
-          name,
-          displayName: name,
-          tier,
-          pack: 'Tokens',
-          icon: getPetIconPath(name),
-          tooltip: getPetAbilityText(name),
-          type: 'pet',
-          category: 'Tokens',
-        });
-      });
-    }
-    return tokenItems;
-  }
-
-  /** Loads all pets, equipment, and toys for the ability selector mode */
-  private loadAbilities(): void {
-    // --- Pets ---
-    const petItems: SelectionItem[] = [];
-    if (!this.basePetItems) {
-      const basePets: SelectionItem[] = [];
-      for (const pack of PACK_NAMES) {
-        const packPets = this.petService.basePackPetsByName[pack];
-        if (packPets) {
-          for (const [tier, pets] of packPets) {
-            pets.forEach((name) => {
-              basePets.push({
-                name,
-                displayName: name,
-                tier,
-                pack,
-                icon: getPetIconPath(name),
-                tooltip: getPetAbilityText(name),
-                type: 'pet',
-                category: `Tier ${tier}`,
-              });
-            });
-          }
-        }
-      }
-      this.basePetItems = basePets;
-    }
-
-    const allPets: SelectionItem[] = [];
-    allPets.push(...this.basePetItems);
-    allPets.push(...this.buildTokenItems());
-
-    const byName = new Map<string, SelectionItem>();
-    allPets.forEach((item) => {
-      const existing = byName.get(item.name);
-      if (!existing) {
-        byName.set(item.name, item);
-        return;
-      }
-      const existingIsToken = existing.pack === 'Tokens';
-      const incomingIsToken = item.pack === 'Tokens';
-      if (existingIsToken && !incomingIsToken) {
-        byName.set(item.name, item);
-      }
-    });
-
-    petItems.push(...Array.from(byName.values()));
-
-    // --- Equipment (non-pet, greyed out) ---
-    if (!this.equipmentItems) {
-      this.loadEquipment(); // populates this.equipmentItems
-    }
-    const equipItems: SelectionItem[] = (this.equipmentItems ?? []).map((item) => ({
-      ...item,
-      isDisabled: true,
-      category: item.type === 'ailment' ? 'Ailments' : (item.category ?? 'Equipment'),
-    }));
-
-    // --- Toys (non-pet, greyed out) ---
-    if (!this.toyItems) {
-      this.loadToys(false);
-    }
-    if (!this.hardToyItems) {
-      this.loadToys(true);
-    }
-    const toyItems: SelectionItem[] = [
-      ...(this.toyItems ?? []),
-      ...(this.hardToyItems ?? []),
-    ].map((item) => ({
-      ...item,
-      isDisabled: true,
-      category: item.type === 'hard-toy' ? `Hard Toy Tier ${item.tier}` : `Toy Tier ${item.tier}`,
-    }));
-
-    this.items = [...petItems, ...equipItems, ...toyItems];
   }
 
   private updateAvailableItemCategories(): void {

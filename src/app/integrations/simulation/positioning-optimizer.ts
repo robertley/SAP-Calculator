@@ -13,6 +13,7 @@ export interface PositioningOptimizerOptions {
   confidenceZ: number;
   minSamplesBeforeElimination: number;
   baseSeed: number;
+  keepSameBuffTargets: boolean;
 }
 
 export interface PositioningOptimizerProgress {
@@ -49,7 +50,8 @@ export interface PositioningOptimizationResult {
 
 interface CandidateState extends PositioningPermutationStats {
   rounds: number;
-  simulationLineup: (PetConfig | null)[];
+  simulationLineup: (PetConfig | null)[] | null;
+  lineupSignature: string;
 }
 
 interface RunPositioningOptimizationParams {
@@ -84,6 +86,8 @@ export function runPositioningOptimization(
     projectEndTurnLineup,
   } = params;
   const side = params.options.side;
+  const keepSameBuffTargets = params.options.keepSameBuffTargets === true;
+  const projectedLineupCache = new Map<string, (PetConfig | null)[]>();
 
   const maxSimulationsPerPermutation = Math.max(
     1,
@@ -118,7 +122,7 @@ export function runPositioningOptimization(
 
   const petsKey = side === 'player' ? 'playerPets' : 'opponentPets';
   const sidePets = (baseConfig[petsKey] ?? []).slice();
-  const baselineLineupDeltas = projectEndTurnLineup
+  const baselineLineupDeltas = projectEndTurnLineup && !keepSameBuffTargets
     ? computeLineupNumericDeltas(
         sidePets,
         normalizeLineupLength(
@@ -144,17 +148,12 @@ export function runPositioningOptimization(
     upperBound: 1,
     eliminated: false,
     rounds: 0,
-    simulationLineup: baselineLineupDeltas
-      ? buildProjectedCandidateLineup(
-          baseConfig,
-          side,
-          sidePets,
-          order,
-          baselineLineupDeltas,
-          projectEndTurnLineup,
-        )
-      : applyOrder(sidePets, order),
+    simulationLineup: keepSameBuffTargets ? applyOrder(sidePets, order) : null,
+    lineupSignature: '',
   }));
+  candidates.forEach((candidate) => {
+    candidate.lineupSignature = buildLineupSignature(candidate.lineup);
+  });
 
   let completedBattles = 0;
   const totalBattlesEstimate = permutations.length * maxSimulationsPerPermutation;
@@ -196,9 +195,21 @@ export function runPositioningOptimization(
       }
 
       ranAnyBatch = true;
+      const simulationLineup = getCandidateSimulationLineup(
+        candidate,
+        {
+          keepSameBuffTargets,
+          baseConfig,
+          side,
+          sidePets,
+          baselineLineupDeltas,
+          projectEndTurnLineup,
+        },
+        projectedLineupCache,
+      );
       const batchConfig = {
         ...baseConfig,
-        [petsKey]: candidate.simulationLineup,
+        [petsKey]: simulationLineup,
         simulationCount: simulationsToRun,
         logsEnabled: false,
         maxLoggedBattles: 0,
@@ -300,7 +311,7 @@ function cloneCandidateStats(candidate: CandidateState): PositioningPermutationS
   return {
     order: [...candidate.order],
     lineup: [...candidate.lineup],
-    simulationLineup: [...candidate.simulationLineup],
+    simulationLineup: [...(candidate.simulationLineup ?? candidate.lineup)],
     simulations: candidate.simulations,
     wins: candidate.wins,
     draws: candidate.draws,
@@ -496,24 +507,26 @@ function generateIndexPermutations<T>(source: T[]): number[][] {
 function groupEquivalentValues<T>(
   source: T[],
 ): Array<{ representative: T; indices: number[] }> {
-  const groups: Array<{ representative: T; indices: number[] }> = [];
+  const groupsBySignature = new Map<
+    string,
+    { representative: T; indices: number[] }
+  >();
 
   for (let index = 0; index < source.length; index += 1) {
     const value = source[index];
-    const existingGroup = groups.find((group) =>
-      valuesAreEquivalent(group.representative, value),
-    );
+    const signature = buildValueSignature(value);
+    const existingGroup = groupsBySignature.get(signature);
     if (existingGroup) {
       existingGroup.indices.push(index);
       continue;
     }
-    groups.push({
+    groupsBySignature.set(signature, {
       representative: value,
       indices: [index],
     });
   }
 
-  return groups;
+  return Array.from(groupsBySignature.values());
 }
 
 function generateGroupOrderPermutations(
@@ -565,54 +578,79 @@ function materializeIndexPermutation<T>(
   });
 }
 
-function valuesAreEquivalent(left: unknown, right: unknown): boolean {
-  if (Object.is(left, right)) {
-    return true;
+function getCandidateSimulationLineup(
+  candidate: CandidateState,
+  context: {
+    keepSameBuffTargets: boolean;
+    baseConfig: SimulationConfig;
+    side: PositioningOptimizationSide;
+    sidePets: (PetConfig | null)[];
+    baselineLineupDeltas: Array<Record<string, number>> | null;
+    projectEndTurnLineup: RunPositioningOptimizationParams['projectEndTurnLineup'];
+  },
+  projectedLineupCache: Map<string, (PetConfig | null)[]>,
+): (PetConfig | null)[] {
+  if (candidate.simulationLineup) {
+    return candidate.simulationLineup;
   }
 
-  if (left == null || right == null) {
-    return left === right;
+  const cached = projectedLineupCache.get(candidate.lineupSignature);
+  if (cached) {
+    candidate.simulationLineup = cached;
+    return cached;
   }
 
-  if (Array.isArray(left) || Array.isArray(right)) {
-    if (!Array.isArray(left) || !Array.isArray(right)) {
-      return false;
-    }
-    if (left.length !== right.length) {
-      return false;
-    }
-    for (let index = 0; index < left.length; index += 1) {
-      if (!valuesAreEquivalent(left[index], right[index])) {
-        return false;
-      }
-    }
-    return true;
+  const simulationLineup =
+    context.keepSameBuffTargets || !context.baselineLineupDeltas || !context.projectEndTurnLineup
+      ? candidate.lineup
+      : buildProjectedCandidateLineup(
+          context.baseConfig,
+          context.side,
+          context.sidePets,
+          candidate.order,
+          context.baselineLineupDeltas,
+          context.projectEndTurnLineup,
+        );
+
+  projectedLineupCache.set(candidate.lineupSignature, simulationLineup);
+  candidate.simulationLineup = simulationLineup;
+  return simulationLineup;
+}
+
+const objectSignatureCache = new WeakMap<object, string>();
+
+function buildLineupSignature(lineup: (PetConfig | null)[]): string {
+  return lineup.map((pet) => buildValueSignature(pet)).join('|');
+}
+
+function buildValueSignature(value: unknown): string {
+  if (value == null) {
+    return `${value}`;
+  }
+  if (typeof value === 'string') {
+    return `s:${value}`;
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return `${typeof value}:${value}`;
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map((entry) => buildValueSignature(entry)).join(',')}]`;
+  }
+  if (typeof value !== 'object') {
+    return `${typeof value}:${String(value)}`;
   }
 
-  if (typeof left !== 'object' || typeof right !== 'object') {
-    return false;
+  const cached = objectSignatureCache.get(value);
+  if (cached) {
+    return cached;
   }
 
-  const leftRecord = left as Record<string, unknown>;
-  const rightRecord = right as Record<string, unknown>;
-  const leftKeys = Object.keys(leftRecord).sort();
-  const rightKeys = Object.keys(rightRecord).sort();
-
-  if (leftKeys.length !== rightKeys.length) {
-    return false;
-  }
-
-  for (let index = 0; index < leftKeys.length; index += 1) {
-    const leftKey = leftKeys[index];
-    const rightKey = rightKeys[index];
-    if (leftKey !== rightKey) {
-      return false;
-    }
-    if (!valuesAreEquivalent(leftRecord[leftKey], rightRecord[rightKey])) {
-      return false;
-    }
-  }
-
-  return true;
+  const record = value as Record<string, unknown>;
+  const keys = Object.keys(record).sort();
+  const signature = `{${keys
+    .map((key) => `${key}:${buildValueSignature(record[key])}`)
+    .join(',')}}`;
+  objectSignatureCache.set(value, signature);
+  return signature;
 }
 

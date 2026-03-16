@@ -1,5 +1,6 @@
 export const EQUIPMENT_CATEGORIES: { [key: string]: string[] } = {
   Turtle: [
+    'Bread',
     'Cake',
     'Chili',
     'Coconut',

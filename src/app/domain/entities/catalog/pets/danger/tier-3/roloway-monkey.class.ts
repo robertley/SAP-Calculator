@@ -5,7 +5,6 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
-import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
@@ -15,8 +14,8 @@ export class RolowayMonkey extends Pet {
   name = 'Roloway Monkey';
   tier = 3;
   pack: Pack = 'Danger';
-  attack = 2;
-  health = 5;
+  attack = 1;
+  health = 4;
   initAbilities(): void {
     this.addAbility(
       new RolowayMonkeyAbility(this, this.logService, this.petService),
@@ -71,8 +70,10 @@ export class RolowayMonkeyAbility extends Ability {
       return;
     }
 
-    // Pool of useful hurt pets to transform into
-    const petNames = DANGERS_AND_USEFUL_POOLS.rolowayMonkey;
+    const petNames = this.petService.getFaintPetNamesByTiers([2, 3]);
+    if (petNames.length === 0) {
+      return;
+    }
 
     for (let target of targetResp.pets) {
       const sourcePositionLabel = this.formatPositionArg(owner);

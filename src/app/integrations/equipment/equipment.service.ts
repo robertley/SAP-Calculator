@@ -66,6 +66,7 @@ export class EquipmentService {
     ['Squash', 3],
     // T4
     ['Banana', 4],
+    ['Bread', 4],
     ['Love Potion', 4],
     ['Pie', 4],
     ['Grapes', 4],

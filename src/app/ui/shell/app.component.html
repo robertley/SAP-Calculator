@@ -13,58 +13,54 @@
             <h2 class="me-2 player-side-text">Player</h2>
             <div class="toy-row">
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'player')">
-                  <img *ngIf="playerToyImageUrl" class="toy-art" [ngSrc]="playerToyImageUrl" width="36" height="36"
+                <button type="button" class="toy-select-btn" (click)="boardFacade.openSelectionDialog('toy', 'player')">
+                  <img *ngIf="boardFacade.playerToyImageUrl" class="toy-art" [ngSrc]="boardFacade.playerToyImageUrl" width="36" height="36"
                     loading="lazy" decoding="async" alt="Player Toy" />
-                  <span class="toy-label">{{
-                    formGroup.get("playerToy").value || "Select Toy"
-                    }}</span>
+                  <span class="toy-label">{{ boardFacade.playerToyName }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="toy-level-controls inline" *ngIf="playerToyImageUrl">
-                  <button type="button" class="toy-level-btn" (click)="decrementToyLevel('player')"
+                <div class="toy-level-controls inline" *ngIf="boardFacade.playerToyImageUrl">
+                  <button type="button" class="toy-level-btn" (click)="boardFacade.decrementToyLevel('player')"
                     title="Decrease level" aria-label="Decrease player toy level">
                     <i class="fas fa-minus"></i>
                   </button>
-                  <span class="toy-level-label">Lv{{ formGroup.get("playerToyLevel").value }}</span>
-                  <button type="button" class="toy-level-btn" (click)="incrementToyLevel('player')"
+                  <span class="toy-level-label">Lv{{ boardFacade.playerToyLevel }}</span>
+                  <button type="button" class="toy-level-btn" (click)="boardFacade.incrementToyLevel('player')"
                     title="Increase level" aria-label="Increase player toy level">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
               </div>
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('hard-toy', 'player')">
-                  <img *ngIf="playerHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="playerHardToyImageUrl"
+                <button type="button" class="toy-select-btn" (click)="boardFacade.openSelectionDialog('hard-toy', 'player')">
+                  <img *ngIf="boardFacade.playerHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="boardFacade.playerHardToyImageUrl"
                     width="36" height="36" loading="lazy" decoding="async" alt="Player Hard Toy" />
-                  <span class="toy-label">{{
-                    formGroup.get("playerHardToy").value || "Hard Toy"
-                    }}</span>
+                  <span class="toy-label">{{ boardFacade.playerHardToyName }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <button type="button" *ngIf="playerHardToyImageUrl" class="toy-remove-btn-inline"
-                  (click)="removeHardToy('player')" title="Remove hard toy" aria-label="Remove player hard toy">
+                <button type="button" *ngIf="boardFacade.playerHardToyImageUrl" class="toy-remove-btn-inline"
+                  (click)="boardFacade.removeHardToy('player')" title="Remove hard toy" aria-label="Remove player hard toy">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
             </div>
           </div>
-          <button class="btn glass-btn mb-1" (click)="resetPlayer('player')">
+          <button class="btn glass-btn mb-1" (click)="boardFacade.resetPlayer('player')">
             Reset
           </button>
         </div>
         <div class="card p-2 player-card">
           <!-- <div class="back">BACK</div> -->
           <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
-            (cdkDropListDropped)="drop($event, 'player')">
+            (cdkDropListDropped)="boardFacade.drop($event, 'player')">
             <div class="col drag-container mb-2 mb-md-0 px-0" *ngFor="
-                let pet of playerPetsControls;
+                let pet of boardFacade.playerPetsControls;
                 index as i;
-                trackBy: trackByIndex
-              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay"
-              (mousedown)="setActivePetSlot('player', 4 - i)" (focusin)="setActivePetSlot('player', 4 - i)"
+                trackBy: boardFacade.trackByIndex
+              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="boardFacade.petSlotDragStartDelay"
+              (mousedown)="boardFacade.setActivePetSlot('player', 4 - i)" (focusin)="boardFacade.setActivePetSlot('player', 4 - i)"
               [class.pet-slot-active]="
-                activePetSlot?.side === 'player' && activePetSlot?.index === 4 - i
+                boardFacade.activePetSlot?.side === 'player' && boardFacade.activePetSlot?.index === 4 - i
               ">
               <div class="pet-slot-actions">
                 <button type="button" class="pet-clear-btn"
@@ -73,13 +69,13 @@
                   X
                 </button>
               </div>
-              <app-pet-selector [pet]="player.getPet(4 - i)" [player]="player" [opponent]="opponent" [index]="4 - i"
-                #playerPetSelector [formGroup]="makeFormGroup(pet)" [ailments]="true"
-                [allPets]="formGroup.get('allPets').value" [mana]="formGroup.get('mana').value"
-                [triggersConsumed]="formGroup.get('triggersConsumed').value" [allowEquipmentUseOverrides]="
-                  formGroup.get('changeEquipmentUses').value
-                " [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="true"
-                [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
+              <app-pet-selector [pet]="boardFacade.player.getPet(4 - i)" [player]="boardFacade.player" [opponent]="boardFacade.opponent" [index]="4 - i"
+                #playerPetSelector [formGroup]="boardFacade.makeFormGroup(pet)" [ailments]="true"
+                [allPets]="boardFacade.allPets" [mana]="boardFacade.mana"
+                [triggersConsumed]="boardFacade.triggersConsumed" [allowEquipmentUseOverrides]="
+                  boardFacade.changeEquipmentUses
+                " [showTokenPets]="boardFacade.tokenPets" [flipImage]="true"
+                [customPacks]="boardFacade.customPacks"></app-pet-selector>
             </div>
           </div>
           <!-- <div class="front">FRONT</div> -->
@@ -92,43 +88,39 @@
             <h2 class="me-2 opponent-side-text">Opponent</h2>
             <div class="toy-row">
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('toy', 'opponent')">
-                  <img *ngIf="opponentToyImageUrl" class="toy-art" [ngSrc]="opponentToyImageUrl" width="36" height="36"
+                <button type="button" class="toy-select-btn" (click)="boardFacade.openSelectionDialog('toy', 'opponent')">
+                  <img *ngIf="boardFacade.opponentToyImageUrl" class="toy-art" [ngSrc]="boardFacade.opponentToyImageUrl" width="36" height="36"
                     loading="lazy" decoding="async" alt="Opponent Toy" />
-                  <span class="toy-label">{{
-                    formGroup.get("opponentToy").value || "Select Toy"
-                    }}</span>
+                  <span class="toy-label">{{ boardFacade.opponentToyName }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <div class="toy-level-controls inline" *ngIf="opponentToyImageUrl">
-                  <button type="button" class="toy-level-btn" (click)="decrementToyLevel('opponent')"
+                <div class="toy-level-controls inline" *ngIf="boardFacade.opponentToyImageUrl">
+                  <button type="button" class="toy-level-btn" (click)="boardFacade.decrementToyLevel('opponent')"
                     title="Decrease level" aria-label="Decrease opponent toy level">
                     <i class="fas fa-minus"></i>
                   </button>
-                  <span class="toy-level-label">Lv{{ formGroup.get("opponentToyLevel").value }}</span>
-                  <button type="button" class="toy-level-btn" (click)="incrementToyLevel('opponent')"
+                  <span class="toy-level-label">Lv{{ boardFacade.opponentToyLevel }}</span>
+                  <button type="button" class="toy-level-btn" (click)="boardFacade.incrementToyLevel('opponent')"
                     title="Increase level" aria-label="Increase opponent toy level">
                     <i class="fas fa-plus"></i>
                   </button>
                 </div>
               </div>
               <div class="toy-slot">
-                <button type="button" class="toy-select-btn" (click)="openSelectionDialog('hard-toy', 'opponent')">
-                  <img *ngIf="opponentHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="opponentHardToyImageUrl"
+                <button type="button" class="toy-select-btn" (click)="boardFacade.openSelectionDialog('hard-toy', 'opponent')">
+                  <img *ngIf="boardFacade.opponentHardToyImageUrl" class="toy-art hard-toy-art" [ngSrc]="boardFacade.opponentHardToyImageUrl"
                     width="36" height="36" loading="lazy" decoding="async" alt="Opponent Hard Toy" />
-                  <span class="toy-label">{{
-                    formGroup.get("opponentHardToy").value || "Hard Toy"
-                    }}</span>
+                  <span class="toy-label">{{ boardFacade.opponentHardToyName }}</span>
                   <i class="fas fa-chevron-down"></i>
                 </button>
-                <button type="button" *ngIf="opponentHardToyImageUrl" class="toy-remove-btn-inline"
-                  (click)="removeHardToy('opponent')" title="Remove hard toy" aria-label="Remove opponent hard toy">
+                <button type="button" *ngIf="boardFacade.opponentHardToyImageUrl" class="toy-remove-btn-inline"
+                  (click)="boardFacade.removeHardToy('opponent')" title="Remove hard toy" aria-label="Remove opponent hard toy">
                   <i class="fas fa-times"></i>
                 </button>
               </div>
             </div>
           </div>
-          <button class="btn glass-btn mb-1" (click)="resetPlayer('opponent')">
+          <button class="btn glass-btn mb-1" (click)="boardFacade.resetPlayer('opponent')">
             Reset
           </button>
         </div>
@@ -136,15 +128,15 @@
         <div class="card p-2 player-card ml-auto">
           <!-- <div class="front">FRONT</div> -->
           <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
-            (cdkDropListDropped)="drop($event, 'opponent')">
+            (cdkDropListDropped)="boardFacade.drop($event, 'opponent')">
             <div class="col drag-container mb-2 mb-sm-0 px-0" *ngFor="
-                let pet of opponentPetsControls;
+                let pet of boardFacade.opponentPetsControls;
                 index as i;
-                trackBy: trackByIndex
-              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="petSlotDragStartDelay"
-              (mousedown)="setActivePetSlot('opponent', i)" (focusin)="setActivePetSlot('opponent', i)"
+                trackBy: boardFacade.trackByIndex
+              " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="boardFacade.petSlotDragStartDelay"
+              (mousedown)="boardFacade.setActivePetSlot('opponent', i)" (focusin)="boardFacade.setActivePetSlot('opponent', i)"
               [class.pet-slot-active]="
-                activePetSlot?.side === 'opponent' && activePetSlot?.index === i
+                boardFacade.activePetSlot?.side === 'opponent' && boardFacade.activePetSlot?.index === i
               ">
               <div class="pet-slot-actions">
                 <button type="button" class="pet-clear-btn"
@@ -153,13 +145,13 @@
                   X
                 </button>
               </div>
-              <app-pet-selector [pet]="opponent.getPet(i)" [player]="opponent" [opponent]="player" [index]="i"
-                #opponentPetSelector [formGroup]="makeFormGroup(pet)" [ailments]="true"
-                [allPets]="formGroup.get('allPets').value" [mana]="formGroup.get('mana').value"
-                [triggersConsumed]="formGroup.get('triggersConsumed').value" [allowEquipmentUseOverrides]="
-                  formGroup.get('changeEquipmentUses').value
-                " [showTokenPets]="formGroup.get('tokenPets').value" [flipImage]="false"
-                [customPacks]="formGroup.get('customPacks')"></app-pet-selector>
+              <app-pet-selector [pet]="boardFacade.opponent.getPet(i)" [player]="boardFacade.opponent" [opponent]="boardFacade.player" [index]="i"
+                #opponentPetSelector [formGroup]="boardFacade.makeFormGroup(pet)" [ailments]="true"
+                [allPets]="boardFacade.allPets" [mana]="boardFacade.mana"
+                [triggersConsumed]="boardFacade.triggersConsumed" [allowEquipmentUseOverrides]="
+                  boardFacade.changeEquipmentUses
+                " [showTokenPets]="boardFacade.tokenPets" [flipImage]="false"
+                [customPacks]="boardFacade.customPacks"></app-pet-selector>
             </div>
           </div>
           <!-- <div class="back">BACK</div> -->
@@ -167,9 +159,9 @@
       </div>
     </div>
 
-    <app-shell-controls [app]="app"></app-shell-controls>
+    <app-shell-controls [app]="controlsFacade" [renderEpoch]="controlsFacade.renderEpoch"></app-shell-controls>
 
-    <app-shell-battle-results [app]="app"></app-shell-battle-results>
+    <app-shell-battle-results [app]="battleResultsFacade" [renderEpoch]="battleResultsFacade.renderEpoch"></app-shell-battle-results>
 
     <!-- Custom Pack -->
     <div class="modal fade custom-pack-editor-modal" id="customPackEditor" tabindex="-1"
@@ -197,7 +189,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            @defer (when showInfo) {
+            @defer (when overlayState.showInfo) {
             <app-info></app-info>
             } @placeholder {
             <div class="text-muted">Loading info…</div>
@@ -217,7 +209,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            @defer (when showImport) {
+            @defer (when overlayState.showImport) {
             <app-import-calculator [importFunc]="importForDialog"></app-import-calculator>
             } @placeholder {
             <div class="text-muted">Loading import tools…</div>
@@ -237,7 +229,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            @defer (when showExport) {
+            @defer (when overlayState.showExport) {
             <app-export-calculator [formGroup]="formGroup"></app-export-calculator>
             } @placeholder {
             <div class="text-muted">Loading export tools…</div>
@@ -255,7 +247,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            @defer (when showReportABug) {
+            @defer (when overlayState.showReportABug) {
             <app-report-a-bug [calcFormGroup]="formGroup"></app-report-a-bug>
             } @placeholder {
             <div class="text-muted">Loading report form…</div>
@@ -267,7 +259,9 @@
   </div>
 </ng-container>
 
-<app-item-selection-dialog *ngIf="showSelectionDialog" [ngClass]="lapsusTypographyStageClass" [type]="selectionType"
-  [showAllPets]="formGroup.get('allPets').value" [customPacks]="formGroup.get('customPacks')" [savedTeams]="savedTeams"
-  (select)="onItemSelected($event)" (close)="showSelectionDialog = false">
+@defer (when overlayState.showSelectionDialog) {
+<app-item-selection-dialog *ngIf="overlayState.showSelectionDialog" [ngClass]="lapsusTypographyStageClass" [type]="overlayState.selectionType"
+  [showAllPets]="boardFacade.selectionDialogShowAllPets" [customPacks]="boardFacade.customPacks" [savedTeams]="savedTeams"
+  (select)="onItemSelected($event)" (close)="overlayState.closeSelectionDialog()">
 </app-item-selection-dialog>
+}

@@ -4,7 +4,7 @@
       <div class="zone-label">Run</div>
       <div class="simulate-controls">
         <div class="simulate-input-group">
-          <button class="btn btn-primary" (click)="app.simulate(app.formGroup.get('simulations').value)"
+          <button class="btn btn-primary" (click)="app.simulate(app.simulations)"
             [disabled]="app.simulationInProgress">
             {{ app.simulationInProgress ? "Simulating..." : "Simulate" }}
           </button>
@@ -24,6 +24,18 @@
             <option value="player" class="player-side-text">Player</option>
             <option value="opponent" class="opponent-side-text">Opponent</option>
           </select>
+          <div class="form-check mb-0">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="keepSameBuffTargetsOnOptimization"
+              formControlName="keepSameBuffTargetsOnOptimization"
+              [disabled]="app.simulationInProgress"
+            />
+            <label class="form-check-label small" for="keepSameBuffTargetsOnOptimization">
+              Keep same buff targets
+            </label>
+          </div>
         </div>
         <div class="randomize-control-group">
           <button class="btn btn-secondary" (click)="app.randomize()">
@@ -168,28 +180,20 @@
             <div class="form-group min-w-input">
               <label><span class="player-side-text">Player</span> Pack</label>
               <button class="selection-btn" (click)="app.openSelectionDialog('pack', 'player')">
-                <img *ngIf="
-                        app.getPackIconPath(app.formGroup.get('playerPack').value) &&
-                        !app.playerPackImageBroken
-                      " [ngSrc]="app.getPackIconPath(app.formGroup.get('playerPack').value)" class="btn-icon"
+                <img *ngIf="app.playerPackIconPath && !app.playerPackImageBroken"
+                  [ngSrc]="app.playerPackIconPath" class="btn-icon"
                   width="24" height="24" loading="lazy" decoding="async" (error)="app.onPackImageError('player')" />
-                <span class="btn-text">{{
-                  app.formGroup.get("playerPack").value || "Select Pack"
-                  }}</span>
+                <span class="btn-text">{{ app.playerPackName }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
             </div>
             <div class="form-group min-w-input">
               <label><span class="opponent-side-text">Opponent</span> Pack</label>
               <button class="selection-btn" (click)="app.openSelectionDialog('pack', 'opponent')">
-                <img *ngIf="
-                        app.getPackIconPath(app.formGroup.get('opponentPack').value) &&
-                        !app.opponentPackImageBroken
-                      " [ngSrc]="app.getPackIconPath(app.formGroup.get('opponentPack').value)" class="btn-icon"
+                <img *ngIf="app.opponentPackIconPath && !app.opponentPackImageBroken"
+                  [ngSrc]="app.opponentPackIconPath" class="btn-icon"
                   width="24" height="24" loading="lazy" decoding="async" (error)="app.onPackImageError('opponent')" />
-                <span class="btn-text">{{
-                  app.formGroup.get("opponentPack").value || "Select Pack"
-                  }}</span>
+                <span class="btn-text">{{ app.opponentPackName }}</span>
                 <i class="fas fa-chevron-down ms-auto"></i>
               </button>
             </div>
