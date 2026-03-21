@@ -139,7 +139,7 @@
     "NameId": "Bread"
   },
   {
-    "Ability": "Before attack: Transform into a random summon pet.",
+    "Ability": "Before attack: Transform into a random Wolf, Slug, Sheep, Rooster, Nessie, Deer, Tardigrade, Hirola, Patagonian Mara, Osprey, or Anteater.",
     "Positive": true,
     "Id": "94",
     "Name": "Cocoa Bean",
