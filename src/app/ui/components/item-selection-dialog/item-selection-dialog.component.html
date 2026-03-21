@@ -30,7 +30,25 @@
           (ngModelChange)="onSearchChange()" #searchInput />
       </div>
 
-      <div class="pack-filters" *ngIf="type === 'pet' || type === 'swallowed-pet'">
+      <div class="sort-mode-selector" *ngIf="supportsTriggerSort">
+        <span class="sort-mode-label">Sort by</span>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Item Sort Selector">
+          <button type="button" class="btn"
+            [class.btn-primary]="selectedSortMode === 'default'"
+            [class.btn-outline-primary]="selectedSortMode !== 'default'"
+            (click)="setSortMode('default')">
+            {{ defaultSortLabel }}
+          </button>
+          <button type="button" class="btn"
+            [class.btn-primary]="selectedSortMode === 'trigger'"
+            [class.btn-outline-primary]="selectedSortMode !== 'trigger'"
+            (click)="setSortMode('trigger')">
+            Trigger
+          </button>
+        </div>
+      </div>
+
+      <div class="pack-filters" *ngIf="showPackFilters">
         <button *ngFor="let pack of availablePacks; trackBy: trackByPack" class="btn btn-sm"
           [class.btn-primary]="selectedPack === pack" [class.btn-outline-primary]="selectedPack !== pack"
           (click)="selectPack(pack)">
@@ -72,12 +90,22 @@
         </div>
       </div>
 
-      <div class="pack-filters" *ngIf="type === 'equipment' || type === 'toy' || type === 'hard-toy'">
+      <div class="pack-filters" *ngIf="showDefaultCategoryFilters">
         <button *ngFor="let category of availableItemCategories; trackBy: trackByCategory" class="btn btn-sm"
           [class.btn-primary]="selectedItemCategory === category"
           [class.btn-outline-primary]="selectedItemCategory !== category" (click)="selectItemCategory(category)">
           {{ category }}
         </button>
+      </div>
+
+      <div class="filter-select-row" *ngIf="showTriggerFilters">
+        <label class="filter-select-label" for="triggerFilterSelect">Trigger</label>
+        <select id="triggerFilterSelect" class="form-select filter-select" [ngModel]="selectedTriggerCategory"
+          (ngModelChange)="selectTriggerCategory($event)">
+          <option *ngFor="let category of availableTriggerCategories; trackBy: trackByCategory" [ngValue]="category">
+            {{ category }}
+          </option>
+        </select>
       </div>
 
       <!-- Non-vanilla warning for ability mode -->
@@ -100,8 +128,8 @@
             let i = index;
             trackBy: trackByItem
           ">
-          <div class="category-header" *ngIf="i === 0 || filteredItems[i - 1].category !== item.category">
-            {{ item.category }}
+          <div class="category-header" *ngIf="shouldShowCategoryHeader(i, item)">
+            {{ getVisibleCategory(item) }}
           </div>
           <div class="item-card" [class.item-card-disabled]="item.isDisabled" [class.team-card]="type === 'team'"
             (click)="onItemClick(item)" [appTooltip]="item.tooltip || item.displayName || item.name">

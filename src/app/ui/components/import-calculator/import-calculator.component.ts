@@ -22,9 +22,17 @@ import {
   buildReplayAbilityPetMapFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 import { parseReplayCode } from 'app/integrations/replay/replay-code';
-import { ReplayOddsImageService } from 'app/integrations/replay/replay-odds-image.service';
 import {
+  ReplayOddsImageHotspot,
+  ReplayOddsImagePreview,
+  ReplayOddsImageResult,
+  ReplayOddsImageService,
+} from 'app/integrations/replay/replay-odds-image.service';
+import {
+  ReplayPositioningImageHotspot,
+  ReplayPositioningImagePreview,
   ReplayPositioningImageProgress,
+  ReplayPositioningImageResult,
   ReplayPositioningImageService,
 } from 'app/integrations/replay/replay-positioning-image.service';
 import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
@@ -102,9 +110,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   positioningImageLoading = false;
   oddsImageBlob: Blob | null = null;
   oddsImagePreviewUrl: string | null = null;
+  oddsImagePreview: ReplayOddsImagePreview | null = null;
   oddsImageFileName = '';
   positioningImageBlob: Blob | null = null;
   positioningImagePreviewUrl: string | null = null;
+  positioningImagePreview: ReplayPositioningImagePreview | null = null;
   positioningImageFileName = '';
   positioningProgressPercent = 0;
   positioningProgressMessage = '';
@@ -1032,13 +1042,13 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   ): void {
     this.setOddsImageLoading(true);
     this.replayOddsImageService
-      .buildOddsImageBlob({
+      .buildOddsImage({
         replayPayload: request.replay,
         simulationCount: request.simulationCount,
         abilityPetMap: request.abilityPetMap ?? null,
       })
-      .then((blob) => {
-        this.setOddsPreview(blob, replayId);
+      .then((result) => {
+        this.setOddsPreview(result, replayId);
         this.setStatus('Replay odds image ready. Preview and download below.', 'success');
       })
       .catch((error) => {
@@ -1058,7 +1068,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.positioningBuildAbortController = abortController;
     this.setPositioningImageLoading(true);
     this.replayPositioningImageService
-      .buildPositioningImageBlob({
+      .buildPositioningImage({
         replayPayload: request.replay,
         simulationCount: request.simulationCount,
         optimizationSide: request.optimizationSide ?? 'player',
@@ -1071,11 +1081,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
       })
-      .then((blob) => {
+      .then((result) => {
         if (abortController.signal.aborted) {
           return;
         }
-        this.setPositioningPreview(blob, replayId);
+        this.setPositioningPreview(result, replayId);
         this.setStatus('Positioning image ready. Preview and download below.', 'success');
       })
       .catch((error) => {
@@ -1115,6 +1125,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     }
     this.oddsImagePreviewUrl = null;
     this.oddsImageBlob = null;
+    this.oddsImagePreview = null;
     this.oddsImageFileName = '';
   }
 
@@ -1138,13 +1149,18 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     }
     this.positioningImagePreviewUrl = null;
     this.positioningImageBlob = null;
+    this.positioningImagePreview = null;
     this.positioningImageFileName = '';
   }
 
-  private setOddsPreview(blob: Blob, replayId?: string): void {
+  private setOddsPreview(
+    result: ReplayOddsImageResult,
+    replayId?: string,
+  ): void {
     this.clearOddsPreview();
-    this.oddsImageBlob = blob;
-    this.oddsImagePreviewUrl = window.URL.createObjectURL(blob);
+    this.oddsImageBlob = result.blob;
+    this.oddsImagePreviewUrl = window.URL.createObjectURL(result.blob);
+    this.oddsImagePreview = result.preview;
     const sanitizedReplayId =
       typeof replayId === 'string'
         ? replayId.replace(/[^a-zA-Z0-9_-]/g, '')
@@ -1155,10 +1171,14 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private setPositioningPreview(blob: Blob, replayId?: string): void {
+  private setPositioningPreview(
+    result: ReplayPositioningImageResult,
+    replayId?: string,
+  ): void {
     this.clearPositioningPreview();
-    this.positioningImageBlob = blob;
-    this.positioningImagePreviewUrl = window.URL.createObjectURL(blob);
+    this.positioningImageBlob = result.blob;
+    this.positioningImagePreviewUrl = window.URL.createObjectURL(result.blob);
+    this.positioningImagePreview = result.preview;
     const sanitizedReplayId =
       typeof replayId === 'string'
         ? replayId.replace(/[^a-zA-Z0-9_-]/g, '')
@@ -1167,6 +1187,32 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       ? `replay-positioning-${sanitizedReplayId}.png`
       : `replay-positioning-${new Date().toISOString().slice(0, 10)}.png`;
     this.cdr.markForCheck();
+  }
+
+  positioningHotspotStyle(
+    hotspot: ReplayPositioningImageHotspot,
+  ): Record<string, string> {
+    if (!this.positioningImagePreview || this.positioningImagePreview.height <= 0) {
+      return {};
+    }
+
+    return {
+      top: `${(hotspot.top / this.positioningImagePreview.height) * 100}%`,
+      height: `${(hotspot.height / this.positioningImagePreview.height) * 100}%`,
+    };
+  }
+
+  oddsHotspotStyle(
+    hotspot: ReplayOddsImageHotspot,
+  ): Record<string, string> {
+    if (!this.oddsImagePreview || this.oddsImagePreview.height <= 0) {
+      return {};
+    }
+
+    return {
+      top: `${(hotspot.top / this.oddsImagePreview.height) * 100}%`,
+      height: `${(hotspot.height / this.oddsImagePreview.height) * 100}%`,
+    };
   }
 
   private handleOddsImageError(error: unknown): void {

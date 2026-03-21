@@ -111,6 +111,65 @@ describe('random decision overrides', () => {
     expect(labels).toContain('(P1) Bay Cat summon 2');
   });
 
+  it('captures Roloway Monkey transform decisions from the fixed pool', () => {
+    const expectedPool = [
+      'Sea Urchin',
+      'Bigfoot',
+      'Frost Wolf',
+      'Thorny Dragon',
+      'Hoopoe Bird',
+      'Flea',
+      'Weasel',
+      'Skeleton Dog',
+      'Flamingo',
+      'Tuna',
+    ];
+    const config: SimulationConfig = {
+      playerPack: 'Danger',
+      opponentPack: 'Danger',
+      turn: 11,
+      simulationCount: 1,
+      logsEnabled: true,
+      playerGoldSpent: 0,
+      opponentGoldSpent: 0,
+      playerRollAmount: 0,
+      opponentRollAmount: 0,
+      playerLevel3Sold: 0,
+      opponentLevel3Sold: 0,
+      playerSummonedAmount: 0,
+      opponentSummonedAmount: 0,
+      playerTransformationAmount: 0,
+      opponentTransformationAmount: 0,
+      playerPets: [
+        { name: 'Ant', attack: 2, health: 2, exp: 0, mana: 0, equipment: null },
+        { name: 'Fish', attack: 3, health: 3, exp: 0, mana: 0, equipment: null },
+        { name: 'Roloway Monkey', attack: 1, health: 4, exp: 0, mana: 0, equipment: null },
+        null,
+        null,
+      ],
+      opponentPets: [
+        { name: 'Elephant', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        null,
+        null,
+        null,
+        null,
+      ],
+      captureRandomDecisions: true,
+      maxLoggedBattles: 1,
+    };
+
+    const result = runSimulation(config);
+    const decisions = (result.randomDecisions ?? []).filter(
+      (decision) => decision.key === 'pet.roloway-monkey-transform',
+    );
+
+    expect(decisions).toHaveLength(2);
+    for (const decision of decisions) {
+      expect(decision.options.map((option) => option.id)).toEqual(expectedPool);
+      expect(decision.label).toContain('Roloway Monkey transform');
+    }
+  });
+
   it('labels equipment decisions with the equipment owner', () => {
     const config: SimulationConfig = {
       playerPack: 'Star',

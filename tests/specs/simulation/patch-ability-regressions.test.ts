@@ -3,6 +3,20 @@ import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
 import { LogService } from '../../../src/app/integrations/log.service';
 import { parseLogMessage } from '../../../src/app/ui/shell/simulation/app.component.simulation';
 
+const COCOA_BEAN_SUMMON_POOL = [
+    'Wolf',
+    'Slug',
+    'Sheep',
+    'Rooster',
+    'Nessie',
+    'Deer',
+    'Tardigrade',
+    'Hirola',
+    'Patagonian Mara',
+    'Osprey',
+    'Anteater',
+];
+
 describe('Pet Ability Patch Regressions', () => {
     const baseConfig: SimulationConfig = {
         playerPack: 'Custom',
@@ -215,6 +229,7 @@ describe('Pet Ability Patch Regressions', () => {
         );
 
         expect(decision).toBeDefined();
+        expect(decision?.options.map((option) => option.id)).toEqual(COCOA_BEAN_SUMMON_POOL);
 
         const forcedOption = decision!.options[0];
         const result = runSimulation({
@@ -293,6 +308,7 @@ describe('Pet Ability Patch Regressions', () => {
             entry.key === 'equipment.cocoa-bean-transform'
         );
         expect(decision).toBeDefined();
+        expect(decision?.options.map((option) => option.id)).toEqual(COCOA_BEAN_SUMMON_POOL);
 
         const forcedOption =
             decision!.options.find((option: any) => option.id !== 'Ant') ?? decision!.options[0];
@@ -1417,4 +1433,3 @@ describe('Pet Ability Patch Regressions', () => {
         expect(noRoomLog).toBeUndefined();
     });
 });
-

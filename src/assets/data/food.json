@@ -1941,7 +1941,7 @@
       "Danger"
     ],
     "Rollable": true,
-    "PerkNote": "Before attack: Transform into a random summon pet.",
+    "PerkNote": "Before attack: Transform into a random Wolf, Slug, Sheep, Rooster, Nessie, Deer, Tardigrade, Hirola, Patagonian Mara, Osprey, or Anteater.",
     "CustomArchetypes": [],
     "Random": true
   },

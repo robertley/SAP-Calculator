@@ -8607,15 +8607,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Transform the two friends ahead into level 1 <b>Faint</b> pets from tier 2 and 3."
+          "About": "Start of battle: Transform the two friends ahead into a random level 1 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Transform the two friends ahead into level 2 <b>Faint</b> pets from tier 2 and 3."
+          "About": "Start of battle: Transform the two friends ahead into a random level 2 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Transform the two friends ahead into level 3 <b>Faint</b> pets from tier 2 and 3."
+          "About": "Start of battle: Transform the two friends ahead into a random level 3 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
       }
     ],
     "Id": "429",

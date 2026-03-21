@@ -19,6 +19,76 @@ import { SelectionItem, SelectionType } from './item-selection-dialog.types';
 export interface IndexedSelectionItem extends SelectionItem {
   searchName: string;
   searchDisplayName: string;
+  triggerCategory: string;
+}
+
+export const PASSIVE_TRIGGER_CATEGORY = 'Passive';
+
+export function extractTriggerCategory(tooltip?: string | null): string {
+  if (!tooltip) {
+    return PASSIVE_TRIGGER_CATEGORY;
+  }
+
+  const lines = tooltip
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  for (const line of lines) {
+    const normalizedLine = line.replace(/^Lv\s*\d+\s*:\s*/i, '').trim();
+    const triggerMatch = /^([^:]+):/.exec(normalizedLine);
+    if (triggerMatch?.[1]) {
+      return triggerMatch[1].trim();
+    }
+  }
+
+  return PASSIVE_TRIGGER_CATEGORY;
+}
+
+export function compareTriggerCategories(left: string, right: string): number {
+  if (left === right) {
+    return 0;
+  }
+  if (left === PASSIVE_TRIGGER_CATEGORY) {
+    return 1;
+  }
+  if (right === PASSIVE_TRIGGER_CATEGORY) {
+    return -1;
+  }
+  return left.localeCompare(right);
+}
+
+export function getTriggerCategories(
+  items: Array<Pick<IndexedSelectionItem, 'triggerCategory'>>,
+): string[] {
+  const categories = Array.from(
+    new Set(
+      items
+        .map((item) => item.triggerCategory)
+        .filter((category) => category.length > 0),
+    ),
+  );
+
+  categories.sort(compareTriggerCategories);
+  return categories;
+}
+
+export function sortItemsByTrigger<T extends IndexedSelectionItem>(
+  items: T[],
+): T[] {
+  return [...items].sort((left, right) => {
+    const categoryDiff = compareTriggerCategories(
+      left.triggerCategory,
+      right.triggerCategory,
+    );
+    if (categoryDiff !== 0) {
+      return categoryDiff;
+    }
+    if ((left.tier ?? 0) !== (right.tier ?? 0)) {
+      return (left.tier ?? 0) - (right.tier ?? 0);
+    }
+    return left.name.localeCompare(right.name);
+  });
 }
 
 @Injectable({
@@ -395,6 +465,7 @@ export class ItemSelectionCatalogService {
       ...item,
       searchName: item.name.toLowerCase(),
       searchDisplayName: (item.displayName ?? item.name).toLowerCase(),
+      triggerCategory: extractTriggerCategory(item.tooltip),
     };
   }
 

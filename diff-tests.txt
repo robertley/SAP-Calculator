@@ -1,0 +1,381 @@
+﻿diff --git a/tests/specs/replay/replay-calc-parser.test.ts b/tests/specs/replay/replay-calc-parser.test.ts
+index 08aa2918..1e8b331c 100644
+--- a/tests/specs/replay/replay-calc-parser.test.ts
++++ b/tests/specs/replay/replay-calc-parser.test.ts
+@@ -377,4 +377,23 @@ describe('ReplayCalcParser', () => {
+     expect(playerPet?.attack).toBe(1);
+     expect(playerPet?.health).toBe(4);
+   });
++
++  it('accepts pack names directly on imported replay battle boards', () => {
++    const parser = new ReplayCalcParser();
++    const battleJson: ReplayBattleJson = {
++      UserBoard: {
++        Pack: 'Unicorn',
++        Mins: { Items: [] },
++      },
++      OpponentBoard: {
++        Pack: 'Puppy',
++        Mins: { Items: [] },
++      },
++    };
++
++    const state = parser.parseReplayForCalculator(battleJson);
++
++    expect(state.playerPack).toBe('Unicorn');
++    expect(state.opponentPack).toBe('Puppy');
++  });
+ });
+diff --git a/tests/specs/replay/replay-calc.service.test.ts b/tests/specs/replay/replay-calc.service.test.ts
+new file mode 100644
+index 00000000..6a7c2e93
+--- /dev/null
++++ b/tests/specs/replay/replay-calc.service.test.ts
+@@ -0,0 +1,61 @@
++import { describe, expect, it, vi } from 'vitest';
++import { HttpClient } from '@angular/common/http';
++
++vi.mock('../../../src/app/integrations/replay/replay-api-endpoints', () => ({
++  getReplayApiUrl: (path: string) => path,
++  getReplayTurnsApiUrl: (path: string) => path,
++}));
++
++import {
++  ReplayBattleResponse,
++  ReplayCalcService,
++  ReplayTurnsResponse,
++} from '../../../src/app/integrations/replay/replay-calc.service';
++
++describe('ReplayCalcService', () => {
++  it('preserves replay meta pack data when building a battle from turns', () => {
++    const service = new ReplayCalcService(null as unknown as HttpClient);
++    const turnsResponse: ReplayTurnsResponse = {
++      turns: [
++        {
++          turn: 1,
++          user: {
++            stats: {
++              turn: 1,
++              goldSpent: 10,
++            },
++            pets: [],
++          },
++          opponent: {
++            stats: {
++              turn: 1,
++              goldSpent: 9,
++            },
++            pets: [],
++          },
++        },
++      ],
++      replayMeta: {
++        pack: 'Unicorn',
++        opponent_pack: 'Danger',
++      },
++    };
++
++    const replayServiceWithTurnsBuilder = service as unknown as {
++      buildReplayBattleResponseFromTurns: (
++        response: ReplayTurnsResponse,
++        requestedTurn: number,
++        replayId: string,
++      ) => ReplayBattleResponse;
++    };
++
++    const response = replayServiceWithTurnsBuilder.buildReplayBattleResponseFromTurns(
++      turnsResponse,
++      1,
++      'replay-1',
++    );
++
++    expect(response.battle?.UserBoard?.Pack).toBe(6);
++    expect(response.battle?.OpponentBoard?.Pack).toBe(7);
++  });
++});
+diff --git a/tests/specs/simulation/dunkleosteus-manticore-regressions.test.ts b/tests/specs/simulation/dunkleosteus-manticore-regressions.test.ts
+new file mode 100644
+index 00000000..f998118a
+--- /dev/null
++++ b/tests/specs/simulation/dunkleosteus-manticore-regressions.test.ts
+@@ -0,0 +1,53 @@
++import { describe, expect, it } from 'vitest';
++import { createBaseConfig, createPet, runBattleLogs } from '../../support/battle-test-runtime';
++
++describe('Dunkleosteus and copied Manticore regressions', () => {
++  it('Dunkleosteus skips enemies that already have the ailment when moving it', () => {
++    const config = createBaseConfig('Custom');
++    config.playerPets[0] = createPet('Dunkleosteus', {
++      attack: 6,
++      health: 8,
++      equipment: { name: 'Weak' },
++    });
++    config.opponentPets[0] = createPet('Pig', {
++      attack: 6,
++      health: 12,
++      equipment: { name: 'Weak' },
++    });
++    config.opponentPets[1] = createPet('Fish', { attack: 4, health: 6 });
++    config.opponentPets[2] = createPet('Ant', { attack: 2, health: 4 });
++
++    const logs = runBattleLogs(config);
++    const dunkleosteusLog = logs.find((log) =>
++      String(log.message ?? '').includes('Dunkleosteus moved Weak to'),
++    );
++
++    expect(dunkleosteusLog?.message).toContain('Dunkleosteus moved Weak to Fish, Ant.');
++  });
++
++  it('Abomination copied Manticore amplifies enemy ailments', () => {
++    const config = createBaseConfig('Unicorn');
++    config.opponentPack = 'Turtle';
++    config.playerPets[0] = createPet('Abomination', {
++      attack: 4,
++      health: 8,
++      abominationSwallowedPet1: 'Manticore',
++      abominationSwallowedPet1Level: 1,
++    });
++    config.opponentPets[0] = createPet('Ant', {
++      attack: 1,
++      health: 20,
++      equipment: { name: 'Weak' },
++    });
++
++    const logs = runBattleLogs(config);
++    const attackLog = logs.find(
++      (log) =>
++        log.type === 'attack' &&
++        String(log.message ?? '').includes('Abomination attacks Ant for 10.'),
++    );
++
++    expect(attackLog?.message).toContain('(Weak +6)');
++    expect(attackLog?.message).toContain('x2 (Manticore)');
++  });
++});
+diff --git a/tests/specs/simulation/patch-ability-regressions.test.ts b/tests/specs/simulation/patch-ability-regressions.test.ts
+index e6ca0cdd..b8a7f5b6 100644
+--- a/tests/specs/simulation/patch-ability-regressions.test.ts
++++ b/tests/specs/simulation/patch-ability-regressions.test.ts
+@@ -3,6 +3,20 @@ import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
+ import { LogService } from '../../../src/app/integrations/log.service';
+ import { parseLogMessage } from '../../../src/app/ui/shell/simulation/app.component.simulation';
+ 
++const COCOA_BEAN_SUMMON_POOL = [
++    'Wolf',
++    'Slug',
++    'Sheep',
++    'Rooster',
++    'Nessie',
++    'Deer',
++    'Tardigrade',
++    'Hirola',
++    'Patagonian Mara',
++    'Osprey',
++    'Anteater',
++];
++
+ describe('Pet Ability Patch Regressions', () => {
+     const baseConfig: SimulationConfig = {
+         playerPack: 'Custom',
+@@ -215,6 +229,7 @@ describe('Pet Ability Patch Regressions', () => {
+         );
+ 
+         expect(decision).toBeDefined();
++        expect(decision?.options.map((option) => option.id)).toEqual(COCOA_BEAN_SUMMON_POOL);
+ 
+         const forcedOption = decision!.options[0];
+         const result = runSimulation({
+@@ -293,6 +308,7 @@ describe('Pet Ability Patch Regressions', () => {
+             entry.key === 'equipment.cocoa-bean-transform'
+         );
+         expect(decision).toBeDefined();
++        expect(decision?.options.map((option) => option.id)).toEqual(COCOA_BEAN_SUMMON_POOL);
+ 
+         const forcedOption =
+             decision!.options.find((option: any) => option.id !== 'Ant') ?? decision!.options[0];
+@@ -1417,4 +1433,3 @@ describe('Pet Ability Patch Regressions', () => {
+         expect(noRoomLog).toBeUndefined();
+     });
+ });
+-
+diff --git a/tests/specs/simulation/positioning-live-optimizer-regression.test.ts b/tests/specs/simulation/positioning-live-optimizer-regression.test.ts
+index 85e43696..98f33164 100644
+--- a/tests/specs/simulation/positioning-live-optimizer-regression.test.ts
++++ b/tests/specs/simulation/positioning-live-optimizer-regression.test.ts
+@@ -18,6 +18,7 @@ import { PetFactoryService } from 'app/integrations/pet/pet-factory.service';
+ import { EquipmentFactoryService } from 'app/integrations/equipment/equipment-factory.service';
+ import { ToyFactoryService } from 'app/integrations/toy/toy-factory.service';
+ import { InjectorService } from 'app/integrations/injector.service';
++import { getOptimizedPositioningLineup } from 'app/integrations/replay/replay-positioning-image.service';
+ import {
+   PetConfig,
+   SimulationConfig,
+@@ -181,9 +182,17 @@ describe('positioning optimizer live-board regression', () => {
+           simulationCount,
+         ),
+       );
++      const replayImageAppliedResult = verifierRunner.run(
++        buildConfig(
++          state,
++          getOptimizedPositioningLineup(projected),
++          simulationCount,
++        ),
++      );
+ 
+       expect(rawAppliedResult.playerWins).toBeLessThan(simulationCount);
+       expect(projectedAppliedResult.playerWins).toBe(simulationCount);
++      expect(replayImageAppliedResult).toEqual(projectedAppliedResult);
+     },
+     120000,
+   );
+diff --git a/tests/specs/simulation/random-decision-overrides.test.ts b/tests/specs/simulation/random-decision-overrides.test.ts
+index 075c26b4..bcc12862 100644
+--- a/tests/specs/simulation/random-decision-overrides.test.ts
++++ b/tests/specs/simulation/random-decision-overrides.test.ts
+@@ -111,6 +111,65 @@ describe('random decision overrides', () => {
+     expect(labels).toContain('(P1) Bay Cat summon 2');
+   });
+ 
++  it('captures Roloway Monkey transform decisions from the fixed pool', () => {
++    const expectedPool = [
++      'Sea Urchin',
++      'Bigfoot',
++      'Frost Wolf',
++      'Thorny Dragon',
++      'Hoopoe Bird',
++      'Flea',
++      'Weasel',
++      'Skeleton Dog',
++      'Flamingo',
++      'Tuna',
++    ];
++    const config: SimulationConfig = {
++      playerPack: 'Danger',
++      opponentPack: 'Danger',
++      turn: 11,
++      simulationCount: 1,
++      logsEnabled: true,
++      playerGoldSpent: 0,
++      opponentGoldSpent: 0,
++      playerRollAmount: 0,
++      opponentRollAmount: 0,
++      playerLevel3Sold: 0,
++      opponentLevel3Sold: 0,
++      playerSummonedAmount: 0,
++      opponentSummonedAmount: 0,
++      playerTransformationAmount: 0,
++      opponentTransformationAmount: 0,
++      playerPets: [
++        { name: 'Ant', attack: 2, health: 2, exp: 0, mana: 0, equipment: null },
++        { name: 'Fish', attack: 3, health: 3, exp: 0, mana: 0, equipment: null },
++        { name: 'Roloway Monkey', attack: 1, health: 4, exp: 0, mana: 0, equipment: null },
++        null,
++        null,
++      ],
++      opponentPets: [
++        { name: 'Elephant', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
++        null,
++        null,
++        null,
++        null,
++      ],
++      captureRandomDecisions: true,
++      maxLoggedBattles: 1,
++    };
++
++    const result = runSimulation(config);
++    const decisions = (result.randomDecisions ?? []).filter(
++      (decision) => decision.key === 'pet.roloway-monkey-transform',
++    );
++
++    expect(decisions).toHaveLength(2);
++    for (const decision of decisions) {
++      expect(decision.options.map((option) => option.id)).toEqual(expectedPool);
++      expect(decision.label).toContain('Roloway Monkey transform');
++    }
++  });
++
+   it('labels equipment decisions with the equipment owner', () => {
+     const config: SimulationConfig = {
+       playerPack: 'Star',
+diff --git a/tests/specs/ui/item-selection-dialog-trigger-sort.test.ts b/tests/specs/ui/item-selection-dialog-trigger-sort.test.ts
+new file mode 100644
+index 00000000..78f39dad
+--- /dev/null
++++ b/tests/specs/ui/item-selection-dialog-trigger-sort.test.ts
+@@ -0,0 +1,75 @@
++import { describe, expect, it } from 'vitest';
++import {
++  extractTriggerCategory,
++  getTriggerCategories,
++  IndexedSelectionItem,
++  sortItemsByTrigger,
++} from 'app/ui/components/item-selection-dialog/item-selection-catalog.service';
++
++function makeIndexedItem(
++  name: string,
++  triggerCategory: string,
++  options?: Partial<IndexedSelectionItem>,
++): IndexedSelectionItem {
++  return {
++    name,
++    displayName: name,
++    tier: 1,
++    type: 'pet',
++    category: 'Tier 1',
++    searchName: name.toLowerCase(),
++    searchDisplayName: name.toLowerCase(),
++    triggerCategory,
++    ...options,
++  };
++}
++
++describe('extractTriggerCategory', () => {
++  it('uses the leading trigger phrase from leveled abilities', () => {
++    expect(
++      extractTriggerCategory(
++        'Lv1: Start of battle: Give the nearest friend ahead +1 mana.',
++      ),
++    ).toBe('Start of battle');
++  });
++
++  it('falls back to Passive when an ability has no trigger prefix', () => {
++    expect(extractTriggerCategory('Gain +1 attack and +2 health.')).toBe(
++      'Passive',
++    );
++  });
++});
++
++describe('trigger sort helpers', () => {
++  it('orders trigger groups and keeps Passive at the end', () => {
++    expect(
++      getTriggerCategories([
++        makeIndexedItem('Gamma', 'Start of battle'),
++        makeIndexedItem('Zulu', 'End turn'),
++        makeIndexedItem('Delta', 'Passive'),
++      ]),
++    ).toEqual([
++      'All',
++      'End turn',
++      'Start of battle',
++      'Passive',
++    ].slice(1));
++  });
++
++  it('sorts items by trigger, then tier, then name', () => {
++    const items = sortItemsByTrigger([
++      makeIndexedItem('Zulu', 'End turn'),
++      makeIndexedItem('Gamma', 'Start of battle', { tier: 2, pack: 'Puppy' }),
++      makeIndexedItem('Alpha', 'Start of battle', { tier: 1, pack: 'Turtle' }),
++      makeIndexedItem('Beta', 'Passive', { tier: 1 }),
++    ]);
++
++    expect(items.map((item) => item.name)).toEqual([
++      'Zulu',
++      'Alpha',
++      'Gamma',
++      'Beta',
++    ]);
++    expect(items.at(-1)?.name).toBe('Beta');
++  });
++});

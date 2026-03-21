@@ -28,6 +28,24 @@ export interface ReplayOddsImageBuildInput {
   abilityPetMap?: Record<string, string | number> | null;
 }
 
+export interface ReplayOddsImageHotspot {
+  turn: number;
+  calculatorUrl: string;
+  top: number;
+  height: number;
+}
+
+export interface ReplayOddsImagePreview {
+  width: number;
+  height: number;
+  hotspots: ReplayOddsImageHotspot[];
+}
+
+export interface ReplayOddsImageResult {
+  blob: Blob;
+  preview: ReplayOddsImagePreview;
+}
+
 interface ReplayActionEntry {
   Type?: number;
   Turn?: number | string | null;
@@ -37,12 +55,14 @@ interface ReplayActionEntry {
 
 interface ContentEntry {
   Id?: string | number;
+  Name?: string;
   NameId?: string;
 }
 
 interface OddsBattleRow {
   turn: number;
   battle: ReplayBattleJson;
+  calculatorUrl: string;
 }
 
 interface RenderPetInfo {
@@ -67,8 +87,8 @@ interface RenderBattleInfo {
   playerName: string | null;
   playerLives: number | null;
   opponentLives: number | null;
-  playerPets: RenderPetInfo[];
-  opponentPets: RenderPetInfo[];
+  playerPets: Array<RenderPetInfo | null>;
+  opponentPets: Array<RenderPetInfo | null>;
   playerToy: RenderToyInfo | null;
   opponentToy: RenderToyInfo | null;
 }
@@ -77,6 +97,12 @@ interface TurnOddsSummary {
   player: string;
   opponent: string;
   draw: string;
+}
+
+interface TurnOddsAnalysis {
+  odds: TurnOddsSummary | null;
+  calculatorUrl: string | null;
+  renderInfo: RenderBattleInfo | null;
 }
 
 const MODULE_PETS =
@@ -116,6 +142,44 @@ const TOY_NAME_ID_BY_ID = new Map<string, string>(
     .map((entry) => [String(entry.Id), entry.NameId as string]),
 );
 
+const PET_NAME_ID_BY_KEY = new Map<string, string>();
+const PERK_NAME_ID_BY_KEY = new Map<string, string>();
+
+MODULE_PETS.forEach((entry) => {
+  if (typeof entry?.NameId !== 'string') {
+    return;
+  }
+  const byName = normalizeLookupKey(entry.Name);
+  const byNameId = normalizeLookupKey(entry.NameId);
+  if (byName) {
+    PET_NAME_ID_BY_KEY.set(byName, entry.NameId);
+  }
+  if (byNameId) {
+    PET_NAME_ID_BY_KEY.set(byNameId, entry.NameId);
+  }
+});
+
+MODULE_PERKS.forEach((entry) => {
+  if (typeof entry?.NameId !== 'string') {
+    return;
+  }
+  const byName = normalizeLookupKey(entry.Name);
+  const byNameId = normalizeLookupKey(entry.NameId);
+  if (byName) {
+    PERK_NAME_ID_BY_KEY.set(byName, entry.NameId);
+  }
+  if (byNameId) {
+    PERK_NAME_ID_BY_KEY.set(byNameId, entry.NameId);
+  }
+});
+
+function normalizeLookupKey(value: unknown): string {
+  if (typeof value !== 'string') {
+    return '';
+  }
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -130,7 +194,7 @@ export class ReplayOddsImageService {
     private toyService: ToyService,
   ) {}
 
-  async buildOddsImageBlob(input: ReplayOddsImageBuildInput): Promise<Blob> {
+  async buildOddsImage(input: ReplayOddsImageBuildInput): Promise<ReplayOddsImageResult> {
     const resolvedReplay = this.resolveReplayActionsContainer(input.replayPayload);
     const turns = this.extractBattleRows(resolvedReplay);
     if (turns.length === 0) {
@@ -144,7 +208,7 @@ export class ReplayOddsImageService {
       (replayActions ? buildReplayAbilityPetMapFromActions(replayActions) : null);
 
     const buildModel = this.getReplayBuildModel(resolvedReplay);
-    const oddsByTurn = turns.map((turn) =>
+    const analyses = turns.map((turn) =>
       this.computeTurnOdds(
         turn.battle,
         buildModel,
@@ -152,14 +216,25 @@ export class ReplayOddsImageService {
         input.simulationCount,
       ),
     );
-    const renderInfo = turns.map((turn) => this.toRenderBattleInfo(turn.battle));
+    const turnsWithLinks = turns.map((turn, index) => ({
+      ...turn,
+      calculatorUrl: analyses[index]?.calculatorUrl ?? '',
+    }));
+    const renderInfo = turnsWithLinks.map(
+      (turn, index) => analyses[index]?.renderInfo ?? this.toRenderBattleInfo(turn.battle),
+    );
 
     return this.renderOddsImage(
-      turns,
+      turnsWithLinks,
       renderInfo,
-      oddsByTurn,
+      analyses.map((entry) => entry.odds),
       input.simulationCount,
     );
+  }
+
+  async buildOddsImageBlob(input: ReplayOddsImageBuildInput): Promise<Blob> {
+    const result = await this.buildOddsImage(input);
+    return result.blob;
   }
 
   private computeTurnOdds(
@@ -167,7 +242,7 @@ export class ReplayOddsImageService {
     buildModel: ReplayBuildModelJson | null,
     abilityPetMap: Record<string, string | number> | null,
     simulationCount: number,
-  ): TurnOddsSummary | null {
+  ): TurnOddsAnalysis {
     try {
       const calculatorState = this.replayCalcService.parseReplayForCalculator(
         battle,
@@ -182,15 +257,33 @@ export class ReplayOddsImageService {
       const result = this.runLocalSimulation(config);
       const total = result.playerWins + result.opponentWins + result.draws;
       if (total <= 0) {
-        return null;
+        return {
+          odds: null,
+          calculatorUrl: this.replayCalcService.generateCalculatorLink(calculatorState),
+          renderInfo: this.buildRenderBattleInfoFromCalculatorState(
+            battle,
+            calculatorState,
+          ),
+        };
       }
       return {
-        player: `${((result.playerWins / total) * 100).toFixed(1)}%`,
-        opponent: `${((result.opponentWins / total) * 100).toFixed(1)}%`,
-        draw: `${((result.draws / total) * 100).toFixed(1)}%`,
+        odds: {
+          player: `${((result.playerWins / total) * 100).toFixed(1)}%`,
+          opponent: `${((result.opponentWins / total) * 100).toFixed(1)}%`,
+          draw: `${((result.draws / total) * 100).toFixed(1)}%`,
+        },
+        calculatorUrl: this.replayCalcService.generateCalculatorLink(calculatorState),
+        renderInfo: this.buildRenderBattleInfoFromCalculatorState(
+          battle,
+          calculatorState,
+        ),
       };
     } catch {
-      return null;
+      return {
+        odds: null,
+        calculatorUrl: null,
+        renderInfo: null,
+      };
     }
   }
 
@@ -306,7 +399,7 @@ export class ReplayOddsImageService {
             replayId,
           );
           if (response?.battle) {
-            rows.push({ turn: turnNumber, battle: response.battle });
+            rows.push({ turn: turnNumber, battle: response.battle, calculatorUrl: '' });
           }
         } catch {
           // ignore
@@ -327,7 +420,7 @@ export class ReplayOddsImageService {
           return null;
         }
         const parsedTurn = this.toPositiveInt(action.Turn);
-        const row = { turn: parsedTurn ?? fallbackTurn, battle: parsedBattle };
+        const row = { turn: parsedTurn ?? fallbackTurn, battle: parsedBattle, calculatorUrl: '' };
         fallbackTurn += 1;
         return row;
       })
@@ -350,12 +443,24 @@ export class ReplayOddsImageService {
     };
   }
 
+  private buildRenderBattleInfoFromCalculatorState(
+    battle: ReplayBattleJson,
+    calculatorState: ReplayCalculatorState,
+  ): RenderBattleInfo {
+    const baseInfo = this.toRenderBattleInfo(battle);
+    return {
+      ...baseInfo,
+      playerPets: this.buildRenderPetsFromPetConfigLineup(calculatorState.playerPets ?? []),
+      opponentPets: this.buildRenderPetsFromPetConfigLineup(calculatorState.opponentPets ?? []),
+    };
+  }
+
   private async renderOddsImage(
     turns: OddsBattleRow[],
     renderInfo: RenderBattleInfo[],
     oddsByTurn: Array<TurnOddsSummary | null>,
     simulationCount: number,
-  ): Promise<Blob> {
+  ): Promise<ReplayOddsImageResult> {
     const PET_WIDTH = 50;
     const BATTLE_HEIGHT = 125;
     const BASE_CANVAS_WIDTH = 1250;
@@ -452,7 +557,12 @@ export class ReplayOddsImageService {
 
       for (let x = 0; x < info.playerPets.length && x < 5; x += 1) {
         const pet = info.playerPets[x];
-        const posX = x * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
+        if (!pet) {
+          continue;
+        }
+        const visualIndex = 4 - x;
+        const posX =
+          visualIndex * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
         await this.drawPet(ctx, pet, posX, baseY, true, PET_WIDTH, loadImage);
       }
       if (info.playerToy) {
@@ -468,7 +578,13 @@ export class ReplayOddsImageService {
 
       for (let x = 0; x < info.opponentPets.length && x < 5; x += 1) {
         const pet = info.opponentPets[x];
-        const posX = BASE_CANVAS_WIDTH - (x * (PET_WIDTH + 25) + PET_WIDTH + 25);
+        if (!pet) {
+          continue;
+        }
+        const visualIndex = 4 - x;
+        const posX =
+          BASE_CANVAS_WIDTH -
+          (visualIndex * (PET_WIDTH + 25) + PET_WIDTH + 25);
         await this.drawPet(ctx, pet, posX, baseY, false, PET_WIDTH, loadImage);
       }
       if (info.opponentToy) {
@@ -537,13 +653,33 @@ export class ReplayOddsImageService {
     ctx.textAlign = 'left';
     ctx.fillText(`Simulations per turn: ${simulationCount}`, 25, footerY + 24);
 
-    return new Promise<Blob>((resolve, reject) => {
+    const preview: ReplayOddsImagePreview = {
+      width: CANVAS_WIDTH,
+      height: canvas.height,
+      hotspots: turns
+        .map((turn, index) =>
+          turn.calculatorUrl.length > 0
+            ? {
+                turn: turn.turn,
+                calculatorUrl: turn.calculatorUrl,
+                top: headerHeight + index * BATTLE_HEIGHT,
+                height: BATTLE_HEIGHT,
+              }
+            : null,
+        )
+        .filter((hotspot): hotspot is ReplayOddsImageHotspot => hotspot !== null),
+    };
+
+    return new Promise<ReplayOddsImageResult>((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (!blob) {
           reject(new Error('Failed to create PNG image.'));
           return;
         }
-        resolve(blob);
+        resolve({
+          blob,
+          preview,
+        });
       }, 'image/png');
     });
   }
@@ -627,6 +763,36 @@ export class ReplayOddsImageService {
     ctx.textAlign = 'left';
   }
 
+  private buildRenderPetsFromPetConfigLineup(
+    lineup: Array<ReplayCalculatorState['playerPets'][number]>,
+  ): Array<RenderPetInfo | null> {
+    return lineup.map((pet) => {
+      if (!pet?.name) {
+        return null;
+      }
+      const petNameId = PET_NAME_ID_BY_KEY.get(normalizeLookupKey(pet.name)) ?? null;
+      const equipmentName = pet?.equipment?.name ?? null;
+      const perkNameId = equipmentName
+        ? (PERK_NAME_ID_BY_KEY.get(normalizeLookupKey(equipmentName)) ?? null)
+        : null;
+      return {
+        imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
+        perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
+        attack: this.toNumberOrFallback(pet.attack, 0),
+        health: this.toNumberOrFallback(pet.health, 0),
+        tempAttack: 0,
+        tempHealth: 0,
+        level:
+          this.toNumberOrFallback(pet.exp, 1) >= 5
+            ? 3
+            : this.toNumberOrFallback(pet.exp, 1) >= 2
+              ? 2
+              : 1,
+        xp: this.toNumberOrFallback(pet.exp, 0),
+      };
+    });
+  }
+
   private getReplayActions(payload: Record<string, unknown>): ReplayActionEntry[] | null {
     const actions = payload['Actions'];
     return Array.isArray(actions) ? (actions as ReplayActionEntry[]) : null;
@@ -686,7 +852,7 @@ export class ReplayOddsImageService {
     return this.isObject(board) ? board : null;
   }
 
-  private getBoardPets(board: Record<string, unknown> | null): RenderPetInfo[] {
+  private getBoardPets(board: Record<string, unknown> | null): Array<RenderPetInfo | null> {
     if (!board) {
       return [];
     }
@@ -696,7 +862,7 @@ export class ReplayOddsImageService {
       return [];
     }
 
-    const pets: RenderPetInfo[] = [];
+    const pets: Array<RenderPetInfo | null> = [null, null, null, null, null];
     items.forEach((item) => {
       if (!this.isObject(item)) {
         return;
@@ -714,7 +880,11 @@ export class ReplayOddsImageService {
       const tempHealth = this.toNumberOrFallback(healthStats?.['Temp'], 0);
       const petNameId = PET_NAME_ID_BY_ID.get(petId) ?? null;
       const perkNameId = perkId ? PERK_NAME_ID_BY_ID.get(perkId) ?? null : null;
-      pets.push({
+      const poi = this.getRecord(item, 'Poi');
+      const rawPosition =
+        this.toNumberOrFallback(poi?.['x'], this.toNumberOrFallback(item['slot'], 0));
+      const position = Math.max(0, Math.min(4, Math.trunc(rawPosition)));
+      pets[position] = {
         imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
         perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
         attack,
@@ -723,7 +893,7 @@ export class ReplayOddsImageService {
         tempHealth,
         level: this.toNumberOrFallback(item['Lvl'], 1),
         xp: this.toNumberOrFallback(item['Exp'], 0),
-      });
+      };
     });
     return pets;
   }

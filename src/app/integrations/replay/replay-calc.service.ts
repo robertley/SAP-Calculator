@@ -12,6 +12,7 @@ import {
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
 } from './replay-calc-parser';
+import { PACK_MAP } from './replay-calc-schema';
 import { getReplayApiUrl, getReplayTurnsApiUrl } from './replay-api-endpoints';
 
 export interface ReplayBattleRequest {
@@ -58,6 +59,11 @@ interface ReplayTurnsStats {
   summons?: number | null;
   level3Sold?: number | null;
   transformed?: number | null;
+}
+
+interface ReplayTurnsReplayMeta {
+  pack?: number | string | null;
+  opponent_pack?: number | string | null;
 }
 
 interface ReplayTurnsPetStat {
@@ -156,6 +162,9 @@ type ReplayJsonObject = Record<string, unknown>;
 
 export interface ReplayTurnsResponse {
   replayId?: string;
+  replayMeta?: ReplayTurnsReplayMeta | null;
+  pack?: number | string | null;
+  opponent_pack?: number | string | null;
   replay?: {
     id?: string;
     raw_json?: {
@@ -175,6 +184,7 @@ export interface ReplayTurnsResponse {
 })
 export class ReplayCalcService {
   private parser = new ReplayCalcParser();
+  private readonly replayPackIdByName = this.buildPackIdByNameLookup();
 
   constructor(private http: HttpClient) { }
 
@@ -543,7 +553,10 @@ export class ReplayCalcService {
     };
   }
 
-  private mapReplayTurnsSide(side?: ReplayTurnsSide | null): Record<string, unknown> {
+  private mapReplayTurnsSide(
+    side?: ReplayTurnsSide | null,
+    packRaw?: unknown,
+  ): Record<string, unknown> {
     const stats = side?.stats ?? null;
     const victories =
       this.toFiniteNumber(stats?.victories) ??
@@ -568,6 +581,7 @@ export class ReplayCalcService {
       MiSu: this.toFiniteNumber(stats?.summons) ?? 0,
       MSFL: this.toFiniteNumber(stats?.level3Sold) ?? 0,
       TrTT: this.toFiniteNumber(stats?.transformed) ?? 0,
+      Pack: this.resolveReplayPackId(packRaw),
       Mins: {
         Items: (side?.pets ?? []).map((pet) => this.mapReplayTurnsPet(pet)),
       },
@@ -578,10 +592,11 @@ export class ReplayCalcService {
     turn: ReplayTurnEntry,
     side: 'player' | 'opponent',
     buildJson?: ReplayJsonObject | null,
+    packRaw?: unknown,
   ): Record<string, unknown> {
     if (buildJson && side === 'player') {
-      // If we have direct Build JSON (for player), return it
-      return buildJson;
+      // If we have direct Build JSON (for player), preserve it and add pack metadata if needed.
+      return this.withReplayPack(buildJson, packRaw);
     }
 
     const isPlayer = side === 'player';
@@ -606,6 +621,7 @@ export class ReplayCalcService {
       ) ?? 0,
       MSFL: 0,
       TrTT: 0,
+      Pack: this.resolveReplayPackId(packRaw),
       Mins: {
         Items: pets.map((pet) => this.mapReplaySummaryPet(pet)),
       },
@@ -640,6 +656,7 @@ export class ReplayCalcService {
       };
     }
 
+    const replayMeta = this.getReplayMeta(turnsResponse);
     const hasRawSides = Boolean(selectedTurn?.user || selectedTurn?.opponent);
     let buildJson: ReplayJsonObject | null = null;
     let battleJson: ReplayJsonObject | null = null;
@@ -705,19 +722,24 @@ export class ReplayCalcService {
 
     const battleFromTurn: ReplayJsonObject = hasRawSides
       ? {
-        UserBoard: this.mapReplayTurnsSide(selectedTurn?.user),
-        OpponentBoard: this.mapReplayTurnsSide(selectedTurn?.opponent),
+        UserBoard: this.mapReplayTurnsSide(selectedTurn?.user, replayMeta?.pack),
+        OpponentBoard: this.mapReplayTurnsSide(
+          selectedTurn?.opponent,
+          replayMeta?.opponent_pack,
+        ),
       }
       : {
         UserBoard: this.mapReplaySummarySide(
           selectedTurn as ReplayTurnEntry,
           'player',
           buildJson ?? (this.isRecord(battleJson?.UserBoard) ? battleJson.UserBoard : null),
+          replayMeta?.pack,
         ),
         OpponentBoard: this.mapReplaySummarySide(
           selectedTurn as ReplayTurnEntry,
           'opponent',
           this.isRecord(battleJson?.OpponentBoard) ? battleJson.OpponentBoard : null,
+          replayMeta?.opponent_pack,
         ),
       };
 
@@ -909,5 +931,63 @@ export class ReplayCalcService {
       return 0;
     }
     return Math.max(0, Math.trunc(value));
+  }
+
+  private buildPackIdByNameLookup(): Map<string, number> {
+    const lookup = new Map<string, number>();
+    Object.entries(PACK_MAP).forEach(([packIdRaw, packName]) => {
+      const packId = Number(packIdRaw);
+      if (!Number.isFinite(packId) || typeof packName !== 'string') {
+        return;
+      }
+      lookup.set(packName.toLowerCase(), packId);
+    });
+    return lookup;
+  }
+
+  private resolveReplayPackId(value: unknown): number | null {
+    const numeric = this.toFiniteNumber(value);
+    if (numeric !== null) {
+      return numeric;
+    }
+    if (typeof value !== 'string') {
+      return null;
+    }
+    return this.replayPackIdByName.get(value.toLowerCase()) ?? null;
+  }
+
+  private withReplayPack(
+    board: ReplayJsonObject,
+    packRaw: unknown,
+  ): ReplayJsonObject {
+    if ('Pack' in board && board['Pack'] !== null && board['Pack'] !== undefined) {
+      return board;
+    }
+    const resolvedPack = this.resolveReplayPackId(packRaw);
+    if (resolvedPack === null) {
+      return board;
+    }
+    return {
+      ...board,
+      Pack: resolvedPack,
+    };
+  }
+
+  private getReplayMeta(
+    turnsResponse: ReplayTurnsResponse,
+  ): ReplayTurnsReplayMeta | null {
+    if (turnsResponse?.replayMeta) {
+      return turnsResponse.replayMeta;
+    }
+    if (
+      turnsResponse?.pack !== undefined ||
+      turnsResponse?.opponent_pack !== undefined
+    ) {
+      return {
+        pack: turnsResponse.pack,
+        opponent_pack: turnsResponse.opponent_pack,
+      };
+    }
+    return null;
   }
 }

@@ -46,6 +46,48 @@ export interface ReplayPositioningImageProgress {
   totalTurns: number;
 }
 
+export interface ReplayPositioningImageHotspot {
+  turn: number;
+  calculatorUrl: string;
+  top: number;
+  height: number;
+}
+
+export interface ReplayPositioningImagePreview {
+  width: number;
+  height: number;
+  hotspots: ReplayPositioningImageHotspot[];
+}
+
+export interface ReplayPositioningImageResult {
+  blob: Blob;
+  preview: ReplayPositioningImagePreview;
+}
+
+export function getOptimizedPositioningLineup(
+  result: PositioningOptimizationResult,
+): (PetConfig | null)[] {
+  return result.bestPermutation.simulationLineup.length > 0
+    ? result.bestPermutation.simulationLineup
+    : result.bestPermutation.lineup;
+}
+
+function clonePetConfig(pet: PetConfig | null): PetConfig | null {
+  if (!pet) {
+    return null;
+  }
+  return {
+    ...pet,
+    equipment: pet.equipment ? { ...pet.equipment } : null,
+  };
+}
+
+function clonePetConfigLineup(
+  lineup: (PetConfig | null)[] | null | undefined,
+): (PetConfig | null)[] {
+  return (lineup ?? []).map((pet) => clonePetConfig(pet));
+}
+
 interface ReplayActionEntry {
   Type?: number;
   Turn?: number | string | null;
@@ -78,6 +120,7 @@ interface OptimizedTurnRow {
   optimizedPlayerPets: Array<RenderPetInfo | null>;
   optimizedOpponentPets: Array<RenderPetInfo | null>;
   delta: TurnDeltaSummary;
+  calculatorUrl: string;
 }
 
 interface RenderPetInfo {
@@ -100,8 +143,8 @@ interface RenderBattleInfo {
   playerName: string | null;
   playerLives: number | null;
   opponentLives: number | null;
-  playerPets: RenderPetInfo[];
-  opponentPets: RenderPetInfo[];
+  playerPets: Array<RenderPetInfo | null>;
+  opponentPets: Array<RenderPetInfo | null>;
   playerToy: RenderToyInfo | null;
   opponentToy: RenderToyInfo | null;
 }
@@ -195,9 +238,9 @@ export class ReplayPositioningImageService {
     private toyService: ToyService,
   ) {}
 
-  async buildPositioningImageBlob(
+  async buildPositioningImage(
     input: ReplayPositioningImageBuildInput,
-  ): Promise<Blob> {
+  ): Promise<ReplayPositioningImageResult> {
     this.throwIfAborted(input.abortSignal);
     this.emitProgress(input, 0, 'Preparing replay turns...', 'preparing', 0, 0);
     const resolvedReplay = this.resolveReplayActionsContainer(input.replayPayload);
@@ -264,34 +307,38 @@ export class ReplayPositioningImageService {
         },
       );
       this.throwIfAborted(input.abortSignal);
+      const optimizedLineup = getOptimizedPositioningLineup(optimizationResult);
       const optimizedConfig: SimulationConfig = {
         ...baseConfig,
         playerPets:
           input.optimizationSide === 'player'
-            ? optimizationResult.bestPermutation.lineup
+            ? optimizedLineup
             : baseConfig.playerPets,
         opponentPets:
           input.optimizationSide === 'opponent'
-            ? optimizationResult.bestPermutation.lineup
+            ? optimizedLineup
             : baseConfig.opponentPets,
         simulationCount: input.simulationCount,
       };
       const optimizedResult = this.runLocalSimulation(optimizedConfig);
       this.throwIfAborted(input.abortSignal);
-      const baselineOdds = this.toOddsSummary(baselineResult, input.optimizationSide);
-      const optimizedOdds = this.toOddsSummary(optimizedResult, input.optimizationSide);
-      const baselineScore = this.toOptimizationScore(baselineOdds);
-      const optimizedScore = this.toOptimizationScore(optimizedOdds);
-      const isSignificantIncrease = this.isStatisticallySignificantImprovement(
-        optimizationResult,
-        baselineResult,
-        input.optimizationSide,
-      );
-      const shouldApplyOptimized =
-        isSignificantIncrease && optimizedScore > baselineScore;
-      const effectiveOptimizedResult = shouldApplyOptimized
-        ? optimizedResult
-        : baselineResult;
+      const shouldApplyOptimized = true;
+      const effectiveOptimizedResult = optimizedResult;
+      const linkedCalculatorState: ReplayCalculatorState = {
+        ...calculatorState,
+        playerPets: clonePetConfigLineup(
+          input.optimizationSide === 'player' && shouldApplyOptimized
+            ? optimizedLineup
+            : calculatorState.playerPets,
+        ),
+        opponentPets: clonePetConfigLineup(
+          input.optimizationSide === 'opponent' && shouldApplyOptimized
+            ? optimizedLineup
+            : calculatorState.opponentPets,
+        ),
+      };
+      const calculatorUrl =
+        this.replayCalcService.generateCalculatorLink(linkedCalculatorState);
 
       const delta = this.buildDeltaSummary(
         baselineResult,
@@ -301,13 +348,13 @@ export class ReplayPositioningImageService {
       const optimizedPlayerPets =
         shouldApplyOptimized && input.optimizationSide === 'player'
           ? this.buildRenderPetsFromPetConfigLineup(
-              optimizationResult.bestPermutation.lineup,
+              optimizedLineup,
             )
           : [];
       const optimizedOpponentPets =
         shouldApplyOptimized && input.optimizationSide === 'opponent'
           ? this.buildRenderPetsFromPetConfigLineup(
-              optimizationResult.bestPermutation.lineup,
+              optimizedLineup,
             )
           : [];
 
@@ -317,6 +364,7 @@ export class ReplayPositioningImageService {
         optimizedPlayerPets,
         optimizedOpponentPets,
         delta,
+        calculatorUrl,
       });
       this.emitProgress(
         input,
@@ -336,6 +384,13 @@ export class ReplayPositioningImageService {
       input.simulationCount,
       input.optimizationSide,
     );
+  }
+
+  async buildPositioningImageBlob(
+    input: ReplayPositioningImageBuildInput,
+  ): Promise<Blob> {
+    const result = await this.buildPositioningImage(input);
+    return result.blob;
   }
 
   private runOptimization(
@@ -525,35 +580,6 @@ export class ReplayPositioningImageService {
     };
   }
 
-  private toOptimizationScore(odds: OddsSummary): number {
-    return odds.win + odds.draw * 0.5;
-  }
-
-  private isStatisticallySignificantImprovement(
-    optimizationResult: PositioningOptimizationResult,
-    baselineResult: SimulationResult,
-    side: 'player' | 'opponent',
-  ): boolean {
-    const optimizedLowerBound = optimizationResult?.bestPermutation?.lowerBound;
-    if (!Number.isFinite(optimizedLowerBound)) {
-      return false;
-    }
-
-    const totalBattles =
-      baselineResult.playerWins + baselineResult.opponentWins + baselineResult.draws;
-    if (totalBattles <= 0) {
-      return false;
-    }
-
-    const baselineOdds = this.toOddsSummary(baselineResult, side);
-    const baselineScore = this.toOptimizationScore(baselineOdds) / 100;
-    const variance = Math.max(0, baselineScore * (1 - baselineScore));
-    const margin = 1.96 * Math.sqrt(variance / totalBattles);
-    const baselineUpperBound = Math.min(1, baselineScore + margin);
-
-    return optimizedLowerBound > baselineUpperBound;
-  }
-
   private buildRenderPetsFromPetConfigLineup(
     lineup: (PetConfig | null)[],
   ): Array<RenderPetInfo | null> {
@@ -582,7 +608,7 @@ export class ReplayPositioningImageService {
     renderInfo: RenderBattleInfo[],
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
-  ): Promise<Blob> {
+  ): Promise<ReplayPositioningImageResult> {
     const PET_WIDTH = 50;
     const BATTLE_HEIGHT = 125;
     const BASE_CANVAS_WIDTH = 1250;
@@ -681,7 +707,9 @@ export class ReplayPositioningImageService {
         if (!pet) {
           continue;
         }
-        const posX = x * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
+        const visualIndex = 4 - x;
+        const posX =
+          visualIndex * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
         await this.drawPet(ctx, pet, posX, baseY, true, PET_WIDTH, loadImage);
       }
       if (info.playerToy) {
@@ -700,7 +728,10 @@ export class ReplayPositioningImageService {
         if (!pet) {
           continue;
         }
-        const posX = BASE_CANVAS_WIDTH - (x * (PET_WIDTH + 25) + PET_WIDTH + 25);
+        const visualIndex = 4 - x;
+        const posX =
+          BASE_CANVAS_WIDTH -
+          (visualIndex * (PET_WIDTH + 25) + PET_WIDTH + 25);
         await this.drawPet(ctx, pet, posX, baseY, false, PET_WIDTH, loadImage);
       }
       if (info.opponentToy) {
@@ -763,13 +794,27 @@ export class ReplayPositioningImageService {
       footerY + 44,
     );
 
-    return new Promise<Blob>((resolve, reject) => {
+    const preview: ReplayPositioningImagePreview = {
+      width: CANVAS_WIDTH,
+      height: canvas.height,
+      hotspots: rows.map((row, index) => ({
+        turn: row.turn,
+        calculatorUrl: row.calculatorUrl,
+        top: headerHeight + index * BATTLE_HEIGHT,
+        height: BATTLE_HEIGHT,
+      })),
+    };
+
+    return new Promise<ReplayPositioningImageResult>((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (!blob) {
           reject(new Error('Failed to create PNG image.'));
           return;
         }
-        resolve(blob);
+        resolve({
+          blob,
+          preview,
+        });
       }, 'image/png');
     });
   }
@@ -1052,7 +1097,7 @@ export class ReplayPositioningImageService {
     return this.isObject(board) ? board : null;
   }
 
-  private getBoardPets(board: Record<string, unknown> | null): RenderPetInfo[] {
+  private getBoardPets(board: Record<string, unknown> | null): Array<RenderPetInfo | null> {
     if (!board) {
       return [];
     }
@@ -1062,7 +1107,7 @@ export class ReplayPositioningImageService {
       return [];
     }
 
-    const pets: RenderPetInfo[] = [];
+    const pets: Array<RenderPetInfo | null> = [null, null, null, null, null];
     items.forEach((item) => {
       if (!this.isObject(item)) {
         return;
@@ -1078,14 +1123,18 @@ export class ReplayPositioningImageService {
       const health = this.toNumberOrFallback(healthStats?.['Perm'], 0);
       const petNameId = PET_NAME_ID_BY_ID.get(petId) ?? null;
       const perkNameId = perkId ? PERK_NAME_ID_BY_ID.get(perkId) ?? null : null;
-      pets.push({
+      const poi = this.getRecord(item, 'Poi');
+      const rawPosition =
+        this.toNumberOrFallback(poi?.['x'], this.toNumberOrFallback(item['slot'], 0));
+      const position = Math.max(0, Math.min(4, Math.trunc(rawPosition)));
+      pets[position] = {
         imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
         perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
         attack,
         health,
         level: this.toNumberOrFallback(item['Lvl'], 1),
         xp: this.toNumberOrFallback(item['Exp'], 0),
-      });
+      };
     });
     return pets;
   }

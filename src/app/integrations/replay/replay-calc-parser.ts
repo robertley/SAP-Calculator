@@ -1103,12 +1103,14 @@ export class ReplayCalcParser {
       customPacks,
       opponentBoard?.Deck,
     );
+    const playerPackId = resolvePackIdFromUnknown(userBoard?.Pack);
+    const opponentPackId = resolvePackIdFromUnknown(opponentBoard?.Pack);
     const playerPackName =
-      PACK_MAP[toNumberOrFallback(userBoard?.Pack, NaN)] ||
+      (playerPackId !== null ? PACK_MAP[playerPackId] : null) ||
       playerCustomPack?.name ||
       'Turtle';
     const opponentPackName =
-      PACK_MAP[toNumberOrFallback(opponentBoard?.Pack, NaN)] ||
+      (opponentPackId !== null ? PACK_MAP[opponentPackId] : null) ||
       opponentCustomPack?.name ||
       'Turtle';
 

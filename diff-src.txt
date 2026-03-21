@@ -1,0 +1,1840 @@
+﻿diff --git a/src/app/domain/dangers-and-useful.ts b/src/app/domain/dangers-and-useful.ts
+index 6d4dfffa..ac97c856 100644
+--- a/src/app/domain/dangers-and-useful.ts
++++ b/src/app/domain/dangers-and-useful.ts
+@@ -129,7 +129,18 @@ export const DANGERS_AND_USEFUL_POOLS: DangersAndUsefulPools = {
+       'White Okra',
+     ],
+   },
+-  rolowayMonkey: ['Peacock', 'Camel', 'Porcupine', 'Lizard', 'Guineafowl'],
++  rolowayMonkey: [
++    'Sea Urchin',
++    'Bigfoot',
++    'Frost Wolf',
++    'Thorny Dragon',
++    'Hoopoe Bird',
++    'Flea',
++    'Weasel',
++    'Skeleton Dog',
++    'Flamingo',
++    'Tuna',
++  ],
+   goldenTamarin: [
+     'Crocodile',
+     'Tarantula Hawk',
+diff --git a/src/app/domain/entities/catalog/equipment/danger/cocoa-bean.class.ts b/src/app/domain/entities/catalog/equipment/danger/cocoa-bean.class.ts
+index b922230a..f6851e54 100644
+--- a/src/app/domain/entities/catalog/equipment/danger/cocoa-bean.class.ts
++++ b/src/app/domain/entities/catalog/equipment/danger/cocoa-bean.class.ts
+@@ -7,6 +7,20 @@ import { chooseRandomOption } from 'app/runtime/random-decision-state';
+ import { getRandomInt } from 'app/runtime/random';
+ import { formatEquipmentScopedRandomLabel } from 'app/runtime/random-decision-label';
+ 
++const COCOA_BEAN_SUMMON_POOL = [
++  'Wolf',
++  'Slug',
++  'Sheep',
++  'Rooster',
++  'Nessie',
++  'Deer',
++  'Tardigrade',
++  'Hirola',
++  'Patagonian Mara',
++  'Osprey',
++  'Anteater',
++] as const;
++
+ 
+ export class CocoaBean extends Equipment {
+   name = 'Cocoa Bean';
+@@ -63,7 +77,7 @@ export class CocoaBeanAbility extends Ability {
+ 
+   private executeAbility(context: AbilityContext): void {
+     const owner = this.owner;
+-    const summonPool = this.petService.getSummonPetNames();
++    const summonPool = [...COCOA_BEAN_SUMMON_POOL];
+     if (summonPool.length === 0) {
+       owner.removePerk();
+       return;
+diff --git a/src/app/domain/entities/catalog/pets/custom/tier-6/dunkleosteus.class.ts b/src/app/domain/entities/catalog/pets/custom/tier-6/dunkleosteus.class.ts
+index d0809106..2124a309 100644
+--- a/src/app/domain/entities/catalog/pets/custom/tier-6/dunkleosteus.class.ts
++++ b/src/app/domain/entities/catalog/pets/custom/tier-6/dunkleosteus.class.ts
+@@ -5,6 +5,7 @@ import { Pack, Pet } from 'app/domain/entities/pet.class';
+ import { Player } from 'app/domain/entities/player.class';
+ import { cloneDeep } from 'lodash-es';
+ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
++import { canApplyAilment } from 'app/domain/entities/ability-resolution';
+ 
+ 
+ export class Dunkleosteus extends Pet {
+@@ -69,7 +70,14 @@ export class DunkleosteusAbility extends Ability {
+     const copiedAilment = cloneDeep(ailment);
+     owner.removePerk(true);
+ 
+-    const targets = opponentPets.slice(0, Math.min(2, opponentPets.length));
++    const targets = opponentPets
++      .filter((pet) => canApplyAilment(pet, copiedAilment.name))
++      .slice(0, 2);
++    if (targets.length === 0) {
++      this.triggerTigerExecution(context);
++      return;
++    }
++
+     for (const target of targets) {
+       const ailmentClone = cloneDeep(copiedAilment);
+       ailmentClone.multiplier += this.level - 1;
+diff --git a/src/app/domain/entities/catalog/pets/danger/tier-3/roloway-monkey.class.ts b/src/app/domain/entities/catalog/pets/danger/tier-3/roloway-monkey.class.ts
+index 82bd8e84..5fa96c59 100644
+--- a/src/app/domain/entities/catalog/pets/danger/tier-3/roloway-monkey.class.ts
++++ b/src/app/domain/entities/catalog/pets/danger/tier-3/roloway-monkey.class.ts
+@@ -8,6 +8,7 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+ import { chooseRandomOption } from 'app/runtime/random-decision-state';
+ import { getRandomInt } from 'app/runtime/random';
+ import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
++import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
+ 
+ 
+ export class RolowayMonkey extends Pet {
+@@ -70,7 +71,7 @@ export class RolowayMonkeyAbility extends Ability {
+       return;
+     }
+ 
+-    const petNames = this.petService.getFaintPetNamesByTiers([2, 3]);
++    const petNames = DANGERS_AND_USEFUL_POOLS.rolowayMonkey;
+     if (petNames.length === 0) {
+       return;
+     }
+diff --git a/src/app/domain/entities/pet/pet-targeting-runtime-facade.ts b/src/app/domain/entities/pet/pet-targeting-runtime-facade.ts
+index 74e6496d..026fb82b 100644
+--- a/src/app/domain/entities/pet/pet-targeting-runtime-facade.ts
++++ b/src/app/domain/entities/pet/pet-targeting-runtime-facade.ts
+@@ -36,16 +36,11 @@ export abstract class PetTargetingRuntimeFacade extends PetEquipmentFacade {
+ 
+   getManticoreMult(): number[] {
+     const parent = this.parent;
+-    if (!parent || !parent.petArray) {
++    if (!parent) {
+       return [];
+     }
+-    let mult: number[] = [];
+-    for (let pet of parent.petArray) {
+-      if (pet.name == 'Manticore') {
+-        mult.push(pet.level);
+-      }
+-    }
+-    return mult;
++
++    return parent.getManticoreMult();
+   }
+ 
+   getSparrowLevel(): number {
+diff --git a/src/app/integrations/replay/replay-calc-parser.ts b/src/app/integrations/replay/replay-calc-parser.ts
+index fff8b022..301c1375 100644
+--- a/src/app/integrations/replay/replay-calc-parser.ts
++++ b/src/app/integrations/replay/replay-calc-parser.ts
+@@ -1103,12 +1103,14 @@ export class ReplayCalcParser {
+       customPacks,
+       opponentBoard?.Deck,
+     );
++    const playerPackId = resolvePackIdFromUnknown(userBoard?.Pack);
++    const opponentPackId = resolvePackIdFromUnknown(opponentBoard?.Pack);
+     const playerPackName =
+-      PACK_MAP[toNumberOrFallback(userBoard?.Pack, NaN)] ||
++      (playerPackId !== null ? PACK_MAP[playerPackId] : null) ||
+       playerCustomPack?.name ||
+       'Turtle';
+     const opponentPackName =
+-      PACK_MAP[toNumberOrFallback(opponentBoard?.Pack, NaN)] ||
++      (opponentPackId !== null ? PACK_MAP[opponentPackId] : null) ||
+       opponentCustomPack?.name ||
+       'Turtle';
+ 
+diff --git a/src/app/integrations/replay/replay-calc.service.ts b/src/app/integrations/replay/replay-calc.service.ts
+index 8843ec71..7293212d 100644
+--- a/src/app/integrations/replay/replay-calc.service.ts
++++ b/src/app/integrations/replay/replay-calc.service.ts
+@@ -12,6 +12,7 @@ import {
+   ReplayParseOptions,
+   buildReplayAbilityPetMapFromActions,
+ } from './replay-calc-parser';
++import { PACK_MAP } from './replay-calc-schema';
+ import { getReplayApiUrl, getReplayTurnsApiUrl } from './replay-api-endpoints';
+ 
+ export interface ReplayBattleRequest {
+@@ -60,6 +61,11 @@ interface ReplayTurnsStats {
+   transformed?: number | null;
+ }
+ 
++interface ReplayTurnsReplayMeta {
++  pack?: number | string | null;
++  opponent_pack?: number | string | null;
++}
++
+ interface ReplayTurnsPetStat {
+   permanent?: number | null;
+   temporary?: number | null;
+@@ -156,6 +162,9 @@ type ReplayJsonObject = Record<string, unknown>;
+ 
+ export interface ReplayTurnsResponse {
+   replayId?: string;
++  replayMeta?: ReplayTurnsReplayMeta | null;
++  pack?: number | string | null;
++  opponent_pack?: number | string | null;
+   replay?: {
+     id?: string;
+     raw_json?: {
+@@ -175,6 +184,7 @@ export interface ReplayTurnsResponse {
+ })
+ export class ReplayCalcService {
+   private parser = new ReplayCalcParser();
++  private readonly replayPackIdByName = this.buildPackIdByNameLookup();
+ 
+   constructor(private http: HttpClient) { }
+ 
+@@ -543,7 +553,10 @@ export class ReplayCalcService {
+     };
+   }
+ 
+-  private mapReplayTurnsSide(side?: ReplayTurnsSide | null): Record<string, unknown> {
++  private mapReplayTurnsSide(
++    side?: ReplayTurnsSide | null,
++    packRaw?: unknown,
++  ): Record<string, unknown> {
+     const stats = side?.stats ?? null;
+     const victories =
+       this.toFiniteNumber(stats?.victories) ??
+@@ -568,6 +581,7 @@ export class ReplayCalcService {
+       MiSu: this.toFiniteNumber(stats?.summons) ?? 0,
+       MSFL: this.toFiniteNumber(stats?.level3Sold) ?? 0,
+       TrTT: this.toFiniteNumber(stats?.transformed) ?? 0,
++      Pack: this.resolveReplayPackId(packRaw),
+       Mins: {
+         Items: (side?.pets ?? []).map((pet) => this.mapReplayTurnsPet(pet)),
+       },
+@@ -578,10 +592,11 @@ export class ReplayCalcService {
+     turn: ReplayTurnEntry,
+     side: 'player' | 'opponent',
+     buildJson?: ReplayJsonObject | null,
++    packRaw?: unknown,
+   ): Record<string, unknown> {
+     if (buildJson && side === 'player') {
+-      // If we have direct Build JSON (for player), return it
+-      return buildJson;
++      // If we have direct Build JSON (for player), preserve it and add pack metadata if needed.
++      return this.withReplayPack(buildJson, packRaw);
+     }
+ 
+     const isPlayer = side === 'player';
+@@ -606,6 +621,7 @@ export class ReplayCalcService {
+       ) ?? 0,
+       MSFL: 0,
+       TrTT: 0,
++      Pack: this.resolveReplayPackId(packRaw),
+       Mins: {
+         Items: pets.map((pet) => this.mapReplaySummaryPet(pet)),
+       },
+@@ -640,6 +656,7 @@ export class ReplayCalcService {
+       };
+     }
+ 
++    const replayMeta = this.getReplayMeta(turnsResponse);
+     const hasRawSides = Boolean(selectedTurn?.user || selectedTurn?.opponent);
+     let buildJson: ReplayJsonObject | null = null;
+     let battleJson: ReplayJsonObject | null = null;
+@@ -705,19 +722,24 @@ export class ReplayCalcService {
+ 
+     const battleFromTurn: ReplayJsonObject = hasRawSides
+       ? {
+-        UserBoard: this.mapReplayTurnsSide(selectedTurn?.user),
+-        OpponentBoard: this.mapReplayTurnsSide(selectedTurn?.opponent),
++        UserBoard: this.mapReplayTurnsSide(selectedTurn?.user, replayMeta?.pack),
++        OpponentBoard: this.mapReplayTurnsSide(
++          selectedTurn?.opponent,
++          replayMeta?.opponent_pack,
++        ),
+       }
+       : {
+         UserBoard: this.mapReplaySummarySide(
+           selectedTurn as ReplayTurnEntry,
+           'player',
+           buildJson ?? (this.isRecord(battleJson?.UserBoard) ? battleJson.UserBoard : null),
++          replayMeta?.pack,
+         ),
+         OpponentBoard: this.mapReplaySummarySide(
+           selectedTurn as ReplayTurnEntry,
+           'opponent',
+           this.isRecord(battleJson?.OpponentBoard) ? battleJson.OpponentBoard : null,
++          replayMeta?.opponent_pack,
+         ),
+       };
+ 
+@@ -910,4 +932,62 @@ export class ReplayCalcService {
+     }
+     return Math.max(0, Math.trunc(value));
+   }
++
++  private buildPackIdByNameLookup(): Map<string, number> {
++    const lookup = new Map<string, number>();
++    Object.entries(PACK_MAP).forEach(([packIdRaw, packName]) => {
++      const packId = Number(packIdRaw);
++      if (!Number.isFinite(packId) || typeof packName !== 'string') {
++        return;
++      }
++      lookup.set(packName.toLowerCase(), packId);
++    });
++    return lookup;
++  }
++
++  private resolveReplayPackId(value: unknown): number | null {
++    const numeric = this.toFiniteNumber(value);
++    if (numeric !== null) {
++      return numeric;
++    }
++    if (typeof value !== 'string') {
++      return null;
++    }
++    return this.replayPackIdByName.get(value.toLowerCase()) ?? null;
++  }
++
++  private withReplayPack(
++    board: ReplayJsonObject,
++    packRaw: unknown,
++  ): ReplayJsonObject {
++    if ('Pack' in board && board['Pack'] !== null && board['Pack'] !== undefined) {
++      return board;
++    }
++    const resolvedPack = this.resolveReplayPackId(packRaw);
++    if (resolvedPack === null) {
++      return board;
++    }
++    return {
++      ...board,
++      Pack: resolvedPack,
++    };
++  }
++
++  private getReplayMeta(
++    turnsResponse: ReplayTurnsResponse,
++  ): ReplayTurnsReplayMeta | null {
++    if (turnsResponse?.replayMeta) {
++      return turnsResponse.replayMeta;
++    }
++    if (
++      turnsResponse?.pack !== undefined ||
++      turnsResponse?.opponent_pack !== undefined
++    ) {
++      return {
++        pack: turnsResponse.pack,
++        opponent_pack: turnsResponse.opponent_pack,
++      };
++    }
++    return null;
++  }
+ }
+diff --git a/src/app/integrations/replay/replay-odds-image.service.ts b/src/app/integrations/replay/replay-odds-image.service.ts
+index bba5838e..eb6e5f32 100644
+--- a/src/app/integrations/replay/replay-odds-image.service.ts
++++ b/src/app/integrations/replay/replay-odds-image.service.ts
+@@ -28,6 +28,24 @@ export interface ReplayOddsImageBuildInput {
+   abilityPetMap?: Record<string, string | number> | null;
+ }
+ 
++export interface ReplayOddsImageHotspot {
++  turn: number;
++  calculatorUrl: string;
++  top: number;
++  height: number;
++}
++
++export interface ReplayOddsImagePreview {
++  width: number;
++  height: number;
++  hotspots: ReplayOddsImageHotspot[];
++}
++
++export interface ReplayOddsImageResult {
++  blob: Blob;
++  preview: ReplayOddsImagePreview;
++}
++
+ interface ReplayActionEntry {
+   Type?: number;
+   Turn?: number | string | null;
+@@ -37,12 +55,14 @@ interface ReplayActionEntry {
+ 
+ interface ContentEntry {
+   Id?: string | number;
++  Name?: string;
+   NameId?: string;
+ }
+ 
+ interface OddsBattleRow {
+   turn: number;
+   battle: ReplayBattleJson;
++  calculatorUrl: string;
+ }
+ 
+ interface RenderPetInfo {
+@@ -67,8 +87,8 @@ interface RenderBattleInfo {
+   playerName: string | null;
+   playerLives: number | null;
+   opponentLives: number | null;
+-  playerPets: RenderPetInfo[];
+-  opponentPets: RenderPetInfo[];
++  playerPets: Array<RenderPetInfo | null>;
++  opponentPets: Array<RenderPetInfo | null>;
+   playerToy: RenderToyInfo | null;
+   opponentToy: RenderToyInfo | null;
+ }
+@@ -79,6 +99,12 @@ interface TurnOddsSummary {
+   draw: string;
+ }
+ 
++interface TurnOddsAnalysis {
++  odds: TurnOddsSummary | null;
++  calculatorUrl: string | null;
++  renderInfo: RenderBattleInfo | null;
++}
++
+ const MODULE_PETS =
+   ((petsData as unknown as { default?: ContentEntry[] }).default ??
+     (petsData as unknown as ContentEntry[])) ?? [];
+@@ -116,6 +142,44 @@ const TOY_NAME_ID_BY_ID = new Map<string, string>(
+     .map((entry) => [String(entry.Id), entry.NameId as string]),
+ );
+ 
++const PET_NAME_ID_BY_KEY = new Map<string, string>();
++const PERK_NAME_ID_BY_KEY = new Map<string, string>();
++
++MODULE_PETS.forEach((entry) => {
++  if (typeof entry?.NameId !== 'string') {
++    return;
++  }
++  const byName = normalizeLookupKey(entry.Name);
++  const byNameId = normalizeLookupKey(entry.NameId);
++  if (byName) {
++    PET_NAME_ID_BY_KEY.set(byName, entry.NameId);
++  }
++  if (byNameId) {
++    PET_NAME_ID_BY_KEY.set(byNameId, entry.NameId);
++  }
++});
++
++MODULE_PERKS.forEach((entry) => {
++  if (typeof entry?.NameId !== 'string') {
++    return;
++  }
++  const byName = normalizeLookupKey(entry.Name);
++  const byNameId = normalizeLookupKey(entry.NameId);
++  if (byName) {
++    PERK_NAME_ID_BY_KEY.set(byName, entry.NameId);
++  }
++  if (byNameId) {
++    PERK_NAME_ID_BY_KEY.set(byNameId, entry.NameId);
++  }
++});
++
++function normalizeLookupKey(value: unknown): string {
++  if (typeof value !== 'string') {
++    return '';
++  }
++  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
++}
++
+ @Injectable({
+   providedIn: 'root',
+ })
+@@ -130,7 +194,7 @@ export class ReplayOddsImageService {
+     private toyService: ToyService,
+   ) {}
+ 
+-  async buildOddsImageBlob(input: ReplayOddsImageBuildInput): Promise<Blob> {
++  async buildOddsImage(input: ReplayOddsImageBuildInput): Promise<ReplayOddsImageResult> {
+     const resolvedReplay = this.resolveReplayActionsContainer(input.replayPayload);
+     const turns = this.extractBattleRows(resolvedReplay);
+     if (turns.length === 0) {
+@@ -144,7 +208,7 @@ export class ReplayOddsImageService {
+       (replayActions ? buildReplayAbilityPetMapFromActions(replayActions) : null);
+ 
+     const buildModel = this.getReplayBuildModel(resolvedReplay);
+-    const oddsByTurn = turns.map((turn) =>
++    const analyses = turns.map((turn) =>
+       this.computeTurnOdds(
+         turn.battle,
+         buildModel,
+@@ -152,22 +216,33 @@ export class ReplayOddsImageService {
+         input.simulationCount,
+       ),
+     );
+-    const renderInfo = turns.map((turn) => this.toRenderBattleInfo(turn.battle));
++    const turnsWithLinks = turns.map((turn, index) => ({
++      ...turn,
++      calculatorUrl: analyses[index]?.calculatorUrl ?? '',
++    }));
++    const renderInfo = turnsWithLinks.map(
++      (turn, index) => analyses[index]?.renderInfo ?? this.toRenderBattleInfo(turn.battle),
++    );
+ 
+     return this.renderOddsImage(
+-      turns,
++      turnsWithLinks,
+       renderInfo,
+-      oddsByTurn,
++      analyses.map((entry) => entry.odds),
+       input.simulationCount,
+     );
+   }
+ 
++  async buildOddsImageBlob(input: ReplayOddsImageBuildInput): Promise<Blob> {
++    const result = await this.buildOddsImage(input);
++    return result.blob;
++  }
++
+   private computeTurnOdds(
+     battle: ReplayBattleJson,
+     buildModel: ReplayBuildModelJson | null,
+     abilityPetMap: Record<string, string | number> | null,
+     simulationCount: number,
+-  ): TurnOddsSummary | null {
++  ): TurnOddsAnalysis {
+     try {
+       const calculatorState = this.replayCalcService.parseReplayForCalculator(
+         battle,
+@@ -182,15 +257,33 @@ export class ReplayOddsImageService {
+       const result = this.runLocalSimulation(config);
+       const total = result.playerWins + result.opponentWins + result.draws;
+       if (total <= 0) {
+-        return null;
++        return {
++          odds: null,
++          calculatorUrl: this.replayCalcService.generateCalculatorLink(calculatorState),
++          renderInfo: this.buildRenderBattleInfoFromCalculatorState(
++            battle,
++            calculatorState,
++          ),
++        };
+       }
+       return {
+-        player: `${((result.playerWins / total) * 100).toFixed(1)}%`,
+-        opponent: `${((result.opponentWins / total) * 100).toFixed(1)}%`,
+-        draw: `${((result.draws / total) * 100).toFixed(1)}%`,
++        odds: {
++          player: `${((result.playerWins / total) * 100).toFixed(1)}%`,
++          opponent: `${((result.opponentWins / total) * 100).toFixed(1)}%`,
++          draw: `${((result.draws / total) * 100).toFixed(1)}%`,
++        },
++        calculatorUrl: this.replayCalcService.generateCalculatorLink(calculatorState),
++        renderInfo: this.buildRenderBattleInfoFromCalculatorState(
++          battle,
++          calculatorState,
++        ),
+       };
+     } catch {
+-      return null;
++      return {
++        odds: null,
++        calculatorUrl: null,
++        renderInfo: null,
++      };
+     }
+   }
+ 
+@@ -306,7 +399,7 @@ export class ReplayOddsImageService {
+             replayId,
+           );
+           if (response?.battle) {
+-            rows.push({ turn: turnNumber, battle: response.battle });
++            rows.push({ turn: turnNumber, battle: response.battle, calculatorUrl: '' });
+           }
+         } catch {
+           // ignore
+@@ -327,7 +420,7 @@ export class ReplayOddsImageService {
+           return null;
+         }
+         const parsedTurn = this.toPositiveInt(action.Turn);
+-        const row = { turn: parsedTurn ?? fallbackTurn, battle: parsedBattle };
++        const row = { turn: parsedTurn ?? fallbackTurn, battle: parsedBattle, calculatorUrl: '' };
+         fallbackTurn += 1;
+         return row;
+       })
+@@ -350,12 +443,24 @@ export class ReplayOddsImageService {
+     };
+   }
+ 
++  private buildRenderBattleInfoFromCalculatorState(
++    battle: ReplayBattleJson,
++    calculatorState: ReplayCalculatorState,
++  ): RenderBattleInfo {
++    const baseInfo = this.toRenderBattleInfo(battle);
++    return {
++      ...baseInfo,
++      playerPets: this.buildRenderPetsFromPetConfigLineup(calculatorState.playerPets ?? []),
++      opponentPets: this.buildRenderPetsFromPetConfigLineup(calculatorState.opponentPets ?? []),
++    };
++  }
++
+   private async renderOddsImage(
+     turns: OddsBattleRow[],
+     renderInfo: RenderBattleInfo[],
+     oddsByTurn: Array<TurnOddsSummary | null>,
+     simulationCount: number,
+-  ): Promise<Blob> {
++  ): Promise<ReplayOddsImageResult> {
+     const PET_WIDTH = 50;
+     const BATTLE_HEIGHT = 125;
+     const BASE_CANVAS_WIDTH = 1250;
+@@ -452,7 +557,12 @@ export class ReplayOddsImageService {
+ 
+       for (let x = 0; x < info.playerPets.length && x < 5; x += 1) {
+         const pet = info.playerPets[x];
+-        const posX = x * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
++        if (!pet) {
++          continue;
++        }
++        const visualIndex = 4 - x;
++        const posX =
++          visualIndex * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
+         await this.drawPet(ctx, pet, posX, baseY, true, PET_WIDTH, loadImage);
+       }
+       if (info.playerToy) {
+@@ -468,7 +578,13 @@ export class ReplayOddsImageService {
+ 
+       for (let x = 0; x < info.opponentPets.length && x < 5; x += 1) {
+         const pet = info.opponentPets[x];
+-        const posX = BASE_CANVAS_WIDTH - (x * (PET_WIDTH + 25) + PET_WIDTH + 25);
++        if (!pet) {
++          continue;
++        }
++        const visualIndex = 4 - x;
++        const posX =
++          BASE_CANVAS_WIDTH -
++          (visualIndex * (PET_WIDTH + 25) + PET_WIDTH + 25);
+         await this.drawPet(ctx, pet, posX, baseY, false, PET_WIDTH, loadImage);
+       }
+       if (info.opponentToy) {
+@@ -537,13 +653,33 @@ export class ReplayOddsImageService {
+     ctx.textAlign = 'left';
+     ctx.fillText(`Simulations per turn: ${simulationCount}`, 25, footerY + 24);
+ 
+-    return new Promise<Blob>((resolve, reject) => {
++    const preview: ReplayOddsImagePreview = {
++      width: CANVAS_WIDTH,
++      height: canvas.height,
++      hotspots: turns
++        .map((turn, index) =>
++          turn.calculatorUrl.length > 0
++            ? {
++                turn: turn.turn,
++                calculatorUrl: turn.calculatorUrl,
++                top: headerHeight + index * BATTLE_HEIGHT,
++                height: BATTLE_HEIGHT,
++              }
++            : null,
++        )
++        .filter((hotspot): hotspot is ReplayOddsImageHotspot => hotspot !== null),
++    };
++
++    return new Promise<ReplayOddsImageResult>((resolve, reject) => {
+       canvas.toBlob((blob) => {
+         if (!blob) {
+           reject(new Error('Failed to create PNG image.'));
+           return;
+         }
+-        resolve(blob);
++        resolve({
++          blob,
++          preview,
++        });
+       }, 'image/png');
+     });
+   }
+@@ -627,6 +763,36 @@ export class ReplayOddsImageService {
+     ctx.textAlign = 'left';
+   }
+ 
++  private buildRenderPetsFromPetConfigLineup(
++    lineup: Array<ReplayCalculatorState['playerPets'][number]>,
++  ): Array<RenderPetInfo | null> {
++    return lineup.map((pet) => {
++      if (!pet?.name) {
++        return null;
++      }
++      const petNameId = PET_NAME_ID_BY_KEY.get(normalizeLookupKey(pet.name)) ?? null;
++      const equipmentName = pet?.equipment?.name ?? null;
++      const perkNameId = equipmentName
++        ? (PERK_NAME_ID_BY_KEY.get(normalizeLookupKey(equipmentName)) ?? null)
++        : null;
++      return {
++        imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
++        perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
++        attack: this.toNumberOrFallback(pet.attack, 0),
++        health: this.toNumberOrFallback(pet.health, 0),
++        tempAttack: 0,
++        tempHealth: 0,
++        level:
++          this.toNumberOrFallback(pet.exp, 1) >= 5
++            ? 3
++            : this.toNumberOrFallback(pet.exp, 1) >= 2
++              ? 2
++              : 1,
++        xp: this.toNumberOrFallback(pet.exp, 0),
++      };
++    });
++  }
++
+   private getReplayActions(payload: Record<string, unknown>): ReplayActionEntry[] | null {
+     const actions = payload['Actions'];
+     return Array.isArray(actions) ? (actions as ReplayActionEntry[]) : null;
+@@ -686,7 +852,7 @@ export class ReplayOddsImageService {
+     return this.isObject(board) ? board : null;
+   }
+ 
+-  private getBoardPets(board: Record<string, unknown> | null): RenderPetInfo[] {
++  private getBoardPets(board: Record<string, unknown> | null): Array<RenderPetInfo | null> {
+     if (!board) {
+       return [];
+     }
+@@ -696,7 +862,7 @@ export class ReplayOddsImageService {
+       return [];
+     }
+ 
+-    const pets: RenderPetInfo[] = [];
++    const pets: Array<RenderPetInfo | null> = [null, null, null, null, null];
+     items.forEach((item) => {
+       if (!this.isObject(item)) {
+         return;
+@@ -714,7 +880,11 @@ export class ReplayOddsImageService {
+       const tempHealth = this.toNumberOrFallback(healthStats?.['Temp'], 0);
+       const petNameId = PET_NAME_ID_BY_ID.get(petId) ?? null;
+       const perkNameId = perkId ? PERK_NAME_ID_BY_ID.get(perkId) ?? null : null;
+-      pets.push({
++      const poi = this.getRecord(item, 'Poi');
++      const rawPosition =
++        this.toNumberOrFallback(poi?.['x'], this.toNumberOrFallback(item['slot'], 0));
++      const position = Math.max(0, Math.min(4, Math.trunc(rawPosition)));
++      pets[position] = {
+         imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
+         perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
+         attack,
+@@ -723,7 +893,7 @@ export class ReplayOddsImageService {
+         tempHealth,
+         level: this.toNumberOrFallback(item['Lvl'], 1),
+         xp: this.toNumberOrFallback(item['Exp'], 0),
+-      });
++      };
+     });
+     return pets;
+   }
+diff --git a/src/app/integrations/replay/replay-positioning-image.service.ts b/src/app/integrations/replay/replay-positioning-image.service.ts
+index 224b6d14..e2a679bc 100644
+--- a/src/app/integrations/replay/replay-positioning-image.service.ts
++++ b/src/app/integrations/replay/replay-positioning-image.service.ts
+@@ -46,6 +46,48 @@ export interface ReplayPositioningImageProgress {
+   totalTurns: number;
+ }
+ 
++export interface ReplayPositioningImageHotspot {
++  turn: number;
++  calculatorUrl: string;
++  top: number;
++  height: number;
++}
++
++export interface ReplayPositioningImagePreview {
++  width: number;
++  height: number;
++  hotspots: ReplayPositioningImageHotspot[];
++}
++
++export interface ReplayPositioningImageResult {
++  blob: Blob;
++  preview: ReplayPositioningImagePreview;
++}
++
++export function getOptimizedPositioningLineup(
++  result: PositioningOptimizationResult,
++): (PetConfig | null)[] {
++  return result.bestPermutation.simulationLineup.length > 0
++    ? result.bestPermutation.simulationLineup
++    : result.bestPermutation.lineup;
++}
++
++function clonePetConfig(pet: PetConfig | null): PetConfig | null {
++  if (!pet) {
++    return null;
++  }
++  return {
++    ...pet,
++    equipment: pet.equipment ? { ...pet.equipment } : null,
++  };
++}
++
++function clonePetConfigLineup(
++  lineup: (PetConfig | null)[] | null | undefined,
++): (PetConfig | null)[] {
++  return (lineup ?? []).map((pet) => clonePetConfig(pet));
++}
++
+ interface ReplayActionEntry {
+   Type?: number;
+   Turn?: number | string | null;
+@@ -78,6 +120,7 @@ interface OptimizedTurnRow {
+   optimizedPlayerPets: Array<RenderPetInfo | null>;
+   optimizedOpponentPets: Array<RenderPetInfo | null>;
+   delta: TurnDeltaSummary;
++  calculatorUrl: string;
+ }
+ 
+ interface RenderPetInfo {
+@@ -100,8 +143,8 @@ interface RenderBattleInfo {
+   playerName: string | null;
+   playerLives: number | null;
+   opponentLives: number | null;
+-  playerPets: RenderPetInfo[];
+-  opponentPets: RenderPetInfo[];
++  playerPets: Array<RenderPetInfo | null>;
++  opponentPets: Array<RenderPetInfo | null>;
+   playerToy: RenderToyInfo | null;
+   opponentToy: RenderToyInfo | null;
+ }
+@@ -195,9 +238,9 @@ export class ReplayPositioningImageService {
+     private toyService: ToyService,
+   ) {}
+ 
+-  async buildPositioningImageBlob(
++  async buildPositioningImage(
+     input: ReplayPositioningImageBuildInput,
+-  ): Promise<Blob> {
++  ): Promise<ReplayPositioningImageResult> {
+     this.throwIfAborted(input.abortSignal);
+     this.emitProgress(input, 0, 'Preparing replay turns...', 'preparing', 0, 0);
+     const resolvedReplay = this.resolveReplayActionsContainer(input.replayPayload);
+@@ -264,34 +307,38 @@ export class ReplayPositioningImageService {
+         },
+       );
+       this.throwIfAborted(input.abortSignal);
++      const optimizedLineup = getOptimizedPositioningLineup(optimizationResult);
+       const optimizedConfig: SimulationConfig = {
+         ...baseConfig,
+         playerPets:
+           input.optimizationSide === 'player'
+-            ? optimizationResult.bestPermutation.lineup
++            ? optimizedLineup
+             : baseConfig.playerPets,
+         opponentPets:
+           input.optimizationSide === 'opponent'
+-            ? optimizationResult.bestPermutation.lineup
++            ? optimizedLineup
+             : baseConfig.opponentPets,
+         simulationCount: input.simulationCount,
+       };
+       const optimizedResult = this.runLocalSimulation(optimizedConfig);
+       this.throwIfAborted(input.abortSignal);
+-      const baselineOdds = this.toOddsSummary(baselineResult, input.optimizationSide);
+-      const optimizedOdds = this.toOddsSummary(optimizedResult, input.optimizationSide);
+-      const baselineScore = this.toOptimizationScore(baselineOdds);
+-      const optimizedScore = this.toOptimizationScore(optimizedOdds);
+-      const isSignificantIncrease = this.isStatisticallySignificantImprovement(
+-        optimizationResult,
+-        baselineResult,
+-        input.optimizationSide,
+-      );
+-      const shouldApplyOptimized =
+-        isSignificantIncrease && optimizedScore > baselineScore;
+-      const effectiveOptimizedResult = shouldApplyOptimized
+-        ? optimizedResult
+-        : baselineResult;
++      const shouldApplyOptimized = true;
++      const effectiveOptimizedResult = optimizedResult;
++      const linkedCalculatorState: ReplayCalculatorState = {
++        ...calculatorState,
++        playerPets: clonePetConfigLineup(
++          input.optimizationSide === 'player' && shouldApplyOptimized
++            ? optimizedLineup
++            : calculatorState.playerPets,
++        ),
++        opponentPets: clonePetConfigLineup(
++          input.optimizationSide === 'opponent' && shouldApplyOptimized
++            ? optimizedLineup
++            : calculatorState.opponentPets,
++        ),
++      };
++      const calculatorUrl =
++        this.replayCalcService.generateCalculatorLink(linkedCalculatorState);
+ 
+       const delta = this.buildDeltaSummary(
+         baselineResult,
+@@ -301,13 +348,13 @@ export class ReplayPositioningImageService {
+       const optimizedPlayerPets =
+         shouldApplyOptimized && input.optimizationSide === 'player'
+           ? this.buildRenderPetsFromPetConfigLineup(
+-              optimizationResult.bestPermutation.lineup,
++              optimizedLineup,
+             )
+           : [];
+       const optimizedOpponentPets =
+         shouldApplyOptimized && input.optimizationSide === 'opponent'
+           ? this.buildRenderPetsFromPetConfigLineup(
+-              optimizationResult.bestPermutation.lineup,
++              optimizedLineup,
+             )
+           : [];
+ 
+@@ -317,6 +364,7 @@ export class ReplayPositioningImageService {
+         optimizedPlayerPets,
+         optimizedOpponentPets,
+         delta,
++        calculatorUrl,
+       });
+       this.emitProgress(
+         input,
+@@ -338,6 +386,13 @@ export class ReplayPositioningImageService {
+     );
+   }
+ 
++  async buildPositioningImageBlob(
++    input: ReplayPositioningImageBuildInput,
++  ): Promise<Blob> {
++    const result = await this.buildPositioningImage(input);
++    return result.blob;
++  }
++
+   private runOptimization(
+     baseConfig: SimulationConfig,
+     simulationCount: number,
+@@ -525,35 +580,6 @@ export class ReplayPositioningImageService {
+     };
+   }
+ 
+-  private toOptimizationScore(odds: OddsSummary): number {
+-    return odds.win + odds.draw * 0.5;
+-  }
+-
+-  private isStatisticallySignificantImprovement(
+-    optimizationResult: PositioningOptimizationResult,
+-    baselineResult: SimulationResult,
+-    side: 'player' | 'opponent',
+-  ): boolean {
+-    const optimizedLowerBound = optimizationResult?.bestPermutation?.lowerBound;
+-    if (!Number.isFinite(optimizedLowerBound)) {
+-      return false;
+-    }
+-
+-    const totalBattles =
+-      baselineResult.playerWins + baselineResult.opponentWins + baselineResult.draws;
+-    if (totalBattles <= 0) {
+-      return false;
+-    }
+-
+-    const baselineOdds = this.toOddsSummary(baselineResult, side);
+-    const baselineScore = this.toOptimizationScore(baselineOdds) / 100;
+-    const variance = Math.max(0, baselineScore * (1 - baselineScore));
+-    const margin = 1.96 * Math.sqrt(variance / totalBattles);
+-    const baselineUpperBound = Math.min(1, baselineScore + margin);
+-
+-    return optimizedLowerBound > baselineUpperBound;
+-  }
+-
+   private buildRenderPetsFromPetConfigLineup(
+     lineup: (PetConfig | null)[],
+   ): Array<RenderPetInfo | null> {
+@@ -582,7 +608,7 @@ export class ReplayPositioningImageService {
+     renderInfo: RenderBattleInfo[],
+     simulationCount: number,
+     optimizationSide: 'player' | 'opponent',
+-  ): Promise<Blob> {
++  ): Promise<ReplayPositioningImageResult> {
+     const PET_WIDTH = 50;
+     const BATTLE_HEIGHT = 125;
+     const BASE_CANVAS_WIDTH = 1250;
+@@ -681,7 +707,9 @@ export class ReplayPositioningImageService {
+         if (!pet) {
+           continue;
+         }
+-        const posX = x * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
++        const visualIndex = 4 - x;
++        const posX =
++          visualIndex * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
+         await this.drawPet(ctx, pet, posX, baseY, true, PET_WIDTH, loadImage);
+       }
+       if (info.playerToy) {
+@@ -700,7 +728,10 @@ export class ReplayPositioningImageService {
+         if (!pet) {
+           continue;
+         }
+-        const posX = BASE_CANVAS_WIDTH - (x * (PET_WIDTH + 25) + PET_WIDTH + 25);
++        const visualIndex = 4 - x;
++        const posX =
++          BASE_CANVAS_WIDTH -
++          (visualIndex * (PET_WIDTH + 25) + PET_WIDTH + 25);
+         await this.drawPet(ctx, pet, posX, baseY, false, PET_WIDTH, loadImage);
+       }
+       if (info.opponentToy) {
+@@ -763,13 +794,27 @@ export class ReplayPositioningImageService {
+       footerY + 44,
+     );
+ 
+-    return new Promise<Blob>((resolve, reject) => {
++    const preview: ReplayPositioningImagePreview = {
++      width: CANVAS_WIDTH,
++      height: canvas.height,
++      hotspots: rows.map((row, index) => ({
++        turn: row.turn,
++        calculatorUrl: row.calculatorUrl,
++        top: headerHeight + index * BATTLE_HEIGHT,
++        height: BATTLE_HEIGHT,
++      })),
++    };
++
++    return new Promise<ReplayPositioningImageResult>((resolve, reject) => {
+       canvas.toBlob((blob) => {
+         if (!blob) {
+           reject(new Error('Failed to create PNG image.'));
+           return;
+         }
+-        resolve(blob);
++        resolve({
++          blob,
++          preview,
++        });
+       }, 'image/png');
+     });
+   }
+@@ -1052,7 +1097,7 @@ export class ReplayPositioningImageService {
+     return this.isObject(board) ? board : null;
+   }
+ 
+-  private getBoardPets(board: Record<string, unknown> | null): RenderPetInfo[] {
++  private getBoardPets(board: Record<string, unknown> | null): Array<RenderPetInfo | null> {
+     if (!board) {
+       return [];
+     }
+@@ -1062,7 +1107,7 @@ export class ReplayPositioningImageService {
+       return [];
+     }
+ 
+-    const pets: RenderPetInfo[] = [];
++    const pets: Array<RenderPetInfo | null> = [null, null, null, null, null];
+     items.forEach((item) => {
+       if (!this.isObject(item)) {
+         return;
+@@ -1078,14 +1123,18 @@ export class ReplayPositioningImageService {
+       const health = this.toNumberOrFallback(healthStats?.['Perm'], 0);
+       const petNameId = PET_NAME_ID_BY_ID.get(petId) ?? null;
+       const perkNameId = perkId ? PERK_NAME_ID_BY_ID.get(perkId) ?? null : null;
+-      pets.push({
++      const poi = this.getRecord(item, 'Poi');
++      const rawPosition =
++        this.toNumberOrFallback(poi?.['x'], this.toNumberOrFallback(item['slot'], 0));
++      const position = Math.max(0, Math.min(4, Math.trunc(rawPosition)));
++      pets[position] = {
+         imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
+         perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
+         attack,
+         health,
+         level: this.toNumberOrFallback(item['Lvl'], 1),
+         xp: this.toNumberOrFallback(item['Exp'], 0),
+-      });
++      };
+     });
+     return pets;
+   }
+diff --git a/src/app/ui/components/import-calculator/import-calculator.component.html b/src/app/ui/components/import-calculator/import-calculator.component.html
+index efe8634b..8983e922 100644
+--- a/src/app/ui/components/import-calculator/import-calculator.component.html
++++ b/src/app/ui/components/import-calculator/import-calculator.component.html
+@@ -136,11 +136,28 @@
+       <strong>Odds Image Preview</strong>
+       <span class="text-muted small">{{ oddsImageFileName }}</span>
+     </div>
+-    <img
+-      class="odds-preview-image"
+-      [src]="oddsImagePreviewUrl"
+-      alt="Replay odds preview"
+-    />
++    <div class="positioning-preview-frame">
++      <img
++        class="odds-preview-image positioning-preview-image"
++        [src]="oddsImagePreviewUrl"
++        alt="Replay odds preview"
++      />
++      <a
++        *ngFor="let hotspot of oddsImagePreview?.hotspots ?? []"
++        class="positioning-preview-hotspot"
++        [href]="hotspot.calculatorUrl"
++        target="_blank"
++        rel="noopener noreferrer"
++        [ngStyle]="oddsHotspotStyle(hotspot)"
++        [attr.aria-label]="'Open turn ' + hotspot.turn + ' in calculator'"
++        [title]="'Open turn ' + hotspot.turn + ' in calculator'"
++      >
++        <span class="positioning-preview-hotspot-label">Turn {{ hotspot.turn }}</span>
++      </a>
++    </div>
++    <div *ngIf="oddsImagePreview?.hotspots?.length" class="text-muted small mt-2">
++      Hover a row to open that turn in the calculator.
++    </div>
+     <div class="odds-preview-actions mt-2">
+       <button class="btn btn-primary me-2" (click)="downloadOddsImage()">
+         Download PNG
+@@ -155,11 +172,28 @@
+       <strong>Positioning Image Preview</strong>
+       <span class="text-muted small">{{ positioningImageFileName }}</span>
+     </div>
+-    <img
+-      class="odds-preview-image"
+-      [src]="positioningImagePreviewUrl"
+-      alt="Replay positioning preview"
+-    />
++    <div class="positioning-preview-frame">
++      <img
++        class="odds-preview-image positioning-preview-image"
++        [src]="positioningImagePreviewUrl"
++        alt="Replay positioning preview"
++      />
++      <a
++        *ngFor="let hotspot of positioningImagePreview?.hotspots ?? []"
++        class="positioning-preview-hotspot"
++        [href]="hotspot.calculatorUrl"
++        target="_blank"
++        rel="noopener noreferrer"
++        [ngStyle]="positioningHotspotStyle(hotspot)"
++        [attr.aria-label]="'Open turn ' + hotspot.turn + ' in calculator'"
++        [title]="'Open turn ' + hotspot.turn + ' in calculator'"
++      >
++        <span class="positioning-preview-hotspot-label">Turn {{ hotspot.turn }}</span>
++      </a>
++    </div>
++    <div *ngIf="positioningImagePreview?.hotspots?.length" class="text-muted small mt-2">
++      Hover a row to open that turn in the calculator.
++    </div>
+     <div class="odds-preview-actions mt-2">
+       <button class="btn btn-success me-2" (click)="downloadPositioningImage()">
+         Download PNG
+diff --git a/src/app/ui/components/import-calculator/import-calculator.component.scss b/src/app/ui/components/import-calculator/import-calculator.component.scss
+index 4d70561f..af60f726 100644
+--- a/src/app/ui/components/import-calculator/import-calculator.component.scss
++++ b/src/app/ui/components/import-calculator/import-calculator.component.scss
+@@ -30,3 +30,52 @@
+   border: 1px solid #ececec;
+   border-radius: 6px;
+ }
++
++.positioning-preview-frame {
++  position: relative;
++}
++
++.positioning-preview-image {
++  display: block;
++}
++
++.positioning-preview-hotspot {
++  position: absolute;
++  left: 0;
++  right: 0;
++  display: flex;
++  justify-content: flex-end;
++  align-items: flex-start;
++  padding: 8px 12px;
++  text-decoration: none;
++  background: rgba(25, 118, 210, 0);
++  border-top: 1px solid transparent;
++  border-bottom: 1px solid transparent;
++  transition:
++    background-color 0.15s ease,
++    border-color 0.15s ease;
++}
++
++.positioning-preview-hotspot:hover,
++.positioning-preview-hotspot:focus-visible {
++  background: rgba(25, 118, 210, 0.12);
++  border-top-color: rgba(25, 118, 210, 0.4);
++  border-bottom-color: rgba(25, 118, 210, 0.4);
++  outline: none;
++}
++
++.positioning-preview-hotspot-label {
++  opacity: 0;
++  padding: 4px 8px;
++  border-radius: 999px;
++  background: rgba(17, 17, 17, 0.82);
++  color: #ffffff;
++  font-size: 12px;
++  line-height: 1;
++  transition: opacity 0.15s ease;
++}
++
++.positioning-preview-hotspot:hover .positioning-preview-hotspot-label,
++.positioning-preview-hotspot:focus-visible .positioning-preview-hotspot-label {
++  opacity: 1;
++}
+diff --git a/src/app/ui/components/import-calculator/import-calculator.component.ts b/src/app/ui/components/import-calculator/import-calculator.component.ts
+index 5f958148..2275e000 100644
+--- a/src/app/ui/components/import-calculator/import-calculator.component.ts
++++ b/src/app/ui/components/import-calculator/import-calculator.component.ts
+@@ -22,9 +22,17 @@ import {
+   buildReplayAbilityPetMapFromActions,
+ } from 'app/integrations/replay/replay-calc-parser';
+ import { parseReplayCode } from 'app/integrations/replay/replay-code';
+-import { ReplayOddsImageService } from 'app/integrations/replay/replay-odds-image.service';
+ import {
++  ReplayOddsImageHotspot,
++  ReplayOddsImagePreview,
++  ReplayOddsImageResult,
++  ReplayOddsImageService,
++} from 'app/integrations/replay/replay-odds-image.service';
++import {
++  ReplayPositioningImageHotspot,
++  ReplayPositioningImagePreview,
+   ReplayPositioningImageProgress,
++  ReplayPositioningImageResult,
+   ReplayPositioningImageService,
+ } from 'app/integrations/replay/replay-positioning-image.service';
+ import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
+@@ -102,9 +110,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+   positioningImageLoading = false;
+   oddsImageBlob: Blob | null = null;
+   oddsImagePreviewUrl: string | null = null;
++  oddsImagePreview: ReplayOddsImagePreview | null = null;
+   oddsImageFileName = '';
+   positioningImageBlob: Blob | null = null;
+   positioningImagePreviewUrl: string | null = null;
++  positioningImagePreview: ReplayPositioningImagePreview | null = null;
+   positioningImageFileName = '';
+   positioningProgressPercent = 0;
+   positioningProgressMessage = '';
+@@ -1032,13 +1042,13 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+   ): void {
+     this.setOddsImageLoading(true);
+     this.replayOddsImageService
+-      .buildOddsImageBlob({
++      .buildOddsImage({
+         replayPayload: request.replay,
+         simulationCount: request.simulationCount,
+         abilityPetMap: request.abilityPetMap ?? null,
+       })
+-      .then((blob) => {
+-        this.setOddsPreview(blob, replayId);
++      .then((result) => {
++        this.setOddsPreview(result, replayId);
+         this.setStatus('Replay odds image ready. Preview and download below.', 'success');
+       })
+       .catch((error) => {
+@@ -1058,7 +1068,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+     this.positioningBuildAbortController = abortController;
+     this.setPositioningImageLoading(true);
+     this.replayPositioningImageService
+-      .buildPositioningImageBlob({
++      .buildPositioningImage({
+         replayPayload: request.replay,
+         simulationCount: request.simulationCount,
+         optimizationSide: request.optimizationSide ?? 'player',
+@@ -1071,11 +1081,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+           this.cdr.markForCheck();
+         },
+       })
+-      .then((blob) => {
++      .then((result) => {
+         if (abortController.signal.aborted) {
+           return;
+         }
+-        this.setPositioningPreview(blob, replayId);
++        this.setPositioningPreview(result, replayId);
+         this.setStatus('Positioning image ready. Preview and download below.', 'success');
+       })
+       .catch((error) => {
+@@ -1115,6 +1125,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+     }
+     this.oddsImagePreviewUrl = null;
+     this.oddsImageBlob = null;
++    this.oddsImagePreview = null;
+     this.oddsImageFileName = '';
+   }
+ 
+@@ -1138,13 +1149,18 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+     }
+     this.positioningImagePreviewUrl = null;
+     this.positioningImageBlob = null;
++    this.positioningImagePreview = null;
+     this.positioningImageFileName = '';
+   }
+ 
+-  private setOddsPreview(blob: Blob, replayId?: string): void {
++  private setOddsPreview(
++    result: ReplayOddsImageResult,
++    replayId?: string,
++  ): void {
+     this.clearOddsPreview();
+-    this.oddsImageBlob = blob;
+-    this.oddsImagePreviewUrl = window.URL.createObjectURL(blob);
++    this.oddsImageBlob = result.blob;
++    this.oddsImagePreviewUrl = window.URL.createObjectURL(result.blob);
++    this.oddsImagePreview = result.preview;
+     const sanitizedReplayId =
+       typeof replayId === 'string'
+         ? replayId.replace(/[^a-zA-Z0-9_-]/g, '')
+@@ -1155,10 +1171,14 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+     this.cdr.markForCheck();
+   }
+ 
+-  private setPositioningPreview(blob: Blob, replayId?: string): void {
++  private setPositioningPreview(
++    result: ReplayPositioningImageResult,
++    replayId?: string,
++  ): void {
+     this.clearPositioningPreview();
+-    this.positioningImageBlob = blob;
+-    this.positioningImagePreviewUrl = window.URL.createObjectURL(blob);
++    this.positioningImageBlob = result.blob;
++    this.positioningImagePreviewUrl = window.URL.createObjectURL(result.blob);
++    this.positioningImagePreview = result.preview;
+     const sanitizedReplayId =
+       typeof replayId === 'string'
+         ? replayId.replace(/[^a-zA-Z0-9_-]/g, '')
+@@ -1169,6 +1189,32 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
+     this.cdr.markForCheck();
+   }
+ 
++  positioningHotspotStyle(
++    hotspot: ReplayPositioningImageHotspot,
++  ): Record<string, string> {
++    if (!this.positioningImagePreview || this.positioningImagePreview.height <= 0) {
++      return {};
++    }
++
++    return {
++      top: `${(hotspot.top / this.positioningImagePreview.height) * 100}%`,
++      height: `${(hotspot.height / this.positioningImagePreview.height) * 100}%`,
++    };
++  }
++
++  oddsHotspotStyle(
++    hotspot: ReplayOddsImageHotspot,
++  ): Record<string, string> {
++    if (!this.oddsImagePreview || this.oddsImagePreview.height <= 0) {
++      return {};
++    }
++
++    return {
++      top: `${(hotspot.top / this.oddsImagePreview.height) * 100}%`,
++      height: `${(hotspot.height / this.oddsImagePreview.height) * 100}%`,
++    };
++  }
++
+   private handleOddsImageError(error: unknown): void {
+     let message = 'Failed to build replay odds image.';
+     if (error instanceof Error && error.message) {
+diff --git a/src/app/ui/components/item-selection-dialog/item-selection-catalog.service.ts b/src/app/ui/components/item-selection-dialog/item-selection-catalog.service.ts
+index 844804b6..26aab813 100644
+--- a/src/app/ui/components/item-selection-dialog/item-selection-catalog.service.ts
++++ b/src/app/ui/components/item-selection-dialog/item-selection-catalog.service.ts
+@@ -19,6 +19,76 @@ import { SelectionItem, SelectionType } from './item-selection-dialog.types';
+ export interface IndexedSelectionItem extends SelectionItem {
+   searchName: string;
+   searchDisplayName: string;
++  triggerCategory: string;
++}
++
++export const PASSIVE_TRIGGER_CATEGORY = 'Passive';
++
++export function extractTriggerCategory(tooltip?: string | null): string {
++  if (!tooltip) {
++    return PASSIVE_TRIGGER_CATEGORY;
++  }
++
++  const lines = tooltip
++    .split(/\r?\n/)
++    .map((line) => line.trim())
++    .filter((line) => line.length > 0);
++
++  for (const line of lines) {
++    const normalizedLine = line.replace(/^Lv\s*\d+\s*:\s*/i, '').trim();
++    const triggerMatch = /^([^:]+):/.exec(normalizedLine);
++    if (triggerMatch?.[1]) {
++      return triggerMatch[1].trim();
++    }
++  }
++
++  return PASSIVE_TRIGGER_CATEGORY;
++}
++
++export function compareTriggerCategories(left: string, right: string): number {
++  if (left === right) {
++    return 0;
++  }
++  if (left === PASSIVE_TRIGGER_CATEGORY) {
++    return 1;
++  }
++  if (right === PASSIVE_TRIGGER_CATEGORY) {
++    return -1;
++  }
++  return left.localeCompare(right);
++}
++
++export function getTriggerCategories(
++  items: Array<Pick<IndexedSelectionItem, 'triggerCategory'>>,
++): string[] {
++  const categories = Array.from(
++    new Set(
++      items
++        .map((item) => item.triggerCategory)
++        .filter((category) => category.length > 0),
++    ),
++  );
++
++  categories.sort(compareTriggerCategories);
++  return categories;
++}
++
++export function sortItemsByTrigger<T extends IndexedSelectionItem>(
++  items: T[],
++): T[] {
++  return [...items].sort((left, right) => {
++    const categoryDiff = compareTriggerCategories(
++      left.triggerCategory,
++      right.triggerCategory,
++    );
++    if (categoryDiff !== 0) {
++      return categoryDiff;
++    }
++    if ((left.tier ?? 0) !== (right.tier ?? 0)) {
++      return (left.tier ?? 0) - (right.tier ?? 0);
++    }
++    return left.name.localeCompare(right.name);
++  });
+ }
+ 
+ @Injectable({
+@@ -395,6 +465,7 @@ export class ItemSelectionCatalogService {
+       ...item,
+       searchName: item.name.toLowerCase(),
+       searchDisplayName: (item.displayName ?? item.name).toLowerCase(),
++      triggerCategory: extractTriggerCategory(item.tooltip),
+     };
+   }
+ 
+diff --git a/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.html b/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.html
+index d55e0c52..f5d12d11 100644
+--- a/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.html
++++ b/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.html
+@@ -30,7 +30,25 @@
+           (ngModelChange)="onSearchChange()" #searchInput />
+       </div>
+ 
+-      <div class="pack-filters" *ngIf="type === 'pet' || type === 'swallowed-pet'">
++      <div class="sort-mode-selector" *ngIf="supportsTriggerSort">
++        <span class="sort-mode-label">Sort by</span>
++        <div class="btn-group btn-group-sm" role="group" aria-label="Item Sort Selector">
++          <button type="button" class="btn"
++            [class.btn-primary]="selectedSortMode === 'default'"
++            [class.btn-outline-primary]="selectedSortMode !== 'default'"
++            (click)="setSortMode('default')">
++            {{ defaultSortLabel }}
++          </button>
++          <button type="button" class="btn"
++            [class.btn-primary]="selectedSortMode === 'trigger'"
++            [class.btn-outline-primary]="selectedSortMode !== 'trigger'"
++            (click)="setSortMode('trigger')">
++            Trigger
++          </button>
++        </div>
++      </div>
++
++      <div class="pack-filters" *ngIf="showPackFilters">
+         <button *ngFor="let pack of availablePacks; trackBy: trackByPack" class="btn btn-sm"
+           [class.btn-primary]="selectedPack === pack" [class.btn-outline-primary]="selectedPack !== pack"
+           (click)="selectPack(pack)">
+@@ -72,7 +90,7 @@
+         </div>
+       </div>
+ 
+-      <div class="pack-filters" *ngIf="type === 'equipment' || type === 'toy' || type === 'hard-toy'">
++      <div class="pack-filters" *ngIf="showDefaultCategoryFilters">
+         <button *ngFor="let category of availableItemCategories; trackBy: trackByCategory" class="btn btn-sm"
+           [class.btn-primary]="selectedItemCategory === category"
+           [class.btn-outline-primary]="selectedItemCategory !== category" (click)="selectItemCategory(category)">
+@@ -80,6 +98,16 @@
+         </button>
+       </div>
+ 
++      <div class="filter-select-row" *ngIf="showTriggerFilters">
++        <label class="filter-select-label" for="triggerFilterSelect">Trigger</label>
++        <select id="triggerFilterSelect" class="form-select filter-select" [ngModel]="selectedTriggerCategory"
++          (ngModelChange)="selectTriggerCategory($event)">
++          <option *ngFor="let category of availableTriggerCategories; trackBy: trackByCategory" [ngValue]="category">
++            {{ category }}
++          </option>
++        </select>
++      </div>
++
+       <!-- Non-vanilla warning for ability mode -->
+       <div class="ability-mode-notice" *ngIf="type === 'ability'">
+         <span class="notice-icon">ΓÜá</span>
+@@ -100,8 +128,8 @@
+             let i = index;
+             trackBy: trackByItem
+           ">
+-          <div class="category-header" *ngIf="i === 0 || filteredItems[i - 1].category !== item.category">
+-            {{ item.category }}
++          <div class="category-header" *ngIf="shouldShowCategoryHeader(i, item)">
++            {{ getVisibleCategory(item) }}
+           </div>
+           <div class="item-card" [class.item-card-disabled]="item.isDisabled" [class.team-card]="type === 'team'"
+             (click)="onItemClick(item)" [appTooltip]="item.tooltip || item.displayName || item.name">
+@@ -131,4 +159,4 @@
+       </div>
+     </div>
+   </div>
+-</div>
+\ No newline at end of file
++</div>
+diff --git a/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.scss b/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.scss
+index 79e46818..ca607a7c 100644
+--- a/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.scss
++++ b/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.scss
+@@ -76,6 +76,7 @@
+   gap: 1rem;
+   flex: 1;
+   overflow: hidden;
++  min-height: 0;
+ }
+ 
+ .search-container {
+@@ -94,6 +95,45 @@
+   }
+ }
+ 
++.sort-mode-selector {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 0.75rem;
++
++  .sort-mode-label {
++    font-size: 0.8rem;
++    font-weight: 600;
++    color: #495057;
++    text-transform: uppercase;
++    letter-spacing: 0.04em;
++  }
++}
++
++.filter-select-row {
++  display: flex;
++  align-items: center;
++  gap: 0.75rem;
++  padding-bottom: 0.5rem;
++  border-bottom: 1px solid #eee;
++
++  .filter-select-label {
++    flex: 0 0 auto;
++    margin: 0;
++    font-size: 0.8rem;
++    font-weight: 600;
++    color: #495057;
++    text-transform: uppercase;
++    letter-spacing: 0.04em;
++  }
++
++  .filter-select {
++    min-width: 0;
++    max-width: 260px;
++    font-size: 0.9rem;
++  }
++}
++
+ .pack-filters {
+   display: flex;
+   flex-wrap: wrap;
+@@ -129,8 +169,12 @@
+   padding: 0.5rem 0.5rem 0.75rem;
+   overflow-y: auto;
+   flex: 1;
++  min-height: 0;
+   align-content: start;
+   align-items: start;
++  overscroll-behavior: contain;
++  touch-action: pan-y;
++  -webkit-overflow-scrolling: touch;
+ 
+   &::-webkit-scrollbar {
+     width: 6px;
+@@ -146,6 +190,19 @@
+   }
+ }
+ 
++@media (max-width: 640px) {
++  .sort-mode-selector,
++  .filter-select-row {
++    align-items: stretch;
++    flex-direction: column;
++  }
++
++  .filter-select-row .filter-select {
++    max-width: none;
++    width: 100%;
++  }
++}
++
+ .items-grid.team-grid {
+   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+   justify-content: stretch;
+diff --git a/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.ts b/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.ts
+index 2b5abdcb..3fc8db93 100644
+--- a/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.ts
++++ b/src/app/ui/components/item-selection-dialog/item-selection-dialog.component.ts
+@@ -25,8 +25,10 @@ import {
+   SelectionType,
+ } from './item-selection-dialog.types';
+ import {
++  getTriggerCategories,
+   IndexedSelectionItem,
+   ItemSelectionCatalogService,
++  sortItemsByTrigger,
+ } from './item-selection-catalog.service';
+ export type {
+   SelectionItem,
+@@ -34,6 +36,8 @@ export type {
+   SelectionType,
+ } from './item-selection-dialog.types';
+ 
++type ItemSelectorSortMode = 'default' | 'trigger';
++
+ @Component({
+   selector: 'app-item-selection-dialog',
+   standalone: true,
+@@ -68,7 +72,10 @@ export class ItemSelectionDialogComponent
+   availablePacks = ['All', ...PACK_NAMES, 'Tokens'];
+   selectedItemCategory = 'All';
+   availableItemCategories = ['All'];
++  selectedTriggerCategory = 'All';
++  availableTriggerCategories = ['All'];
+   selectedLevel = 1;
++  selectedSortMode: ItemSelectorSortMode = 'default';
+ 
+   items: IndexedSelectionItem[] = [];
+   filteredItems: IndexedSelectionItem[] = [];
+@@ -102,6 +109,43 @@ export class ItemSelectionDialogComponent
+     );
+   }
+ 
++  get supportsTriggerSort(): boolean {
++    return (
++      this.type === 'pet' ||
++      this.type === 'swallowed-pet' ||
++      this.type === 'equipment' ||
++      this.type === 'toy' ||
++      this.type === 'hard-toy'
++    );
++  }
++
++  get defaultSortLabel(): string {
++    if (this.type === 'pet' || this.type === 'swallowed-pet') {
++      return 'Pack';
++    }
++    return 'Category';
++  }
++
++  get showPackFilters(): boolean {
++    return (
++      (this.type === 'pet' || this.type === 'swallowed-pet') &&
++      this.selectedSortMode === 'default'
++    );
++  }
++
++  get showDefaultCategoryFilters(): boolean {
++    return (
++      (this.type === 'equipment' ||
++        this.type === 'toy' ||
++        this.type === 'hard-toy') &&
++      this.selectedSortMode === 'default'
++    );
++  }
++
++  get showTriggerFilters(): boolean {
++    return this.supportsTriggerSort && this.selectedSortMode === 'trigger';
++  }
++
+   constructor(
+     private catalogService: ItemSelectionCatalogService,
+   ) { }
+@@ -171,13 +215,17 @@ export class ItemSelectionDialogComponent
+       savedTeams: this.savedTeams,
+     });
+     this.updateAvailableItemCategories();
++    this.updateAvailableTriggerCategories();
+     this.filterItems();
+   }
+ 
+   filterItems() {
+     let filtered = this.items;
+ 
+-    if (this.type === 'pet' || this.type === 'swallowed-pet') {
++    if (
++      (this.type === 'pet' || this.type === 'swallowed-pet') &&
++      this.selectedSortMode === 'default'
++    ) {
+       if (this.selectedPack === 'Tokens') {
+         filtered = filtered.filter((item) => item.pack === 'Tokens');
+       } else if (this.selectedPack !== 'All') {
+@@ -208,7 +256,10 @@ export class ItemSelectionDialogComponent
+     }
+ 
+     if (
+-      (this.type === 'equipment' || this.type === 'toy' || this.type === 'hard-toy') &&
++      (this.type === 'equipment' ||
++        this.type === 'toy' ||
++        this.type === 'hard-toy') &&
++      this.selectedSortMode === 'default' &&
+       this.selectedItemCategory !== 'All'
+     ) {
+       filtered = filtered.filter(
+@@ -216,6 +267,16 @@ export class ItemSelectionDialogComponent
+       );
+     }
+ 
++    if (
++      this.selectedSortMode === 'trigger' &&
++      this.supportsTriggerSort &&
++      this.selectedTriggerCategory !== 'All'
++    ) {
++      filtered = filtered.filter(
++        (item) => item.triggerCategory === this.selectedTriggerCategory,
++      );
++    }
++
+     if (this.searchQuery) {
+       const query = this.searchQuery.toLowerCase();
+       filtered = filtered.filter(
+@@ -225,7 +286,7 @@ export class ItemSelectionDialogComponent
+       );
+     }
+ 
+-    this.filteredItems = filtered;
++    this.filteredItems = this.sortItemsForDisplay(filtered);
+   }
+ 
+   onSearchChange() {
+@@ -248,6 +309,33 @@ export class ItemSelectionDialogComponent
+     this.filterItems();
+   }
+ 
++  setSortMode(mode: ItemSelectorSortMode) {
++    this.selectedSortMode = mode;
++    this.filterItems();
++  }
++
++  selectTriggerCategory(category: string) {
++    this.selectedTriggerCategory = category;
++    this.filterItems();
++  }
++
++  getVisibleCategory(item: IndexedSelectionItem): string {
++    if (this.selectedSortMode === 'trigger' && this.supportsTriggerSort) {
++      return item.triggerCategory;
++    }
++    return item.category ?? '';
++  }
++
++  shouldShowCategoryHeader(index: number, item: IndexedSelectionItem): boolean {
++    if (index === 0) {
++      return true;
++    }
++    return (
++      this.getVisibleCategory(this.filteredItems[index - 1]) !==
++      this.getVisibleCategory(item)
++    );
++  }
++
+   getPackFilterIcon(pack: string): string | null {
+     if (!pack || pack === 'All') {
+       return null;
+@@ -359,6 +447,19 @@ export class ItemSelectionDialogComponent
+     }
+   }
+ 
++  private updateAvailableTriggerCategories(): void {
++    if (!this.supportsTriggerSort) {
++      this.availableTriggerCategories = ['All'];
++      this.selectedTriggerCategory = 'All';
++      return;
++    }
++
++    this.availableTriggerCategories = ['All', ...getTriggerCategories(this.items)];
++    if (!this.availableTriggerCategories.includes(this.selectedTriggerCategory)) {
++      this.selectedTriggerCategory = 'All';
++    }
++  }
++
+   /** Pack filter options for 'ability' mode */
+   get abilityPackFilters(): string[] {
+     if (this.type !== 'ability') return [];
+@@ -380,4 +481,18 @@ export class ItemSelectionDialogComponent
+     }
+     return Math.max(1, Math.min(3, Math.trunc(parsed)));
+   }
++
++  private sortItemsForDisplay(
++    items: IndexedSelectionItem[],
++  ): IndexedSelectionItem[] {
++    if (this.selectedSortMode !== 'trigger' || !this.supportsTriggerSort) {
++      return filteredCopy(items);
++    }
++
++    return sortItemsByTrigger(items);
++  }
++}
++
++function filteredCopy(items: IndexedSelectionItem[]): IndexedSelectionItem[] {
++  return [...items];
+ }
+diff --git a/src/assets/data/food.json b/src/assets/data/food.json
+index 18fdbfa9..c75bf829 100644
+--- a/src/assets/data/food.json
++++ b/src/assets/data/food.json
+@@ -1941,7 +1941,7 @@
+       "Danger"
+     ],
+     "Rollable": true,
+-    "PerkNote": "Before attack: Transform into a random summon pet.",
++    "PerkNote": "Before attack: Transform into a random Wolf, Slug, Sheep, Rooster, Nessie, Deer, Tardigrade, Hirola, Patagonian Mara, Osprey, or Anteater.",
+     "CustomArchetypes": [],
+     "Random": true
+   },
+diff --git a/src/assets/data/perks.json b/src/assets/data/perks.json
+index d81e6349..57f7a6fc 100644
+--- a/src/assets/data/perks.json
++++ b/src/assets/data/perks.json
+@@ -139,7 +139,7 @@
+     "NameId": "Bread"
+   },
+   {
+-    "Ability": "Before attack: Transform into a random summon pet.",
++    "Ability": "Before attack: Transform into a random Wolf, Slug, Sheep, Rooster, Nessie, Deer, Tardigrade, Hirola, Patagonian Mara, Osprey, or Anteater.",
+     "Positive": true,
+     "Id": "94",
+     "Name": "Cocoa Bean",
+diff --git a/src/assets/data/pets.json b/src/assets/data/pets.json
+index 76e6e2d4..db33792f 100644
+--- a/src/assets/data/pets.json
++++ b/src/assets/data/pets.json
+@@ -8607,15 +8607,15 @@
+     "Abilities": [
+       {
+         "Level": 1,
+-        "About": "Start of battle: Transform the two friends ahead into level 1 <b>Faint</b> pets from tier 2 and 3."
++          "About": "Start of battle: Transform the two friends ahead into a random level 1 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
+       },
+       {
+         "Level": 2,
+-        "About": "Start of battle: Transform the two friends ahead into level 2 <b>Faint</b> pets from tier 2 and 3."
++          "About": "Start of battle: Transform the two friends ahead into a random level 2 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
+       },
+       {
+         "Level": 3,
+-        "About": "Start of battle: Transform the two friends ahead into level 3 <b>Faint</b> pets from tier 2 and 3."
++          "About": "Start of battle: Transform the two friends ahead into a random level 3 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
+       }
+     ],
+     "Id": "429",

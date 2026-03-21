@@ -18,6 +18,7 @@ import { PetFactoryService } from 'app/integrations/pet/pet-factory.service';
 import { EquipmentFactoryService } from 'app/integrations/equipment/equipment-factory.service';
 import { ToyFactoryService } from 'app/integrations/toy/toy-factory.service';
 import { InjectorService } from 'app/integrations/injector.service';
+import { getOptimizedPositioningLineup } from 'app/integrations/replay/replay-positioning-image.service';
 import {
   PetConfig,
   SimulationConfig,
@@ -181,9 +182,17 @@ describe('positioning optimizer live-board regression', () => {
           simulationCount,
         ),
       );
+      const replayImageAppliedResult = verifierRunner.run(
+        buildConfig(
+          state,
+          getOptimizedPositioningLineup(projected),
+          simulationCount,
+        ),
+      );
 
       expect(rawAppliedResult.playerWins).toBeLessThan(simulationCount);
       expect(projectedAppliedResult.playerWins).toBe(simulationCount);
+      expect(replayImageAppliedResult).toEqual(projectedAppliedResult);
     },
     120000,
   );

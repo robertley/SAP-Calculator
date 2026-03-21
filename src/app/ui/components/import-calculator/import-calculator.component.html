@@ -136,11 +136,28 @@
       <strong>Odds Image Preview</strong>
       <span class="text-muted small">{{ oddsImageFileName }}</span>
     </div>
-    <img
-      class="odds-preview-image"
-      [src]="oddsImagePreviewUrl"
-      alt="Replay odds preview"
-    />
+    <div class="positioning-preview-frame">
+      <img
+        class="odds-preview-image positioning-preview-image"
+        [src]="oddsImagePreviewUrl"
+        alt="Replay odds preview"
+      />
+      <a
+        *ngFor="let hotspot of oddsImagePreview?.hotspots ?? []"
+        class="positioning-preview-hotspot"
+        [href]="hotspot.calculatorUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        [ngStyle]="oddsHotspotStyle(hotspot)"
+        [attr.aria-label]="'Open turn ' + hotspot.turn + ' in calculator'"
+        [title]="'Open turn ' + hotspot.turn + ' in calculator'"
+      >
+        <span class="positioning-preview-hotspot-label">Turn {{ hotspot.turn }}</span>
+      </a>
+    </div>
+    <div *ngIf="oddsImagePreview?.hotspots?.length" class="text-muted small mt-2">
+      Hover a row to open that turn in the calculator.
+    </div>
     <div class="odds-preview-actions mt-2">
       <button class="btn btn-primary me-2" (click)="downloadOddsImage()">
         Download PNG
@@ -155,11 +172,28 @@
       <strong>Positioning Image Preview</strong>
       <span class="text-muted small">{{ positioningImageFileName }}</span>
     </div>
-    <img
-      class="odds-preview-image"
-      [src]="positioningImagePreviewUrl"
-      alt="Replay positioning preview"
-    />
+    <div class="positioning-preview-frame">
+      <img
+        class="odds-preview-image positioning-preview-image"
+        [src]="positioningImagePreviewUrl"
+        alt="Replay positioning preview"
+      />
+      <a
+        *ngFor="let hotspot of positioningImagePreview?.hotspots ?? []"
+        class="positioning-preview-hotspot"
+        [href]="hotspot.calculatorUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        [ngStyle]="positioningHotspotStyle(hotspot)"
+        [attr.aria-label]="'Open turn ' + hotspot.turn + ' in calculator'"
+        [title]="'Open turn ' + hotspot.turn + ' in calculator'"
+      >
+        <span class="positioning-preview-hotspot-label">Turn {{ hotspot.turn }}</span>
+      </a>
+    </div>
+    <div *ngIf="positioningImagePreview?.hotspots?.length" class="text-muted small mt-2">
+      Hover a row to open that turn in the calculator.
+    </div>
     <div class="odds-preview-actions mt-2">
       <button class="btn btn-success me-2" (click)="downloadPositioningImage()">
         Download PNG

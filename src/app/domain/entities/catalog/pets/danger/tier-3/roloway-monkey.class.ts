@@ -8,6 +8,7 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
+import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 
 
 export class RolowayMonkey extends Pet {
@@ -70,7 +71,7 @@ export class RolowayMonkeyAbility extends Ability {
       return;
     }
 
-    const petNames = this.petService.getFaintPetNamesByTiers([2, 3]);
+    const petNames = DANGERS_AND_USEFUL_POOLS.rolowayMonkey;
     if (petNames.length === 0) {
       return;
     }

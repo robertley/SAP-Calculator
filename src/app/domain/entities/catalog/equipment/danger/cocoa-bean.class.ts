@@ -7,6 +7,20 @@ import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatEquipmentScopedRandomLabel } from 'app/runtime/random-decision-label';
 
+const COCOA_BEAN_SUMMON_POOL = [
+  'Wolf',
+  'Slug',
+  'Sheep',
+  'Rooster',
+  'Nessie',
+  'Deer',
+  'Tardigrade',
+  'Hirola',
+  'Patagonian Mara',
+  'Osprey',
+  'Anteater',
+] as const;
+
 
 export class CocoaBean extends Equipment {
   name = 'Cocoa Bean';
@@ -63,7 +77,7 @@ export class CocoaBeanAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
-    const summonPool = this.petService.getSummonPetNames();
+    const summonPool = [...COCOA_BEAN_SUMMON_POOL];
     if (summonPool.length === 0) {
       owner.removePerk();
       return;

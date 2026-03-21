@@ -36,16 +36,11 @@ export abstract class PetTargetingRuntimeFacade extends PetEquipmentFacade {
 
   getManticoreMult(): number[] {
     const parent = this.parent;
-    if (!parent || !parent.petArray) {
+    if (!parent) {
       return [];
     }
-    let mult: number[] = [];
-    for (let pet of parent.petArray) {
-      if (pet.name == 'Manticore') {
-        mult.push(pet.level);
-      }
-    }
-    return mult;
+
+    return parent.getManticoreMult();
   }
 
   getSparrowLevel(): number {

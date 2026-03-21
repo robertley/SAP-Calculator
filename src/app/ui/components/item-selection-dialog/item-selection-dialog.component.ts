@@ -25,14 +25,18 @@ import {
   SelectionType,
 } from './item-selection-dialog.types';
 import {
+  getTriggerCategories,
   IndexedSelectionItem,
   ItemSelectionCatalogService,
+  sortItemsByTrigger,
 } from './item-selection-catalog.service';
 export type {
   SelectionItem,
   SelectionItemType,
   SelectionType,
 } from './item-selection-dialog.types';
+
+type ItemSelectorSortMode = 'default' | 'trigger';
 
 @Component({
   selector: 'app-item-selection-dialog',
@@ -68,7 +72,10 @@ export class ItemSelectionDialogComponent
   availablePacks = ['All', ...PACK_NAMES, 'Tokens'];
   selectedItemCategory = 'All';
   availableItemCategories = ['All'];
+  selectedTriggerCategory = 'All';
+  availableTriggerCategories = ['All'];
   selectedLevel = 1;
+  selectedSortMode: ItemSelectorSortMode = 'default';
 
   items: IndexedSelectionItem[] = [];
   filteredItems: IndexedSelectionItem[] = [];
@@ -100,6 +107,43 @@ export class ItemSelectionDialogComponent
       this.type !== 'team' &&
       this.searchQuery.trim().length === 0
     );
+  }
+
+  get supportsTriggerSort(): boolean {
+    return (
+      this.type === 'pet' ||
+      this.type === 'swallowed-pet' ||
+      this.type === 'equipment' ||
+      this.type === 'toy' ||
+      this.type === 'hard-toy'
+    );
+  }
+
+  get defaultSortLabel(): string {
+    if (this.type === 'pet' || this.type === 'swallowed-pet') {
+      return 'Pack';
+    }
+    return 'Category';
+  }
+
+  get showPackFilters(): boolean {
+    return (
+      (this.type === 'pet' || this.type === 'swallowed-pet') &&
+      this.selectedSortMode === 'default'
+    );
+  }
+
+  get showDefaultCategoryFilters(): boolean {
+    return (
+      (this.type === 'equipment' ||
+        this.type === 'toy' ||
+        this.type === 'hard-toy') &&
+      this.selectedSortMode === 'default'
+    );
+  }
+
+  get showTriggerFilters(): boolean {
+    return this.supportsTriggerSort && this.selectedSortMode === 'trigger';
   }
 
   constructor(
@@ -171,13 +215,17 @@ export class ItemSelectionDialogComponent
       savedTeams: this.savedTeams,
     });
     this.updateAvailableItemCategories();
+    this.updateAvailableTriggerCategories();
     this.filterItems();
   }
 
   filterItems() {
     let filtered = this.items;
 
-    if (this.type === 'pet' || this.type === 'swallowed-pet') {
+    if (
+      (this.type === 'pet' || this.type === 'swallowed-pet') &&
+      this.selectedSortMode === 'default'
+    ) {
       if (this.selectedPack === 'Tokens') {
         filtered = filtered.filter((item) => item.pack === 'Tokens');
       } else if (this.selectedPack !== 'All') {
@@ -208,11 +256,24 @@ export class ItemSelectionDialogComponent
     }
 
     if (
-      (this.type === 'equipment' || this.type === 'toy' || this.type === 'hard-toy') &&
+      (this.type === 'equipment' ||
+        this.type === 'toy' ||
+        this.type === 'hard-toy') &&
+      this.selectedSortMode === 'default' &&
       this.selectedItemCategory !== 'All'
     ) {
       filtered = filtered.filter(
         (item) => item.category === this.selectedItemCategory,
+      );
+    }
+
+    if (
+      this.selectedSortMode === 'trigger' &&
+      this.supportsTriggerSort &&
+      this.selectedTriggerCategory !== 'All'
+    ) {
+      filtered = filtered.filter(
+        (item) => item.triggerCategory === this.selectedTriggerCategory,
       );
     }
 
@@ -225,7 +286,7 @@ export class ItemSelectionDialogComponent
       );
     }
 
-    this.filteredItems = filtered;
+    this.filteredItems = this.sortItemsForDisplay(filtered);
   }
 
   onSearchChange() {
@@ -246,6 +307,33 @@ export class ItemSelectionDialogComponent
   selectItemCategory(category: string) {
     this.selectedItemCategory = category;
     this.filterItems();
+  }
+
+  setSortMode(mode: ItemSelectorSortMode) {
+    this.selectedSortMode = mode;
+    this.filterItems();
+  }
+
+  selectTriggerCategory(category: string) {
+    this.selectedTriggerCategory = category;
+    this.filterItems();
+  }
+
+  getVisibleCategory(item: IndexedSelectionItem): string {
+    if (this.selectedSortMode === 'trigger' && this.supportsTriggerSort) {
+      return item.triggerCategory;
+    }
+    return item.category ?? '';
+  }
+
+  shouldShowCategoryHeader(index: number, item: IndexedSelectionItem): boolean {
+    if (index === 0) {
+      return true;
+    }
+    return (
+      this.getVisibleCategory(this.filteredItems[index - 1]) !==
+      this.getVisibleCategory(item)
+    );
   }
 
   getPackFilterIcon(pack: string): string | null {
@@ -359,6 +447,19 @@ export class ItemSelectionDialogComponent
     }
   }
 
+  private updateAvailableTriggerCategories(): void {
+    if (!this.supportsTriggerSort) {
+      this.availableTriggerCategories = ['All'];
+      this.selectedTriggerCategory = 'All';
+      return;
+    }
+
+    this.availableTriggerCategories = ['All', ...getTriggerCategories(this.items)];
+    if (!this.availableTriggerCategories.includes(this.selectedTriggerCategory)) {
+      this.selectedTriggerCategory = 'All';
+    }
+  }
+
   /** Pack filter options for 'ability' mode */
   get abilityPackFilters(): string[] {
     if (this.type !== 'ability') return [];
@@ -380,4 +481,18 @@ export class ItemSelectionDialogComponent
     }
     return Math.max(1, Math.min(3, Math.trunc(parsed)));
   }
+
+  private sortItemsForDisplay(
+    items: IndexedSelectionItem[],
+  ): IndexedSelectionItem[] {
+    if (this.selectedSortMode !== 'trigger' || !this.supportsTriggerSort) {
+      return filteredCopy(items);
+    }
+
+    return sortItemsByTrigger(items);
+  }
+}
+
+function filteredCopy(items: IndexedSelectionItem[]): IndexedSelectionItem[] {
+  return [...items];
 }

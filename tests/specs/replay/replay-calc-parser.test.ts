@@ -377,4 +377,23 @@ describe('ReplayCalcParser', () => {
     expect(playerPet?.attack).toBe(1);
     expect(playerPet?.health).toBe(4);
   });
+
+  it('accepts pack names directly on imported replay battle boards', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 'Unicorn',
+        Mins: { Items: [] },
+      },
+      OpponentBoard: {
+        Pack: 'Puppy',
+        Mins: { Items: [] },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(battleJson);
+
+    expect(state.playerPack).toBe('Unicorn');
+    expect(state.opponentPack).toBe('Puppy');
+  });
 });

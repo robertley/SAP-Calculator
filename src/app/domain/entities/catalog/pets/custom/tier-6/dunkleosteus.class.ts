@@ -5,6 +5,7 @@ import { Pack, Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { cloneDeep } from 'lodash-es';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
+import { canApplyAilment } from 'app/domain/entities/ability-resolution';
 
 
 export class Dunkleosteus extends Pet {
@@ -69,7 +70,14 @@ export class DunkleosteusAbility extends Ability {
     const copiedAilment = cloneDeep(ailment);
     owner.removePerk(true);
 
-    const targets = opponentPets.slice(0, Math.min(2, opponentPets.length));
+    const targets = opponentPets
+      .filter((pet) => canApplyAilment(pet, copiedAilment.name))
+      .slice(0, 2);
+    if (targets.length === 0) {
+      this.triggerTigerExecution(context);
+      return;
+    }
+
     for (const target of targets) {
       const ailmentClone = cloneDeep(copiedAilment);
       ailmentClone.multiplier += this.level - 1;
