@@ -25,10 +25,11 @@ import {
   SelectionType,
 } from './item-selection-dialog.types';
 import {
-  getTriggerCategories,
   IndexedSelectionItem,
   ItemSelectionCatalogService,
   sortItemsByTrigger,
+  TriggerFilterEntry,
+  getTriggerFilterEntries,
 } from './item-selection-catalog.service';
 export type {
   SelectionItem,
@@ -73,12 +74,12 @@ export class ItemSelectionDialogComponent
   selectedItemCategory = 'All';
   availableItemCategories = ['All'];
   selectedTriggerCategory = 'All';
-  availableTriggerCategories = ['All'];
   selectedLevel = 1;
   selectedSortMode: ItemSelectorSortMode = 'default';
 
   items: IndexedSelectionItem[] = [];
   filteredItems: IndexedSelectionItem[] = [];
+  triggerFilterEntries: TriggerFilterEntry[] = [];
 
   private customPacksSubscription: Subscription | null = null;
   private searchDebounceHandle: ReturnType<typeof setTimeout> | null = null;
@@ -89,6 +90,13 @@ export class ItemSelectionDialogComponent
 
   trackByCategory(index: number, category: string): string {
     return category ?? String(index);
+  }
+
+  trackByTriggerEntry(index: number, entry: TriggerFilterEntry): string {
+    if (entry.type === 'single') {
+      return entry.category;
+    }
+    return entry.label ?? String(index);
   }
 
   trackByItem(index: number, item: SelectionItem): string | number {
@@ -449,13 +457,21 @@ export class ItemSelectionDialogComponent
 
   private updateAvailableTriggerCategories(): void {
     if (!this.supportsTriggerSort) {
-      this.availableTriggerCategories = ['All'];
+      this.triggerFilterEntries = [];
       this.selectedTriggerCategory = 'All';
       return;
     }
 
-    this.availableTriggerCategories = ['All', ...getTriggerCategories(this.items)];
-    if (!this.availableTriggerCategories.includes(this.selectedTriggerCategory)) {
+    this.triggerFilterEntries = getTriggerFilterEntries(this.items);
+    const availableCategories = new Set<string>(['All']);
+    this.triggerFilterEntries.forEach((entry) => {
+      if (entry.type === 'single') {
+        availableCategories.add(entry.category);
+        return;
+      }
+      entry.categories.forEach((category) => availableCategories.add(category));
+    });
+    if (!availableCategories.has(this.selectedTriggerCategory)) {
       this.selectedTriggerCategory = 'All';
     }
   }

@@ -102,9 +102,17 @@
         <label class="filter-select-label" for="triggerFilterSelect">Trigger</label>
         <select id="triggerFilterSelect" class="form-select filter-select" [ngModel]="selectedTriggerCategory"
           (ngModelChange)="selectTriggerCategory($event)">
-          <option *ngFor="let category of availableTriggerCategories; trackBy: trackByCategory" [ngValue]="category">
-            {{ category }}
-          </option>
+          <option [ngValue]="'All'">All triggers</option>
+          <ng-container *ngFor="let entry of triggerFilterEntries; trackBy: trackByTriggerEntry">
+            <option *ngIf="entry.type === 'single'" [ngValue]="entry.category">
+              {{ entry.category }}
+            </option>
+            <optgroup *ngIf="entry.type === 'group'" [label]="entry.label">
+              <option *ngFor="let category of entry.categories; trackBy: trackByCategory" [ngValue]="category">
+                {{ category }}
+              </option>
+            </optgroup>
+          </ng-container>
         </select>
       </div>
 
