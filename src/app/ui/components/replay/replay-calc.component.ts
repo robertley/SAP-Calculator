@@ -63,6 +63,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
   statusTone: 'success' | 'error' | 'warning' = 'success';
   calculatorLink = '';
   replayCode = '';
+  sapLibraryReplayUrl = '';
   loading = false;
   private readonly replayTimeoutMs = 10000;
   private readonly replayHealthTimeoutMs = 2500;
@@ -105,6 +106,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
     this.clearStatus();
     this.calculatorLink = '';
     this.replayCode = '';
+    this.sapLibraryReplayUrl = '';
     this.loading = false;
 
     const rawInput = this.formGroup.get('replayJson').value?.trim();
@@ -183,6 +185,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
                   battleJson,
                   response?.genesisBuildModel,
                   response?.abilityPetMap ?? null,
+                  response?.sapLibraryReplayUrl,
                   turnNumber,
                 );
               },
@@ -238,6 +241,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
       battleJson,
       parsedInput?.GenesisBuildModel,
       parseOptions?.abilityPetMap ?? null,
+      undefined,
       Number(this.formGroup.get('turn').value ?? parsedInput?.T),
     );
   }
@@ -280,6 +284,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
     battleJson: ReplayBattleJson,
     genesisBuildModel?: ReplayBuildModelJson,
     abilityPetMap?: Record<string, string | number> | null,
+    sapLibraryReplayUrl?: string,
     turnNumber?: number,
   ) {
     const calculatorState = this.replayCalcService.parseReplayForCalculator(
@@ -299,6 +304,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
           ? turnNumber
           : undefined,
     });
+    this.sapLibraryReplayUrl = sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
   }
 
   private saveSapCredentials() {
@@ -337,6 +343,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
   }
 
   private handleReplayIndexUploadStatus(status: ReplayIndexUploadStatus): void {
+    this.sapLibraryReplayUrl = status.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
     if (status.outcome === 'success') {
       this.setStatus(status.message, 'success');
       this.cdr.markForCheck();

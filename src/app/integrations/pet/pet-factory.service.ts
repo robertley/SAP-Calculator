@@ -126,6 +126,7 @@ export class PetFactoryService {
       exp,
       triggersConsumed,
       foodsEaten,
+      timesGaveHealth,
       battlesFought,
     } = normalizedPetForm;
     let hasRandomEvents = normalizedPetForm.hasRandomEvents;
@@ -154,6 +155,13 @@ export class PetFactoryService {
         if (Number.isFinite(value)) {
           pet.foodsEaten = value;
           pet.originalFoodsEaten = value;
+        }
+      }
+      if (timesGaveHealth != null) {
+        const value = Number(timesGaveHealth);
+        if (Number.isFinite(value)) {
+          pet.timesGaveHealth = Math.max(0, Math.floor(value));
+          pet.originalTimesGaveHealth = pet.timesGaveHealth;
         }
       }
       if (plan.hasTimesHurt && normalizedPetForm.timesHurt != null) {
@@ -377,6 +385,7 @@ export class PetFactoryService {
       hasNonDefaultFormValue(petForm, ABOMINATION_FORM_FIELDS);
     const hasSarcastic = petForm.sarcasticFringeheadSwallowedPet != null;
     const hasFriendsDied = (petForm.friendsDiedBeforeBattle ?? 0) > 0;
+    const hasTimesGaveHealth = (petForm.timesGaveHealth ?? 0) > 0;
     const hasTimesHurt = (petForm.timesHurt ?? 0) > 0;
     const hasFoodsEaten = petForm.foodsEaten != null;
     const needsPostInit =
@@ -385,6 +394,7 @@ export class PetFactoryService {
       hasAbominationData ||
       hasSarcastic ||
       hasFriendsDied ||
+      hasTimesGaveHealth ||
       hasTimesHurt ||
       hasFoodsEaten;
 
@@ -416,6 +426,7 @@ export class PetFactoryService {
       hasAbominationData,
       hasSarcastic,
       hasFriendsDied,
+      hasTimesGaveHealth,
       hasTimesHurt,
       hasEquipmentUses,
       equipmentValue: petForm.equipment ?? null,
@@ -500,6 +511,7 @@ type PetBuildPlan = {
   hasAbominationData: boolean;
   hasSarcastic: boolean;
   hasFriendsDied: boolean;
+  hasTimesGaveHealth: boolean;
   hasTimesHurt: boolean;
   hasEquipmentUses: boolean;
   equipmentValue: PetForm['equipment'] | null;

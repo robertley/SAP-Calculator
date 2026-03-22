@@ -105,6 +105,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   errorMessage = '';
   statusMessage = '';
   statusTone: 'success' | 'error' | 'warning' = 'success';
+  sapLibraryReplayUrl = '';
   loading = false;
   oddsImageLoading = false;
   positioningImageLoading = false;
@@ -166,6 +167,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   submit() {
     this.errorMessage = '';
     this.clearStatus();
+    this.sapLibraryReplayUrl = '';
     const calcControl = this.formGroup.get('calcCode');
     const rawInput = calcControl?.value?.trim();
     if (!rawInput) {
@@ -250,6 +252,8 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                   this.errorMessage = 'Replay lookup failed to return a battle.';
                   return;
                 }
+                this.sapLibraryReplayUrl =
+                  response?.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
                 this.importReplayBattle(
                   battleJson,
                   response?.genesisBuildModel,
@@ -596,6 +600,8 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                 this.errorMessage = 'Replay lookup failed to return a battle.';
                 return;
               }
+              this.sapLibraryReplayUrl =
+                response?.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
               this.importReplayBattle(
                 battleJson,
                 response?.genesisBuildModel,
@@ -626,6 +632,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   }
 
   private handleReplayIndexUploadStatus(status: ReplayIndexUploadStatus): void {
+    this.sapLibraryReplayUrl = status.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
     if (status.outcome === 'success') {
       this.setStatus(status.message, 'success');
       this.cdr.markForCheck();

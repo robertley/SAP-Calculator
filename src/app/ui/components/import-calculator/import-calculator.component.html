@@ -131,6 +131,16 @@
   >
     {{ statusMessage }}
   </div>
+  <div *ngIf="sapLibraryReplayUrl" class="mb-2">
+    <a
+      class="btn btn-outline-primary btn-sm"
+      [href]="sapLibraryReplayUrl"
+      target="_blank"
+      rel="noopener"
+    >
+      Open on SAP Library
+    </a>
+  </div>
   <div *ngIf="oddsImagePreviewUrl" class="odds-preview mb-3">
     <div class="odds-preview-header">
       <strong>Odds Image Preview</strong>

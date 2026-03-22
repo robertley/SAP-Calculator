@@ -10,6 +10,7 @@ export interface AppShellBoardFacade {
   playerPetsControls: AbstractControl[];
   opponentPetsControls: AbstractControl[];
   activePetSlot: { side: 'player' | 'opponent'; index: number } | null;
+  petSlotDragDisabled: boolean;
   petSlotDragStartDelay: DragStartDelay;
   playerToyImageUrl: string;
   playerToyName: string;
@@ -60,6 +61,13 @@ export function createAppShellBoardFacade(
     },
     get activePetSlot() {
       return app.activePetSlot;
+    },
+    get petSlotDragDisabled() {
+      return (
+        app.overlayState.showSelectionDialog ||
+        app.petSelectors?.toArray().some((selector) => selector.showSelectionDialog) ||
+        false
+      );
     },
     get petSlotDragStartDelay() {
       return app.petSlotDragStartDelay;

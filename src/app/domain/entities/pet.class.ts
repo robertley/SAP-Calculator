@@ -34,6 +34,7 @@ export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
   suppressManaSnipeOnFaint: boolean = false;
   triggersConsumed: number = 0;
   foodsEaten: number = 0;
+  timesGaveHealth: number = 0;
   sellValue: number = 1;
   baseSellValue: number = 1;
   // Memory-heavy swallowed/copy state is typed in PetMemoryState.
@@ -59,6 +60,7 @@ export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
   originalMana: number;
   originalTriggersConsumed: number;
   originalFoodsEaten: number;
+  originalTimesGaveHealth: number = 0;
   originalEquipment?: Equipment;
   originalExp?: number = 0;
   originalTimesHurt: number = 0;
@@ -119,6 +121,7 @@ export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
     this.originalMana = this.mana;
     this.originalTriggersConsumed = this.triggersConsumed;
     this.originalFoodsEaten = this.foodsEaten;
+    this.originalTimesGaveHealth = this.timesGaveHealth;
     this.equipment = equipment;
     this.originalEquipment = equipment;
     this.originalExp = this.exp;

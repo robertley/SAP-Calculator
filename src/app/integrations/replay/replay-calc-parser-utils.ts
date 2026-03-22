@@ -28,6 +28,7 @@ interface ReplayMemoryEntry extends ReplayUnknownRecord {
   Exp?: number | null;
   Perk?: number | null;
   Powa?: number | null;
+  HrtC?: number | null;
   MiMs?: ReplayMemoryPayload;
 }
 
@@ -304,6 +305,13 @@ function buildBelugaSwallowedEntry(swallowedRaw: unknown): ReplayMemoryEntry | n
   const perkNumber = toNullableNumber(perk);
   if (perkNumber !== null) {
     entry.Perk = perkNumber;
+  }
+  const timesHurt = toFiniteNumber(
+    swallowed['timesHurt'] ?? swallowed['TimesHurt'] ?? swallowed['HrtC'],
+    NaN,
+  );
+  if (Number.isFinite(timesHurt)) {
+    entry.HrtC = Math.max(0, Math.round(timesHurt));
   }
   return entry;
 }
@@ -697,6 +705,8 @@ export function getTimesHurtFromRawPet(rawPet: unknown): number | null {
   const direct = [
     pet?.['timesHurt'],
     pet?.['TimesHurt'],
+    pet?.['HrtC'],
+    pet?.['hrtc'],
     pow?.['SabertoothTigerAbility'],
     powLower?.['SabertoothTigerAbility'],
   ];

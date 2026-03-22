@@ -950,6 +950,7 @@ function buildPetSignature(pet: unknown): string {
     mana: petRecord.mana ?? null,
     triggersConsumed: petRecord.triggersConsumed ?? null,
     foodsEaten: petRecord.foodsEaten ?? null,
+    timesGaveHealth: petRecord.timesGaveHealth ?? null,
     battlesFought: petRecord.battlesFought ?? null,
     timesHurt: petRecord.timesHurt ?? null,
   };

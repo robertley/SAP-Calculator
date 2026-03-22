@@ -36,6 +36,7 @@ type PetFormValue = {
   mana?: unknown;
   triggersConsumed?: unknown;
   foodsEaten?: unknown;
+  timesGaveHealth?: unknown;
   equipment?: unknown;
   [key: string]: unknown;
 };
@@ -140,6 +141,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     this.subscribeDebouncedStat('mana', 0, 50);
     this.subscribeDebouncedStat('triggersConsumed', 0, 10);
     this.subscribeDebouncedStat('foodsEaten', 0, 99);
+    this.subscribeDebouncedStat('timesGaveHealth', 0, 99);
 
     this.formGroup
       .get('friendsDiedBeforeBattle')
@@ -224,6 +226,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
           .get('triggersConsumed')
           .setValue(null, { emitEvent: false });
         this.formGroup.get('foodsEaten').setValue(null, { emitEvent: false });
+        this.formGroup.get('timesGaveHealth').setValue(null, { emitEvent: false });
         formValue = this.formGroup.getRawValue() as PetFormValue;
       }
       this.applyStatCaps(formValue);
@@ -247,6 +250,9 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
         this.formGroup
           .get('foodsEaten')
           .setValue(pet.foodsEaten ?? 0, { emitEvent: false });
+        this.formGroup
+          .get('timesGaveHealth')
+          .setValue(pet.timesGaveHealth ?? 0, { emitEvent: false });
         this.cdr.markForCheck();
       }
     });
@@ -263,6 +269,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     const mana = this.clampValue(formValue.mana, 0, 50);
     const triggers = this.clampValue(formValue.triggersConsumed, 0, 10);
     const foodsEaten = this.clampValue(formValue.foodsEaten, 0, 99);
+    const timesGaveHealth = this.clampValue(formValue.timesGaveHealth, 0, 99);
 
     if (attack !== formValue.attack && formValue.attack != null) {
       this.formGroup.get('attack').setValue(attack, { emitEvent: false });
@@ -290,6 +297,15 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
         .get('foodsEaten')
         .setValue(foodsEaten, { emitEvent: false });
       formValue.foodsEaten = foodsEaten;
+    }
+    if (
+      timesGaveHealth !== formValue.timesGaveHealth &&
+      formValue.timesGaveHealth != null
+    ) {
+      this.formGroup
+        .get('timesGaveHealth')
+        .setValue(timesGaveHealth, { emitEvent: false });
+      formValue.timesGaveHealth = timesGaveHealth;
     }
   }
 
@@ -340,6 +356,7 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     this.formGroup.get('mana').setValue(0, { emitEvent: false });
     this.formGroup.get('triggersConsumed').setValue(0, { emitEvent: false });
     this.formGroup.get('foodsEaten').setValue(0, { emitEvent: false });
+    this.formGroup.get('timesGaveHealth').setValue(0, { emitEvent: false });
   }
 
   protected clampFriendsDiedBeforeBattle() {

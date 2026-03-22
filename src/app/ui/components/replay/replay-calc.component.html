@@ -64,6 +64,16 @@
   >
     {{ statusMessage }}
   </div>
+  <div *ngIf="sapLibraryReplayUrl" class="mb-3">
+    <a
+      class="btn btn-outline-primary"
+      [href]="sapLibraryReplayUrl"
+      target="_blank"
+      rel="noopener"
+    >
+      Open on SAP Library
+    </a>
+  </div>
 
   <div *ngIf="calculatorLink">
     <label for="calcLink" class="form-label">Calculator Link</label>

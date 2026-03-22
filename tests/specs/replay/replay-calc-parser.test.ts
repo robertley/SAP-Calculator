@@ -6,6 +6,10 @@ import {
   ReplayCalcParser,
   selectReplayBattleFromActions,
 } from '../../../src/app/integrations/replay/replay-calc-parser';
+import {
+  buildReplayCode,
+  parseReplayCode,
+} from '../../../src/app/integrations/replay/replay-code';
 
 describe('ReplayCalcParser', () => {
   it('parses calculator state directly from actions for replaybot usage', () => {
@@ -210,6 +214,184 @@ describe('ReplayCalcParser', () => {
     expect(abomination?.abominationSwallowedPet1Level).toBe(1);
     expect(abomination?.abominationSwallowedPet2Level).toBe(2);
     expect(abomination?.abominationSwallowedPet3Level).toBe(3);
+  });
+
+  it('preserves nested swallowed pets when replay codes are imported', () => {
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 5,
+        Mins: {
+          Items: [
+            {
+              Enu: 182,
+              Lvl: 2,
+              Poi: { x: 0 },
+              At: { Perm: 12 },
+              Hp: { Perm: 14 },
+              MiMs: {
+                Lsts: {
+                  WhiteWhaleAbility: [{ Enu: 349 }],
+                  '8001': [{ Enu: 349 }],
+                },
+              },
+            },
+            {
+              Enu: 763,
+              Lvl: 1,
+              Poi: { x: 1 },
+              At: { Perm: 6 },
+              Hp: { Perm: 7 },
+              MiMs: {
+                Lsts: {
+                  SarcasticFringeheadAbility: [{ Enu: 381 }],
+                },
+              },
+            },
+            {
+              Enu: 373,
+              Lvl: 2,
+              Poi: { x: 2 },
+              At: { Perm: 15 },
+              Hp: { Perm: 15 },
+              Abil: [
+                { Enu: 8001, Lvl: 2, Grop: 1 },
+                { Enu: 8002, Lvl: 1, Grop: 2 },
+              ],
+              MiMs: {
+                Lsts: {
+                  '8001': [{ Enu: 349 }],
+                  '8002': [
+                    {
+                      Enu: 763,
+                      MiMs: {
+                        Lsts: {
+                          SarcasticFringeheadAbility: [{ Enu: 381 }],
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: {
+          Items: [],
+        },
+      },
+    };
+    const replayCode = buildReplayCode({
+      battle: battleJson,
+      abilityPetMap: {
+        '8001': 'Beluga Whale',
+        '8002': 'Sarcastic Fringehead',
+      },
+    });
+    const parsedReplayCode = parseReplayCode(replayCode);
+    const parser = new ReplayCalcParser();
+    if (!parsedReplayCode) {
+      throw new Error('Expected replay code to parse.');
+    }
+
+    const state = parser.parseReplayForCalculator(
+      parsedReplayCode.battle,
+      undefined,
+      undefined,
+      {
+        abilityPetMap: parsedReplayCode.abilityPetMap ?? null,
+      },
+    );
+
+    const beluga = state.playerPets.find((pet) => pet?.name === 'Beluga Whale');
+    const sarcasticFringehead = state.playerPets.find(
+      (pet) => pet?.name === 'Sarcastic Fringehead',
+    );
+    const abomination = state.playerPets.find(
+      (pet) => pet?.name === 'Abomination',
+    );
+
+    expect(beluga?.belugaSwallowedPet).toBe('Brain Cramp');
+    expect(sarcasticFringehead?.sarcasticFringeheadSwallowedPet).toBe(
+      'Vampire Bat',
+    );
+    expect(abomination?.abominationSwallowedPet1).toBe('Beluga Whale');
+    expect(abomination?.abominationSwallowedPet1BelugaSwallowedPet).toBe(
+      'Brain Cramp',
+    );
+    expect(abomination?.abominationSwallowedPet2).toBe('Sarcastic Fringehead');
+    expect(
+      abomination?.abominationSwallowedPet2SarcasticFringeheadSwallowedPet,
+    ).toBe('Vampire Bat');
+  });
+
+  it('reads times hurt from raw replay battle pets and swallowed memory', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 6,
+        Mins: {
+          Items: [
+            {
+              Enu: 373,
+              Lvl: 2,
+              Poi: { x: 0 },
+              At: { Perm: 14 },
+              Hp: { Perm: 15 },
+              HrtC: 4,
+              Abil: [
+                { Enu: 8003, Lvl: 2, Grop: 1 },
+              ],
+              MiMs: {
+                Lsts: {
+                  '8003': [
+                    {
+                      Enu: 182,
+                      HrtC: 3,
+                      MiMs: {
+                        Lsts: {
+                          WhiteWhaleAbility: [{ Enu: 349 }],
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: {
+          Items: [],
+        },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(
+      battleJson,
+      undefined,
+      undefined,
+      {
+        abilityPetMap: {
+          '8003': 'Beluga Whale',
+        },
+      },
+    );
+
+    const abomination = state.playerPets.find(
+      (pet) => pet?.name === 'Abomination',
+    );
+
+    expect(abomination?.timesHurt).toBe(4);
+    expect(abomination?.abominationSwallowedPet1).toBe('Beluga Whale');
+    expect(abomination?.abominationSwallowedPet1TimesHurt).toBe(3);
+    expect(abomination?.abominationSwallowedPet1BelugaSwallowedPet).toBe(
+      'Brain Cramp',
+    );
   });
 
   it('selects battle action by explicit turn before index fallback', () => {

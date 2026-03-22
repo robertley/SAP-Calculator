@@ -4,6 +4,8 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  padding: 1rem;
+  box-sizing: border-box;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   z-index: 1000;
@@ -13,9 +15,11 @@
 }
 
 .selection-dialog {
-  width: 90%;
-  max-width: 600px;
-  height: 80vh;
+  width: min(92vw, 840px);
+  min-width: min(560px, calc(100vw - 2rem));
+  max-width: calc(100vw - 2rem);
+  height: min(80vh, calc(100vh - 2rem));
+  position: relative;
   background: #fff;
   border-radius: 12px;
   display: flex;
@@ -67,6 +71,43 @@
     font-size: 1.25rem;
     font-weight: 600;
   }
+}
+
+.dialog-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.resize-handle {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  cursor: ew-resize;
+  touch-action: none;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(73, 80, 87, 0.08);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 12px;
+    border-radius: 999px;
+    transform: translate(-50%, -50%);
+    background: rgba(73, 80, 87, 0.28);
+    transition: background 0.2s ease, opacity 0.2s ease;
+    opacity: 0.45;
+  }
+}
+
+.selection-dialog:hover .resize-handle::after,
+.selection-dialog.selection-dialog-resizing .resize-handle::after {
+  background: rgba(51, 55, 122, 0.55);
+  opacity: 0.95;
 }
 
 .dialog-body {
@@ -191,6 +232,20 @@
 }
 
 @media (max-width: 640px) {
+  .selection-overlay {
+    padding: 0.75rem;
+  }
+
+  .selection-dialog {
+    min-width: 0;
+    max-width: calc(100vw - 1.5rem);
+    height: min(80vh, calc(100vh - 1.5rem));
+  }
+
+  .resize-handle {
+    display: none;
+  }
+
   .sort-mode-selector,
   .filter-select-row {
     align-items: stretch;

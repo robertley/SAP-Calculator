@@ -11,6 +11,7 @@ export interface PetConfig extends PetMemoryState {
   mana?: number;
   triggersConsumed?: number;
   foodsEaten?: number;
+  timesGaveHealth?: number;
   battlesFought?: number;
   timesHurt?: number;
   friendsDiedBeforeBattle?: number;

@@ -510,6 +510,7 @@ export class SimulationRunner {
       mana: petConfig.mana ?? 0,
       triggersConsumed: petConfig.triggersConsumed ?? 0,
       foodsEaten: petConfig.foodsEaten ?? 0,
+      timesGaveHealth: petConfig.timesGaveHealth ?? 0,
       equipment,
       equipmentUses:
         petConfig.equipmentUses ??
@@ -616,6 +617,8 @@ export class SimulationRunner {
         triggersConsumed:
           runtimePet.triggersConsumed ?? sourcePet.triggersConsumed ?? 0,
         foodsEaten: runtimePet.foodsEaten ?? sourcePet.foodsEaten ?? 0,
+        timesGaveHealth:
+          runtimePet.timesGaveHealth ?? sourcePet.timesGaveHealth ?? 0,
         battlesFought: runtimePet.battlesFought ?? sourcePet.battlesFought ?? 0,
         timesHurt: runtimePet.timesHurt ?? sourcePet.timesHurt ?? 0,
         friendsDiedBeforeBattle:

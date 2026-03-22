@@ -39,6 +39,11 @@ export type {
 
 type ItemSelectorSortMode = 'default' | 'trigger';
 
+const ITEM_SELECTOR_WIDTH_STORAGE_KEY = 'sapItemSelectorWidthPx';
+const ITEM_SELECTOR_DEFAULT_WIDTH_PX = 840;
+const ITEM_SELECTOR_MIN_WIDTH_PX = 560;
+const ITEM_SELECTOR_VIEWPORT_GUTTER_PX = 32;
+
 @Component({
   selector: 'app-item-selection-dialog',
   standalone: true,
@@ -66,6 +71,7 @@ export class ItemSelectionDialogComponent
   @Output() select = new EventEmitter<unknown>();
   @Output() close = new EventEmitter<void>();
 
+  @ViewChild('selectionDialog') selectionDialog?: ElementRef<HTMLElement>;
   @ViewChild('searchInput') searchInput?: ElementRef<HTMLInputElement>;
 
   searchQuery = '';
@@ -80,9 +86,22 @@ export class ItemSelectionDialogComponent
   items: IndexedSelectionItem[] = [];
   filteredItems: IndexedSelectionItem[] = [];
   triggerFilterEntries: TriggerFilterEntry[] = [];
+  dialogWidthPx = this.getInitialDialogWidth();
+  isResizing = false;
+  suppressOverlayClose = false;
 
   private customPacksSubscription: Subscription | null = null;
   private searchDebounceHandle: ReturnType<typeof setTimeout> | null = null;
+  private resizeStartX = 0;
+  private resizeStartWidth = ITEM_SELECTOR_DEFAULT_WIDTH_PX;
+  private resizePointerId: number | null = null;
+  private resizeHandleElement: HTMLElement | null = null;
+  private readonly boundResizePointerMove = (event: PointerEvent): void => {
+    this.onResizePointerMove(event);
+  };
+  private readonly boundResizePointerUp = (event: PointerEvent): void => {
+    this.onResizePointerUp(event);
+  };
 
   trackByPack(index: number, pack: string): string {
     return pack ?? String(index);
@@ -197,6 +216,7 @@ export class ItemSelectionDialogComponent
       clearTimeout(this.searchDebounceHandle);
       this.searchDebounceHandle = null;
     }
+    this.stopResizing();
   }
 
   private updateAvailablePacks() {
@@ -403,6 +423,50 @@ export class ItemSelectionDialogComponent
     this.close.emit();
   }
 
+  onOverlayClick(): void {
+    if (this.isResizing || this.suppressOverlayClose) {
+      this.suppressOverlayClose = false;
+      return;
+    }
+    this.onCancel();
+  }
+
+  onResizePointerDown(event: PointerEvent): void {
+    if (
+      event.button !== 0 ||
+      !this.selectionDialog?.nativeElement ||
+      !this.isDesktopResizable()
+    ) {
+      return;
+    }
+
+    const handleElement = event.currentTarget;
+    if (!(handleElement instanceof HTMLElement)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.isResizing = true;
+    this.suppressOverlayClose = true;
+    this.resizePointerId = event.pointerId;
+    this.resizeHandleElement = handleElement;
+    this.resizeStartX = event.clientX;
+    this.resizeStartWidth =
+      this.selectionDialog.nativeElement.getBoundingClientRect().width;
+    handleElement.setPointerCapture(event.pointerId);
+
+    window.addEventListener('pointermove', this.boundResizePointerMove);
+    window.addEventListener('pointerup', this.boundResizePointerUp);
+    window.addEventListener('pointercancel', this.boundResizePointerUp);
+
+    if (typeof document !== 'undefined') {
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'ew-resize';
+    }
+  }
+
   private getFirstCustomPackPet(control: AbstractControl): string | null {
     for (let tier = 1; tier <= 6; tier++) {
       const pets = control.get(`tier${tier}Pets`)?.value as
@@ -507,8 +571,117 @@ export class ItemSelectionDialogComponent
 
     return sortItemsByTrigger(items);
   }
+
+  private onResizePointerMove(event: PointerEvent): void {
+    if (!this.isResizing || this.resizePointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - this.resizeStartX;
+    this.dialogWidthPx = this.clampDialogWidth(this.resizeStartWidth + deltaX);
+  }
+
+  private onResizePointerUp(event: PointerEvent): void {
+    if (!this.isResizing || this.resizePointerId !== event.pointerId) {
+      return;
+    }
+
+    if (
+      this.resizeHandleElement?.hasPointerCapture(event.pointerId)
+    ) {
+      this.resizeHandleElement.releasePointerCapture(event.pointerId);
+    }
+
+    this.persistDialogWidth(this.dialogWidthPx);
+    this.stopResizing();
+    setTimeout(() => {
+      this.suppressOverlayClose = false;
+    }, 0);
+  }
+
+  private persistDialogWidth(width: number): void {
+    if (!hasLocalStorage()) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(
+        ITEM_SELECTOR_WIDTH_STORAGE_KEY,
+        String(this.clampDialogWidth(width)),
+      );
+    } catch {
+      // Ignore storage write failures for this UI preference.
+    }
+  }
+
+  private stopResizing(): void {
+    this.isResizing = false;
+    this.resizePointerId = null;
+    this.resizeHandleElement = null;
+
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('pointermove', this.boundResizePointerMove);
+      window.removeEventListener('pointerup', this.boundResizePointerUp);
+      window.removeEventListener('pointercancel', this.boundResizePointerUp);
+    }
+
+    if (typeof document !== 'undefined') {
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    }
+  }
+
+  private getInitialDialogWidth(): number {
+    const fallbackWidth = this.clampDialogWidth(ITEM_SELECTOR_DEFAULT_WIDTH_PX);
+    if (!hasLocalStorage()) {
+      return fallbackWidth;
+    }
+
+    try {
+      const rawValue = window.localStorage.getItem(
+        ITEM_SELECTOR_WIDTH_STORAGE_KEY,
+      );
+      if (rawValue == null || rawValue === '') {
+        return fallbackWidth;
+      }
+
+      const parsedWidth = Number(rawValue);
+      if (!Number.isFinite(parsedWidth)) {
+        return fallbackWidth;
+      }
+
+      return this.clampDialogWidth(parsedWidth);
+    } catch {
+      return fallbackWidth;
+    }
+  }
+
+  private clampDialogWidth(width: number): number {
+    const maxWidth = this.getMaxDialogWidth();
+    const minWidth = Math.min(ITEM_SELECTOR_MIN_WIDTH_PX, maxWidth);
+    return Math.max(minWidth, Math.min(Math.round(width), maxWidth));
+  }
+
+  private getMaxDialogWidth(): number {
+    if (typeof window === 'undefined') {
+      return ITEM_SELECTOR_DEFAULT_WIDTH_PX;
+    }
+
+    return Math.max(320, window.innerWidth - ITEM_SELECTOR_VIEWPORT_GUTTER_PX);
+  }
+
+  private isDesktopResizable(): boolean {
+    return typeof window !== 'undefined' && window.innerWidth > 640;
+  }
 }
 
 function filteredCopy(items: IndexedSelectionItem[]): IndexedSelectionItem[] {
   return [...items];
+}
+
+function hasLocalStorage(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.localStorage !== 'undefined'
+  );
 }

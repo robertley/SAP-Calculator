@@ -59,4 +59,27 @@ describe('imported state regression', () => {
     expect(abomination?.abominationSwallowedPet3).toBe('Worm of Sand');
     expect(abomination?.abominationSwallowedPet3Level).toBe(1);
   });
+
+  it('expands Giant Isopod prior health-buff counts from compact imports', () => {
+    const payload = JSON.stringify({
+      pP: 'Custom',
+      oP: 'Custom',
+      p: [
+        {
+          n: 'Giant Isopod',
+          a: 5,
+          h: 6,
+          tGH: 4,
+        },
+      ],
+      o: [],
+    });
+
+    const expanded = expandCompactCalculatorState(
+      parseImportPayload(payload),
+    ) as SimulationConfig;
+
+    expect(expanded.playerPets?.[0]?.name).toBe('Giant Isopod');
+    expect(expanded.playerPets?.[0]?.timesGaveHealth).toBe(4);
+  });
 });

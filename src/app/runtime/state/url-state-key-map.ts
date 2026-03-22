@@ -91,6 +91,7 @@ export const KEY_MAP: Record<string, string> = {
   battlesFought: 'bF',
   friendsDiedBeforeBattle: 'fDBB',
   foodsEaten: 'fE',
+  timesGaveHealth: 'tGH',
   ...PARROT_COPY_PET_ABOMINATION_KEY_MAP,
   abominationSwallowedPet1ParrotCopyPet: 'aSP1PCP',
   abominationSwallowedPet2ParrotCopyPet: 'aSP2PCP',

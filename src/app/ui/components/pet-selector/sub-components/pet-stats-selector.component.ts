@@ -109,6 +109,19 @@ import { supportsTimesHurtPet } from '../pet-selector.constants';
         />
       </div>
 
+      <div class="col-12 mb-2" *ngIf="shouldShowTimesGaveHealthInput()">
+        <label class="swallowed-label" for="timesGaveHealth"
+          >Times Gave Health</label
+        >
+        <input
+          class="form-control"
+          formControlName="timesGaveHealth"
+          type="number"
+          min="0"
+          max="99"
+        />
+      </div>
+
       <!-- Attack and Health -->
       <div class="col-6">
         <div class="stat-tile stat-attack">
@@ -156,6 +169,7 @@ export class PetStatsSelectorComponent {
     'Dung Beetle',
     'Locust',
   ]);
+  private timesGaveHealthPets = new Set<string>(['Giant Isopod']);
   private battlesFoughtPets = new Set<string>(['Slime']);
 
   shouldShowFriendsDiedInput(): boolean {
@@ -174,6 +188,13 @@ export class PetStatsSelectorComponent {
       return false;
     }
     return this.battlesFoughtPets.has(this.petName);
+  }
+
+  shouldShowTimesGaveHealthInput(): boolean {
+    if (!this.petName) {
+      return false;
+    }
+    return this.timesGaveHealthPets.has(this.petName);
   }
 
   shouldShowTimesHurtInput(): boolean {

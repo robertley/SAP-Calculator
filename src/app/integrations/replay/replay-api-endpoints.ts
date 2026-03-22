@@ -19,3 +19,10 @@ export function getReplayTurnsApiUrl(replayId: string): string {
   const encodedReplayId = encodeURIComponent(String(replayId));
   return `${trimTrailingSlash(environment.replayApiBaseUrl)}/replays/${encodedReplayId}/turns`;
 }
+
+export function getSapLibraryReplayUrl(replayId: string): string {
+  const baseUrl = trimTrailingSlash(environment.sapLibraryBaseUrl);
+  const url = new URL(baseUrl);
+  url.searchParams.set('replay', String(replayId));
+  return url.toString();
+}

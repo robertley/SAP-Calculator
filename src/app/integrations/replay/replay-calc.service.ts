@@ -13,7 +13,11 @@ import {
   buildReplayAbilityPetMapFromActions,
 } from './replay-calc-parser';
 import { PACK_MAP } from './replay-calc-schema';
-import { getReplayApiUrl, getReplayTurnsApiUrl } from './replay-api-endpoints';
+import {
+  getReplayApiUrl,
+  getReplayTurnsApiUrl,
+  getSapLibraryReplayUrl,
+} from './replay-api-endpoints';
 
 export interface ReplayBattleRequest {
   Pid: string;
@@ -27,6 +31,8 @@ export interface ReplayBattleResponse {
   battle?: ReplayBattleJson;
   genesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
+  sapLibraryReplayId?: string;
+  sapLibraryReplayUrl?: string;
   error?: string;
 }
 
@@ -34,6 +40,8 @@ export interface ReplayIndexUploadStatus {
   outcome: 'success' | 'unsupported' | 'error';
   message: string;
   statusCode?: number;
+  sapLibraryReplayId?: string;
+  sapLibraryReplayUrl?: string;
 }
 
 export interface ReplayApiHealthStatus {
@@ -43,6 +51,10 @@ export interface ReplayApiHealthStatus {
 
 interface ReplayIndexResponse {
   replayId?: string;
+  id?: string | number;
+  replay?: {
+    id?: string | number | null;
+  } | null;
   status?: string;
   error?: string;
 }
@@ -217,7 +229,9 @@ export class ReplayCalcService {
     payload: ReplayBattleRequest,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
-    return this.fetchReplayBattleFromTurnsApi(payload, timeoutMs);
+    return this.fetchReplayBattleDirect(payload, timeoutMs).pipe(
+      catchError(() => this.fetchReplayBattleFromTurnsApi(payload, timeoutMs)),
+    );
   }
 
   fetchReplayBattleDirect(
@@ -308,10 +322,16 @@ export class ReplayCalcService {
       })
       .pipe(
         timeout(timeoutMs),
-        tap(() => {
+        tap((response) => {
+          const sapLibraryReplayId =
+            this.extractSapLibraryReplayIdFromIndexResponse(response);
           this.notifyReplayIndexUploadStatus(payload, {
             outcome: 'success',
             message: 'Replay uploaded to SAP Library.',
+            sapLibraryReplayId,
+            sapLibraryReplayUrl: sapLibraryReplayId
+              ? getSapLibraryReplayUrl(sapLibraryReplayId)
+              : undefined,
           });
         }),
         catchError((error: unknown) => {
@@ -760,6 +780,9 @@ export class ReplayCalcService {
       battleFromTurn.Opponent = battleJson.Opponent;
     }
 
+    const sapLibraryReplayId =
+      this.extractSapLibraryReplayIdFromTurnsResponse(turnsResponse);
+
     return {
       battle: battleFromTurn as ReplayBattleJson,
       genesisBuildModel:
@@ -767,7 +790,42 @@ export class ReplayCalcService {
         turnsResponse?.replay?.raw_json?.GenesisBuildModel ??
         turnsResponse?.replay?.GenesisBuildModel,
       abilityPetMap,
+      sapLibraryReplayId,
+      sapLibraryReplayUrl: sapLibraryReplayId
+        ? getSapLibraryReplayUrl(sapLibraryReplayId)
+        : undefined,
     };
+  }
+
+  private extractSapLibraryReplayIdFromIndexResponse(
+    response: ReplayIndexResponse | null | undefined,
+  ): string | undefined {
+    const candidates = [
+      response?.replay?.id,
+      response?.replayId,
+      response?.id,
+    ];
+    return this.normalizeSapLibraryReplayId(...candidates);
+  }
+
+  private extractSapLibraryReplayIdFromTurnsResponse(
+    response: ReplayTurnsResponse | null | undefined,
+  ): string | undefined {
+    return this.normalizeSapLibraryReplayId(response?.replay?.id);
+  }
+
+  private normalizeSapLibraryReplayId(
+    ...candidates: Array<string | number | null | undefined>
+  ): string | undefined {
+    for (const candidate of candidates) {
+      if (typeof candidate === 'number' && Number.isFinite(candidate)) {
+        return String(candidate);
+      }
+      if (typeof candidate === 'string' && candidate.trim().length > 0) {
+        return candidate.trim();
+      }
+    }
+    return undefined;
   }
 
   private resolveBattleOutcomeFromSources(

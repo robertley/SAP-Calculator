@@ -52,12 +52,14 @@
         <div class="card p-2 player-card">
           <!-- <div class="back">BACK</div> -->
           <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
+            [cdkDropListDisabled]="boardFacade.petSlotDragDisabled"
             (cdkDropListDropped)="boardFacade.drop($event, 'player')">
             <div class="col drag-container mb-2 mb-md-0 px-0" *ngFor="
                 let pet of boardFacade.playerPetsControls;
                 index as i;
                 trackBy: boardFacade.trackByIndex
               " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="boardFacade.petSlotDragStartDelay"
+              [cdkDragDisabled]="boardFacade.petSlotDragDisabled"
               (mousedown)="boardFacade.setActivePetSlot('player', 4 - i)" (focusin)="boardFacade.setActivePetSlot('player', 4 - i)"
               [class.pet-slot-active]="
                 boardFacade.activePetSlot?.side === 'player' && boardFacade.activePetSlot?.index === 4 - i
@@ -128,12 +130,14 @@
         <div class="card p-2 player-card ml-auto">
           <!-- <div class="front">FRONT</div> -->
           <div class="row row-cols-1 row-cols-md-5 g-0" cdkDropList cdkDropListOrientation="horizontal"
+            [cdkDropListDisabled]="boardFacade.petSlotDragDisabled"
             (cdkDropListDropped)="boardFacade.drop($event, 'opponent')">
             <div class="col drag-container mb-2 mb-sm-0 px-0" *ngFor="
                 let pet of boardFacade.opponentPetsControls;
                 index as i;
                 trackBy: boardFacade.trackByIndex
               " cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="boardFacade.petSlotDragStartDelay"
+              [cdkDragDisabled]="boardFacade.petSlotDragDisabled"
               (mousedown)="boardFacade.setActivePetSlot('opponent', i)" (focusin)="boardFacade.setActivePetSlot('opponent', i)"
               [class.pet-slot-active]="
                 boardFacade.activePetSlot?.side === 'opponent' && boardFacade.activePetSlot?.index === i

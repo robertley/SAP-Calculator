@@ -35,7 +35,6 @@ export class GiantIsopod extends Pet {
 
 export class GiantIsopodAbility extends Ability {
   private logService: LogService;
-  private triggerCount = 0;
 
   constructor(owner: Pet, logService: LogService) {
     super({
@@ -53,7 +52,8 @@ export class GiantIsopodAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
     const baseHealth = [2, 4, 6][Math.min(Math.max(this.level - 1, 0), 2)];
-    const extra = Math.floor(this.triggerCount / 2);
+    const priorHealthBuffs = Math.max(0, Math.floor(owner.timesGaveHealth ?? 0));
+    const extra = Math.floor(priorHealthBuffs / 2);
     const healthGain = baseHealth + extra;
 
     const friends = owner.parent.petArray.filter(
@@ -75,7 +75,7 @@ export class GiantIsopodAbility extends Ability {
       owner.parent.spendTrumpets(2, owner);
     }
 
-    this.triggerCount++;
+    owner.timesGaveHealth = priorHealthBuffs + 1;
     this.triggerTigerExecution(context);
   }
 

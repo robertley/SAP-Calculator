@@ -1,5 +1,7 @@
-<div class="selection-overlay" (click)="onCancel()">
-  <div class="selection-dialog card shadow-lg" (click)="$event.stopPropagation()">
+<div class="selection-overlay" (click)="onOverlayClick()">
+  <div #selectionDialog class="selection-dialog card shadow-lg" [style.width.px]="dialogWidthPx"
+    [class.selection-dialog-resizing]="isResizing"
+    (click)="$event.stopPropagation()">
     <div class="dialog-header">
       <h3>
         Select
@@ -21,7 +23,11 @@
         : "Pack"
         }}
       </h3>
-      <button class="btn-close" (click)="onCancel()"></button>
+      <div class="dialog-header-actions">
+        <div class="resize-handle" title="Drag to resize" aria-hidden="true"
+          (pointerdown)="onResizePointerDown($event)"></div>
+        <button class="btn-close" (click)="onCancel()"></button>
+      </div>
     </div>
 
     <div class="dialog-body">

@@ -54,6 +54,7 @@ export const createPet = (
   mana: 0,
   triggersConsumed: 0,
   foodsEaten: 0,
+  timesGaveHealth: 0,
   equipment: null,
   belugaSwallowedPet: null,
   abominationSwallowedPet1: null,

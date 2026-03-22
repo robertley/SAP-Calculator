@@ -360,6 +360,7 @@ export function loadTeamPreset(options: {
         mana: petData.mana ?? 0,
         triggersConsumed: petData.triggersConsumed ?? 0,
         foodsEaten: petData.foodsEaten ?? 0,
+        timesGaveHealth: petData.timesGaveHealth ?? 0,
         abominationSwallowedPet1: petData.abominationSwallowedPet1 ?? null,
         abominationSwallowedPet2: petData.abominationSwallowedPet2 ?? null,
         abominationSwallowedPet3: petData.abominationSwallowedPet3 ?? null,
@@ -440,6 +441,7 @@ function sanitizePetFormValue(petValue: unknown): PetForm | null {
     mana: (petRecord.mana as number | null) ?? 0,
     triggersConsumed: (petRecord.triggersConsumed as number | null) ?? 0,
     foodsEaten: (petRecord.foodsEaten as number | null) ?? 0,
+    timesGaveHealth: (petRecord.timesGaveHealth as number | null) ?? 0,
     abominationSwallowedPet1:
       (petRecord.abominationSwallowedPet1 as string | null) ?? null,
     abominationSwallowedPet2:
@@ -536,6 +538,5 @@ function resolvePresetToyLevel(candidate: unknown): number {
   }
   return Math.max(1, Math.min(3, Math.trunc(parsedLevel)));
 }
-
 
 

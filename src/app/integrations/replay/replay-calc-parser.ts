@@ -58,6 +58,18 @@ interface ReplayPetJson {
   [key: string]: unknown;
 }
 
+interface ReplayMemoryEntryJson {
+  Enu?: number | string | null;
+  Lvl?: number | null;
+  Id?: number | string | null;
+  id?: number | string | null;
+  enu?: number | string | null;
+  MiMs?: {
+    Lsts?: Record<string, Array<ReplayMemoryEntryJson | null> | null> | null;
+  } | null;
+  [key: string]: unknown;
+}
+
 interface ReplayToyJson {
   Enu?: number | string | null;
   Lvl?: number | null;
@@ -257,6 +269,92 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return isRecord(value) ? value : null;
 }
 
+function asReplayMemoryEntry(
+  value: unknown,
+): ReplayMemoryEntryJson | null {
+  return isRecord(value) ? (value as ReplayMemoryEntryJson) : null;
+}
+
+function getReplayMemoryLists(
+  value: ReplayPetJson | ReplayMemoryEntryJson | null | undefined,
+): Record<string, Array<ReplayMemoryEntryJson | null> | null> | null {
+  const lists = value?.MiMs?.Lsts;
+  return isRecord(lists)
+    ? (lists as Record<string, Array<ReplayMemoryEntryJson | null> | null>)
+    : null;
+}
+
+function getFirstReplayMemoryEntry(
+  value: ReplayPetJson | ReplayMemoryEntryJson | null | undefined,
+): ReplayMemoryEntryJson | null {
+  const lists = getReplayMemoryLists(value);
+  if (!lists) {
+    return null;
+  }
+
+  for (const entries of Object.values(lists)) {
+    if (!Array.isArray(entries)) {
+      continue;
+    }
+    for (const entry of entries) {
+      const memoryEntry = asReplayMemoryEntry(entry);
+      if (memoryEntry) {
+        return memoryEntry;
+      }
+    }
+  }
+
+  return null;
+}
+
+function getReplayMemoryEntryByAbilityId(
+  value: ReplayPetJson | ReplayMemoryEntryJson | null | undefined,
+  abilityId: unknown,
+): ReplayMemoryEntryJson | null {
+  const key = toReplayId(abilityId);
+  if (!key) {
+    return null;
+  }
+
+  const entries = getReplayMemoryLists(value)?.[key];
+  if (!Array.isArray(entries)) {
+    return null;
+  }
+
+  for (const entry of entries) {
+    const memoryEntry = asReplayMemoryEntry(entry);
+    if (memoryEntry) {
+      return memoryEntry;
+    }
+  }
+
+  return null;
+}
+
+function resolveReplayMemoryPetName(
+  value: ReplayMemoryEntryJson | null | undefined,
+): string | null {
+  const rawPetRef =
+    value?.Enu ??
+    value?.enu ??
+    value?.Id ??
+    value?.id;
+  const resolvedPetId = resolvePetIdFromUnknown(rawPetRef, { PET_IDS_BY_NAME });
+  if (resolvedPetId === null) {
+    return null;
+  }
+
+  return PETS_BY_ID.get(String(resolvedPetId)) ?? `Pet #${resolvedPetId}`;
+}
+
+function resolveNestedSwallowedPetName(
+  value: ReplayPetJson | ReplayMemoryEntryJson | null | undefined,
+): string | null {
+  const directEntry = asReplayMemoryEntry(value);
+  const nestedEntry = getFirstReplayMemoryEntry(value);
+  return resolveReplayMemoryPetName(nestedEntry ?? directEntry);
+}
+
 const COPY_SOURCE_PET_IDS = new Set<string>([
   '53', // Parrot
   '373', // Abomination
@@ -266,14 +364,23 @@ const ABOMINATION_SLOT_FIELDS = [
   {
     pet: 'abominationSwallowedPet1',
     level: 'abominationSwallowedPet1Level',
+    timesHurt: 'abominationSwallowedPet1TimesHurt',
+    beluga: 'abominationSwallowedPet1BelugaSwallowedPet',
+    sarcasticFringehead: 'abominationSwallowedPet1SarcasticFringeheadSwallowedPet',
   },
   {
     pet: 'abominationSwallowedPet2',
     level: 'abominationSwallowedPet2Level',
+    timesHurt: 'abominationSwallowedPet2TimesHurt',
+    beluga: 'abominationSwallowedPet2BelugaSwallowedPet',
+    sarcasticFringehead: 'abominationSwallowedPet2SarcasticFringeheadSwallowedPet',
   },
   {
     pet: 'abominationSwallowedPet3',
     level: 'abominationSwallowedPet3Level',
+    timesHurt: 'abominationSwallowedPet3TimesHurt',
+    beluga: 'abominationSwallowedPet3BelugaSwallowedPet',
+    sarcasticFringehead: 'abominationSwallowedPet3SarcasticFringeheadSwallowedPet',
   },
 ] as const;
 
@@ -282,10 +389,18 @@ type AbilityOwnerCounts = Map<string, Map<string, number>>;
 type AbominationSwallowedPetField = (typeof ABOMINATION_SLOT_FIELDS)[number]['pet'];
 type AbominationSwallowedPetLevelField =
   (typeof ABOMINATION_SLOT_FIELDS)[number]['level'];
+type AbominationSwallowedPetTimesHurtField =
+  (typeof ABOMINATION_SLOT_FIELDS)[number]['timesHurt'];
+type AbominationSwallowedPetNestedField =
+  (typeof ABOMINATION_SLOT_FIELDS)[number]['beluga'] |
+  (typeof ABOMINATION_SLOT_FIELDS)[number]['sarcasticFringehead'];
 
 type AbominationSwallowedState = Pick<
   PetConfig,
-  AbominationSwallowedPetField | AbominationSwallowedPetLevelField
+  AbominationSwallowedPetField |
+  AbominationSwallowedPetLevelField |
+  AbominationSwallowedPetTimesHurtField |
+  AbominationSwallowedPetNestedField
 >;
 
 function toReplayId(value: unknown): string | null {
@@ -647,6 +762,15 @@ function defaultAbominationSwallowedState(): AbominationSwallowedState {
     abominationSwallowedPet1: null,
     abominationSwallowedPet2: null,
     abominationSwallowedPet3: null,
+    abominationSwallowedPet1BelugaSwallowedPet: null,
+    abominationSwallowedPet2BelugaSwallowedPet: null,
+    abominationSwallowedPet3BelugaSwallowedPet: null,
+    abominationSwallowedPet1SarcasticFringeheadSwallowedPet: null,
+    abominationSwallowedPet2SarcasticFringeheadSwallowedPet: null,
+    abominationSwallowedPet3SarcasticFringeheadSwallowedPet: null,
+    abominationSwallowedPet1TimesHurt: 0,
+    abominationSwallowedPet2TimesHurt: 0,
+    abominationSwallowedPet3TimesHurt: 0,
     abominationSwallowedPet1Level: 1,
     abominationSwallowedPet2Level: 1,
     abominationSwallowedPet3Level: 1,
@@ -793,6 +917,29 @@ export class ReplayCalcParser {
       petJson: ReplayPetJson,
     ): AbominationSwallowedState => {
       const abominationState = defaultAbominationSwallowedState();
+      const applyNestedMemoryState = (
+        slotFields: (typeof ABOMINATION_SLOT_FIELDS)[number],
+        ownerPetName: string,
+        ability: ReplayAbilityJson,
+      ): void => {
+        const memoryEntry = getReplayMemoryEntryByAbilityId(petJson, ability.Enu);
+        const nestedTimesHurt = getTimesHurtFromRawPet(memoryEntry);
+        if (nestedTimesHurt !== null) {
+          abominationState[slotFields.timesHurt] = nestedTimesHurt;
+        }
+        const nestedSwallowedPet = resolveNestedSwallowedPetName(memoryEntry);
+        if (!nestedSwallowedPet) {
+          return;
+        }
+        if (ownerPetName === 'Beluga Whale') {
+          abominationState[slotFields.beluga] = nestedSwallowedPet;
+          return;
+        }
+        if (ownerPetName === 'Sarcastic Fringehead') {
+          abominationState[slotFields.sarcasticFringehead] = nestedSwallowedPet;
+        }
+      };
+
       const copiedAbilities = (petJson?.Abil ?? [])
         .map((ability, index) => ({ ability, index }))
         .filter(
@@ -865,6 +1012,11 @@ export class ReplayCalcParser {
         if (inferredLevel !== null) {
           abominationState[slotFields.level] = inferredLevel;
         }
+        applyNestedMemoryState(
+          slotFields,
+          resolvedPetName,
+          resolvedAbilityEntry.ability,
+        );
         usedAbilityIndexes.add(resolvedAbilityEntry.index);
       });
 
@@ -886,12 +1038,17 @@ export class ReplayCalcParser {
           return {
             ownerPetName,
             level: toFiniteNumber(abilityEntry.ability?.Lvl),
+            ability: abilityEntry.ability,
           };
         })
         .filter(
           (
             abilityEntry,
-          ): abilityEntry is { ownerPetName: string; level: number | null } =>
+          ): abilityEntry is {
+            ownerPetName: string;
+            level: number | null;
+            ability: ReplayAbilityJson;
+          } =>
             abilityEntry !== null,
         );
 
@@ -905,6 +1062,11 @@ export class ReplayCalcParser {
         if (fallbackAbility.level !== null) {
           abominationState[slotFields.level] = fallbackAbility.level;
         }
+        applyNestedMemoryState(
+          slotFields,
+          fallbackAbility.ownerPetName,
+          fallbackAbility.ability,
+        );
       });
 
       return abominationState;
@@ -951,15 +1113,10 @@ export class ReplayCalcParser {
         0,
       );
 
-      let belugaSwallowedPet: string | null = null;
-      if (petId === '182') {
-        const swallowedPets = petJson?.MiMs?.Lsts?.WhiteWhaleAbility ?? [];
-        if (swallowedPets.length > 0) {
-          const swallowedPetId = swallowedPets[0]?.Enu;
-          belugaSwallowedPet =
-            PETS_BY_ID.get(String(swallowedPetId)) || `Pet #${swallowedPetId}`;
-        }
-      }
+      const belugaSwallowedPet =
+        petId === '182' ? resolveNestedSwallowedPetName(petJson) : null;
+      const sarcasticFringeheadSwallowedPet =
+        petId === '763' ? resolveNestedSwallowedPetName(petJson) : null;
       const abominationSwallowedState =
         petId === '373'
           ? parseAbominationSwallowedState(petJson)
@@ -1017,7 +1174,7 @@ export class ReplayCalcParser {
         equipment: perkName ? { name: perkName } : null,
         mana: toNumberOrFallback(petJson.Mana, 0),
         belugaSwallowedPet,
-        sarcasticFringeheadSwallowedPet: null,
+        sarcasticFringeheadSwallowedPet,
         ...abominationSwallowedState,
         battlesFought: 0,
         triggersConsumed:
