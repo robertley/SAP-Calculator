@@ -102,11 +102,13 @@ export class CocoaBeanAbility extends Ability {
       );
       const summonPetName = summonPool[choice.index];
 
+      const currentAttack = owner.attack;
+      const currentHealth = owner.health;
       let transformedPet = this.petService.createPet(
         {
           name: summonPetName,
-          attack: null,
-          health: null,
+          attack: currentAttack,
+          health: currentHealth,
           mana: owner.mana,
           exp: 0,
           equipment: null,
@@ -126,8 +128,3 @@ export class CocoaBeanAbility extends Ability {
     }
   }
 }
-
-
-
-
-
