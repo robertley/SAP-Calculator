@@ -55,7 +55,11 @@ export class GooseAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.opponent.getFurthestUpPet(owner);
+    let targetResp = owner.parent.opponent.getFurthestUpPet(
+      owner,
+      undefined,
+      (pet) => pet.attack > 1,
+    );
     let target = targetResp.pet;
     if (target == null) {
       return;
@@ -68,6 +72,13 @@ export class GooseAbility extends Ability {
       player: owner.parent,
       tiger: tiger,
       randomEvent: targetResp.random,
+      noCollapse: true,
+      sourcePet: owner,
+      targetPet: target,
+      sourceIndex: Number.isFinite(owner.position) ? owner.position + 1 : undefined,
+      targetIndex: Number.isFinite(target.position)
+        ? target.position + 1
+        : undefined,
     });
 
     // Tiger system: trigger Tiger execution at the end

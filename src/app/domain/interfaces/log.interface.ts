@@ -30,5 +30,6 @@ export interface Log {
   bold?: boolean;
   rawMessage?: string;
   decorated?: boolean;
+  noCollapse?: boolean;
 }
 

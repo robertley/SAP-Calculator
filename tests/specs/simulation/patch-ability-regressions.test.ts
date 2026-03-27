@@ -172,6 +172,201 @@ describe('Pet Ability Patch Regressions', () => {
         expect(roadrunnerLog).toBeDefined();
     });
 
+    it('Goose skips pets already reduced to 1 attack', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPets: [
+                {
+                    name: 'Goose',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Goose',
+                    attack: 2,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Elephant',
+                    attack: 2,
+                    health: 10,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Pig',
+                    attack: 3,
+                    health: 5,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const elephantLog = logs.find((log: any) =>
+            log.type === 'ability' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Elephant') &&
+            log.message.includes('Goose removed')
+        );
+        const pigLog = logs.find((log: any) =>
+            log.type === 'ability' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Pig') &&
+            log.message.includes('Goose removed')
+        );
+
+        expect(elephantLog).toBeDefined();
+        expect(pigLog).toBeDefined();
+    });
+
+    it('Fish levels up with the pre-level attack/health value', () => {
+        const config: SimulationConfig = {
+            ...baseConfig,
+            playerPets: [
+                {
+                    name: 'Fish',
+                    attack: 2,
+                    health: 3,
+                    exp: 1,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Pug',
+                    attack: 5,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                {
+                    name: 'Ant',
+                    attack: 1,
+                    health: 2,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+            ],
+            opponentPets: [
+                {
+                    name: 'Elephant',
+                    attack: 10,
+                    health: 10,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
+                null,
+                null,
+                null,
+                null,
+            ],
+        };
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+        const fishLog = logs.find((log: any) =>
+            log.type === 'ability' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Fish gave') &&
+            log.message.includes('1 attack and 1 health')
+        );
+
+        expect(fishLog).toBeDefined();
+    });
+
     it('Cocoa Bean should transform pet into a random summon pet before attack', () => {
         const captureConfig: SimulationConfig = {
             ...baseConfig,

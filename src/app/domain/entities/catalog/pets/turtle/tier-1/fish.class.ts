@@ -51,10 +51,11 @@ export class FishAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
-    if (this.level >= 3) {
+    const abilityLevel = context.levelBefore ?? this.level;
+    if (abilityLevel >= 3) {
       return;
     }
-    const power = this.level;
+    const power = abilityLevel;
     const targetsResp = owner.parent.getRandomPets(
       2,
       [owner],

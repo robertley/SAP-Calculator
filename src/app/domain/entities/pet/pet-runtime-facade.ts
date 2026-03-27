@@ -313,24 +313,30 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
   }
 
   increaseExp(amt: number) {
-    let level = this.level;
+    const startingLevel = this.level;
     this.increaseAttack(amt);
     this.increaseHealth(amt);
     this.exp = Math.min(this.exp + amt, 5);
-    let timesLevelled = this.level - level;
+    const timesLevelled = this.level - startingLevel;
     if (timesLevelled > 0) {
       this.baseSellValue += timesLevelled;
       this.sellValue += timesLevelled;
     }
+    let previousLevel = startingLevel;
     for (let i = 0; i < timesLevelled; i++) {
+      const nextLevel = previousLevel + 1;
       this.logService.createLog({
-        message: `${this.name} leveled up to level ${this.level}.`,
+        message: `${this.name} leveled up to level ${nextLevel}.`,
         type: 'ability',
         player: this.parent,
       });
-      this.abilityService.triggerLevelUpEvents(this as unknown as Pet);
+      this.abilityService.triggerLevelUpEvents(
+        this as unknown as Pet,
+        previousLevel,
+      );
       this.abilityService.executeFriendlyLevelUpToyEvents();
       this.resetAbilityUses();
+      previousLevel = nextLevel;
     }
     for (let i = 0; i < Math.min(amt, 5); i++) {
       this.abilityService.triggerFriendGainedExperienceEvents(

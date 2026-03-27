@@ -136,6 +136,9 @@ export interface AbilityContext {
   puma?: boolean;
   damageAmount?: number;
   tigerSupportPet?: Pet | null;
+  levelBefore?: number;
+  levelAfter?: number;
+  levelDiff?: number;
   [key: string]: unknown; // Allow for additional custom parameters
 }
 
