@@ -281,11 +281,16 @@ export abstract class PlayerTargetingFacade {
     return null;
   }
 
-  getFurthestUpPet(callingPet?: Pet, excludePets?: Pet[]): PetRandomResult {
+  getFurthestUpPet(
+    callingPet?: Pet,
+    excludePets?: Pet[],
+    predicate?: (pet: Pet) => boolean,
+  ): PetRandomResult {
     return getFurthestUpPetImpl(
       this.asPlayerLike(),
       callingPet,
       excludePets,
+      predicate,
     );
   }
 

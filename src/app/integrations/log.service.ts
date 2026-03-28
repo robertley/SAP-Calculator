@@ -223,6 +223,9 @@ export class LogService {
     if (!lastLog) {
       return false;
     }
+    if (lastLog.noCollapse || log.noCollapse) {
+      return false;
+    }
 
     const samePlayer = lastLog.player === log.player;
     const sameMessage = lastLog.message?.trim() === log.message?.trim();

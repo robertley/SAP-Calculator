@@ -7,6 +7,9 @@ export function getMergedAttackHealthMessage(
   if (!lastLog || !nextLog) {
     return null;
   }
+  if (lastLog.noCollapse || nextLog.noCollapse) {
+    return null;
+  }
   if (lastLog.player !== nextLog.player) {
     return null;
   }

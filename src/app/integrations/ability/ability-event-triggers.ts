@@ -269,34 +269,51 @@ export abstract class AbilityEventTriggers {
   }
 
   // Level up events handler
-  triggerLevelUpEvents(levelUpPet: Pet) {
+  triggerLevelUpEvents(levelUpPet: Pet, levelBefore: number) {
     const player = levelUpPet.parent;
+    if (!player) {
+      return;
+    }
+    const levelAfter = levelBefore + 1;
+    const levelContext = {
+      levelBefore,
+      levelAfter,
+      levelDiff: levelAfter - levelBefore,
+    };
     this.triggerFriendlyLevelUpToyEvents(player, levelUpPet);
 
     // Check friends
     for (let pet of player.petArray) {
-      this.abilityQueueService.triggerAbility(pet, 'AnyLeveledUp', levelUpPet);
+      this.abilityQueueService.triggerAbility(
+        pet,
+        'AnyLeveledUp',
+        levelUpPet,
+        levelContext,
+      );
       this.abilityQueueService.triggerAbility(
         pet,
         'FriendlyLeveledUp',
         levelUpPet,
+        levelContext,
       );
       if (pet == levelUpPet) {
         this.abilityQueueService.triggerAbility(
           pet,
           'ThisLeveledUp',
           levelUpPet,
+          levelContext,
         );
       } else {
         this.abilityQueueService.triggerAbility(
           pet,
           'FriendLeveledUp',
           levelUpPet,
+          levelContext,
         );
         this.abilityQueueService.handleNumberedCounterTriggers(
           pet,
           levelUpPet,
-          undefined,
+          levelContext,
           this.abilityQueueService.getNumberedTriggersForPet(
             pet,
             'FriendlyLeveledUp',
@@ -312,6 +329,7 @@ export abstract class AbilityEventTriggers {
           pet,
           'AnyLeveledUp',
           levelUpPet,
+          levelContext,
         );
       }
     }

@@ -87,6 +87,7 @@ export const getFurthestUpPet = (
   player: PlayerLike,
   callingPet?: Pet,
   excludePets?: Pet[],
+  predicate: (pet: Pet) => boolean = () => true,
 ): PetRandomResult => {
   if (callingPet && hasSilly(callingPet)) {
     return getRandomLivingPet(player, [callingPet], true);
@@ -95,6 +96,9 @@ export const getFurthestUpPet = (
   for (const pet of player.petArray) {
     if (pet.alive) {
       if (excludePets && excludePets.includes(pet)) {
+        continue;
+      }
+      if (!predicate(pet)) {
         continue;
       }
       return { pet, random: false };
