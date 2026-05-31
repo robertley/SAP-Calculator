@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
 
 describe('Cashew Nut repeat simulations', () => {
-    it('triggers start-of-battle snipe in each simulation', () => {
+    it('snipes the second enemy before attacking in each simulation', () => {
         const config: SimulationConfig = {
             playerPack: 'Turtle',
             opponentPack: 'Turtle',
@@ -15,7 +15,7 @@ describe('Cashew Nut repeat simulations', () => {
                     attack: 1,
                     health: 10,
                     exp: 0,
-                    equipment: null,
+                    equipment: { name: 'Cashew Nut' },
                     belugaSwallowedPet: null,
                     mana: 0,
                     triggersConsumed: 0,
@@ -45,7 +45,7 @@ describe('Cashew Nut repeat simulations', () => {
                     attack: 2,
                     health: 5,
                     exp: 0,
-                    equipment: { name: 'Cashew Nut' },
+                    equipment: null,
                     belugaSwallowedPet: null,
                     mana: 0,
                     triggersConsumed: 0,
@@ -74,7 +74,21 @@ describe('Cashew Nut repeat simulations', () => {
                     battlesFought: 0,
                     timesHurt: 0,
                 },
-                null,
+                {
+                    name: 'Otter',
+                    attack: 2,
+                    health: 8,
+                    exp: 0,
+                    equipment: null,
+                    belugaSwallowedPet: null,
+                    mana: 0,
+                    triggersConsumed: 0,
+                    abominationSwallowedPet1: null,
+                    abominationSwallowedPet2: null,
+                    abominationSwallowedPet3: null,
+                    battlesFought: 0,
+                    timesHurt: 0,
+                },
                 null,
                 null,
                 null,
@@ -101,10 +115,11 @@ describe('Cashew Nut repeat simulations', () => {
         const hasCashewSnipe = (battleIndex: number) => {
             const logs = result.battles?.[battleIndex]?.logs ?? [];
             return logs.some(
-                (log: any) =>
+                (log) =>
                     log.type === 'attack' &&
                     typeof log.message === 'string' &&
                     log.message.includes('sniped') &&
+                    log.message.includes('Otter') &&
                     log.message.includes('(Cashew Nut)'),
             );
         };

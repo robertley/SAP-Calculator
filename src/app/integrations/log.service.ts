@@ -281,6 +281,9 @@ export class LogService {
     if (parent.pet4 === pet) {
       return 5;
     }
+    if (Number.isFinite(pet.savedPosition)) {
+      return pet.savedPosition + 1;
+    }
     return null;
   }
 

@@ -11,7 +11,7 @@ export class Angelshark extends Pet {
   tier = 4;
   pack: Pack = 'Danger';
   attack = 3;
-  health = 4;
+  health = 3;
 
   constructor(
     protected logService: LogService,

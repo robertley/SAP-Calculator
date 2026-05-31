@@ -511,6 +511,7 @@ export class SimulationRunner {
       triggersConsumed: petConfig.triggersConsumed ?? 0,
       foodsEaten: petConfig.foodsEaten ?? 0,
       timesGaveHealth: petConfig.timesGaveHealth ?? 0,
+      ailmentsCount: petConfig.ailmentsCount ?? 0,
       equipment,
       equipmentUses:
         petConfig.equipmentUses ??
@@ -520,6 +521,7 @@ export class SimulationRunner {
       battlesFought: petConfig.battlesFought ?? 0,
       timesHurt: petConfig.timesHurt ?? 0,
       friendsDiedBeforeBattle: petConfig.friendsDiedBeforeBattle ?? 0,
+      friendsHurtBeforeBattle: petConfig.friendsHurtBeforeBattle ?? 0,
       abominationSwallowedPet1TimesHurt:
         petConfig.abominationSwallowedPet1TimesHurt ?? 0,
       abominationSwallowedPet2TimesHurt:
@@ -619,11 +621,17 @@ export class SimulationRunner {
         foodsEaten: runtimePet.foodsEaten ?? sourcePet.foodsEaten ?? 0,
         timesGaveHealth:
           runtimePet.timesGaveHealth ?? sourcePet.timesGaveHealth ?? 0,
+        ailmentsCount:
+          runtimePet.ailmentsCount ?? sourcePet.ailmentsCount ?? 0,
         battlesFought: runtimePet.battlesFought ?? sourcePet.battlesFought ?? 0,
         timesHurt: runtimePet.timesHurt ?? sourcePet.timesHurt ?? 0,
         friendsDiedBeforeBattle:
           runtimePet.friendsDiedBeforeBattle ??
           sourcePet.friendsDiedBeforeBattle ??
+          0,
+        friendsHurtBeforeBattle:
+          runtimePet.friendsHurtBeforeBattle ??
+          sourcePet.friendsHurtBeforeBattle ??
           0,
         equipment: runtimePet.equipment?.name
           ? { name: runtimePet.equipment.name }

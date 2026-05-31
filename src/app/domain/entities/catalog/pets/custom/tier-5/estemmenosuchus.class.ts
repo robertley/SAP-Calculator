@@ -82,10 +82,11 @@ export class EstemmenosuchusAbility extends Ability {
 
   private countAilments(): number {
     const owner = this.owner;
-    return owner.parent.petArray.filter((pet) => {
+    const visibleAilments = owner.parent.petArray.filter((pet) => {
       const eqClass = pet?.equipment?.equipmentClass;
       return !!eqClass && eqClass.startsWith('ailment');
     }).length;
+    return Math.max(visibleAilments, owner.ailmentsCount ?? 0);
   }
 
   private executeAbility(context: AbilityContext): void {

@@ -11,7 +11,7 @@ export class AraripeManakin extends Pet {
   tier = 2;
   pack: Pack = 'Danger';
   attack = 3;
-  health = 2;
+  health = 3;
   initAbilities(): void {
     this.addAbility(new AraripeManakinAbility(this, this.logService));
     super.initAbilities();
@@ -64,7 +64,7 @@ export class AraripeManakinAbility extends Ability {
       return;
     }
 
-    let healthGain = this.level * 3;
+    let healthGain = this.level * 2;
     target.increaseHealth(healthGain);
 
     this.logService.createLog({

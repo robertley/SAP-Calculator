@@ -52,7 +52,7 @@ export class MalteseAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
     const player = owner.parent;
-    const trumpetsAvailable = player.trumpets;
+    const trumpetsAvailable = Math.min(player.trumpets, 24);
     if (trumpetsAvailable > 0) {
       player.spendTrumpets(trumpetsAvailable, owner, context.pteranodon);
     }
@@ -78,7 +78,7 @@ export class MalteseAbility extends Ability {
     }
 
     this.logService.createLog({
-      message: `${owner.name} converted ${trumpetsAvailable} trumpets into ${totalMana} mana and spread it to friends.`,
+      message: `${owner.name} converted up to 24 trumpets (${trumpetsAvailable}) into ${totalMana} mana and spread it to friends.`,
       type: 'ability',
       player: player,
       tiger: context.tiger,

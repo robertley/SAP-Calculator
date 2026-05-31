@@ -104,6 +104,10 @@ export class AbilityService extends AbilityEventTriggers {
     this.abilityQueueService.simulatePostRemovalFriendFaintsCounters(pet, count);
   }
 
+  simulateFriendHurtCounters(pet: Pet, count: number) {
+    this.abilityQueueService.simulateFriendHurtCounters(pet, count);
+  }
+
   // --- Event Triggering & Execution ---
 
   // End of Turn Events

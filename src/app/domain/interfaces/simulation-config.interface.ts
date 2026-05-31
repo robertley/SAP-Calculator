@@ -15,6 +15,8 @@ export interface PetConfig extends PetMemoryState {
   battlesFought?: number;
   timesHurt?: number;
   friendsDiedBeforeBattle?: number;
+  friendsHurtBeforeBattle?: number;
+  ailmentsCount?: number;
 }
 
 export interface CustomPackConfig {

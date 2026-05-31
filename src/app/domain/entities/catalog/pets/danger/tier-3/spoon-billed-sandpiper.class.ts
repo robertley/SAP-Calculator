@@ -10,7 +10,7 @@ export class SpoonBilledSandpiper extends Pet {
   name = 'Spoon-Billed Sandpiper';
   tier = 3;
   pack: Pack = 'Danger';
-  attack = 3;
+  attack = 2;
   health = 2;
 
   constructor(

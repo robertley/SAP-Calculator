@@ -128,6 +128,8 @@ export class PetFactoryService {
       foodsEaten,
       timesGaveHealth,
       battlesFought,
+      ailmentsCount,
+      friendsHurtBeforeBattle,
     } = normalizedPetForm;
     let hasRandomEvents = normalizedPetForm.hasRandomEvents;
     if (
@@ -172,6 +174,18 @@ export class PetFactoryService {
         const value = Number(battlesFought);
         if (Number.isFinite(value)) {
           pet.battlesFought = Math.max(0, Math.floor(value));
+        }
+      }
+      if (ailmentsCount != null) {
+        const value = Number(ailmentsCount);
+        if (Number.isFinite(value)) {
+          pet.ailmentsCount = Math.max(0, Math.floor(value));
+        }
+      }
+      if (friendsHurtBeforeBattle != null) {
+        const value = Number(friendsHurtBeforeBattle);
+        if (Number.isFinite(value)) {
+          pet.friendsHurtBeforeBattle = Math.max(0, Math.floor(value));
         }
       }
       if (hasRandomEvents) {
@@ -385,7 +399,9 @@ export class PetFactoryService {
       hasNonDefaultFormValue(petForm, ABOMINATION_FORM_FIELDS);
     const hasSarcastic = petForm.sarcasticFringeheadSwallowedPet != null;
     const hasFriendsDied = (petForm.friendsDiedBeforeBattle ?? 0) > 0;
+    const hasFriendsHurt = (petForm.friendsHurtBeforeBattle ?? 0) > 0;
     const hasTimesGaveHealth = (petForm.timesGaveHealth ?? 0) > 0;
+    const hasAilmentsCount = (petForm.ailmentsCount ?? 0) > 0;
     const hasTimesHurt = (petForm.timesHurt ?? 0) > 0;
     const hasFoodsEaten = petForm.foodsEaten != null;
     const needsPostInit =
@@ -394,7 +410,9 @@ export class PetFactoryService {
       hasAbominationData ||
       hasSarcastic ||
       hasFriendsDied ||
+      hasFriendsHurt ||
       hasTimesGaveHealth ||
+      hasAilmentsCount ||
       hasTimesHurt ||
       hasFoodsEaten;
 
@@ -426,7 +444,9 @@ export class PetFactoryService {
       hasAbominationData,
       hasSarcastic,
       hasFriendsDied,
+      hasFriendsHurt,
       hasTimesGaveHealth,
+      hasAilmentsCount,
       hasTimesHurt,
       hasEquipmentUses,
       equipmentValue: petForm.equipment ?? null,
@@ -511,7 +531,9 @@ type PetBuildPlan = {
   hasAbominationData: boolean;
   hasSarcastic: boolean;
   hasFriendsDied: boolean;
+  hasFriendsHurt: boolean;
   hasTimesGaveHealth: boolean;
+  hasAilmentsCount: boolean;
   hasTimesHurt: boolean;
   hasEquipmentUses: boolean;
   equipmentValue: PetForm['equipment'] | null;

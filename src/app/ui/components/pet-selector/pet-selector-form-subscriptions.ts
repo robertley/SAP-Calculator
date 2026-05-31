@@ -37,6 +37,8 @@ type PetFormValue = {
   triggersConsumed?: unknown;
   foodsEaten?: unknown;
   timesGaveHealth?: unknown;
+  ailmentsCount?: unknown;
+  friendsHurtBeforeBattle?: unknown;
   equipment?: unknown;
   [key: string]: unknown;
 };
@@ -142,6 +144,8 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     this.subscribeDebouncedStat('triggersConsumed', 0, 10);
     this.subscribeDebouncedStat('foodsEaten', 0, 99);
     this.subscribeDebouncedStat('timesGaveHealth', 0, 99);
+    this.subscribeDebouncedStat('ailmentsCount', 0, 99);
+    this.subscribeDebouncedStat('friendsHurtBeforeBattle', 0, 99);
 
     this.formGroup
       .get('friendsDiedBeforeBattle')
@@ -227,6 +231,10 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
           .setValue(null, { emitEvent: false });
         this.formGroup.get('foodsEaten').setValue(null, { emitEvent: false });
         this.formGroup.get('timesGaveHealth').setValue(null, { emitEvent: false });
+        this.formGroup.get('ailmentsCount').setValue(null, { emitEvent: false });
+        this.formGroup
+          .get('friendsHurtBeforeBattle')
+          .setValue(null, { emitEvent: false });
         formValue = this.formGroup.getRawValue() as PetFormValue;
       }
       this.applyStatCaps(formValue);
@@ -253,6 +261,12 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
         this.formGroup
           .get('timesGaveHealth')
           .setValue(pet.timesGaveHealth ?? 0, { emitEvent: false });
+        this.formGroup
+          .get('ailmentsCount')
+          .setValue(pet.ailmentsCount ?? 0, { emitEvent: false });
+        this.formGroup
+          .get('friendsHurtBeforeBattle')
+          .setValue(pet.friendsHurtBeforeBattle ?? 0, { emitEvent: false });
         this.cdr.markForCheck();
       }
     });
@@ -270,6 +284,12 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     const triggers = this.clampValue(formValue.triggersConsumed, 0, 10);
     const foodsEaten = this.clampValue(formValue.foodsEaten, 0, 99);
     const timesGaveHealth = this.clampValue(formValue.timesGaveHealth, 0, 99);
+    const ailmentsCount = this.clampValue(formValue.ailmentsCount, 0, 99);
+    const friendsHurtBeforeBattle = this.clampValue(
+      formValue.friendsHurtBeforeBattle,
+      0,
+      99,
+    );
 
     if (attack !== formValue.attack && formValue.attack != null) {
       this.formGroup.get('attack').setValue(attack, { emitEvent: false });
@@ -306,6 +326,24 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
         .get('timesGaveHealth')
         .setValue(timesGaveHealth, { emitEvent: false });
       formValue.timesGaveHealth = timesGaveHealth;
+    }
+    if (
+      ailmentsCount !== formValue.ailmentsCount &&
+      formValue.ailmentsCount != null
+    ) {
+      this.formGroup
+        .get('ailmentsCount')
+        .setValue(ailmentsCount, { emitEvent: false });
+      formValue.ailmentsCount = ailmentsCount;
+    }
+    if (
+      friendsHurtBeforeBattle !== formValue.friendsHurtBeforeBattle &&
+      formValue.friendsHurtBeforeBattle != null
+    ) {
+      this.formGroup
+        .get('friendsHurtBeforeBattle')
+        .setValue(friendsHurtBeforeBattle, { emitEvent: false });
+      formValue.friendsHurtBeforeBattle = friendsHurtBeforeBattle;
     }
   }
 
@@ -357,6 +395,10 @@ export class PetSelectorFormSubscriptions extends PetSelectorSwallowing {
     this.formGroup.get('triggersConsumed').setValue(0, { emitEvent: false });
     this.formGroup.get('foodsEaten').setValue(0, { emitEvent: false });
     this.formGroup.get('timesGaveHealth').setValue(0, { emitEvent: false });
+    this.formGroup.get('ailmentsCount').setValue(0, { emitEvent: false });
+    this.formGroup
+      .get('friendsHurtBeforeBattle')
+      .setValue(0, { emitEvent: false });
   }
 
   protected clampFriendsDiedBeforeBattle() {

@@ -1,23 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { createBaseConfig, createPet, runBattleLogs } from '../../support/battle-test-runtime';
 
-function getKakapoTargets(logs: Array<{ type?: string; message?: string }>, effect: 'gave' | 'pushed'): string[] {
-  const verb = effect === 'gave' ? 'gave' : 'pushed';
-  const pattern =
-    effect === 'gave'
-      ? /^Kakapo gave (.+) Spooked\.$/
-      : /^Kakapo pushed (.+) to the back\.$/;
-
+function getKakapoTargets(logs: Array<{ type?: string; message?: string }>): string[] {
   return logs
     .filter((log) => log?.type === 'ability')
     .map((log) => String(log?.message ?? ''))
-    .filter((message) => message.startsWith(`Kakapo ${verb} `))
-    .map((message) => message.match(pattern)?.[1] ?? '')
+    .filter((message) => message.startsWith('Kakapo made '))
+    .map((message) => message.match(/^Kakapo made (.+) Cowardly\.$/)?.[1] ?? '')
     .filter((name) => name.length > 0);
 }
 
 describe('Kakapo target order', () => {
-  it('at level 2 applies Spooked and push to the lowest-attack selected target first', () => {
+  it('at level 2 makes the two highest attack enemies Cowardly', () => {
     const config = createBaseConfig('Danger');
     config.playerPets[0] = createPet('Kakapo', {
       exp: 2,
@@ -31,14 +25,12 @@ describe('Kakapo target order', () => {
     config.opponentPets[3] = createPet('Otter', { attack: 5, health: 10 });
 
     const logs = runBattleLogs(config);
-    const spookedTargets = getKakapoTargets(logs, 'gave');
-    const pushedTargets = getKakapoTargets(logs, 'pushed');
+    const cowardlyTargets = getKakapoTargets(logs);
 
-    expect(spookedTargets.slice(0, 2)).toEqual(['Pig', 'Fish']);
-    expect(pushedTargets.slice(0, 2)).toEqual(['Pig', 'Fish']);
+    expect(cowardlyTargets.slice(0, 2)).toEqual(['Fish', 'Pig']);
   });
 
-  it('at level 3 applies Spooked and push to the lowest-attack selected target first', () => {
+  it('at level 3 makes the three highest attack enemies Cowardly', () => {
     const config = createBaseConfig('Danger');
     config.playerPets[0] = createPet('Kakapo', {
       exp: 5,
@@ -53,11 +45,8 @@ describe('Kakapo target order', () => {
     config.opponentPets[4] = createPet('Beaver', { attack: 2, health: 10 });
 
     const logs = runBattleLogs(config);
-    const spookedTargets = getKakapoTargets(logs, 'gave');
-    const pushedTargets = getKakapoTargets(logs, 'pushed');
+    const cowardlyTargets = getKakapoTargets(logs);
 
-    expect(spookedTargets.slice(0, 3)).toEqual(['Otter', 'Pig', 'Fish']);
-    expect(pushedTargets.slice(0, 3)).toEqual(['Otter', 'Pig', 'Fish']);
+    expect(cowardlyTargets.slice(0, 3)).toEqual(['Fish', 'Pig', 'Otter']);
   });
 });
-

@@ -428,7 +428,7 @@ export function dealDamage(self: Pet, pet: Pet, damage: number): void {
     return;
   }
   if (damage >= pet.health && pet.equipment?.name == 'Bok Choy') {
-    let healthGain = 4 * pet.equipment.multiplier;
+    let healthGain = 3 * pet.equipment.multiplier;
     self.createLog({
       message: `${pet.name} gained ${healthGain} health (Bok Choy) ${pet.equipment.multiplierMessage} `,
       type: 'equipment',

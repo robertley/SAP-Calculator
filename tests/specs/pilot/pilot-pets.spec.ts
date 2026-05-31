@@ -6,7 +6,7 @@ const PILOT_PETS = [
   { name: 'Aardvark', pack: 'Custom', behavior: 'Enemy summoned: Gain +1 attack and +3 health.' },
   { name: 'Adult Flounder', pack: 'Custom', behavior: 'Transformed: Give two back-most friends 1 experience.' },
   { name: 'Ahuizotl', pack: 'Custom', behavior: 'End turn: Summon one level 1 Ocarina.' },
-  { name: 'Akhlut', pack: 'Custom', behavior: 'Faint: Spend 2 mana to give the nearest friend behind permanent +3 attack and +3 health.' },
+  { name: 'Akhlut', pack: 'Custom', behavior: 'Faint: Spend 2 mana to give the nearest friend behind permanent +4 attack and +4 health.' },
   { name: 'Albatross', pack: 'Custom', behavior: 'Adjacent tier 4 or lower friends deals 3 ability damage extra.' },
   { name: 'Albino Squirrel', pack: 'Custom', behavior: 'Sell: Replace shop food with three random food and discount them by 1 gold.' },
   { name: 'Amargasaurus', pack: 'Custom', behavior: 'Friend hurt: Restore its health. Can restore up to 15 health per turn.' },

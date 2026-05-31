@@ -15,5 +15,7 @@ export interface PetForm extends PetMemoryState {
   battlesFought?: number;
   timesHurt?: number;
   friendsDiedBeforeBattle?: number;
+  friendsHurtBeforeBattle?: number;
+  ailmentsCount?: number;
   equipmentUses?: number;
 }

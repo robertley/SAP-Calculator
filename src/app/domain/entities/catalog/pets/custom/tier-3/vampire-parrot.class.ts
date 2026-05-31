@@ -71,7 +71,7 @@ export class VampireParrotAbility extends Ability {
       }
     }
 
-    const count = uniqueAilments.size;
+    const count = Math.max(uniqueAilments.size, owner.ailmentsCount ?? 0);
     if (count === 0) {
       this.triggerTigerExecution(context);
       return;

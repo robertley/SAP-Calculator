@@ -25,6 +25,28 @@ describe('Mandrake targeting', () => {
       expect(String(dazedLog?.message ?? '')).toContain('Cricket');
     }
   });
+
+  it('does not target tier 5 faint pets at level 2', () => {
+    const config = createBaseConfig('Custom');
+    config.playerPets[0] = createPet('Mandrake', {
+      attack: 4,
+      health: 3,
+      exp: 2,
+    });
+    config.opponentPets[0] = createPet('Nyala', { attack: 3, health: 4 });
+
+    const logs = runBattleLogs(config);
+
+    expect(
+      logs.some(
+        (log) =>
+          log.type === 'ability' &&
+          typeof log.message === 'string' &&
+          log.message.includes('Mandrake made') &&
+          log.message.includes('Dazed'),
+      ),
+    ).toBe(false);
+  });
 });
 
 

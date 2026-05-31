@@ -78,8 +78,8 @@ export class FlyAbility extends Ability {
       this.logService,
       this.abilityService,
       owner.parent,
-      null,
-      null,
+      this.level * 4,
+      this.level * 4,
       null,
       this.minExpForLevel,
     );

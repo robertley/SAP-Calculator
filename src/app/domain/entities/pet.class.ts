@@ -44,6 +44,8 @@ export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
   parrotCopyPetBelugaSwallowedPet: string | null = null;
   sarcasticFringeheadSwallowedPet?: string | null;
   friendsDiedBeforeBattle: number = 0;
+  friendsHurtBeforeBattle: number = 0;
+  ailmentsCount: number = 0;
   timesHurt: number = 0;
   timesAttacked: number = 0;
   battlesFought: number = 0;

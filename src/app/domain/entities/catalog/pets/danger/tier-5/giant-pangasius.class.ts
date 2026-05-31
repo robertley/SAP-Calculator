@@ -11,7 +11,7 @@ export class GiantPangasius extends Pet {
   name = 'Giant Pangasius';
   tier = 5;
   pack: Pack = 'Danger';
-  attack = 4;
+  attack = 7;
   health = 5;
 
   initAbilities(): void {

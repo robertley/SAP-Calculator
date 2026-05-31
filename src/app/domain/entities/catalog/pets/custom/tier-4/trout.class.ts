@@ -11,7 +11,7 @@ export class Trout extends Pet {
   tier = 4;
   pack: Pack = 'Custom';
   attack = 3;
-  health = 4;
+  health = 3;
   initAbilities(): void {
     this.addAbility(new TroutAbility(this, this.logService));
     super.initAbilities();
@@ -43,6 +43,7 @@ export class TroutAbility extends Ability {
       triggers: ['FriendSold'],
       abilityType: 'Pet',
       native: true,
+      maxUses: 2,
       abilitylevel: owner.level,
       abilityFunction: (context) => this.executeAbility(context),
     });
@@ -53,18 +54,16 @@ export class TroutAbility extends Ability {
     const owner = this.owner;
     const soldPet = context.triggerPet;
 
-    if (!soldPet || soldPet.sellValue < 3) {
+    if (!soldPet) {
       this.triggerTigerExecution(context);
       return;
     }
 
-    const attackGain = Math.max(1, this.level);
-    const healthGain = attackGain * 2;
-    owner.increaseAttack(attackGain);
+    const healthGain = soldPet.sellValue * this.level;
     owner.increaseHealth(healthGain);
 
     this.logService.createLog({
-      message: `${owner.name} gained +${attackGain}/+${healthGain} after ${soldPet.name} was sold.`,
+      message: `${owner.name} gained +${healthGain} health from ${soldPet.name}'s sell value.`,
       type: 'ability',
       player: owner.parent,
       tiger: context.tiger,

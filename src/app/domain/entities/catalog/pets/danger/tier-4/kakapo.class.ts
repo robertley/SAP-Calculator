@@ -4,7 +4,7 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
-import { Spooked } from 'app/domain/entities/catalog/equipment/ailments/spooked.class';
+import { Cowardly } from 'app/domain/entities/catalog/equipment/ailments/cowardly.class';
 
 
 export class Kakapo extends Pet {
@@ -36,7 +36,7 @@ export class Kakapo extends Pet {
 }
 
 
-// After first attack: Make the highest attack enemy Spooked and push it to the back.
+// After first attack: Make the highest attack enemy Cowardly.
 export class KakapoAbility extends Ability {
   private logService: LogService;
 
@@ -48,7 +48,6 @@ export class KakapoAbility extends Ability {
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
-      maxUses: 2,
       condition: (context: AbilityContext) => {
         const { triggerPet, tiger, pteranodon } = context;
         const owner = this.owner;
@@ -64,36 +63,25 @@ export class KakapoAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
-    const selectedTargetsResp = owner.parent.opponent.getHighestAttackPets(
-      this.level,
-      undefined,
-      owner,
-    );
-    const orderedTargets = [...selectedTargetsResp.pets].sort(
-      (a, b) => a.attack - b.attack,
-    );
-
-    // Effect 1: Spooked (lowest attack first among selected targets)
-    for (let target of orderedTargets) {
-      target.givePetEquipment(new Spooked());
+    const excludeTargets: Pet[] = [];
+    for (let i = 0; i < this.level; i++) {
+      const targetResp = owner.parent.opponent.getHighestAttackPets(
+        1,
+        excludeTargets,
+        owner,
+      );
+      const target = targetResp.pets[0];
+      if (!target) {
+        continue;
+      }
+      excludeTargets.push(target);
+      target.givePetEquipment(new Cowardly(this.logService));
       this.logService.createLog({
-        message: `${owner.name} gave ${target.name} Spooked.`,
+        message: `${owner.name} made ${target.name} Cowardly.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: selectedTargetsResp.random,
-      });
-    }
-
-    // Effect 2: Push (same selected targets, same order)
-    for (let target of orderedTargets) {
-      target.parent.pushPetToBack(target);
-      this.logService.createLog({
-        message: `${owner.name} pushed ${target.name} to the back.`,
-        type: 'ability',
-        player: owner.parent,
-        tiger: tiger,
-        randomEvent: selectedTargetsResp.random,
+        randomEvent: targetResp.random,
       });
     }
 

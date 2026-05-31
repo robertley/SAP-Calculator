@@ -41,8 +41,10 @@ export class GiantOtter extends Pet {
 // Before battle: Give friends +2 attack and +5 health until after the first non-jump attack.
 export class GiantOtterAbility extends Ability {
   private logService: LogService;
-  private buffedFriends: Map<Pet, { attack: number; health: number }> =
-    new Map();
+  private buffedFriends: Map<
+    Pet,
+    { attack: number; health: number; startingHealth: number }
+  > = new Map();
 
   constructor(owner: Pet, logService: LogService) {
     super({
@@ -81,16 +83,20 @@ export class GiantOtterAbility extends Ability {
         if (stats.attack > 0) {
           currentFriend.increaseAttack(-stats.attack);
         }
-        if (stats.health > 0) {
-          currentFriend.increaseHealth(-stats.health);
+        const removableHealth = Math.min(
+          stats.health,
+          Math.max(0, currentFriend.health - stats.startingHealth),
+        );
+        if (removableHealth > 0) {
+          currentFriend.increaseHealth(-removableHealth);
         }
-        if (stats.attack > 0 || stats.health > 0) {
+        if (stats.attack > 0 || removableHealth > 0) {
           const parts: string[] = [];
           if (stats.attack > 0) {
             parts.push(`${stats.attack} attack`);
           }
-          if (stats.health > 0) {
-            parts.push(`${stats.health} health`);
+          if (removableHealth > 0) {
+            parts.push(`${removableHealth} health`);
           }
           this.logService.createLog({
             message: `${currentFriend.name} lost ${parts.join(' and ')} (Giant Otter Buffs removed)`,
@@ -137,6 +143,7 @@ export class GiantOtterAbility extends Ability {
     let friends = targetResp.pets;
 
     for (let friend of friends) {
+      const startingHealth = friend.health;
       const actualAttack = friend.increaseAttack(statBonus.attack);
       const actualHealth = friend.increaseHealth(statBonus.health);
 
@@ -148,6 +155,7 @@ export class GiantOtterAbility extends Ability {
         this.buffedFriends.set(friend, {
           attack: actualAttack,
           health: actualHealth,
+          startingHealth,
         });
       }
 

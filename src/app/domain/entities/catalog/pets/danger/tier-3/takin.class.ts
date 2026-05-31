@@ -10,8 +10,8 @@ export class Takin extends Pet {
   name = 'Takin';
   tier = 3;
   pack: Pack = 'Danger';
-  attack = 1;
-  health = 2;
+  attack = 2;
+  health = 3;
 
   initAbilities(): void {
     this.addAbility(new TakinAbility(this, this.logService));
@@ -42,7 +42,7 @@ export class TakinAbility extends Ability {
     super({
       name: 'TakinAbility',
       owner: owner,
-      triggers: ['FriendAheadHurt'],
+      triggers: ['AdjacentFriendAttacked'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -57,8 +57,9 @@ export class TakinAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let attackGain = this.level;
-    let healthGain = this.level * 2;
+    const multiplier = this.currentUses % 3 === 0 ? 3 : 1;
+    let attackGain = this.level * multiplier;
+    let healthGain = this.level * multiplier;
     let targetResp = owner.parent.getThis(owner);
     let target = targetResp.pet;
 

@@ -232,4 +232,6 @@ export const KEY_MAP: Record<string, string> = {
   abominationSwallowedPet3ParrotCopyPetAbominationSwallowedPet3TimesHurt:
     'aSP3PCPAS3T',
   timesHurt: 'tH',
+  ailmentsCount: 'aC',
+  friendsHurtBeforeBattle: 'fHBB',
 };

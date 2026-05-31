@@ -28,7 +28,7 @@ describe('Basilisk transform regression', () => {
           attack: 2,
           health: 2,
           exp: 0,
-          equipment: null,
+          equipment: { name: 'Garlic' },
           belugaSwallowedPet: null,
           mana: 0,
           triggersConsumed: 0,
@@ -98,5 +98,6 @@ describe('Basilisk transform regression', () => {
 
     expect(boardText).not.toContain('undefined/undefined');
     expect(boardText).toContain('(2/7/0xp)');
+    expect(boardMessages.join('\n')).toContain('alt="Garlic"');
   });
 });

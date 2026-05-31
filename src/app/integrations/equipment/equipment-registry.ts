@@ -53,6 +53,7 @@ import { GrosMichelBanana } from 'app/domain/entities/catalog/equipment/danger/g
 import { CocoaBean } from 'app/domain/entities/catalog/equipment/danger/cocoa-bean.class';
 import { WhiteOkra } from 'app/domain/entities/catalog/equipment/danger/white-okra.class';
 import { WhiteTruffle } from 'app/domain/entities/catalog/equipment/danger/white-truffle.class';
+import { GeecheeRedPea } from 'app/domain/entities/catalog/equipment/danger/geechee-red-pea.class';
 import { Unagi } from 'app/domain/entities/catalog/equipment/custom/unagi.class';
 import { Corncob } from 'app/domain/entities/catalog/equipment/custom/corncob.class';
 import { FortuneCookie } from 'app/domain/entities/catalog/equipment/custom/fortune-cookie.class';
@@ -96,6 +97,7 @@ import { Tasty } from 'app/domain/entities/catalog/equipment/ailments/tasty.clas
 import { Silly } from 'app/domain/entities/catalog/equipment/ailments/silly.class';
 import { Bloated } from 'app/domain/entities/catalog/equipment/ailments/bloated.class';
 import { Confused } from 'app/domain/entities/catalog/equipment/ailments/confused.class';
+import { Cowardly } from 'app/domain/entities/catalog/equipment/ailments/cowardly.class';
 import { Cursed } from 'app/domain/entities/catalog/equipment/ailments/cursed.class';
 import { Inked } from 'app/domain/entities/catalog/equipment/ailments/inked.class';
 import { Sad } from 'app/domain/entities/catalog/equipment/ailments/sad.class';
@@ -199,6 +201,7 @@ export const LOG_ONLY_EQUIPMENT: Record<string, LogOnlyEquipmentConstructor> = {
   'Health Potion': HealthPotion,
   'Golden Egg': GoldenEgg,
   'White Truffle': WhiteTruffle,
+  'Geechee Red Pea': GeecheeRedPea,
 };
 
 // LogService + AbilityService equipment
@@ -252,6 +255,7 @@ export const SPECIAL_EQUIPMENT_BUILDERS: {
 export const SPECIAL_AILMENT_BUILDERS: {
   [key: string]: (deps: EquipmentRegistryDeps) => Equipment;
 } = {
+  Cowardly: (deps) => new Cowardly(deps.logService),
   Tasty: (deps) => new Tasty(deps.logService),
 };
 

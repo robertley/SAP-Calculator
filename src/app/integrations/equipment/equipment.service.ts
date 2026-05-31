@@ -93,6 +93,10 @@ export class EquipmentService {
     ['Tomato', 6],
     ['Sudduth Tomato', 6],
     ['Pita Bread', 6],
+    // T7 food perks
+    ['Coconut', 7],
+    ['Peanut', 7],
+    ['Peanut Butter', 7],
     // Hidden
     ['Seaweed', 5],
     // Golden

@@ -109,6 +109,31 @@ import { supportsTimesHurtPet } from '../pet-selector.constants';
         />
       </div>
 
+      <div class="col-12 mb-2" *ngIf="shouldShowFriendsHurtInput()">
+        <label class="swallowed-label" for="friendsHurtBeforeBattle"
+          >Friends Hurt</label
+        >
+        <input
+          class="form-control"
+          type="number"
+          min="0"
+          max="99"
+          formControlName="friendsHurtBeforeBattle"
+        />
+      </div>
+
+      <!-- Ailments Count -->
+      <div class="col-12 mb-2" *ngIf="shouldShowAilmentsCountInput()">
+        <label for="ailmentsCount">Ailments</label>
+        <input
+          class="form-control"
+          formControlName="ailmentsCount"
+          type="number"
+          min="0"
+          max="99"
+        />
+      </div>
+
       <div class="col-12 mb-2" *ngIf="shouldShowTimesGaveHealthInput()">
         <label class="swallowed-label" for="timesGaveHealth"
           >Times Gave Health</label
@@ -163,6 +188,7 @@ export class PetStatsSelectorComponent {
     ['Secretary Bird', 1],
     ['Mimic', 2],
   ]);
+  private friendsHurtPets = new Set<string>(['Wolverine']);
   private foodsEatenPets = new Set<string>([
     'Black Bear',
     'Blue Jay',
@@ -171,9 +197,18 @@ export class PetStatsSelectorComponent {
   ]);
   private timesGaveHealthPets = new Set<string>(['Giant Isopod']);
   private battlesFoughtPets = new Set<string>(['Slime']);
+  private ailmentsCountPets = new Set<string>([
+    'Estemmenosuchus',
+    'Vampire Parrot',
+    'Woolly Rhino',
+  ]);
 
   shouldShowFriendsDiedInput(): boolean {
     return this.petName ? this.friendsDiedCaps.has(this.petName) : false;
+  }
+
+  shouldShowFriendsHurtInput(): boolean {
+    return this.petName ? this.friendsHurtPets.has(this.petName) : false;
   }
 
   shouldShowFoodsEatenInput(): boolean {
@@ -188,6 +223,13 @@ export class PetStatsSelectorComponent {
       return false;
     }
     return this.battlesFoughtPets.has(this.petName);
+  }
+
+  shouldShowAilmentsCountInput(): boolean {
+    if (!this.petName) {
+      return false;
+    }
+    return this.ailmentsCountPets.has(this.petName);
   }
 
   shouldShowTimesGaveHealthInput(): boolean {

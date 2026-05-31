@@ -506,6 +506,10 @@ export function initPetForms(
       friendsDiedBeforeBattle: new FormControl(
         pet?.friendsDiedBeforeBattle ?? 0,
       ),
+      friendsHurtBeforeBattle: new FormControl(
+        pet?.friendsHurtBeforeBattle ?? 0,
+      ),
+      ailmentsCount: new FormControl(pet?.ailmentsCount ?? 0),
       battlesFought: new FormControl(pet?.battlesFought ?? 0),
       timesHurt: new FormControl(pet?.timesHurt ?? 0),
     });

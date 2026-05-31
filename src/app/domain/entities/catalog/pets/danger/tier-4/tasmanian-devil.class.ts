@@ -11,8 +11,8 @@ export class TasmanianDevil extends Pet {
   name = 'Tasmanian Devil';
   tier = 4;
   pack: Pack = 'Danger';
-  attack = 1;
-  health = 5;
+  attack = 2;
+  health = 6;
 
   initAbilities(): void {
     this.addAbility(new TasmanianDevilAbility(this, this.logService));

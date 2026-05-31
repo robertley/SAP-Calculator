@@ -11,7 +11,7 @@ export class AmamiRabbit extends Pet {
   tier = 3;
   pack: Pack = 'Danger';
   attack = 1;
-  health = 3;
+  health = 4;
   initAbilities(): void {
     this.addAbility(new AmamiRabbitAbility(this, this.logService));
     super.initAbilities();

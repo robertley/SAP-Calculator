@@ -134,11 +134,48 @@ Popcorn
 White Okra
 
 --- Roloway Monkey
-Peacock
-Camel
-Porcupine
-Lizard
-Guineafowl
+Beluga Sturgeon
+Bigfoot
+Black Necked Stilt
+Dove
+Dung Beetle
+Flamingo
+Frost Wolf
+Gargoyle
+Hedgehog
+Mandrill
+Nightcrawler
+Olm
+Rat
+Sea Urchin
+Spider
+Squid
+Stork
+Takhi
+Thorny Dragon
+Anteater
+Baby Urchin
+Badger
+Bear
+Calygreyhound
+Dugong
+Flea
+Fur-Bearing Trout
+Hirola
+Hoopoe Bird
+Jewel Caterpillar
+Mole
+Osprey
+Pangolin
+Patagonian Mara
+Quetzalcoatlus
+Sheep
+Skeleton Dog
+Slime
+Surgeon Fish
+Tucuxi
+Tuna
+Weasel
 
 --- Golden Tamarin
 Crocodile

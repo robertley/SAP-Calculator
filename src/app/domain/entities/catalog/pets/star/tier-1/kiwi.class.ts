@@ -56,7 +56,7 @@ export class KiwiAbility extends Ability {
     const owner = this.owner;
 
     let excludePets = owner.parent.petArray.filter(
-      (pet) => pet.equipment?.name != 'Strawberry' || pet == owner,
+      (pet) => pet.equipment?.name != 'Strawberry',
     );
 
     // Get the backmost (last position) Strawberry pet

@@ -31,6 +31,7 @@ const EQUIPMENT_TIER_OVERRIDES = new Map<string, number>([
   ['Cod Roe', 2],
   ['Eucalyptus', 2],
   ['Faint Bread', 2],
+  ['Geechee Red Pea', 3],
   ['Fairy Dust', 2],
   ['Meat Bone', 2],
   ['Radish', 2],

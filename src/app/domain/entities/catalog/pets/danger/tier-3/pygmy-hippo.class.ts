@@ -64,7 +64,7 @@ export class PygmyHippoAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let damage = Math.floor(owner.health * 0.33); // 33% of current health
+    let damage = Math.ceil(owner.health * 0.33); // 33% of current health
     let targetsResp = owner.parent.opponent.getLowestHealthPets(
       this.level,
       undefined,

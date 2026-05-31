@@ -64,7 +64,7 @@ export class AkhlutAbility extends Ability {
       return;
     }
 
-    const buff = this.level * 3;
+    const buff = this.level * 4;
     target.increaseAttack(buff);
     target.increaseHealth(buff);
 

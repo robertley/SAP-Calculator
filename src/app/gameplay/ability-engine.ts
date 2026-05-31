@@ -26,6 +26,12 @@ export class AbilityEngine {
             pet.friendsDiedBeforeBattle,
           );
         }
+        if (pet?.friendsHurtBeforeBattle) {
+          this.abilityService.simulateFriendHurtCounters(
+            pet,
+            pet.friendsHurtBeforeBattle,
+          );
+        }
       }
     }
   }

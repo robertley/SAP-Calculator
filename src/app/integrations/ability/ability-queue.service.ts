@@ -199,6 +199,16 @@ export class AbilityQueueService {
     }
   }
 
+  simulateFriendHurtCounters(pet: Pet, count: number) {
+    if (!pet || count <= 0) {
+      return;
+    }
+    const triggers = this.getNumberedTriggersForPet(pet, 'FriendHurt');
+    for (let i = 0; i < count; i++) {
+      this.handleNumberedCounterTriggers(pet, undefined, undefined, triggers);
+    }
+  }
+
   // --- Counter Helpers ---
 
   handleCounterTriggers(

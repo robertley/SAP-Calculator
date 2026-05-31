@@ -7,11 +7,17 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 
 
 export class RuspolisTuraco extends Pet {
-  name = 'Ruspolis Turaco';
+  name = "Ruspoli's Turaco";
   tier = 4;
   pack: Pack = 'Custom';
-  attack = 4;
-  health = 3;
+  attack = 1;
+  health = 6;
+
+  override initAbilities(): void {
+    this.addAbility(new RuspolisTuracoAbility(this, this.logService));
+    super.initAbilities();
+  }
+
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,
@@ -36,42 +42,45 @@ export class RuspolisTuracoAbility extends Ability {
     super({
       name: "Ruspoli's Turaco Ability",
       owner: owner,
-      triggers: ['StartBattle'],
+      triggers: ['BeforeFriendAttacks'],
       abilityType: 'Pet',
       native: true,
+      maxUses: 3,
       abilitylevel: owner.level,
+      precondition: (context: AbilityContext) => {
+        const target = context.triggerPet;
+        return (
+          !!target &&
+          target.parent === this.owner.parent &&
+          target.alive &&
+          target.equipment?.name === 'Strawberry'
+        );
+      },
       abilityFunction: (context) => this.executeAbility(context),
     });
     this.logService = logService;
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { tiger, pteranodon } = context;
+    const { tiger, pteranodon, triggerPet } = context;
     const owner = this.owner;
-    const manaGain = [4, 8, 12][Math.min(this.level - 1, 2)];
+    const manaGain = 5 * this.level;
 
-    const transformed: string[] = [];
-    owner.parent.petArray.forEach((friend) => {
-      if (!friend || !friend.alive || !friend.equipment) {
-        return;
-      }
-
-      if (friend.equipment.name === 'Strawberry') {
-        friend.removePerk();
-        friend.increaseMana(manaGain);
-        transformed.push(friend.name);
-      }
-    });
-
-    if (transformed.length > 0) {
-      this.logService.createLog({
-        message: `${owner.name} replaced Strawberries on ${transformed.join(', ')} with +${manaGain} mana.`,
-        type: 'ability',
-        player: owner.parent,
-        tiger,
-        pteranodon,
-      });
+    if (!triggerPet || triggerPet.equipment?.name !== 'Strawberry') {
+      this.triggerTigerExecution(context);
+      return;
     }
+
+    triggerPet.removePerk();
+    triggerPet.increaseMana(manaGain);
+
+    this.logService.createLog({
+      message: `${owner.name} replaced ${triggerPet.name}'s Strawberry with +${manaGain} mana before attacking.`,
+      type: 'ability',
+      player: owner.parent,
+      tiger,
+      pteranodon,
+    });
 
     this.triggerTigerExecution(context);
   }

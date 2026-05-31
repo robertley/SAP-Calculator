@@ -361,6 +361,7 @@ export function loadTeamPreset(options: {
         triggersConsumed: petData.triggersConsumed ?? 0,
         foodsEaten: petData.foodsEaten ?? 0,
         timesGaveHealth: petData.timesGaveHealth ?? 0,
+        ailmentsCount: petData.ailmentsCount ?? 0,
         abominationSwallowedPet1: petData.abominationSwallowedPet1 ?? null,
         abominationSwallowedPet2: petData.abominationSwallowedPet2 ?? null,
         abominationSwallowedPet3: petData.abominationSwallowedPet3 ?? null,
@@ -392,6 +393,7 @@ export function loadTeamPreset(options: {
         abominationSwallowedPet3TimesHurt:
           petData.abominationSwallowedPet3TimesHurt ?? 0,
         friendsDiedBeforeBattle: petData.friendsDiedBeforeBattle ?? 0,
+        friendsHurtBeforeBattle: petData.friendsHurtBeforeBattle ?? 0,
         battlesFought: petData.battlesFought ?? 0,
         timesHurt: petData.timesHurt ?? 0,
       },
@@ -442,6 +444,7 @@ function sanitizePetFormValue(petValue: unknown): PetForm | null {
     triggersConsumed: (petRecord.triggersConsumed as number | null) ?? 0,
     foodsEaten: (petRecord.foodsEaten as number | null) ?? 0,
     timesGaveHealth: (petRecord.timesGaveHealth as number | null) ?? 0,
+    ailmentsCount: (petRecord.ailmentsCount as number | null) ?? 0,
     abominationSwallowedPet1:
       (petRecord.abominationSwallowedPet1 as string | null) ?? null,
     abominationSwallowedPet2:
@@ -480,6 +483,8 @@ function sanitizePetFormValue(petValue: unknown): PetForm | null {
       (petRecord.abominationSwallowedPet3TimesHurt as number | null) ?? 0,
     friendsDiedBeforeBattle:
       (petRecord.friendsDiedBeforeBattle as number | null) ?? 0,
+    friendsHurtBeforeBattle:
+      (petRecord.friendsHurtBeforeBattle as number | null) ?? 0,
     battlesFought: (petRecord.battlesFought as number | null) ?? 0,
     timesHurt: (petRecord.timesHurt as number | null) ?? 0,
     equipmentUses: (petRecord.equipmentUses as number | null) ?? null,
@@ -538,5 +543,3 @@ function resolvePresetToyLevel(candidate: unknown): number {
   }
   return Math.max(1, Math.min(3, Math.trunc(parsedLevel)));
 }
-
-

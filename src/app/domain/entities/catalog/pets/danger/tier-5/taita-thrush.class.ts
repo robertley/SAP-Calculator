@@ -60,7 +60,7 @@ export class TaitaThrushAbility extends Ability {
 
     let power = this.level; // 1/2/3 based on level
 
-    let friendsResp = owner.parent.getAll(false, owner, true); // excludeSelf = true
+    let friendsResp = owner.parent.getAll(false, owner, false);
 
     for (let friend of friendsResp.pets) {
       friend.increaseAttack(power);

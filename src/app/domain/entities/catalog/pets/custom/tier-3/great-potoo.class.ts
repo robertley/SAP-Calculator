@@ -45,7 +45,7 @@ export class GreatPotooAbility extends Ability {
       triggers: ['AnyoneHurt'],
       abilityType: 'Pet',
       native: true,
-      maxUses: 5,
+      maxUses: 4,
       abilitylevel: owner.level,
       abilityFunction: (context) => this.executeAbility(context),
     });
@@ -61,7 +61,7 @@ export class GreatPotooAbility extends Ability {
     const hasAnyoneAttacked = gameApi.FirstNonJumpAttackHappened === true;
 
     if (!hasAnyoneAttacked) {
-      const healthBuff = 2 * this.level;
+      const healthBuff = 3 * this.level;
       owner.increaseHealth(healthBuff);
 
       this.logService.createLog({

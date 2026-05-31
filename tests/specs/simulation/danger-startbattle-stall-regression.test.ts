@@ -2,6 +2,91 @@ import { describe, expect, it } from 'vitest';
 import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
 
 describe('danger start battle stall regression', () => {
+  it('fires Mink StartBattle ability and gives a useful previous-tier perk', () => {
+    const config: SimulationConfig = {
+      playerPack: 'Custom',
+      opponentPack: 'Custom',
+      turn: 3,
+      playerGoldSpent: 0,
+      opponentGoldSpent: 0,
+      tokenPets: true,
+      mana: true,
+      logsEnabled: true,
+      simulationCount: 1,
+      captureRandomDecisions: true,
+      playerPets: [{ name: 'Mink', attack: 3, health: 3, exp: 0 }],
+      opponentPets: [{ name: 'Pig', attack: 1, health: 20, exp: 0 }],
+    };
+
+    const result = runSimulation(config);
+    const logs = result.battles?.[0]?.logs ?? [];
+    const minkDecision = (result.randomDecisions ?? []).find(
+      (entry) => entry.key === 'pet.mink-perk',
+    );
+    const minkLog = logs.find((log) =>
+      String(log?.message ?? '').includes('Mink gained'),
+    );
+
+    expect(minkDecision).toBeDefined();
+    expect(minkLog).toBeDefined();
+    expect(String(minkLog?.message ?? '')).toContain('before battle');
+  });
+
+  it('fires Mink StartBattle ability after Iriomote Cat transforms into Mink', () => {
+    const baseConfig: SimulationConfig = {
+      playerPack: 'Danger',
+      opponentPack: 'Danger',
+      turn: 5,
+      playerGoldSpent: 0,
+      opponentGoldSpent: 0,
+      tokenPets: true,
+      mana: true,
+      logsEnabled: true,
+      simulationCount: 1,
+      captureRandomDecisions: true,
+      playerPets: [{ name: 'Iriomote Cat', attack: 10, health: 10, exp: 2 }],
+      opponentPets: [{ name: 'Pig', attack: 1, health: 20, exp: 0 }],
+    };
+
+    const warmup = runSimulation(baseConfig);
+    const iriomoteDecision = (warmup.randomDecisions ?? []).find(
+      (entry) => entry.key === 'pet.iriomote-cat-transform',
+    );
+    expect(iriomoteDecision).toBeDefined();
+
+    const minkOption = iriomoteDecision?.options.find(
+      (option) => option.id === 'Mink',
+    );
+    expect(minkOption).toBeDefined();
+
+    const forced = runSimulation({
+      ...baseConfig,
+      strictRandomOverrideValidation: true,
+      randomDecisionOverrides: [
+        {
+          index: iriomoteDecision!.index,
+          key: iriomoteDecision!.key,
+          optionId: minkOption!.id,
+        },
+      ],
+    });
+
+    const logs = forced.battles?.[0]?.logs ?? [];
+    const transformLog = logs.find((log) =>
+      String(log?.message ?? '').includes(
+        'Iriomote Cat transformed into a Mink',
+      ),
+    );
+    const minkPerkLog = logs.find((log) =>
+      String(log?.message ?? '').includes('Mink gained'),
+    );
+
+    expect(forced.randomOverrideError ?? null).toBeNull();
+    expect(transformLog).toBeDefined();
+    expect(minkPerkLog).toBeDefined();
+    expect(String(minkPerkLog?.message ?? '')).toContain('before battle');
+  });
+
   it('fires StartBattle abilities for Iriomote transformed pets', () => {
     const baseConfig: SimulationConfig = {
       playerPack: 'Danger',

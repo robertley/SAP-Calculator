@@ -74,8 +74,8 @@ export class PandaAbility extends Ability {
         pteranodon: pteranodon,
         randomEvent: targetsAheadResp.random,
       });
+      owner.health = 0;
     }
-    owner.health = 0;
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);

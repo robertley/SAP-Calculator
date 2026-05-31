@@ -379,7 +379,7 @@ describe('Pet Ability Patch Regressions', () => {
                     name: 'Ant',
                     attack: 1,
                     health: 5,
-                    exp: 0,
+                    exp: 5,
                     equipment: { name: 'Cocoa Bean' },
                     belugaSwallowedPet: null,
                     mana: 0,
@@ -445,6 +445,14 @@ describe('Pet Ability Patch Regressions', () => {
         );
 
         expect(cocoaBeanLog).toBeDefined();
+
+        const levelPreservedBoardLog = logs.find((log) =>
+            log.type === 'board' &&
+            typeof log.message === 'string' &&
+            log.message.includes('Pig.png') &&
+            log.message.includes('(9/6/5xp)')
+        );
+        expect(levelPreservedBoardLog).toBeDefined();
     });
 
     it('Cocoa Bean transform should no longer use the enemy-copy pool', () => {

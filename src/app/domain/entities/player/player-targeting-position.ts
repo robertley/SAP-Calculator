@@ -247,9 +247,10 @@ export const getPetsWithinXSpaces = (
     }
   }
 
-  for (const pet of player.opponent.petArray) {
+  const livingOpponents = player.opponent.petArray.filter((pet) => pet.alive);
+  for (const [targetPosition, pet] of livingOpponents.entries()) {
     if (pet.alive) {
-      const distance = callingPosition + pet.position + 1;
+      const distance = callingPosition + targetPosition + 1;
       if (distance <= range) {
         targets.push(pet);
       }

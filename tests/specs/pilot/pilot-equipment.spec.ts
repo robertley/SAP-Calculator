@@ -69,6 +69,11 @@ describe('Pilot Equipment Specs (Generated)', () => {
           expect(config).not.toBeNull();
           const logs = runBattleLogs(config!);
           expect(hasNamedLog(logs, item.name, ['ability', 'equipment'])).toBe(true);
+          if (item.name === 'Bok Choy') {
+            const messages = logs.map((log) => String(log.message ?? ''));
+            expect(messages.some((message) => message.includes('gained 3 health (Bok Choy)'))).toBe(true);
+            expect(messages.some((message) => message.includes('gained 4 health (Bok Choy)'))).toBe(false);
+          }
         });
       } else {
         it.skip(

@@ -10,8 +10,8 @@ export class BlackRhino extends Pet {
   name = 'Black Rhino';
   tier = 6;
   pack: Pack = 'Danger';
-  attack = 5;
-  health = 9;
+  attack = 7;
+  health = 7;
 
   initAbilities(): void {
     this.addAbility(new BlackRhinoAbility(this, this.logService));
@@ -41,7 +41,7 @@ export class BlackRhinoAbility extends Ability {
     super({
       name: 'BlackRhinoAbility',
       owner: owner,
-      triggers: ['EnemyAttacked7'],
+      triggers: ['EnemyAttacked8'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,

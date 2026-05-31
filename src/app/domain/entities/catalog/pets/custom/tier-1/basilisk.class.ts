@@ -79,6 +79,7 @@ export class BasiliskAbility extends Ability {
         transformedAttack,
         friendAhead.mana,
         friendAhead.exp,
+        friendAhead.equipment,
       );
 
       owner.parent.transformPet(friendAhead, rock);

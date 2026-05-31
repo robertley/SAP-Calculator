@@ -38,6 +38,27 @@ describe('Fly + Mushroom Ordering', () => {
     expect(boardAfterZombieSpawn).toContain('alt="Zombie Fly"');
     expect(boardAfterZombieSpawn).toContain('O2 <img src="assets/art/Public/Public/Pets/Snake.png"');
   });
+
+  it('spawns level 2 Zombie Fly as 8/8', () => {
+    const config = createBaseConfig('Turtle');
+    config.playerPets[0] = createPet('Hippo', { attack: 10, health: 50 });
+    config.opponentPets[0] = createPet('Ant', { attack: 1, health: 1 });
+    config.opponentPets[1] = createPet('Fly', { attack: 4, health: 50, exp: 2 });
+
+    const logs = runBattleLogs(config);
+    const messages = logs.map((log) => String(log?.message ?? ''));
+
+    const zombieSpawn = messages.findIndex((message) =>
+      message.includes('Fly spawned Zombie Fly Level 2'),
+    );
+    expect(zombieSpawn).toBeGreaterThan(-1);
+
+    const boardAfterZombieSpawn = messages.find(
+      (message, idx) => idx > zombieSpawn && message.includes(' | O1 '),
+    );
+    expect(boardAfterZombieSpawn).toBeTruthy();
+    expect(boardAfterZombieSpawn).toContain('alt="Zombie Fly">(8/8/2xp)');
+  });
 });
 
 

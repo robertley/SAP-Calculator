@@ -11,7 +11,7 @@ export class ProboscisMonkey extends Pet {
   tier = 2;
   pack: Pack = 'Danger';
   attack = 4;
-  health = 4;
+  health = 3;
 
   constructor(
     protected logService: LogService,

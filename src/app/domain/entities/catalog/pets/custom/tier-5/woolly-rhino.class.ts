@@ -63,7 +63,7 @@ export class WoollyRhinoAbility extends Ability {
       }
     }
 
-    const ailmentCount = ailments.size;
+    const ailmentCount = Math.max(ailments.size, owner.ailmentsCount ?? 0);
     if (ailmentCount <= 0) {
       this.triggerTigerExecution(context);
       return;

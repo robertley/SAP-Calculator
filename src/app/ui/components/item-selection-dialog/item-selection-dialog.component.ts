@@ -190,14 +190,7 @@ export class ItemSelectionDialogComponent
       });
     }
 
-    if (this.showAllPets) {
-      this.selectedPack = 'All';
-    } else if (this.currentPack && this.currentPack !== 'custom') {
-      this.selectedPack = this.currentPack;
-    }
-    if (!this.availablePacks.includes(this.selectedPack)) {
-      this.selectedPack = 'All';
-    }
+    this.resetSelectionFilters();
     this.loadItems();
   }
 
@@ -339,6 +332,7 @@ export class ItemSelectionDialogComponent
 
   setSortMode(mode: ItemSelectorSortMode) {
     this.selectedSortMode = mode;
+    this.resetSelectionFilters();
     this.filterItems();
   }
 
@@ -517,6 +511,12 @@ export class ItemSelectionDialogComponent
     if (!this.availableItemCategories.includes(this.selectedItemCategory)) {
       this.selectedItemCategory = 'All';
     }
+  }
+
+  private resetSelectionFilters(): void {
+    this.selectedPack = 'All';
+    this.selectedItemCategory = 'All';
+    this.selectedTriggerCategory = 'All';
   }
 
   private updateAvailableTriggerCategories(): void {

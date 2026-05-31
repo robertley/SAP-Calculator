@@ -110,7 +110,7 @@ export class CocoaBeanAbility extends Ability {
           attack: currentAttack,
           health: currentHealth,
           mana: owner.mana,
-          exp: 0,
+          exp: owner.exp,
           equipment: null,
         },
         owner.parent,

@@ -7,7 +7,7 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 export class CashewNut extends Equipment {
   name = 'Cashew Nut';
   tier = 1;
-  equipmentClass: EquipmentClass = 'beforeStartOfBattle';
+  equipmentClass: EquipmentClass = 'beforeAttack';
   callback = (pet: Pet) => {
     const equipment = pet.getEquippedEquipmentInstance(this);
     // Add Cashew Nut ability using dedicated ability class
@@ -27,9 +27,10 @@ export class CashewNutAbility extends Ability {
     super({
       name: 'CashewNutAbility',
       owner: owner,
-      triggers: ['BeforeStartBattle'],
+      triggers: ['BeforeThisAttacks'],
       abilityType: 'Equipment',
       native: true,
+      maxUses: 1,
       abilitylevel: 1,
       abilityFunction: (context) => {
         this.executeAbility(context);
@@ -40,20 +41,28 @@ export class CashewNutAbility extends Ability {
 
   private executeAbility(context: AbilityContext): void {
     const owner = this.owner;
+    const targetResp = owner.parent.opponent.getFurthestUpPets(
+      2,
+      undefined,
+      owner,
+    );
+    const target = targetResp.pets[1];
 
-    for (let i = 0; i < this.equipment.multiplier; i++) {
-      let targetResp = owner.parent.nearestPetsAhead(2, owner, null, true);
-      let targets = targetResp.pets.filter((pet) => pet?.alive);
-      if (targets.length < 2) {
-        return;
-      }
-      let target = targets[1];
-      if (target.parent == owner.parent) {
-        owner.snipePet(target, 1, targetResp.random, null, null, true);
-      } else {
-        owner.snipePet(target, 2, targetResp.random, null, null, true);
-      }
+    if (target?.alive) {
+      owner.snipePet(
+        target,
+        2 * this.equipment.multiplier,
+        targetResp.random,
+        null,
+        null,
+        true,
+        false,
+        'sniped',
+        2,
+      );
     }
+
+    owner.removePerk();
   }
 }
 

@@ -1563,6 +1563,12 @@ export class ReplayCalcParser {
       if (pet.foodsEaten) {
         newPet.foodsEaten = pet.foodsEaten;
       }
+      if (pet.ailmentsCount) {
+        newPet.ailmentsCount = pet.ailmentsCount;
+      }
+      if (pet.friendsHurtBeforeBattle) {
+        newPet.friendsHurtBeforeBattle = pet.friendsHurtBeforeBattle;
+      }
       if (pet.belugaSwallowedPet != null) {
         newPet.belugaSwallowedPet = pet.belugaSwallowedPet;
       }

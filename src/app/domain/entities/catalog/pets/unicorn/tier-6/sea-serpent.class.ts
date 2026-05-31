@@ -56,15 +56,17 @@ export class SeaSerpentAbility extends Ability {
     const owner = this.owner;
 
     const contextState = context as AbilityContext & {
-      seaSerpentMana?: number;
+      seaSerpentManaByOwner?: Map<Pet, number>;
     };
-    const manaSpent = contextState.seaSerpentMana ?? owner.mana;
+    contextState.seaSerpentManaByOwner ??= new Map<Pet, number>();
+    const manaSpent =
+      contextState.seaSerpentManaByOwner.get(owner) ?? owner.mana;
     if (manaSpent == 0) {
       return;
     }
 
-    if (contextState.seaSerpentMana == null) {
-      contextState.seaSerpentMana = manaSpent;
+    if (!contextState.seaSerpentManaByOwner.has(owner)) {
+      contextState.seaSerpentManaByOwner.set(owner, manaSpent);
       owner.mana = 0;
     }
 

@@ -60,7 +60,7 @@ describe('Giant Otter Stat Cap', () => {
         const result = runSimulation(config);
         const logs = result.battles?.[0]?.logs ?? [];
 
-        const removalLog = logs.find((log: any) =>
+        const removalLog = logs.find((log) =>
             typeof log?.message === 'string' &&
             log.message.includes('(Giant Otter Buffs removed)')
         );
@@ -83,12 +83,32 @@ describe('Giant Otter Stat Cap', () => {
         const result = runSimulation(config);
         const logs = result.battles?.[0]?.logs ?? [];
 
-        const removalLog = logs.find((log: any) =>
+        const removalLog = logs.find((log) =>
             typeof log?.message === 'string' &&
             log.message.includes('(Giant Otter Buffs removed)')
         );
 
         expect(removalLog).toBeDefined();
         expect(removalLog.message).toBe('Ant lost 2 attack and 5 health (Giant Otter Buffs removed)');
+    });
+
+    it('only removes temporary health that remains after damage', () => {
+        const config = createBaseConfig();
+        config.logsEnabled = true;
+
+        config.playerPets[0] = createPet('Giant Otter', 4, 50);
+        config.playerPets[1] = createPet('Ant', 10, 10);
+        config.opponentPets[0] = createPet('Dolphin', 4, 50);
+
+        const result = runSimulation(config);
+        const logs = result.battles?.[0]?.logs ?? [];
+
+        const removalLog = logs.find((log) =>
+            typeof log?.message === 'string' &&
+            log.message.includes('(Giant Otter Buffs removed)')
+        );
+
+        expect(removalLog).toBeDefined();
+        expect(removalLog.message).toBe('Ant lost 2 attack and 1 health (Giant Otter Buffs removed)');
     });
 });

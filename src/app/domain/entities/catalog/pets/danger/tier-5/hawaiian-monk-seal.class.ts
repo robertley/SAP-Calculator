@@ -40,7 +40,7 @@ export class HawaiianMonkSealAbility extends Ability {
     super({
       name: 'HawaiianMonkSealAbility',
       owner: owner,
-      triggers: ['FriendAttacked'],
+      triggers: ['StartTurn'],
       abilityType: 'Pet',
       native: true,
       abilitylevel: owner.level,
@@ -55,28 +55,18 @@ export class HawaiianMonkSealAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
-    let attackingFriend = targetResp.pet;
+    const healthBonus = 2 * owner.level;
+    const friendsResp = owner.parent.getAll(false, owner, true);
 
-    if (!attackingFriend || owner.targettedFriends.has(attackingFriend)) {
-      return;
-    }
-
-    // If still standing, give it +2 health per level. Works on three friends per turn.
-    if (owner.targettedFriends.size < 3) {
-      if (attackingFriend.alive) {
-        let healthBonus = 2 * owner.level;
-        attackingFriend.increaseHealth(healthBonus);
-        owner.targettedFriends.add(attackingFriend);
-
-        this.logService.createLog({
-          message: `${owner.name} gave ${attackingFriend.name} ${healthBonus} health`,
-          type: 'ability',
-          player: owner.parent,
-          tiger: tiger,
-          randomEvent: targetResp.random,
-        });
-      }
+    for (const friend of friendsResp.pets) {
+      friend.increaseHealth(healthBonus);
+      this.logService.createLog({
+        message: `${owner.name} gave ${friend.name} ${healthBonus} health`,
+        type: 'ability',
+        player: owner.parent,
+        tiger: tiger,
+        randomEvent: friendsResp.random,
+      });
     }
 
     // Tiger system: trigger Tiger execution at the end
