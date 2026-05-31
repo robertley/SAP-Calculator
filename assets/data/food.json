@@ -152,6 +152,22 @@
     "CustomArchetypes": []
   },
   {
+    "Ability": "Make one pet Cowardly without triggering abilities.",
+    "Id": "253",
+    "Name": "Canned Cowardly",
+    "NameId": "CannedCowardly",
+    "Tier": 3,
+    "Packs": [
+      "Danger"
+    ],
+    "PacksRequired": [
+      "Danger"
+    ],
+    "Rollable": true,
+    "PerkNote": "Before attack: Move to the back, once.",
+    "CustomArchetypes": []
+  },
+  {
     "Ability": "Make one pet Toasty without triggering abilities.",
     "Id": "223",
     "Name": "Canned Toasty",
@@ -175,7 +191,7 @@
       "Pack3"
     ],
     "Rollable": true,
-    "PerkNote": "Before battle: Deal 1 damage to the second nearest pet ahead. Double against enemies.",
+    "PerkNote": "Before attack: Deal 2 damage to the second enemy, once.",
     "CustomArchetypes": []
   },
   {
@@ -996,7 +1012,7 @@
     "CustomArchetypes": []
   },
   {
-    "Ability": "Give one pet +3 attack.",
+    "Ability": "Give one pet +3 health. Every 2nd carrot gives attack.",
     "Id": "201",
     "Name": "Carrot Parisier",
     "NameId": "CarrotParisier",
@@ -1078,7 +1094,7 @@
     "CustomArchetypes": []
   },
   {
-    "Ability": "Give one pet +3 health.",
+    "Ability": "Give one pet the Geechee Red Pea perk.",
     "Id": "211",
     "Name": "Geechee Red Pea",
     "NameId": "GeecheeRedPea",
@@ -1090,6 +1106,7 @@
       "Danger"
     ],
     "Rollable": true,
+    "PerkNote": "Before attack: Remove 5 attack from target, once.",
     "CustomArchetypes": []
   },
   {
@@ -1941,7 +1958,7 @@
       "Danger"
     ],
     "Rollable": true,
-    "PerkNote": "Before attack: Transform into a random Wolf, Slug, Sheep, Rooster, Nessie, Deer, Tardigrade, Hirola, Patagonian Mara, Osprey, or Anteater.",
+    "PerkNote": "Before attack: Transform into a random summon pet.",
     "CustomArchetypes": [],
     "Random": true
   },

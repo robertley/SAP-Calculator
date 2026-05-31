@@ -961,7 +961,7 @@
   },
   {
     "Attack": 3,
-    "Health": 2,
+    "Health": 1,
     "Abilities": [
       {
         "Level": 1,
@@ -1966,7 +1966,7 @@
   },
   {
     "Attack": 3,
-    "Health": 3,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
@@ -3286,19 +3286,19 @@
   },
   {
     "Attack": 3,
-    "Health": 2,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Friend jumped or transformed: Gain +3 health until next turn. Works 2 times per turn."
+        "About": "Friend jumped or transformed: Gain +2 health until next turn. Works 2 times per turn."
       },
       {
         "Level": 2,
-        "About": "Friend jumped or transformed: Gain +6 health until next turn. Works 2 times per turn."
+        "About": "Friend jumped or transformed: Gain +4 health until next turn. Works 2 times per turn."
       },
       {
         "Level": 3,
-        "About": "Friend jumped or transformed: Gain +9 health until next turn. Works 2 times per turn."
+        "About": "Friend jumped or transformed: Gain +6 health until next turn. Works 2 times per turn."
       }
     ],
     "Id": "394",
@@ -5009,7 +5009,7 @@
   },
   {
     "Attack": 4,
-    "Health": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -6177,7 +6177,7 @@
   },
   {
     "Attack": 1,
-    "Health": 3,
+    "Health": 4,
     "Abilities": [
       {
         "Level": 1,
@@ -7473,15 +7473,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Anyone hurt: If nobody has attacked, gain +2 health until next turn. Works 5 times per turn."
+        "About": "Anyone hurt: If nobody has attacked, gain +3 health until next turn. Works 4 times per turn."
       },
       {
         "Level": 2,
-        "About": "Anyone hurt: If nobody has attacked, gain +4 health until next turn. Works 5 times per turn."
+        "About": "Anyone hurt: If nobody has attacked, gain +6 health until next turn. Works 4 times per turn."
       },
       {
         "Level": 3,
-        "About": "Anyone hurt: If nobody has attacked, gain +6 health until next turn. Works 5 times per turn."
+        "About": "Anyone hurt: If nobody has attacked, gain +9 health until next turn. Works 4 times per turn."
       }
     ],
     "Id": "697",
@@ -8607,15 +8607,15 @@
     "Abilities": [
       {
         "Level": 1,
-          "About": "Start of battle: Transform the two friends ahead into a random level 1 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
+          "About": "Start of battle: Transform the two friends ahead into a random level 1 Faint pet from tiers 2 and 3."
       },
       {
         "Level": 2,
-          "About": "Start of battle: Transform the two friends ahead into a random level 2 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
+          "About": "Start of battle: Transform the two friends ahead into a random level 2 Faint pet from tiers 2 and 3."
       },
       {
         "Level": 3,
-          "About": "Start of battle: Transform the two friends ahead into a random level 3 pet from this pool: Sea Urchin, Bigfoot, Frost Wolf, Thorny Dragon, Hoopoe Bird, Flea, Weasel, Skeleton Dog, Flamingo, Tuna."
+          "About": "Start of battle: Transform the two friends ahead into a random level 3 Faint pet from tiers 2 and 3."
       }
     ],
     "Id": "429",
@@ -8868,7 +8868,7 @@
     ]
   },
   {
-    "Attack": 3,
+    "Attack": 2,
     "Health": 2,
     "Abilities": [
       {
@@ -8967,20 +8967,20 @@
     ]
   },
   {
-    "Attack": 1,
-    "Health": 2,
+    "Attack": 2,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Friend ahead hurt: Gain +1 attack and +2 health until next turn."
+        "About": "Adjacent friend attacked: Gain +1 attack and +1 health. Triple on every third trigger."
       },
       {
         "Level": 2,
-        "About": "Friend ahead hurt: Gain +2 attack and +4 health until next turn."
+        "About": "Adjacent friend attacked: Gain +2 attack and +2 health. Triple on every third trigger."
       },
       {
         "Level": 3,
-        "About": "Friend ahead hurt: Gain +3 attack and +6 health until next turn."
+        "About": "Adjacent friend attacked: Gain +3 attack and +3 health. Triple on every third trigger."
       }
     ],
     "Id": "719",
@@ -9497,7 +9497,7 @@
   },
   {
     "Attack": 3,
-    "Health": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
@@ -10635,15 +10635,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Before battle: Transform into ANY useful level 1 <b>Start of Battle</b> pet from tier 5."
+        "About": "Before battle: Transform into a level 1 <b>Start of Battle</b> pet from tier 4 and 5."
       },
       {
         "Level": 2,
-        "About": "Before battle: Transform into ANY useful level 2 <b>Start of Battle</b> pet from tier 5."
+        "About": "Before battle: Transform into a level 2 <b>Start of Battle</b> pet from tier 4 and 5."
       },
       {
         "Level": 3,
-        "About": "Before battle: Transform into ANY useful level 3 <b>Start of Battle</b> pet from tier 5."
+        "About": "Before battle: Transform into a level 3 <b>Start of Battle</b> pet from tier 4 and 5."
       }
     ],
     "Id": "720",
@@ -10832,15 +10832,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "After first attack: Make the highest attack enemy Spooked and push it to the back."
+        "About": "After first attack: Make the highest attack enemy Cowardly."
       },
       {
         "Level": 2,
-        "About": "After first attack: Make the two highest attack enemies Spooked and push them to the back."
+        "About": "After first attack: Make the highest attack enemy Cowardly. Triggers 2 times."
       },
       {
         "Level": 3,
-        "About": "After first attack: Make the three highest attack enemies Spooked and push them to the back."
+        "About": "After first attack: Make the highest attack enemy Cowardly. Triggers 3 times."
       }
     ],
     "Id": "419",
@@ -10934,15 +10934,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Give adjacent friends 1 experience and remove this."
+        "About": "Start of battle: Remove this and give adjacent friends 1 experience and +4 health."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Give adjacent friends 2 experience and remove this."
+        "About": "Start of battle: Remove this and give adjacent friends 2 experience and +8 health."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Give adjacent friends 3 experience and remove this."
+        "About": "Start of battle: Remove this and give adjacent friends 3 experience and +12 health."
       }
     ],
     "Id": "723",
@@ -11770,20 +11770,20 @@
     ]
   },
   {
-    "Attack": 4,
-    "Health": 3,
+    "Attack": 1,
+    "Health": 6,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of battle: Replace friendly strawberries with +4 mana."
+        "About": "Before friend attacks: Replace its Strawberry with +5 mana. Works 3 times per turn."
       },
       {
         "Level": 2,
-        "About": "Start of battle: Replace friendly strawberries with +8 mana."
+        "About": "Before friend attacks: Replace its Strawberry with +10 mana. Works 3 times per turn."
       },
       {
         "Level": 3,
-        "About": "Start of battle: Replace friendly strawberries with +12 mana."
+        "About": "Before friend attacks: Replace its Strawberry with +15 mana. Works 3 times per turn."
       }
     ],
     "Id": "802",
@@ -12365,8 +12365,8 @@
     ]
   },
   {
-    "Attack": 1,
-    "Health": 5,
+    "Attack": 2,
+    "Health": 6,
     "Abilities": [
       {
         "Level": 1,
@@ -12435,19 +12435,19 @@
   },
   {
     "Attack": 3,
-    "Health": 4,
+    "Health": 3,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Friend sold: If it was sold for at least 3 gold, gain +1 attack and +2 health."
+        "About": "Friend sold: Gain its sell value as health. Works 2 times per turn."
       },
       {
         "Level": 2,
-        "About": "Friend sold: If it was sold for at least 3 gold, gain +2 attack and +4 health."
+        "About": "Friend sold: Gain twice its sell value as health. Works 2 times per turn."
       },
       {
         "Level": 3,
-        "About": "Friend sold: If it was sold for at least 3 gold, gain +3 attack and +6 health."
+        "About": "Friend sold: Gain three times its sell value as health. Works 2 times per turn."
       }
     ],
     "Id": "706",
@@ -12934,8 +12934,8 @@
     ]
   },
   {
-    "Attack": 4,
-    "Health": 7,
+    "Attack": 6,
+    "Health": 5,
     "Abilities": [
       {
         "Level": 1,
@@ -13662,7 +13662,7 @@
     ]
   },
   {
-    "Attack": 4,
+    "Attack": 7,
     "Health": 5,
     "Abilities": [
       {
@@ -13770,15 +13770,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Start of turn: Give three random friends that fainted last battle +2 health."
+        "About": "Start of turn: Give friends that fainted last battle +2 health."
       },
       {
         "Level": 2,
-        "About": "Start of turn: Give three random friends that fainted last battle +4 health."
+        "About": "Start of turn: Give friends that fainted last battle +4 health."
       },
       {
         "Level": 3,
-        "About": "Start of turn: Give three random friends that fainted last battle +6 health."
+        "About": "Start of turn: Give friends that fainted last battle +6 health."
       }
     ],
     "Id": "414",
@@ -14107,15 +14107,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Convert trumpets into double mana and spread it evenly to friends."
+        "About": "Faint: Convert up to 24 trumpets into double mana and spread it evenly to friends."
       },
       {
         "Level": 2,
-        "About": "Faint: Convert trumpets into triple mana and spread it evenly to friends."
+        "About": "Faint: Convert up to 24 trumpets into triple mana and spread it evenly to friends."
       },
       {
         "Level": 3,
-        "About": "Faint: Convert trumpets into quadruple mana and spread it evenly to friends."
+        "About": "Faint: Convert up to 24 trumpets into quadruple mana and spread it evenly to friends."
       }
     ],
     "Id": "556",
@@ -15399,15 +15399,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Adjacent friend attacked: Give friends +1 attack and +1 health. Works 3 times per turn."
+        "About": "Adjacent friend attacked: Give friendly pets +1 attack and +1 health. Works 3 times per turn."
       },
       {
         "Level": 2,
-        "About": "Adjacent friend attacked: Give friends +2 attack and +2 health. Works 3 times per turn."
+        "About": "Adjacent friend attacked: Give friendly pets +2 attack and +2 health. Works 3 times per turn."
       },
       {
         "Level": 3,
-        "About": "Adjacent friend attacked: Give friends +3 attack and +3 health. Works 3 times per turn."
+        "About": "Adjacent friend attacked: Give friendly pets +3 attack and +3 health. Works 3 times per turn."
       }
     ],
     "Id": "436",
@@ -15834,15 +15834,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Spend 2 mana to give the nearest friend behind permanent +3 attack and +3 health."
+        "About": "Faint: Spend 2 mana to give the nearest friend behind permanent +4 attack and +4 health."
       },
       {
         "Level": 2,
-        "About": "Faint: Spend 2 mana to give the nearest friend behind permanent +6 attack and +6 health."
+        "About": "Faint: Spend 2 mana to give the nearest friend behind permanent +8 attack and +8 health."
       },
       {
         "Level": 3,
-        "About": "Faint: Spend 2 mana to give the nearest friend behind permanent +9 attack and +9 health."
+        "About": "Faint: Spend 2 mana to give the nearest friend behind permanent +12 attack and +12 health."
       }
     ],
     "Id": "782",
@@ -16105,15 +16105,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "Faint: Summon ANY one useful <b>Start of Battle</b> pet from tier 4 and activate its ability."
+        "About": "Faint: Summon one <b>Start of Battle</b> pet from tier 4 and activate its ability."
       },
       {
         "Level": 2,
-        "About": "Faint: Summon ANY two useful <b>Start of Battle</b> pets from tier 4 and activate their abilities."
+        "About": "Faint: Summon two <b>Start of Battle</b> pets from tier 4 and activate their abilities."
       },
       {
         "Level": 3,
-        "About": "Faint: Summon ANY three useful <b>Start of Battle</b> pets from tier 4 and activate their abilities."
+        "About": "Faint: Summon three <b>Start of Battle</b> pets from tier 4 and activate their abilities."
       }
     ],
     "Id": "397",
@@ -16237,20 +16237,20 @@
     "Random": true
   },
   {
-    "Attack": 5,
-    "Health": 9,
+    "Attack": 7,
+    "Health": 7,
     "Abilities": [
       {
         "Level": 1,
-        "About": "Seven enemy attacks: Deal 30 damage to the most healthy enemy."
+        "About": "Eight enemy attacks: Deal 30 damage to the most healthy enemy."
       },
       {
         "Level": 2,
-        "About": "Seven enemy attacks: Deal 30 damage to the two most healthy enemies."
+        "About": "Eight enemy attacks: Deal 30 damage to the two most healthy enemies."
       },
       {
         "Level": 3,
-        "About": "Seven enemy attacks: Deal 30 damage to the three most healthy enemies."
+        "About": "Eight enemy attacks: Deal 30 damage to the three most healthy enemies."
       }
     ],
     "Id": "398",
@@ -17347,8 +17347,8 @@
     "CustomArchetypes": []
   },
   {
-    "Attack": 4,
-    "Health": 5,
+    "Attack": 7,
+    "Health": 7,
     "Abilities": [
       {
         "Level": 1,

@@ -83,7 +83,7 @@
     "NameId": "Carrot"
   },
   {
-    "Ability": "Before battle: Deal 1 damage to the second nearest pet ahead. Double against enemies.",
+    "Ability": "Before attack: Deal 2 damage to the second enemy, once.",
     "Positive": true,
     "Id": "115",
     "Name": "Cashew Nut",
@@ -139,7 +139,7 @@
     "NameId": "Bread"
   },
   {
-    "Ability": "Before attack: Transform into a random Wolf, Slug, Sheep, Rooster, Nessie, Deer, Tardigrade, Hirola, Patagonian Mara, Osprey, or Anteater.",
+    "Ability": "Before attack: Transform into a random summon pet.",
     "Positive": true,
     "Id": "94",
     "Name": "Cocoa Bean",
@@ -170,6 +170,12 @@
     "Id": "118",
     "Name": "Confused",
     "NameId": "Confused"
+  },
+  {
+    "Ability": "Before attack: Move to the back, once.",
+    "Id": "125",
+    "Name": "Cowardly",
+    "NameId": "Cowardly"
   },
   {
     "Ability": "Anyone attacks: Take 6 damage, once.",
