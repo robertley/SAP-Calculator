@@ -135,7 +135,7 @@ export function calculateDamage(
     manticoreMult,
   );
 
-  if (self.equipment?.name === 'Inked' && damage > 0) {
+  if (snipe && self.equipment?.name === 'Inked' && damage > 0) {
     damage = Math.max(0, damage - 3);
   }
   if (defenseEquipment instanceof Pepper) {

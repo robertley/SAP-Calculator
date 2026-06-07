@@ -52,39 +52,26 @@ export class RocAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { tiger } = context;
     const owner = this.owner;
 
     const petsAheadResp = owner.parent.nearestPetsAhead(5, owner);
-    let petsAhead = petsAheadResp.pets;
+    const petsAhead = petsAheadResp.pets;
     if (petsAhead.length == 0) {
       return;
     }
 
-    let excludePets = owner.parent.petArray.filter(
-      (pet) => pet == owner || !petsAhead.includes(pet),
-    );
-    //TO DO: Make it spread evenly
     for (let i = 0; i < this.level * 3; i++) {
-      let targetResp = owner.parent.getRandomPet(
-        excludePets,
-        true,
-        false,
-        false,
-        owner,
-      );
-      if (targetResp.pet == null) {
-        break;
-      }
+      const target = petsAhead[i % petsAhead.length];
       this.logService.createLog({
-        message: `${owner.name} gave ${targetResp.pet.name} 2 mana.`,
+        message: `${owner.name} gave ${target.name} 2 mana.`,
         type: 'ability',
         player: owner.parent,
         tiger: tiger,
-        randomEvent: targetResp.random,
+        randomEvent: petsAheadResp.random,
       });
 
-      targetResp.pet.increaseMana(2);
+      target.increaseMana(2);
     }
 
     // Tiger system: trigger Tiger execution at the end

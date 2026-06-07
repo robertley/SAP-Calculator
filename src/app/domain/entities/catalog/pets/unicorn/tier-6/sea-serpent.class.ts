@@ -80,35 +80,17 @@ export class SeaSerpentAbility extends Ability {
       pteranodon: pteranodon,
     });
 
-    // First, snipe the most healthy enemy
-    let highestHealthResult = owner.parent.opponent.getHighestHealthPet(
+    const targetsResp = owner.parent.opponent.getHighestHealthPets(
+      this.level + 1,
       undefined,
       owner,
     );
-    if (highestHealthResult.pet != null) {
-      owner.snipePet(
-        highestHealthResult.pet,
-        power,
-        highestHealthResult.random,
-        tiger,
-        pteranodon,
-      );
-    }
-
-    // Then snipe level number of random enemies (excluding the first target)
-    let randomTargetsResp = owner.parent.getRandomEnemyPetsWithSillyFallback(
-      this.level,
-      [highestHealthResult.pet],
-      null,
-      true,
-      owner,
-    );
-    for (let target of randomTargetsResp.pets) {
+    for (let target of targetsResp.pets) {
       if (target != null) {
         owner.snipePet(
           target,
           power,
-          randomTargetsResp.random,
+          targetsResp.random,
           tiger,
           pteranodon,
         );
