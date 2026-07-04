@@ -47,6 +47,38 @@ describe('Mandrake targeting', () => {
       ),
     ).toBe(false);
   });
+
+  it('prioritizes Chameleon after it copies Melon Helmet as a faint ability', () => {
+    for (let i = 0; i < 20; i++) {
+      const config = createBaseConfig('Puppy');
+      config.seed = 1000 + i;
+      config.playerToy = 'Melon Helmet';
+      config.playerToyLevel = 1;
+      config.playerPets[0] = createPet('Fish', { attack: 3, health: 8 });
+      config.playerPets[1] = createPet('Chameleon', {
+        attack: 6,
+        health: 9,
+        exp: 2,
+      });
+      config.opponentPets[0] = createPet('Mandrake', {
+        attack: 4,
+        health: 3,
+        exp: 2,
+      });
+
+      const logs = runBattleLogs(config);
+      const dazedLog = logs.find(
+        (log) =>
+          log.type === 'ability' &&
+          typeof log.message === 'string' &&
+          log.message.includes('Mandrake made') &&
+          log.message.includes('Dazed'),
+      );
+
+      expect(dazedLog).toBeDefined();
+      expect(String(dazedLog?.message ?? '')).toContain('Chameleon');
+    }
+  });
 });
 
 

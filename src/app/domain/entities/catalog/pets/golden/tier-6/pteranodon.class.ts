@@ -61,12 +61,12 @@ export class PteranodonAbility extends Ability {
       abilitylevel: owner.level,
       maxUses: owner.level,
       condition: (context: AbilityContext): boolean => {
-        const { triggerPet, tiger, pteranodon } = context;
+        const { triggerPet } = context;
         const owner = this.owner;
         if (triggerPet == null) {
           return false;
         }
-        return true;
+        return owner.parent.petArray.length < 5;
       },
       abilityFunction: (context) => {
         this.executeAbility(context);

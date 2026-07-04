@@ -63,10 +63,12 @@ export class OxAbility extends Ability {
     if (target == null) {
       return;
     }
+    const targetName =
+      target === owner ? (owner.baseName ?? target.name) : target.name;
 
     target.increaseAttack(1);
     this.logService.createLog({
-      message: `${owner.name} gave ${target.name} +1 attack.`,
+      message: `${owner.name} gave ${targetName} +1 attack.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,
@@ -78,10 +80,14 @@ export class OxAbility extends Ability {
     if (melonTarget == null) {
       return;
     }
+    const melonTargetName =
+      melonTarget === owner
+        ? (owner.baseName ?? melonTarget.name)
+        : melonTarget.name;
 
     melonTarget.givePetEquipment(new Melon());
     this.logService.createLog({
-      message: `${owner.name} gave ${melonTarget.name} Melon.`,
+      message: `${owner.name} gave ${melonTargetName} Melon.`,
       type: 'ability',
       player: owner.parent,
       tiger: tiger,

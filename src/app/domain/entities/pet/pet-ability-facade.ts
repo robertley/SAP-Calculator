@@ -172,11 +172,12 @@ export abstract class PetAbilityFacade {
       if (copiedAbility == null) {
         continue;
       }
+      copiedAbility.initialCurrentUses = 0;
       if (level) {
         copiedAbility.abilityLevel = level;
         copiedAbility.alwaysIgnorePetLevel = true;
-        copiedAbility.reset();
       }
+      copiedAbility.reset();
       copiedAbility.native = false;
 
       const originalFunction = copiedAbility.abilityFunction;
@@ -239,18 +240,14 @@ export abstract class PetAbilityFacade {
   }
 
   isFaintPet(): boolean {
-    if (
-      this.originalAbilityList.filter((ability) => {
-        return (
-          (ability.matchesTrigger('PostRemovalFaint') ||
-            ability.matchesTrigger('Faint')) &&
-          ability.abilityType == 'Pet'
-        );
-      }).length > 0
-    ) {
-      return true;
-    }
-    return false;
+    const abilities = [...this.originalAbilityList, ...this.abilityList];
+    return abilities.some((ability) => {
+      return (
+        (ability.matchesTrigger('PostRemovalFaint') ||
+          ability.matchesTrigger('Faint')) &&
+        ability.abilityType == 'Pet'
+      );
+    });
   }
 
   protected asPet(): Pet {

@@ -326,6 +326,49 @@ export class PetService {
     ];
   }
 
+  private getPackFaintPetNamesByTier(parent: Player, tier: number): string[] {
+    const packPetNames = new Set(this.getRandomPetPoolByTier(parent, tier));
+    return (this.faintPetsByTier.get(tier) ?? []).filter((petName) =>
+      packPetNames.has(petName),
+    );
+  }
+
+  private getRandomFaintPetPool(
+    parent: Player,
+    tier?: number,
+    fromAnyPack = false,
+  ): string[] {
+    if (fromAnyPack) {
+      if (tier && this.faintPetsByTier.get(tier)) {
+        return [...(this.faintPetsByTier.get(tier) ?? [])];
+      }
+      return Array.from(this.faintPetsByTier.values()).flat();
+    }
+
+    const requestedTiers =
+      tier && this.faintPetsByTier.get(tier) ? [tier] : [...ALL_TIERS];
+    const packTierPool = requestedTiers.flatMap((targetTier) =>
+      this.getPackFaintPetNamesByTier(parent, targetTier),
+    );
+    if (packTierPool.length) {
+      return [...new Set(packTierPool)];
+    }
+
+    if (tier) {
+      const packAnyTierPool = ALL_TIERS.flatMap((targetTier) =>
+        this.getPackFaintPetNamesByTier(parent, targetTier),
+      );
+      if (packAnyTierPool.length) {
+        return [...new Set(packAnyTierPool)];
+      }
+    }
+
+    if (tier && this.faintPetsByTier.get(tier)) {
+      return [...(this.faintPetsByTier.get(tier) ?? [])];
+    }
+    return Array.from(this.faintPetsByTier.values()).flat();
+  }
+
   getSummonPetNames(): string[] {
     if (!this.tokenPetsMap?.size) {
       this.init();
@@ -449,6 +492,7 @@ export class PetService {
     tier?: number,
     excludeNames: string[] = [],
     sourcePet?: Pet,
+    fromAnyPack = false,
   ): Pet {
     if (!this.faintPetsByTier?.size) {
       this.faintPetsByTier = this.buildFaintPetsByTier(
@@ -456,13 +500,7 @@ export class PetService {
       );
     }
 
-    let faintPets: string[] = [];
-    if (tier && this.faintPetsByTier.get(tier)) {
-      faintPets = this.faintPetsByTier.get(tier) ?? [];
-    } else {
-      // If no tier specified or invalid tier, use all faint pets
-      faintPets = Array.from(this.faintPetsByTier.values()).flat();
-    }
+    const faintPets = this.getRandomFaintPetPool(parent, tier, fromAnyPack);
 
     const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
     const filteredFaintPets = faintPets.filter(
@@ -472,8 +510,11 @@ export class PetService {
     // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
     let pool = filteredFaintPets;
     if (!pool.length && tier) {
-      const allFiltered = Array.from(this.faintPetsByTier.values())
-        .flat()
+      const allFiltered = this.getRandomFaintPetPool(
+        parent,
+        undefined,
+        fromAnyPack,
+      )
         .filter((name: string) => !excludeSet.has(name.toLowerCase()));
       if (allFiltered.length) {
         pool = allFiltered;

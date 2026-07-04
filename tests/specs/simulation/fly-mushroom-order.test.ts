@@ -59,6 +59,77 @@ describe('Fly + Mushroom Ordering', () => {
     expect(boardAfterZombieSpawn).toBeTruthy();
     expect(boardAfterZombieSpawn).toContain('alt="Zombie Fly">(8/8/2xp)');
   });
+
+  it('does not spend a Parrot-copied Fly trigger when Parrot copies Fly', () => {
+    const config = createBaseConfig('Turtle');
+    config.turn = 13;
+    config.mana = true;
+    config.playerPets = [
+      createPet('Badger', {
+        attack: 12,
+        health: 9,
+        exp: 2,
+        equipment: { name: 'Melon' },
+      }),
+      createPet('Mammoth', {
+        attack: 8,
+        health: 16,
+        exp: 3,
+        equipment: { name: 'Mushroom' },
+      }),
+      createPet('Whale', {
+        attack: 4,
+        health: 15,
+        equipment: { name: 'Bread' },
+      }),
+      createPet('Boar', {
+        attack: 12,
+        health: 9,
+        equipment: { name: 'Melon' },
+      }),
+      createPet('Shark', {
+        attack: 7,
+        health: 16,
+        exp: 2,
+        equipment: { name: 'Bread' },
+      }),
+    ];
+    config.opponentPets = [
+      createPet('Fish', {
+        attack: 18,
+        health: 21,
+        exp: 2,
+        equipment: { name: 'Melon' },
+      }),
+      createPet('Snake', { attack: 10, health: 6 }),
+      createPet('Boar', {
+        attack: 16,
+        health: 13,
+        exp: 2,
+        equipment: { name: 'Melon' },
+      }),
+      createPet('Fly', {
+        attack: 7,
+        health: 7,
+        equipment: { name: 'Mushroom' },
+      }),
+      createPet('Parrot', {
+        attack: 11,
+        health: 16,
+        exp: 2,
+        equipment: { name: 'Bread' },
+      }),
+    ];
+
+    const logs = runBattleLogs(config);
+    const messages = logs.map((log) => String(log?.message ?? ''));
+
+    expect(
+      messages.filter((message) =>
+        message.includes("Parrot's Fly spawned Zombie Fly"),
+      ),
+    ).toHaveLength(3);
+  });
 });
 
 

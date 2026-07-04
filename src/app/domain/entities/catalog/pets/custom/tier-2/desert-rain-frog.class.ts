@@ -60,6 +60,8 @@ export class DesertRainFrogAbility extends Ability {
   private executeAbility(context: AbilityContext): void {
     const { tiger, pteranodon } = context;
     const owner = this.owner;
+    const tigerSupportPet =
+      context.tigerSupportPet ?? owner.petBehind(true, true);
 
     const petService = InjectorService.getInjector().get(PetService);
     let targetTier = Math.min(6, owner.tier + this.level);
@@ -83,7 +85,7 @@ export class DesertRainFrogAbility extends Ability {
     owner.parent.transformPet(owner, transformedPet);
 
     // Tiger system: trigger Tiger execution at the end
-    this.triggerTigerExecution(context);
+    this.triggerTigerExecution({ ...context, tigerSupportPet });
   }
 
   copy(newOwner: Pet): DesertRainFrogAbility {
