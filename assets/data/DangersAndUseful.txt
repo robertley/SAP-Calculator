@@ -178,12 +178,18 @@ Tuna
 Weasel
 
 --- Golden Tamarin
+Skunk
+Doberman
+Hawk
+Humphead Wrasse
+Tasmanian Devil
+Lynx
 Crocodile
-Tarantula Hawk
+Swordfish
 Red Dragon
 Werewolf
 Snow Leopard
-Sea Cucumber
+Tarantula Hawk
 
 --- Bay Cat
 Skunk

@@ -18187,15 +18187,15 @@
     "Abilities": [
       {
         "Level": 1,
-        "About": "This pet's mana damage hits the most healthy enemy and one extra enemy."
+        "About": "This pet's mana damage hits the two most healthy enemies."
       },
       {
         "Level": 2,
-        "About": "This pet's mana damage hits the most healthy enemy and two extra enemies."
+        "About": "This pet's mana damage hits the three most healthy enemies."
       },
       {
         "Level": 3,
-        "About": "This pet's mana damage hits the most healthy enemy and three extra enemies."
+        "About": "This pet's mana damage hits the four most healthy enemies."
       }
     ],
     "Id": "372",
