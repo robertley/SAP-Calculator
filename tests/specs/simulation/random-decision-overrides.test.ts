@@ -1,6 +1,47 @@
 import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
+import {
+  expandCompactCalculatorState,
+  parseImportPayload,
+} from 'app/ui/shell/state/app.component.share';
 
 describe('random decision overrides', () => {
+  it('captures Golden Tamarin transform decisions from the fixed pool for the shared repro', () => {
+    const payload =
+      'SAPC1:eyJwVEwiOiIxIiwib1RMIjoiMSIsInBIVEwiOiIxIiwib0hUTCI6IjEiLCJ0IjoxMywib0dTIjoxMywicCI6W3sibiI6IkdvbGRlbiBUYW1hcmluIiwiYSI6NiwiaCI6NiwiZSI6MiwiZXEiOnsibiI6IkhvbmV5In19LHsibiI6IlJvb3N0ZXIiLCJhIjo5LCJoIjo4LCJlIjozLCJlcSI6eyJuIjoiQnJlYWQifX0seyJuIjoiRmx5IiwiYSI6OCwiaCI6OCwiZSI6NCwiZXEiOnsibiI6Ik11c2hyb29tIn19LHsibiI6IlNoYXJrIiwiYSI6NiwiaCI6NiwiZSI6NCwiZXEiOnsibiI6IkNoaWxpIn19LHsibiI6IlBhcnJvdCIsImEiOjcsImgiOjUsImUiOjMsImVxIjp7Im4iOiJCcmVhZCJ9fV0sIm8iOlt7Im4iOiJUaWdlciIsImEiOjYsImgiOjQsImVxIjp7Im4iOiJNZWxvbiJ9LCJlVSI6MX0seyJuIjoiRmxhbWluZ28iLCJhIjozLCJoIjoyLCJlcSI6eyJuIjoiTWVhdCBCb25lIn19LHsibiI6IlBlbmd1aW4iLCJhIjozLCJoIjo0LCJlIjoxLCJlcSI6eyJuIjoiR2FybGljIn19LHsibiI6IkNyaWNrZXQiLCJhIjo0LCJoIjo2LCJlIjozLCJlcSI6eyJuIjoiQ2hpbGkifX0seyJuIjoiU2VhbCIsImEiOjQsImgiOjksImUiOjEsImVxIjp7Im4iOiJDYWtlIn19XSwibSI6dHJ1ZSwib1NBIjoyfQ';
+    const config = expandCompactCalculatorState(
+      parseImportPayload(payload),
+    ) as SimulationConfig;
+    const expectedPool = [
+      'Skunk',
+      'Doberman',
+      'Hawk',
+      'Humphead Wrasse',
+      'Tasmanian Devil',
+      'Lynx',
+      'Crocodile',
+      'Swordfish',
+      'Red Dragon',
+      'Werewolf',
+      'Snow Leopard',
+      'Tarantula Hawk',
+    ];
+
+    const result = runSimulation({
+      ...config,
+      simulationCount: 1,
+      captureRandomDecisions: true,
+      maxLoggedBattles: 1,
+    });
+    const tamarinDecision = (result.randomDecisions ?? []).find(
+      (decision) => decision.key === 'pet.golden-tamarin-transform',
+    );
+
+    expect(tamarinDecision?.options.map((option) => option.id)).toEqual(
+      expectedPool,
+    );
+    expect(expectedPool).toContain(tamarinDecision?.selectedOptionId);
+  });
+
   it('captures Orca faint spawn options and forces a selected spawn', () => {
     const baseConfig: SimulationConfig = {
       playerPack: 'Star',
