@@ -5,6 +5,8 @@ import { Pack, Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class ThornyDragon extends Pet {
@@ -73,11 +75,21 @@ export class ThornyDragonAbility extends Ability {
 
     const targetPool =
       petsWithAilments.length > 0 ? petsWithAilments : opponentPets;
-    const isRandom = targetPool.length > 1;
-    const target = targetPool[getRandomInt(0, targetPool.length - 1)];
+    const targetChoice = chooseLegacyRandomOption(
+      {
+        key: 'pet.thorny-dragon-target',
+        label: formatPetScopedRandomLabel(owner, 'Thorny Dragon target'),
+        options: targetPool.map((pet) => ({
+          id: `${pet.name}-${pet.savedPosition}`,
+          label: pet.name,
+        })),
+      },
+      () => getRandomInt(0, targetPool.length - 1),
+    );
+    const target = targetPool[targetChoice.index];
 
     if (target) {
-      owner.snipePet(target, damage, isRandom, tiger, pteranodon);
+      owner.snipePet(target, damage, targetChoice.randomEvent, tiger, pteranodon);
 
       this.logService.createLog({
         message: `${owner.name} fainted and dealt ${damage} damage to ${target.name} (prioritizing ailments).`,
@@ -85,7 +97,7 @@ export class ThornyDragonAbility extends Ability {
         player: owner.parent,
         tiger: tiger,
         pteranodon: pteranodon,
-        randomEvent: isRandom,
+        randomEvent: targetChoice.randomEvent,
       });
     }
 

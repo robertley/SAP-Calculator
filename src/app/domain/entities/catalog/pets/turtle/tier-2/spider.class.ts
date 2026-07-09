@@ -6,6 +6,8 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Spider extends Pet {
@@ -89,8 +91,15 @@ export class SpiderAbility extends Ability {
       return;
     }
 
-    let spawnPetName =
-      possibleSpawnPets[getRandomInt(0, possibleSpawnPets.length - 1)];
+    const spawnChoice = chooseLegacyRandomOption(
+      {
+        key: 'pet.spider-summon',
+        label: formatPetScopedRandomLabel(owner, 'Spider summon'),
+        options: possibleSpawnPets.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, possibleSpawnPets.length - 1),
+    );
+    let spawnPetName = possibleSpawnPets[spawnChoice.index];
     if (!spawnPetName) {
       return;
     }
@@ -122,7 +131,7 @@ export class SpiderAbility extends Ability {
         message: `${owner.name} spawned ${spawnPet.name} level ${level} (${power}/${power})`,
         type: 'ability',
         player: owner.parent,
-        randomEvent: true,
+        randomEvent: spawnChoice.randomEvent,
         tiger: tiger,
         pteranodon: pteranodon,
       });

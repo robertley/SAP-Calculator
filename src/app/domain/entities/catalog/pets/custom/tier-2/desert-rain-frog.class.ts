@@ -65,12 +65,10 @@ export class DesertRainFrogAbility extends Ability {
 
     const petService = InjectorService.getInjector().get(PetService);
     let targetTier = Math.min(6, owner.tier + this.level);
-    let transformedPet = petService.getRandomFaintPet(
-      owner.parent,
-      targetTier,
-      [],
-      owner,
-    );
+    let transformedPet = petService.getRandomFaintPet(owner.parent, {
+      tier: targetTier,
+      sourcePet: owner,
+    });
 
     this.logService.createLog({
       message: `${owner.name} transformed into ${transformedPet.name}.`,

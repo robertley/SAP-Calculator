@@ -8,6 +8,8 @@ import { InjectorService } from 'app/integrations/injector.service';
 import { ToyService } from 'app/integrations/toy/toy.service';
 import { getRandomInt } from 'app/runtime/random';
 import { logAbility } from 'app/domain/entities/ability-resolution';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Gharial extends Pet {
@@ -74,7 +76,15 @@ export class GharialAbility extends Ability {
       return;
     }
 
-    const toyName = availableToys[getRandomInt(0, availableToys.length - 1)];
+    const toyChoice = chooseLegacyRandomOption(
+      {
+        key: 'pet.gharial-toy',
+        label: formatPetScopedRandomLabel(owner, `Gharial level ${tier} toy`),
+        options: availableToys.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, availableToys.length - 1),
+    );
+    const toyName = availableToys[toyChoice.index];
     const newToy = toyService.createToy(toyName, owner.parent, tier);
     if (!newToy) {
       this.triggerTigerExecution(context);
@@ -91,6 +101,7 @@ export class GharialAbility extends Ability {
       `${owner.name} chose a level ${tier} ${toyName} toy.`,
       context.tiger,
       context.pteranodon,
+      { randomEvent: toyChoice.randomEvent },
     );
     this.triggerTigerExecution(context);
   }

@@ -5,11 +5,18 @@ import { Equipment } from '../../../../equipment.class';
 import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
-import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
+const BAY_CAT_SUMMON_POOL = [
+  'Skunk',
+  'Doberman',
+  'Hawk',
+  'Humphead Wrasse',
+  'Tasmanian Devil',
+  'Lynx',
+];
 
 export class BayCat extends Pet {
   name = 'Bay Cat';
@@ -79,7 +86,7 @@ export class BayCatAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let bayPool = DANGERS_AND_USEFUL_POOLS.bayCat;
+    const bayPool = BAY_CAT_SUMMON_POOL;
 
     for (let i = 0; i < owner.level; i++) {
       const choice = chooseRandomOption(

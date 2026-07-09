@@ -7,6 +7,8 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import { InjectorService } from 'app/integrations/injector.service';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class AlbinoSquirrel extends Pet {
@@ -71,7 +73,21 @@ export class AlbinoSquirrelAbility extends Ability {
 
     let chosenFoods: string[] = [];
     for (let i = 0; i < 3; i++) {
-      let food = shopFoods[getRandomInt(0, shopFoods.length - 1)];
+      const foodChoice = chooseLegacyRandomOption(
+        {
+          key: 'pet.albino-squirrel-shop-food',
+          label: formatPetScopedRandomLabel(
+            owner,
+            `Albino Squirrel shop food ${i + 1}`,
+          ),
+          options: shopFoods.map((food) => ({
+            id: food.name,
+            label: food.name,
+          })),
+        },
+        () => getRandomInt(0, shopFoods.length - 1),
+      );
+      let food = shopFoods[foodChoice.index];
       chosenFoods.push(food.name);
     }
 

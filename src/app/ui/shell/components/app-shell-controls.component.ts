@@ -89,28 +89,17 @@ export class AppShellControlsComponent {
   }
 
   get activeAdvancedOverridesCount(): number {
-    return this.activeAdvancedSettingsCount + this.randomOverrideCount;
+    return this.activeAdvancedSettingsCount;
   }
 
   get unifiedAdvancedSummary(): string {
     const advancedCount = this.activeAdvancedSettingsCount;
-    const randomCount = this.randomOverrideCount;
     const packSummary = `Packs: ${this.getControlDisplayValue('playerPack', 'None')} vs ${this.getControlDisplayValue('opponentPack', 'None')}.`;
 
-    if (!advancedCount && !randomCount) {
+    if (!advancedCount) {
       return `${packSummary} No scenario tweaks active.`;
     }
-    if (advancedCount && randomCount) {
-      return `${packSummary} ${advancedCount} advanced setting${advancedCount === 1 ? '' : 's'} and ${randomCount} random override${randomCount === 1 ? '' : 's'} active.`;
-    }
-    if (advancedCount) {
-      return `${packSummary} ${advancedCount} advanced setting${advancedCount === 1 ? '' : 's'} active.`;
-    }
-    return `${packSummary} ${randomCount} random override${randomCount === 1 ? '' : 's'} captured.`;
-  }
-
-  private get randomOverrideCount(): number {
-    return this.app?.randomDecisions?.length ?? 0;
+    return `${packSummary} ${advancedCount} advanced setting${advancedCount === 1 ? '' : 's'} active.`;
   }
 
   @HostListener('document:click', ['$event'])

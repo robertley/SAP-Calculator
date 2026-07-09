@@ -17,4 +17,3 @@ export class MapleSyrupAttack extends Equipment {
   power = 0;
   originalPower = 0;
 }
-//TO DO: Might need change

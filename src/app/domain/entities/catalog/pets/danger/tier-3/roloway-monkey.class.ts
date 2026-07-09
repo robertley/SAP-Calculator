@@ -8,8 +8,51 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
-import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 
+const ROLOWAY_MONKEY_TRANSFORM_POOL = [
+  'Beluga Sturgeon',
+  'Bigfoot',
+  'Black Necked Stilt',
+  'Dove',
+  'Dung Beetle',
+  'Flamingo',
+  'Frost Wolf',
+  'Gargoyle',
+  'Hedgehog',
+  'Mandrill',
+  'Nightcrawler',
+  'Olm',
+  'Rat',
+  'Sea Urchin',
+  'Spider',
+  'Squid',
+  'Stork',
+  'Takhi',
+  'Thorny Dragon',
+  'Anteater',
+  'Baby Urchin',
+  'Badger',
+  'Bear',
+  'Calygreyhound',
+  'Dugong',
+  'Flea',
+  'Fur-Bearing Trout',
+  'Hirola',
+  'Hoopoe Bird',
+  'Jewel Caterpillar',
+  'Mole',
+  'Osprey',
+  'Pangolin',
+  'Patagonian Mara',
+  'Quetzalcoatlus',
+  'Sheep',
+  'Skeleton Dog',
+  'Slime',
+  'Surgeon Fish',
+  'Tucuxi',
+  'Tuna',
+  'Weasel',
+];
 
 export class RolowayMonkey extends Pet {
   name = 'Roloway Monkey';
@@ -71,7 +114,7 @@ export class RolowayMonkeyAbility extends Ability {
       return;
     }
 
-    const petNames = DANGERS_AND_USEFUL_POOLS.rolowayMonkey;
+    const petNames = ROLOWAY_MONKEY_TRANSFORM_POOL;
     if (petNames.length === 0) {
       return;
     }

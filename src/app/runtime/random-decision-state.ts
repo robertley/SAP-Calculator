@@ -154,3 +154,15 @@ export function chooseRandomOption(
     forced,
   };
 }
+
+export function chooseLegacyRandomOption(
+  request: RandomChoiceRequest,
+  randomIndexFactory: () => number,
+): RandomChoiceResult {
+  if (request.options.length === 1) {
+    randomIndexFactory();
+    return { index: 0, randomEvent: false, forced: false };
+  }
+
+  return chooseRandomOption(request, randomIndexFactory);
+}

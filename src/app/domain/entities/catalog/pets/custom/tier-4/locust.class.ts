@@ -7,6 +7,8 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { InjectorService } from 'app/integrations/injector.service';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 import * as foodJson from 'assets/data/food.json';
 
 type StatFood = {
@@ -193,8 +195,21 @@ export class LocustAbility extends Ability {
         if (statFoods.length === 0) {
           break;
         }
-        const statFood =
-          statFoods[getRandomInt(0, statFoods.length - 1)];
+        const statFoodChoice = chooseLegacyRandomOption(
+          {
+            key: 'pet.locust-stat-food',
+            label: formatPetScopedRandomLabel(
+              owner,
+              `Locust stat food ${i + 1}.${foodIndex + 1}`,
+            ),
+            options: statFoods.map((food) => ({
+              id: food.name,
+              label: food.name,
+            })),
+          },
+          () => getRandomInt(0, statFoods.length - 1),
+        );
+        const statFood = statFoods[statFoodChoice.index];
         if (!statFood) {
           continue;
         }

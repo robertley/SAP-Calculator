@@ -6,6 +6,8 @@ import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { hasSilly } from 'app/domain/entities/player/player-utils';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class SpiderCrab extends Pet {
@@ -89,7 +91,18 @@ export class SpiderCrabAbility extends Ability {
         this.triggerTigerExecution(context);
         return;
       }
-      target = candidates[getRandomInt(0, candidates.length - 1)];
+      const targetChoice = chooseLegacyRandomOption(
+        {
+          key: 'pet.spider-crab-silly-target',
+          label: formatPetScopedRandomLabel(owner, 'Spider Crab silly target'),
+          options: candidates.map((pet) => ({
+            id: `${pet.name}-${pet.savedPosition}`,
+            label: pet.name,
+          })),
+        },
+        () => getRandomInt(0, candidates.length - 1),
+      );
+      target = candidates[targetChoice.index];
     }
 
     target.increaseHealth(4);

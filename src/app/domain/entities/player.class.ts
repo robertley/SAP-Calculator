@@ -150,7 +150,6 @@ export class Player extends PlayerSummonFacade {
     pushPetsForwardImpl(this);
   }
 
-  //TO DO: This needs fix, might be useless
   onionCheck() {
     onionCheckImpl(this);
   }

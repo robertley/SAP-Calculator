@@ -50,7 +50,7 @@ export abstract class Pet extends PetRuntimeFacade implements PetMemoryState {
   timesAttacked: number = 0;
   battlesFought: number = 0;
   currentTarget?: Pet; // Who this pet is currently attacking
-  lastAttacker?: Pet; // Who last attacked this pet //TO DO: This might be useless
+  lastAttacker?: Pet; // Who last attacked this pet
   killedBy?: Pet; // Who caused this pet to faint
   transformedInto: Pet | null = null;
   lastLostEquipment?: Equipment;

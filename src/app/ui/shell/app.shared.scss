@@ -217,10 +217,53 @@ $night: #33377a;
 }
 
 .optimize-control-group,
-.randomize-control-group {
+.randomize-control-group,
+.force-randomness-control-group {
   display: inline-flex;
   align-items: center;
   gap: var(--ui-space-1);
+}
+
+.force-randomness-btn {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--ui-space-1);
+}
+
+.force-randomness-badge {
+  align-items: center;
+  background: var(--ui-brand);
+  border-radius: 999px;
+  color: #ffffff;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  min-width: 1.35rem;
+  padding: 0.2rem 0.36rem;
+}
+
+.force-randomness-modal .modal-content {
+  background: var(--ui-surface-0);
+  color: var(--ui-text-1);
+}
+
+.force-randomness-modal .modal-header {
+  border-bottom-color: var(--ui-border-1);
+}
+
+.force-randomness-modal-subtitle {
+  color: var(--ui-text-3);
+  font-size: 0.88rem;
+  margin-top: 0.15rem;
+}
+
+.random-overrides-title-row {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--ui-space-2);
 }
 
 .top-controls .btn {

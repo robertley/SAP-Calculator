@@ -18,7 +18,6 @@ export class Bigfoot extends Pet {
     );
     super.initAbilities();
   }
-  //TO DO: This needs to be marked as faintPet
   constructor(
     protected logService: LogService,
     protected abilityService: AbilityService,

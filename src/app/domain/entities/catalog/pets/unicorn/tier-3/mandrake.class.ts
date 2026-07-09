@@ -6,6 +6,8 @@ import { Player } from '../../../../player.class';
 import { Dazed } from 'app/domain/entities/catalog/equipment/ailments/dazed.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Mandrake extends Pet {
@@ -95,10 +97,20 @@ export class MandrakeAbility extends Ability {
     );
 
     if (faintCandidates.length > 0) {
-      const index = getRandomInt(0, faintCandidates.length - 1);
+      const choice = chooseLegacyRandomOption(
+        {
+          key: 'pet.mandrake-faint-target',
+          label: formatPetScopedRandomLabel(owner, 'Mandrake faint target'),
+          options: faintCandidates.map((pet) => ({
+            id: `${pet.name}-${pet.savedPosition}`,
+            label: pet.name,
+          })),
+        },
+        () => getRandomInt(0, faintCandidates.length - 1),
+      );
       return {
-        pet: faintCandidates[index],
-        random: faintCandidates.length > 1,
+        pet: faintCandidates[choice.index],
+        random: choice.randomEvent,
       };
     }
 

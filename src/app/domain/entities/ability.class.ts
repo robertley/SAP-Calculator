@@ -232,7 +232,6 @@ export class Ability {
     }
     // Check if pet is disabled (Dazed)
     if (!this.owner.abilityValidCheck()) {
-      //TO DO1: Add logservice
       return false;
     }
     try {

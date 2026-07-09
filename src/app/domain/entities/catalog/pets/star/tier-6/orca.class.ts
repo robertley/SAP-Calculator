@@ -6,8 +6,6 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 
-
-// TO DO: Update faint pool, and add all faint pets
 export class Orca extends Pet {
   name = 'Orca';
   tier = 6;
@@ -75,13 +73,11 @@ export class OrcaAbility extends Ability {
     const owner = this.owner;
 
     for (let i = 0; i < this.level; i++) {
-      let faintPet = this.petService.getRandomFaintPet(
-        owner.parent,
-        undefined,
-        [owner.name, 'Quetzalcoatlus'],
-        owner,
-        true,
-      );
+      let faintPet = this.petService.getRandomFaintPet(owner.parent, {
+        excludeNames: [owner.name, 'Quetzalcoatlus'],
+        sourcePet: owner,
+        fromAnyPack: true,
+      });
       faintPet.attack = 6;
       faintPet.health = 6;
 

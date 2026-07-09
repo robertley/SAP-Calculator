@@ -5,6 +5,8 @@ import { Pack, Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 import * as petJson from 'assets/data/pets.json';
 
 const PET_STATS_BY_NAME: Map<string, { attack: number; health: number }> =
@@ -120,10 +122,15 @@ export class AndrewsarchusAbility extends Ability {
       return;
     }
 
-    const chosen =
-      candidates.length === 1
-        ? candidates[0]
-        : candidates[getRandomInt(0, candidates.length - 1)];
+    const choice = chooseRandomOption(
+      {
+        key: 'pet.andrewsarchus-shop-pet',
+        label: formatPetScopedRandomLabel(owner, 'Andrewsarchus shop pet'),
+        options: candidates.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, candidates.length - 1),
+    );
+    const chosen = candidates[choice.index];
     const chosenStats = PET_STATS_BY_NAME.get(chosen);
     if (!chosenStats) {
       this.triggerTigerExecution(context);
@@ -147,7 +154,7 @@ export class AndrewsarchusAbility extends Ability {
       player: owner.parent,
       tiger: tiger,
       pteranodon: pteranodon,
-      randomEvent: candidates.length > 1,
+      randomEvent: choice.randomEvent,
     });
 
     this.triggerTigerExecution(context);

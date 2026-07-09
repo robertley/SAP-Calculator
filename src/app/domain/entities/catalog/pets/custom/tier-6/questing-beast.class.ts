@@ -7,6 +7,8 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { InjectorService } from 'app/integrations/injector.service';
 import { ToyService } from 'app/integrations/toy/toy.service';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class QuestingBeast extends Pet {
@@ -62,7 +64,18 @@ export class QuestingBeastAbility extends Ability {
       return;
     }
 
-    const toyName = availableToys[getRandomInt(0, availableToys.length - 1)];
+    const toyChoice = chooseLegacyRandomOption(
+      {
+        key: 'pet.questing-beast-toy',
+        label: formatPetScopedRandomLabel(
+          owner,
+          `Questing Beast level ${level} toy`,
+        ),
+        options: availableToys.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, availableToys.length - 1),
+    );
+    const toyName = availableToys[toyChoice.index];
     const newToy = toyService.createToy(toyName, owner.parent, level);
     if (!newToy) {
       this.triggerTigerExecution(context);
@@ -77,6 +90,7 @@ export class QuestingBeastAbility extends Ability {
       message: `${owner.name} created a level ${level} ${toyName} toy.`,
       type: 'ability',
       player: owner.parent,
+      randomEvent: toyChoice.randomEvent,
     });
 
     this.triggerTigerExecution(context);

@@ -5,11 +5,24 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
-import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { getRandomInt } from 'app/runtime/random';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
+const GOLDEN_TAMARIN_TRANSFORM_POOL = [
+  'Skunk',
+  'Doberman',
+  'Hawk',
+  'Humphead Wrasse',
+  'Tasmanian Devil',
+  'Lynx',
+  'Crocodile',
+  'Swordfish',
+  'Red Dragon',
+  'Werewolf',
+  'Snow Leopard',
+  'Tarantula Hawk',
+];
 
 export class GoldenTamarin extends Pet {
   name = 'Golden Tamarin';
@@ -74,7 +87,7 @@ export class GoldenTamarinAbility extends Ability {
       return;
     }
 
-    const petNames = DANGERS_AND_USEFUL_POOLS.goldenTamarin;
+    const petNames = GOLDEN_TAMARIN_TRANSFORM_POOL;
     const choice = chooseRandomOption(
       {
         key: 'pet.golden-tamarin-transform',

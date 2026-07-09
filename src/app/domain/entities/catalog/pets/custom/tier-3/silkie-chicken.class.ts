@@ -7,6 +7,8 @@ import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import { InjectorService } from 'app/integrations/injector.service';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class SilkieChicken extends Pet {
@@ -76,8 +78,15 @@ export class SilkieChickenAbility extends Ability {
       return;
     }
 
-    const perkIndex = getRandomInt(0, perks.length - 1);
-    const perk = perks[perkIndex];
+    const perkChoice = chooseLegacyRandomOption(
+      {
+        key: 'pet.silkie-chicken-perk',
+        label: formatPetScopedRandomLabel(owner, 'Silkie Chicken perk'),
+        options: perks.map((perk) => ({ id: perk.name, label: perk.name })),
+      },
+      () => getRandomInt(0, perks.length - 1),
+    );
+    const perk = perks[perkChoice.index];
     target.givePetEquipment(perk);
 
     this.logService.createLog({
@@ -86,6 +95,7 @@ export class SilkieChickenAbility extends Ability {
       player: owner.parent,
       tiger: tiger,
       pteranodon: pteranodon,
+      randomEvent: perkChoice.randomEvent,
     });
 
     this.triggerTigerExecution(context);

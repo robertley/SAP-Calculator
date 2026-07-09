@@ -5,6 +5,8 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
 
 export class Tyrannosaurus extends Pet {
@@ -73,9 +75,22 @@ export class TyrannosaurusAbility extends Ability {
 
     const targets: Pet[] = [];
     while (targets.length < 2 && candidates.length > 0) {
-      const index = getRandomInt(0, candidates.length - 1);
-      targets.push(candidates[index]);
-      candidates.splice(index, 1);
+      const choice = chooseLegacyRandomOption(
+        {
+          key: 'pet.tyrannosaurus-target',
+          label: formatPetScopedRandomLabel(
+            owner,
+            `Tyrannosaurus target ${targets.length + 1}`,
+          ),
+          options: candidates.map((pet) => ({
+            id: `${pet.name}-${pet.savedPosition}`,
+            label: pet.name,
+          })),
+        },
+        () => getRandomInt(0, candidates.length - 1),
+      );
+      targets.push(candidates[choice.index]);
+      candidates.splice(choice.index, 1);
     }
 
     const buff = this.level * 2;

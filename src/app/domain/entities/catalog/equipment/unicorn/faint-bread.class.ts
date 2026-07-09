@@ -4,8 +4,6 @@ import { Equipment, EquipmentClass } from '../../../equipment.class';
 import { Pet } from '../../../pet.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 
-
-//TO DO: Add all tier 1 faint pet
 export class FaintBread extends Equipment {
   name = 'Faint Bread';
   equipmentClass: EquipmentClass = 'afterFaint';
@@ -56,7 +54,12 @@ export class FaintBreadAbility extends Ability {
     const owner = this.owner;
 
     for (let i = 0; i < this.equipment.multiplier; i++) {
-      let faintPet = this.petService.getRandomFaintPet(owner.parent, 1, [], owner);
+      let faintPet = this.petService.getRandomFaintPet(owner.parent, {
+        tier: 1,
+        sourcePet: owner,
+        fromAnyPack: true,
+        fallbackAcrossTiers: false,
+      });
 
       let multiplierMessage = i > 0 ? this.equipment.multiplierMessage : '';
 

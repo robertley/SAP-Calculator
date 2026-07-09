@@ -108,7 +108,85 @@ describe('random decision overrides', () => {
     expect(forcedResult.randomOverrideError ?? null).toBeNull();
   });
 
+  it('captures Faint Bread options from any tier 1 faint pet', () => {
+    const expectedPool = [
+      'Ant',
+      'Cockroach',
+      'Cricket',
+      'Ethiopian Wolf',
+      'Farmer Mouse',
+      'Firefly',
+      'Groundhog',
+      'Hummingbird',
+      'Peacock Spider',
+      'Pied Tamarin',
+      'Togian Babirusa',
+      'Volcano Snail',
+      'Pink Robin',
+    ];
+    const config: SimulationConfig = {
+      playerPack: 'Unicorn',
+      opponentPack: 'Unicorn',
+      turn: 11,
+      simulationCount: 1,
+      logsEnabled: true,
+      playerGoldSpent: 0,
+      opponentGoldSpent: 0,
+      playerRollAmount: 0,
+      opponentRollAmount: 0,
+      playerLevel3Sold: 0,
+      opponentLevel3Sold: 0,
+      playerSummonedAmount: 0,
+      opponentSummonedAmount: 0,
+      playerTransformationAmount: 0,
+      opponentTransformationAmount: 0,
+      playerPets: [
+        {
+          name: 'Ant',
+          attack: 1,
+          health: 1,
+          exp: 0,
+          mana: 0,
+          equipment: { name: 'Faint Bread' },
+        },
+        null,
+        null,
+        null,
+        null,
+      ],
+      opponentPets: [
+        { name: 'Hydra', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        null,
+        null,
+        null,
+        null,
+      ],
+      captureRandomDecisions: true,
+      maxLoggedBattles: 1,
+    };
+
+    const result = runSimulation(config);
+    const faintBreadDecision = (result.randomDecisions ?? []).find(
+      (decision) => decision.key === 'pet.random-faint-pet',
+    );
+
+    expect(faintBreadDecision?.options.map((option) => option.id)).toEqual(
+      expectedPool,
+    );
+    expect(faintBreadDecision?.options.map((option) => option.id)).not.toContain(
+      'Hydra',
+    );
+  });
+
   it('labels Bay Cat summon decisions with position and summon number', () => {
+    const expectedPool = [
+      'Skunk',
+      'Doberman',
+      'Hawk',
+      'Humphead Wrasse',
+      'Tasmanian Devil',
+      'Lynx',
+    ];
     const config: SimulationConfig = {
       playerPack: 'Danger',
       opponentPack: 'Danger',
@@ -147,9 +225,15 @@ describe('random decision overrides', () => {
     const labels = (result.randomDecisions ?? [])
       .filter((decision) => decision.key === 'pet.bay-cat-summon')
       .map((decision) => decision.label);
+    const decisions = (result.randomDecisions ?? []).filter(
+      (decision) => decision.key === 'pet.bay-cat-summon',
+    );
 
     expect(labels).toContain('(P1) Bay Cat summon 1');
     expect(labels).toContain('(P1) Bay Cat summon 2');
+    for (const decision of decisions) {
+      expect(decision.options.map((option) => option.id)).toEqual(expectedPool);
+    }
   });
 
   it('captures Roloway Monkey transform decisions from the fixed pool', () => {

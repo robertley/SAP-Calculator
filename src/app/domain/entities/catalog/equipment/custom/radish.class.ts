@@ -4,9 +4,42 @@ import { LogService } from 'app/integrations/log.service';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { EquipmentService } from 'app/integrations/equipment/equipment.service';
 import { InjectorService } from 'app/integrations/injector.service';
-import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 import { getRandomInt } from 'app/runtime/random';
+import { chooseLegacyRandomOption } from 'app/runtime/random-decision-state';
+import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
+const RADISH_PERK_POOLS: Record<number, string[]> = {
+  1: ['Walnut', 'Honey', 'Egg', 'Strawberry'],
+  2: [
+    'Meat Bone',
+    'Lime',
+    'Caramel',
+    'Bok Choy',
+    'Fairy Dust',
+    'Faint Bread',
+    'Cod Roe',
+  ],
+  3: ['Garlic', 'Squash', 'Seaweed', 'Fig', 'Brussels Sprout'],
+  4: [
+    'Fortune Cookie',
+    'Salt',
+    'Baguette',
+    'Cheese',
+    'Banana',
+    'Bread',
+    'Ambrosia',
+  ],
+  5: ['Chili', 'Lemon', 'Pepper', 'Durian', 'Honeydew Melon', 'Easter Egg'],
+  6: [
+    'Steak',
+    'Melon',
+    'Pita Bread',
+    'Tomato',
+    'Yggdrasil Fruit',
+    'Popcorn',
+    'White Okra',
+  ],
+};
 
 export class Radish extends Equipment {
   name = 'Radish';
@@ -46,7 +79,7 @@ export class RadishAbility extends Ability {
     const owner = this.owner;
 
     const tier = Math.min(Math.max(owner.tier ?? owner.level ?? 1, 1), 6);
-    const pool = DANGERS_AND_USEFUL_POOLS.radish[tier];
+    const pool = RADISH_PERK_POOLS[tier];
 
     if (!pool || pool.length === 0) {
       return;
@@ -59,8 +92,15 @@ export class RadishAbility extends Ability {
       return;
     }
 
-    const randomIndex = getRandomInt(0, availablePerks.length - 1);
-    const perkName = availablePerks[randomIndex];
+    const perkChoice = chooseLegacyRandomOption(
+      {
+        key: 'equipment.radish-perk',
+        label: formatPetScopedRandomLabel(owner, 'Radish perk'),
+        options: availablePerks.map((name) => ({ id: name, label: name })),
+      },
+      () => getRandomInt(0, availablePerks.length - 1),
+    );
+    const perkName = availablePerks[perkChoice.index];
     const perk = equipmentMap.get(perkName);
 
     if (!perk) {
@@ -73,7 +113,7 @@ export class RadishAbility extends Ability {
       message: `${owner.name} gained ${perk.name} before battle (Radish).`,
       type: 'equipment',
       player: owner.parent,
-      randomEvent: true,
+      randomEvent: perkChoice.randomEvent,
     });
   }
 }

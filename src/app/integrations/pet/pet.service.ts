@@ -337,6 +337,7 @@ export class PetService {
     parent: Player,
     tier?: number,
     fromAnyPack = false,
+    fallbackAcrossTiers = true,
   ): string[] {
     if (fromAnyPack) {
       if (tier && this.faintPetsByTier.get(tier)) {
@@ -354,7 +355,7 @@ export class PetService {
       return [...new Set(packTierPool)];
     }
 
-    if (tier) {
+    if (tier && fallbackAcrossTiers) {
       const packAnyTierPool = ALL_TIERS.flatMap((targetTier) =>
         this.getPackFaintPetNamesByTier(parent, targetTier),
       );
@@ -474,11 +475,23 @@ export class PetService {
       () => getRandomInt(0, pets.length - 1),
     );
     let pet = pets[petDecision.index];
+    const expOptions = [0, 1, 2, 3, 4, 5].map((value) => ({
+      id: `${value}`,
+      label: `${value} experience`,
+    }));
+    const expDecision = chooseRandomOption(
+      {
+        key: 'pet.random-exp',
+        label: `Random experience for ${pet}`,
+        options: expOptions,
+      },
+      () => getRandomInt(0, expOptions.length - 1),
+    );
     return this.createPet(
       {
         attack: null,
         equipment: null,
-        exp: getRandomInt(0, 5),
+        exp: expDecision.index,
         health: null,
         name: pet,
         mana: null,
@@ -489,10 +502,13 @@ export class PetService {
 
   getRandomFaintPet(
     parent: Player,
-    tier?: number,
-    excludeNames: string[] = [],
-    sourcePet?: Pet,
-    fromAnyPack = false,
+    options: {
+      tier?: number;
+      excludeNames?: string[];
+      sourcePet?: Pet;
+      fromAnyPack?: boolean;
+      fallbackAcrossTiers?: boolean;
+    } = {},
   ): Pet {
     if (!this.faintPetsByTier?.size) {
       this.faintPetsByTier = this.buildFaintPetsByTier(
@@ -500,7 +516,17 @@ export class PetService {
       );
     }
 
-    const faintPets = this.getRandomFaintPetPool(parent, tier, fromAnyPack);
+    const tier = options.tier;
+    const excludeNames = options.excludeNames ?? [];
+    const fromAnyPack = options.fromAnyPack ?? false;
+    const fallbackAcrossTiers = options.fallbackAcrossTiers ?? true;
+
+    const faintPets = this.getRandomFaintPetPool(
+      parent,
+      tier,
+      fromAnyPack,
+      fallbackAcrossTiers,
+    );
 
     const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
     const filteredFaintPets = faintPets.filter(
@@ -509,11 +535,12 @@ export class PetService {
 
     // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
     let pool = filteredFaintPets;
-    if (!pool.length && tier) {
+    if (!pool.length && tier && fallbackAcrossTiers) {
       const allFiltered = this.getRandomFaintPetPool(
         parent,
         undefined,
         fromAnyPack,
+        fallbackAcrossTiers,
       )
         .filter((name: string) => !excludeSet.has(name.toLowerCase()));
       if (allFiltered.length) {
@@ -529,7 +556,7 @@ export class PetService {
     const decision = chooseRandomOption(
       {
         key: 'pet.random-faint-pet',
-        label: `${this.describeRandomFaintPetOwner(parent, sourcePet)} -> Random faint pet summon`,
+        label: `${this.describeRandomFaintPetOwner(parent, options.sourcePet)} -> Random faint pet summon`,
         options: pool.map((name) => ({ id: name, label: name })),
       },
       () => getRandomInt(0, pool.length - 1),

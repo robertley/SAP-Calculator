@@ -6,10 +6,99 @@ import { Pack, Pet } from '../../../../pet.class';
 import { Player } from '../../../../player.class';
 import { Ability, AbilityContext } from 'app/domain/entities/ability.class';
 import { getRandomInt } from 'app/runtime/random';
-import { DANGERS_AND_USEFUL_POOLS } from 'app/domain/dangers-and-useful';
 import { chooseRandomOption } from 'app/runtime/random-decision-state';
 import { formatPetScopedRandomLabel } from 'app/runtime/random-decision-label';
 
+const IRIOMOTE_CAT_TRANSFORM_POOLS: Record<number, string[]> = {
+  1: [
+    'Ant',
+    'Mosquito',
+    'Cricket',
+    'Moth',
+    'Beetle',
+    'Chihuahua',
+    'Cockroach',
+    'Hummingbird',
+    'Frilled Dragon',
+    'Farmer Mouse',
+    'Budgie',
+    'Groundhog',
+    'Cone Snail',
+    'Goose',
+    'Barghest',
+    'Tsuchinoko',
+    'Alchemedes',
+    'Bunyip',
+    'Sneaky Egg',
+    'Ethiopian Wolf',
+    'African Wild Dog',
+    'Volcano Snail',
+    'Pygmy Seahorse',
+    'Nudibranch',
+  ],
+  2: [
+    'Crab',
+    'Hedgehog',
+    'Flamingo',
+    'Spider',
+    'Robin',
+    'Beluga Sturgeon',
+    'Stork',
+    'Bass',
+    'Panda',
+    'Seahorse',
+    'Roadrunner',
+    'Mink',
+    'Meerkat',
+    'Black Necked Stilt',
+    'Sea Urchin',
+    'Honduran White Bat',
+    'Frost Wolf',
+    'Ogopogo',
+    'Thunderbird',
+    'Bigfoot',
+    'Takhi',
+    'White-Bellied Heron',
+    'Taita Shrew',
+    'Nightcrawler',
+    'Pink Robin',
+    'Fruit Fly',
+    'Olm',
+    'Tadpole',
+    'Thorny Dragon',
+  ],
+  3: [
+    'Dodo',
+    'Dolphin',
+    'Sheep',
+    'Hoopoe Bird',
+    'Pug',
+    'Anteater',
+    'Eel',
+    'Bear',
+    'Farmer Pig',
+    'Brazillian Treehopper',
+    'Flea',
+    'Weasel',
+    'Osprey',
+    'Blue Dragon',
+    'Betta Fish',
+    'Skeleton Dog',
+    'Mandrake',
+    'Fur-Bearing Trout',
+    'Mana Hound',
+    'Roloway Monkey',
+    'Amami Rabbit',
+    'Hirola',
+    'Tucuxi',
+    'Tree Kangaroo',
+    'Slime',
+    'Dimetrodon',
+    'Gerenuk',
+    'Pangasius',
+    'Vampire Parrot',
+  ],
+};
 
 export class IriomoteCat extends Pet {
   name = 'Iriomote Cat';
@@ -66,7 +155,7 @@ export class IriomoteCatAbility extends Ability {
     const owner = this.owner;
 
     const pool =
-      DANGERS_AND_USEFUL_POOLS.iriomoteCat[this.level] ??
+      IRIOMOTE_CAT_TRANSFORM_POOLS[this.level] ??
       this.petService.allPets.get(this.level) ??
       [];
     if (pool.length === 0) {
