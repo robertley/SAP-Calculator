@@ -11,63 +11,48 @@
           <button class="btn btn-outline-danger" *ngIf="app.simulationInProgress" (click)="app.cancelSimulation()">
             Cancel
           </button>
-          <input class="form-control simulate-input" type="number" formControlName="simulations" min="1" />
+          <label class="simulate-count-label" for="simulations">Battles</label>
+          <input id="simulations" class="form-control simulate-input" type="number" formControlName="simulations" min="1" />
         </div>
-        <div class="optimize-control-group">
-          <button class="btn btn-outline-primary" (click)="app.optimizePositioning(optimizeSide)"
-            [disabled]="app.simulationInProgress">
-            Optimize
+        <div class="run-utility-group">
+          <button type="button" class="btn btn-outline-primary" (click)="toggleToolsMenu()"
+            [attr.aria-expanded]="toolsMenuOpen" aria-controls="run-tools-menu">
+            Tools <i class="fas fa-chevron-down ms-1" aria-hidden="true"></i>
           </button>
-          <select class="form-select form-select-sm" [(ngModel)]="optimizeSide"
-            [ngClass]="optimizeSide === 'player' ? 'side-select-player' : 'side-select-opponent'"
-            [ngModelOptions]="{ standalone: true }" [disabled]="app.simulationInProgress">
-            <option value="player" class="player-side-text">Player</option>
-            <option value="opponent" class="opponent-side-text">Opponent</option>
-          </select>
-          <div class="form-check mb-0">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              id="keepSameBuffTargetsOnOptimization"
-              formControlName="keepSameBuffTargetsOnOptimization"
-              [disabled]="app.simulationInProgress"
-            />
-            <label class="form-check-label small" for="keepSameBuffTargetsOnOptimization">
-              Keep same buff targets
-            </label>
+          <div id="run-tools-menu" class="command-menu run-tools-menu" *ngIf="toolsMenuOpen">
+            <button type="button" class="command-menu-item" (click)="openOptimizationDialog()"
+              [disabled]="app.simulationInProgress">
+              <span>Optimize Positioning</span>
+              <small>Find the strongest board order</small>
+            </button>
+            <button type="button" class="command-menu-item" data-bs-toggle="modal" data-bs-target="#boardStrength"
+              [disabled]="app.simulationInProgress" (click)="closeToolsMenu()">
+              <span>Board Strength</span>
+              <small>Evaluate this board</small>
+            </button>
+            <button type="button" class="command-menu-item" data-bs-toggle="modal" data-bs-target="#forceRandomness"
+              (click)="closeToolsMenu()">
+              <span>Force Randomness <b *ngIf="app.randomDecisions.length">{{ app.randomDecisions.length }}</b></span>
+              <small>Capture and replay outcomes</small>
+            </button>
           </div>
-        </div>
-        <div class="board-strength-control-group">
-          <button
-            type="button"
-            class="btn btn-outline-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#boardStrength"
-            aria-controls="boardStrength"
-            [disabled]="app.simulationInProgress"
-            title="Evaluate a board against the standardized stat ladder."
-          >
-            Board Strength
-          </button>
         </div>
         <div class="randomize-control-group">
           <button class="btn btn-secondary" (click)="app.randomize()">
             Randomize
           </button>
-          <button class="btn btn-secondary" *ngIf="app.undoState" (click)="app.undoRandomize()">
-            Undo Randomize
+          <button class="btn btn-outline-secondary undo-randomize-btn" *ngIf="app.undoState" (click)="app.undoRandomize()"
+            title="Undo randomize" aria-label="Undo randomize">
+            <i class="fas fa-undo" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="force-randomness-control-group">
-          <button type="button" class="btn btn-outline-primary force-randomness-btn"
-            data-bs-toggle="modal" data-bs-target="#forceRandomness" aria-controls="forceRandomness"
-            title="Open controls to capture random events and force specific outcomes.">
-            Force Randomness
-            <span class="force-randomness-badge" *ngIf="app.randomDecisions.length">
-              {{ app.randomDecisions.length }}
-            </span>
-          </button>
-        </div>
+        <button type="button" class="btn btn-outline-secondary scenario-trigger" (click)="app.toggleAdvanced()"
+          [attr.aria-expanded]="isUnifiedAdvancedExpanded" aria-controls="scenario-dialog">
+          Scenario
+          <span class="scenario-trigger-count" *ngIf="activeAdvancedOverridesCount">
+            {{ activeAdvancedOverridesCount }}
+          </span>
+        </button>
       </div>
     </div>
     <div class="top-toolbar-zone top-toolbar-zone-results">
@@ -112,13 +97,31 @@
     <div class="top-toolbar-zone top-toolbar-zone-actions">
       <div class="zone-label zone-label-right">Actions</div>
       <div class="external-buttons">
-        <button class="btn btn-secondary" (click)="app.toggleTheme()">
-          {{ app.theme === "dark" ? "Light Theme" : "Dark Theme" }}
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import"
+          (click)="app.showImport = true">Import</button>
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#export"
+          (click)="app.showExport = true">Export</button>
+        <button class="btn btn-primary" (click)="app.generateShareLink()">
+          Share
         </button>
         <div class="sound-menu" #soundMenuRoot>
-          <button class="btn btn-secondary" (click)="app.toggleSoundMenu()">
-            Sound
+          <button type="button" class="btn btn-secondary" (click)="toggleActionsMenu()"
+            [attr.aria-expanded]="actionsMenuOpen" aria-controls="secondary-actions-menu">
+            More <i class="fas fa-ellipsis-h ms-1" aria-hidden="true"></i>
           </button>
+          <div id="secondary-actions-menu" class="command-menu actions-menu" *ngIf="actionsMenuOpen">
+            <button type="button" class="command-menu-item" (click)="app.toggleTheme(); closeActionsMenu()">
+              <span>{{ app.theme === "dark" ? "Light Theme" : "Dark Theme" }}</span>
+            </button>
+            <button type="button" class="command-menu-item" (click)="app.toggleSoundMenu(); closeActionsMenu()">
+              <span>Sound</span>
+            </button>
+            <div class="command-menu-divider"></div>
+            <button type="button" class="command-menu-item" data-bs-toggle="modal" data-bs-target="#info"
+              (click)="app.showInfo = true; closeActionsMenu()"><span>Guide</span></button>
+            <button type="button" class="command-menu-item" data-bs-toggle="modal" data-bs-target="#reportABug"
+              (click)="app.showReportABug = true; closeActionsMenu()"><span>Report a Bug</span></button>
+          </div>
           <div class="sound-menu-panel" *ngIf="app.soundMenuOpen">
             <div class="sound-menu-title">Volume: {{ app.soundVolumePercent }}%</div>
             <input
@@ -136,25 +139,6 @@
             </button>
           </div>
         </div>
-        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#info"
-          (click)="app.showInfo = true" aria-label="Open guide">
-          Guide
-        </button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#reportABug"
-          (click)="app.showReportABug = true">
-          Report A Bug
-        </button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#export"
-          (click)="app.showExport = true">
-          Export
-        </button>
-        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#import"
-          (click)="app.showImport = true">
-          Import
-        </button>
-        <button class="btn btn-primary" (click)="app.generateShareLink()">
-          Generate Link
-        </button>
       </div>
       <div class="external-meta top-controls-meta-text">
         Shortcuts: Alt+S simulate, Alt+R randomize, Alt+P/O optimize, Alt+A controls, Alt+T theme
@@ -178,26 +162,19 @@
     </div>
   </div>
 
-  <div class="top-controls-body">
+  <div class="scenario-backdrop" *ngIf="isUnifiedAdvancedExpanded" (click)="app.toggleAdvanced()"></div>
+  <section id="scenario-dialog" class="top-controls-body scenario-dialog" *ngIf="isUnifiedAdvancedExpanded"
+    role="dialog" aria-modal="true" aria-labelledby="scenario-dialog-title">
+    <header class="scenario-dialog-header">
+      <div>
+        <h2 id="scenario-dialog-title">Scenario</h2>
+        <p>Configure packs, saved teams, and battle-specific overrides.</p>
+      </div>
+      <button type="button" class="btn-close" (click)="app.toggleAdvanced()" aria-label="Close scenario controls"></button>
+    </header>
     <div class="controls-grid">
       <div class="controls-section unified-advanced-section">
-        <div class="unified-advanced-header">
-          <button type="button" class="btn-link unified-advanced-toggle-btn" (click)="app.toggleAdvanced()"
-            [attr.aria-expanded]="isUnifiedAdvancedExpanded" aria-controls="advanced-overrides-panel">
-            <span class="section-title">Scenario Controls</span>
-            <span class="unified-advanced-count" *ngIf="activeAdvancedOverridesCount">
-              {{ activeAdvancedOverridesCount }} active
-            </span>
-            <span class="unified-advanced-chevron" [class.expanded]="isUnifiedAdvancedExpanded"
-              aria-hidden="true">&#9662;</span>
-          </button>
-        </div>
-
-        <div class="unified-advanced-summary" *ngIf="!isUnifiedAdvancedExpanded">
-          {{ unifiedAdvancedSummary }}
-        </div>
-
-        <div id="advanced-overrides-panel" class="unified-advanced-body" *ngIf="isUnifiedAdvancedExpanded">
+        <div id="advanced-overrides-panel" class="unified-advanced-body">
           <div class="controls-section nested-section packs-section">
             <div class="section-title subsection-title">Pack Selection</div>
             <div class="form-group min-w-input">
@@ -435,7 +412,37 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <div class="scenario-backdrop" *ngIf="optimizationDialogOpen" (click)="closeOptimizationDialog()"></div>
+<section id="optimization-dialog" class="optimization-dialog" *ngIf="optimizationDialogOpen" role="dialog"
+  aria-modal="true" aria-labelledby="optimization-dialog-title">
+  <header class="optimization-dialog-header">
+    <div>
+      <h2 id="optimization-dialog-title">Optimize positioning</h2>
+      <p>Test board orders and apply the strongest lineup.</p>
+    </div>
+    <button type="button" class="btn-close" (click)="closeOptimizationDialog()" aria-label="Close optimizer"></button>
+  </header>
+  <div class="optimization-dialog-body">
+    <label class="dialog-field-label" for="optimizeSide">Optimize</label>
+    <div class="side-segmented-control" role="group" aria-label="Side to optimize">
+      <button type="button" [class.active]="optimizeSide === 'player'" (click)="optimizeSide = 'player'">Player</button>
+      <button type="button" [class.active]="optimizeSide === 'opponent'" (click)="optimizeSide = 'opponent'">Opponent</button>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="keepSameBuffTargetsOnOptimization"
+        formControlName="keepSameBuffTargetsOnOptimization" [disabled]="app.simulationInProgress" />
+      <label class="form-check-label" for="keepSameBuffTargetsOnOptimization">Keep the same buff targets</label>
+    </div>
   </div>
+  <footer class="optimization-dialog-footer">
+    <button type="button" class="btn btn-secondary" (click)="closeOptimizationDialog()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="runOptimization()" [disabled]="app.simulationInProgress">
+      Optimize {{ optimizeSide === 'player' ? 'Player' : 'Opponent' }}
+    </button>
+  </footer>
+</section>
 </div>
 
 <div class="modal fade force-randomness-modal" id="forceRandomness" tabindex="-1"

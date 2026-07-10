@@ -27,6 +27,12 @@ import {
 import * as petsData from 'assets/data/pets.json';
 import * as perksData from 'assets/data/perks.json';
 import * as toysData from 'assets/data/toys.json';
+import {
+  ReplayImageBattleInfo,
+  ReplayImageCanvasRendererService,
+  ReplayImagePetInfo,
+  ReplayImageToyInfo,
+} from './replay-image-canvas-renderer.service';
 
 export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -123,31 +129,9 @@ interface OptimizedTurnRow {
   calculatorUrl: string;
 }
 
-interface RenderPetInfo {
-  imagePath: string | null;
-  perkImagePath: string | null;
-  attack: number;
-  health: number;
-  level: number;
-  xp: number;
-}
-
-interface RenderToyInfo {
-  imagePath: string | null;
-  level: number;
-}
-
-interface RenderBattleInfo {
-  outcome: number;
-  opponentName: string | null;
-  playerName: string | null;
-  playerLives: number | null;
-  opponentLives: number | null;
-  playerPets: Array<RenderPetInfo | null>;
-  opponentPets: Array<RenderPetInfo | null>;
-  playerToy: RenderToyInfo | null;
-  opponentToy: RenderToyInfo | null;
-}
+type RenderPetInfo = ReplayImagePetInfo;
+type RenderToyInfo = ReplayImageToyInfo;
+type RenderBattleInfo = ReplayImageBattleInfo;
 
 const MODULE_PETS =
   ((petsData as unknown as { default?: ContentEntry[] }).default ??
@@ -236,6 +220,7 @@ export class ReplayPositioningImageService {
     private petService: PetService,
     private equipmentService: EquipmentService,
     private toyService: ToyService,
+    private replayImageRenderer: ReplayImageCanvasRendererService,
   ) {}
 
   async buildPositioningImage(
@@ -609,64 +594,21 @@ export class ReplayPositioningImageService {
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
   ): Promise<ReplayPositioningImageResult> {
-    const PET_WIDTH = 50;
-    const BATTLE_HEIGHT = 125;
-    const BASE_CANVAS_WIDTH = 1250;
     const DELTA_COLUMN_WIDTH = 360;
-    const FOOTER_HEIGHT = 60;
-    const CANVAS_WIDTH = BASE_CANVAS_WIDTH + DELTA_COLUMN_WIDTH;
-    const canvas = document.createElement('canvas');
-    const headerHeight =
-      renderInfo[0]?.playerName && renderInfo[0]?.opponentName ? 36 : 0;
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = headerHeight + rows.length * BATTLE_HEIGHT + FOOTER_HEIGHT;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Canvas rendering is not available in this browser.');
-    }
-
-    const imageCache = new Map<string, Promise<HTMLImageElement | null>>();
-    const loadImage = (src: string | null): Promise<HTMLImageElement | null> => {
-      if (!src) {
-        return Promise.resolve(null);
-      }
-      const cached = imageCache.get(src);
-      if (cached) {
-        return cached;
-      }
-      const promise = new Promise<HTMLImageElement | null>((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => resolve(null);
-        img.src = src;
-      });
-      imageCache.set(src, promise);
-      return promise;
-    };
-
-    const turnIconSize = (25 + PET_WIDTH) * 2;
-    const livesIconSize = 15 + PET_WIDTH;
-    const heartIcon = await loadImage('/assets/art/Public/Public/Icons/heart-from-textmap.png');
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, canvas.height);
-    if (headerHeight > 0) {
-      ctx.fillStyle = '#000000';
-      ctx.font = '18px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(
-        `${renderInfo[0]?.playerName} vs ${renderInfo[0]?.opponentName} (Optimized Positioning)`,
-        CANVAS_WIDTH / 2,
-        24,
-      );
-      ctx.textAlign = 'left';
-    }
+    const title =
+      renderInfo[0]?.playerName && renderInfo[0]?.opponentName
+        ? `${renderInfo[0].playerName} vs ${renderInfo[0].opponentName} (Optimized Positioning)`
+        : null;
+    const session = this.replayImageRenderer.createSession({
+      rowCount: rows.length,
+      extraColumnWidth: DELTA_COLUMN_WIDTH,
+      title,
+    });
+    const { ctx } = session;
 
     for (let i = 0; i < rows.length; i += 1) {
       const info = renderInfo[i];
       const row = rows[i];
-      const rowStartY = headerHeight + i * BATTLE_HEIGHT;
-      const baseY = rowStartY + 25;
       const playerRenderPets =
         optimizationSide === 'player' && row.optimizedPlayerPets.length > 0
           ? row.optimizedPlayerPets
@@ -676,76 +618,15 @@ export class ReplayPositioningImageService {
           ? row.optimizedOpponentPets
           : info.opponentPets;
 
-      ctx.fillStyle =
-        info.outcome === 1 ? '#E6F4EA' : info.outcome === 2 ? '#FDECEA' : '#F2F2F2';
-      ctx.fillRect(0, rowStartY, CANVAS_WIDTH, BATTLE_HEIGHT);
+      const { baseY } = await this.replayImageRenderer.drawBattleRow(session, {
+        index: i,
+        turn: row.turn,
+        info,
+        playerPets: playerRenderPets,
+        opponentPets: opponentRenderPets,
+      });
 
-      ctx.fillStyle = '#000000';
-      ctx.font = '24px Arial';
-      ctx.fillText(String(row.turn), 25 + PET_WIDTH + 15, baseY + PET_WIDTH / 2 + 6);
-      if (heartIcon) {
-        ctx.drawImage(heartIcon, turnIconSize, baseY, PET_WIDTH, PET_WIDTH);
-        if (info.playerLives !== null) {
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = '24px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText(
-            String(info.playerLives),
-            turnIconSize + PET_WIDTH / 2,
-            baseY + (PET_WIDTH - 24) + 6,
-          );
-          ctx.textAlign = 'left';
-        }
-      }
-      ctx.fillStyle = '#111111';
-      ctx.font = '18px Arial';
-      const resultText = info.outcome === 1 ? 'WIN' : info.outcome === 2 ? 'LOSS' : 'DRAW';
-      ctx.fillText(resultText, turnIconSize + PET_WIDTH / 2 - 18, baseY + PET_WIDTH + 26);
-
-      for (let x = 0; x < playerRenderPets.length && x < 5; x += 1) {
-        const pet = playerRenderPets[x];
-        if (!pet) {
-          continue;
-        }
-        const visualIndex = 4 - x;
-        const posX =
-          visualIndex * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
-        await this.drawPet(ctx, pet, posX, baseY, true, PET_WIDTH, loadImage);
-      }
-      if (info.playerToy) {
-        await this.drawToy(
-          ctx,
-          info.playerToy,
-          5 * (PET_WIDTH + 25) + turnIconSize + livesIconSize,
-          baseY,
-          PET_WIDTH,
-          loadImage,
-        );
-      }
-
-      for (let x = 0; x < opponentRenderPets.length && x < 5; x += 1) {
-        const pet = opponentRenderPets[x];
-        if (!pet) {
-          continue;
-        }
-        const visualIndex = 4 - x;
-        const posX =
-          BASE_CANVAS_WIDTH -
-          (visualIndex * (PET_WIDTH + 25) + PET_WIDTH + 25);
-        await this.drawPet(ctx, pet, posX, baseY, false, PET_WIDTH, loadImage);
-      }
-      if (info.opponentToy) {
-        await this.drawToy(
-          ctx,
-          info.opponentToy,
-          BASE_CANVAS_WIDTH - ((5 + 1) * (PET_WIDTH + 25)),
-          baseY,
-          PET_WIDTH,
-          loadImage,
-        );
-      }
-
-      const deltaX = BASE_CANVAS_WIDTH + 10;
+      const deltaX = session.baseWidth + 10;
       const delta = row.delta;
       if (this.hasVisibleOddsChange(delta)) {
         ctx.textAlign = 'left';
@@ -774,12 +655,10 @@ export class ReplayPositioningImageService {
       ctx.textAlign = 'center';
     }
 
-    const footerY = headerHeight + rows.length * BATTLE_HEIGHT;
+    const footerY = this.replayImageRenderer.drawFooterBackground(session);
     const totalWinDelta = rows.reduce((sum, row) => sum + row.delta.deltaWin, 0);
     const totalLossDelta = rows.reduce((sum, row) => sum + row.delta.deltaLoss, 0);
     const totalDrawDelta = rows.reduce((sum, row) => sum + row.delta.deltaDraw, 0);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, footerY, CANVAS_WIDTH, FOOTER_HEIGHT);
     ctx.fillStyle = '#111111';
     ctx.font = '14px Arial';
     ctx.textAlign = 'left';
@@ -795,28 +674,20 @@ export class ReplayPositioningImageService {
     );
 
     const preview: ReplayPositioningImagePreview = {
-      width: CANVAS_WIDTH,
-      height: canvas.height,
+      width: session.width,
+      height: session.height,
       hotspots: rows.map((row, index) => ({
         turn: row.turn,
         calculatorUrl: row.calculatorUrl,
-        top: headerHeight + index * BATTLE_HEIGHT,
-        height: BATTLE_HEIGHT,
+        top: session.headerHeight + index * session.rowHeight,
+        height: session.rowHeight,
       })),
     };
 
-    return new Promise<ReplayPositioningImageResult>((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          reject(new Error('Failed to create PNG image.'));
-          return;
-        }
-        resolve({
-          blob,
-          preview,
-        });
-      }, 'image/png');
-    });
+    return {
+      blob: await this.replayImageRenderer.toBlob(session),
+      preview,
+    };
   }
 
   private formatDelta(value: number): string {
@@ -831,64 +702,6 @@ export class ReplayPositioningImageService {
       round(delta.baseline.draw) !== round(delta.optimized.draw) ||
       round(delta.baseline.loss) !== round(delta.optimized.loss)
     );
-  }
-
-  private async drawPet(
-    ctx: CanvasRenderingContext2D,
-    pet: RenderPetInfo,
-    x: number,
-    y: number,
-    flip: boolean,
-    petWidth: number,
-    loadImage: (src: string | null) => Promise<HTMLImageElement | null>,
-  ): Promise<void> {
-    const petImage = await loadImage(pet.imagePath);
-    if (petImage) {
-      if (flip) {
-        ctx.save();
-        ctx.scale(-1, 1);
-        ctx.drawImage(petImage, -(x + petWidth), y, petWidth, petWidth);
-        ctx.restore();
-      } else {
-        ctx.drawImage(petImage, x, y, petWidth, petWidth);
-      }
-    }
-    const perkImage = await loadImage(pet.perkImagePath);
-    if (perkImage) {
-      ctx.drawImage(perkImage, x + 30, y - 10, 30, 30);
-    }
-    ctx.font = '18px Arial';
-    ctx.fillStyle = 'green';
-    ctx.textAlign = 'center';
-    ctx.fillText(String(pet.attack), x + petWidth / 4, y + petWidth + 20);
-    ctx.fillStyle = 'red';
-    ctx.fillText(String(pet.health), x + (3 * petWidth) / 4, y + petWidth + 20);
-    ctx.font = '12px Arial';
-    ctx.fillStyle = 'grey';
-    ctx.fillText('Lvl', x, y - 6);
-    ctx.font = '18px Arial';
-    ctx.fillStyle = 'orange';
-    ctx.fillText(String(pet.level), x + 18, y - 7.5);
-    ctx.textAlign = 'left';
-  }
-
-  private async drawToy(
-    ctx: CanvasRenderingContext2D,
-    toy: RenderToyInfo,
-    x: number,
-    y: number,
-    petWidth: number,
-    loadImage: (src: string | null) => Promise<HTMLImageElement | null>,
-  ): Promise<void> {
-    const toyImage = await loadImage(toy.imagePath);
-    if (toyImage) {
-      ctx.drawImage(toyImage, x, y, petWidth, petWidth);
-    }
-    ctx.fillStyle = '#111111';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Lv${toy.level}`, x + petWidth / 2, y + (3 * petWidth) / 2);
-    ctx.textAlign = 'left';
   }
 
   private projectLocalEndTurnLineup(

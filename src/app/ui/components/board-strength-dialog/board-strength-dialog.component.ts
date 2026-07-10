@@ -99,6 +99,9 @@ export class BoardStrengthDialogComponent implements OnInit, OnDestroy {
     if (this.progress.phase === 'complete') {
       return 100;
     }
+    if (this.progress.phase === 'scout') {
+      return 5;
+    }
     if (this.progress.phase === 'scan') {
       return Math.min(
         45,
@@ -120,8 +123,11 @@ export class BoardStrengthDialogComponent implements OnInit, OnDestroy {
   }
 
   get phaseLabel(): string {
-    if (!this.progress || this.progress.phase === 'scan') {
-      return 'Scanning the 1/1–100/100 ladder';
+    if (!this.progress || this.progress.phase === 'scout') {
+      return 'Finding the board\'s benchmark range';
+    }
+    if (this.progress.phase === 'scan') {
+      return 'Scanning the benchmark ladder';
     }
     if (this.progress.phase === 'refine') {
       return `Refining uncertain matchups · pass ${this.progress.refinementRound}`;
@@ -138,6 +144,24 @@ export class BoardStrengthDialogComponent implements OnInit, OnDestroy {
       return '';
     }
     return `12,208 ${this.getCurveCoordinates(this.result.points)} 608,208`;
+  }
+
+  get chartAxisLabels(): number[] {
+    const result = this.result;
+    if (!result) {
+      return [];
+    }
+    const span = result.maxStat - result.minStat;
+    return [0, 0.25, 0.5, 0.75, 1].map((position) =>
+      Math.round(result.minStat + span * position),
+    );
+  }
+
+  get formattedScore(): string {
+    const result = this.result;
+    return result
+      ? `${result.score.toFixed(1)}${result.rangeTruncated ? '+' : ''}`
+      : '';
   }
 
   get benchmarkMarkerX(): number | null {
@@ -220,7 +244,6 @@ export class BoardStrengthDialogComponent implements OnInit, OnDestroy {
         side: this.selectedSide,
         precision: this.precision,
         minStat: 1,
-        maxStat: 100,
       },
     );
     this.changeDetectorRef.markForCheck();
@@ -248,7 +271,7 @@ export class BoardStrengthDialogComponent implements OnInit, OnDestroy {
       ? ` At ${representative.stat}/${representative.stat}: ${this.getWinPercent(representative)}% win, ${this.getDrawPercent(representative)}% draw, ${this.getLossPercent(representative)}% loss.`
       : '';
     await navigator.clipboard.writeText(
-      `${this.sideLabel} board strength: ${result.score.toFixed(1)} (BS1). 50% benchmark: ${benchmark}. ${result.totalBattles.toLocaleString()} battles.${matchup}`,
+      `${this.sideLabel} board strength: ${result.score.toFixed(1)}${result.rangeTruncated ? '+' : ''} (BS1). 50% benchmark: ${benchmark}. ${result.totalBattles.toLocaleString()} battles.${matchup}`,
     );
     this.copyLabel = 'Copied';
     this.changeDetectorRef.markForCheck();

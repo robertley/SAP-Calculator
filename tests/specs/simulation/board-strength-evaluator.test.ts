@@ -99,6 +99,70 @@ describe('board strength evaluator', () => {
     expect(evaluation.totalBattles).toBe(125);
   });
 
+  it('preserves non-monotonic rebounds and uses the highest passing benchmark', () => {
+    const evaluation = runBoardStrengthEvaluation({
+      baseConfig: baseConfig(),
+      options: { side: 'player', precision: 'quick', minStat: 1, maxStat: 5 },
+      simulateBatch: (config) => {
+        const stat = config.opponentPets[0]?.attack ?? 0;
+        const count = config.simulationCount ?? 0;
+        return stat === 2 || stat === 5
+          ? result(count, 0, 0)
+          : result(0, count, 0);
+      },
+    });
+
+    expect(evaluation.points.map((point) => point.smoothedScore)).toEqual([0, 1, 0, 0, 1]);
+    expect(evaluation.benchmark50).toBe(5);
+  });
+
+  it('automatically expands beyond 500 for strong boards', () => {
+    const evaluation = runBoardStrengthEvaluation({
+      baseConfig: baseConfig(),
+      options: { side: 'player', precision: 'quick' },
+      simulateBatch: (config) => {
+        const stat = config.opponentPets[0]?.attack ?? 0;
+        const count = config.simulationCount ?? 0;
+        return stat <= 550 ? result(count, 0, 0) : result(0, count, 0);
+      },
+    });
+
+    expect(evaluation.maxStat).toBe(600);
+    expect(evaluation.score).toBe(550);
+    expect(evaluation.benchmark50).toBe(550);
+    expect(evaluation.rangeTruncated).toBe(false);
+  });
+
+  it('discovers a high-stat rebound after lower-stat failures', () => {
+    const evaluation = runBoardStrengthEvaluation({
+      baseConfig: baseConfig(),
+      options: { side: 'player', precision: 'quick' },
+      simulateBatch: (config) => {
+        const stat = config.opponentPets[0]?.attack ?? 0;
+        const count = config.simulationCount ?? 0;
+        return stat >= 450 && stat <= 550
+          ? result(count, 0, 0)
+          : result(0, count, 0);
+      },
+    });
+
+    expect(evaluation.maxStat).toBe(600);
+    expect(evaluation.score).toBe(101);
+    expect(evaluation.benchmark50).toBe(550);
+  });
+
+  it('reports a lower bound when still winning at the evaluation horizon', () => {
+    const evaluation = runBoardStrengthEvaluation({
+      baseConfig: baseConfig(),
+      options: { side: 'player', precision: 'quick' },
+      simulateBatch: (config) => result(config.simulationCount ?? 0, 0, 0),
+    });
+
+    expect(evaluation.maxStat).toBe(5000);
+    expect(evaluation.score).toBe(5000);
+    expect(evaluation.rangeTruncated).toBe(true);
+  });
+
   it('places an internal five-pet benchmark on the other side', () => {
     const config = createBoardStrengthMatchConfig(
       baseConfig(),

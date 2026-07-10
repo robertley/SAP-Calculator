@@ -21,6 +21,12 @@ import { ToyService } from '../toy/toy.service';
 import * as petsData from 'assets/data/pets.json';
 import * as perksData from 'assets/data/perks.json';
 import * as toysData from 'assets/data/toys.json';
+import {
+  ReplayImageBattleInfo,
+  ReplayImageCanvasRendererService,
+  ReplayImagePetInfo,
+  ReplayImageToyInfo,
+} from './replay-image-canvas-renderer.service';
 
 export interface ReplayOddsImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -65,33 +71,9 @@ interface OddsBattleRow {
   calculatorUrl: string;
 }
 
-interface RenderPetInfo {
-  imagePath: string | null;
-  perkImagePath: string | null;
-  attack: number;
-  health: number;
-  tempAttack: number;
-  tempHealth: number;
-  level: number;
-  xp: number;
-}
-
-interface RenderToyInfo {
-  imagePath: string | null;
-  level: number;
-}
-
-interface RenderBattleInfo {
-  outcome: number;
-  opponentName: string | null;
-  playerName: string | null;
-  playerLives: number | null;
-  opponentLives: number | null;
-  playerPets: Array<RenderPetInfo | null>;
-  opponentPets: Array<RenderPetInfo | null>;
-  playerToy: RenderToyInfo | null;
-  opponentToy: RenderToyInfo | null;
-}
+type RenderPetInfo = ReplayImagePetInfo;
+type RenderToyInfo = ReplayImageToyInfo;
+type RenderBattleInfo = ReplayImageBattleInfo;
 
 interface TurnOddsSummary {
   player: string;
@@ -192,6 +174,7 @@ export class ReplayOddsImageService {
     private petService: PetService,
     private equipmentService: EquipmentService,
     private toyService: ToyService,
+    private replayImageRenderer: ReplayImageCanvasRendererService,
   ) {}
 
   async buildOddsImage(input: ReplayOddsImageBuildInput): Promise<ReplayOddsImageResult> {
@@ -461,144 +444,35 @@ export class ReplayOddsImageService {
     oddsByTurn: Array<TurnOddsSummary | null>,
     simulationCount: number,
   ): Promise<ReplayOddsImageResult> {
-    const PET_WIDTH = 50;
-    const BATTLE_HEIGHT = 125;
-    const BASE_CANVAS_WIDTH = 1250;
     const WIN_PERCENT_COLUMN_WIDTH = 260;
-    const FOOTER_HEIGHT = 60;
-    const CANVAS_WIDTH = BASE_CANVAS_WIDTH + WIN_PERCENT_COLUMN_WIDTH;
-    const canvas = document.createElement('canvas');
-    const headerHeight =
-      renderInfo[0]?.playerName && renderInfo[0]?.opponentName ? 36 : 0;
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = headerHeight + turns.length * BATTLE_HEIGHT + FOOTER_HEIGHT;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Canvas rendering is not available in this browser.');
-    }
-
-    const imageCache = new Map<string, Promise<HTMLImageElement | null>>();
-    const loadImage = (src: string | null): Promise<HTMLImageElement | null> => {
-      if (!src) {
-        return Promise.resolve(null);
-      }
-      const cached = imageCache.get(src);
-      if (cached) {
-        return cached;
-      }
-      const promise = new Promise<HTMLImageElement | null>((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = () => resolve(null);
-        img.src = src;
-      });
-      imageCache.set(src, promise);
-      return promise;
-    };
-
-    const turnIconSize = (25 + PET_WIDTH) * 2;
-    const livesIconSize = 15 + PET_WIDTH;
-    const heartIcon = await loadImage('/assets/art/Public/Public/Icons/heart-from-textmap.png');
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, CANVAS_WIDTH, canvas.height);
-    if (headerHeight > 0) {
-      ctx.fillStyle = '#000000';
-      ctx.font = '18px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(
-        `${renderInfo[0]?.playerName} vs ${renderInfo[0]?.opponentName}`,
-        CANVAS_WIDTH / 2,
-        24,
-      );
-      ctx.textAlign = 'left';
-    }
+    const title =
+      renderInfo[0]?.playerName && renderInfo[0]?.opponentName
+        ? `${renderInfo[0].playerName} vs ${renderInfo[0].opponentName}`
+        : null;
+    const session = this.replayImageRenderer.createSession({
+      rowCount: turns.length,
+      extraColumnWidth: WIN_PERCENT_COLUMN_WIDTH,
+      title,
+    });
+    const { ctx } = session;
 
     for (let i = 0; i < turns.length; i += 1) {
       const info = renderInfo[i];
       const odds = oddsByTurn[i];
-      const rowStartY = headerHeight + i * BATTLE_HEIGHT;
-      const baseY = rowStartY + 25;
       const winValue = odds ? this.parsePercentValue(odds.player) : null;
       const lossValue = odds ? this.parsePercentValue(odds.opponent) : null;
       const drawValue = odds ? this.parsePercentValue(odds.draw) : null;
       const isGaped =
         info.outcome === 1 && winValue !== null && Number.isFinite(winValue) && winValue <= 5;
 
-      if (isGaped) {
-        ctx.fillStyle = '#F4D35E';
-      } else {
-        ctx.fillStyle =
-          info.outcome === 1 ? '#E6F4EA' : info.outcome === 2 ? '#FDECEA' : '#F2F2F2';
-      }
-      ctx.fillRect(0, rowStartY, CANVAS_WIDTH, BATTLE_HEIGHT);
+      const { baseY } = await this.replayImageRenderer.drawBattleRow(session, {
+        index: i,
+        turn: turns[i].turn,
+        info,
+        backgroundColor: isGaped ? '#F4D35E' : undefined,
+      });
 
-      ctx.fillStyle = '#000000';
-      ctx.font = '24px Arial';
-      ctx.fillText(String(turns[i].turn), 25 + PET_WIDTH + 15, baseY + PET_WIDTH / 2 + 6);
-      if (heartIcon) {
-        ctx.drawImage(heartIcon, turnIconSize, baseY, PET_WIDTH, PET_WIDTH);
-        if (info.playerLives !== null) {
-          ctx.fillStyle = '#FFFFFF';
-          ctx.font = '24px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText(
-            String(info.playerLives),
-            turnIconSize + PET_WIDTH / 2,
-            baseY + (PET_WIDTH - 24) + 6,
-          );
-          ctx.textAlign = 'left';
-        }
-      }
-      ctx.fillStyle = '#111111';
-      ctx.font = '18px Arial';
-      const resultText = info.outcome === 1 ? 'WIN' : info.outcome === 2 ? 'LOSS' : 'DRAW';
-      ctx.fillText(resultText, turnIconSize + PET_WIDTH / 2 - 18, baseY + PET_WIDTH + 26);
-
-      for (let x = 0; x < info.playerPets.length && x < 5; x += 1) {
-        const pet = info.playerPets[x];
-        if (!pet) {
-          continue;
-        }
-        const visualIndex = 4 - x;
-        const posX =
-          visualIndex * (PET_WIDTH + 25) + 25 + turnIconSize + livesIconSize;
-        await this.drawPet(ctx, pet, posX, baseY, true, PET_WIDTH, loadImage);
-      }
-      if (info.playerToy) {
-        await this.drawToy(
-          ctx,
-          info.playerToy,
-          5 * (PET_WIDTH + 25) + turnIconSize + livesIconSize,
-          baseY,
-          PET_WIDTH,
-          loadImage,
-        );
-      }
-
-      for (let x = 0; x < info.opponentPets.length && x < 5; x += 1) {
-        const pet = info.opponentPets[x];
-        if (!pet) {
-          continue;
-        }
-        const visualIndex = 4 - x;
-        const posX =
-          BASE_CANVAS_WIDTH -
-          (visualIndex * (PET_WIDTH + 25) + PET_WIDTH + 25);
-        await this.drawPet(ctx, pet, posX, baseY, false, PET_WIDTH, loadImage);
-      }
-      if (info.opponentToy) {
-        await this.drawToy(
-          ctx,
-          info.opponentToy,
-          BASE_CANVAS_WIDTH - ((5 + 1) * (PET_WIDTH + 25)),
-          baseY,
-          PET_WIDTH,
-          loadImage,
-        );
-      }
-
-      const oddsX = BASE_CANVAS_WIDTH + 10;
+      const oddsX = session.baseWidth + 10;
       ctx.textAlign = 'left';
       if (odds) {
         const max = Math.max(winValue ?? -1, lossValue ?? -1, drawValue ?? -1);
@@ -645,122 +519,33 @@ export class ReplayOddsImageService {
       ctx.textAlign = 'center';
     }
 
-    const footerY = headerHeight + turns.length * BATTLE_HEIGHT;
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, footerY, CANVAS_WIDTH, FOOTER_HEIGHT);
+    const footerY = this.replayImageRenderer.drawFooterBackground(session);
     ctx.fillStyle = '#111111';
     ctx.font = '14px Arial';
     ctx.textAlign = 'left';
     ctx.fillText(`Simulations per turn: ${simulationCount}`, 25, footerY + 24);
 
     const preview: ReplayOddsImagePreview = {
-      width: CANVAS_WIDTH,
-      height: canvas.height,
+      width: session.width,
+      height: session.height,
       hotspots: turns
         .map((turn, index) =>
           turn.calculatorUrl.length > 0
             ? {
                 turn: turn.turn,
                 calculatorUrl: turn.calculatorUrl,
-                top: headerHeight + index * BATTLE_HEIGHT,
-                height: BATTLE_HEIGHT,
+                top: session.headerHeight + index * session.rowHeight,
+                height: session.rowHeight,
               }
             : null,
         )
         .filter((hotspot): hotspot is ReplayOddsImageHotspot => hotspot !== null),
     };
 
-    return new Promise<ReplayOddsImageResult>((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          reject(new Error('Failed to create PNG image.'));
-          return;
-        }
-        resolve({
-          blob,
-          preview,
-        });
-      }, 'image/png');
-    });
-  }
-
-  private async drawPet(
-    ctx: CanvasRenderingContext2D,
-    pet: RenderPetInfo,
-    x: number,
-    y: number,
-    flip: boolean,
-    petWidth: number,
-    loadImage: (src: string | null) => Promise<HTMLImageElement | null>,
-  ): Promise<void> {
-    const petImage = await loadImage(pet.imagePath);
-    if (petImage) {
-      if (flip) {
-        ctx.save();
-        ctx.scale(-1, 1);
-        ctx.drawImage(petImage, -(x + petWidth), y, petWidth, petWidth);
-        ctx.restore();
-      } else {
-        ctx.drawImage(petImage, x, y, petWidth, petWidth);
-      }
-    }
-    const perkImage = await loadImage(pet.perkImagePath);
-    if (perkImage) {
-      ctx.drawImage(perkImage, x + 30, y - 10, 30, 30);
-    }
-    ctx.font = '18px Arial';
-    ctx.fillStyle = 'green';
-    ctx.textAlign = 'center';
-    ctx.fillText(String(pet.attack + pet.tempAttack), x + petWidth / 4, y + petWidth + 20);
-    ctx.fillStyle = 'red';
-    ctx.fillText(
-      String(pet.health + pet.tempHealth),
-      x + (3 * petWidth) / 4,
-      y + petWidth + 20,
-    );
-    ctx.font = '12px Arial';
-    ctx.fillStyle = 'grey';
-    ctx.fillText('Lvl', x, y - 6);
-    ctx.font = '18px Arial';
-    ctx.fillStyle = 'orange';
-    ctx.fillText(String(pet.level), x + 18, y - 7.5);
-
-    const xpBars = pet.xp < 2 ? 2 : 3;
-    const xpStartX = x - 9;
-    const xpBarWidth = pet.xp < 2 ? 14 : 10;
-    const xpBarGap = pet.xp < 2 ? 16 : 12;
-    for (let idx = 0; idx < xpBars; idx += 1) {
-      const fillXpBar = pet.xp < 2 ? idx < pet.xp : idx < pet.xp - 2;
-      this.fillRoundedRect(
-        ctx,
-        xpStartX + idx * xpBarGap,
-        y - 2,
-        xpBarWidth,
-        6,
-        2,
-        fillXpBar ? 'orange' : 'grey',
-      );
-    }
-    ctx.textAlign = 'left';
-  }
-
-  private async drawToy(
-    ctx: CanvasRenderingContext2D,
-    toy: RenderToyInfo,
-    x: number,
-    y: number,
-    petWidth: number,
-    loadImage: (src: string | null) => Promise<HTMLImageElement | null>,
-  ): Promise<void> {
-    const toyImage = await loadImage(toy.imagePath);
-    if (toyImage) {
-      ctx.drawImage(toyImage, x, y, petWidth, petWidth);
-    }
-    ctx.fillStyle = '#111111';
-    ctx.font = '12px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText(`Lv${toy.level}`, x + petWidth / 2, y + (3 * petWidth) / 2);
-    ctx.textAlign = 'left';
+    return {
+      blob: await this.replayImageRenderer.toBlob(session),
+      preview,
+    };
   }
 
   private buildRenderPetsFromPetConfigLineup(
@@ -997,28 +782,4 @@ export class ReplayOddsImageService {
     return Number.isFinite(parsed) ? parsed : fallback;
   }
 
-  private fillRoundedRect(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    radius: number,
-    fillStyle: string,
-  ): void {
-    const clampedRadius = Math.max(0, Math.min(radius, Math.min(width, height) / 2));
-    ctx.beginPath();
-    ctx.moveTo(x + clampedRadius, y);
-    ctx.lineTo(x + width - clampedRadius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + clampedRadius);
-    ctx.lineTo(x + width, y + height - clampedRadius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - clampedRadius, y + height);
-    ctx.lineTo(x + clampedRadius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - clampedRadius);
-    ctx.lineTo(x, y + clampedRadius);
-    ctx.quadraticCurveTo(x, y, x + clampedRadius, y);
-    ctx.closePath();
-    ctx.fillStyle = fillStyle;
-    ctx.fill();
-  }
 }

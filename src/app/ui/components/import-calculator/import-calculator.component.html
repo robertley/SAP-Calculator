@@ -89,6 +89,17 @@
           : "Build Positioning Image"
       }}
     </button>
+    <button
+      class="btn btn-outline-primary"
+      (click)="buildBoardStrengthImage()"
+      [disabled]="boardStrengthImageLoading"
+    >
+      {{
+        boardStrengthImageLoading
+          ? "Building Strength Image..."
+          : "Build Strength Image"
+      }}
+    </button>
   </div>
   <div *ngIf="positioningImageLoading" class="mb-2">
     <div class="d-flex align-items-center justify-content-between mb-1">
@@ -113,6 +124,32 @@
         aria-valuemax="100"
       >
         {{ positioningProgressPercent }}%
+      </div>
+    </div>
+  </div>
+  <div *ngIf="boardStrengthImageLoading" class="mb-2">
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <div class="small text-muted">
+        {{ boardStrengthProgressMessage || "Building board strength image..." }}
+      </div>
+      <button
+        type="button"
+        class="btn btn-sm btn-outline-danger"
+        (click)="cancelBoardStrengthBuild()"
+      >
+        Cancel
+      </button>
+    </div>
+    <div class="progress">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated"
+        role="progressbar"
+        [style.width.%]="boardStrengthProgressPercent"
+        [attr.aria-valuenow]="boardStrengthProgressPercent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        {{ boardStrengthProgressPercent }}%
       </div>
     </div>
   </div>
@@ -209,6 +246,42 @@
         Download PNG
       </button>
       <button class="btn btn-outline-secondary" (click)="clearPositioningPreview()">
+        Clear Preview
+      </button>
+    </div>
+  </div>
+  <div *ngIf="boardStrengthImagePreviewUrl" class="odds-preview mb-3">
+    <div class="odds-preview-header">
+      <strong>Board Strength Image Preview</strong>
+      <span class="text-muted small">{{ boardStrengthImageFileName }}</span>
+    </div>
+    <div class="positioning-preview-frame">
+      <img
+        class="odds-preview-image positioning-preview-image"
+        [src]="boardStrengthImagePreviewUrl"
+        alt="Replay board strength preview"
+      />
+      <a
+        *ngFor="let hotspot of boardStrengthImagePreview?.hotspots ?? []"
+        class="positioning-preview-hotspot"
+        [href]="hotspot.calculatorUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        [ngStyle]="boardStrengthHotspotStyle(hotspot)"
+        [attr.aria-label]="'Open turn ' + hotspot.turn + ' in calculator'"
+        [title]="'Open turn ' + hotspot.turn + ' in calculator'"
+      >
+        <span class="positioning-preview-hotspot-label">Turn {{ hotspot.turn }}</span>
+      </a>
+    </div>
+    <div *ngIf="boardStrengthImagePreview?.hotspots?.length" class="text-muted small mt-2">
+      Hover a row to open that turn in the calculator.
+    </div>
+    <div class="odds-preview-actions mt-2">
+      <button class="btn btn-primary me-2" (click)="downloadBoardStrengthImage()">
+        Download PNG
+      </button>
+      <button class="btn btn-outline-secondary" (click)="clearBoardStrengthPreview()">
         Clear Preview
       </button>
     </div>

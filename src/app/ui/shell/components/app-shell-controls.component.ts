@@ -70,6 +70,9 @@ export class AppShellControlsComponent {
   optimizeSide: 'player' | 'opponent' = 'player';
   saveSide: 'player' | 'opponent' = 'player';
   loadSide: 'player' | 'opponent' = 'player';
+  optimizationDialogOpen = false;
+  toolsMenuOpen = false;
+  actionsMenuOpen = false;
 
   get isUnifiedAdvancedExpanded(): boolean {
     return Boolean(this.app?.formGroup?.get('showAdvanced')?.value);
@@ -92,33 +95,76 @@ export class AppShellControlsComponent {
     return this.activeAdvancedSettingsCount;
   }
 
-  get unifiedAdvancedSummary(): string {
-    const advancedCount = this.activeAdvancedSettingsCount;
-    const packSummary = `Packs: ${this.getControlDisplayValue('playerPack', 'None')} vs ${this.getControlDisplayValue('opponentPack', 'None')}.`;
-
-    if (!advancedCount) {
-      return `${packSummary} No scenario tweaks active.`;
-    }
-    return `${packSummary} ${advancedCount} advanced setting${advancedCount === 1 ? '' : 's'} active.`;
-  }
-
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (!this.app?.soundMenuOpen) {
-      return;
-    }
     const target = event.target as Node | null;
+    const element = event.target instanceof Element ? event.target : null;
     const root = this.soundMenuRoot?.nativeElement;
-    if (!target || !root) {
+    if (!target || !root || !element) {
+      this.closeMenus();
+      return;
+    }
+    if (root.contains(target) || element.closest('.run-utility-group')) {
+      return;
+    }
+    this.closeMenus();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.optimizationDialogOpen) {
+      this.closeOptimizationDialog();
+      return;
+    }
+    if (this.isUnifiedAdvancedExpanded) {
+      this.app.toggleAdvanced();
+      return;
+    }
+    this.closeMenus();
+  }
+
+  openOptimizationDialog(): void {
+    if (this.app.simulationInProgress) {
+      return;
+    }
+    this.optimizationDialogOpen = true;
+    this.closeMenus();
+  }
+
+  closeOptimizationDialog(): void {
+    this.optimizationDialogOpen = false;
+  }
+
+  runOptimization(): void {
+    this.app.optimizePositioning(this.optimizeSide);
+    this.closeOptimizationDialog();
+  }
+
+  toggleToolsMenu(): void {
+    this.toolsMenuOpen = !this.toolsMenuOpen;
+    this.actionsMenuOpen = false;
+  }
+
+  closeToolsMenu(): void {
+    this.toolsMenuOpen = false;
+  }
+
+  toggleActionsMenu(): void {
+    this.actionsMenuOpen = !this.actionsMenuOpen;
+    this.toolsMenuOpen = false;
+  }
+
+  closeActionsMenu(): void {
+    this.actionsMenuOpen = false;
+  }
+
+  private closeMenus(): void {
+    this.toolsMenuOpen = false;
+    this.actionsMenuOpen = false;
+    if (this.app?.soundMenuOpen) {
       this.app.soundMenuOpen = false;
-      this.app.markForCheck();
-      return;
     }
-    if (root.contains(target)) {
-      return;
-    }
-    this.app.soundMenuOpen = false;
-    this.app.markForCheck();
+    this.app?.markForCheck();
   }
 
   resetScenarioSettings(): void {
@@ -130,11 +176,4 @@ export class AppShellControlsComponent {
     this.app.refreshDebugLogPresentation();
   }
 
-  private getControlDisplayValue(controlName: string, fallback: string): string {
-    const value = this.app?.formGroup?.get(controlName)?.value;
-    if (value === null || value === undefined || value === '') {
-      return fallback;
-    }
-    return String(value);
-  }
 }

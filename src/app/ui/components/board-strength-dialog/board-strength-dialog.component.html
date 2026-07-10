@@ -34,11 +34,27 @@
 
       <ng-container *ngIf="result as evaluation; else setupView">
         <section class="strength-result" aria-live="polite">
+          <div class="strength-board-strip strength-board-strip-result">
+            <div class="strength-board-icons">
+              <img
+                *ngFor="let name of selectedPetNames"
+                [ngSrc]="getPetIcon(name)"
+                width="54"
+                height="54"
+                [alt]="name"
+              />
+            </div>
+            <div class="strength-board-meta">
+              <strong>{{ sideLabel }} board</strong>
+              <span>{{ selectedPetNames.length }} of 5 slots filled</span>
+            </div>
+          </div>
+
           <div class="strength-score-block">
             <div class="strength-score-label">{{ sideLabel }} board strength</div>
-            <div class="strength-score">{{ evaluation.score | number:'1.1-1' }}</div>
+            <div class="strength-score">{{ formattedScore }}</div>
             <div class="strength-score-caption">
-              Equivalent performance across the five-pet stat ladder
+              Equivalent performance across the five-pet stat ladder<span *ngIf="evaluation.rangeTruncated"> (minimum; range still winning)</span>
             </div>
           </div>
 
@@ -88,7 +104,7 @@
               <text x="14" y="202" class="chart-y-label">0%</text>
             </svg>
             <div class="strength-chart-axis-labels" aria-hidden="true">
-              <span>1/1</span><span>25/25</span><span>50/50</span><span>75/75</span><span>100/100</span>
+              <span *ngFor="let stat of chartAxisLabels">{{ stat }}/{{ stat }}</span>
             </div>
           </div>
 
@@ -148,8 +164,9 @@
           </div>
 
           <div class="strength-explainer">
-            Tests this board against five identical, no-ability pets from
-            1/1 through 100/100. Draws count as half a win.
+            Tests this board against five identical, no-ability pets, beginning
+            at 1/1 and automatically expanding as far as the board can compete.
+            Draws count as half a win.
           </div>
 
           <div class="alert alert-danger py-2" *ngIf="status === 'error'">
@@ -177,7 +194,8 @@
         </div>
         <div class="strength-progress-meta" *ngIf="progress">
           <span>{{ progress.battlesCompleted | number }} battles simulated</span>
-          <span>{{ progress.completedStats }}/{{ progress.totalStats }} ladder points scanned</span>
+          <span *ngIf="progress.phase !== 'scout'">{{ progress.completedStats }}/{{ progress.totalStats }} ladder points scanned</span>
+          <span *ngIf="progress.phase === 'scout'">Range probe</span>
         </div>
         <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
       </section>

@@ -35,6 +35,13 @@ import {
   ReplayPositioningImageResult,
   ReplayPositioningImageService,
 } from 'app/integrations/replay/replay-positioning-image.service';
+import {
+  ReplayBoardStrengthImageHotspot,
+  ReplayBoardStrengthImagePreview,
+  ReplayBoardStrengthImageProgress,
+  ReplayBoardStrengthImageResult,
+  ReplayBoardStrengthImageService,
+} from 'app/integrations/replay/replay-board-strength-image.service';
 import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 interface ReplayActionEntry {
@@ -119,7 +126,15 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   positioningImageFileName = '';
   positioningProgressPercent = 0;
   positioningProgressMessage = '';
+  boardStrengthImageLoading = false;
+  boardStrengthImageBlob: Blob | null = null;
+  boardStrengthImagePreviewUrl: string | null = null;
+  boardStrengthImagePreview: ReplayBoardStrengthImagePreview | null = null;
+  boardStrengthImageFileName = '';
+  boardStrengthProgressPercent = 0;
+  boardStrengthProgressMessage = '';
   private positioningBuildAbortController: AbortController | null = null;
+  private boardStrengthBuildAbortController: AbortController | null = null;
   private destroyed = false;
   private readonly replayTimeoutMs = 10000;
   private readonly replayHealthTimeoutMs = 2500;
@@ -143,6 +158,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     private replayCalcService: ReplayCalcService,
     private replayOddsImageService: ReplayOddsImageService,
     private replayPositioningImageService: ReplayPositioningImageService,
+    private replayBoardStrengthImageService: ReplayBoardStrengthImageService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -154,8 +170,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.destroyed = true;
     this.statusController.dispose();
     this.cancelPositioningBuild();
+    this.cancelBoardStrengthBuild();
     this.clearOddsPreview();
     this.clearPositioningPreview();
+    this.clearBoardStrengthPreview();
   }
 
   private isReplayTurnsPayload(
@@ -519,6 +537,65 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     });
   }
 
+  buildBoardStrengthImage(): void {
+    this.errorMessage = '';
+    this.clearStatus();
+    const rawInput = this.formGroup.get('calcCode')?.value?.trim();
+    if (!rawInput) {
+      this.errorMessage = 'Paste replay JSON or a replay Pid first.';
+      return;
+    }
+
+    const requestedTurn = this.getRequestedTurn();
+    const replayCodePayload = parseReplayCode(rawInput);
+    if (replayCodePayload?.battle) {
+      this.requestBoardStrengthImageDownload({
+        replay: this.buildSingleBattleReplayPayload(
+          replayCodePayload.battle,
+          replayCodePayload.turn ?? requestedTurn,
+          replayCodePayload.genesisBuildModel ?? null,
+          replayCodePayload.abilityPetMap ?? null,
+        ),
+        simulationCount: 1,
+        abilityPetMap: replayCodePayload.abilityPetMap ?? null,
+      });
+      return;
+    }
+
+    let parsedInput: ReplayImportPayload;
+    try {
+      parsedInput = JSON.parse(rawInput) as ReplayImportPayload;
+    } catch {
+      const pid = rawInput.trim();
+      if (this.looksLikePid(pid)) {
+        this.fetchReplayJsonAndBuildBoardStrengthImage(pid, requestedTurn);
+        return;
+      }
+      this.errorMessage = 'Invalid JSON. Paste replay JSON or a replay Pid.';
+      return;
+    }
+
+    if ((parsedInput?.Pid || parsedInput?.pid) && !parsedInput?.Actions) {
+      this.fetchReplayJsonAndBuildBoardStrengthImage(
+        String(parsedInput.Pid ?? parsedInput.pid),
+        requestedTurn,
+      );
+      return;
+    }
+
+    const request = this.buildOddsImageSourceFromPayload(
+      parsedInput,
+      requestedTurn,
+      1,
+    );
+    if (!request) {
+      this.errorMessage =
+        'Replay JSON must include Actions, turns, replay.raw_json.Actions, or UserBoard/OpponentBoard.';
+      return;
+    }
+    this.requestBoardStrengthImageDownload(request);
+  }
+
   private importReplayBattle(
     battleJson: ReplayBattleJson,
     buildModel?: ReplayBuildModelJson,
@@ -787,6 +864,78 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       })
       .catch(() => {
         this.setPositioningImageLoading(false);
+        this.errorMessage = 'Failed to reach the replay API.';
+        this.cdr.markForCheck();
+      });
+  }
+
+  private fetchReplayJsonAndBuildBoardStrengthImage(
+    replayId: string,
+    turnNumber: number,
+  ): void {
+    this.setBoardStrengthImageLoading(true);
+    this.replayCalcService
+      .checkReplayApiHealth(this.replayHealthTimeoutMs)
+      .then((healthStatus) => {
+        if (!healthStatus.reachable) {
+          this.errorMessage =
+            'Replay API is not reachable. Ensure the replay backend is available.';
+          this.setBoardStrengthImageLoading(false);
+          this.cdr.markForCheck();
+          return;
+        }
+        if (!healthStatus.isReplayHealthContract) {
+          this.setStatus(
+            'Replay API is reachable, but /api/health is not the replay backend format. Continuing lookup.',
+            'warning',
+          );
+        }
+        this.replayCalcService
+          .fetchReplayTurns(
+            {
+              Pid: replayId,
+              T: turnNumber,
+              onReplayIndexUploadStatus: (status: ReplayIndexUploadStatus) =>
+                this.handleReplayIndexUploadStatus(status),
+            },
+            this.replayTimeoutMs,
+          )
+          .subscribe({
+            next: (turnsResponse: ReplayTurnsResponse) => {
+              void this.resolveOddsReplayPayloadFromTurns(
+                turnsResponse,
+                replayId,
+              )
+                .then((replayPayload) => {
+                  if (this.destroyed) {
+                    this.setBoardStrengthImageLoading(false);
+                    return;
+                  }
+                  this.requestBoardStrengthImageDownload(
+                    {
+                      replay: replayPayload,
+                      simulationCount: 1,
+                      abilityPetMap: turnsResponse?.abilityPetMap ?? null,
+                    },
+                    replayId,
+                  );
+                })
+                .catch((error: unknown) => {
+                  this.handleOddsImageError(error);
+                  this.setBoardStrengthImageLoading(false);
+                });
+            },
+            error: (error) => {
+              this.errorMessage =
+                error?.error?.error ||
+                'Failed to fetch replay JSON from replay API.';
+              this.setBoardStrengthImageLoading(false);
+              this.cdr.markForCheck();
+            },
+          });
+      })
+      .catch(() => {
+        this.setBoardStrengthImageLoading(false);
         this.errorMessage = 'Failed to reach the replay API.';
         this.cdr.markForCheck();
       });
@@ -1112,6 +1261,53 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       });
   }
 
+  private requestBoardStrengthImageDownload(
+    request: OddsImageSourcePayload,
+    replayId?: string,
+  ): void {
+    this.cancelBoardStrengthBuild();
+    const abortController = new AbortController();
+    this.boardStrengthBuildAbortController = abortController;
+    this.setBoardStrengthImageLoading(true);
+    this.replayBoardStrengthImageService
+      .buildBoardStrengthImage({
+        replayPayload: request.replay,
+        abilityPetMap: request.abilityPetMap ?? null,
+        abortSignal: abortController.signal,
+        onProgress: (progress: ReplayBoardStrengthImageProgress) => {
+          this.boardStrengthProgressPercent = Math.round(progress.percent);
+          this.boardStrengthProgressMessage = progress.message;
+          this.cdr.markForCheck();
+        },
+      })
+      .then((result) => {
+        if (abortController.signal.aborted) return;
+        this.setBoardStrengthPreview(result, replayId);
+        this.setStatus(
+          'Board strength image ready. Preview and download below.',
+          'success',
+        );
+      })
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : '';
+        if (
+          abortController.signal.aborted ||
+          message === 'Board strength image build cancelled.'
+        ) {
+          this.setStatus('Board strength image build cancelled.', 'warning');
+          return;
+        }
+        this.handleOddsImageError(error);
+      })
+      .finally(() => {
+        if (this.boardStrengthBuildAbortController === abortController) {
+          this.boardStrengthBuildAbortController = null;
+          this.setBoardStrengthImageLoading(false);
+          this.clearBoardStrengthProgress();
+        }
+      });
+  }
+
   downloadOddsImage(): void {
     if (!this.oddsImageBlob) {
       return;
@@ -1160,6 +1356,30 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.positioningImageFileName = '';
   }
 
+  downloadBoardStrengthImage(): void {
+    if (!this.boardStrengthImageBlob) return;
+    const objectUrl = window.URL.createObjectURL(this.boardStrengthImageBlob);
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download =
+      this.boardStrengthImageFileName ||
+      `replay-strength-${new Date().toISOString().slice(0, 10)}.png`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    window.URL.revokeObjectURL(objectUrl);
+  }
+
+  clearBoardStrengthPreview(): void {
+    if (this.boardStrengthImagePreviewUrl) {
+      window.URL.revokeObjectURL(this.boardStrengthImagePreviewUrl);
+    }
+    this.boardStrengthImagePreviewUrl = null;
+    this.boardStrengthImageBlob = null;
+    this.boardStrengthImagePreview = null;
+    this.boardStrengthImageFileName = '';
+  }
+
   private setOddsPreview(
     result: ReplayOddsImageResult,
     replayId?: string,
@@ -1196,6 +1416,24 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  private setBoardStrengthPreview(
+    result: ReplayBoardStrengthImageResult,
+    replayId?: string,
+  ): void {
+    this.clearBoardStrengthPreview();
+    this.boardStrengthImageBlob = result.blob;
+    this.boardStrengthImagePreviewUrl = window.URL.createObjectURL(result.blob);
+    this.boardStrengthImagePreview = result.preview;
+    const sanitizedReplayId =
+      typeof replayId === 'string'
+        ? replayId.replace(/[^a-zA-Z0-9_-]/g, '')
+        : '';
+    this.boardStrengthImageFileName = sanitizedReplayId
+      ? `replay-strength-${sanitizedReplayId}.png`
+      : `replay-strength-${new Date().toISOString().slice(0, 10)}.png`;
+    this.cdr.markForCheck();
+  }
+
   positioningHotspotStyle(
     hotspot: ReplayPositioningImageHotspot,
   ): Record<string, string> {
@@ -1219,6 +1457,21 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     return {
       top: `${(hotspot.top / this.oddsImagePreview.height) * 100}%`,
       height: `${(hotspot.height / this.oddsImagePreview.height) * 100}%`,
+    };
+  }
+
+  boardStrengthHotspotStyle(
+    hotspot: ReplayBoardStrengthImageHotspot,
+  ): Record<string, string> {
+    if (
+      !this.boardStrengthImagePreview ||
+      this.boardStrengthImagePreview.height <= 0
+    ) {
+      return {};
+    }
+    return {
+      top: `${(hotspot.top / this.boardStrengthImagePreview.height) * 100}%`,
+      height: `${(hotspot.height / this.boardStrengthImagePreview.height) * 100}%`,
     };
   }
 
@@ -1290,6 +1543,21 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  private setBoardStrengthImageLoading(value: boolean): void {
+    this.boardStrengthImageLoading = value;
+    if (value) {
+      this.boardStrengthProgressPercent = Math.max(
+        this.boardStrengthProgressPercent,
+        1,
+      );
+      if (!this.boardStrengthProgressMessage) {
+        this.boardStrengthProgressMessage =
+          'Starting board strength image build...';
+      }
+    }
+    this.cdr.markForCheck();
+  }
+
   cancelPositioningBuild(): void {
     if (!this.positioningBuildAbortController) {
       return;
@@ -1300,9 +1568,22 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.clearPositioningProgress();
   }
 
+  cancelBoardStrengthBuild(): void {
+    if (!this.boardStrengthBuildAbortController) return;
+    this.boardStrengthBuildAbortController.abort();
+    this.boardStrengthBuildAbortController = null;
+    this.setBoardStrengthImageLoading(false);
+    this.clearBoardStrengthProgress();
+  }
+
   private clearPositioningProgress(): void {
     this.positioningProgressPercent = 0;
     this.positioningProgressMessage = '';
+  }
+
+  private clearBoardStrengthProgress(): void {
+    this.boardStrengthProgressPercent = 0;
+    this.boardStrengthProgressMessage = '';
   }
 
   private clearStatus() {

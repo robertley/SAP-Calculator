@@ -1,12 +1,23 @@
 :host {
-  display: block;
+  display: flex;
+  min-height: 0;
+  flex: 1 1 auto;
   color: var(--ui-text-1);
 }
 
 .strength-dialog {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex-direction: column;
   background: var(--ui-surface-0);
   border-radius: inherit;
   overflow: hidden;
+}
+
+.strength-header,
+.strength-footer {
+  flex: 0 0 auto;
 }
 
 .strength-header {
@@ -30,11 +41,21 @@
 }
 
 .strength-body {
-  min-height: 430px;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 1.25rem 1.5rem 1.5rem;
   background:
     radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--ui-brand) 10%, transparent), transparent 34%),
     var(--ui-surface-0);
+}
+
+.strength-board-strip-result {
+  padding-top: 0;
+  margin-bottom: 1.15rem;
 }
 
 .strength-side-switch {
@@ -391,7 +412,14 @@
 }
 
 @media (max-width: 575.98px) {
-  .strength-body { padding-inline: 1rem; }
+  .strength-header { padding: 1rem; }
+  .strength-body {
+    min-height: 0;
+    padding: 1rem;
+  }
+  .strength-footer {
+    padding: 0.75rem 1rem;
+  }
   .strength-board-strip,
   .strength-matchup { align-items: flex-start; flex-direction: column; }
   .strength-board-meta { align-items: flex-start; }

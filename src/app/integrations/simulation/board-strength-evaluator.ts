@@ -6,7 +6,7 @@ import {
 
 export type BoardStrengthSide = 'player' | 'opponent';
 export type BoardStrengthPrecision = 'quick' | 'standard' | 'high';
-export type BoardStrengthPhase = 'scan' | 'refine' | 'complete';
+export type BoardStrengthPhase = 'scout' | 'scan' | 'refine' | 'complete';
 
 export interface BoardStrengthOptions {
   side: BoardStrengthSide;
@@ -48,6 +48,7 @@ export interface BoardStrengthResult {
   maxStat: number;
   points: BoardStrengthPoint[];
   aborted: boolean;
+  rangeTruncated: boolean;
 }
 
 export interface BoardStrengthRunContext {
@@ -74,6 +75,9 @@ interface MutablePoint {
 }
 
 const DEFAULT_SEED = 730241;
+const AUTO_INITIAL_MAX_STAT = 100;
+const AUTO_MAX_STAT = 5000;
+const AUTO_SIGNAL_THRESHOLD = 0.005;
 
 const PRECISION_PROFILES: Readonly<Record<BoardStrengthPrecision, PrecisionProfile>> = {
   quick: {
@@ -107,27 +111,25 @@ export function runBoardStrengthEvaluation(
 ): BoardStrengthResult {
   const precision = context.options.precision ?? 'standard';
   const profile = PRECISION_PROFILES[precision];
-  const minStat = clampInteger(context.options.minStat ?? 1, 1, 100);
-  const maxStat = clampInteger(
-    context.options.maxStat ?? 100,
-    minStat,
-    100,
-  );
-  const stats = Array.from(
-    { length: maxStat - minStat + 1 },
-    (_, index) => minStat + index,
-  );
-  const points = stats.map<MutablePoint>((stat) => ({
-    stat,
-    wins: 0,
-    draws: 0,
-    losses: 0,
-    battles: 0,
-  }));
-  const maximumBattles = stats.length * profile.maxBattlesPerStat;
+  const minStat = normalizePositiveInteger(context.options.minStat ?? 1);
+  const explicitMaxStat = context.options.maxStat === undefined
+    ? null
+    : Math.max(minStat, normalizePositiveInteger(context.options.maxStat));
+  const pointsByStat = new Map<number, MutablePoint>();
   let battlesCompleted = 0;
   let completedStats = 0;
   let refinementRound = 0;
+  let rangeTruncated = false;
+
+  const getPoint = (stat: number): MutablePoint => {
+    const existing = pointsByStat.get(stat);
+    if (existing) {
+      return existing;
+    }
+    const point: MutablePoint = { stat, wins: 0, draws: 0, losses: 0, battles: 0 };
+    pointsByStat.set(stat, point);
+    return point;
+  };
 
   const simulatePoint = (point: MutablePoint, count: number) => {
     const config = createBoardStrengthMatchConfig(
@@ -157,11 +159,58 @@ export function runBoardStrengthEvaluation(
     battlesCompleted += completed;
   };
 
+  let maxStat = explicitMaxStat ?? Math.max(minStat, AUTO_INITIAL_MAX_STAT);
+  if (explicitMaxStat === null) {
+    let probeStat = maxStat;
+    let consecutiveMisses = 0;
+    let sawSignal = false;
+    let coverageBoundary = maxStat;
+
+    while (true) {
+      if (context.shouldAbort?.()) {
+        const partial = [...pointsByStat.values()].sort((a, b) => a.stat - b.stat);
+        return buildResult(partial, context.options.side, precision, minStat, probeStat, true, false);
+      }
+      const point = getPoint(probeStat);
+      simulatePoint(point, profile.initialBattles);
+      const hasSignal = getExpectedScore(point) > AUTO_SIGNAL_THRESHOLD;
+      if (hasSignal) {
+        sawSignal = true;
+        consecutiveMisses = 0;
+      } else {
+        consecutiveMisses += 1;
+        if (sawSignal && consecutiveMisses === 1) {
+          coverageBoundary = probeStat;
+        }
+      }
+      context.onProgress?.({
+        phase: 'scout', completedStats: 0, totalStats: 0, currentStat: probeStat,
+        battlesCompleted, maximumBattles: 0, refinementRound,
+      });
+
+      if (probeStat >= AUTO_MAX_STAT) {
+        rangeTruncated = hasSignal;
+        maxStat = rangeTruncated ? AUTO_MAX_STAT : coverageBoundary;
+        break;
+      }
+      probeStat = Math.min(
+        AUTO_MAX_STAT,
+        probeStat < 1000 ? probeStat + 100 : probeStat * 2,
+      );
+    }
+  }
+
+  const stats = Array.from({ length: maxStat - minStat + 1 }, (_, index) => minStat + index);
+  const points = stats.map(getPoint);
+  const maximumBattles = stats.length * profile.maxBattlesPerStat;
+
   for (const point of points) {
     if (context.shouldAbort?.()) {
-      return buildResult(points, context.options.side, precision, minStat, maxStat, true);
+      return buildResult(points, context.options.side, precision, minStat, maxStat, true, rangeTruncated);
     }
-    simulatePoint(point, profile.initialBattles);
+    if (point.battles === 0) {
+      simulatePoint(point, profile.initialBattles);
+    }
     completedStats += 1;
     context.onProgress?.({
       phase: 'scan',
@@ -187,7 +236,7 @@ export function runBoardStrengthEvaluation(
     refinementRound += 1;
     for (const point of candidates) {
       if (context.shouldAbort?.()) {
-        return buildResult(points, context.options.side, precision, minStat, maxStat, true);
+        return buildResult(points, context.options.side, precision, minStat, maxStat, true, rangeTruncated);
       }
       const remaining = profile.maxBattlesPerStat - point.battles;
       simulatePoint(point, Math.min(profile.batchSize, remaining));
@@ -220,6 +269,7 @@ export function runBoardStrengthEvaluation(
     minStat,
     maxStat,
     false,
+    rangeTruncated,
   );
 }
 
@@ -286,7 +336,7 @@ export function createBoardStrengthFingerprint(
 }
 
 function createBenchmarkPets(stat: number): PetConfig[] {
-  const normalizedStat = clampInteger(stat, 1, 100);
+  const normalizedStat = normalizePositiveInteger(stat);
   return Array.from({ length: 5 }, () => {
     const pet: PetConfig = {
       name: 'Benchmark Pet',
@@ -308,14 +358,13 @@ function buildResult(
   minStat: number,
   maxStat: number,
   aborted: boolean,
+  rangeTruncated: boolean,
 ): BoardStrengthResult {
   const rawScores = mutablePoints.map((point) => getExpectedScore(point));
-  const weights = mutablePoints.map((point) => Math.max(1, point.battles));
-  const smoothedScores = decreasingIsotonicRegression(rawScores, weights);
   const points = mutablePoints.map<BoardStrengthPoint>((point, index) => ({
     ...point,
     expectedScore: rawScores[index],
-    smoothedScore: smoothedScores[index],
+    smoothedScore: rawScores[index],
   }));
   const score = rawScores.reduce((sum, value) => sum + value, 0);
   const varianceOfScore = mutablePoints.reduce((sum, point) => {
@@ -338,6 +387,7 @@ function buildResult(
     maxStat,
     points,
     aborted,
+    rangeTruncated,
   };
 }
 
@@ -365,59 +415,12 @@ function estimateStandardError(point: MutablePoint): number {
   return Math.sqrt(conservativeVariance / point.battles);
 }
 
-function decreasingIsotonicRegression(
-  values: number[],
-  weights: number[],
-): number[] {
-  const blocks: Array<{
-    start: number;
-    end: number;
-    weight: number;
-    weightedValue: number;
-  }> = [];
-
-  values.forEach((value, index) => {
-    const weight = weights[index] ?? 1;
-    blocks.push({
-      start: index,
-      end: index,
-      weight,
-      weightedValue: value * weight,
-    });
-    while (blocks.length >= 2) {
-      const right = blocks[blocks.length - 1];
-      const left = blocks[blocks.length - 2];
-      const leftMean = left.weightedValue / left.weight;
-      const rightMean = right.weightedValue / right.weight;
-      if (leftMean >= rightMean) {
-        break;
-      }
-      blocks.splice(blocks.length - 2, 2, {
-        start: left.start,
-        end: right.end,
-        weight: left.weight + right.weight,
-        weightedValue: left.weightedValue + right.weightedValue,
-      });
-    }
-  });
-
-  const fitted = Array.from({ length: values.length }, () => 0);
-  for (const block of blocks) {
-    const mean = block.weightedValue / block.weight;
-    for (let index = block.start; index <= block.end; index += 1) {
-      fitted[index] = mean;
-    }
-  }
-  return fitted;
-}
-
 function findBenchmark50(points: BoardStrengthPoint[]): number | null {
   let highestPassingStat: number | null = null;
   for (const point of points) {
-    if (point.smoothedScore < 0.5) {
-      break;
+    if (point.expectedScore >= 0.5) {
+      highestPassingStat = point.stat;
     }
-    highestPassingStat = point.stat;
   }
   return highestPassingStat;
 }
@@ -426,7 +429,7 @@ function deepClone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
-function clampInteger(value: number, minimum: number, maximum: number): number {
-  const normalized = Number.isFinite(value) ? Math.trunc(value) : minimum;
-  return Math.min(maximum, Math.max(minimum, normalized));
+function normalizePositiveInteger(value: number): number {
+  const normalized = Number.isFinite(value) ? Math.trunc(value) : 1;
+  return Math.max(1, normalized);
 }
