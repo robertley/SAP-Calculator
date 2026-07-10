@@ -37,6 +37,19 @@
             </label>
           </div>
         </div>
+        <div class="board-strength-control-group">
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#boardStrength"
+            aria-controls="boardStrength"
+            [disabled]="app.simulationInProgress"
+            title="Evaluate a board against the standardized stat ladder."
+          >
+            Board Strength
+          </button>
+        </div>
         <div class="randomize-control-group">
           <button class="btn btn-secondary" (click)="app.randomize()">
             Randomize

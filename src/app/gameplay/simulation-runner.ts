@@ -26,6 +26,7 @@ import {
   startRandomDecisionSession,
 } from 'app/runtime/random-decision-state';
 import { coerceLogService } from 'app/runtime/log-service-fallback';
+import { BenchmarkPet } from 'app/domain/entities/combat/benchmark-pet.class';
 
 export interface SimulationRunHooks {
   shouldAbort?: () => boolean;
@@ -476,6 +477,23 @@ export class SimulationRunner {
     for (let i = 0; i < 5; i++) {
       const petConfig = petsConfig[i];
       if (!petConfig || !petConfig.name) continue;
+
+      if (petConfig.benchmark) {
+        const attack = Math.max(1, Math.trunc(petConfig.attack ?? 1));
+        const health = Math.max(1, Math.trunc(petConfig.health ?? 1));
+        player.setPet(
+          i,
+          new BenchmarkPet(
+            this.logService,
+            this.abilityService,
+            player,
+            attack,
+            health,
+          ),
+          true,
+        );
+        continue;
+      }
 
       let petForm = this.petFormCache.get(petConfig);
       if (!petForm) {

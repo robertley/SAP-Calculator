@@ -167,6 +167,26 @@
 
     <app-shell-battle-results [app]="battleResultsFacade" [renderEpoch]="battleResultsFacade.renderEpoch"></app-shell-battle-results>
 
+    <div
+      class="modal fade"
+      id="boardStrength"
+      tabindex="-1"
+      aria-labelledby="boardStrengthModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <app-board-strength-dialog
+            [formGroup]="formGroup"
+            [player]="player"
+            [opponent]="opponent"
+          ></app-board-strength-dialog>
+        </div>
+      </div>
+    </div>
+
     <!-- Custom Pack -->
     <div class="modal fade custom-pack-editor-modal" id="customPackEditor" tabindex="-1"
       aria-labelledby="customPackEditorLabel" aria-hidden="true" #customPackEditor>

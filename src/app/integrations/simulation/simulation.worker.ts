@@ -21,6 +21,10 @@ import { AttackEventService } from '../ability/attack-event.service';
 import { FaintEventService } from '../ability/faint-event.service';
 import { InjectorService } from '../injector.service';
 import { runPositioningOptimization } from './positioning-optimizer';
+import {
+  BoardStrengthOptions,
+  runBoardStrengthEvaluation,
+} from './board-strength-evaluator';
 
 type StartMessage = {
   type: 'start';
@@ -42,11 +46,18 @@ type OptimizePositioningStartMessage = {
   };
 };
 
+type BoardStrengthStartMessage = {
+  type: 'board-strength-start';
+  config: SimulationConfig;
+  options: BoardStrengthOptions;
+};
+
 type CancelMessage = { type: 'cancel' };
 
 type IncomingMessage =
   | StartMessage
   | OptimizePositioningStartMessage
+  | BoardStrengthStartMessage
   | CancelMessage;
 
 let cancelRequested = false;
@@ -184,6 +195,42 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
 
   if (data.type === 'cancel') {
     cancelRequested = true;
+    return;
+  }
+
+  if (data.type === 'board-strength-start') {
+    cancelRequested = false;
+    const { config, options } = data;
+
+    try {
+      const { runner } = createRunner();
+      const result = runBoardStrengthEvaluation({
+        baseConfig: config,
+        options,
+        shouldAbort: () => cancelRequested,
+        onProgress: (progress) => {
+          postMessage({ type: 'board-strength-progress', progress });
+        },
+        simulateBatch: (batchConfig) =>
+          runner.run(batchConfig, {
+            shouldAbort: () => cancelRequested,
+          }),
+      });
+
+      if (cancelRequested || result.aborted) {
+        postMessage({ type: 'board-strength-aborted', result });
+      } else {
+        postMessage({ type: 'board-strength-result', result });
+      }
+    } catch (error) {
+      postMessage({
+        type: 'error',
+        message:
+          error instanceof Error
+            ? error.message
+            : 'Board strength evaluation failed.',
+      });
+    }
     return;
   }
 

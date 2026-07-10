@@ -1,0 +1,201 @@
+<div class="strength-dialog">
+  <div class="modal-header strength-header">
+    <div>
+      <div class="strength-eyebrow">BS1 benchmark</div>
+      <h1 class="modal-title" id="boardStrengthModalLabel">Board Strength</h1>
+    </div>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"
+      [disabled]="status === 'running'"
+    ></button>
+  </div>
+
+  <div class="modal-body strength-body">
+    <ng-container *ngIf="status !== 'running'; else runningView">
+      <div class="strength-side-switch" role="group" aria-label="Board to evaluate">
+        <button
+          type="button"
+          [class.active]="selectedSide === 'player'"
+          (click)="setSide('player')"
+        >
+          Player
+        </button>
+        <button
+          type="button"
+          [class.active]="selectedSide === 'opponent'"
+          (click)="setSide('opponent')"
+        >
+          Opponent
+        </button>
+      </div>
+
+      <ng-container *ngIf="result as evaluation; else setupView">
+        <section class="strength-result" aria-live="polite">
+          <div class="strength-score-block">
+            <div class="strength-score-label">{{ sideLabel }} board strength</div>
+            <div class="strength-score">{{ evaluation.score | number:'1.1-1' }}</div>
+            <div class="strength-score-caption">
+              Equivalent performance across the five-pet stat ladder
+            </div>
+          </div>
+
+          <div class="strength-metrics">
+            <div class="strength-metric">
+              <span>50% benchmark</span>
+              <strong>{{ formatBenchmark(evaluation.benchmark50) }}</strong>
+            </div>
+            <div class="strength-metric">
+              <span>Sampling precision</span>
+              <strong>±{{ evaluation.estimatedPrecision95 | number:'1.1-1' }}</strong>
+            </div>
+            <div class="strength-metric">
+              <span>Battles tested</span>
+              <strong>{{ evaluation.totalBattles | number }}</strong>
+            </div>
+          </div>
+
+          <div class="strength-chart-shell">
+            <div class="strength-chart-heading">
+              <div>
+                <span class="strength-chart-title">Expected result by benchmark</span>
+                <span class="strength-chart-subtitle">Win + half of draws</span>
+              </div>
+              <span class="strength-version">{{ evaluation.version }}</span>
+            </div>
+            <svg
+              class="strength-chart"
+              viewBox="0 0 620 224"
+              role="img"
+              aria-label="Expected result against benchmark pet stats"
+            >
+              <line x1="12" y1="110" x2="608" y2="110" class="chart-midline"></line>
+              <line x1="12" y1="208" x2="608" y2="208" class="chart-axis"></line>
+              <polygon [attr.points]="curveArea" class="chart-area"></polygon>
+              <polyline [attr.points]="curvePolyline" class="chart-line"></polyline>
+              <line
+                *ngIf="benchmarkMarkerX != null"
+                [attr.x1]="benchmarkMarkerX"
+                y1="12"
+                [attr.x2]="benchmarkMarkerX"
+                y2="208"
+                class="chart-marker"
+              ></line>
+              <text x="14" y="24" class="chart-y-label">100%</text>
+              <text x="14" y="104" class="chart-y-label">50%</text>
+              <text x="14" y="202" class="chart-y-label">0%</text>
+            </svg>
+            <div class="strength-chart-axis-labels" aria-hidden="true">
+              <span>1/1</span><span>25/25</span><span>50/50</span><span>75/75</span><span>100/100</span>
+            </div>
+          </div>
+
+          <div class="strength-matchup" *ngIf="representativePoint as point">
+            <div>
+              <span class="strength-matchup-label">At {{ point.stat }}/{{ point.stat }}</span>
+              <span class="strength-matchup-caption">{{ representativeCaption }}</span>
+            </div>
+            <div class="strength-outcomes">
+              <span class="outcome-win">{{ getWinPercent(point) }}% win</span>
+              <span>{{ getDrawPercent(point) }}% draw</span>
+              <span class="outcome-loss">{{ getLossPercent(point) }}% loss</span>
+            </div>
+          </div>
+
+          <details class="strength-details">
+            <summary>Matchup details</summary>
+            <div class="strength-table-scroll">
+              <table class="table table-sm strength-table">
+                <thead>
+                  <tr><th>Benchmark</th><th>Win</th><th>Draw</th><th>Loss</th><th>Battles</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let point of evaluation.points; trackBy: trackByStat">
+                    <td>{{ point.stat }}/{{ point.stat }}</td>
+                    <td>{{ getWinPercent(point) }}%</td>
+                    <td>{{ getDrawPercent(point) }}%</td>
+                    <td>{{ getLossPercent(point) }}%</td>
+                    <td>{{ point.battles }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </section>
+      </ng-container>
+
+      <ng-template #setupView>
+        <section class="strength-setup">
+          <div class="strength-board-strip">
+            <div class="strength-board-icons" *ngIf="selectedPetNames.length; else emptyBoard">
+              <img
+                *ngFor="let name of selectedPetNames"
+                [ngSrc]="getPetIcon(name)"
+                width="54"
+                height="54"
+                [alt]="name"
+              />
+            </div>
+            <ng-template #emptyBoard>
+              <div class="strength-empty-board">Add at least one pet to evaluate this board.</div>
+            </ng-template>
+            <div class="strength-board-meta">
+              <strong>{{ sideLabel }} board</strong>
+              <span>{{ selectedPetNames.length }} of 5 slots filled</span>
+            </div>
+          </div>
+
+          <div class="strength-explainer">
+            Tests this board against five identical, no-ability pets from
+            1/1 through 100/100. Draws count as half a win.
+          </div>
+
+          <div class="alert alert-danger py-2" *ngIf="status === 'error'">
+            {{ errorMessage }}
+          </div>
+          <div class="strength-cancelled" *ngIf="status === 'cancelled'">
+            Evaluation cancelled. No partial score was saved.
+          </div>
+        </section>
+      </ng-template>
+    </ng-container>
+
+    <ng-template #runningView>
+      <section class="strength-running" aria-live="polite">
+        <div class="strength-running-orbit" aria-hidden="true">
+          <span></span>
+        </div>
+        <div class="strength-eyebrow">Evaluating {{ sideLabel | lowercase }} board</div>
+        <h2>{{ phaseLabel }}</h2>
+        <p *ngIf="progress">
+          Testing five {{ progress.currentStat }}/{{ progress.currentStat }} benchmark pets
+        </p>
+        <div class="strength-progress-track">
+          <span [style.width.%]="progressPercent"></span>
+        </div>
+        <div class="strength-progress-meta" *ngIf="progress">
+          <span>{{ progress.battlesCompleted | number }} battles simulated</span>
+          <span>{{ progress.completedStats }}/{{ progress.totalStats }} ladder points scanned</span>
+        </div>
+        <button type="button" class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+      </section>
+    </ng-template>
+  </div>
+
+  <div class="modal-footer strength-footer" *ngIf="status !== 'running'">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button
+      type="button"
+      class="btn btn-outline-primary"
+      *ngIf="result"
+      (click)="copySummary()"
+    >
+      {{ copyLabel }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="!canEvaluate" (click)="evaluate()">
+      {{ result ? 'Run Again' : 'Run Evaluation' }}
+    </button>
+  </div>
+</div>

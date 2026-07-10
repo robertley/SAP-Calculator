@@ -217,6 +217,7 @@ $night: #33377a;
 }
 
 .optimize-control-group,
+.board-strength-control-group,
 .randomize-control-group,
 .force-randomness-control-group {
   display: inline-flex;
@@ -1036,6 +1037,7 @@ $night: #33377a;
   .simulate-controls,
   .simulate-input-group,
   .optimize-control-group,
+  .board-strength-control-group,
   .randomize-control-group,
   .team-name-actions,
   .external-buttons,
@@ -1045,6 +1047,7 @@ $night: #33377a;
 
   .simulate-controls,
   .optimize-control-group,
+  .board-strength-control-group,
   .randomize-control-group,
   .team-name-actions,
   .external-buttons,

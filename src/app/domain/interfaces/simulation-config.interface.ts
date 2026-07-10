@@ -3,6 +3,8 @@ import { Battle } from './battle.interface';
 
 export interface PetConfig extends PetMemoryState {
   name: string | null;
+  /** Internal simulation fixture; never exposed through the playable pet catalog. */
+  benchmark?: boolean;
   attack?: number;
   health?: number;
   exp?: number;

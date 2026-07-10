@@ -23,6 +23,12 @@ import {
   buildSimulationConfigFromForm,
   syncGameApiFromForm,
 } from 'app/runtime/state/simulation-form-mapper';
+import {
+  BoardStrengthOptions,
+  BoardStrengthProgress,
+  BoardStrengthResult,
+  runBoardStrengthEvaluation,
+} from './board-strength-evaluator';
 
 @Injectable({
   providedIn: 'root',
@@ -173,6 +179,69 @@ export class SimulationService {
     return worker;
   }
 
+  runBoardStrengthInWorker(
+    formGroup: FormGroup,
+    player: Player,
+    opponent: Player,
+    callbacks: {
+      onProgress?: (progress: BoardStrengthProgress) => void;
+      onResult?: (result: BoardStrengthResult) => void;
+      onAborted?: (result: BoardStrengthResult) => void;
+      onError?: (message: string) => void;
+    },
+    options: BoardStrengthOptions,
+  ): Worker | null {
+    if (typeof Worker === 'undefined') {
+      const result = this.runBoardStrength(
+        formGroup,
+        player,
+        opponent,
+        options,
+      );
+      callbacks.onResult?.(result);
+      return null;
+    }
+
+    const config = this.buildConfig(formGroup, 1, {
+      logsEnabled: false,
+      maxLoggedBattles: 0,
+    });
+    const worker = new Worker(
+      new URL('./simulation.worker', import.meta.url),
+      { type: 'module' },
+    );
+
+    worker.onmessage = ({ data }) => {
+      if (!data || !data.type) {
+        return;
+      }
+      if (data.type === 'board-strength-progress') {
+        callbacks.onProgress?.(data.progress as BoardStrengthProgress);
+      } else if (data.type === 'board-strength-result') {
+        callbacks.onResult?.(data.result as BoardStrengthResult);
+      } else if (data.type === 'board-strength-aborted') {
+        callbacks.onAborted?.(data.result as BoardStrengthResult);
+      } else if (data.type === 'error') {
+        callbacks.onError?.(
+          data.message || 'Board strength evaluation failed.',
+        );
+      }
+    };
+
+    worker.onerror = (event) => {
+      callbacks.onError?.(
+        event.message || 'Board strength evaluation failed.',
+      );
+    };
+
+    worker.postMessage({
+      type: 'board-strength-start',
+      config,
+      options,
+    });
+    return worker;
+  }
+
   requestWorkerCancel(worker: Worker | null): void {
     if (!worker) {
       return;
@@ -272,6 +341,42 @@ export class SimulationService {
     this.logService.setEnabled(wasLoggingEnabled);
     this.logService.setDeferDecorations(wasDeferringDecorations);
 
+    return result;
+  }
+
+  runBoardStrength(
+    formGroup: FormGroup,
+    player: Player,
+    opponent: Player,
+    options: BoardStrengthOptions,
+  ): BoardStrengthResult {
+    const config = this.buildConfig(formGroup, 1, {
+      logsEnabled: false,
+      maxLoggedBattles: 0,
+    });
+    const wasLoggingEnabled = this.logService.isEnabled();
+    const wasDeferringDecorations = this.logService.isDeferDecorations();
+    this.logService.setEnabled(false);
+    this.logService.setDeferDecorations(true);
+
+    const runner = new SimulationRunner(
+      this.logService,
+      this.gameService,
+      this.abilityService,
+      this.petService,
+      this.equipmentService,
+      this.toyService,
+    );
+    const result = runBoardStrengthEvaluation({
+      baseConfig: config,
+      options,
+      simulateBatch: (batchConfig) => runner.run(batchConfig),
+    });
+
+    this.gameService.init(player, opponent);
+    syncGameApiFromForm(this.gameService, formGroup);
+    this.logService.setEnabled(wasLoggingEnabled);
+    this.logService.setDeferDecorations(wasDeferringDecorations);
     return result;
   }
 

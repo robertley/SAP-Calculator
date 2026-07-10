@@ -31,6 +31,7 @@ import { InfoComponent } from 'app/ui/components/info/info.component';
 import { ImportCalculatorComponent } from 'app/ui/components/import-calculator/import-calculator.component';
 import { ReportABugComponent } from 'app/ui/components/report-a-bug/report-a-bug.component';
 import { ExportCalculatorComponent } from 'app/ui/components/export-calculator/export-calculator.component';
+import { BoardStrengthDialogComponent } from 'app/ui/components/board-strength-dialog/board-strength-dialog.component';
 import { AppShellControlsComponent } from './components/app-shell-controls.component';
 import { AppShellBattleResultsComponent } from './components/app-shell-battle-results.component';
 import { createAppShellControlsFacade } from './components/app-shell-controls.facade';
@@ -120,6 +121,7 @@ import { AppShellOverlayStateService } from './state/app-shell-overlay-state.ser
     ImportCalculatorComponent,
     ReportABugComponent,
     ExportCalculatorComponent,
+    BoardStrengthDialogComponent,
     AppShellControlsComponent,
     AppShellBattleResultsComponent,
   ],
