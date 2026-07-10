@@ -12,6 +12,10 @@ import { AttackEventService } from './attack-event.service';
 import { FaintEventService } from './faint-event.service';
 import { AbilityEventTriggers } from './ability-event-triggers';
 import { coerceLogService } from 'app/runtime/log-service-fallback';
+import {
+  AbilityEventFilter,
+  AbilityResolutionCoordinator,
+} from './ability-resolution-coordinator';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +23,7 @@ import { coerceLogService } from 'app/runtime/log-service-fallback';
 export class AbilityService extends AbilityEventTriggers {
   declare public gameApi: GameAPI;
   declare protected lastLoggedTrigger?: AbilityTrigger;
-  private nonPhaseExecutionLock: Set<string> | null = null;
+  private readonly resolutionCoordinator: AbilityResolutionCoordinator;
 
   constructor(
     protected gameService: GameService,
@@ -31,6 +35,11 @@ export class AbilityService extends AbilityEventTriggers {
   ) {
     super();
     this.logService = coerceLogService(this.logService);
+    this.resolutionCoordinator = new AbilityResolutionCoordinator(
+      this.abilityQueueService,
+      () => this.gameService.gameApi,
+      (event) => this.logQueuedEvent(event),
+    );
   }
 
   // --- Delegates to AbilityQueueService ---
@@ -68,10 +77,20 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeEventCallback(event: AbilityEvent) {
-    this.logTriggerHeader(event);
-    this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
+    this.executeQueuedEvent(event);
     if (!this.hasGlobalEvents) {
       this.lastLoggedTrigger = undefined;
+    }
+  }
+
+  private executeQueuedEvent(event: AbilityEvent): void {
+    this.logQueuedEvent(event);
+    this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
+  }
+
+  private logQueuedEvent(event: AbilityEvent): void {
+    if (event.customParams?.isDeathLog !== true) {
+      this.logTriggerHeader(event);
     }
   }
 
@@ -108,6 +127,38 @@ export class AbilityService extends AbilityEventTriggers {
     this.abilityQueueService.simulateFriendHurtCounters(pet, count);
   }
 
+  queueDeathLog(pet: Pet): void {
+    // The log belongs to the Faint phase, rather than death detection. This
+    // lets higher-priority Hurt events resolve before it and KnockOut events
+    // resolve afterward according to ABILITY_PRIORITIES.
+    this.abilityQueueService.addEventToQueue({
+      priority: Number.MAX_SAFE_INTEGER,
+      callback: () => {
+        this.logService.createLog({
+          message: `${pet.name} fainted.`,
+          type: 'death',
+          player: pet.parent,
+          sourcePet: pet,
+        });
+      },
+      pet,
+      triggerPet: pet,
+      abilityType: 'Faint',
+      customParams: { isDeathLog: true },
+    });
+  }
+
+  protected executeQueueEvents(
+    filter: AbilityEventFilter,
+    synchronizeDeaths: boolean = false,
+  ): void {
+    this.resolutionCoordinator.drain(filter, { synchronizeDeaths });
+  }
+
+  synchronizePendingDeaths(): void {
+    this.resolutionCoordinator.synchronizeDeaths();
+  }
+
   // --- Event Triggering & Execution ---
 
   // End of Turn Events
@@ -135,7 +186,7 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeEndTurnEvents() {
-    this.processPhaseWithInterleaving(new Set(['EndTurn']));
+    this.resolvePhaseEvents(new Set(['EndTurn']), true);
   }
 
   // Before start of battle
@@ -159,11 +210,7 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeBeforeStartOfBattleEvents() {
-    this.processPhaseWithInterleaving(
-      new Set(['BeforeStartBattle']),
-      false,
-      true,
-    );
+    this.resolvePhaseEvents(new Set(['BeforeStartBattle']), false, true);
   }
 
   // Counter
@@ -187,7 +234,7 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeStartBattleEvents() {
-    this.processPhaseWithInterleaving(new Set(['StartBattle']), false, true);
+    this.resolvePhaseEvents(new Set(['StartBattle']), false, true);
   }
 
   // Before Attack
@@ -196,7 +243,7 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeBeforeAttackEvents() {
-    if (this.nonPhaseExecutionLock) {
+    if (this.resolutionCoordinator.isNonPhaseExecutionLocked) {
       return;
     }
     const beforeAttackTriggers = new Set([
@@ -206,20 +253,22 @@ export class AbilityService extends AbilityEventTriggers {
       'BeforeFriendAttacks',
       'BeforeAdjacentFriendAttacked',
     ]);
-    const phaseTriggers = new Set(['BeforeStartBattle', 'StartBattle']);
-    this.abilityQueueService.processQueue(this.gameService.gameApi, {
-      filter: (event) => beforeAttackTriggers.has(event.abilityType as string),
-      onExecute: (event) => this.logTriggerHeader(event),
-    });
-    this.abilityQueueService.processQueue(this.gameService.gameApi, {
-      filter: (event) => !phaseTriggers.has(event.abilityType as string),
-      onExecute: (event) => this.logTriggerHeader(event),
-    });
-    this.lastLoggedTrigger = undefined;
+    const startBattleTriggers = new Set([
+      'BeforeStartBattle',
+      'StartBattle',
+    ]);
+    this.executeQueueEvents(
+      this.createTriggerFilter(beforeAttackTriggers),
+    );
+    this.executeQueueEvents(
+      (event) => !startBattleTriggers.has(event.abilityType as string),
+      true,
+    );
+    this.clearLastLoggedTrigger();
   }
 
   executeBeforeAttackTriggerOnly() {
-    if (this.nonPhaseExecutionLock) {
+    if (this.resolutionCoordinator.isNonPhaseExecutionLocked) {
       return;
     }
     const beforeAttackTriggers = new Set([
@@ -229,11 +278,8 @@ export class AbilityService extends AbilityEventTriggers {
       'BeforeFriendAttacks',
       'BeforeAdjacentFriendAttacked',
     ]);
-    this.abilityQueueService.processQueue(this.gameService.gameApi, {
-      filter: (event) => beforeAttackTriggers.has(event.abilityType as string),
-      onExecute: (event) => this.logTriggerHeader(event),
-    });
-    this.lastLoggedTrigger = undefined;
+    this.executeQueueEvents(this.createTriggerFilter(beforeAttackTriggers));
+    this.clearLastLoggedTrigger();
   }
 
   // Friend/After attacks events
@@ -242,7 +288,7 @@ export class AbilityService extends AbilityEventTriggers {
   }
 
   executeAfterAttackEvents() {
-    if (this.nonPhaseExecutionLock) {
+    if (this.resolutionCoordinator.isNonPhaseExecutionLocked) {
       return;
     }
     const afterAttackTriggers = new Set([
@@ -255,9 +301,12 @@ export class AbilityService extends AbilityEventTriggers {
       'ThisAttacked',
       'ThisFirstAttack',
     ]);
-    const phaseTriggers = new Set(['BeforeStartBattle', 'StartBattle']);
-    this.abilityQueueService.processQueue(this.gameService.gameApi, {
-      filter: (event) => {
+    const startBattleTriggers = new Set([
+      'BeforeStartBattle',
+      'StartBattle',
+    ]);
+    this.executeQueueEvents(
+      (event) => {
         const trigger = event.abilityType as string;
         if (afterAttackTriggers.has(trigger)) {
           return true;
@@ -266,128 +315,33 @@ export class AbilityService extends AbilityEventTriggers {
           trigger,
         );
       },
-      onExecute: (event) => this.logTriggerHeader(event),
-    });
-    this.abilityQueueService.processQueue(this.gameService.gameApi, {
-      filter: (event) => !phaseTriggers.has(event.abilityType as string),
-      onExecute: (event) => this.logTriggerHeader(event),
-    });
-    this.lastLoggedTrigger = undefined;
+    );
+    this.executeQueueEvents(
+      (event) => !startBattleTriggers.has(event.abilityType as string),
+      true,
+    );
+    this.clearLastLoggedTrigger();
   }
 
-  private takeNextPhaseEvent(allowedTriggers: Set<string>): AbilityEvent | null {
-    const queue = this.abilityQueueService.globalEventQueue;
-    let bestIdx = -1;
-
-    for (let i = 0; i < queue.length; i++) {
-      const event = queue[i];
-      if (!allowedTriggers.has(event.abilityType as string)) {
-        continue;
-      }
-
-      if (bestIdx === -1) {
-        bestIdx = i;
-        continue;
-      }
-
-      const currentBest = queue[bestIdx];
-      const eventAbilityPriority = this.abilityQueueService.getPriorityNumber(
-        event.abilityType as string,
-      );
-      const bestAbilityPriority = this.abilityQueueService.getPriorityNumber(
-        currentBest.abilityType as string,
-      );
-
-      if (eventAbilityPriority < bestAbilityPriority) {
-        bestIdx = i;
-        continue;
-      }
-      if (eventAbilityPriority > bestAbilityPriority) {
-        continue;
-      }
-
-      const eventPet =
-        event.pet?.transformed && event.pet?.transformedInto
-          ? event.pet.transformedInto
-          : event.pet;
-      const bestPet =
-        currentBest.pet?.transformed && currentBest.pet?.transformedInto
-          ? currentBest.pet.transformedInto
-          : currentBest.pet;
-
-      const eventPriority = eventPet
-        ? this.abilityQueueService.getPetEventPriority(eventPet)
-        : Number(event.priority ?? 0);
-      const bestPriority = bestPet
-        ? this.abilityQueueService.getPetEventPriority(bestPet)
-        : Number(currentBest.priority ?? 0);
-
-      if (eventPriority > bestPriority) {
-        bestIdx = i;
-        continue;
-      }
-      if (eventPriority < bestPriority) {
-        continue;
-      }
-
-      const eventTie = Number(event.tieBreaker ?? 0);
-      const bestTie = Number(currentBest.tieBreaker ?? 0);
-      if (eventTie < bestTie) {
-        bestIdx = i;
-      }
-    }
-
-    if (bestIdx === -1) {
-      return null;
-    }
-
-    const [event] = queue.splice(bestIdx, 1);
-    return event ?? null;
-  }
-
-  private processPhaseWithInterleaving(
-    allowedTriggers: Set<string>,
-    interleaveNonPhaseEvents: boolean = true,
+  private resolvePhaseEvents(
+    phaseTriggers: ReadonlySet<string>,
+    interleaveNonPhaseEvents: boolean,
     lockNonPhaseExecution: boolean = false,
-  ) {
-    const executeNonPhaseEvents = () => {
-      this.abilityQueueService.processQueue(this.gameService.gameApi, {
-        filter: (evt) => !allowedTriggers.has(evt.abilityType as string),
-        onExecute: (evt) => this.logTriggerHeader(evt),
-      });
-    };
+  ): void {
+    const phaseFilter = this.createTriggerFilter(phaseTriggers);
+    this.resolutionCoordinator.resolvePhase({
+      phaseFilter,
+      nonPhaseFilter: (event) => !phaseFilter(event),
+      interleaveNonPhaseEvents,
+      lockNonPhaseExecution,
+    });
+    this.clearLastLoggedTrigger();
+  }
 
-    const runPhaseEvents = () => {
-      while (true) {
-        const event = this.takeNextPhaseEvent(allowedTriggers);
-        if (!event) {
-          break;
-        }
-        this.logTriggerHeader(event);
-        this.abilityQueueService.executeEvent(event, this.gameService.gameApi);
-        if (interleaveNonPhaseEvents) {
-          executeNonPhaseEvents();
-        }
-      }
-    };
-
-    const previousNonPhaseLock = this.nonPhaseExecutionLock;
-    if (lockNonPhaseExecution) {
-      this.nonPhaseExecutionLock = allowedTriggers;
-    }
-    try {
-      runPhaseEvents();
-    } finally {
-      if (lockNonPhaseExecution) {
-        this.nonPhaseExecutionLock = previousNonPhaseLock;
-      }
-    }
-
-    if (!interleaveNonPhaseEvents) {
-      executeNonPhaseEvents();
-    }
-
-    this.lastLoggedTrigger = undefined;
+  private createTriggerFilter(
+    triggers: ReadonlySet<string>,
+  ): AbilityEventFilter {
+    return (event) => triggers.has(event.abilityType as string);
   }
 
 

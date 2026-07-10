@@ -86,24 +86,30 @@ export const handleDeath = (pet: Pet, logService: LogService): void => {
   createDeathLog(pet, logService);
 };
 
+const queueDeath = (pet: Pet, abilityService: AbilityService): void => {
+  pet.seenDead = true;
+  abilityService.queueDeathLog(pet);
+  pet.setFaintEventIfPresent();
+};
+
 export const checkPetsAlive = (
   player: Player,
-  logService: LogService,
+  abilityService: AbilityService,
 ): void => {
   if (player.pet0 && !player.pet0.alive && !player.pet0.seenDead) {
-    handleDeath(player.pet0, logService);
+    queueDeath(player.pet0, abilityService);
   }
   if (player.pet1 && !player.pet1.alive && !player.pet1.seenDead) {
-    handleDeath(player.pet1, logService);
+    queueDeath(player.pet1, abilityService);
   }
   if (player.pet2 && !player.pet2.alive && !player.pet2.seenDead) {
-    handleDeath(player.pet2, logService);
+    queueDeath(player.pet2, abilityService);
   }
   if (player.pet3 && !player.pet3.alive && !player.pet3.seenDead) {
-    handleDeath(player.pet3, logService);
+    queueDeath(player.pet3, abilityService);
   }
   if (player.pet4 && !player.pet4.alive && !player.pet4.seenDead) {
-    handleDeath(player.pet4, logService);
+    queueDeath(player.pet4, abilityService);
   }
 };
 

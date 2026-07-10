@@ -1263,12 +1263,12 @@ export class ReplayCalcParser {
     const playerPackId = resolvePackIdFromUnknown(userBoard?.Pack);
     const opponentPackId = resolvePackIdFromUnknown(opponentBoard?.Pack);
     const playerPackName =
-      (playerPackId !== null ? PACK_MAP[playerPackId] : null) ||
       playerCustomPack?.name ||
+      (playerPackId !== null ? PACK_MAP[playerPackId] : null) ||
       'Turtle';
     const opponentPackName =
-      (opponentPackId !== null ? PACK_MAP[opponentPackId] : null) ||
       opponentCustomPack?.name ||
+      (opponentPackId !== null ? PACK_MAP[opponentPackId] : null) ||
       'Turtle';
 
     return {
@@ -1329,7 +1329,7 @@ export class ReplayCalcParser {
     const usedNames = new Set<string>();
 
     for (const deck of decks) {
-      const deckId = deck?.Id ? String(deck.Id) : null;
+      const deckId = deck?.Id != null ? String(deck.Id) : null;
       if (deckId && seenDeckIds.has(deckId)) {
         continue;
       }
@@ -1420,18 +1420,59 @@ export class ReplayCalcParser {
     if (!deck) {
       return null;
     }
-    const deckId = deck?.Id ? String(deck.Id) : null;
+    const deckId = deck?.Id != null ? String(deck.Id) : null;
     if (deckId) {
       const byId = customPacks.find((pack) => pack.deckId === deckId);
       if (byId) {
         return byId;
       }
     }
+
+    const deckContents = this.buildCustomPackFromDeck(deck, new Set());
+    if (deckContents) {
+      const byContents = customPacks.find((pack) =>
+        this.customPackContentsMatch(pack, deckContents),
+      );
+      if (byContents) {
+        return byContents;
+      }
+    }
+
     const deckName = deck?.Title;
     if (deckName) {
       return customPacks.find((pack) => pack.name === deckName) || null;
     }
     return null;
+  }
+
+  private customPackContentsMatch(
+    pack: ReplayCustomPack,
+    deckContents: ReplayCustomPackCore,
+  ): boolean {
+    const tierKeys = [
+      'tier1Pets',
+      'tier2Pets',
+      'tier3Pets',
+      'tier4Pets',
+      'tier5Pets',
+      'tier6Pets',
+    ] as const;
+
+    return (
+      tierKeys.every((tierKey) =>
+        this.stringArraysMatch(pack[tierKey], deckContents[tierKey]),
+      ) && this.stringArraysMatch(pack.spells, deckContents.spells)
+    );
+  }
+
+  private stringArraysMatch(
+    left: ReadonlyArray<string | null>,
+    right: ReadonlyArray<string | null>,
+  ): boolean {
+    return (
+      left.length === right.length &&
+      left.every((value, index) => value === right[index])
+    );
   }
 
   private stripDefaultValues(

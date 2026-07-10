@@ -141,17 +141,9 @@ export class HippogriffAbility extends Ability {
           petName.toLowerCase() !== owner.name.toLowerCase(),
       );
 
-    const petPool =
-      owner.parent === gameApi.player
-        ? gameApi.playerPetPool
-        : gameApi.opponentPetPool;
-    let tierPool = normalizePool(petPool?.get(tier));
-    if (!tierPool?.length) {
-      tierPool = normalizePool(this.petService.allPets.get(tier));
-    }
-    if (!tierPool?.length) {
-      tierPool = normalizePool(this.petService.allPets.get(1));
-    }
+    const tierPool = normalizePool(
+      this.petService.getPetPoolByTier(owner.parent, tier),
+    );
     if (!tierPool.length) {
       return;
     }

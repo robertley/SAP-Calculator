@@ -73,20 +73,12 @@ export class SpiderAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { tiger, pteranodon } = context;
     const owner = this.owner;
 
-    const activePool =
-      owner.parent == gameApi?.player
-        ? gameApi?.playerPetPool
-        : gameApi?.opponentPetPool;
-    const tier3Pets = [...(activePool?.get(3) ?? [])];
-    let possibleSpawnPets = tier3Pets.filter((pet) => pet && pet != 'Spider');
-    if (possibleSpawnPets.length == 0) {
-      possibleSpawnPets = [...(this.petService?.allPets?.get(3) ?? [])].filter(
-        (pet) => pet && pet != 'Spider',
-      );
-    }
+    const possibleSpawnPets = this.petService
+      .getPetPoolByTier(owner.parent, 3)
+      .filter((pet) => pet && pet !== 'Spider');
     if (possibleSpawnPets.length == 0) {
       return;
     }

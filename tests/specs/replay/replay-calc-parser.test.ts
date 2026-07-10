@@ -578,4 +578,39 @@ describe('ReplayCalcParser', () => {
     expect(state.playerPack).toBe('Unicorn');
     expect(state.opponentPack).toBe('Puppy');
   });
+
+  it('selects the matching custom deck instead of an empty deck with the same title', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 0,
+        Deck: {
+          Title: 'Custom Pack',
+          Minions: ['624'],
+        },
+        Mins: { Items: [] },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: { Items: [] },
+      },
+    };
+    const buildModel = {
+      Bor: {
+        Deck: {
+          Id: 'empty-template',
+          Title: 'Custom Pack',
+          Minions: [],
+        },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(battleJson, buildModel);
+    const selectedPack = state.customPacks.find(
+      (pack) => pack.name === state.playerPack,
+    );
+
+    expect(state.playerPack).toBe('Custom Pack (2)');
+    expect(selectedPack?.tier1Pets.some((pet) => pet !== null)).toBe(true);
+  });
 });

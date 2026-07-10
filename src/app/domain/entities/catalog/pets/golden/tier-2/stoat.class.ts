@@ -76,7 +76,7 @@ export class StoatAbility extends Ability {
     const owner = this.owner;
     const { gameApi } = context;
     const tier = Math.max(1, gameApi.previousShopTier ?? owner.tier);
-    const pool = this.petService.allPets.get(tier) ?? [];
+    const pool = this.petService.getPetPoolByTier(owner.parent, tier);
     if (!pool.length) {
       this.triggerTigerExecution(context);
       return;

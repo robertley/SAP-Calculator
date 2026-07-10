@@ -103,8 +103,7 @@ export class AbilityEngine {
   }
 
   checkPetsAlive() {
-    this.player.checkPetsAlive();
-    this.opponent.checkPetsAlive();
+    this.abilityService.synchronizePendingDeaths();
   }
 
   removeDeadPets() {

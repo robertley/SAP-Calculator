@@ -89,19 +89,9 @@ export class EagleAbility extends Ability {
           petName.toLowerCase() !== owner.name.toLowerCase(),
       );
 
-    const petPool =
-      owner.parent === gameApi.player
-        ? gameApi.playerPetPool
-        : gameApi.opponentPetPool;
-    let pets = normalizePool(petPool?.get(tier));
-    // Fallback to global pool if the per-player pool is missing/empty (e.g. custom packs or unset tier)
-    if (!pets?.length) {
-      pets = normalizePool(this.petService.allPets.get(tier));
-    }
-    // Final fallback to tier 1 to avoid crashing if pools are still empty
-    if (!pets?.length) {
-      pets = normalizePool(this.petService.allPets.get(1));
-    }
+    const pets = normalizePool(
+      this.petService.getPetPoolByTier(owner.parent, tier),
+    );
     if (!pets.length) {
       // Nothing to spawn; still trigger tiger effects to keep ability chain intact
       this.triggerTigerExecution(context);

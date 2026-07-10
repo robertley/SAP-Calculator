@@ -72,7 +72,7 @@ export class HarpyEagleAbility extends Ability {
 
     this.usesThisTurn++;
 
-    const { gameApi, tiger, pteranodon } = context;
+    const { tiger, pteranodon } = context;
     const owner = this.owner;
 
     let power = this.level * 5;
@@ -84,14 +84,9 @@ export class HarpyEagleAbility extends Ability {
           petName.toLowerCase() !== owner.name.toLowerCase(),
       );
 
-    const activePool =
-      owner.parent === gameApi.player
-        ? gameApi.playerPetPool
-        : gameApi.opponentPetPool;
-    let tierOnePool = normalizePool(activePool?.get(1));
-    if (!tierOnePool.length) {
-      tierOnePool = normalizePool(this.petService.allPets.get(1));
-    }
+    const tierOnePool = normalizePool(
+      this.petService.getPetPoolByTier(owner.parent, 1),
+    );
     if (!tierOnePool.length) {
       return;
     }

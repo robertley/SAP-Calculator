@@ -106,6 +106,35 @@ export class AbilityQueueService {
     return this.globalEventQueue.shift() || null;
   }
 
+  takeNextMatchingEvent(
+    filter: (event: AbilityEvent) => boolean,
+  ): AbilityEvent | null {
+    let nextIndex = -1;
+
+    for (let index = 0; index < this.globalEventQueue.length; index++) {
+      const event = this.globalEventQueue[index];
+      if (!filter(event)) {
+        continue;
+      }
+      if (
+        nextIndex === -1 ||
+        this.compareEventsForQueueOrder(
+          event,
+          this.globalEventQueue[nextIndex],
+        ) < 0
+      ) {
+        nextIndex = index;
+      }
+    }
+
+    if (nextIndex === -1) {
+      return null;
+    }
+
+    const [event] = this.globalEventQueue.splice(nextIndex, 1);
+    return event ?? null;
+  }
+
   // NEW: Legacy support
   peekNextHighestPriorityEvent(): AbilityEvent | null {
     return this.globalEventQueue.length > 0 ? this.globalEventQueue[0] : null;

@@ -228,7 +228,7 @@ export class Player extends PlayerSummonFacade {
   }
 
   checkPetsAlive() {
-    checkPetsAliveImpl(this, this.logService);
+    checkPetsAliveImpl(this, this.abilityService);
   }
 
   removeDeadPets(): boolean {

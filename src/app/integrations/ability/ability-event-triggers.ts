@@ -19,6 +19,10 @@ export abstract class AbilityEventTriggers {
   protected abstract faintEventService: FaintEventService;
   protected abstract logTriggerHeader(event: AbilityEvent): void;
   protected abstract clearLastLoggedTrigger(): void;
+  protected abstract executeQueueEvents(
+    filter: (event: AbilityEvent) => boolean,
+    synchronizeDeaths?: boolean,
+  ): void;
 
   // Summon events
   triggerSummonEvents(summonedPet: Pet) {
@@ -346,10 +350,9 @@ export abstract class AbilityEventTriggers {
   }
 
   executeEmptyFrontSpaceEvents(): void {
-    this.abilityQueueService.processQueue(this.gameService.gameApi, {
-      filter: (event) => event.abilityType === 'EmptyFrontSpace',
-      onExecute: (event) => this.logTriggerHeader(event),
-    });
+    this.executeQueueEvents(
+      (event) => event.abilityType === 'EmptyFrontSpace',
+    );
     this.clearLastLoggedTrigger();
   }
 

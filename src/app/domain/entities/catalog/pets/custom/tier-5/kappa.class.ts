@@ -73,34 +73,37 @@ export class KappaAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let petPool =
-      owner.parent == gameApi.player
-        ? gameApi.playerPetPool
-        : gameApi.opponentPetPool;
-    let tier3Pets = petPool.get(3);
+    const ownerTierThreePets = this.petService.getPetPoolByTier(
+      owner.parent,
+      3,
+    );
+    if (!ownerTierThreePets.length) {
+      this.triggerTigerExecution(context);
+      return;
+    }
 
     for (let i = 0; i < owner.level; i++) {
       const playerChoice = chooseRandomOption(
         {
           key: 'pet.kappa-player-spawn',
           label: formatPetScopedRandomLabel(owner, 'Kappa player spawn', i + 1),
-          options: tier3Pets.map((name) => ({ id: name, label: name })),
+          options: ownerTierThreePets.map((name) => ({ id: name, label: name })),
         },
-        () => getRandomInt(0, tier3Pets.length - 1),
+        () => getRandomInt(0, ownerTierThreePets.length - 1),
       );
-      let playerSpawn = tier3Pets[playerChoice.index];
+      let playerSpawn = ownerTierThreePets[playerChoice.index];
       const opponentChoice = chooseRandomOption(
         {
           key: 'pet.kappa-opponent-spawn',
           label: formatPetScopedRandomLabel(owner, 'Kappa opponent spawn', i + 1),
-          options: tier3Pets.map((name) => ({ id: name, label: name })),
+          options: ownerTierThreePets.map((name) => ({ id: name, label: name })),
         },
-        () => getRandomInt(0, tier3Pets.length - 1),
+        () => getRandomInt(0, ownerTierThreePets.length - 1),
       );
-      let opponentSpawn = tier3Pets[opponentChoice.index];
+      let opponentSpawn = ownerTierThreePets[opponentChoice.index];
 
       let spawn = this.petService.createPet(
         {

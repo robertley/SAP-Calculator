@@ -142,7 +142,7 @@ export class PetService {
     }
   }
 
-  private getRandomPetPoolByTier(parent: Player, tier: number): string[] {
+  getPetPoolByTier(parent: Player, tier: number): string[] {
     if (parent.allPets) {
       return [...(this.allPets.get(tier) || [])];
     }
@@ -327,7 +327,7 @@ export class PetService {
   }
 
   private getPackFaintPetNamesByTier(parent: Player, tier: number): string[] {
-    const packPetNames = new Set(this.getRandomPetPoolByTier(parent, tier));
+    const packPetNames = new Set(this.getPetPoolByTier(parent, tier));
     return (this.faintPetsByTier.get(tier) ?? []).filter((petName) =>
       packPetNames.has(petName),
     );
@@ -453,7 +453,7 @@ export class PetService {
       () => getRandomInt(0, tierOptions.length - 1),
     );
     let tier = tierDecision.index + 1;
-    let pets = this.getRandomPetPoolByTier(parent, tier);
+    let pets = this.getPetPoolByTier(parent, tier);
 
     if (parent.allPets && parent.tokenPets) {
       const tokens = this.tokenPetsMap.get(tier) || [];
