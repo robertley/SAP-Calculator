@@ -13,6 +13,8 @@ import { getPetIconPath } from 'app/runtime/asset-catalog';
 })
 export class CustomPackFormComponent implements OnInit {
   readonly tiers: number[] = [1, 2, 3, 4, 5, 6];
+  activeTier = 1;
+  readonly searchControl = new FormControl('', { nonNullable: true });
 
   @Input()
   formGroup: FormGroup;
@@ -121,6 +123,23 @@ export class CustomPackFormComponent implements OnInit {
     return pets;
   }
 
+  getFilteredPets(tier: number): string[] {
+    const query = this.searchControl.value.trim().toLowerCase();
+    return this.getPets(tier).filter((pet) =>
+      !query || pet.toLowerCase().includes(query),
+    );
+  }
+
+  getSelectedPets(tier: number): string[] {
+    const value = this.formGroup.get(`tier${tier}Pets`)?.value;
+    return Array.isArray(value) ? value : [];
+  }
+
+  setActiveTier(tier: number): void {
+    this.activeTier = tier;
+    this.searchControl.setValue('');
+  }
+
   getCount(tier: number) {
     return this.formGroup.get(`tier${tier}Pets`).value.length;
   }
@@ -128,6 +147,10 @@ export class CustomPackFormComponent implements OnInit {
   processCheckboxChange(tier: number, pet: string, checked: boolean) {
     let formControlValue = this.formGroup.get(`tier${tier}Pets`).value;
     if (checked) {
+      if (formControlValue.length >= 10) {
+        this.getCheckboxFormGroup(tier).get(pet)?.setValue(false, { emitEvent: false });
+        return;
+      }
       formControlValue.push(pet);
     } else {
       remove(formControlValue, (value) => value === pet);
@@ -157,9 +180,7 @@ export class CustomPackFormComponent implements OnInit {
   }
 
   cancel() {
-    if (confirm('Are you sure you want to cancel?')) {
-      this.cancelEvent.emit(this.formGroup);
-    }
+    this.cancelEvent.emit(this.formGroup);
   }
 
   submitDisabled() {

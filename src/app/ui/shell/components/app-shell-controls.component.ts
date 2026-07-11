@@ -8,7 +8,18 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BoardStrengthDialogComponent } from '../../components/board-strength-dialog/board-strength-dialog.component';
+import { ImportCalculatorComponent } from '../../components/import-calculator/import-calculator.component';
 import type { AppShellControlsFacade } from './app-shell-controls.facade';
+
+type ToolsWorkspaceTab =
+  | 'optimize'
+  | 'strength'
+  | 'randomness'
+  | 'teams'
+  | 'odds-image'
+  | 'positioning-image'
+  | 'strength-image';
 
 const ADVANCED_CONTROL_DEFAULTS: Readonly<Record<string, boolean | number | null>> = {
   komodoShuffle: false,
@@ -57,7 +68,7 @@ const SCENARIO_CONTROL_RESET_VALUES: Readonly<Record<string, boolean | number | 
 @Component({
   selector: 'app-shell-controls',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgOptimizedImage],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgOptimizedImage, BoardStrengthDialogComponent, ImportCalculatorComponent],
   templateUrl: './app-shell-controls.component.html',
   styleUrl: './app-shell-controls.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,9 +80,10 @@ export class AppShellControlsComponent {
 
   optimizeSide: 'player' | 'opponent' = 'player';
   saveSide: 'player' | 'opponent' = 'player';
-  loadSide: 'player' | 'opponent' = 'player';
+  toolsDialogOpen = false;
   optimizationDialogOpen = false;
-  toolsMenuOpen = false;
+  teamLibraryDialogOpen = false;
+  activeToolsTab: ToolsWorkspaceTab = 'optimize';
   actionsMenuOpen = false;
 
   get isUnifiedAdvancedExpanded(): boolean {
@@ -112,8 +124,16 @@ export class AppShellControlsComponent {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (this.teamLibraryDialogOpen) {
+      this.closeTeamLibraryDialog();
+      return;
+    }
     if (this.optimizationDialogOpen) {
       this.closeOptimizationDialog();
+      return;
+    }
+    if (this.toolsDialogOpen) {
+      this.closeToolsDialog();
       return;
     }
     if (this.isUnifiedAdvancedExpanded) {
@@ -123,35 +143,51 @@ export class AppShellControlsComponent {
     this.closeMenus();
   }
 
+  runOptimization(): void {
+    this.app.optimizePositioning(this.optimizeSide);
+    this.closeToolsDialog();
+  }
+
   openOptimizationDialog(): void {
     if (this.app.simulationInProgress) {
       return;
     }
+    this.toolsDialogOpen = false;
     this.optimizationDialogOpen = true;
-    this.closeMenus();
   }
 
   closeOptimizationDialog(): void {
     this.optimizationDialogOpen = false;
   }
 
-  runOptimization(): void {
-    this.app.optimizePositioning(this.optimizeSide);
-    this.closeOptimizationDialog();
+  openTeamLibraryDialog(): void {
+    this.toolsDialogOpen = false;
+    this.teamLibraryDialogOpen = true;
   }
 
-  toggleToolsMenu(): void {
-    this.toolsMenuOpen = !this.toolsMenuOpen;
+  closeTeamLibraryDialog(): void {
+    this.teamLibraryDialogOpen = false;
+  }
+
+  openToolsDialog(): void {
+    this.toolsDialogOpen = true;
     this.actionsMenuOpen = false;
   }
 
-  closeToolsMenu(): void {
-    this.toolsMenuOpen = false;
+  closeToolsDialog(): void {
+    this.toolsDialogOpen = false;
+  }
+
+  selectToolsTab(tab: ToolsWorkspaceTab): void {
+    if (this.app.simulationInProgress && (tab === 'optimize' || tab === 'strength')) {
+      return;
+    }
+    this.activeToolsTab = tab;
   }
 
   toggleActionsMenu(): void {
     this.actionsMenuOpen = !this.actionsMenuOpen;
-    this.toolsMenuOpen = false;
+    this.toolsDialogOpen = false;
   }
 
   closeActionsMenu(): void {
@@ -159,7 +195,6 @@ export class AppShellControlsComponent {
   }
 
   private closeMenus(): void {
-    this.toolsMenuOpen = false;
     this.actionsMenuOpen = false;
     if (this.app?.soundMenuOpen) {
       this.app.soundMenuOpen = false;

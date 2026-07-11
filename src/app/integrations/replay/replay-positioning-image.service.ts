@@ -38,7 +38,6 @@ export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
   simulationCount: number;
   optimizationSide: 'player' | 'opponent';
-  keepSameBuffTargets?: boolean;
   abilityPetMap?: Record<string, string | number> | null;
   abortSignal?: AbortSignal;
   onProgress?: (progress: ReplayPositioningImageProgress) => void;
@@ -278,7 +277,6 @@ export class ReplayPositioningImageService {
         baseConfig,
         input.simulationCount,
         input.optimizationSide,
-        input.keepSameBuffTargets === true,
         input.abortSignal,
         (turnPercent) => {
           this.emitProgress(
@@ -382,7 +380,6 @@ export class ReplayPositioningImageService {
     baseConfig: SimulationConfig,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
-    keepSameBuffTargets: boolean,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
@@ -391,7 +388,6 @@ export class ReplayPositioningImageService {
         baseConfig,
         simulationCount,
         optimizationSide,
-        keepSameBuffTargets,
         abortSignal,
         onProgress,
       );
@@ -407,7 +403,6 @@ export class ReplayPositioningImageService {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
           batchSize: Math.max(10, Math.min(25, simulationCount)),
-          keepSameBuffTargets,
         },
         shouldAbort: () => Boolean(abortSignal?.aborted),
         onProgress: (progress) => {
@@ -423,8 +418,6 @@ export class ReplayPositioningImageService {
           );
           onProgress?.(percent);
         },
-        projectEndTurnLineup: ({ baseConfig: config, side, lineup }) =>
-          this.projectLocalEndTurnLineup(config, side, lineup),
         simulateBatch: (config) => this.runLocalSimulation(config),
       }),
     );
@@ -434,7 +427,6 @@ export class ReplayPositioningImageService {
     baseConfig: SimulationConfig,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
-    keepSameBuffTargets: boolean,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
@@ -525,8 +517,7 @@ export class ReplayPositioningImageService {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
           batchSize: Math.max(10, Math.min(25, simulationCount)),
-          projectEndTurnLineup: true,
-          keepSameBuffTargets,
+          projectEndTurnLineup: false,
         },
       });
     });
@@ -702,39 +693,6 @@ export class ReplayPositioningImageService {
       round(delta.baseline.draw) !== round(delta.optimized.draw) ||
       round(delta.baseline.loss) !== round(delta.optimized.loss)
     );
-  }
-
-  private projectLocalEndTurnLineup(
-    config: SimulationConfig,
-    side: 'player' | 'opponent',
-    lineup: (PetConfig | null)[],
-  ): (PetConfig | null)[] {
-    const previousGameApi = this.gameService.gameApi
-      ? ({ ...this.gameService.gameApi } as GameAPI)
-      : null;
-    const wasEnabled = this.logService.isEnabled();
-    const wasDeferDecorations = this.logService.isDeferDecorations();
-    const wasShowTriggerNames = this.logService.isShowTriggerNamesInLogs();
-
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService,
-    );
-
-    try {
-      return runner.projectLineupAfterEndTurn(config, side, lineup);
-    } finally {
-      if (previousGameApi) {
-        this.gameService.gameApi = previousGameApi;
-      }
-      this.logService.setEnabled(wasEnabled);
-      this.logService.setDeferDecorations(wasDeferDecorations);
-      this.logService.setShowTriggerNamesInLogs(wasShowTriggerNames);
-    }
   }
 
   private runLocalSimulation(config: SimulationConfig): SimulationResult {

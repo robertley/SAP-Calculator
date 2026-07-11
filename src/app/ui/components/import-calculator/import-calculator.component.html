@@ -1,35 +1,35 @@
 <div class="form-group" [formGroup]="formGroup">
-  <label for="calcCode" class="form-label fw-semibold">Import Input</label>
+  <label [attr.for]="mode === 'import' ? 'calcCode' : mode + 'Code'" class="form-label fw-semibold">{{ mode === 'import' ? 'Import Input' : 'Replay Input' }}</label>
   <div class="text-muted small mb-1">Supported formats:</div>
-  <ul class="text-muted small ps-3 mb-2">
+  <ul class="text-muted small ps-3 mb-2" *ngIf="mode === 'import'; else imageFormats">
     <li>Compressed calculator export code</li>
     <li>Replay export code</li>
     <li>Calculator JSON</li>
     <li>Replay JSON (Actions, single battle JSON, or PID lookup)</li>
   </ul>
-  <div class="text-muted small mb-2">
+  <ng-template #imageFormats>
+    <ul class="text-muted small ps-3 mb-2">
+      <li>Participation ID (UUID) or JSON containing <code>Pid</code></li>
+      <li>Replay export code containing a battle</li>
+      <li>Replay JSON containing <code>Actions</code> or <code>turns</code></li>
+      <li>Single-battle JSON containing <code>UserBoard</code> and <code>OpponentBoard</code></li>
+    </ul>
+  </ng-template>
+  <div class="text-muted small mb-2" *ngIf="mode === 'import'">
     PID example: <code>{{ pidExample }}</code>
+  </div>
+  <div class="text-muted small mb-2" *ngIf="mode !== 'import'">
+    Image builds process every available replay turn. A <code>T</code> value in PID JSON is ignored.
   </div>
   <textarea
     class="form-control mb-2 calc-textarea"
-    id="calcCode"
+    [id]="mode === 'import' ? 'calcCode' : mode + 'Code'"
     rows="8"
     formControlName="calcCode"
     placeholder="Paste calculator or replay payload here..."
   ></textarea>
-  <div class="d-flex align-items-end gap-3 flex-wrap mb-2">
-    <div>
-      <label for="turnNumber" class="form-label">Battle Turn</label>
-      <input
-        id="turnNumber"
-        type="number"
-        class="form-control"
-        min="1"
-        formControlName="turn"
-      />
-      <div class="text-muted small mt-1">1-based turn index</div>
-    </div>
-    <div>
+  <div class="d-flex align-items-end gap-3 flex-wrap mb-2" *ngIf="mode !== 'import'">
+    <div *ngIf="mode === 'odds-image' || mode === 'positioning-image'">
       <label for="oddsSimulations" class="form-label">Image Simulations</label>
       <input
         id="oddsSimulations"
@@ -38,11 +38,9 @@
         min="1"
         formControlName="oddsSimulations"
       />
-      <div class="text-muted small mt-1">
-        Used for both odds and positioning image builds (positioning max 50)
-      </div>
+      <div class="text-muted small mt-1">Simulations per turn</div>
     </div>
-    <div>
+    <div *ngIf="mode === 'positioning-image'">
       <label for="positioningSide" class="form-label">Positioning Side</label>
       <select
         id="positioningSide"
@@ -52,34 +50,21 @@
         <option value="player">Player</option>
         <option value="opponent">Opponent</option>
       </select>
-      <div class="text-muted small mt-1">Used for positioning image builds</div>
-    </div>
-    <div class="form-check align-self-center mt-4">
-      <input
-        id="keepSameBuffTargets"
-        class="form-check-input"
-        type="checkbox"
-        formControlName="keepSameBuffTargets"
-      />
-      <label class="form-check-label" for="keepSameBuffTargets">
-        Keep same buff targets
-      </label>
-      <div class="text-muted small mt-1">Used for positioning image builds</div>
     </div>
   </div>
   <div class="d-flex align-items-end gap-2 flex-wrap mb-2">
-    <button class="btn btn-primary" (click)="submit()" [disabled]="loading">
+    <button class="btn btn-primary" *ngIf="mode === 'import'" (click)="submit()" [disabled]="loading">
       {{ loading ? "Fetching..." : "Import Data" }}
     </button>
     <button
-      class="btn btn-outline-primary"
+      class="btn btn-outline-primary" *ngIf="mode === 'odds-image'"
       (click)="buildOddsImage()"
       [disabled]="oddsImageLoading"
     >
       {{ oddsImageLoading ? "Building Odds Image..." : "Build Odds Image" }}
     </button>
     <button
-      class="btn btn-outline-success"
+      class="btn btn-outline-success" *ngIf="mode === 'positioning-image'"
       (click)="buildPositioningImage()"
       [disabled]="positioningImageLoading"
     >
@@ -90,7 +75,7 @@
       }}
     </button>
     <button
-      class="btn btn-outline-primary"
+      class="btn btn-outline-primary" *ngIf="mode === 'strength-image'"
       (click)="buildBoardStrengthImage()"
       [disabled]="boardStrengthImageLoading"
     >
@@ -101,7 +86,7 @@
       }}
     </button>
   </div>
-  <div *ngIf="positioningImageLoading" class="mb-2">
+  <div *ngIf="mode === 'positioning-image' && positioningImageLoading" class="mb-2">
     <div class="d-flex align-items-center justify-content-between mb-1">
       <div class="small text-muted">
         {{ positioningProgressMessage || "Building positioning image..." }}
@@ -127,7 +112,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="boardStrengthImageLoading" class="mb-2">
+  <div *ngIf="mode === 'strength-image' && boardStrengthImageLoading" class="mb-2">
     <div class="d-flex align-items-center justify-content-between mb-1">
       <div class="small text-muted">
         {{ boardStrengthProgressMessage || "Building board strength image..." }}
@@ -153,7 +138,7 @@
       </div>
     </div>
   </div>
-  <div class="warning mb-2">
+  <div class="warning mb-2" *ngIf="mode === 'import'">
     Warning: This will overwrite any existing custom packs. Any custom packs in
     the import will be added.
   </div>
@@ -178,7 +163,7 @@
       Open on SAP Library
     </a>
   </div>
-  <div *ngIf="oddsImagePreviewUrl" class="odds-preview mb-3">
+  <div *ngIf="mode === 'odds-image' && oddsImagePreviewUrl" class="odds-preview mb-3">
     <div class="odds-preview-header">
       <strong>Odds Image Preview</strong>
       <span class="text-muted small">{{ oddsImageFileName }}</span>
@@ -206,6 +191,9 @@
       Hover a row to open that turn in the calculator.
     </div>
     <div class="odds-preview-actions mt-2">
+      <a class="btn btn-outline-primary me-2" [href]="oddsImagePreviewUrl" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-expand me-1" aria-hidden="true"></i>Open full size
+      </a>
       <button class="btn btn-primary me-2" (click)="downloadOddsImage()">
         Download PNG
       </button>
@@ -214,7 +202,7 @@
       </button>
     </div>
   </div>
-  <div *ngIf="positioningImagePreviewUrl" class="odds-preview mb-3">
+  <div *ngIf="mode === 'positioning-image' && positioningImagePreviewUrl" class="odds-preview mb-3">
     <div class="odds-preview-header">
       <strong>Positioning Image Preview</strong>
       <span class="text-muted small">{{ positioningImageFileName }}</span>
@@ -242,6 +230,9 @@
       Hover a row to open that turn in the calculator.
     </div>
     <div class="odds-preview-actions mt-2">
+      <a class="btn btn-outline-success me-2" [href]="positioningImagePreviewUrl" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-expand me-1" aria-hidden="true"></i>Open full size
+      </a>
       <button class="btn btn-success me-2" (click)="downloadPositioningImage()">
         Download PNG
       </button>
@@ -250,7 +241,7 @@
       </button>
     </div>
   </div>
-  <div *ngIf="boardStrengthImagePreviewUrl" class="odds-preview mb-3">
+  <div *ngIf="mode === 'strength-image' && boardStrengthImagePreviewUrl" class="odds-preview mb-3">
     <div class="odds-preview-header">
       <strong>Board Strength Image Preview</strong>
       <span class="text-muted small">{{ boardStrengthImageFileName }}</span>
@@ -278,6 +269,9 @@
       Hover a row to open that turn in the calculator.
     </div>
     <div class="odds-preview-actions mt-2">
+      <a class="btn btn-outline-primary me-2" [href]="boardStrengthImagePreviewUrl" target="_blank" rel="noopener noreferrer">
+        <i class="fas fa-expand me-1" aria-hidden="true"></i>Open full size
+      </a>
       <button class="btn btn-primary me-2" (click)="downloadBoardStrengthImage()">
         Download PNG
       </button>

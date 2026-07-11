@@ -5,6 +5,131 @@ import {
 } from 'app/ui/shell/state/app.component.share';
 
 describe('random decision overrides', () => {
+  it('captures the Flying Fish Love Potion summon order and marks its first target random', () => {
+    const baseConfig: SimulationConfig = {
+      playerPack: 'Golden',
+      opponentPack: 'Golden',
+      turn: 12,
+      simulationCount: 1,
+      logsEnabled: true,
+      playerGoldSpent: 0,
+      opponentGoldSpent: 0,
+      playerRollAmount: 0,
+      opponentRollAmount: 0,
+      playerLevel3Sold: 0,
+      opponentLevel3Sold: 0,
+      playerSummonedAmount: 0,
+      opponentSummonedAmount: 0,
+      playerTransformationAmount: 0,
+      opponentTransformationAmount: 0,
+      playerPets: [
+        {
+          name: 'Team Spirit',
+          attack: 4,
+          health: 5,
+          exp: 0,
+          mana: 0,
+          equipment: { name: 'Love Potion' },
+        },
+        null,
+        {
+          name: 'Clownfish',
+          attack: 5,
+          health: 6,
+          exp: 2,
+          mana: 0,
+          equipment: { name: 'Love Potion' },
+        },
+        null,
+        {
+          name: 'Flying Fish',
+          attack: 5,
+          health: 2,
+          exp: 5,
+          mana: 0,
+          equipment: null,
+        },
+      ],
+      opponentPets: [
+        {
+          name: 'Ant',
+          attack: 50,
+          health: 50,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
+        null,
+        null,
+        null,
+        null,
+      ],
+      captureRandomDecisions: true,
+      maxLoggedBattles: 1,
+    };
+
+    const capture = runSimulation(baseConfig);
+    const experienceLogs = (capture.battles?.[0]?.logs ?? []).filter((log) =>
+      String(log.message).includes('Flying Fish gave'),
+    );
+
+    expect(experienceLogs.length).toBeGreaterThan(0);
+    expect(experienceLogs[0]?.randomEvent).toBe(true);
+
+    const orderDecision = (capture.randomDecisions ?? []).find(
+      (decision) =>
+        decision.key === 'ability-queue.phase-order' &&
+        decision.label.includes('BeforeStartBattle'),
+    );
+    expect(orderDecision?.options.map((option) => option.id)).toEqual([
+      'P1 Team Spirit',
+      'P3 Clownfish',
+    ]);
+    const flyingFishDecision = (capture.randomDecisions ?? []).find(
+      (decision) =>
+        decision.key === 'ability-queue.tie-order' &&
+        decision.label.includes('FriendSummoned') &&
+        decision.options.some((option) => option.id.includes('Team Spirit')) &&
+        decision.options.some((option) => option.id.includes('Clownfish')),
+    );
+    expect(flyingFishDecision).toBeDefined();
+    expect(flyingFishDecision?.options.map((option) => option.id)).toEqual([
+      'P5 Flying Fish -> P1 Team Spirit',
+      'P5 Flying Fish -> P3 Clownfish',
+    ]);
+
+    const forced = runSimulation({
+      ...baseConfig,
+      randomDecisionOverrides: [
+        {
+          index: orderDecision!.index,
+          key: orderDecision!.key,
+          label: orderDecision!.label,
+          optionId: 'P1 Team Spirit',
+        },
+      ],
+      strictRandomOverrideValidation: true,
+    });
+    expect(forced.randomOverrideError ?? null).toBeNull();
+    const forcedXpTarget = runSimulation({
+      ...baseConfig,
+      randomDecisionOverrides: [
+        {
+          index: flyingFishDecision!.index,
+          key: flyingFishDecision!.key,
+          label: flyingFishDecision!.label,
+          optionId: 'P5 Flying Fish -> P1 Team Spirit',
+        },
+      ],
+      strictRandomOverrideValidation: true,
+    });
+    expect(forcedXpTarget.randomOverrideError ?? null).toBeNull();
+    const forcedXpLogs = (forcedXpTarget.battles?.[0]?.logs ?? []).filter(
+      (log) => String(log.message).includes('Flying Fish gave'),
+    );
+    expect(forcedXpLogs[0]?.message).toContain('Team Spirit');
+  });
+
   it('captures Golden Tamarin transform decisions from the fixed pool for the shared repro', () => {
     const payload =
       'SAPC1:eyJwVEwiOiIxIiwib1RMIjoiMSIsInBIVEwiOiIxIiwib0hUTCI6IjEiLCJ0IjoxMywib0dTIjoxMywicCI6W3sibiI6IkdvbGRlbiBUYW1hcmluIiwiYSI6NiwiaCI6NiwiZSI6MiwiZXEiOnsibiI6IkhvbmV5In19LHsibiI6IlJvb3N0ZXIiLCJhIjo5LCJoIjo4LCJlIjozLCJlcSI6eyJuIjoiQnJlYWQifX0seyJuIjoiRmx5IiwiYSI6OCwiaCI6OCwiZSI6NCwiZXEiOnsibiI6Ik11c2hyb29tIn19LHsibiI6IlNoYXJrIiwiYSI6NiwiaCI6NiwiZSI6NCwiZXEiOnsibiI6IkNoaWxpIn19LHsibiI6IlBhcnJvdCIsImEiOjcsImgiOjUsImUiOjMsImVxIjp7Im4iOiJCcmVhZCJ9fV0sIm8iOlt7Im4iOiJUaWdlciIsImEiOjYsImgiOjQsImVxIjp7Im4iOiJNZWxvbiJ9LCJlVSI6MX0seyJuIjoiRmxhbWluZ28iLCJhIjozLCJoIjoyLCJlcSI6eyJuIjoiTWVhdCBCb25lIn19LHsibiI6IlBlbmd1aW4iLCJhIjozLCJoIjo0LCJlIjoxLCJlcSI6eyJuIjoiR2FybGljIn19LHsibiI6IkNyaWNrZXQiLCJhIjo0LCJoIjo2LCJlIjozLCJlcSI6eyJuIjoiQ2hpbGkifX0seyJuIjoiU2VhbCIsImEiOjQsImgiOjksImUiOjEsImVxIjp7Im4iOiJDYWtlIn19XSwibSI6dHJ1ZSwib1NBIjoyfQ';
@@ -60,14 +185,28 @@ describe('random decision overrides', () => {
       playerTransformationAmount: 0,
       opponentTransformationAmount: 0,
       playerPets: [
-        { name: 'Orca', attack: 1, health: 1, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Orca',
+          attack: 1,
+          health: 1,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
         null,
       ],
       opponentPets: [
-        { name: 'Ant', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Ant',
+          attack: 20,
+          health: 20,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
@@ -155,7 +294,14 @@ describe('random decision overrides', () => {
         null,
       ],
       opponentPets: [
-        { name: 'Hydra', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Hydra',
+          attack: 20,
+          health: 20,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
@@ -173,9 +319,9 @@ describe('random decision overrides', () => {
     expect(faintBreadDecision?.options.map((option) => option.id)).toEqual(
       expectedPool,
     );
-    expect(faintBreadDecision?.options.map((option) => option.id)).not.toContain(
-      'Hydra',
-    );
+    expect(
+      faintBreadDecision?.options.map((option) => option.id),
+    ).not.toContain('Hydra');
   });
 
   it('labels Bay Cat summon decisions with position and summon number', () => {
@@ -204,14 +350,28 @@ describe('random decision overrides', () => {
       playerTransformationAmount: 0,
       opponentTransformationAmount: 0,
       playerPets: [
-        { name: 'Bay Cat', attack: 1, health: 1, exp: 2, mana: 0, equipment: null },
+        {
+          name: 'Bay Cat',
+          attack: 1,
+          health: 1,
+          exp: 2,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
         null,
       ],
       opponentPets: [
-        { name: 'Ant', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Ant',
+          attack: 20,
+          health: 20,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
@@ -299,13 +459,34 @@ describe('random decision overrides', () => {
       opponentTransformationAmount: 0,
       playerPets: [
         { name: 'Ant', attack: 2, health: 2, exp: 0, mana: 0, equipment: null },
-        { name: 'Fish', attack: 3, health: 3, exp: 0, mana: 0, equipment: null },
-        { name: 'Roloway Monkey', attack: 1, health: 4, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Fish',
+          attack: 3,
+          health: 3,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
+        {
+          name: 'Roloway Monkey',
+          attack: 1,
+          health: 4,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
       ],
       opponentPets: [
-        { name: 'Elephant', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Elephant',
+          attack: 20,
+          health: 20,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
@@ -346,7 +527,7 @@ describe('random decision overrides', () => {
       opponentTransformationAmount: 0,
       playerPets: [
         {
-          name: 'Darwin\'s Fox',
+          name: "Darwin's Fox",
           attack: 1,
           health: 1,
           exp: 0,
@@ -359,7 +540,14 @@ describe('random decision overrides', () => {
         null,
       ],
       opponentPets: [
-        { name: 'Ant', attack: 20, health: 20, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Ant',
+          attack: 20,
+          health: 20,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
@@ -395,15 +583,36 @@ describe('random decision overrides', () => {
       playerTransformationAmount: 0,
       opponentTransformationAmount: 0,
       playerPets: [
-        { name: 'Leaf Gecko', attack: 1, health: 1, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Leaf Gecko',
+          attack: 1,
+          health: 1,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         { name: 'Ant', attack: 2, health: 2, exp: 0, mana: 0, equipment: null },
         null,
         null,
         null,
       ],
       opponentPets: [
-        { name: 'Elephant', attack: 10, health: 10, exp: 0, mana: 0, equipment: null },
-        { name: 'Fish', attack: 3, health: 3, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Elephant',
+          attack: 10,
+          health: 10,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
+        {
+          name: 'Fish',
+          attack: 3,
+          health: 3,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,
@@ -453,7 +662,9 @@ describe('random decision overrides', () => {
     );
 
     expect(forcedTargetDecision?.selectedOptionId).toBe(forcedTargetOption.id);
-    expect(forcedAilmentDecision?.selectedOptionId).toBe(forcedAilmentOption.id);
+    expect(forcedAilmentDecision?.selectedOptionId).toBe(
+      forcedAilmentOption.id,
+    );
     expect(forcedTargetDecision?.forced).toBe(true);
     expect(forcedAilmentDecision?.forced).toBe(true);
 
@@ -463,7 +674,9 @@ describe('random decision overrides', () => {
     );
     expect(leafGeckoLog).toBeDefined();
     const leafGeckoMessage = String(leafGeckoLog?.message ?? '');
-    expect(leafGeckoMessage).not.toContain('could not apply any random ailments');
+    expect(leafGeckoMessage).not.toContain(
+      'could not apply any random ailments',
+    );
     expect(leafGeckoMessage).toContain(':');
     expect(leafGeckoMessage).toContain('(');
     expect(leafGeckoMessage).toContain(')');
@@ -501,8 +714,22 @@ describe('random decision overrides', () => {
         null,
       ],
       opponentPets: [
-        { name: 'Elephant', attack: 10, health: 10, exp: 0, mana: 0, equipment: null },
-        { name: 'Fish', attack: 4, health: 4, exp: 0, mana: 0, equipment: null },
+        {
+          name: 'Elephant',
+          attack: 10,
+          health: 10,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
+        {
+          name: 'Fish',
+          attack: 4,
+          health: 4,
+          exp: 0,
+          mana: 0,
+          equipment: null,
+        },
         null,
         null,
         null,

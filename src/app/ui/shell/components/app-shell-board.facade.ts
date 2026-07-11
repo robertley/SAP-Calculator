@@ -39,6 +39,10 @@ export interface AppShellBoardFacade {
   decrementToyLevel: (side: 'player' | 'opponent') => void;
   removeHardToy: (side: 'player' | 'opponent') => void;
   resetPlayer: (side: 'player' | 'opponent') => void;
+  randomize: () => void;
+  undoRandomize: () => void;
+  swapSides: () => void;
+  undoState: unknown;
   drop: (event: unknown, side: 'player' | 'opponent') => void;
   setActivePetSlot: (side: 'player' | 'opponent', index: number) => void;
 }
@@ -123,6 +127,9 @@ export function createAppShellBoardFacade(
     get selectionDialogShowAllPets() {
       return Boolean(app.formGroup.get('allPets')?.value);
     },
+    get undoState() {
+      return app.undoState;
+    },
     trackByIndex: app.trackByIndex,
     makeFormGroup: (control) => app.makeFormGroup(control),
     openSelectionDialog: (type, side) => app.openSelectionDialog(type, side),
@@ -130,6 +137,9 @@ export function createAppShellBoardFacade(
     decrementToyLevel: (side) => app.decrementToyLevel(side),
     removeHardToy: (side) => app.removeHardToy(side),
     resetPlayer: (side) => app.resetPlayer(side),
+    randomize: () => app.randomize(),
+    undoRandomize: () => app.undoRandomize(),
+    swapSides: () => app.swapSides(),
     drop: (event, side) => app.drop(event as never, side),
     setActivePetSlot: (side, index) => app.setActivePetSlot(side, index),
   };

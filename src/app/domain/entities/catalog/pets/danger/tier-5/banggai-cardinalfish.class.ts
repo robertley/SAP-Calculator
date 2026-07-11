@@ -57,15 +57,15 @@ export class BanggaiCardinalfishAbility extends Ability {
     const { gameApi, triggerPet, tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let attackReduction = this.level * 6; // 6/12/18 based on level
-    let minimumAttack = 4;
+    const attackReduction = this.level * 6; // 6/12/18 based on level
+    const minimumAttack = 4;
 
     let targetResp = owner.parent.getAll(true, owner, true);
-    for (let targetPet of targetResp.pets) {
-      let newAttack = Math.max(
-        targetPet.attack - attackReduction,
-        minimumAttack,
-      );
+    for (const targetPet of targetResp.pets) {
+      const newAttack =
+        targetPet.attack > minimumAttack
+          ? Math.max(targetPet.attack - attackReduction, minimumAttack)
+          : targetPet.attack;
 
       targetPet.attack = newAttack;
       this.logService.createLog({

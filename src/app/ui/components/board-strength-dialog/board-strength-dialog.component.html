@@ -1,5 +1,5 @@
 <div class="strength-dialog">
-  <div class="modal-header strength-header">
+  <div class="modal-header strength-header" *ngIf="!embedded">
     <div>
       <div class="strength-eyebrow">BS1 benchmark</div>
       <h1 class="modal-title" id="boardStrengthModalLabel">Board Strength</h1>
@@ -203,7 +203,7 @@
   </div>
 
   <div class="modal-footer strength-footer" *ngIf="status !== 'running'">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" *ngIf="!embedded">Close</button>
     <button
       type="button"
       class="btn btn-outline-primary"

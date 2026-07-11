@@ -32,6 +32,13 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+/* Keep the page behind both Bootstrap and custom dialogs stationary. */
+html:has(.modal.show, [aria-modal="true"], .selection-overlay),
+body:has(.modal.show, [aria-modal="true"], .selection-overlay) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 :root {
   --sap-btn-primary: #2563eb;
   --sap-btn-primary-hover: #1d4ed8;

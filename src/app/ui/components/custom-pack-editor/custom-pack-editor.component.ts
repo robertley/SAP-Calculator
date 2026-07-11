@@ -34,6 +34,7 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
   petNameToId: Map<string, string> = new Map();
   petNameToTier: Map<string, number> = new Map();
   focusedGroup: FormGroup = null;
+  private focusedSnapshot: Record<string, unknown> | null = null;
 
   importFormGroup = new FormGroup({
     code: new FormControl(null),
@@ -91,6 +92,7 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
 
   createNewPack() {
     let group = this.createPack();
+    this.focusedSnapshot = null;
     this.focusedGroup = group;
   }
 
@@ -140,14 +142,22 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
     }
     this.petService.buildCustomPackPets(this.customPacks);
     this.focusedGroup = null;
+    this.focusedSnapshot = null;
     this.localStorageService.setFormStorage(this.formGroup);
   }
 
   cancelEvent(event: FormGroup) {
+    if (this.focusedSnapshot && this.customPacks.controls.includes(event)) {
+      event.reset(this.focusedSnapshot);
+    }
     this.focusedGroup = null;
+    this.focusedSnapshot = null;
   }
 
   editPack(group: AbstractControl) {
+    this.focusedSnapshot = JSON.parse(
+      JSON.stringify((group as FormGroup).getRawValue()),
+    ) as Record<string, unknown>;
     this.focusedGroup = group as FormGroup;
   }
 
@@ -155,6 +165,7 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
     if (confirm('Are you sure you want to delete this pack?')) {
       let index = this.customPacks.controls.indexOf(group);
       this.customPacks.removeAt(index);
+      this.petService.buildCustomPackPets(this.customPacks);
       this.focusedGroup = null;
       this.localStorageService.setFormStorage(this.formGroup);
     }

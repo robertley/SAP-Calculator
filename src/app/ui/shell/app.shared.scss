@@ -79,6 +79,7 @@ $night: #33377a;
   background-position: center;
   background-size: cover;
   font-weight: 400;
+  position: relative;
 }
 
 .battle-row h2 {
@@ -413,6 +414,17 @@ $night: #33377a;
 
 .undo-randomize-btn {
   min-width: 2.35rem;
+}
+
+.board-action-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ui-space-2);
+  justify-content: center;
+  padding: var(--ui-space-4) var(--ui-space-4) 0;
+  position: relative;
+  width: 100%;
 }
 
 .scenario-trigger,

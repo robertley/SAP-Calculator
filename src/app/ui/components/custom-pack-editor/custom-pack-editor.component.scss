@@ -1,12 +1,36 @@
-.valid {
-  color: #4caf50;
-}
-.invalid {
-  color: #f44336;
-}
-.text {
-  font-size: 1.5em;
-}
-td {
-  padding: 0.25em 0.5em;
+.pack-library { min-height: 34rem; color: var(--ui-text-1); }
+.pack-library-toolbar,
+.pack-row,
+.pack-identity,
+.pack-actions,
+.import-workspace { display: flex; align-items: center; }
+.pack-library-toolbar { justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--ui-border-1); }
+.pack-library-toolbar > div,
+.pack-identity > div:last-child,
+.import-copy { display: grid; gap: 0.12rem; }
+.pack-library-toolbar span,
+.pack-identity span,
+.import-copy span { color: var(--ui-text-3); font-size: 0.78rem; }
+.pack-list { display: grid; }
+.pack-row { gap: 1rem; min-height: 4.5rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--ui-border-1); transition: background 120ms ease; }
+.pack-row:hover { background: var(--ui-surface-1); }
+.pack-identity { min-width: 0; flex: 1; gap: 0.75rem; }
+.pack-monogram { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; flex: 0 0 auto; color: white; background: var(--bs-primary); border-radius: 0.65rem; font-weight: 750; }
+.pack-status { padding: 0.25rem 0.55rem; color: #166534; background: #dcfce7; border-radius: 999px; font-size: 0.7rem; font-weight: 700; }
+.pack-status.invalid-status { color: #991b1b; background: #fee2e2; }
+.pack-actions { gap: 0.4rem; }
+.empty-library { display: grid; justify-items: center; gap: 0.35rem; padding: 4rem 1rem; color: var(--ui-text-3); text-align: center; }
+.empty-library i { margin-bottom: 0.35rem; font-size: 2rem; }
+.empty-library strong { color: var(--ui-text-1); }
+.import-workspace { gap: 0.75rem; padding: 1.1rem 1.25rem; background: var(--ui-surface-1); }
+.import-copy { min-width: 11rem; }
+.import-workspace textarea { min-height: 4.4rem; resize: vertical; }
+.import-workspace .btn { flex: 0 0 auto; }
+.editor-status { padding: 0.65rem 1.25rem; font-size: 0.82rem; }
+
+@media (max-width: 767.98px) {
+  .pack-row { align-items: flex-start; flex-wrap: wrap; }
+  .pack-identity { flex-basis: calc(100% - 6rem); }
+  .pack-actions { width: 100%; }
+  .import-workspace { align-items: stretch; flex-direction: column; }
 }

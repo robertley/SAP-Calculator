@@ -161,41 +161,36 @@
           <!-- <div class="back">BACK</div> -->
         </div>
       </div>
+      <div class="board-action-row" role="group" aria-label="Board actions">
+        <button type="button" class="btn glass-btn mb-1" (click)="boardFacade.randomize()">
+          Randomize
+        </button>
+        <button type="button" class="btn glass-btn mb-1" (click)="boardFacade.swapSides()"
+          title="Swap player and opponent teams">
+          Swap
+        </button>
+        <button type="button" class="btn glass-btn mb-1 undo-randomize-btn"
+          *ngIf="boardFacade.undoState" (click)="boardFacade.undoRandomize()" title="Undo the last randomize">
+          Undo Randomize
+        </button>
+      </div>
     </div>
 
     <app-shell-controls [app]="controlsFacade" [renderEpoch]="controlsFacade.renderEpoch"></app-shell-controls>
 
     <app-shell-battle-results [app]="battleResultsFacade" [renderEpoch]="battleResultsFacade.renderEpoch"></app-shell-battle-results>
 
-    <div
-      class="modal fade board-strength-modal"
-      id="boardStrength"
-      tabindex="-1"
-      aria-labelledby="boardStrengthModalLabel"
-      aria-hidden="true"
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-    >
-      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-          <app-board-strength-dialog
-            [formGroup]="formGroup"
-            [player]="player"
-            [opponent]="opponent"
-          ></app-board-strength-dialog>
-        </div>
-      </div>
-    </div>
-
     <!-- Custom Pack -->
     <div class="modal fade custom-pack-editor-modal" id="customPackEditor" tabindex="-1"
       aria-labelledby="customPackEditorLabel" aria-hidden="true" #customPackEditor>
-      <div class="modal-dialog modal-lg custom-pack-editor-dialog">
+      <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable custom-pack-editor-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="customPackEditorLabel">
-              Custom Pack Editor
-            </h1>
+          <div class="modal-header custom-pack-modal-header">
+            <div>
+              <span class="custom-pack-modal-eyebrow">Pack workspace</span>
+              <h1 class="modal-title" id="customPackEditorLabel">Custom packs</h1>
+              <p>Build a 60-pet pack with ten pets in every tier.</p>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">

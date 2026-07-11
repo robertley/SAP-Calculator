@@ -1,78 +1,57 @@
-<div class="row" *ngIf="focusedGroup != null">
-  <div class="col-12">
-    <app-custom-pack-form
-      [formGroup]="makeFormGroup(focusedGroup)"
-      [petPackMap]="petPackMap"
-      (submitEvent)="submitEvent($event)"
-      (cancelEvent)="cancelEvent($event)"
-    ></app-custom-pack-form>
-  </div>
-</div>
+<app-custom-pack-form *ngIf="focusedGroup; else packLibrary"
+  [formGroup]="makeFormGroup(focusedGroup)" [petPackMap]="petPackMap"
+  (submitEvent)="submitEvent($event)" (cancelEvent)="cancelEvent($event)">
+</app-custom-pack-form>
 
-<div *ngIf="focusedGroup == null">
-  <div class="row mb-3">
-    <div class="col-12">
-      <h3>Custom Packs</h3>
-      <table>
-        <tr *ngFor="let pack of customPacks.controls; trackBy: trackByPackName">
-          <td class="text">{{ pack.get("name").value }}</td>
-          <td class="text">
-            <span *ngIf="pack.valid" class="valid">Valid</span>
-            <span *ngIf="!pack.valid" class="invalid">Invalid</span>
-          </td>
-          <td>
-            <button class="btn btn-primary" (click)="editPack(pack)">
-              Edit
-            </button>
-          </td>
-          <td>
-            <button class="btn btn-secondary" (click)="exportCustomPack(pack)">
-              Export
-            </button>
-          </td>
-          <td>
-            <button class="btn btn-danger" (click)="deletePack(pack)">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </div>
-  <div class="row mb-4">
-    <div class="col-12">
-      <button class="btn btn-primary" (click)="createNewPack()">
-        Create New Pack
-      </button>
-    </div>
-  </div>
-
-  <div class="row mb-3">
-    <div class="col-12">
-      <h3>Import Custom Pack</h3>
-      <div class="form-group" [formGroup]="importFormGroup">
-        <textarea
-          class="form-control"
-          id="code"
-          rows="3"
-          formControlName="code"
-        ></textarea>
+<ng-template #packLibrary>
+  <div class="pack-library">
+    <header class="pack-library-toolbar">
+      <div>
+        <strong>Pack library</strong>
+        <span>{{ customPacks.controls.length }} custom packs</span>
       </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-12">
-      <button class="btn btn-primary" (click)="importCustomPack()">
-        Import
+      <button type="button" class="btn btn-primary" (click)="createNewPack()">
+        <i class="fas fa-plus" aria-hidden="true"></i> New pack
       </button>
+    </header>
+
+    <div class="pack-list" *ngIf="customPacks.controls.length; else emptyLibrary">
+      <article class="pack-row" *ngFor="let pack of customPacks.controls; trackBy: trackByPackName">
+        <div class="pack-identity">
+          <div class="pack-monogram">{{ (pack.get('name')?.value || '?').slice(0, 1).toUpperCase() }}</div>
+          <div>
+            <strong>{{ pack.get('name')?.value || 'Untitled pack' }}</strong>
+            <span>{{ pack.valid ? 'Ready to use' : 'Needs 10 pets in every tier' }}</span>
+          </div>
+        </div>
+        <span class="pack-status" [class.invalid-status]="!pack.valid">{{ pack.valid ? 'Valid' : 'Incomplete' }}</span>
+        <div class="pack-actions">
+          <button type="button" class="btn btn-primary btn-sm" (click)="editPack(pack)">Edit</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="exportCustomPack(pack)">Copy JSON</button>
+          <button type="button" class="btn btn-outline-danger btn-sm" (click)="deletePack(pack)" aria-label="Delete pack">
+            <i class="fas fa-trash" aria-hidden="true"></i>
+          </button>
+        </div>
+      </article>
     </div>
+    <ng-template #emptyLibrary>
+      <div class="empty-library">
+        <i class="fas fa-layer-group" aria-hidden="true"></i>
+        <strong>No custom packs yet</strong>
+        <span>Create one from the pet catalog or import existing JSON below.</span>
+      </div>
+    </ng-template>
+
+    <section class="import-workspace" [formGroup]="importFormGroup">
+      <div class="import-copy">
+        <strong>Import pack JSON</strong>
+        <span>Paste a Super Auto Pets pack payload to open it in the editor.</span>
+      </div>
+      <textarea class="form-control" id="code" rows="3" formControlName="code" placeholder="Paste pack JSON…"></textarea>
+      <button type="button" class="btn btn-outline-primary" (click)="importCustomPack()">Import and review</button>
+    </section>
+
+    <div *ngIf="statusMessage" class="editor-status"
+      [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'">{{ statusMessage }}</div>
   </div>
-  <div
-    *ngIf="statusMessage"
-    class="mt-2"
-    [ngClass]="statusTone === 'success' ? 'text-success' : 'text-danger'"
-  >
-    {{ statusMessage }}
-  </div>
-</div>
+</ng-template>

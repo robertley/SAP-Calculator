@@ -1,65 +1,56 @@
-<form [formGroup]="formGroup">
-  <div class="row mb-4">
-    <div class="col-12">
-      <label for="name" class="form-label">Pack Name</label>
-      <input class="form-control" id="name" formControlName="name" />
-      <div class="invalid" *ngIf="formGroup.get('name').errors?.forbiddenName">
-        That name is not allowed.
-      </div>
+<form class="pack-builder" [formGroup]="formGroup">
+  <header class="builder-header">
+    <div>
+      <span class="builder-eyebrow">Pack editor</span>
+      <input class="pack-name-input" id="name" formControlName="name" placeholder="Untitled pack" aria-label="Pack name" />
+      <span class="name-error" *ngIf="formGroup.get('name')?.errors?.forbiddenName">That name is already used or reserved.</span>
     </div>
-  </div>
+    <div class="builder-actions">
+      <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="submitDisabled()">Save pack</button>
+    </div>
+  </header>
 
-  <div
-    class="row mb-4"
-    *ngFor="let tier of tiers"
-    [formGroup]="getCheckboxFormGroup(tier)"
-  >
-    <div class="col-12">
-      <h3>
-        Tier {{ tier }} Pets
-        <span [class]="getCount(tier) == 10 ? 'valid' : 'invalid'"
-          >{{ getCount(tier) }}/10</span
-        >
-      </h3>
-      <div class="row">
-        <div class="col-12 editor-grid">
-          <div
-            class="form-check"
-            *ngFor="let pet of getPets(tier); trackBy: trackByPetName"
-          >
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              [id]="pet"
-              [formControlName]="pet"
-            />
-            <label class="form-check-label pet-label" [for]="pet">
-              <img
-                class="pet-icon"
-                [src]="getPetIcon(pet)"
-                [alt]="pet + ' icon'"
-                (error)="handlePetIconError($event)"
-              />
-              {{ pet }}
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <nav class="tier-navigation" aria-label="Pack tiers">
+    <button type="button" *ngFor="let tier of tiers" (click)="setActiveTier(tier)" [class.active]="activeTier === tier">
+      <span>Tier {{ tier }}</span>
+      <strong [class.complete]="getCount(tier) === 10">{{ getCount(tier) }}/10</strong>
+    </button>
+  </nav>
 
-  <div class="row">
-    <div class="col-12">
-      <button
-        class="btn btn-primary me-2"
-        (click)="submit()"
-        [disabled]="submitDisabled()"
-      >
-        Submit Pack
-      </button>
-      <button class="btn btn-danger" (click)="cancel()">Cancel</button>
-      <div *ngIf="submitDisabled()" class="invalid">Name is required.</div>
-    </div>
+  <div class="builder-workspace" [formGroup]="getCheckboxFormGroup(activeTier)">
+    <aside class="selected-roster">
+      <div class="section-heading">
+        <div><strong>Selected pets</strong><span>Tier {{ activeTier }}</span></div>
+        <b [class.complete]="getCount(activeTier) === 10">{{ getCount(activeTier) }}/10</b>
+      </div>
+      <div class="selected-list" *ngIf="getSelectedPets(activeTier).length; else emptyTier">
+        <label class="selected-pet" *ngFor="let pet of getSelectedPets(activeTier); trackBy: trackByPetName" [for]="'pet-' + activeTier + '-' + pet">
+          <img [src]="getPetIcon(pet)" [alt]="pet + ' icon'" (error)="handlePetIconError($event)" />
+          <span>{{ pet }}</span>
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </label>
+      </div>
+      <ng-template #emptyTier><div class="empty-tier">Choose ten pets from the catalog.</div></ng-template>
+    </aside>
+
+    <section class="pet-catalog">
+      <div class="catalog-toolbar">
+        <div><strong>Pet catalog</strong><span>Choose exactly ten Tier {{ activeTier }} pets.</span></div>
+        <label class="catalog-search">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <input type="search" [formControl]="searchControl" placeholder="Search pets" aria-label="Search pets" />
+        </label>
+      </div>
+      <div class="pet-grid">
+        <label class="pet-option" *ngFor="let pet of getFilteredPets(activeTier); trackBy: trackByPetName"
+          [class.selected]="getCheckboxFormGroup(activeTier).get(pet)?.value" [for]="'pet-' + activeTier + '-' + pet">
+          <input class="visually-hidden" type="checkbox" [id]="'pet-' + activeTier + '-' + pet" [formControlName]="pet" />
+          <img [src]="getPetIcon(pet)" [alt]="pet + ' icon'" (error)="handlePetIconError($event)" />
+          <span>{{ pet }}</span>
+          <i class="fas fa-check" aria-hidden="true"></i>
+        </label>
+      </div>
+    </section>
   </div>
 </form>

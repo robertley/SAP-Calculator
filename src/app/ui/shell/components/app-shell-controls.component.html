@@ -15,35 +15,9 @@
           <input id="simulations" class="form-control simulate-input" type="number" formControlName="simulations" min="1" />
         </div>
         <div class="run-utility-group">
-          <button type="button" class="btn btn-outline-primary" (click)="toggleToolsMenu()"
-            [attr.aria-expanded]="toolsMenuOpen" aria-controls="run-tools-menu">
-            Tools <i class="fas fa-chevron-down ms-1" aria-hidden="true"></i>
-          </button>
-          <div id="run-tools-menu" class="command-menu run-tools-menu" *ngIf="toolsMenuOpen">
-            <button type="button" class="command-menu-item" (click)="openOptimizationDialog()"
-              [disabled]="app.simulationInProgress">
-              <span>Optimize Positioning</span>
-              <small>Find the strongest board order</small>
-            </button>
-            <button type="button" class="command-menu-item" data-bs-toggle="modal" data-bs-target="#boardStrength"
-              [disabled]="app.simulationInProgress" (click)="closeToolsMenu()">
-              <span>Board Strength</span>
-              <small>Evaluate this board</small>
-            </button>
-            <button type="button" class="command-menu-item" data-bs-toggle="modal" data-bs-target="#forceRandomness"
-              (click)="closeToolsMenu()">
-              <span>Force Randomness <b *ngIf="app.randomDecisions.length">{{ app.randomDecisions.length }}</b></span>
-              <small>Capture and replay outcomes</small>
-            </button>
-          </div>
-        </div>
-        <div class="randomize-control-group">
-          <button class="btn btn-secondary" (click)="app.randomize()">
-            Randomize
-          </button>
-          <button class="btn btn-outline-secondary undo-randomize-btn" *ngIf="app.undoState" (click)="app.undoRandomize()"
-            title="Undo randomize" aria-label="Undo randomize">
-            <i class="fas fa-undo" aria-hidden="true"></i>
+          <button type="button" class="btn btn-outline-primary" (click)="openToolsDialog()"
+            [attr.aria-expanded]="toolsDialogOpen" aria-controls="tools-dialog">
+            Tools <i class="fas fa-wrench ms-1" aria-hidden="true"></i>
           </button>
         </div>
         <button type="button" class="btn btn-outline-secondary scenario-trigger" (click)="app.toggleAdvanced()"
@@ -162,13 +136,211 @@
     </div>
   </div>
 
+  <div class="scenario-backdrop" *ngIf="toolsDialogOpen" (click)="closeToolsDialog()"></div>
+  <section id="tools-dialog" class="tools-dialog" *ngIf="toolsDialogOpen" role="dialog" aria-modal="true"
+    aria-labelledby="tools-dialog-title">
+    <header class="tools-dialog-header">
+      <div>
+        <span class="dialog-eyebrow">Battle workspace</span>
+        <h2 id="tools-dialog-title">Tools</h2>
+        <p>Analyze the current matchup or manage reusable teams.</p>
+      </div>
+      <button type="button" class="btn-close" (click)="closeToolsDialog()" aria-label="Close tools"></button>
+    </header>
+    <div class="tools-workspace">
+      <nav class="tools-workspace-nav" aria-label="Tools">
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('optimize')"
+        [class.active]="activeToolsTab === 'optimize'" [disabled]="app.simulationInProgress">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Crane.png" alt="">
+        </span>
+        <span><strong>Optimize positioning</strong><small>Find the strongest board order</small></span>
+      </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('strength')"
+        [class.active]="activeToolsTab === 'strength'" [disabled]="app.simulationInProgress">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Bison.png" alt="">
+        </span>
+        <span><strong>Board strength</strong><small>Evaluate this board</small></span>
+      </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('randomness')"
+        [class.active]="activeToolsTab === 'randomness'">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Chameleon.png" alt="">
+        </span>
+        <span><strong>Force randomness</strong><small>Capture and replay outcomes</small></span>
+        <b class="tool-action-count" *ngIf="app.randomDecisions.length">{{ app.randomDecisions.length }}</b>
+      </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('teams')"
+        [class.active]="activeToolsTab === 'teams'">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Dog.png" alt="">
+        </span>
+        <span><strong>Team library</strong><small>Save, browse, and load team presets</small></span>
+        <b class="tool-action-count">{{ app.savedTeamsCount }}</b>
+      </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('odds-image')"
+        [class.active]="activeToolsTab === 'odds-image'">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Owl.png" alt="">
+        </span>
+        <span><strong>Odds image</strong><small>Build replay win percentages</small></span>
+      </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('positioning-image')"
+        [class.active]="activeToolsTab === 'positioning-image'">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Frigatebird.png" alt="">
+        </span>
+        <span><strong>Positioning image</strong><small>Build optimized board orders</small></span>
+      </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('strength-image')"
+        [class.active]="activeToolsTab === 'strength-image'">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Gorilla.png" alt="">
+        </span>
+        <span><strong>Strength image</strong><small>Build board-strength benchmarks</small></span>
+      </button>
+      </nav>
+
+      <main class="tools-workspace-content">
+        <section class="tool-pane" *ngIf="activeToolsTab === 'optimize'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Board order</span><h3>Optimize positioning</h3><p>Test board orders and apply the strongest lineup.</p></div>
+          <div class="optimization-dialog-body">
+            <label class="dialog-field-label" for="optimizeSide">Optimize</label>
+            <div class="side-segmented-control" role="group" aria-label="Side to optimize">
+              <button type="button" [class.active]="optimizeSide === 'player'" (click)="optimizeSide = 'player'">Player</button>
+              <button type="button" [class.active]="optimizeSide === 'opponent'" (click)="optimizeSide = 'opponent'">Opponent</button>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="keepSameBuffTargetsOnOptimization"
+                formControlName="keepSameBuffTargetsOnOptimization" [disabled]="app.simulationInProgress" />
+              <label class="form-check-label" for="keepSameBuffTargetsOnOptimization">Keep the same buff targets</label>
+            </div>
+          </div>
+          <footer class="tool-pane-footer">
+            <button type="button" class="btn btn-primary" (click)="runOptimization()" [disabled]="app.simulationInProgress">
+              Optimize {{ optimizeSide === 'player' ? 'Player' : 'Opponent' }}
+            </button>
+          </footer>
+        </section>
+
+        <section class="tool-pane tool-pane-strength" *ngIf="activeToolsTab === 'strength'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">BS1 benchmark</span><h3>Board strength</h3><p>Evaluate a board against the stat ladder.</p></div>
+          <app-board-strength-dialog [formGroup]="app.formGroup" [player]="app.player" [opponent]="app.opponent" [embedded]="true"></app-board-strength-dialog>
+        </section>
+
+        <section class="tool-pane" *ngIf="activeToolsTab === 'teams'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Presets</span><h3>Team library</h3><p>Save either board or load a reusable lineup.</p></div>
+          <div class="team-library-dialog-body">
+      <section class="team-library-section">
+        <div class="team-library-section-heading">
+          <strong>Save current board</strong>
+          <span>Create or update a reusable lineup.</span>
+        </div>
+        <div class="team-tool-row">
+          <input id="dialogTeamName" class="form-control" [(ngModel)]="app.teamName"
+            [ngModelOptions]="{ standalone: true }" placeholder="Team name" aria-label="Team name" />
+          <select class="form-select side-select" [(ngModel)]="saveSide"
+            [ngModelOptions]="{ standalone: true }" aria-label="Side to save">
+            <option value="player">Player</option>
+            <option value="opponent">Opponent</option>
+          </select>
+          <button type="button" class="btn btn-primary" (click)="app.saveTeam(saveSide)">Save team</button>
+        </div>
+      </section>
+      <section class="team-library-section">
+        <div class="team-library-section-heading">
+          <strong>Saved teams</strong>
+          <span>{{ app.savedTeamsCount }} presets available</span>
+        </div>
+        <button type="button" class="saved-team-picker" (click)="app.openSelectionDialog('team', 'none')">
+          <span class="team-preview compact" *ngIf="app.selectedTeamPreviewIcons.length; else dialogTeamPlaceholder">
+            <img *ngFor="let icon of app.selectedTeamPreviewIcons" [ngSrc]="icon" width="28" height="28"
+              loading="lazy" decoding="async" [alt]="app.selectedTeamName" />
+          </span>
+          <ng-template #dialogTeamPlaceholder><i class="fas fa-users" aria-hidden="true"></i></ng-template>
+          <span>{{ app.selectedTeamName }}</span>
+          <span class="picker-hint">Choose preset <i class="fas fa-chevron-right" aria-hidden="true"></i></span>
+        </button>
+        <div class="team-dialog-load-actions">
+          <span>Load selected team into</span>
+          <button type="button" class="btn btn-outline-primary" (click)="app.loadTeam('player')">Player board</button>
+          <button type="button" class="btn btn-outline-danger" (click)="app.loadTeam('opponent')">Opponent board</button>
+        </div>
+      </section>
+          </div>
+        </section>
+
+        <section class="tool-pane" *ngIf="activeToolsTab === 'randomness'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Battle outcomes</span><h3>Force randomness</h3><p>Capture random events, choose outcomes, then run a forced battle.</p></div>
+          <div class="random-overrides-panel">
+            <div class="random-overrides-header">
+              <div class="random-overrides-title-row"><span class="section-title">Random events</span><span class="random-overrides-count" *ngIf="app.randomDecisions.length">{{ app.randomDecisions.length }} events</span></div>
+              <div class="random-overrides-actions">
+                <button class="btn btn-secondary btn-sm" (click)="app.captureRandomEvents()" [disabled]="app.simulationInProgress">Capture random events</button>
+                <button class="btn btn-primary btn-sm" (click)="app.runForcedRandomSimulation()" [disabled]="app.simulationInProgress || !app.randomDecisions.length">Run forced simulation</button>
+                <button class="btn btn-outline-danger btn-sm" (click)="app.clearRandomOverrides()" [disabled]="!app.randomDecisions.length">Clear</button>
+              </div>
+            </div>
+            <div class="random-overrides-body">
+              <div class="random-overrides-empty" *ngIf="!app.randomDecisions.length">Capture random events to populate forced outcome selectors.</div>
+              <div class="random-overrides-error" *ngIf="app.randomOverrideError">{{ app.randomOverrideError }}</div>
+              <div class="random-overrides-table-wrap" *ngIf="app.randomDecisions.length">
+                <table class="table table-sm random-overrides-table"><thead><tr><th scope="col">Step</th><th scope="col">Event</th><th scope="col">Forced choice</th></tr></thead><tbody>
+                  <tr *ngFor="let decision of app.randomDecisions; trackBy: app.trackByIndex">
+                    <td>{{ decision.index + 1 }}</td>
+                    <td><div class="decision-label"><ng-container *ngFor="let part of app.getRandomDecisionLabelParts(decision); trackBy: app.trackByIndex"><img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt" width="16" height="16" loading="lazy" decoding="async" /><span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span><br *ngIf="part.type === 'br'" /></ng-container></div><div class="decision-key">{{ decision.key }}</div></td>
+                    <td><div class="decision-choice-preview"><ng-container *ngFor="let part of app.getRandomDecisionSelectedOptionParts(decision); trackBy: app.trackByIndex"><img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt" width="16" height="16" loading="lazy" decoding="async" /><span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span><br *ngIf="part.type === 'br'" /></ng-container></div><select class="form-select form-select-sm" [ngModel]="app.getSelectedRandomDecisionOptionId(decision)" (ngModelChange)="app.onRandomDecisionChoiceChanged(decision, $event)" [ngModelOptions]="{ standalone: true }"><option *ngFor="let option of decision.options; trackBy: app.trackByIndex" [ngValue]="option.id">{{ option.label }}</option></select></td>
+                  </tr>
+                </tbody></table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-pane tool-pane-images" *ngIf="activeToolsTab === 'odds-image'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Replay graphics</span><h3>Odds image</h3><p>Simulate each replay turn and build a win, loss, and draw summary.</p></div>
+          <div class="image-builder-body">
+            @defer {
+              <app-import-calculator mode="odds-image" [importFunc]="app.importForDialog"></app-import-calculator>
+            } @placeholder {
+              <div class="text-muted">Loading odds image builder…</div>
+            }
+          </div>
+        </section>
+
+        <section class="tool-pane tool-pane-images" *ngIf="activeToolsTab === 'positioning-image'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Replay graphics</span><h3>Positioning image</h3><p>Optimize one side across replay turns and build a comparison image.</p></div>
+          <div class="image-builder-body">
+            @defer {
+              <app-import-calculator mode="positioning-image" [importFunc]="app.importForDialog"></app-import-calculator>
+            } @placeholder {
+              <div class="text-muted">Loading positioning image builder…</div>
+            }
+          </div>
+        </section>
+
+        <section class="tool-pane tool-pane-images" *ngIf="activeToolsTab === 'strength-image'">
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Replay graphics</span><h3>Strength image</h3><p>Evaluate replay boards against the BS1 benchmark ladder.</p></div>
+          <div class="image-builder-body">
+            @defer {
+              <app-import-calculator mode="strength-image" [importFunc]="app.importForDialog"></app-import-calculator>
+            } @placeholder {
+              <div class="text-muted">Loading strength image builder…</div>
+            }
+          </div>
+        </section>
+      </main>
+    </div>
+  </section>
+
   <div class="scenario-backdrop" *ngIf="isUnifiedAdvancedExpanded" (click)="app.toggleAdvanced()"></div>
   <section id="scenario-dialog" class="top-controls-body scenario-dialog" *ngIf="isUnifiedAdvancedExpanded"
     role="dialog" aria-modal="true" aria-labelledby="scenario-dialog-title">
     <header class="scenario-dialog-header">
       <div>
         <h2 id="scenario-dialog-title">Scenario</h2>
-        <p>Configure packs, saved teams, and battle-specific overrides.</p>
+        <p>Configure packs and battle-specific overrides.</p>
       </div>
       <button type="button" class="btn-close" (click)="app.toggleAdvanced()" aria-label="Close scenario controls"></button>
     </header>
@@ -200,55 +372,6 @@
             <div class="form-check" title="All pets are included in the pet pool.">
               <input class="form-check-input" type="checkbox" value="" id="allPets" formControlName="allPets" />
               <label class="form-check-label" for="allPets">All Pets</label>
-            </div>
-          </div>
-
-          <div class="controls-section nested-section teams-section">
-            <div class="section-title subsection-title">Save / Load Teams</div>
-            <div class="team-column">
-              <input class="form-control team-name-input" [(ngModel)]="app.teamName"
-                [ngModelOptions]="{ standalone: true }" placeholder="Team name" />
-              <div class="team-name-actions">
-                <button class="btn btn-secondary btn-sm" (click)="app.saveTeam(saveSide)">
-                  Save
-                </button>
-                <select class="form-select form-select-sm" [(ngModel)]="saveSide"
-                  [ngClass]="saveSide === 'player' ? 'side-select-player' : 'side-select-opponent'"
-                  [ngModelOptions]="{ standalone: true }">
-                  <option value="player" class="player-side-text">Player</option>
-                  <option value="opponent" class="opponent-side-text">Opponent</option>
-                </select>
-              </div>
-            </div>
-            <div class="team-column">
-              <button class="selection-btn team-selection-btn" (click)="app.openSelectionDialog('team', 'none')">
-                <div class="team-preview" *ngIf="
-                        app.selectedTeamPreviewIcons.length;
-                        else teamPlaceholder
-                      ">
-                  <img *ngFor="
-                          let icon of app.selectedTeamPreviewIcons;
-                          let i = index
-                        " [ngSrc]="icon" width="28" height="28" loading="lazy" decoding="async"
-                    [alt]="app.selectedTeamName" class="team-preview-icon" />
-                </div>
-                <ng-template #teamPlaceholder>
-                  <span class="btn-placeholder">Saved teams</span>
-                </ng-template>
-                <span class="btn-text">{{ app.selectedTeamName }}</span>
-                <i class="fas fa-chevron-down ms-auto"></i>
-              </button>
-              <div class="team-name-actions load-actions">
-                <button class="btn btn-secondary btn-sm" (click)="app.loadTeam(loadSide)">
-                  Load
-                </button>
-                <select class="form-select form-select-sm" [(ngModel)]="loadSide"
-                  [ngClass]="loadSide === 'player' ? 'side-select-player' : 'side-select-opponent'"
-                  [ngModelOptions]="{ standalone: true }">
-                  <option value="player" class="player-side-text">Player</option>
-                  <option value="opponent" class="opponent-side-text">Opponent</option>
-                </select>
-              </div>
             </div>
           </div>
 
@@ -414,137 +537,4 @@
     </div>
   </section>
 
-  <div class="scenario-backdrop" *ngIf="optimizationDialogOpen" (click)="closeOptimizationDialog()"></div>
-<section id="optimization-dialog" class="optimization-dialog" *ngIf="optimizationDialogOpen" role="dialog"
-  aria-modal="true" aria-labelledby="optimization-dialog-title">
-  <header class="optimization-dialog-header">
-    <div>
-      <h2 id="optimization-dialog-title">Optimize positioning</h2>
-      <p>Test board orders and apply the strongest lineup.</p>
-    </div>
-    <button type="button" class="btn-close" (click)="closeOptimizationDialog()" aria-label="Close optimizer"></button>
-  </header>
-  <div class="optimization-dialog-body">
-    <label class="dialog-field-label" for="optimizeSide">Optimize</label>
-    <div class="side-segmented-control" role="group" aria-label="Side to optimize">
-      <button type="button" [class.active]="optimizeSide === 'player'" (click)="optimizeSide = 'player'">Player</button>
-      <button type="button" [class.active]="optimizeSide === 'opponent'" (click)="optimizeSide = 'opponent'">Opponent</button>
-    </div>
-    <div class="form-check">
-      <input class="form-check-input" type="checkbox" id="keepSameBuffTargetsOnOptimization"
-        formControlName="keepSameBuffTargetsOnOptimization" [disabled]="app.simulationInProgress" />
-      <label class="form-check-label" for="keepSameBuffTargetsOnOptimization">Keep the same buff targets</label>
-    </div>
-  </div>
-  <footer class="optimization-dialog-footer">
-    <button type="button" class="btn btn-secondary" (click)="closeOptimizationDialog()">Cancel</button>
-    <button type="button" class="btn btn-primary" (click)="runOptimization()" [disabled]="app.simulationInProgress">
-      Optimize {{ optimizeSide === 'player' ? 'Player' : 'Opponent' }}
-    </button>
-  </footer>
-</section>
-</div>
-
-<div class="modal fade force-randomness-modal" id="forceRandomness" tabindex="-1"
-  aria-labelledby="forceRandomnessLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-          <h1 class="modal-title fs-5" id="forceRandomnessLabel">Force Randomness</h1>
-          <div class="force-randomness-modal-subtitle">
-            Capture random events, choose forced outcomes, then run a forced battle.
-          </div>
-        </div>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="random-overrides-panel">
-          <div class="random-overrides-header">
-            <div class="random-overrides-title-row">
-              <span class="section-title">Random Events</span>
-              <span class="random-overrides-count" *ngIf="app.randomDecisions.length">
-                {{ app.randomDecisions.length }} events
-              </span>
-            </div>
-            <div class="random-overrides-actions">
-              <button class="btn btn-secondary btn-sm" (click)="app.captureRandomEvents()"
-                [disabled]="app.simulationInProgress"
-                title="Runs one logged battle and captures random decision points.">
-                Capture Random Events
-              </button>
-              <button class="btn btn-primary btn-sm" (click)="app.runForcedRandomSimulation()"
-                [disabled]="app.simulationInProgress || !app.randomDecisions.length"
-                title="Runs one logged battle while forcing selected random options.">
-                Run Forced Simulation
-              </button>
-              <button class="btn btn-outline-danger btn-sm" (click)="app.clearRandomOverrides()"
-                [disabled]="!app.randomDecisions.length">
-                Clear
-              </button>
-            </div>
-          </div>
-
-          <div class="random-overrides-body">
-            <div class="random-overrides-empty" *ngIf="!app.randomDecisions.length">
-              Capture random events to populate forced outcome selectors.
-            </div>
-
-            <div class="random-overrides-error" *ngIf="app.randomOverrideError">
-              {{ app.randomOverrideError }}
-            </div>
-
-            <div class="random-overrides-table-wrap" *ngIf="app.randomDecisions.length">
-              <table class="table table-sm random-overrides-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Step</th>
-                    <th scope="col">Event</th>
-                    <th scope="col">Forced Choice</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let decision of app.randomDecisions; trackBy: app.trackByIndex">
-                    <td>{{ decision.index + 1 }}</td>
-                    <td>
-                      <div class="decision-label">
-                        <ng-container
-                          *ngFor="let part of app.getRandomDecisionLabelParts(decision); trackBy: app.trackByIndex">
-                          <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
-                            width="16" height="16" loading="lazy" decoding="async" />
-                          <span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span>
-                          <br *ngIf="part.type === 'br'" />
-                        </ng-container>
-                      </div>
-                      <div class="decision-key">{{ decision.key }}</div>
-                    </td>
-                    <td>
-                      <div class="decision-choice-preview">
-                        <ng-container
-                          *ngFor="let part of app.getRandomDecisionSelectedOptionParts(decision); trackBy: app.trackByIndex">
-                          <img *ngIf="part.type === 'img'" [ngSrc]="part.src" class="log-inline-icon" [alt]="part.alt"
-                            width="16" height="16" loading="lazy" decoding="async" />
-                          <span *ngIf="part.type === 'text'" [ngClass]="part.className">{{ part.text }}</span>
-                          <br *ngIf="part.type === 'br'" />
-                        </ng-container>
-                      </div>
-                      <select class="form-select form-select-sm"
-                        [ngModel]="app.getSelectedRandomDecisionOptionId(decision)"
-                        (ngModelChange)="app.onRandomDecisionChoiceChanged(decision, $event)"
-                        [ngModelOptions]="{ standalone: true }">
-                        <option *ngFor="let option of decision.options; trackBy: app.trackByIndex"
-                          [ngValue]="option.id">
-                          {{ option.label }}
-                        </option>
-                      </select>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>

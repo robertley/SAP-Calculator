@@ -249,6 +249,39 @@ export function undoRandomize(ctx: AppUiContext): void {
   });
 }
 
+export function swapSides(ctx: AppUiContext): void {
+  const currentState = ctx.formGroup.getRawValue() as Record<string, unknown>;
+  const swappedState: Record<string, unknown> = JSON.parse(
+    JSON.stringify(currentState),
+  ) as Record<string, unknown>;
+
+  for (const [key, value] of Object.entries(currentState)) {
+    if (!key.startsWith('player')) {
+      continue;
+    }
+
+    const opponentKey = `opponent${key.slice('player'.length)}`;
+    if (!(opponentKey in currentState)) {
+      continue;
+    }
+
+    swappedState[key] = currentState[opponentKey];
+    swappedState[opponentKey] = value;
+  }
+
+  applyCalculatorState(ctx, swappedState);
+  for (let index = 0; index < 5; index++) {
+    ctx.player.setPet(index, null);
+    ctx.opponent.setPet(index, null);
+  }
+  initApp(ctx);
+  ctx.undoState = null;
+
+  setTimeout(() => {
+    ctx.petSelectors?.forEach((selector) => selector.fixLoadEquipment());
+  });
+}
+
 export function clearCache(ctx: AppUiContext): void {
   ctx.localStorageService.clearStorage();
   ctx.setStatus?.('Cache cleared. Refresh page to see changes.', 'success');
@@ -271,6 +304,7 @@ export function initModals(ctx: AppUiContext): void {
 }
 
 export function openCustomPackEditor(ctx: AppUiContext): void {
+  ctx.formGroup.get('showAdvanced')?.setValue(false, { emitEvent: false });
   ctx.customPackEditorModal.show();
   ctx.formGroup
     .get('playerPack')
@@ -410,6 +444,3 @@ export function generateShareLink(ctx: AppUiContext): void {
       ctx.setStatus?.('Failed to copy link. See console for details.', 'error');
     });
 }
-
-
-

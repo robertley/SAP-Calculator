@@ -12,6 +12,7 @@ export function logAbilityEvent(
   message: string,
   extras: AbilityLogExtras = {},
 ): void {
+  const contextRandom = context.randomEvent === true;
   logService.createLog({
     message,
     type: 'ability',
@@ -19,6 +20,12 @@ export function logAbilityEvent(
     tiger: context.tiger,
     pteranodon: context.pteranodon,
     ...extras,
+    randomEvent: extras.randomEvent === true || contextRandom,
+    randomEventReason:
+      extras.randomEventReason ??
+      (contextRandom && context.randomEventReason === 'tie-broken'
+        ? 'tie-broken'
+        : undefined),
   });
 }
 

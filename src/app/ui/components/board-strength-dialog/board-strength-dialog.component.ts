@@ -35,6 +35,7 @@ export class BoardStrengthDialogComponent implements OnInit, OnDestroy {
   @Input({ required: true }) formGroup: FormGroup;
   @Input({ required: true }) player: Player;
   @Input({ required: true }) opponent: Player;
+  @Input() embedded = false;
 
   selectedSide: BoardStrengthSide = 'player';
   readonly precision = 'high' as const;

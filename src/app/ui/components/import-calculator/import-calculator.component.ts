@@ -85,7 +85,6 @@ interface OddsImageSourcePayload {
   replay: Record<string, unknown>;
   simulationCount: number;
   optimizationSide?: 'player' | 'opponent';
-  keepSameBuffTargets?: boolean;
   abilityPetMap?: Record<string, string | number> | null;
 }
 
@@ -97,6 +96,7 @@ interface OddsImageSourcePayload {
   styleUrls: ['./import-calculator.component.scss'],
 })
 export class ImportCalculatorComponent implements OnInit, OnDestroy {
+  @Input() mode: 'import' | 'odds-image' | 'positioning-image' | 'strength-image' = 'import';
   @Input()
   importFunc: (importVal: string, options?: { resetBattle?: boolean }) => boolean;
   readonly pidExample = '{"Pid":"ce7b41c5-d69d-4152-8c5d-0d5fee869f9f","T":6}';
@@ -106,7 +106,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     turn: new FormControl(1, Validators.min(1)),
     oddsSimulations: new FormControl(100, Validators.min(1)),
     positioningSide: new FormControl('player'),
-    keepSameBuffTargets: new FormControl(false),
   });
 
   errorMessage = '';
@@ -138,7 +137,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private destroyed = false;
   private readonly replayTimeoutMs = 10000;
   private readonly replayHealthTimeoutMs = 2500;
-  private readonly maxPositioningSimulations = 50;
   private readonly statusController = new TimedStatusController<
     'success' | 'error' | 'warning'
   >(
@@ -469,7 +467,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     const simulationCount = this.getPositioningSimulationCount();
     const requestedTurn = this.getRequestedTurn();
     const optimizationSide = this.getPositioningSide();
-    const keepSameBuffTargets = this.getKeepSameBuffTargets();
 
     const replayCodePayload = parseReplayCode(rawInput);
     if (replayCodePayload?.battle) {
@@ -483,7 +480,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         replay: replayPayload,
         simulationCount,
         optimizationSide,
-        keepSameBuffTargets,
         abilityPetMap: replayCodePayload.abilityPetMap ?? null,
       });
       return;
@@ -500,7 +496,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
           requestedTurn,
           simulationCount,
           optimizationSide,
-          keepSameBuffTargets,
         );
         return;
       }
@@ -515,7 +510,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         requestedTurn,
         simulationCount,
         optimizationSide,
-        keepSameBuffTargets,
       );
       return;
     }
@@ -533,7 +527,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.requestPositioningImageDownload({
       ...request,
       optimizationSide,
-      keepSameBuffTargets,
     });
   }
 
@@ -797,7 +790,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     turnNumber: number,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
-    keepSameBuffTargets: boolean,
   ): void {
     this.setPositioningImageLoading(true);
     this.replayCalcService
@@ -843,7 +835,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                       replay: replayPayload,
                       simulationCount,
                       optimizationSide,
-                      keepSameBuffTargets,
                       abilityPetMap: turnsResponse?.abilityPetMap ?? null,
                     },
                     replayId,
@@ -1228,7 +1219,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         replayPayload: request.replay,
         simulationCount: request.simulationCount,
         optimizationSide: request.optimizationSide ?? 'player',
-        keepSameBuffTargets: request.keepSameBuffTargets === true,
         abilityPetMap: request.abilityPetMap ?? null,
         abortSignal: abortController.signal,
         onProgress: (progress: ReplayPositioningImageProgress) => {
@@ -1502,24 +1492,12 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   }
 
   private getPositioningSimulationCount(): number {
-    const requested = this.getOddsSimulationCount();
-    if (requested > this.maxPositioningSimulations) {
-      this.setStatus(
-        `Positioning image simulations capped at ${this.maxPositioningSimulations}.`,
-        'warning',
-      );
-      return this.maxPositioningSimulations;
-    }
-    return requested;
+    return this.getOddsSimulationCount();
   }
 
   private getPositioningSide(): 'player' | 'opponent' {
     const rawValue = this.formGroup.get('positioningSide')?.value;
     return rawValue === 'opponent' ? 'opponent' : 'player';
-  }
-
-  private getKeepSameBuffTargets(): boolean {
-    return this.formGroup.get('keepSameBuffTargets')?.value === true;
   }
 
   private setLoading(value: boolean) {

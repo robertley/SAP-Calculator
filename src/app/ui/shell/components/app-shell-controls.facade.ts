@@ -1,4 +1,5 @@
-import { FormGroup } from '@angular/forms';
+import { FormArray, FormGroup } from '@angular/forms';
+import { getPackIconPath, getPetIconPath } from 'app/runtime/asset-catalog';
 import { RandomDecisionCapture } from 'app/domain/interfaces/simulation-config.interface';
 import {
   LogMessagePart,
@@ -6,10 +7,13 @@ import {
 } from '../simulation/app.component.simulation';
 import type { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.types';
 import type { AppComponent } from '../app.component';
+import type { Player } from 'app/domain/entities/player.class';
 
 export interface AppShellControlsFacade {
   renderEpoch: number;
   formGroup: FormGroup;
+  player: Player;
+  opponent: Player;
   simulations: number;
   simulationInProgress: boolean;
   simulationCancelRequested: boolean;
@@ -90,17 +94,45 @@ export interface AppShellControlsFacade {
   ) => void;
   saveTeam: (side: 'player' | 'opponent') => void;
   loadTeam: (side: 'player' | 'opponent') => void;
+  importForDialog: (
+    importVal: string,
+    options?: { resetBattle?: boolean },
+  ) => boolean;
+  readonly savedTeamsCount: number;
 }
 
 export function createAppShellControlsFacade(
   app: AppComponent,
 ): AppShellControlsFacade {
+  const resolvePackIcon = (packName: string): string | null => {
+    const customPacks = app.formGroup.get('customPacks');
+    if (customPacks instanceof FormArray) {
+      const pack = customPacks.controls.find(
+        (control) => control.get('name')?.value === packName && control.valid,
+      );
+      if (pack) {
+        for (let tier = 1; tier <= 6; tier++) {
+          const pets = pack.get(`tier${tier}Pets`)?.value;
+          if (Array.isArray(pets) && typeof pets[0] === 'string') {
+            return getPetIconPath(pets[0]);
+          }
+        }
+      }
+    }
+    return getPackIconPath(packName);
+  };
   return {
     get renderEpoch() {
       return app.shellRenderEpoch();
     },
     get formGroup() {
       return app.formGroup;
+    },
+    get player() {
+      return app.player;
+    },
+    get opponent() {
+      return app.opponent;
     },
     get simulations() {
       return Number(app.formGroup.get('simulations')?.value ?? 0);
@@ -221,8 +253,12 @@ export function createAppShellControlsFacade(
     get selectedTeamPreviewIcons() {
       return app.selectedTeamPreviewIcons;
     },
+    get savedTeamsCount() {
+      return app.savedTeams.length;
+    },
     saveTeam: (side) => app.saveTeam(side),
     loadTeam: (side) => app.loadTeam(side),
+    importForDialog: (importVal, options) => app.importForDialog(importVal, options),
     get playerPackImageBroken() {
       return app.playerPackImageBroken;
     },
@@ -236,10 +272,10 @@ export function createAppShellControlsFacade(
       return app.formGroup.get('opponentPack')?.value ?? 'Select Pack';
     },
     get playerPackIconPath() {
-      return app.getPackIconPath(app.formGroup.get('playerPack')?.value);
+      return resolvePackIcon(app.formGroup.get('playerPack')?.value);
     },
     get opponentPackIconPath() {
-      return app.getPackIconPath(app.formGroup.get('opponentPack')?.value);
+      return resolvePackIcon(app.formGroup.get('opponentPack')?.value);
     },
     getPackIconPath: (packName) => app.getPackIconPath(packName),
     onPackImageError: (side) => app.onPackImageError(side),

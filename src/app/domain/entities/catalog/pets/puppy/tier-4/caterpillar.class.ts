@@ -54,8 +54,7 @@ export class CaterpillarAbility extends Ability {
       abilitylevel: owner.level,
       condition: (context: AbilityContext) => {
         const { triggerPet, tiger, pteranodon } = context;
-        const owner = this.owner;
-        return owner.level >= 3;
+        return this.level >= 3;
       },
       abilityFunction: (context) => {
         this.executeAbility(context);

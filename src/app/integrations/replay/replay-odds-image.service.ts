@@ -191,14 +191,17 @@ export class ReplayOddsImageService {
       (replayActions ? buildReplayAbilityPetMapFromActions(replayActions) : null);
 
     const buildModel = this.getReplayBuildModel(resolvedReplay);
-    const analyses = turns.map((turn) =>
-      this.computeTurnOdds(
+    const analyses = turns.map((turn, index) => {
+      const previousOutcome =
+        index > 0 ? this.getBattleOutcome(turns[index - 1].battle) : null;
+      return this.computeTurnOdds(
         turn.battle,
         buildModel,
         abilityPetMap,
         input.simulationCount,
-      ),
-    );
+        previousOutcome,
+      );
+    });
     const turnsWithLinks = turns.map((turn, index) => ({
       ...turn,
       calculatorUrl: analyses[index]?.calculatorUrl ?? '',
@@ -225,6 +228,7 @@ export class ReplayOddsImageService {
     buildModel: ReplayBuildModelJson | null,
     abilityPetMap: Record<string, string | number> | null,
     simulationCount: number,
+    previousOutcome: number | null,
   ): TurnOddsAnalysis {
     try {
       const calculatorState = this.replayCalcService.parseReplayForCalculator(
@@ -233,10 +237,14 @@ export class ReplayOddsImageService {
         undefined,
         { abilityPetMap },
       );
-      const config = this.createSimulationConfigFromCalculatorState(
-        calculatorState,
-        simulationCount,
-      );
+      const config: SimulationConfig = {
+        ...this.createSimulationConfigFromCalculatorState(
+          calculatorState,
+          simulationCount,
+        ),
+        playerLostLastBattle: previousOutcome === 2,
+        opponentLostLastBattle: previousOutcome === 1,
+      };
       const result = this.runLocalSimulation(config);
       const total = result.playerWins + result.opponentWins + result.draws;
       if (total <= 0) {

@@ -219,6 +219,45 @@
     opacity 0.3s ease-out;
 }
 
+.custom-pack-editor-modal {
+  z-index: 1080;
+}
+
+.custom-pack-editor-modal .modal-content {
+  min-height: min(52rem, calc(100vh - 3rem));
+  overflow: hidden;
+  border: 1px solid var(--ui-border-1);
+  border-radius: 16px;
+  background: var(--ui-surface-0);
+}
+
+.custom-pack-editor-modal .modal-body {
+  padding: 0;
+}
+
+.custom-pack-modal-header {
+  padding: 1rem 1.25rem;
+}
+
+.custom-pack-modal-header h1 {
+  margin: 0.1rem 0 0.15rem;
+  font-size: 1.35rem;
+}
+
+.custom-pack-modal-header p {
+  margin: 0;
+  color: var(--ui-text-3);
+  font-size: 0.82rem;
+}
+
+.custom-pack-modal-eyebrow {
+  color: var(--ui-text-3);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .custom-pack-editor-modal.show .custom-pack-editor-dialog {
   transform: translateY(0);
   opacity: 1;

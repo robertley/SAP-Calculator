@@ -23,6 +23,7 @@ import { TeamPreset } from 'app/integrations/team-presets.service';
 import {
   SelectionItem,
   SelectionType,
+  shouldShowNoneSelection,
 } from './item-selection-dialog.types';
 import {
   IndexedSelectionItem,
@@ -127,13 +128,7 @@ export class ItemSelectionDialogComponent
   }
 
   get shouldShowNoneCard(): boolean {
-    return (
-      this.type !== 'swallowed-pet' &&
-      this.type !== 'ability' &&
-      this.type !== 'pack' &&
-      this.type !== 'team' &&
-      this.searchQuery.trim().length === 0
-    );
+    return shouldShowNoneSelection(this.type, this.searchQuery);
   }
 
   get supportsTriggerSort(): boolean {

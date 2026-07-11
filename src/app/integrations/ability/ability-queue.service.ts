@@ -13,6 +13,7 @@ import {
   executeEventWithTransform,
 } from './event-queue-processing';
 import { getRandomFloat } from 'app/runtime/random';
+import { chooseRandomOption } from 'app/runtime/random-decision-state';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,7 @@ export class AbilityQueueService {
   >();
   private numberedTriggerRegexCache = new Map<string, RegExp>();
 
-  constructor() { }
+  constructor() {}
 
   // --- Queue Management ---
 
@@ -99,6 +100,15 @@ export class AbilityQueueService {
       onExecute?: (event: AbilityEvent) => void;
     },
   ) {
+    if (options?.filter) {
+      let event = this.takeNextMatchingEvent(options.filter);
+      while (event) {
+        options.onExecute?.(event);
+        this.executeEvent(event, gameApi);
+        event = this.takeNextMatchingEvent(options.filter);
+      }
+      return;
+    }
     processEventQueue(this.globalEventQueue, gameApi, options);
   }
 
@@ -109,30 +119,115 @@ export class AbilityQueueService {
   takeNextMatchingEvent(
     filter: (event: AbilityEvent) => boolean,
   ): AbilityEvent | null {
-    let nextIndex = -1;
-
-    for (let index = 0; index < this.globalEventQueue.length; index++) {
-      const event = this.globalEventQueue[index];
-      if (!filter(event)) {
-        continue;
-      }
-      if (
-        nextIndex === -1 ||
-        this.compareEventsForQueueOrder(
-          event,
-          this.globalEventQueue[nextIndex],
-        ) < 0
-      ) {
-        nextIndex = index;
-      }
-    }
-
-    if (nextIndex === -1) {
+    const matching = this.globalEventQueue.filter(filter);
+    if (matching.length === 0) {
       return null;
     }
 
+    const first = matching[0];
+    const phaseOrderEvents =
+      first.abilityType === 'BeforeStartBattle'
+        ? matching.filter(
+            (event) => event.abilityType === first.abilityType,
+          )
+        : [];
+    if (phaseOrderEvents.length > 1) {
+      const ordered = [...phaseOrderEvents].sort((a, b) =>
+        this.describeEvent(a).localeCompare(this.describeEvent(b)),
+      );
+      const decision = chooseRandomOption(
+        {
+          key: 'ability-queue.phase-order',
+          label: `${String(first.abilityType)} ability order (${ordered.map((event) => this.describeEvent(event)).join(', ')})`,
+          options: ordered.map((event) => ({
+            id: this.describeEvent(event),
+            label: `${this.describeEvent(event)} resolves first`,
+          })),
+        },
+        () => {
+          const queuedFirst = phaseOrderEvents[0];
+          return Math.max(0, ordered.indexOf(queuedFirst));
+        },
+      );
+      const selected = ordered[decision.index] ?? ordered[0];
+      this.markEventRandom(selected);
+      const selectedIndex = this.globalEventQueue.indexOf(selected);
+      const [event] = this.globalEventQueue.splice(selectedIndex, 1);
+      return event ?? null;
+    }
+
+    const abilityPriority = this.getAbilityPriority(first.abilityType);
+    const eventPriority = first.priority;
+    const tied = matching.filter(
+      (event) =>
+        this.getAbilityPriority(event.abilityType) === abilityPriority &&
+        event.priority === eventPriority,
+    );
+
+    let selected = first;
+    const distinctDescriptions = new Set(
+      tied.map((event) => this.describeEvent(event)),
+    );
+    if (tied.length > 1 && distinctDescriptions.size === tied.length) {
+      const ordered = [...tied].sort((a, b) =>
+        this.describeEvent(a).localeCompare(this.describeEvent(b)),
+      );
+      const decision = chooseRandomOption(
+        {
+          key: 'ability-queue.tie-order',
+          label: `${String(first.abilityType ?? 'Unknown')} ability order (${ordered.map((event) => this.describeEvent(event)).join(', ')})`,
+          options: ordered.map((event) => ({
+            id: this.describeEvent(event),
+            label: `${this.describeEvent(event)} resolves first`,
+          })),
+        },
+        () => {
+          let selectedIndex = 0;
+          for (let index = 1; index < ordered.length; index++) {
+            if (
+              (ordered[index].tieBreaker ?? 0) <
+              (ordered[selectedIndex].tieBreaker ?? 0)
+            ) {
+              selectedIndex = index;
+            }
+          }
+          return selectedIndex;
+        },
+      );
+      selected = ordered[decision.index] ?? first;
+      this.markEventRandom(selected);
+    }
+
+    const nextIndex = this.globalEventQueue.indexOf(selected);
+
     const [event] = this.globalEventQueue.splice(nextIndex, 1);
     return event ?? null;
+  }
+
+  private describeEvent(event: AbilityEvent): string {
+    const pet = event.pet;
+    const side = pet?.parent?.isOpponent ? 'O' : 'P';
+    const position = Number.isFinite(pet?.savedPosition)
+      ? (pet?.savedPosition ?? 0) + 1
+      : 0;
+    const executor = `${side}${position} ${pet?.name ?? 'unknown pet'}`;
+    const triggerPet = event.triggerPet;
+    if (!triggerPet || triggerPet === pet) {
+      return executor;
+    }
+    const triggerSide = triggerPet.parent?.isOpponent ? 'O' : 'P';
+    const triggerPosition = Number.isFinite(triggerPet.savedPosition)
+      ? triggerPet.savedPosition + 1
+      : 0;
+    return `${executor} -> ${triggerSide}${triggerPosition} ${triggerPet.name}`;
+  }
+
+  private markEventRandom(event: AbilityEvent): void {
+    event.customParams = {
+      ...(event.customParams ?? {}),
+      randomEvent: true,
+      randomEventReason: 'tie-broken',
+    };
   }
 
   // NEW: Legacy support
@@ -146,7 +241,9 @@ export class AbilityQueueService {
 
   // --- Priority Helpers ---
 
-  getAbilityPriority(trigger: AbilityTrigger | string | null | undefined): number {
+  getAbilityPriority(
+    trigger: AbilityTrigger | string | null | undefined,
+  ): number {
     if (typeof trigger !== 'string' || trigger.length === 0) {
       return 999;
     }
@@ -222,7 +319,10 @@ export class AbilityQueueService {
     if (!pet || count <= 0) {
       return;
     }
-    const triggers = this.getNumberedTriggersForPet(pet, 'PostRemovalFriendFaints');
+    const triggers = this.getNumberedTriggersForPet(
+      pet,
+      'PostRemovalFriendFaints',
+    );
     for (let i = 0; i < count; i++) {
       this.handleNumberedCounterTriggers(pet, undefined, undefined, triggers);
     }
@@ -343,11 +443,9 @@ export class AbilityQueueService {
   }
 
   public getTeam(petOrPlayer?: Pet | Player | null): Pet[] {
-    const parent = petOrPlayer instanceof Pet ? petOrPlayer.parent : petOrPlayer;
+    const parent =
+      petOrPlayer instanceof Pet ? petOrPlayer.parent : petOrPlayer;
     const arr = parent?.petArray;
     return Array.isArray(arr) ? arr : [];
   }
 }
-
-
-

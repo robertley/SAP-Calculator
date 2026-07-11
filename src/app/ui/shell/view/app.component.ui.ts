@@ -236,5 +236,6 @@ export {
   removeHardToy,
   resetPackImageError,
   resetPlayer,
+  swapSides,
   undoRandomize,
 } from './app.component.ui-workflows';
