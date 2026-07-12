@@ -11,6 +11,7 @@ import { EquipmentService } from '../equipment/equipment.service';
 import { LogService } from '../log.service';
 import { PetService } from '../pet/pet.service';
 import {
+  BoardStrengthPrecision,
   BoardStrengthProgress,
   BoardStrengthResult,
   BoardStrengthSide,
@@ -39,6 +40,7 @@ import {
 
 export interface ReplayBoardStrengthImageBuildInput {
   replayPayload: Record<string, unknown>;
+  precision?: BoardStrengthPrecision;
   abilityPetMap?: Record<string, string | number> | null;
   abortSignal?: AbortSignal;
   onProgress?: (progress: ReplayBoardStrengthImageProgress) => void;
@@ -100,8 +102,6 @@ interface StrengthEvaluationTask {
   config: SimulationConfig;
 }
 
-const PRECISION = 'high' as const;
-
 @Injectable({ providedIn: 'root' })
 export class ReplayBoardStrengthImageService {
   constructor(
@@ -118,6 +118,7 @@ export class ReplayBoardStrengthImageService {
   async buildBoardStrengthImage(
     input: ReplayBoardStrengthImageBuildInput,
   ): Promise<ReplayBoardStrengthImageResult> {
+    const precision = input.precision ?? 'quick';
     this.throwIfAborted(input.abortSignal);
     this.emitProgress(input, 0, 'Preparing replay turns...', 'preparing', 0, 0);
     const resolvedReplay = this.resolveReplayActionsContainer(
@@ -197,9 +198,10 @@ export class ReplayBoardStrengthImageService {
       const result = await this.runEvaluation(
         task.config,
         task.side,
+        precision,
         input.abortSignal,
         (progress) => {
-          const taskProgress = this.getEvaluationProgress(progress);
+          const taskProgress = this.getEvaluationProgress(progress, precision);
           const percent =
             5 + ((index + taskProgress) / Math.max(1, taskList.length)) * 90;
           this.emitProgress(
@@ -246,6 +248,7 @@ export class ReplayBoardStrengthImageService {
   private runEvaluation(
     config: SimulationConfig,
     side: BoardStrengthSide,
+    precision: BoardStrengthPrecision,
     abortSignal: AbortSignal | undefined,
     onProgress: (progress: BoardStrengthProgress) => void,
   ): Promise<BoardStrengthResult> {
@@ -253,6 +256,7 @@ export class ReplayBoardStrengthImageService {
       return this.runEvaluationInWorker(
         config,
         side,
+        precision,
         abortSignal,
         onProgress,
       );
@@ -260,7 +264,7 @@ export class ReplayBoardStrengthImageService {
     return Promise.resolve(
       runBoardStrengthEvaluation({
         baseConfig: config,
-        options: { side, precision: PRECISION },
+        options: { side, precision },
         shouldAbort: () => Boolean(abortSignal?.aborted),
         onProgress,
         simulateBatch: (batchConfig) => this.runLocalSimulation(batchConfig),
@@ -271,6 +275,7 @@ export class ReplayBoardStrengthImageService {
   private runEvaluationInWorker(
     config: SimulationConfig,
     side: BoardStrengthSide,
+    precision: BoardStrengthPrecision,
     abortSignal: AbortSignal | undefined,
     onProgress: (progress: BoardStrengthProgress) => void,
   ): Promise<BoardStrengthResult> {
@@ -326,7 +331,7 @@ export class ReplayBoardStrengthImageService {
       worker.postMessage({
         type: 'board-strength-start',
         config,
-        options: { side, precision: PRECISION },
+        options: { side, precision },
       });
     });
   }
@@ -603,13 +608,16 @@ export class ReplayBoardStrengthImageService {
       .filter((row): row is StrengthBattleRow => row !== null);
   }
 
-  private getEvaluationProgress(progress: BoardStrengthProgress): number {
+  private getEvaluationProgress(
+    progress: BoardStrengthProgress,
+    precision: BoardStrengthPrecision,
+  ): number {
     if (progress.phase === 'complete') return 1;
     if (progress.phase === 'scout') return 0.03;
     if (progress.phase === 'scan') {
       return (progress.completedStats / Math.max(1, progress.totalStats)) * 0.5;
     }
-    const profile = getBoardStrengthPrecisionProfile(PRECISION);
+    const profile = getBoardStrengthPrecisionProfile(precision);
     const initial = progress.totalStats * profile.initialBattles;
     const capacity = Math.max(1, progress.maximumBattles - initial);
     return Math.min(

@@ -42,6 +42,7 @@ import {
   ReplayBoardStrengthImageResult,
   ReplayBoardStrengthImageService,
 } from 'app/integrations/replay/replay-board-strength-image.service';
+import { BoardStrengthPrecision } from 'app/integrations/simulation/board-strength-evaluator';
 import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 interface ReplayActionEntry {
@@ -530,7 +531,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     });
   }
 
-  buildBoardStrengthImage(): void {
+  buildBoardStrengthImage(precision: BoardStrengthPrecision = 'quick'): void {
     this.errorMessage = '';
     this.clearStatus();
     const rawInput = this.formGroup.get('calcCode')?.value?.trim();
@@ -542,16 +543,20 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     const requestedTurn = this.getRequestedTurn();
     const replayCodePayload = parseReplayCode(rawInput);
     if (replayCodePayload?.battle) {
-      this.requestBoardStrengthImageDownload({
-        replay: this.buildSingleBattleReplayPayload(
-          replayCodePayload.battle,
-          replayCodePayload.turn ?? requestedTurn,
-          replayCodePayload.genesisBuildModel ?? null,
-          replayCodePayload.abilityPetMap ?? null,
-        ),
-        simulationCount: 1,
-        abilityPetMap: replayCodePayload.abilityPetMap ?? null,
-      });
+      this.requestBoardStrengthImageDownload(
+        {
+          replay: this.buildSingleBattleReplayPayload(
+            replayCodePayload.battle,
+            replayCodePayload.turn ?? requestedTurn,
+            replayCodePayload.genesisBuildModel ?? null,
+            replayCodePayload.abilityPetMap ?? null,
+          ),
+          simulationCount: 1,
+          abilityPetMap: replayCodePayload.abilityPetMap ?? null,
+        },
+        undefined,
+        precision,
+      );
       return;
     }
 
@@ -561,7 +566,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     } catch {
       const pid = rawInput.trim();
       if (this.looksLikePid(pid)) {
-        this.fetchReplayJsonAndBuildBoardStrengthImage(pid, requestedTurn);
+        this.fetchReplayJsonAndBuildBoardStrengthImage(
+          pid,
+          requestedTurn,
+          precision,
+        );
         return;
       }
       this.errorMessage = 'Invalid JSON. Paste replay JSON or a replay Pid.';
@@ -572,6 +581,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       this.fetchReplayJsonAndBuildBoardStrengthImage(
         String(parsedInput.Pid ?? parsedInput.pid),
         requestedTurn,
+        precision,
       );
       return;
     }
@@ -586,7 +596,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         'Replay JSON must include Actions, turns, replay.raw_json.Actions, or UserBoard/OpponentBoard.';
       return;
     }
-    this.requestBoardStrengthImageDownload(request);
+    this.requestBoardStrengthImageDownload(request, undefined, precision);
   }
 
   private importReplayBattle(
@@ -602,6 +612,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       metaBoards,
       parseOptions,
     );
+    calculatorState.showAdvanced = true;
     if (
       this.importFunc(JSON.stringify(calculatorState), {
         resetBattle: options?.resetBattle,
@@ -863,6 +874,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private fetchReplayJsonAndBuildBoardStrengthImage(
     replayId: string,
     turnNumber: number,
+    precision: BoardStrengthPrecision,
   ): void {
     this.setBoardStrengthImageLoading(true);
     this.replayCalcService
@@ -909,6 +921,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                       abilityPetMap: turnsResponse?.abilityPetMap ?? null,
                     },
                     replayId,
+                    precision,
                   );
                 })
                 .catch((error: unknown) => {
@@ -1254,6 +1267,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private requestBoardStrengthImageDownload(
     request: OddsImageSourcePayload,
     replayId?: string,
+    precision: BoardStrengthPrecision = 'quick',
   ): void {
     this.cancelBoardStrengthBuild();
     const abortController = new AbortController();
@@ -1262,6 +1276,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.replayBoardStrengthImageService
       .buildBoardStrengthImage({
         replayPayload: request.replay,
+        precision,
         abilityPetMap: request.abilityPetMap ?? null,
         abortSignal: abortController.signal,
         onProgress: (progress: ReplayBoardStrengthImageProgress) => {

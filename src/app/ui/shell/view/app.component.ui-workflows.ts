@@ -4,6 +4,7 @@ import { Modal } from 'bootstrap';
 import { Player } from 'app/domain/entities/player.class';
 import type { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.types';
 import { getPackIconPath, getToyIconPath } from 'app/runtime/asset-catalog';
+import { defaultImportedParrotCopies } from 'app/runtime/import-parrot-default';
 import {
   buildExportPayload,
   buildShareableLink,
@@ -386,6 +387,7 @@ export function importCalculator(
   let success = false;
   try {
     const calculator = expandCompactCalculatorState(parseImportPayload(importVal));
+    defaultImportedParrotCopies(calculator);
 
     if (options?.resetBattle) {
       resetSimulationState(ctx);

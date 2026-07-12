@@ -928,7 +928,41 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly importForDialog = (
     importVal: string,
     options?: { resetBattle?: boolean },
-  ): boolean => importCalculatorImpl(this, importVal, false, options);
+  ): boolean => {
+    const success = importCalculatorImpl(this, importVal, false, options);
+    if (success) {
+      this.markForCheck();
+      this.closeImportDialogAfterSuccess();
+    }
+    return success;
+  };
+
+  private closeImportDialogAfterSuccess(): void {
+    const importModalElement = document.getElementById('import');
+    if (!importModalElement) {
+      return;
+    }
+
+    const cleanUpBackdrop = (): void => {
+      if (document.querySelector('.modal.show')) {
+        return;
+      }
+      document.querySelectorAll('.modal-backdrop').forEach((backdrop) => {
+        backdrop.remove();
+      });
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    };
+
+    importModalElement.addEventListener('hidden.bs.modal', cleanUpBackdrop, {
+      once: true,
+    });
+    const importModal =
+      Modal.getInstance(importModalElement) ?? new Modal(importModalElement);
+    importModal.hide();
+    setTimeout(cleanUpBackdrop, 400);
+  }
   readonly generateShareLink = () => generateShareLinkImpl(this);
   readonly refreshFilteredBattles = () => refreshFilteredBattlesImpl(this);
 

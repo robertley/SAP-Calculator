@@ -75,15 +75,25 @@
       }}
     </button>
     <button
-      class="btn btn-outline-primary" *ngIf="mode === 'strength-image'"
-      (click)="buildBoardStrengthImage()"
+      class="btn btn-outline-primary"
+      *ngIf="mode === 'strength-image'"
+      (click)="buildBoardStrengthImage('quick')"
       [disabled]="boardStrengthImageLoading"
     >
       {{
         boardStrengthImageLoading
           ? "Building Strength Image..."
-          : "Build Strength Image"
+          : "Build Quick Strength Image"
       }}
+    </button>
+    <button
+      class="btn btn-outline-secondary"
+      *ngIf="mode === 'strength-image'"
+      (click)="buildBoardStrengthImage('high')"
+      [disabled]="boardStrengthImageLoading"
+      title="Runs a more thorough strength evaluation and takes longer"
+    >
+      Build Extended Strength Image
     </button>
   </div>
   <div *ngIf="mode === 'positioning-image' && positioningImageLoading" class="mb-2">

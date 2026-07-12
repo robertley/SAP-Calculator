@@ -79,7 +79,7 @@ export class CyclopsAbility extends Ability {
     });
     manaTarget.increaseMana(manaGain);
 
-    if (this.currentUses < this.level) {
+    if (this.currentUses <= this.level) {
       let expTargetResp = resolveTriggerTargetAlive(owner, triggerPet);
       let expTarget = expTargetResp.pet;
       if (expTarget == null) {

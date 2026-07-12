@@ -243,6 +243,73 @@ function getBattleForTurn(replay, turnNumber) {
   return fallbackAction?.Battle ? safeParseBattle(fallbackAction.Battle) : null;
 }
 
+function getOpponentParticipationId(replay) {
+  const modeCandidates = [replay?.GenesisModeModel];
+  const actions = Array.isArray(replay?.Actions) ? replay.Actions : [];
+  for (let index = actions.length - 1; index >= 0; index -= 1) {
+    if (actions[index]?.Type === 1 && actions[index]?.Mode) {
+      modeCandidates.push(actions[index].Mode);
+    }
+  }
+
+  for (const candidate of modeCandidates) {
+    const mode =
+      typeof candidate === "string" ? safeParseJson(candidate) : candidate;
+    const opponents = Array.isArray(mode?.Opponents) ? mode.Opponents : [];
+    const participationId = opponents[0]?.ParticipationId;
+    if (participationId != null && String(participationId).trim()) {
+      return String(participationId).trim();
+    }
+  }
+  return null;
+}
+
+async function attachReplayDecks(
+  battle,
+  replay,
+  participationId,
+  email,
+  password,
+) {
+  if (!battle || typeof battle !== "object") {
+    return null;
+  }
+
+  const playerDeck = replay?.GenesisBuildModel?.Bor?.Deck;
+  if (playerDeck && battle.UserBoard && !battle.UserBoard.Deck) {
+    battle.UserBoard.Deck = playerDeck;
+  }
+
+  const opponentParticipationId = getOpponentParticipationId(replay);
+  if (
+    !opponentParticipationId ||
+    opponentParticipationId === String(participationId) ||
+    !battle.OpponentBoard ||
+    battle.OpponentBoard.Deck
+  ) {
+    return null;
+  }
+
+  try {
+    const opponentReplay = await fetchReplay(
+      opponentParticipationId,
+      email,
+      password,
+    );
+    const opponentDeck = opponentReplay?.GenesisBuildModel?.Bor?.Deck;
+    if (opponentDeck) {
+      battle.OpponentBoard.Deck = opponentDeck;
+    }
+    return opponentReplay;
+  } catch (error) {
+    console.warn(
+      `Unable to fetch opponent replay ${opponentParticipationId}:`,
+      error?.message || error,
+    );
+    return null;
+  }
+}
+
 function readFiniteNumber(value) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
@@ -411,20 +478,21 @@ function pickMostLikelyPetId(petCountById) {
   return bestPetId;
 }
 
-function buildReplayAbilityPetMap(replay) {
+function buildReplayAbilityPetMap(...replays) {
   const abilityOwnerCounts = new Map();
-  const actions = Array.isArray(replay?.Actions) ? replay.Actions : [];
+  replays.forEach((replay) => {
+    const actions = Array.isArray(replay?.Actions) ? replay.Actions : [];
+    actions.forEach((action) => {
+      const parsedBuild = safeParseJson(action?.Build);
+      const parsedBattle = safeParseJson(action?.Battle);
+      const parsedMode = safeParseJson(action?.Mode);
+      collectAbilityOwnerCounts(parsedBuild, abilityOwnerCounts);
+      collectAbilityOwnerCounts(parsedBattle, abilityOwnerCounts);
+      collectAbilityOwnerCounts(parsedMode, abilityOwnerCounts);
+    });
 
-  actions.forEach((action) => {
-    const parsedBuild = safeParseJson(action?.Build);
-    const parsedBattle = safeParseJson(action?.Battle);
-    const parsedMode = safeParseJson(action?.Mode);
-    collectAbilityOwnerCounts(parsedBuild, abilityOwnerCounts);
-    collectAbilityOwnerCounts(parsedBattle, abilityOwnerCounts);
-    collectAbilityOwnerCounts(parsedMode, abilityOwnerCounts);
+    collectAbilityOwnerCounts(replay?.GenesisBuildModel, abilityOwnerCounts);
   });
-
-  collectAbilityOwnerCounts(replay?.GenesisBuildModel, abilityOwnerCounts);
 
   const abilityPetMap = {};
   for (const [abilityId, petCountById] of abilityOwnerCounts.entries()) {
@@ -631,11 +699,20 @@ const server = http.createServer(async (req, res) => {
         return;
       }
 
+      const opponentReplay = await attachReplayDecks(
+        battle,
+        replay,
+        participationId,
+        sapEmail,
+        sapPassword,
+      );
+
       sendJson(res, 200, {
         battle,
         genesisBuildModel: replay.GenesisBuildModel || null,
         genesisModeModel: replay.GenesisModeModel || null,
-        abilityPetMap: buildReplayAbilityPetMap(replay),
+        opponentGenesisBuildModel: opponentReplay?.GenesisBuildModel || null,
+        abilityPetMap: buildReplayAbilityPetMap(replay, opponentReplay),
       });
     } catch (error) {
       const statusCode = error.statusCode || 500;

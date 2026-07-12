@@ -110,7 +110,18 @@ export function applyCalculatorState(
     ctx.formGroup,
     calculator as Record<string, unknown>,
     ctx.dayNight,
-    () => fixCustomPackSelect(ctx),
+    () => {
+      ctx.petService.buildCustomPackPets(
+        ctx.formGroup.get('customPacks') as FormArray,
+      );
+      const playerPack = ctx.formGroup.get('playerPack').value;
+      const opponentPack = ctx.formGroup.get('opponentPack').value;
+      fixCustomPackSelect(ctx);
+      updatePlayerPack(ctx, ctx.player, playerPack, false);
+      updatePlayerPack(ctx, ctx.opponent, opponentPack, false);
+      ctx.previousPackPlayer = playerPack;
+      ctx.previousPackOpponent = opponentPack;
+    },
   );
   ctx.logService.setShowTriggerNamesInLogs(
     ctx.formGroup.get('showTriggerNamesInLogs')?.value,

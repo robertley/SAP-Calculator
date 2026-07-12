@@ -327,6 +327,45 @@ describe('ReplayCalcParser', () => {
     ).toBe('Vampire Bat');
   });
 
+  it('imports the Wolf swallowed by Beluga from replay 019f56b7 turn 10', () => {
+    const state = parseTeamwoodReplayForCalculator(
+      {
+        turns: [{
+          turn: 10,
+          user: {
+            pets: [{
+              slot: 0,
+              id: '182',
+              level: 1,
+              attack: { permanent: 3 },
+              health: { permanent: 6 },
+              abilities: [
+                { id: '213', level: 1 },
+                { id: '296', level: 1 },
+              ],
+            }],
+          },
+          opponent: { pets: [] },
+        }],
+        abilityPetMap: {
+          // This actual neighbor made the old heuristic infer pet 193
+          // (Aardvark) from Beluga's native ability 213.
+          '212': '192',
+          '213': '182',
+          // The replay index incorrectly attributes the copied ability to Beluga.
+          '296': '182',
+          // This is the actual neighboring entry in the indexed replay. It must
+          // not cause enum 296 to be guessed as an unrelated nearby pet.
+          '297': '271',
+        },
+      },
+      10,
+    );
+
+    const beluga = state?.playerPets.find((pet) => pet?.name === 'Beluga Whale');
+    expect(beluga?.belugaSwallowedPet).toBe('Wolf');
+  });
+
   it('reads times hurt from raw replay battle pets and swallowed memory', () => {
     const parser = new ReplayCalcParser();
     const battleJson: ReplayBattleJson = {
@@ -612,5 +651,68 @@ describe('ReplayCalcParser', () => {
 
     expect(state.playerPack).toBe('Custom Pack (2)');
     expect(selectedPack?.tier1Pets.some((pet) => pet !== null)).toBe(true);
+  });
+
+  it('assigns a genesis custom pack only to the player perspective', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 0,
+        Mins: { Items: [] },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: { Items: [] },
+      },
+    };
+    const buildModel = {
+      Bor: {
+        Deck: {
+          Id: 'player-genesis-deck',
+          Title: 'alpaca',
+          Minions: ['624'],
+        },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(battleJson, buildModel);
+
+    expect(state.playerPack).toBe('alpaca');
+    expect(state.opponentPack).toBe('Turtle');
+    expect(state.customPacks).toHaveLength(1);
+    expect(state.customPacks[0].deckId).toBe('player-genesis-deck');
+  });
+
+  it('imports custom packs from both replay perspectives', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 0,
+        Deck: {
+          Id: 'player-deck',
+          Title: 'Player Pack',
+          Minions: ['624'],
+        },
+        Mins: { Items: [] },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Deck: {
+          Id: 'opponent-deck',
+          Title: 'Opponent Pack',
+          Minions: ['625'],
+        },
+        Mins: { Items: [] },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(battleJson);
+
+    expect(state.playerPack).toBe('Player Pack');
+    expect(state.opponentPack).toBe('Opponent Pack');
+    expect(state.customPacks.map((pack) => pack.deckId)).toEqual([
+      'player-deck',
+      'opponent-deck',
+    ]);
   });
 });

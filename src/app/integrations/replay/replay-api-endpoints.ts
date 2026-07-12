@@ -20,6 +20,11 @@ export function getReplayTurnsApiUrl(replayId: string): string {
   return `${trimTrailingSlash(environment.replayApiBaseUrl)}/replays/${encodedReplayId}/turns`;
 }
 
+export function getReplayPerspectivesApiUrl(replayId: string): string {
+  const encodedReplayId = encodeURIComponent(String(replayId));
+  return `${trimTrailingSlash(environment.replayApiBaseUrl)}/replays/${encodedReplayId}/perspectives`;
+}
+
 export function getSapLibraryReplayUrl(replayId: string): string {
   const baseUrl = trimTrailingSlash(environment.sapLibraryBaseUrl);
   const url = new URL(baseUrl);

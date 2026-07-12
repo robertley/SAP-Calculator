@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { catchError, map, shareReplay, switchMap, tap, timeout } from 'rxjs/operators';
 
 import {
   ReplayBattleJson,
+  ReplayActionJson,
   ReplayBuildModelJson,
   ReplayCalcParser,
   ReplayCalculatorState,
@@ -15,6 +16,7 @@ import {
 import { PACK_MAP } from './replay-calc-schema';
 import {
   getReplayApiUrl,
+  getReplayPerspectivesApiUrl,
   getReplayTurnsApiUrl,
   getSapLibraryReplayUrl,
 } from './replay-api-endpoints';
@@ -30,6 +32,7 @@ export interface ReplayBattleRequest {
 export interface ReplayBattleResponse {
   battle?: ReplayBattleJson;
   genesisBuildModel?: ReplayBuildModelJson;
+  opponentGenesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
   sapLibraryReplayId?: string;
   sapLibraryReplayUrl?: string;
@@ -57,6 +60,16 @@ interface ReplayIndexResponse {
   } | null;
   status?: string;
   error?: string;
+}
+
+interface ReplayPerspectiveResponse {
+  role?: string | null;
+  participationId?: string | null;
+  raw?: ReplayJsonObject | string | null;
+}
+
+interface ReplayPerspectivesResponse {
+  perspectives?: ReplayPerspectiveResponse[] | null;
 }
 
 interface ReplayTurnsStats {
@@ -188,6 +201,7 @@ export interface ReplayTurnsResponse {
   turns?: ReplayTurnActionLike[] | null;
   genesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
+  perspectives?: ReplayPerspectiveResponse[] | null;
   error?: string;
 }
 
@@ -231,7 +245,44 @@ export class ReplayCalcService {
   ): Observable<ReplayBattleResponse> {
     return this.fetchReplayBattleDirect(payload, timeoutMs).pipe(
       catchError(() => this.fetchReplayBattleFromTurnsApi(payload, timeoutMs)),
+      map((response) => this.attachReplayBuildDecks(response)),
     );
+  }
+
+  private attachReplayBuildDecks(
+    response: ReplayBattleResponse,
+  ): ReplayBattleResponse {
+    const battle = response?.battle;
+    if (!battle) {
+      return response;
+    }
+
+    const playerDeck = response.genesisBuildModel?.Bor?.Deck;
+    const opponentDeck = response.opponentGenesisBuildModel?.Bor?.Deck;
+    const userBoard =
+      playerDeck && battle.UserBoard && !battle.UserBoard.Deck
+        ? { ...battle.UserBoard, Deck: playerDeck }
+        : battle.UserBoard;
+    const opponentBoard =
+      opponentDeck && battle.OpponentBoard && !battle.OpponentBoard.Deck
+        ? { ...battle.OpponentBoard, Deck: opponentDeck }
+        : battle.OpponentBoard;
+
+    if (
+      userBoard === battle.UserBoard &&
+      opponentBoard === battle.OpponentBoard
+    ) {
+      return response;
+    }
+
+    return {
+      ...response,
+      battle: {
+        ...battle,
+        UserBoard: userBoard,
+        OpponentBoard: opponentBoard,
+      },
+    };
   }
 
   fetchReplayBattleDirect(
@@ -377,8 +428,7 @@ export class ReplayCalcService {
     requestedTurn: number,
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
-    return this.http.get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId)).pipe(
-      timeout(timeoutMs),
+    return this.fetchReplayTurnsByReplayId(replayId, timeoutMs).pipe(
       map((turnsResponse) =>
         this.buildReplayBattleResponseFromTurns(
           turnsResponse,
@@ -393,8 +443,21 @@ export class ReplayCalcService {
     replayId: string,
     timeoutMs: number,
   ): Observable<ReplayTurnsResponse> {
-    return this.http.get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId)).pipe(
-      timeout(timeoutMs),
+    const turns$ = this.http
+      .get<ReplayTurnsResponse>(getReplayTurnsApiUrl(replayId))
+      .pipe(timeout(timeoutMs));
+    const perspectives$ = this.http
+      .get<ReplayPerspectivesResponse>(getReplayPerspectivesApiUrl(replayId))
+      .pipe(
+        timeout(timeoutMs),
+        catchError(() => of(null)),
+      );
+
+    return forkJoin({ turns: turns$, perspectives: perspectives$ }).pipe(
+      map(({ turns, perspectives }) => ({
+        ...turns,
+        perspectives: perspectives?.perspectives ?? null,
+      })),
     );
   }
 
@@ -648,6 +711,41 @@ export class ReplayCalcService {
     };
   }
 
+  private parseReplayPerspectiveRaw(
+    raw: ReplayPerspectiveResponse['raw'],
+  ): ReplayJsonObject | null {
+    if (this.isRecord(raw)) {
+      return raw;
+    }
+    return this.parseJsonObject(raw);
+  }
+
+  private getReplayPerspectiveBuildModel(
+    raw: ReplayJsonObject | null,
+  ): ReplayBuildModelJson | undefined {
+    if (!raw) {
+      return undefined;
+    }
+
+    const modelValue = raw['GenesisBuildModel'] ?? raw['GenesisModeModel'];
+    const model = this.isRecord(modelValue)
+      ? modelValue
+      : this.parseJsonObject(modelValue);
+    return model as ReplayBuildModelJson | undefined;
+  }
+
+  private getReplayPerspectiveActions(
+    raw: ReplayJsonObject | null,
+  ): ReplayActionJson[] {
+    if (!Array.isArray(raw?.['Actions'])) {
+      return [];
+    }
+
+    return raw['Actions']
+      .filter((action): action is ReplayJsonObject => this.isRecord(action))
+      .map((action) => action as unknown as ReplayActionJson);
+  }
+
   private buildReplayBattleResponseFromTurns(
     turnsResponse: ReplayTurnsResponse,
     requestedTurn: number,
@@ -721,7 +819,37 @@ export class ReplayCalcService {
       }
     }
 
+    const perspectiveRaws = (turnsResponse?.perspectives ?? [])
+      .map((perspective) => this.parseReplayPerspectiveRaw(perspective?.raw))
+      .filter((raw): raw is ReplayJsonObject => raw !== null);
+    const playerPerspectiveRaw =
+      turnsResponse?.perspectives
+        ?.find((perspective) => perspective?.role === 'player')
+        ?.raw ?? null;
+    const opponentPerspectiveRaw =
+      turnsResponse?.perspectives
+        ?.find((perspective) => perspective?.role === 'opponent')
+        ?.raw ?? null;
+    const playerPerspectiveBuildModel = this.getReplayPerspectiveBuildModel(
+      this.parseReplayPerspectiveRaw(playerPerspectiveRaw),
+    );
+    const opponentPerspectiveBuildModel = this.getReplayPerspectiveBuildModel(
+      this.parseReplayPerspectiveRaw(opponentPerspectiveRaw),
+    );
+
     let abilityPetMap = turnsResponse?.abilityPetMap ?? null;
+    const perspectiveActions = perspectiveRaws.flatMap((raw) =>
+      this.getReplayPerspectiveActions(raw),
+    );
+    if (perspectiveActions.length > 0) {
+      const perspectiveAbilityPetMap = buildReplayAbilityPetMapFromActions(
+        perspectiveActions,
+      );
+      abilityPetMap = {
+        ...(abilityPetMap ?? {}),
+        ...perspectiveAbilityPetMap,
+      };
+    }
     if (!abilityPetMap && turnsResponse?.replay?.raw_json?.Actions) {
       abilityPetMap = buildReplayAbilityPetMapFromActions(
         turnsResponse.replay.raw_json.Actions,
@@ -763,6 +891,14 @@ export class ReplayCalcService {
         ),
       };
 
+    const opponentDeck = opponentPerspectiveBuildModel?.Bor?.Deck;
+    const opponentBoard = this.isRecord(battleFromTurn['OpponentBoard'])
+      ? battleFromTurn['OpponentBoard']
+      : null;
+    if (opponentDeck && opponentBoard && !opponentBoard['Deck']) {
+      opponentBoard['Deck'] = opponentDeck;
+    }
+
     const parsedBattleOutcome = this.resolveBattleOutcomeFromSources(
       turns,
       selectedTurn,
@@ -788,7 +924,9 @@ export class ReplayCalcService {
       genesisBuildModel:
         turnsResponse?.genesisBuildModel ??
         turnsResponse?.replay?.raw_json?.GenesisBuildModel ??
-        turnsResponse?.replay?.GenesisBuildModel,
+        turnsResponse?.replay?.GenesisBuildModel ??
+        playerPerspectiveBuildModel,
+      opponentGenesisBuildModel: opponentPerspectiveBuildModel,
       abilityPetMap,
       sapLibraryReplayId,
       sapLibraryReplayUrl: sapLibraryReplayId

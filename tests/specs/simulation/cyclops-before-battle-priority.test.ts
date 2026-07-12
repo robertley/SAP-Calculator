@@ -65,4 +65,51 @@ describe('Cyclops before battle priority', () => {
     expect(gingerbreadIdx).toBeLessThan(healthPotionIdx);
     expect(healthPotionIdx).toBeLessThan(cyclopsIdx);
   });
+
+  it('gives +1/+1 through experience when the leveled friend reaches level 3', () => {
+    const config: SimulationConfig = {
+      playerPack: 'Unicorn',
+      opponentPack: 'Unicorn',
+      turn: 12,
+      playerGoldSpent: 10,
+      opponentGoldSpent: 10,
+      tokenPets: true,
+      mana: true,
+      logsEnabled: true,
+      simulationCount: 1,
+      playerPets: [
+        {
+          name: 'Ant',
+          attack: 10,
+          health: 10,
+          exp: 4,
+          equipment: { name: 'Gingerbread Man' },
+        },
+        {
+          name: 'Cyclops',
+          attack: 2,
+          health: 5,
+          exp: 0,
+        },
+        null,
+        null,
+        null,
+      ],
+      opponentPets: [
+        { name: 'Pig', attack: 1, health: 50, exp: 0 },
+        null,
+        null,
+        null,
+        null,
+      ],
+    };
+
+    const result = runSimulation(config);
+    const messages = (result.battles?.[0]?.logs ?? []).map((log) =>
+      String(log?.message ?? ''),
+    );
+
+    expect(messages).toContain('Ant leveled up to level 3.');
+    expect(messages).toContain('Cyclops gave Ant 1 exp.');
+  });
 });

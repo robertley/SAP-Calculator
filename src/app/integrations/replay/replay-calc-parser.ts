@@ -350,14 +350,34 @@ function resolveReplayMemoryPetName(
 function resolveNestedSwallowedPetName(
   value: ReplayPetJson | ReplayMemoryEntryJson | null | undefined,
 ): string | null {
-  const directEntry = asReplayMemoryEntry(value);
   const nestedEntry = getFirstReplayMemoryEntry(value);
-  return resolveReplayMemoryPetName(nestedEntry ?? directEntry);
+  if (nestedEntry) {
+    return resolveReplayMemoryPetName(nestedEntry);
+  }
+
+  // A full pet is not its own swallowed-memory entry. This matters when the
+  // replay summary omits MiMs: treating the root Enu as memory made Beluga
+  // swallow another Beluga (and did the same for Sarcastic Fringehead).
+  if (Array.isArray(value?.Abil)) {
+    return null;
+  }
+
+  return resolveReplayMemoryPetName(asReplayMemoryEntry(value));
 }
 
 const COPY_SOURCE_PET_IDS = new Set<string>([
   '53', // Parrot
+  '182', // Beluga Whale
   '373', // Abomination
+  '763', // Sarcastic Fringehead
+]);
+
+// Some stored/copy abilities have their own enum and therefore cannot be
+// recovered from the holder-based abilityPetMap emitted by replay indexing.
+// Keep these explicit so a copied ability is never guessed from an unrelated
+// neighboring pack's enum offset.
+const STORED_COPY_ABILITY_OWNER_BY_ID = new Map<string, string>([
+  ['296', 'Wolf'],
 ]);
 
 const ABOMINATION_SLOT_FIELDS = [
@@ -913,6 +933,43 @@ export class ReplayCalcParser {
       return getTimesHurtFromRawPet(petJson);
     };
 
+    const inferCopiedPetName = (
+      petJson: ReplayPetJson,
+      copyPetName: string,
+    ): string | null => {
+      // Stored-ability enums are definitive. Check every ability for one before
+      // attempting nearby-map inference; otherwise the holder's native ability
+      // can produce a plausible but incorrect pet (for example Aardvark before
+      // reaching Beluga's stored Wolf enum).
+      for (const ability of petJson.Abil ?? []) {
+        const abilityId = toReplayId(ability?.Enu);
+        const storedCopyOwner = abilityId
+          ? STORED_COPY_ABILITY_OWNER_BY_ID.get(abilityId)
+          : null;
+        if (storedCopyOwner) {
+          return storedCopyOwner;
+        }
+      }
+
+      for (const ability of petJson.Abil ?? []) {
+        const abilityId = toReplayId(ability?.Enu);
+        if (!abilityId) {
+          continue;
+        }
+        let ownerPetName = resolveAbilityOwnerPetName(abilityId);
+        // Replay indexes can attribute a copied ability to its current holder.
+        // When that happens, use the surrounding canonical ability map to find
+        // the original owner instead.
+        if (ownerPetName === copyPetName) {
+          ownerPetName = resolveAbilityOwnerPetNameByNearbyMap(abilityId);
+        }
+        if (ownerPetName && ownerPetName !== copyPetName) {
+          return ownerPetName;
+        }
+      }
+      return null;
+    };
+
     const parseAbominationSwallowedState = (
       petJson: ReplayPetJson,
     ): AbominationSwallowedState => {
@@ -1114,9 +1171,15 @@ export class ReplayCalcParser {
       );
 
       const belugaSwallowedPet =
-        petId === '182' ? resolveNestedSwallowedPetName(petJson) : null;
+        petId === '182'
+          ? resolveNestedSwallowedPetName(petJson) ??
+            inferCopiedPetName(petJson, 'Beluga Whale')
+          : null;
       const sarcasticFringeheadSwallowedPet =
-        petId === '763' ? resolveNestedSwallowedPetName(petJson) : null;
+        petId === '763'
+          ? resolveNestedSwallowedPetName(petJson) ??
+            inferCopiedPetName(petJson, 'Sarcastic Fringehead')
+          : null;
       const abominationSwallowedState =
         petId === '373'
           ? parseAbominationSwallowedState(petJson)
@@ -1252,9 +1315,15 @@ export class ReplayCalcParser {
     const opponentToy = getToy(opponentBoard);
 
     const customPacks = this.buildCustomPacksFromGenesis(buildModel, battleJson);
+    // GenesisBuildModel belongs to the participation ID used to fetch the
+    // replay, which is the player perspective. Summarized replay battles often
+    // omit UserBoard.Deck, so use the genesis deck as the player's fallback.
+    // Never use it for the opponent: their custom deck requires their own
+    // participation replay.
+    const playerDeck = userBoard?.Deck ?? buildModel?.Bor?.Deck;
     const playerCustomPack = this.findCustomPackFromDeck(
       customPacks,
-      userBoard?.Deck,
+      playerDeck,
     );
     const opponentCustomPack = this.findCustomPackFromDeck(
       customPacks,
