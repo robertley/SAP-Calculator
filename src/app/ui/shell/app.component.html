@@ -84,16 +84,26 @@
         </div>
         <div class="mobile-pet-board" aria-label="Player team">
           <div class="mobile-board-direction"><span>Back</span><span>Front</span></div>
-          <div class="mobile-pet-slots">
-            <button type="button" class="mobile-pet-slot" *ngFor="let pet of boardFacade.playerPetsControls; index as i; trackBy: boardFacade.trackByIndex"
-              (click)="openMobilePetEditor('player', 4 - i)" [attr.aria-label]="'Edit player slot ' + (i + 1) + ', ' + getMobilePetName('player', 4 - i)">
+          <div class="mobile-pet-slots" cdkDropList cdkDropListOrientation="horizontal"
+            [cdkDropListDisabled]="boardFacade.petSlotDragDisabled"
+            (cdkDropListDropped)="boardFacade.drop($event, 'player')">
+            <div class="mobile-pet-slot" *ngFor="let pet of boardFacade.playerPetsControls; index as i; trackBy: boardFacade.trackByIndex"
+              role="button" tabindex="0"
+              cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="boardFacade.petSlotDragStartDelay"
+              [cdkDragDisabled]="boardFacade.petSlotDragDisabled"
+              (cdkDragStarted)="beginMobilePetDrag()" (cdkDragEnded)="endMobilePetDrag()"
+              (click)="openMobilePetEditor('player', 4 - i)" (keydown.enter)="openMobilePetEditor('player', 4 - i)"
+              (keydown.space)="$event.preventDefault(); openMobilePetEditor('player', 4 - i)"
+              [attr.aria-label]="'Edit player slot ' + (i + 1) + ', ' + getMobilePetName('player', 4 - i)">
+              <button type="button" class="mobile-pet-clear" (click)="clearMobilePetSlot('player', 4 - i, $event)"
+                [attr.aria-label]="'Clear player slot ' + (i + 1)" title="Clear slot">×</button>
               <span class="mobile-slot-number">{{ i + 1 }}</span>
               <img *ngIf="getMobilePetIcon('player', 4 - i) as petIcon; else emptyPlayerSlot" [ngSrc]="petIcon" width="52" height="52" alt="" />
               <ng-template #emptyPlayerSlot><span class="mobile-empty-slot"><i class="fas fa-plus"></i></span></ng-template>
               <img *ngIf="getMobileEquipmentIcon('player', 4 - i) as equipmentIcon" class="mobile-equipment-icon" [ngSrc]="equipmentIcon" width="22" height="22" alt="" />
               <span class="mobile-pet-name">{{ getMobilePetName('player', 4 - i) }}</span>
               <span class="mobile-pet-stats" *ngIf="getMobilePetName('player', 4 - i) !== 'Empty'">{{ boardFacade.makeFormGroup(pet).get('attack')?.value }}/{{ boardFacade.makeFormGroup(pet).get('health')?.value }}</span>
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -176,16 +186,26 @@
         </div>
         <div class="mobile-pet-board" aria-label="Opponent team">
           <div class="mobile-board-direction"><span>Front</span><span>Back</span></div>
-          <div class="mobile-pet-slots">
-            <button type="button" class="mobile-pet-slot" *ngFor="let pet of boardFacade.opponentPetsControls; index as i; trackBy: boardFacade.trackByIndex"
-              (click)="openMobilePetEditor('opponent', i)" [attr.aria-label]="'Edit opponent slot ' + (i + 1) + ', ' + getMobilePetName('opponent', i)">
+          <div class="mobile-pet-slots" cdkDropList cdkDropListOrientation="horizontal"
+            [cdkDropListDisabled]="boardFacade.petSlotDragDisabled"
+            (cdkDropListDropped)="boardFacade.drop($event, 'opponent')">
+            <div class="mobile-pet-slot" *ngFor="let pet of boardFacade.opponentPetsControls; index as i; trackBy: boardFacade.trackByIndex"
+              role="button" tabindex="0"
+              cdkDrag cdkDragLockAxis="x" [cdkDragStartDelay]="boardFacade.petSlotDragStartDelay"
+              [cdkDragDisabled]="boardFacade.petSlotDragDisabled"
+              (cdkDragStarted)="beginMobilePetDrag()" (cdkDragEnded)="endMobilePetDrag()"
+              (click)="openMobilePetEditor('opponent', i)" (keydown.enter)="openMobilePetEditor('opponent', i)"
+              (keydown.space)="$event.preventDefault(); openMobilePetEditor('opponent', i)"
+              [attr.aria-label]="'Edit opponent slot ' + (i + 1) + ', ' + getMobilePetName('opponent', i)">
+              <button type="button" class="mobile-pet-clear" (click)="clearMobilePetSlot('opponent', i, $event)"
+                [attr.aria-label]="'Clear opponent slot ' + (i + 1)" title="Clear slot">×</button>
               <span class="mobile-slot-number">{{ i + 1 }}</span>
               <img *ngIf="getMobilePetIcon('opponent', i) as petIcon; else emptyOpponentSlot" [ngSrc]="petIcon" width="52" height="52" alt="" />
               <ng-template #emptyOpponentSlot><span class="mobile-empty-slot"><i class="fas fa-plus"></i></span></ng-template>
               <img *ngIf="getMobileEquipmentIcon('opponent', i) as equipmentIcon" class="mobile-equipment-icon" [ngSrc]="equipmentIcon" width="22" height="22" alt="" />
               <span class="mobile-pet-name">{{ getMobilePetName('opponent', i) }}</span>
               <span class="mobile-pet-stats" *ngIf="getMobilePetName('opponent', i) !== 'Empty'">{{ boardFacade.makeFormGroup(pet).get('attack')?.value }}/{{ boardFacade.makeFormGroup(pet).get('health')?.value }}</span>
-            </button>
+            </div>
           </div>
         </div>
       </div>

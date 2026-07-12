@@ -284,6 +284,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   lastAutoSavedAt: Date | null = null;
   activePetSlot: { side: 'player' | 'opponent'; index: number } | null = null;
   mobilePetEditorSlot: { side: 'player' | 'opponent'; index: number } | null = null;
+  private mobilePetClickSuppressed = false;
   petClipboard: Record<string, unknown> | null = null;
   readonly petSlotDragStartDelay: DragStartDelay = { touch: 160, mouse: 0 };
 
@@ -455,9 +456,38 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   openMobilePetEditor(side: 'player' | 'opponent', index: number): void {
+    if (this.mobilePetClickSuppressed) {
+      this.mobilePetClickSuppressed = false;
+      return;
+    }
     this.setActivePetSlot(side, index);
     this.mobilePetEditorSlot = { side, index };
     document.body.classList.add('mobile-pet-editor-open');
+    this.cdr.markForCheck();
+  }
+
+  beginMobilePetDrag(): void {
+    this.mobilePetClickSuppressed = true;
+  }
+
+  endMobilePetDrag(): void {
+    window.setTimeout(() => {
+      this.mobilePetClickSuppressed = false;
+    }, 0);
+  }
+
+  clearMobilePetSlot(
+    side: 'player' | 'opponent',
+    index: number,
+    event: Event,
+  ): void {
+    event.stopPropagation();
+    const displayIndex = side === 'player' ? 4 - index : index;
+    const selectorIndex = side === 'player' ? displayIndex : 5 + displayIndex;
+    this.petSelectors?.toArray()[selectorIndex]?.removePet();
+    if (this.mobilePetEditorSlot?.side === side && this.mobilePetEditorSlot.index === index) {
+      this.closeMobilePetEditor();
+    }
     this.cdr.markForCheck();
   }
 

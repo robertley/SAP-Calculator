@@ -341,8 +341,11 @@ export function resetPlayer(
   ctx: AppUiContext,
   player: 'player' | 'opponent',
 ): void {
+  // The mobile focused editor adds a temporary selector after the ten board
+  // selectors. Keep reset targeting the stable desktop board slots.
   const petSelectors = ctx.petSelectors
     .toArray()
+    .slice(0, 10)
     .slice(player == 'player' ? 0 : 5, player == 'player' ? 5 : 10);
   for (const petSelector of petSelectors) {
     petSelector.removePet();

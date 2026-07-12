@@ -521,6 +521,7 @@ body.custom-pack-editor-open .modal-backdrop.show {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.3rem;
+    touch-action: pan-y;
   }
 
   .mobile-pet-slot {
@@ -542,7 +543,27 @@ body.custom-pack-editor-open .modal-backdrop.show {
   }
 
   .mobile-pet-slot:active { transform: scale(0.97); background: rgba(0, 0, 0, 0.42); }
+  .mobile-pet-slot.cdk-drag { touch-action: pan-y; cursor: grab; }
+  .mobile-pet-slot.cdk-drag:active { cursor: grabbing; }
+  .mobile-pet-slot.cdk-drag-preview { opacity: 0.9; transform: rotate(2deg) scale(1.04); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45); }
+  .mobile-pet-slot.cdk-drag-placeholder { opacity: 0.24; background: rgba(255, 255, 255, 0.16); }
   .mobile-pet-slot:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .mobile-pet-clear {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.62);
+    color: #ff8b95;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+  .mobile-pet-clear:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
   .mobile-pet-slot > img:not(.mobile-equipment-icon) { width: 52px; height: 52px; object-fit: contain; }
 
   .mobile-slot-number {
