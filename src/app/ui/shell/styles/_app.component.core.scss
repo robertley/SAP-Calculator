@@ -27,6 +27,14 @@
   position: relative;
 }
 
+.mobile-pet-board,
+.mobile-pet-editor,
+.mobile-pet-editor-backdrop {
+  display: none;
+}
+
+body.mobile-pet-editor-open { overflow: hidden; }
+
 @media (hover: none) and (pointer: coarse) {
   .drag-container.cdk-drag {
     touch-action: pan-y !important;
@@ -490,9 +498,136 @@ body.custom-pack-editor-open .modal-backdrop.show {
 
 // if window is xs breakpoint
 @media (max-width: 767.98px) {
-  .card {
-    max-width: 18em;
+  .desktop-pet-board { display: none; }
+
+  .mobile-pet-board {
+    display: block;
+    padding: 0.35rem 0;
   }
+
+  .mobile-board-direction {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.25rem 0.25rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  }
+
+  .mobile-pet-slots {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.3rem;
+  }
+
+  .mobile-pet-slot {
+    position: relative;
+    min-width: 0;
+    min-height: 112px;
+    padding: 0.55rem 0.2rem 0.35rem;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.28);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-pet-slot:active { transform: scale(0.97); background: rgba(0, 0, 0, 0.42); }
+  .mobile-pet-slot:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .mobile-pet-slot > img:not(.mobile-equipment-icon) { width: 52px; height: 52px; object-fit: contain; }
+
+  .mobile-slot-number {
+    position: absolute;
+    top: 3px;
+    left: 5px;
+    font-size: 0.62rem;
+    opacity: 0.75;
+  }
+
+  .mobile-empty-slot {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border: 1px dashed rgba(255, 255, 255, 0.48);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .mobile-equipment-icon {
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
+  .mobile-pet-name {
+    width: 100%;
+    margin-top: 0.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.68rem;
+  }
+
+  .mobile-pet-stats { font-size: 0.72rem; font-weight: 700; }
+
+  .mobile-pet-editor-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1190;
+    background: rgba(0, 0, 0, 0.58);
+    backdrop-filter: blur(3px);
+  }
+
+  .mobile-pet-editor {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    z-index: 1200;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: min(88dvh, 760px);
+    padding-bottom: env(safe-area-inset-bottom);
+    border-radius: 18px 18px 0 0;
+    background: #263548;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+    animation: mobileEditorUp 180ms ease-out;
+  }
+
+  .mobile-pet-editor-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 64px;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+  }
+
+  .mobile-pet-editor-header h2 { margin: 0.1rem 0 0; font-size: 1.05rem; }
+  .mobile-editor-eyebrow { font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em; opacity: 0.72; text-transform: uppercase; }
+  .mobile-editor-done { min-width: 64px; min-height: 44px; border: 0; border-radius: 999px; background: #fff; color: #172033; font-weight: 700; }
+  .mobile-pet-editor-body { overflow-y: auto; padding: 0.65rem; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .mobile-pet-editor-body app-pet-selector > .card { max-width: none; width: 100%; box-shadow: none; }
+
+  @keyframes mobileEditorUp { from { transform: translateY(35%); opacity: 0; } }
 
   .back,
   .front {

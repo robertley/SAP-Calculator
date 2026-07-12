@@ -21,6 +21,7 @@ import { AttackEventService } from '../ability/attack-event.service';
 import { FaintEventService } from '../ability/faint-event.service';
 import { InjectorService } from '../injector.service';
 import { runPositioningOptimization } from './positioning-optimizer';
+import { OutFinderOptions, runOutFinder } from './out-finder';
 import {
   BoardStrengthOptions,
   runBoardStrengthEvaluation,
@@ -51,12 +52,18 @@ type BoardStrengthStartMessage = {
   config: SimulationConfig;
   options: BoardStrengthOptions;
 };
+type OutFinderStartMessage = {
+  type: 'out-finder-start';
+  config: SimulationConfig;
+  options: OutFinderOptions;
+};
 
 type CancelMessage = { type: 'cancel' };
 
 type IncomingMessage =
   | StartMessage
   | OptimizePositioningStartMessage
+  | OutFinderStartMessage
   | BoardStrengthStartMessage
   | CancelMessage;
 
@@ -229,6 +236,32 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
           error instanceof Error
             ? error.message
             : 'Board strength evaluation failed.',
+      });
+    }
+    return;
+  }
+
+  if (data.type === 'out-finder-start') {
+    cancelRequested = false;
+    const { config, options } = data;
+    try {
+      const { runner } = createRunner();
+      const result = runOutFinder({
+        baseConfig: config,
+        options,
+        shouldAbort: () => cancelRequested,
+        onProgress: (progress) => postMessage({ type: 'out-finder-progress', progress }),
+        simulateBatch: (batchConfig) =>
+          runner.run(batchConfig, { shouldAbort: () => cancelRequested }),
+      });
+      postMessage({
+        type: cancelRequested || result.aborted ? 'out-finder-aborted' : 'out-finder-result',
+        result,
+      });
+    } catch (error) {
+      postMessage({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Out Finder failed.',
       });
     }
     return;

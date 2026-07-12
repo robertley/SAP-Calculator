@@ -1,6 +1,6 @@
 const SOUND_MUTED_STORAGE_KEY = 'sapSoundMuted';
 const SOUND_VOLUME_STORAGE_KEY = 'sapSoundVolume';
-const DEFAULT_SOUND_VOLUME = 1;
+const DEFAULT_SOUND_VOLUME = 0.05;
 
 function hasLocalStorage(): boolean {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';

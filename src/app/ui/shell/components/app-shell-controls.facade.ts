@@ -8,6 +8,7 @@ import {
 import type { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.types';
 import type { AppComponent } from '../app.component';
 import type { Player } from 'app/domain/entities/player.class';
+import type { OutFinderCandidateResult, OutFinderResult } from 'app/integrations/simulation/out-finder';
 
 export interface AppShellControlsFacade {
   renderEpoch: number;
@@ -28,6 +29,7 @@ export interface AppShellControlsFacade {
   losePercent: number;
   positioningDeltaSummary: PositioningDeltaSummary | null;
   positioningDeltaSideLabel: 'Player' | 'Opponent';
+  outFinderResult: OutFinderResult | null;
   theme: 'light' | 'dark';
   soundMenuOpen: boolean;
   soundVolume: number;
@@ -58,6 +60,9 @@ export interface AppShellControlsFacade {
   simulate: (count?: number) => void;
   cancelSimulation: () => void;
   optimizePositioning: (side: 'player' | 'opponent') => void;
+  findOuts: (side: 'player' | 'opponent', shopTier: number) => void;
+  clearOutFinderResult: () => void;
+  applyOut: (candidate: OutFinderCandidateResult) => void;
   randomize: () => void;
   undoRandomize: () => void;
   formatSignedPercentDelta: (value: number) => string;
@@ -176,6 +181,9 @@ export function createAppShellControlsFacade(
     get positioningDeltaSideLabel() {
       return app.positioningDeltaSideLabel;
     },
+    get outFinderResult() {
+      return app.outFinderResult;
+    },
     formatSignedPercentDelta: (value) => app.formatSignedPercentDelta(value),
     get theme() {
       return app.theme;
@@ -283,6 +291,9 @@ export function createAppShellControlsFacade(
     simulate: (count) => app.simulate(count),
     cancelSimulation: () => app.cancelSimulation(),
     optimizePositioning: (side) => app.optimizePositioning(side),
+    findOuts: (side, shopTier) => app.findOuts(side, shopTier),
+    clearOutFinderResult: () => app.clearOutFinderResult(),
+    applyOut: (candidate) => app.applyOut(candidate),
     randomize: () => app.randomize(),
     undoRandomize: () => app.undoRandomize(),
     markForCheck: () => app.markForCheck(),

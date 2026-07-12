@@ -56,6 +56,6 @@ export function loadTeam(ctx: AppTeamStateContext, side: 'player' | 'opponent'):
   });
 }
 
-export function loadTeamPresets(ctx: AppTeamStateContext): void {
-  ctx.savedTeams = ctx.teamPresetsService.loadTeams();
+export function loadTeamPresets(ctx: AppTeamStateContext): TeamPreset[] {
+  return ctx.teamPresetsService.loadTeams();
 }

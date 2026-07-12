@@ -156,6 +156,14 @@
         </span>
         <span><strong>Optimize positioning</strong><small>Find the strongest board order</small></span>
       </button>
+      <button type="button" class="tool-dialog-action" (click)="selectToolsTab('outs')"
+        [class.active]="activeToolsTab === 'outs'">
+        <span class="tool-dialog-icon" aria-hidden="true">
+          <img src="assets/art/Public/Public/Pets/Capybara.png" alt="">
+        </span>
+        <span><strong>Out Finder</strong><small>Test one pet or perk purchase</small></span>
+        <b class="tool-action-count" *ngIf="app.outFinderResult">{{ app.outFinderResult.rankedCandidates.length }}</b>
+      </button>
       <button type="button" class="tool-dialog-action" (click)="selectToolsTab('strength')"
         [class.active]="activeToolsTab === 'strength'" [disabled]="app.simulationInProgress">
         <span class="tool-dialog-icon" aria-hidden="true">
@@ -222,6 +230,73 @@
               Optimize {{ optimizeSide === 'player' ? 'Player' : 'Opponent' }}
             </button>
           </footer>
+        </section>
+
+        <section class="tool-pane out-finder-pane" *ngIf="activeToolsTab === 'outs'">
+          <div class="tool-pane-heading">
+            <span class="dialog-eyebrow">One purchase</span>
+            <h3>Out Finder</h3>
+            <p>Test rollable pet and food purchases available at the selected shop tier.</p>
+          </div>
+          <div class="out-finder-controls">
+            <div>
+              <label class="dialog-field-label">Find outs for</label>
+              <div class="side-segmented-control" role="group" aria-label="Side to find outs for">
+                <button type="button" [class.active]="outFinderSide === 'player'" (click)="outFinderSide = 'player'; onOutFinderScopeChanged()">Player</button>
+                <button type="button" [class.active]="outFinderSide === 'opponent'" (click)="outFinderSide = 'opponent'; onOutFinderScopeChanged()">Opponent</button>
+              </div>
+            </div>
+            <label class="out-finder-tier-field" for="outFinderShopTier">
+              <span class="dialog-field-label">Shop tier</span>
+              <select id="outFinderShopTier" class="form-select" [(ngModel)]="outFinderShopTier"
+                [ngModelOptions]="{ standalone: true }" [disabled]="app.simulationInProgress"
+                (ngModelChange)="onOutFinderScopeChanged()">
+                <option [ngValue]="1">Tier 1</option>
+                <option [ngValue]="2">Tier 2</option>
+                <option [ngValue]="3">Tier 3</option>
+                <option [ngValue]="4">Tier 4</option>
+                <option [ngValue]="5">Tier 5</option>
+                <option [ngValue]="6">Tier 6</option>
+              </select>
+            </label>
+            <button type="button" class="btn btn-primary" (click)="runOutFinder()" [disabled]="app.simulationInProgress">
+              {{ app.simulationInProgress ? 'Testing outs…' : 'Find outs' }}
+            </button>
+          </div>
+
+          <div class="out-finder-summary" *ngIf="app.outFinderResult as result">
+            <span><strong>{{ result.pack }}</strong> pack</span>
+            <span>Tier {{ result.shopTier }}</span>
+            <span>{{ result.candidates.length }} candidates</span>
+            <span>Baseline {{ result.baseline.winRate * 100 | number:'1.1-1' }}% win</span>
+          </div>
+          <div class="out-finder-empty" *ngIf="!app.outFinderResult && !app.simulationInProgress">
+            Results compare one shop action against the current board. Pet outs preserve the other pets' relative order.
+          </div>
+          <div class="out-finder-results" *ngIf="app.outFinderResult as result">
+            <div class="out-finder-empty" *ngIf="!result.rankedCandidates.length">
+              {{ result.stopReason === 'baseline-perfect'
+                ? 'No outs needed: the current board won every baseline simulation.'
+                : 'No improving outs found at this shop tier.' }}
+            </div>
+            <div class="out-finder-result" *ngFor="let candidate of result.rankedCandidates | slice:0:20; index as rank"
+              [class.out-finder-result-improves]="true">
+              <span class="out-finder-rank">{{ rank + 1 }}</span>
+              <img [src]="outIcon(candidate.type, candidate.name)" alt="" loading="lazy">
+              <span class="out-finder-name">
+                <strong>{{ candidate.name }}</strong>
+                <small>{{ candidate.type === 'pet' ? 'Pet' : 'Food' }} · {{ candidate.outcomeDescription || outActionLabel(candidate.replacedIndex, candidate.targetIndex, candidate.type) }}</small>
+              </span>
+              <span class="out-finder-odds">
+                <strong>{{ candidate.winRate * 100 | number:'1.1-1' }}%</strong>
+                <small>win</small>
+              </span>
+              <span class="out-finder-delta" [class.positive]="candidate.winDelta > 0">{{ formatOutDelta(candidate.winDelta) }}</span>
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="app.applyOut(candidate)">
+                {{ candidate.outcomeDescription?.startsWith('Lucky targets:') ? 'Preview' : 'Apply' }}
+              </button>
+            </div>
+          </div>
         </section>
 
         <section class="tool-pane tool-pane-strength" *ngIf="activeToolsTab === 'strength'">

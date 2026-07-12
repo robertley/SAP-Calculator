@@ -11,9 +11,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BoardStrengthDialogComponent } from '../../components/board-strength-dialog/board-strength-dialog.component';
 import { ImportCalculatorComponent } from '../../components/import-calculator/import-calculator.component';
 import type { AppShellControlsFacade } from './app-shell-controls.facade';
+import { getEquipmentIconPath, getPetIconPath } from 'app/runtime/asset-catalog';
 
 type ToolsWorkspaceTab =
   | 'optimize'
+  | 'outs'
   | 'strength'
   | 'randomness'
   | 'teams'
@@ -79,6 +81,8 @@ export class AppShellControlsComponent {
   @ViewChild('soundMenuRoot') soundMenuRoot?: ElementRef<HTMLElement>;
 
   optimizeSide: 'player' | 'opponent' = 'player';
+  outFinderSide: 'player' | 'opponent' = 'player';
+  outFinderShopTier = 6;
   saveSide: 'player' | 'opponent' = 'player';
   toolsDialogOpen = false;
   optimizationDialogOpen = false;
@@ -146,6 +150,30 @@ export class AppShellControlsComponent {
   runOptimization(): void {
     this.app.optimizePositioning(this.optimizeSide);
     this.closeToolsDialog();
+  }
+
+  runOutFinder(): void {
+    this.app.findOuts(this.outFinderSide, this.outFinderShopTier);
+  }
+
+  onOutFinderScopeChanged(): void {
+    this.app.clearOutFinderResult();
+  }
+
+  formatOutDelta(value: number): string {
+    const percentagePoints = value * 100;
+    return `${percentagePoints >= 0 ? '+' : ''}${percentagePoints.toFixed(1)}pp`;
+  }
+
+  outActionLabel(replacedIndex: number | null, targetIndex: number, type: 'pet' | 'food'): string {
+    if (type === 'food') return targetIndex < 0 ? 'All pets' : `Pet ${targetIndex + 1}`;
+    return replacedIndex == null
+      ? `Add at position ${targetIndex + 1}`
+      : `Replace pet ${replacedIndex + 1} · position ${targetIndex + 1}`;
+  }
+
+  outIcon(type: 'pet' | 'food', name: string): string {
+    return type === 'pet' ? getPetIconPath(name) : getEquipmentIconPath(name);
   }
 
   openOptimizationDialog(): void {

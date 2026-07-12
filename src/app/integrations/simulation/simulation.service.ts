@@ -29,6 +29,12 @@ import {
   BoardStrengthResult,
   runBoardStrengthEvaluation,
 } from './board-strength-evaluator';
+import {
+  OutFinderOptions,
+  OutFinderProgress,
+  OutFinderResult,
+  runOutFinder,
+} from './out-finder';
 
 @Injectable({
   providedIn: 'root',
@@ -176,6 +182,49 @@ export class SimulationService {
       options,
     });
 
+    return worker;
+  }
+
+  runOutFinderInWorker(
+    formGroup: FormGroup,
+    count: number,
+    player: Player,
+    opponent: Player,
+    callbacks: {
+      onProgress?: (progress: OutFinderProgress) => void;
+      onResult?: (result: OutFinderResult) => void;
+      onAborted?: (result: OutFinderResult) => void;
+      onError?: (message: string) => void;
+    },
+    options: OutFinderOptions,
+  ): Worker | null {
+    const config = this.buildConfig(formGroup, count);
+    if (typeof Worker === 'undefined') {
+      const runner = new SimulationRunner(
+        this.logService,
+        this.gameService,
+        this.abilityService,
+        this.petService,
+        this.equipmentService,
+        this.toyService,
+      );
+      const result = runOutFinder({
+        baseConfig: config,
+        options,
+        simulateBatch: (batchConfig) => runner.run(batchConfig),
+      });
+      callbacks.onResult?.(result);
+      return null;
+    }
+    const worker = new Worker(new URL('./simulation.worker', import.meta.url), { type: 'module' });
+    worker.onmessage = ({ data }) => {
+      if (data?.type === 'out-finder-progress') callbacks.onProgress?.(data.progress as OutFinderProgress);
+      else if (data?.type === 'out-finder-result') callbacks.onResult?.(data.result as OutFinderResult);
+      else if (data?.type === 'out-finder-aborted') callbacks.onAborted?.(data.result as OutFinderResult);
+      else if (data?.type === 'error') callbacks.onError?.(data.message || 'Out Finder failed.');
+    };
+    worker.onerror = (event) => callbacks.onError?.(event.message || 'Out Finder failed.');
+    worker.postMessage({ type: 'out-finder-start', config, options });
     return worker;
   }
 

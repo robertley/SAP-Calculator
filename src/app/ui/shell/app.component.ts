@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, signal, } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
-import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { CdkDragDrop, DragDropModule, DragStartDelay } from '@angular/cdk/drag-drop';
@@ -103,6 +103,12 @@ import {
 } from './state/app.component.theme';
 import { createStatusStateController } from './state/app.component.status';
 import { AppShellOverlayStateService } from './state/app-shell-overlay-state.service';
+import { getEquipmentIconPath, getPetIconPath } from 'app/runtime/asset-catalog';
+import {
+  OutFinderCandidateResult,
+  OutFinderResult,
+  OutFinderSide,
+} from 'app/integrations/simulation/out-finder';
 
 @Component({
   selector: 'app-root',
@@ -170,6 +176,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   simulationRunId = 0;
   pendingPositioningOptimizationBaseline: PositioningOptimizationBaseline | null = null;
   positioningDeltaSummary: PositioningDeltaSummary | null = null;
+  outFinderResult: OutFinderResult | null = null;
   battles: Battle[] = [];
   battleRandomEvents: LogMessagePart[][] = [];
   battleRandomEventsByBattle = new Map<Battle, LogMessagePart[]>();
@@ -276,6 +283,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   statusTone: 'success' | 'error' = 'success';
   lastAutoSavedAt: Date | null = null;
   activePetSlot: { side: 'player' | 'opponent'; index: number } | null = null;
+  mobilePetEditorSlot: { side: 'player' | 'opponent'; index: number } | null = null;
   petClipboard: Record<string, unknown> | null = null;
   readonly petSlotDragStartDelay: DragStartDelay = { touch: 160, mouse: 0 };
 
@@ -424,6 +432,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formAutoSaveSubscription?.unsubscribe();
     this.clearFightAnimationTimer();
     this.statusStateController.dispose();
+    document.body.classList.remove('mobile-pet-editor-open');
   }
 
   readonly loadLocalStorage = () => loadLocalStorageImpl(this);
@@ -444,6 +453,54 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) => {
     this.activePetSlot = { side, index };
   };
+
+  openMobilePetEditor(side: 'player' | 'opponent', index: number): void {
+    this.setActivePetSlot(side, index);
+    this.mobilePetEditorSlot = { side, index };
+    document.body.classList.add('mobile-pet-editor-open');
+    this.cdr.markForCheck();
+  }
+
+  closeMobilePetEditor(): void {
+    this.mobilePetEditorSlot = null;
+    document.body.classList.remove('mobile-pet-editor-open');
+    this.cdr.markForCheck();
+  }
+
+  getMobilePetControl(side: 'player' | 'opponent', index: number): FormGroup {
+    const controls = side === 'player' ? this.playerPetsControls : this.opponentPetsControls;
+    const displayIndex = side === 'player' ? 4 - index : index;
+    return this.makeFormGroup(controls[displayIndex]);
+  }
+
+  getMobilePetName(side: 'player' | 'opponent', index: number): string {
+    return this.getMobilePetControl(side, index).get('name')?.value || 'Empty';
+  }
+
+  getMobilePetIcon(side: 'player' | 'opponent', index: number): string | null {
+    const name = this.getMobilePetControl(side, index).get('name')?.value;
+    return name ? getPetIconPath(name) : null;
+  }
+
+  getMobileEquipmentIcon(side: 'player' | 'opponent', index: number): string | null {
+    const equipment = this.getMobilePetControl(side, index).get('equipment')?.value;
+    return equipment ? getEquipmentIconPath(equipment) : null;
+  }
+
+  get mobilePetEditorControl(): FormGroup | null {
+    const slot = this.mobilePetEditorSlot;
+    return slot ? this.getMobilePetControl(slot.side, slot.index) : null;
+  }
+
+  get mobilePetEditorPlayer(): Player {
+    const slot = this.mobilePetEditorSlot;
+    return slot?.side === 'opponent' ? this.opponent : this.player;
+  }
+
+  get mobilePetEditorOpponent(): Player {
+    const slot = this.mobilePetEditorSlot;
+    return slot?.side === 'opponent' ? this.player : this.opponent;
+  }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardShortcuts(event: KeyboardEvent): void {
@@ -516,6 +573,101 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       side,
       this.formGroup.get('simulations').value ?? 1000,
     );
+  readonly findOuts = (side: OutFinderSide, shopTier: number) => {
+    if (this.simulationInProgress) return;
+    const count = Math.max(1, Number(this.formGroup.get('simulations')?.value ?? 100));
+    this.outFinderResult = null;
+    this.simulationInProgress = true;
+    this.simulationProgress = 0;
+    this.simulationProgressLabel = 'Building candidates…';
+    this.setStatus(`Finding ${side} outs…`);
+    this.simulationWorker = this.simulationService.runOutFinderInWorker(
+      this.formGroup,
+      count,
+      this.player,
+      this.opponent,
+      {
+        onProgress: (progress) => {
+          this.simulationProgress = progress.totalBattlesEstimate
+            ? Math.min(99, Math.floor(progress.completedBattles / progress.totalBattlesEstimate * 100))
+            : 0;
+          this.simulationProgressLabel = `${progress.testedCandidates} / ${progress.totalCandidates} outs tested`;
+          this.markForCheck();
+        },
+        onResult: (result) => {
+          this.simulationWorker?.terminate();
+          this.simulationWorker = null;
+          this.simulationInProgress = false;
+          this.simulationProgress = 100;
+          this.simulationProgressLabel = result.stopReason === 'baseline-perfect'
+            ? 'Current board already wins every simulation'
+            : `${result.candidates.length} outs tested`;
+          this.outFinderResult = result;
+          const message = result.stopReason === 'baseline-perfect'
+            ? 'No outs needed: the current board already wins every simulation.'
+            : result.rankedCandidates.length
+              ? `Found ${result.rankedCandidates.length} improving outs.`
+              : 'No improving outs found at this shop tier.';
+          this.setStatus(message, result.rankedCandidates.length ? 'success' : 'error');
+          this.markForCheck();
+        },
+        onAborted: () => {
+          this.simulationWorker = null;
+          this.simulationInProgress = false;
+          this.setStatus('Out Finder cancelled.', 'error');
+          this.markForCheck();
+        },
+        onError: (message) => {
+          this.simulationWorker?.terminate();
+          this.simulationWorker = null;
+          this.simulationInProgress = false;
+          this.setStatus(message || 'Out Finder failed.', 'error');
+          this.markForCheck();
+        },
+      },
+      {
+        side,
+        maxSimulationsPerCandidate: count,
+        screeningSimulations: Math.min(25, count),
+        finalistCount: 20,
+        batchSize: Math.min(25, count),
+        shopTier,
+      },
+    );
+    this.markForCheck();
+  };
+  readonly clearOutFinderResult = () => {
+    if (this.simulationInProgress) return;
+    this.outFinderResult = null;
+    this.markForCheck();
+  };
+  readonly applyOut = (candidate: OutFinderCandidateResult) => {
+    if (!this.outFinderResult) return;
+    const side = this.outFinderResult.side;
+    const key = side === 'player' ? 'playerPets' : 'opponentPets';
+    const formArray = this.formGroup.get(key) as FormArray;
+    candidate.lineup.forEach((pet, index) => {
+      const control = formArray.at(index) as FormGroup;
+      const cleared: Record<string, unknown> = Object.fromEntries(
+        Object.keys(control.value as Record<string, unknown>).map(
+          (field): [string, null] => [field, null],
+        ),
+      );
+      const equipment = pet?.equipment && typeof pet.equipment === 'object' ? pet.equipment.name : null;
+      control.patchValue({ ...cleared, ...pet, equipment }, { emitEvent: false });
+    });
+    formArray.updateValueAndValidity();
+    this.afterPositioningApplied();
+    this.outFinderResult = null;
+    const isLuckyFoodOutcome = candidate.outcomeDescription?.startsWith('Lucky targets:') === true;
+    this.setStatus(
+      isLuckyFoodOutcome
+        ? `${candidate.name}'s lucky outcome previewed on the ${side} board.`
+        : `${candidate.name} applied to the ${side} board.`,
+      'success',
+    );
+    this.markForCheck();
+  };
   readonly afterPositioningApplied = () => {
     this.refreshPetFormArrays();
     setTimeout(() => {
@@ -720,7 +872,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     loadTeamImpl(this.getTeamStateContext(), side);
 
   private loadTeamPresets(): void {
-    loadTeamPresetsImpl(this.getTeamStateContext());
+    this.savedTeams = loadTeamPresetsImpl(this.getTeamStateContext());
   }
 
   /**
