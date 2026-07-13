@@ -12,7 +12,10 @@ import {
   ReplayPositioningImageService,
 } from '../../../src/app/integrations/replay/replay-positioning-image.service';
 import type { PositioningOptimizationResult } from '../../../src/app/integrations/simulation/positioning-optimizer';
-import { mergeReplayImageCalculatorState } from '../../../src/app/integrations/replay/replay-image-calculator-state';
+import {
+  mergeReplayImageCalculatorState,
+  orientReplayImageCalculatorState,
+} from '../../../src/app/integrations/replay/replay-image-calculator-state';
 
 function pet(name: string, attack: number): PetConfig {
   return { name, attack, health: attack + 1, exp: 1, equipment: null };
@@ -181,6 +184,30 @@ describe('positioning image row state', () => {
       exp: 0,
       equipment: null,
     });
+  });
+
+  it('reorients reversed exact calculator sides with their toys', () => {
+    const fallback = calculatorState();
+    const exact = {
+      playerToy: 'Microwave Oven',
+      playerToyLevel: '3',
+      opponentToy: 'Action Figure',
+      opponentToyLevel: '2',
+      playerPets: [pet('Otter', 3)],
+      opponentPets: [pet('Ant', 1), pet('Fish', 2)],
+    };
+
+    const oriented = orientReplayImageCalculatorState(fallback, exact);
+
+    expect(oriented.playerToy).toBe('Action Figure');
+    expect(oriented.opponentToy).toBe('Microwave Oven');
+    expect(oriented.playerPets?.map((entry) => entry?.name)).toEqual([
+      'Ant',
+      'Fish',
+    ]);
+    expect(oriented.opponentPets?.map((entry) => entry?.name)).toEqual([
+      'Otter',
+    ]);
   });
 
 });

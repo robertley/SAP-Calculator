@@ -39,6 +39,79 @@ function normalizeLineup(
   );
 }
 
+function lineupIdentityScore(
+  left: (PetConfig | null)[] | undefined,
+  right: (PetConfig | null)[] | undefined,
+): number {
+  const remaining = (right ?? [])
+    .map((pet) => pet?.name?.trim().toLowerCase() ?? '')
+    .filter(Boolean);
+  return (left ?? []).reduce((score, pet) => {
+    const name = pet?.name?.trim().toLowerCase() ?? '';
+    if (!name) {
+      return score;
+    }
+    const matchIndex = remaining.indexOf(name);
+    if (matchIndex < 0) {
+      return score;
+    }
+    remaining.splice(matchIndex, 1);
+    return score + 1;
+  }, 0);
+}
+
+const SIDE_FIELD_PAIRS: ReadonlyArray<
+  readonly [keyof ReplayCalculatorState, keyof ReplayCalculatorState]
+> = [
+  ['playerPack', 'opponentPack'],
+  ['playerToy', 'opponentToy'],
+  ['playerToyLevel', 'opponentToyLevel'],
+  ['playerHardToy', 'opponentHardToy'],
+  ['playerHardToyLevel', 'opponentHardToyLevel'],
+  ['playerGoldSpent', 'opponentGoldSpent'],
+  ['playerRollAmount', 'opponentRollAmount'],
+  ['playerSummonedAmount', 'opponentSummonedAmount'],
+  ['playerLevel3Sold', 'opponentLevel3Sold'],
+  ['playerTransformationAmount', 'opponentTransformationAmount'],
+  ['playerPets', 'opponentPets'],
+];
+
+export function orientReplayImageCalculatorState(
+  fallback: ReplayCalculatorState,
+  exact: Partial<ReplayCalculatorState>,
+): Partial<ReplayCalculatorState> {
+  if (!exact.playerPets || !exact.opponentPets) {
+    return exact;
+  }
+  const directScore =
+    lineupIdentityScore(exact.playerPets, fallback.playerPets) +
+    lineupIdentityScore(exact.opponentPets, fallback.opponentPets);
+  const swappedScore =
+    lineupIdentityScore(exact.playerPets, fallback.opponentPets) +
+    lineupIdentityScore(exact.opponentPets, fallback.playerPets);
+  if (swappedScore <= directScore || swappedScore === 0) {
+    return exact;
+  }
+
+  const oriented = { ...exact } as Record<string, unknown>;
+  const source = exact as Record<string, unknown>;
+  SIDE_FIELD_PAIRS.forEach(([playerKey, opponentKey]) => {
+    const hasPlayer = Object.prototype.hasOwnProperty.call(source, playerKey);
+    const hasOpponent = Object.prototype.hasOwnProperty.call(source, opponentKey);
+    if (hasOpponent) {
+      oriented[playerKey] = source[opponentKey];
+    } else {
+      delete oriented[playerKey];
+    }
+    if (hasPlayer) {
+      oriented[opponentKey] = source[playerKey];
+    } else {
+      delete oriented[opponentKey];
+    }
+  });
+  return oriented as Partial<ReplayCalculatorState>;
+}
+
 export function mergeReplayImageCalculatorState(
   fallback: ReplayCalculatorState,
   exact: Partial<ReplayCalculatorState> | null,
@@ -46,11 +119,12 @@ export function mergeReplayImageCalculatorState(
   if (!exact) {
     return fallback;
   }
+  const oriented = orientReplayImageCalculatorState(fallback, exact);
   return {
     ...fallback,
-    ...exact,
-    playerPets: normalizeLineup(exact.playerPets) ?? fallback.playerPets,
+    ...oriented,
+    playerPets: normalizeLineup(oriented.playerPets) ?? fallback.playerPets,
     opponentPets:
-      normalizeLineup(exact.opponentPets) ?? fallback.opponentPets,
+      normalizeLineup(oriented.opponentPets) ?? fallback.opponentPets,
   };
 }

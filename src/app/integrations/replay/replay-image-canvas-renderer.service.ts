@@ -138,6 +138,20 @@ export class ReplayImageCanvasRendererService {
     ctx.fillRect(0, rowStartY, session.width, session.rowHeight);
 
     ctx.fillStyle = '#000000';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(
+      info.playerName ? `${info.playerName} (Player)` : 'Player',
+      415,
+      rowStartY + 17,
+    );
+    ctx.fillText(
+      info.opponentName ? `${info.opponentName} (Opponent)` : 'Opponent',
+      1010,
+      rowStartY + 17,
+    );
+
+    ctx.fillStyle = '#000000';
     ctx.font = '24px Arial';
     ctx.textAlign = 'left';
     ctx.fillText(

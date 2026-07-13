@@ -64,6 +64,8 @@ describe('ReplayImageCanvasRendererService', () => {
 
     expect(drawImage).toHaveBeenCalled();
     expect(fillText).toHaveBeenCalledWith('4', 90, 56);
+    expect(fillText).toHaveBeenCalledWith('Player (Player)', 415, 17);
+    expect(fillText).toHaveBeenCalledWith('Opponent (Opponent)', 1010, 17);
     expect(fillText).toHaveBeenCalledWith('WIN', 157, 101);
     expect(fillText).toHaveBeenCalledWith('2', 552.5, 95);
     expect(fillText).toHaveBeenCalledWith('2', 887.5, 95);
