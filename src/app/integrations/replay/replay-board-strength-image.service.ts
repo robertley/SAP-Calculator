@@ -37,6 +37,10 @@ import {
   ReplayImageCanvasRendererService,
   ReplayImagePetInfo,
 } from './replay-image-canvas-renderer.service';
+import {
+  getReplayImageCalculatorState,
+  mergeReplayImageCalculatorState,
+} from './replay-image-calculator-state';
 
 export interface ReplayBoardStrengthImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -142,11 +146,15 @@ export class ReplayBoardStrengthImageService {
 
     for (let index = 0; index < turnRows.length; index += 1) {
       const row = turnRows[index];
-      const calculatorState = this.replayCalcService.parseReplayForCalculator(
+      const parsedCalculatorState = this.replayCalcService.parseReplayForCalculator(
         row.battle,
         buildModel ?? undefined,
         undefined,
         { abilityPetMap },
+      );
+      const calculatorState = mergeReplayImageCalculatorState(
+        parsedCalculatorState,
+        getReplayImageCalculatorState(resolvedReplay, row.turn),
       );
       const previousOutcome =
         index > 0 ? this.getBattleOutcome(turnRows[index - 1].battle) : null;

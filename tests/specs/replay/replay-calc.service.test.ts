@@ -22,7 +22,11 @@ import {
 describe('ReplayCalcService', () => {
   it('imports calculator state from SAP Library when battle fallback data omits toys', async () => {
     const encodedState = Buffer.from(
-      JSON.stringify({ oT: 'Microwave Oven', oTL: '2' }),
+      JSON.stringify({
+        oT: 'Microwave Oven',
+        oTL: '2',
+        p: [{ n: 'Fish', a: 9 }],
+      }),
     ).toString('base64url');
     const http = {
       post: vi.fn((path: string) => {
@@ -56,8 +60,9 @@ describe('ReplayCalcService', () => {
     });
 
     expect(response.calculatorState).toEqual({
-      oT: 'Microwave Oven',
-      oTL: '2',
+      opponentToy: 'Microwave Oven',
+      opponentToyLevel: '2',
+      playerPets: [{ name: 'Fish', attack: 9 }],
     });
     expect(response.sapLibraryReplayId).toBe('db-replay-1');
   });

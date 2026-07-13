@@ -14,6 +14,7 @@ import {
   buildReplayAbilityPetMapFromActions,
 } from './replay-calc-parser';
 import { PACK_MAP } from './replay-calc-schema';
+import { REVERSE_KEY_MAP } from 'app/runtime/state/url-state-key-map';
 import {
   getReplayApiUrl,
   getReplayCalculatorApiUrl,
@@ -313,6 +314,14 @@ export class ReplayCalcService {
       timeoutMs,
       (replayId) => this.fetchReplayTurnsByReplayId(replayId, timeoutMs),
     );
+  }
+
+  fetchReplayCalculatorState(
+    replayId: string,
+    turn: number,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
+    return this.fetchReplayCalculatorByReplayId(replayId, turn, timeoutMs);
   }
 
   private fetchReplayBattleFromTurnsApi(
@@ -628,10 +637,26 @@ export class ReplayCalcService {
         character.charCodeAt(0),
       );
       const parsed = JSON.parse(new TextDecoder().decode(bytes)) as unknown;
-      return this.isRecord(parsed) ? parsed : null;
+      const expanded = this.expandCalculatorStateKeys(parsed);
+      return this.isRecord(expanded) ? expanded : null;
     } catch {
       return null;
     }
+  }
+
+  private expandCalculatorStateKeys(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      return value.map((entry) => this.expandCalculatorStateKeys(entry));
+    }
+    if (!this.isRecord(value)) {
+      return value;
+    }
+    const expanded: Record<string, unknown> = {};
+    Object.entries(value).forEach(([key, entry]) => {
+      expanded[REVERSE_KEY_MAP[key] ?? key] =
+        this.expandCalculatorStateKeys(entry);
+    });
+    return expanded;
   }
 
   private parseJsonObject(raw: unknown): ReplayJsonObject | null {

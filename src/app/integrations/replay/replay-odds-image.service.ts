@@ -18,15 +18,21 @@ import { AbilityService } from '../ability/ability.service';
 import { PetService } from '../pet/pet.service';
 import { EquipmentService } from '../equipment/equipment.service';
 import { ToyService } from '../toy/toy.service';
+import { getToyIconPath } from 'app/runtime/asset-catalog';
+import { TOYS_BY_ID } from './replay-calc-schema';
+import { getToyName, resolveToyId } from './replay-calc-parser-utils';
 import * as petsData from 'assets/data/pets.json';
 import * as perksData from 'assets/data/perks.json';
-import * as toysData from 'assets/data/toys.json';
 import {
   ReplayImageBattleInfo,
   ReplayImageCanvasRendererService,
   ReplayImagePetInfo,
   ReplayImageToyInfo,
 } from './replay-image-canvas-renderer.service';
+import {
+  getReplayImageCalculatorState,
+  mergeReplayImageCalculatorState,
+} from './replay-image-calculator-state';
 
 export interface ReplayOddsImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -93,10 +99,6 @@ const MODULE_PETS =
 const MODULE_PERKS =
   ((perksData as unknown as { default?: ContentEntry[] }).default ??
     (perksData as unknown as ContentEntry[])) ?? [];
-const MODULE_TOYS =
-  ((toysData as unknown as { default?: ContentEntry[] }).default ??
-    (toysData as unknown as ContentEntry[])) ?? [];
-
 const PET_NAME_ID_BY_ID = new Map<string, string>(
   MODULE_PETS
     .filter(
@@ -108,15 +110,6 @@ const PET_NAME_ID_BY_ID = new Map<string, string>(
 
 const PERK_NAME_ID_BY_ID = new Map<string, string>(
   MODULE_PERKS
-    .filter(
-      (entry): entry is ContentEntry =>
-        typeof entry?.Id !== 'undefined' && typeof entry?.NameId === 'string',
-    )
-    .map((entry) => [String(entry.Id), entry.NameId as string]),
-);
-
-const TOY_NAME_ID_BY_ID = new Map<string, string>(
-  MODULE_TOYS
     .filter(
       (entry): entry is ContentEntry =>
         typeof entry?.Id !== 'undefined' && typeof entry?.NameId === 'string',
@@ -200,6 +193,7 @@ export class ReplayOddsImageService {
         abilityPetMap,
         input.simulationCount,
         previousOutcome,
+        getReplayImageCalculatorState(resolvedReplay, turn.turn),
       );
     });
     const turnsWithLinks = turns.map((turn, index) => ({
@@ -229,13 +223,19 @@ export class ReplayOddsImageService {
     abilityPetMap: Record<string, string | number> | null,
     simulationCount: number,
     previousOutcome: number | null,
+    exactCalculatorState: Partial<ReplayCalculatorState> | null,
   ): TurnOddsAnalysis {
     try {
-      const calculatorState = this.replayCalcService.parseReplayForCalculator(
-        battle,
-        buildModel ?? undefined,
-        undefined,
-        { abilityPetMap },
+      const parsedCalculatorState =
+        this.replayCalcService.parseReplayForCalculator(
+          battle,
+          buildModel ?? undefined,
+          undefined,
+          { abilityPetMap },
+        );
+      const calculatorState = mergeReplayImageCalculatorState(
+        parsedCalculatorState,
+        exactCalculatorState,
       );
       const config: SimulationConfig = {
         ...this.createSimulationConfigFromCalculatorState(
@@ -441,8 +441,34 @@ export class ReplayOddsImageService {
     const baseInfo = this.toRenderBattleInfo(battle);
     return {
       ...baseInfo,
-      playerPets: this.buildRenderPetsFromPetConfigLineup(calculatorState.playerPets ?? []),
-      opponentPets: this.buildRenderPetsFromPetConfigLineup(calculatorState.opponentPets ?? []),
+      playerPets: this.buildRenderPetsFromPetConfigLineup(
+        calculatorState.playerPets ?? [],
+      ),
+      opponentPets: this.buildRenderPetsFromPetConfigLineup(
+        calculatorState.opponentPets ?? [],
+      ),
+      playerToy:
+        baseInfo.playerToy ??
+        this.toRenderToy(calculatorState.playerToy, calculatorState.playerToyLevel),
+      opponentToy:
+        baseInfo.opponentToy ??
+        this.toRenderToy(
+          calculatorState.opponentToy,
+          calculatorState.opponentToyLevel,
+        ),
+    };
+  }
+
+  private toRenderToy(
+    name: string | null,
+    level: unknown,
+  ): RenderToyInfo | null {
+    if (!name) {
+      return null;
+    }
+    return {
+      imagePath: getToyIconPath(name),
+      level: this.toNumberOrFallback(level, 1),
     };
   }
 
@@ -703,18 +729,22 @@ export class ReplayOddsImageService {
       return null;
     }
     const toyItem = items.find(
-      (entry) => this.isObject(entry) && this.toReplayId(entry['Enu']) !== null,
+      (entry) =>
+        this.isObject(entry) &&
+        (resolveToyId(entry) !== null || getToyName(entry) !== null),
     ) as Record<string, unknown> | undefined;
     if (!toyItem) {
       return null;
     }
-    const toyId = this.toReplayId(toyItem['Enu']);
-    if (!toyId) {
+    const toyId = resolveToyId(toyItem);
+    const toyName =
+      (toyId !== null ? TOYS_BY_ID.get(String(toyId)) : null) ??
+      getToyName(toyItem);
+    if (!toyName) {
       return null;
     }
-    const toyNameId = TOY_NAME_ID_BY_ID.get(toyId) ?? null;
     return {
-      imagePath: toyNameId ? `/assets/art/Public/Public/Toys/${toyNameId}.png` : null,
+      imagePath: getToyIconPath(toyName),
       level: this.toNumberOrFallback(toyItem['Lvl'], 1),
     };
   }

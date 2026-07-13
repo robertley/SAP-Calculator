@@ -24,15 +24,21 @@ import {
   PositioningOptimizationResult,
   runPositioningOptimization,
 } from '../simulation/positioning-optimizer';
-import * as petsData from 'assets/data/pets.json';
-import * as perksData from 'assets/data/perks.json';
-import * as toysData from 'assets/data/toys.json';
+import {
+  getEquipmentIconPath,
+  getPetIconPath,
+  getToyIconPath,
+} from 'app/runtime/asset-catalog';
 import {
   ReplayImageBattleInfo,
   ReplayImageCanvasRendererService,
   ReplayImagePetInfo,
   ReplayImageToyInfo,
 } from './replay-image-canvas-renderer.service';
+import {
+  getReplayImageCalculatorState,
+  mergeReplayImageCalculatorState,
+} from './replay-image-calculator-state';
 
 export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -87,6 +93,24 @@ function clonePetConfig(pet: PetConfig | null): PetConfig | null {
   };
 }
 
+export function buildOptimizedPositioningCalculatorState(
+  calculatorState: ReplayCalculatorState,
+  result: PositioningOptimizationResult,
+): ReplayCalculatorState {
+  const optimizedLineup = getOptimizedPositioningLineup(result);
+  return {
+    ...calculatorState,
+    playerPets: clonePetConfigLineup(
+      result.side === 'player' ? optimizedLineup : calculatorState.playerPets,
+    ),
+    opponentPets: clonePetConfigLineup(
+      result.side === 'opponent'
+        ? optimizedLineup
+        : calculatorState.opponentPets,
+    ),
+  };
+}
+
 function clonePetConfigLineup(
   lineup: (PetConfig | null)[] | null | undefined,
 ): (PetConfig | null)[] {
@@ -97,12 +121,6 @@ interface ReplayActionEntry {
   Type?: number;
   Turn?: number | string | null;
   Battle?: string;
-}
-
-interface ContentEntry {
-  Id?: string | number;
-  Name?: string;
-  NameId?: string;
 }
 
 interface OddsSummary {
@@ -121,9 +139,7 @@ interface TurnDeltaSummary {
 
 interface OptimizedTurnRow {
   turn: number;
-  battle: ReplayBattleJson;
-  optimizedPlayerPets: Array<RenderPetInfo | null>;
-  optimizedOpponentPets: Array<RenderPetInfo | null>;
+  renderInfo: RenderBattleInfo;
   delta: TurnDeltaSummary;
   calculatorUrl: string;
 }
@@ -131,81 +147,6 @@ interface OptimizedTurnRow {
 type RenderPetInfo = ReplayImagePetInfo;
 type RenderToyInfo = ReplayImageToyInfo;
 type RenderBattleInfo = ReplayImageBattleInfo;
-
-const MODULE_PETS =
-  ((petsData as unknown as { default?: ContentEntry[] }).default ??
-    (petsData as unknown as ContentEntry[])) ?? [];
-const MODULE_PERKS =
-  ((perksData as unknown as { default?: ContentEntry[] }).default ??
-    (perksData as unknown as ContentEntry[])) ?? [];
-const MODULE_TOYS =
-  ((toysData as unknown as { default?: ContentEntry[] }).default ??
-    (toysData as unknown as ContentEntry[])) ?? [];
-
-const PET_NAME_ID_BY_ID = new Map<string, string>(
-  MODULE_PETS
-    .filter(
-      (entry): entry is ContentEntry =>
-        typeof entry?.Id !== 'undefined' && typeof entry?.NameId === 'string',
-    )
-    .map((entry) => [String(entry.Id), entry.NameId as string]),
-);
-
-const PERK_NAME_ID_BY_ID = new Map<string, string>(
-  MODULE_PERKS
-    .filter(
-      (entry): entry is ContentEntry =>
-        typeof entry?.Id !== 'undefined' && typeof entry?.NameId === 'string',
-    )
-    .map((entry) => [String(entry.Id), entry.NameId as string]),
-);
-
-const TOY_NAME_ID_BY_ID = new Map<string, string>(
-  MODULE_TOYS
-    .filter(
-      (entry): entry is ContentEntry =>
-        typeof entry?.Id !== 'undefined' && typeof entry?.NameId === 'string',
-    )
-    .map((entry) => [String(entry.Id), entry.NameId as string]),
-);
-
-const PET_NAME_ID_BY_KEY = new Map<string, string>();
-const PERK_NAME_ID_BY_KEY = new Map<string, string>();
-
-MODULE_PETS.forEach((entry) => {
-  if (typeof entry?.NameId !== 'string') {
-    return;
-  }
-  const byName = normalizeLookupKey(entry.Name);
-  const byNameId = normalizeLookupKey(entry.NameId);
-  if (byName) {
-    PET_NAME_ID_BY_KEY.set(byName, entry.NameId);
-  }
-  if (byNameId) {
-    PET_NAME_ID_BY_KEY.set(byNameId, entry.NameId);
-  }
-});
-
-MODULE_PERKS.forEach((entry) => {
-  if (typeof entry?.NameId !== 'string') {
-    return;
-  }
-  const byName = normalizeLookupKey(entry.Name);
-  const byNameId = normalizeLookupKey(entry.NameId);
-  if (byName) {
-    PERK_NAME_ID_BY_KEY.set(byName, entry.NameId);
-  }
-  if (byNameId) {
-    PERK_NAME_ID_BY_KEY.set(byNameId, entry.NameId);
-  }
-});
-
-function normalizeLookupKey(value: unknown): string {
-  if (typeof value !== 'string') {
-    return '';
-  }
-  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
-}
 
 @Injectable({
   providedIn: 'root',
@@ -254,11 +195,16 @@ export class ReplayPositioningImageService {
         turnIndex + 1,
         totalTurns,
       );
-      const calculatorState = this.replayCalcService.parseReplayForCalculator(
-        row.battle,
-        buildModel ?? undefined,
-        undefined,
-        { abilityPetMap },
+      const parsedCalculatorState =
+        this.replayCalcService.parseReplayForCalculator(
+          row.battle,
+          buildModel ?? undefined,
+          undefined,
+          { abilityPetMap },
+        );
+      const calculatorState = mergeReplayImageCalculatorState(
+        parsedCalculatorState,
+        getReplayImageCalculatorState(resolvedReplay, row.turn),
       );
       const previousOutcome =
         turnIndex > 0
@@ -290,62 +236,36 @@ export class ReplayPositioningImageService {
         },
       );
       this.throwIfAborted(input.abortSignal);
-      const optimizedLineup = getOptimizedPositioningLineup(optimizationResult);
+      const linkedCalculatorState =
+        buildOptimizedPositioningCalculatorState(
+          calculatorState,
+          optimizationResult,
+        );
       const optimizedConfig: SimulationConfig = {
-        ...baseConfig,
-        playerPets:
-          input.optimizationSide === 'player'
-            ? optimizedLineup
-            : baseConfig.playerPets,
-        opponentPets:
-          input.optimizationSide === 'opponent'
-            ? optimizedLineup
-            : baseConfig.opponentPets,
-        simulationCount: input.simulationCount,
+        ...this.createSimulationConfigFromCalculatorState(
+          linkedCalculatorState,
+          input.simulationCount,
+        ),
+        playerLostLastBattle: previousOutcome === 2,
+        opponentLostLastBattle: previousOutcome === 1,
       };
       const optimizedResult = this.runLocalSimulation(optimizedConfig);
       this.throwIfAborted(input.abortSignal);
-      const shouldApplyOptimized = true;
-      const effectiveOptimizedResult = optimizedResult;
-      const linkedCalculatorState: ReplayCalculatorState = {
-        ...calculatorState,
-        playerPets: clonePetConfigLineup(
-          input.optimizationSide === 'player' && shouldApplyOptimized
-            ? optimizedLineup
-            : calculatorState.playerPets,
-        ),
-        opponentPets: clonePetConfigLineup(
-          input.optimizationSide === 'opponent' && shouldApplyOptimized
-            ? optimizedLineup
-            : calculatorState.opponentPets,
-        ),
-      };
       const calculatorUrl =
         this.replayCalcService.generateCalculatorLink(linkedCalculatorState);
 
       const delta = this.buildDeltaSummary(
         baselineResult,
-        effectiveOptimizedResult,
+        optimizedResult,
         input.optimizationSide,
       );
-      const optimizedPlayerPets =
-        shouldApplyOptimized && input.optimizationSide === 'player'
-          ? this.buildRenderPetsFromPetConfigLineup(
-              optimizedLineup,
-            )
-          : [];
-      const optimizedOpponentPets =
-        shouldApplyOptimized && input.optimizationSide === 'opponent'
-          ? this.buildRenderPetsFromPetConfigLineup(
-              optimizedLineup,
-            )
-          : [];
 
       optimizedRows.push({
         turn: row.turn,
-        battle: row.battle,
-        optimizedPlayerPets,
-        optimizedOpponentPets,
+        renderInfo: this.toRenderBattleInfo(
+          row.battle,
+          linkedCalculatorState,
+        ),
         delta,
         calculatorUrl,
       });
@@ -359,11 +279,9 @@ export class ReplayPositioningImageService {
       );
     }
 
-    const renderInfo = optimizedRows.map((row) => this.toRenderBattleInfo(row.battle));
     this.emitProgress(input, 98, 'Rendering image...', 'rendering', totalTurns, totalTurns);
     return this.renderPositioningImage(
       optimizedRows,
-      renderInfo,
       input.simulationCount,
       input.optimizationSide,
     );
@@ -402,7 +320,10 @@ export class ReplayPositioningImageService {
         options: {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
-          batchSize: Math.max(10, Math.min(25, simulationCount)),
+          batchSize: Math.min(25, simulationCount),
+          minSamplesBeforeElimination: Math.min(50, simulationCount),
+          confidenceZ: 1.96,
+          keepSameBuffTargets: false,
         },
         shouldAbort: () => Boolean(abortSignal?.aborted),
         onProgress: (progress) => {
@@ -417,6 +338,21 @@ export class ReplayPositioningImageService {
             ),
           );
           onProgress?.(percent);
+        },
+        projectEndTurnLineup: ({ baseConfig: projectionConfig, side, lineup }) => {
+          const runner = new SimulationRunner(
+            this.logService,
+            this.gameService,
+            this.abilityService,
+            this.petService,
+            this.equipmentService,
+            this.toyService,
+          );
+          return runner.projectLineupAfterEndTurn(
+            projectionConfig,
+            side,
+            lineup,
+          );
         },
         simulateBatch: (config) => this.runLocalSimulation(config),
       }),
@@ -516,8 +452,11 @@ export class ReplayPositioningImageService {
         options: {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
-          batchSize: Math.max(10, Math.min(25, simulationCount)),
-          projectEndTurnLineup: false,
+          batchSize: Math.min(25, simulationCount),
+          minSamplesBeforeElimination: Math.min(50, simulationCount),
+          confidenceZ: 1.96,
+          projectEndTurnLineup: true,
+          keepSameBuffTargets: false,
         },
       });
     });
@@ -563,14 +502,12 @@ export class ReplayPositioningImageService {
       if (!pet?.name) {
         return null;
       }
-      const petNameId = PET_NAME_ID_BY_KEY.get(normalizeLookupKey(pet.name)) ?? null;
       const equipmentName = pet?.equipment?.name ?? null;
-      const perkNameId = equipmentName
-        ? (PERK_NAME_ID_BY_KEY.get(normalizeLookupKey(equipmentName)) ?? null)
-        : null;
       return {
-        imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
-        perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
+        imagePath: getPetIconPath(pet.name),
+        perkImagePath: equipmentName
+          ? getEquipmentIconPath(equipmentName)
+          : null,
         attack: this.toNumberOrFallback(pet.attack, 0),
         health: this.toNumberOrFallback(pet.health, 0),
         level: this.toNumberOrFallback(pet.exp, 1) >= 5 ? 3 : this.toNumberOrFallback(pet.exp, 1) >= 2 ? 2 : 1,
@@ -581,14 +518,13 @@ export class ReplayPositioningImageService {
 
   private async renderPositioningImage(
     rows: OptimizedTurnRow[],
-    renderInfo: RenderBattleInfo[],
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
   ): Promise<ReplayPositioningImageResult> {
     const DELTA_COLUMN_WIDTH = 360;
     const title =
-      renderInfo[0]?.playerName && renderInfo[0]?.opponentName
-        ? `${renderInfo[0].playerName} vs ${renderInfo[0].opponentName} (Optimized Positioning)`
+      rows[0]?.renderInfo.playerName && rows[0]?.renderInfo.opponentName
+        ? `${rows[0].renderInfo.playerName} vs ${rows[0].renderInfo.opponentName} (Optimized Positioning)`
         : null;
     const session = this.replayImageRenderer.createSession({
       rowCount: rows.length,
@@ -598,23 +534,12 @@ export class ReplayPositioningImageService {
     const { ctx } = session;
 
     for (let i = 0; i < rows.length; i += 1) {
-      const info = renderInfo[i];
       const row = rows[i];
-      const playerRenderPets =
-        optimizationSide === 'player' && row.optimizedPlayerPets.length > 0
-          ? row.optimizedPlayerPets
-          : info.playerPets;
-      const opponentRenderPets =
-        optimizationSide === 'opponent' && row.optimizedOpponentPets.length > 0
-          ? row.optimizedOpponentPets
-          : info.opponentPets;
 
       const { baseY } = await this.replayImageRenderer.drawBattleRow(session, {
         index: i,
         turn: row.turn,
-        info,
-        playerPets: playerRenderPets,
-        opponentPets: opponentRenderPets,
+        info: row.renderInfo,
       });
 
       const deltaX = session.baseWidth + 10;
@@ -808,7 +733,10 @@ export class ReplayPositioningImageService {
       .filter((row): row is { turn: number; battle: ReplayBattleJson } => row !== null);
   }
 
-  private toRenderBattleInfo(battle: ReplayBattleJson): RenderBattleInfo {
+  private toRenderBattleInfo(
+    battle: ReplayBattleJson,
+    calculatorState: ReplayCalculatorState,
+  ): RenderBattleInfo {
     const userBoard = this.getBoard(battle, 'UserBoard');
     const opponentBoard = this.getBoard(battle, 'OpponentBoard');
     return {
@@ -817,10 +745,33 @@ export class ReplayPositioningImageService {
       opponentName: this.getDisplayName(battle, 'Opponent'),
       playerLives: this.getBoardLives(userBoard),
       opponentLives: this.getBoardLives(opponentBoard),
-      playerPets: this.getBoardPets(userBoard),
-      opponentPets: this.getBoardPets(opponentBoard),
-      playerToy: this.getBoardToy(userBoard),
-      opponentToy: this.getBoardToy(opponentBoard),
+      playerPets: this.buildRenderPetsFromPetConfigLineup(
+        calculatorState.playerPets,
+      ),
+      opponentPets: this.buildRenderPetsFromPetConfigLineup(
+        calculatorState.opponentPets,
+      ),
+      playerToy: this.toRenderToy(
+        calculatorState.playerToy,
+        calculatorState.playerToyLevel,
+      ),
+      opponentToy: this.toRenderToy(
+        calculatorState.opponentToy,
+        calculatorState.opponentToyLevel,
+      ),
+    };
+  }
+
+  private toRenderToy(
+    name: string | null,
+    level: unknown,
+  ): RenderToyInfo | null {
+    if (!name) {
+      return null;
+    }
+    return {
+      imagePath: getToyIconPath(name),
+      level: this.toNumberOrFallback(level, 1),
     };
   }
 
@@ -866,76 +817,6 @@ export class ReplayPositioningImageService {
     const battleRecord = battle as unknown as Record<string, unknown>;
     const board = battleRecord[side];
     return this.isObject(board) ? board : null;
-  }
-
-  private getBoardPets(board: Record<string, unknown> | null): Array<RenderPetInfo | null> {
-    if (!board) {
-      return [];
-    }
-    const mins = this.getRecord(board, 'Mins');
-    const items = mins?.['Items'];
-    if (!Array.isArray(items)) {
-      return [];
-    }
-
-    const pets: Array<RenderPetInfo | null> = [null, null, null, null, null];
-    items.forEach((item) => {
-      if (!this.isObject(item)) {
-        return;
-      }
-      const petId = this.toReplayId(item['Enu']);
-      if (!petId) {
-        return;
-      }
-      const perkId = this.toReplayId(item['Perk']);
-      const attackStats = this.getRecord(item, 'At');
-      const healthStats = this.getRecord(item, 'Hp');
-      const attack = this.toNumberOrFallback(attackStats?.['Perm'], 0);
-      const health = this.toNumberOrFallback(healthStats?.['Perm'], 0);
-      const petNameId = PET_NAME_ID_BY_ID.get(petId) ?? null;
-      const perkNameId = perkId ? PERK_NAME_ID_BY_ID.get(perkId) ?? null : null;
-      const poi = this.getRecord(item, 'Poi');
-      const rawPosition =
-        this.toNumberOrFallback(poi?.['x'], this.toNumberOrFallback(item['slot'], 0));
-      const position = Math.max(0, Math.min(4, Math.trunc(rawPosition)));
-      pets[position] = {
-        imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
-        perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
-        attack,
-        health,
-        level: this.toNumberOrFallback(item['Lvl'], 1),
-        xp: this.toNumberOrFallback(item['Exp'], 0),
-      };
-    });
-    return pets;
-  }
-
-  private getBoardToy(board: Record<string, unknown> | null): RenderToyInfo | null {
-    if (!board) {
-      return null;
-    }
-    const rel = this.getRecord(board, 'Rel') ?? this.getRecord(board, 'Relics');
-    const items =
-      (rel?.['Items'] as unknown[] | undefined) ??
-      (Array.isArray(board['Relics']) ? (board['Relics'] as unknown[]) : undefined);
-    if (!Array.isArray(items)) {
-      return null;
-    }
-    const toyItem = items.find(
-      (entry) => this.isObject(entry) && this.toReplayId(entry['Enu']) !== null,
-    ) as Record<string, unknown> | undefined;
-    if (!toyItem) {
-      return null;
-    }
-    const toyId = this.toReplayId(toyItem['Enu']);
-    if (!toyId) {
-      return null;
-    }
-    const toyNameId = TOY_NAME_ID_BY_ID.get(toyId) ?? null;
-    return {
-      imagePath: toyNameId ? `/assets/art/Public/Public/Toys/${toyNameId}.png` : null,
-      level: this.toNumberOrFallback(toyItem['Lvl'], 1),
-    };
   }
 
   private getBoardLives(board: Record<string, unknown> | null): number | null {
@@ -991,16 +872,6 @@ export class ReplayPositioningImageService {
     }
     const whole = Math.trunc(parsed);
     return whole > 0 ? whole : null;
-  }
-
-  private toReplayId(value: unknown): string | null {
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return String(value);
-    }
-    if (typeof value === 'string' && value.length > 0) {
-      return value;
-    }
-    return null;
   }
 
   private toNumberOrFallback(value: unknown, fallback: number): number {

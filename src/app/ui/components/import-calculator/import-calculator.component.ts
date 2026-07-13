@@ -17,10 +17,15 @@ import {
   ReplayBattleJson,
   ReplayBoardJson,
   ReplayBuildModelJson,
+  ReplayCalculatorState,
   ReplayMetaBoards,
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
+import {
+  REPLAY_IMAGE_CALCULATOR_STATES_KEY,
+  ReplayImageCalculatorStatesByTurn,
+} from 'app/integrations/replay/replay-image-calculator-state';
 import { parseReplayCode } from 'app/integrations/replay/replay-code';
 import {
   ReplayOddsImageHotspot,
@@ -991,59 +996,115 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       return this.buildReplayPayloadFromHydratedActions(turnsResponse, actionsFromTurns);
     }
 
-    const synthesizedActions = this.buildActionsFromTurnsSummary(
-      turnsResponse,
-      replayId,
-    );
-    if (synthesizedActions.length > 0) {
-      return this.buildReplayPayloadFromHydratedActions(
-        turnsResponse,
-        synthesizedActions,
-      );
-    }
-
     const turnCount = this.getReplayTurnCount(turnsResponse);
     if (turnCount <= 0) {
       return turnsResponse as unknown as Record<string, unknown>;
     }
 
-    const hydratedActions: ReplayActionEntry[] = [];
-    for (let turn = 1; turn <= turnCount; turn += 1) {
-      try {
-        const replayBattleResponse = await this.replayCalcService
-          .fetchReplayBattleDirect(
-            {
-              Pid: replayId,
-              T: turn,
-            },
-            this.replayTimeoutMs,
-          )
-          .toPromise();
-        if (replayBattleResponse?.battle) {
-          hydratedActions.push({
-            Type: 0,
-            Turn: turn,
-            Battle: JSON.stringify(replayBattleResponse.battle),
-          });
-        }
-      } catch {
-        // skip failed turns and continue hydrating the remainder
+    const hydratedActions = (
+      await Promise.all(
+        Array.from({ length: turnCount }, async (_, index) => {
+          const turn = index + 1;
+          try {
+            const replayBattleResponse = await this.replayCalcService
+              .fetchReplayBattleDirect(
+                {
+                  Pid: replayId,
+                  T: turn,
+                },
+                this.replayTimeoutMs,
+              )
+              .toPromise();
+            return replayBattleResponse?.battle
+              ? {
+                  Type: 0,
+                  Turn: turn,
+                  Battle: JSON.stringify(replayBattleResponse.battle),
+                }
+              : null;
+          } catch {
+            return null;
+          }
+        }),
+      )
+    ).filter(
+      (
+        action,
+      ): action is { Type: number; Turn: number; Battle: string } =>
+        action !== null,
+    );
+
+    if (hydratedActions.length > 0) {
+      if (hydratedActions.length < turnCount) {
+        this.setStatus(
+          `Loaded ${hydratedActions.length}/${turnCount} exact turns. Some turns may be missing from the preview.`,
+          'warning',
+        );
       }
-    }
-
-    if (hydratedActions.length === 0) {
-      throw new Error(
-        'Replay lookup did not include usable battle payloads in turns JSON.',
+      return this.buildReplayPayloadFromHydratedActions(
+        turnsResponse,
+        hydratedActions,
       );
     }
-    if (hydratedActions.length < turnCount) {
+
+    const synthesizedActions = this.buildActionsFromTurnsSummary(
+      turnsResponse,
+      replayId,
+    );
+    if (synthesizedActions.length > 0) {
+      const calculatorStatesByTurn =
+        await this.fetchReplayCalculatorStatesByTurn(
+          turnsResponse?.replay?.id ?? turnsResponse?.replayId ?? replayId,
+          turnCount,
+        );
       this.setStatus(
-        `Loaded ${hydratedActions.length}/${turnCount} turns. Some turns may be missing from the preview.`,
-        'warning',
+        Object.keys(calculatorStatesByTurn).length > 0
+          ? 'Loaded exact calculator states with summarized battle metadata.'
+          : 'Exact replay battles were unavailable. Using summarized turns; toys may be missing.',
+        Object.keys(calculatorStatesByTurn).length > 0 ? 'success' : 'warning',
+      );
+      return this.buildReplayPayloadFromHydratedActions(
+        turnsResponse,
+        synthesizedActions,
+        calculatorStatesByTurn,
       );
     }
 
-    return this.buildReplayPayloadFromHydratedActions(turnsResponse, hydratedActions);
+    throw new Error(
+      'Replay lookup did not include usable battle payloads in turns JSON.',
+    );
+  }
+
+  private async fetchReplayCalculatorStatesByTurn(
+    replayId: string,
+    turnCount: number,
+  ): Promise<ReplayImageCalculatorStatesByTurn> {
+    const stateEntries = await Promise.all(
+      Array.from({ length: turnCount }, async (_, index) => {
+        const turn = index + 1;
+        try {
+          const response = await this.replayCalcService
+            .fetchReplayCalculatorState(
+              replayId,
+              turn,
+              this.replayTimeoutMs,
+            )
+            .toPromise();
+          const state = response?.calculatorState;
+          return state && typeof state === 'object'
+            ? ([String(turn), state as Partial<ReplayCalculatorState>] as const)
+            : null;
+        } catch {
+          return null;
+        }
+      }),
+    );
+    return Object.fromEntries(
+      stateEntries.filter(
+        (entry): entry is readonly [string, Partial<ReplayCalculatorState>] =>
+          entry !== null,
+      ),
+    );
   }
 
   private hasRawReplayActions(turnsResponse: ReplayTurnsResponse): boolean {
@@ -1140,6 +1201,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private buildReplayPayloadFromHydratedActions(
     turnsResponse: ReplayTurnsResponse,
     actions: ReplayActionEntry[],
+    calculatorStatesByTurn: ReplayImageCalculatorStatesByTurn = {},
   ): Record<string, unknown> {
     const genesisBuildModel =
       turnsResponse?.genesisBuildModel ??
@@ -1151,6 +1213,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       Actions: actions,
       GenesisBuildModel: genesisBuildModel,
       AbilityPetMap: abilityPetMap,
+      [REPLAY_IMAGE_CALCULATOR_STATES_KEY]: calculatorStatesByTurn,
     };
   }
 

@@ -753,7 +753,14 @@ export function resolveToyId(
   }
   const toy = getRecord(rawToy);
   if (toy) {
-    const direct = [toy['id'], toy['toyId'], toy['enum'], toy['Enu']];
+    const direct = [
+      toy['id'],
+      toy['Id'],
+      toy['toyId'],
+      toy['toyID'],
+      toy['enum'],
+      toy['Enu'],
+    ];
     for (const candidate of direct) {
       const n = toFiniteNumber(candidate, NaN);
       if (Number.isFinite(n)) {
