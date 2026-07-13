@@ -83,17 +83,9 @@ export class MobyDickAbility extends Ability {
       player: this.owner.parent,
     });
 
-    // Set removed to true to avoid triggering faint effects
-    this.owner.removed = true;
-
-    // Remove from player slot
     const player = this.owner.parent;
     if (player) {
-      if (player.pet0 === this.owner) player.pet0 = null;
-      if (player.pet1 === this.owner) player.pet1 = null;
-      if (player.pet2 === this.owner) player.pet2 = null;
-      if (player.pet3 === this.owner) player.pet3 = null;
-      if (player.pet4 === this.owner) player.pet4 = null;
+      player.removePet(this.owner);
     }
 
     this.triggerTigerExecution(context);

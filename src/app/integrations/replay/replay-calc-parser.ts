@@ -1419,7 +1419,10 @@ export class ReplayCalcParser {
     const strippedState = this.stripDefaultValues(calculatorState);
     const truncatedState = this.truncateKeys(strippedState);
     const stateString = JSON.stringify(truncatedState);
-    const base64Data = btoa(stateString);
+    const base64Data = btoa(stateString)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/g, '');
     return `${baseUrl}#c=${base64Data}`;
   }
 

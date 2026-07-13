@@ -63,9 +63,7 @@ export class LeafySeaDragonAbility extends Ability {
       friend.increaseHealth(healthGain);
     });
 
-    owner.health = 0;
-    owner.parent.handleDeath(owner);
-    owner.parent.removeDeadPets();
+    owner.parent.removePet(owner);
 
     const message = `${owner.name} gave ${adjacent.length} adjacent friend${adjacent.length === 1 ? '' : 's'} +${expGain} experience, +${healthGain} health, and removed itself.`;
     logAbility(this.logService, owner, message, tiger, pteranodon);

@@ -264,13 +264,20 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
             )
             .subscribe({
               next: (response: ReplayBattleResponse) => {
+                this.sapLibraryReplayUrl =
+                  response?.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
+                if (response?.calculatorState) {
+                  this.importCalculatorState(response.calculatorState, {
+                    resetBattle: true,
+                    suppressSuccessStatus: true,
+                  });
+                  return;
+                }
                 const battleJson = response?.battle;
                 if (!battleJson) {
                   this.errorMessage = 'Replay lookup failed to return a battle.';
                   return;
                 }
-                this.sapLibraryReplayUrl =
-                  response?.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
                 this.importReplayBattle(
                   battleJson,
                   response?.genesisBuildModel,
@@ -626,6 +633,23 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.errorMessage = 'Import failed.';
   }
 
+  private importCalculatorState(
+    calculatorState: Record<string, unknown>,
+    options?: { resetBattle?: boolean; suppressSuccessStatus?: boolean },
+  ): void {
+    if (
+      this.importFunc(JSON.stringify(calculatorState), {
+        resetBattle: options?.resetBattle,
+      })
+    ) {
+      if (!options?.suppressSuccessStatus) {
+        this.setStatus('Import successful.', 'success');
+      }
+      return;
+    }
+    this.errorMessage = 'Import failed.';
+  }
+
   private tryReplayPid(rawInput: string): boolean {
     const pid = rawInput?.trim();
     if (!pid) {
@@ -676,13 +700,20 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
           )
           .subscribe({
             next: (response: ReplayBattleResponse) => {
+              this.sapLibraryReplayUrl =
+                response?.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
+              if (response?.calculatorState) {
+                this.importCalculatorState(response.calculatorState, {
+                  resetBattle: true,
+                  suppressSuccessStatus: true,
+                });
+                return;
+              }
               const battleJson = response?.battle;
               if (!battleJson) {
                 this.errorMessage = 'Replay lookup failed to return a battle.';
                 return;
               }
-              this.sapLibraryReplayUrl =
-                response?.sapLibraryReplayUrl ?? this.sapLibraryReplayUrl;
               this.importReplayBattle(
                 battleJson,
                 response?.genesisBuildModel,

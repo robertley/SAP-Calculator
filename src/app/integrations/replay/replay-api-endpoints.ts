@@ -25,6 +25,14 @@ export function getReplayPerspectivesApiUrl(replayId: string): string {
   return `${trimTrailingSlash(environment.replayApiBaseUrl)}/replays/${encodedReplayId}/perspectives`;
 }
 
+export function getReplayCalculatorApiUrl(
+  replayId: string,
+  turn: number,
+): string {
+  const encodedReplayId = encodeURIComponent(String(replayId));
+  return `${trimTrailingSlash(environment.replayApiBaseUrl)}/replays/${encodedReplayId}/calculator?turn=${encodeURIComponent(String(turn))}`;
+}
+
 export function getSapLibraryReplayUrl(replayId: string): string {
   const baseUrl = trimTrailingSlash(environment.sapLibraryBaseUrl);
   const url = new URL(baseUrl);

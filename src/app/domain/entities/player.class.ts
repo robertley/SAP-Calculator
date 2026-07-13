@@ -4,7 +4,7 @@ import { AbilityService } from 'app/integrations/ability/ability.service';
 import { Toy } from './toy.class';
 import { GameService } from 'app/runtime/state/game.service';
 import { getOpponent } from 'app/runtime/player-opponent';
-import { alive as playerAlive, checkPetsAlive as checkPetsAliveImpl, createDeathLog as createDeathLogImpl, handleDeath as handleDeathImpl, removeDeadPets as removeDeadPetsImpl, resetJumpedFlags as resetJumpedFlagsImpl, resetPets as resetPetsImpl } from './player/player-lifecycle';
+import { alive as playerAlive, checkPetsAlive as checkPetsAliveImpl, createDeathLog as createDeathLogImpl, handleDeath as handleDeathImpl, removeDeadPets as removeDeadPetsImpl, removePet as removePetImpl, resetJumpedFlags as resetJumpedFlagsImpl, resetPets as resetPetsImpl } from './player/player-lifecycle';
 import { makeRoomForSlot as makeRoomForSlotImpl, onionCheck as onionCheckImpl, pushBackwardFromSlot as pushBackwardFromSlotImpl, pushForwardFromSlot as pushForwardFromSlotImpl, pushPetsForward as pushPetsForwardImpl } from './player/player-movement';
 import { summonPet as summonPetImpl, transformPet as transformPetImpl } from './player/player-summon';
 import { PlayerSummonFacade } from './player/player-summon-facade';
@@ -233,6 +233,10 @@ export class Player extends PlayerSummonFacade {
 
   removeDeadPets(): boolean {
     return removeDeadPetsImpl(this, this.abilityService);
+  }
+
+  removePet(pet: Pet): boolean {
+    return removePetImpl(this, pet);
   }
 
   createDeathLog(pet: Pet) {

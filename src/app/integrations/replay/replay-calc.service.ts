@@ -16,6 +16,7 @@ import {
 import { PACK_MAP } from './replay-calc-schema';
 import {
   getReplayApiUrl,
+  getReplayCalculatorApiUrl,
   getReplayPerspectivesApiUrl,
   getReplayTurnsApiUrl,
   getSapLibraryReplayUrl,
@@ -31,6 +32,7 @@ export interface ReplayBattleRequest {
 
 export interface ReplayBattleResponse {
   battle?: ReplayBattleJson;
+  calculatorState?: Record<string, unknown>;
   genesisBuildModel?: ReplayBuildModelJson;
   opponentGenesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
@@ -66,6 +68,10 @@ interface ReplayPerspectiveResponse {
   role?: string | null;
   participationId?: string | null;
   raw?: ReplayJsonObject | string | null;
+}
+
+interface ReplayCalculatorLinkResponse {
+  url?: string;
 }
 
 interface ReplayPerspectivesResponse {
@@ -244,7 +250,11 @@ export class ReplayCalcService {
     timeoutMs: number,
   ): Observable<ReplayBattleResponse> {
     return this.fetchReplayBattleDirect(payload, timeoutMs).pipe(
-      catchError(() => this.fetchReplayBattleFromTurnsApi(payload, timeoutMs)),
+      catchError(() =>
+        this.fetchReplayBattleFromCalculatorApi(payload, timeoutMs).pipe(
+          catchError(() => this.fetchReplayBattleFromTurnsApi(payload, timeoutMs)),
+        ),
+      ),
       map((response) => this.attachReplayBuildDecks(response)),
     );
   }
@@ -314,6 +324,52 @@ export class ReplayCalcService {
       timeoutMs,
       (replayId) => this.fetchReplayBattleByReplayId(replayId, payload.T, timeoutMs),
     );
+  }
+
+  private fetchReplayBattleFromCalculatorApi(
+    payload: ReplayBattleRequest,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
+    return this.fetchWithReplayIndexFallback(
+      payload,
+      timeoutMs,
+      (replayId) =>
+        this.fetchReplayCalculatorByReplayId(
+          replayId,
+          payload.T,
+          timeoutMs,
+        ),
+    );
+  }
+
+  private fetchReplayCalculatorByReplayId(
+    replayId: string,
+    requestedTurn: number,
+    timeoutMs: number,
+  ): Observable<ReplayBattleResponse> {
+    return this.http
+      .get<ReplayCalculatorLinkResponse>(
+        getReplayCalculatorApiUrl(replayId, requestedTurn),
+      )
+      .pipe(
+        timeout(timeoutMs),
+        map((response) => {
+          const calculatorState = response?.url
+            ? this.decodeCalculatorLinkState(response.url)
+            : null;
+          if (!calculatorState) {
+            throw {
+              error: { error: 'SAP Library returned an invalid calculator link.' },
+              status: 502,
+            };
+          }
+          return {
+            calculatorState,
+            sapLibraryReplayId: replayId,
+            sapLibraryReplayUrl: getSapLibraryReplayUrl(replayId),
+          };
+        }),
+      );
   }
 
   private fetchWithReplayIndexFallback<TResponse>(
@@ -547,6 +603,35 @@ export class ReplayCalcService {
 
   private isRecord(value: unknown): value is ReplayJsonObject {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  private decodeCalculatorLinkState(
+    calculatorLink: string,
+  ): Record<string, unknown> | null {
+    try {
+      const url = new URL(calculatorLink);
+      const hash = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hashParams = new URLSearchParams(hash);
+      const encodedData =
+        url.searchParams.get('c') || hashParams.get('c');
+      if (!encodedData) {
+        return null;
+      }
+
+      const base64 = encodedData
+        .replace(/\s/g, '+')
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+      const padded = `${base64}${'='.repeat((4 - (base64.length % 4)) % 4)}`;
+      const binary = atob(padded);
+      const bytes = Uint8Array.from(binary, (character) =>
+        character.charCodeAt(0),
+      );
+      const parsed = JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+      return this.isRecord(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
   }
 
   private parseJsonObject(raw: unknown): ReplayJsonObject | null {

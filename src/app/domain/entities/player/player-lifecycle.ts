@@ -155,3 +155,33 @@ export const removeDeadPets = (
   return petRemoved;
 };
 
+export const removePet = (player: Player, pet: Pet): boolean => {
+  if (player.pet0 === pet) {
+    pet.removed = true;
+    player.pet0 = undefined;
+    return true;
+  }
+  if (player.pet1 === pet) {
+    pet.removed = true;
+    player.pet1 = undefined;
+    return true;
+  }
+  if (player.pet2 === pet) {
+    pet.removed = true;
+    player.pet2 = undefined;
+    return true;
+  }
+  if (player.pet3 === pet) {
+    pet.removed = true;
+    player.pet3 = undefined;
+    return true;
+  }
+  if (player.pet4 === pet) {
+    pet.removed = true;
+    player.pet4 = undefined;
+    return true;
+  }
+
+  return false;
+};
+

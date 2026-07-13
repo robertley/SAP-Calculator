@@ -4,6 +4,8 @@ import { Observable, of, throwError } from 'rxjs';
 
 vi.mock('../../../src/app/integrations/replay/replay-api-endpoints', () => ({
   getReplayApiUrl: (path: string) => path,
+  getReplayCalculatorApiUrl: (replayId: string, turn: number) =>
+    `/replays/${replayId}/calculator?turn=${turn}`,
   getReplayPerspectivesApiUrl: (replayId: string) =>
     `/replays/${replayId}/perspectives`,
   getReplayTurnsApiUrl: (replayId: string) => `/replays/${replayId}/turns`,
@@ -18,6 +20,48 @@ import {
 } from '../../../src/app/integrations/replay/replay-calc.service';
 
 describe('ReplayCalcService', () => {
+  it('imports calculator state from SAP Library when battle fallback data omits toys', async () => {
+    const encodedState = Buffer.from(
+      JSON.stringify({ oT: 'Microwave Oven', oTL: '2' }),
+    ).toString('base64url');
+    const http = {
+      post: vi.fn((path: string) => {
+        if (path === '/replay-battle') {
+          return throwError({ status: 404 });
+        }
+        if (path === '/replays') {
+          return of({ replayId: 'db-replay-1' });
+        }
+        return throwError(new Error(`unexpected post ${path}`));
+      }),
+      get: vi.fn((path: string) => {
+        if (path === '/replays/pid-1/calculator?turn=9') {
+          return throwError({ status: 404 });
+        }
+        if (path === '/replays/db-replay-1/calculator?turn=9') {
+          return of({
+            url: `https://sap-calculator.com/?c=${encodedState}`,
+          });
+        }
+        return throwError(new Error(`unexpected get ${path}`));
+      }),
+    } as unknown as HttpClient;
+    const service = new ReplayCalcService(http);
+
+    const response = await new Promise<ReplayBattleResponse>((resolve, reject) => {
+      service.fetchReplayBattle({ Pid: 'pid-1', T: 9 }, 1000).subscribe({
+        next: resolve,
+        error: reject,
+      });
+    });
+
+    expect(response.calculatorState).toEqual({
+      oT: 'Microwave Oven',
+      oTL: '2',
+    });
+    expect(response.sapLibraryReplayId).toBe('db-replay-1');
+  });
+
   it('prefers direct replay battle payloads before falling back to turns', async () => {
     const http = {
       post: vi.fn((path: string) => {
@@ -29,9 +73,9 @@ describe('ReplayCalcService', () => {
             },
           });
         }
-        return throwError(() => new Error(`unexpected post ${path}`));
+        return throwError(new Error(`unexpected post ${path}`));
       }),
-      get: vi.fn(() => throwError(() => new Error('unexpected get'))),
+      get: vi.fn(() => throwError(new Error('unexpected get'))),
     } as unknown as HttpClient;
     const service = new ReplayCalcService(http);
 
@@ -68,7 +112,7 @@ describe('ReplayCalcService', () => {
           opponentGenesisBuildModel: { Bor: { Deck: opponentDeck } },
         }),
       ),
-      get: vi.fn(() => throwError(() => new Error('unexpected get'))),
+      get: vi.fn(() => throwError(new Error('unexpected get'))),
     } as unknown as HttpClient;
     const service = new ReplayCalcService(http);
 
@@ -119,7 +163,7 @@ describe('ReplayCalcService', () => {
             ],
           });
         }
-        return throwError(() => new Error(`unexpected get ${path}`));
+        return throwError(new Error(`unexpected get ${path}`));
       }),
     } as unknown as HttpClient;
     const service = new ReplayCalcService(http);

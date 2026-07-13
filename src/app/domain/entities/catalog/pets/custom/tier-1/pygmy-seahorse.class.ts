@@ -63,9 +63,6 @@ export class PygmySeahorseAbility extends Ability {
       owner,
     );
     const targets = targetsResp.pets;
-    if (targets.length === 0) {
-      return;
-    }
 
     for (const target of targets) {
       target.increaseAttack(this.level);
@@ -80,7 +77,7 @@ export class PygmySeahorseAbility extends Ability {
       });
     }
 
-    owner.health = 0;
+    owner.parent.removePet(owner);
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);
