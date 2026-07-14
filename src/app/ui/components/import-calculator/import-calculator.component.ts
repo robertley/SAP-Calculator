@@ -112,6 +112,8 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     turn: new FormControl(1, Validators.min(1)),
     oddsSimulations: new FormControl(100, Validators.min(1)),
     positioningSide: new FormControl('player'),
+    projectEndTurnEffects: new FormControl(true),
+    recomputeParrotCopies: new FormControl(true),
   });
 
   errorMessage = '';
@@ -1326,6 +1328,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         replayPayload: request.replay,
         simulationCount: request.simulationCount,
         optimizationSide: request.optimizationSide ?? 'player',
+        projectEndTurnEffects:
+          this.formGroup.get('projectEndTurnEffects')?.value !== false,
+        recomputeParrotCopies:
+          this.formGroup.get('recomputeParrotCopies')?.value !== false,
         abilityPetMap: request.abilityPetMap ?? null,
         abortSignal: abortController.signal,
         onProgress: (progress: ReplayPositioningImageProgress) => {

@@ -3,6 +3,7 @@ import {
   SimulationConfig,
   SimulationResult,
 } from 'app/domain/interfaces/simulation-config.interface';
+import { refreshPositioningLineupMemory } from './positioning-lineup-memory';
 
 export type PositioningOptimizationSide = 'player' | 'opponent';
 
@@ -14,6 +15,7 @@ export interface PositioningOptimizerOptions {
   minSamplesBeforeElimination: number;
   baseSeed: number;
   keepSameBuffTargets: boolean;
+  recomputeParrotCopies: boolean;
 }
 
 export interface PositioningOptimizerProgress {
@@ -87,6 +89,8 @@ export function runPositioningOptimization(
   } = params;
   const side = params.options.side;
   const keepSameBuffTargets = params.options.keepSameBuffTargets === true;
+  const recomputeParrotCopies =
+    params.options.recomputeParrotCopies !== false;
   const projectedLineupCache = new Map<string, (PetConfig | null)[]>();
 
   const maxSimulationsPerPermutation = Math.max(
@@ -136,21 +140,28 @@ export function runPositioningOptimization(
       )
     : null;
   const permutations = generateIndexPermutations(sidePets);
-  const candidates: CandidateState[] = permutations.map((order) => ({
-    order: [...order],
-    lineup: applyOrder(sidePets, order),
-    simulations: 0,
-    wins: 0,
-    draws: 0,
-    losses: 0,
-    score: 0,
-    lowerBound: 0,
-    upperBound: 1,
-    eliminated: false,
-    rounds: 0,
-    simulationLineup: keepSameBuffTargets ? applyOrder(sidePets, order) : null,
-    lineupSignature: '',
-  }));
+  const candidates: CandidateState[] = permutations.map((order) => {
+    const lineup = applyOrder(sidePets, order);
+    return {
+      order: [...order],
+      lineup,
+      simulations: 0,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      score: 0,
+      lowerBound: 0,
+      upperBound: 1,
+      eliminated: false,
+      rounds: 0,
+      simulationLineup: keepSameBuffTargets
+        ? recomputeParrotCopies
+          ? refreshPositioningLineupMemory(lineup)
+          : lineup
+        : null,
+      lineupSignature: '',
+    };
+  });
   candidates.forEach((candidate) => {
     candidate.lineupSignature = buildLineupSignature(candidate.lineup);
   });
@@ -199,6 +210,7 @@ export function runPositioningOptimization(
         candidate,
         {
           keepSameBuffTargets,
+          recomputeParrotCopies,
           baseConfig,
           side,
           sidePets,
@@ -302,16 +314,26 @@ export function runPositioningOptimization(
       .length,
     simulatedBattles: completedBattles,
     aborted,
-    bestPermutation: cloneCandidateStats(bestPermutation),
-    rankedPermutations: rankedPermutations.map(cloneCandidateStats),
+    bestPermutation: cloneCandidateStats(bestPermutation, recomputeParrotCopies),
+    rankedPermutations: rankedPermutations.map((candidate) =>
+      cloneCandidateStats(candidate, recomputeParrotCopies),
+    ),
   };
 }
 
-function cloneCandidateStats(candidate: CandidateState): PositioningPermutationStats {
+function cloneCandidateStats(
+  candidate: CandidateState,
+  recomputeParrotCopies: boolean,
+): PositioningPermutationStats {
   return {
     order: [...candidate.order],
     lineup: [...candidate.lineup],
-    simulationLineup: [...(candidate.simulationLineup ?? candidate.lineup)],
+    simulationLineup: [
+      ...(candidate.simulationLineup ??
+        (recomputeParrotCopies
+          ? refreshPositioningLineupMemory(candidate.lineup)
+          : candidate.lineup)),
+    ],
     simulations: candidate.simulations,
     wins: candidate.wins,
     draws: candidate.draws,
@@ -582,6 +604,7 @@ function getCandidateSimulationLineup(
   candidate: CandidateState,
   context: {
     keepSameBuffTargets: boolean;
+    recomputeParrotCopies: boolean;
     baseConfig: SimulationConfig;
     side: PositioningOptimizationSide;
     sidePets: (PetConfig | null)[];
@@ -600,7 +623,7 @@ function getCandidateSimulationLineup(
     return cached;
   }
 
-  const simulationLineup =
+  const projectedOrRawLineup =
     context.keepSameBuffTargets || !context.baselineLineupDeltas || !context.projectEndTurnLineup
       ? candidate.lineup
       : buildProjectedCandidateLineup(
@@ -611,6 +634,9 @@ function getCandidateSimulationLineup(
           context.baselineLineupDeltas,
           context.projectEndTurnLineup,
         );
+  const simulationLineup = context.recomputeParrotCopies
+    ? refreshPositioningLineupMemory(projectedOrRawLineup)
+    : projectedOrRawLineup;
 
   projectedLineupCache.set(candidate.lineupSignature, simulationLineup);
   candidate.simulationLineup = simulationLineup;

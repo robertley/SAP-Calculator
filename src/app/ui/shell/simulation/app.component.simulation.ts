@@ -710,8 +710,10 @@ export function optimizePositioning(
   }
 
   const maxSimulationsPerPermutation = Math.max(1, Math.trunc(count || 1));
-  const keepSameBuffTargets =
-    ctx.formGroup.get('keepSameBuffTargetsOnOptimization')?.value === true;
+  const projectEndTurnEffects =
+    ctx.formGroup.get('projectEndTurnEffectsOnOptimization')?.value !== false;
+  const recomputeParrotCopies =
+    ctx.formGroup.get('recomputeParrotCopiesOnOptimization')?.value !== false;
   ctx.positioningDeltaSummary = null;
   ctx.pendingPositioningOptimizationBaseline =
     buildOptimizationBaselineFromCurrentResults(ctx, side);
@@ -796,8 +798,9 @@ export function optimizePositioning(
       batchSize: Math.min(25, maxSimulationsPerPermutation),
       minSamplesBeforeElimination: Math.min(50, maxSimulationsPerPermutation),
       confidenceZ: 1.96,
-      projectEndTurnLineup: true,
-      keepSameBuffTargets,
+      projectEndTurnLineup: projectEndTurnEffects,
+      keepSameBuffTargets: !projectEndTurnEffects,
+      recomputeParrotCopies,
     },
   );
 

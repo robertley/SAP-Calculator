@@ -44,6 +44,8 @@ export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
   simulationCount: number;
   optimizationSide: 'player' | 'opponent';
+  projectEndTurnEffects?: boolean;
+  recomputeParrotCopies?: boolean;
   abilityPetMap?: Record<string, string | number> | null;
   abortSignal?: AbortSignal;
   onProgress?: (progress: ReplayPositioningImageProgress) => void;
@@ -223,6 +225,8 @@ export class ReplayPositioningImageService {
         baseConfig,
         input.simulationCount,
         input.optimizationSide,
+        input.projectEndTurnEffects !== false,
+        input.recomputeParrotCopies !== false,
         input.abortSignal,
         (turnPercent) => {
           this.emitProgress(
@@ -298,6 +302,8 @@ export class ReplayPositioningImageService {
     baseConfig: SimulationConfig,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
+    projectEndTurnEffects: boolean,
+    recomputeParrotCopies: boolean,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
@@ -306,6 +312,8 @@ export class ReplayPositioningImageService {
         baseConfig,
         simulationCount,
         optimizationSide,
+        projectEndTurnEffects,
+        recomputeParrotCopies,
         abortSignal,
         onProgress,
       );
@@ -323,7 +331,8 @@ export class ReplayPositioningImageService {
           batchSize: Math.min(25, simulationCount),
           minSamplesBeforeElimination: Math.min(50, simulationCount),
           confidenceZ: 1.96,
-          keepSameBuffTargets: false,
+          keepSameBuffTargets: !projectEndTurnEffects,
+          recomputeParrotCopies,
         },
         shouldAbort: () => Boolean(abortSignal?.aborted),
         onProgress: (progress) => {
@@ -339,21 +348,23 @@ export class ReplayPositioningImageService {
           );
           onProgress?.(percent);
         },
-        projectEndTurnLineup: ({ baseConfig: projectionConfig, side, lineup }) => {
-          const runner = new SimulationRunner(
-            this.logService,
-            this.gameService,
-            this.abilityService,
-            this.petService,
-            this.equipmentService,
-            this.toyService,
-          );
-          return runner.projectLineupAfterEndTurn(
-            projectionConfig,
-            side,
-            lineup,
-          );
-        },
+        projectEndTurnLineup: projectEndTurnEffects
+          ? ({ baseConfig: projectionConfig, side, lineup }) => {
+              const runner = new SimulationRunner(
+                this.logService,
+                this.gameService,
+                this.abilityService,
+                this.petService,
+                this.equipmentService,
+                this.toyService,
+              );
+              return runner.projectLineupAfterEndTurn(
+                projectionConfig,
+                side,
+                lineup,
+              );
+            }
+          : undefined,
         simulateBatch: (config) => this.runLocalSimulation(config),
       }),
     );
@@ -363,6 +374,8 @@ export class ReplayPositioningImageService {
     baseConfig: SimulationConfig,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
+    projectEndTurnEffects: boolean,
+    recomputeParrotCopies: boolean,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
@@ -455,8 +468,9 @@ export class ReplayPositioningImageService {
           batchSize: Math.min(25, simulationCount),
           minSamplesBeforeElimination: Math.min(50, simulationCount),
           confidenceZ: 1.96,
-          projectEndTurnLineup: true,
-          keepSameBuffTargets: false,
+          projectEndTurnLineup: projectEndTurnEffects,
+          keepSameBuffTargets: !projectEndTurnEffects,
+          recomputeParrotCopies,
         },
       });
     });

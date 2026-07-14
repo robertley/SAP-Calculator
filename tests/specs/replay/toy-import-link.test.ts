@@ -6,7 +6,7 @@ import {
 import { UrlStateService } from '../../../src/app/runtime/state/url-state.service';
 
 describe('replay toy calculator links', () => {
-  it('round-trips a replay toy and its level through the generated URL', () => {
+  it('round-trips Unicode state through the generated URL', () => {
     vi.stubGlobal('window', {
       location: {
         origin: 'https://sap-calculator.com',
@@ -17,7 +17,7 @@ describe('replay toy calculator links', () => {
     });
 
     const state = {
-      playerToy: 'Microwave Oven',
+      playerToy: 'Café Toy 🐾',
       playerToyLevel: '2',
       customPacks: [],
       playerPets: [],
@@ -37,7 +37,7 @@ describe('replay toy calculator links', () => {
 
     expect(new UrlStateService().parseCalculatorStateFromUrl()).toEqual({
       state: {
-        playerToy: 'Microwave Oven',
+        playerToy: 'Café Toy 🐾',
         playerToyLevel: '2',
       },
     });

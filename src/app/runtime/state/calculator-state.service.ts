@@ -92,6 +92,8 @@ export class CalculatorStateService {
       showTriggerNamesInLogs: false,
       showPositionalArgsInLogs: true,
       keepSameBuffTargetsOnOptimization: false,
+      projectEndTurnEffectsOnOptimization: true,
+      recomputeParrotCopiesOnOptimization: true,
       ailmentEquipment: false,
     };
   }
@@ -139,5 +141,4 @@ export class CalculatorStateService {
     return null;
   }
 }
-
 

@@ -44,6 +44,7 @@ type OptimizePositioningStartMessage = {
     minSamplesBeforeElimination?: number;
     projectEndTurnLineup?: boolean;
     keepSameBuffTargets?: boolean;
+    recomputeParrotCopies?: boolean;
   };
 };
 
@@ -286,6 +287,7 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
           confidenceZ: options.confidenceZ,
           minSamplesBeforeElimination: options.minSamplesBeforeElimination,
           keepSameBuffTargets: options.keepSameBuffTargets,
+          recomputeParrotCopies: options.recomputeParrotCopies,
         },
         shouldAbort: () => cancelRequested,
         onProgress: (progress) => {

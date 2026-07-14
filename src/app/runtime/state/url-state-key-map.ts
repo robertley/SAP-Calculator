@@ -58,6 +58,8 @@ export const KEY_MAP: Record<string, string> = {
   showTriggerNamesInLogs: 'stn',
   showPositionalArgsInLogs: 'spa',
   keepSameBuffTargetsOnOptimization: 'ksbt',
+  projectEndTurnEffectsOnOptimization: 'pete',
+  recomputeParrotCopiesOnOptimization: 'rpc',
   ailmentEquipment: 'ae',
   changeEquipmentUses: 'cEU',
   logsEnabled: 'lE',

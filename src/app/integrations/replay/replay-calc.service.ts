@@ -15,6 +15,7 @@ import {
 } from './replay-calc-parser';
 import { PACK_MAP } from './replay-calc-schema';
 import { REVERSE_KEY_MAP } from 'app/runtime/state/url-state-key-map';
+import { decodeBase64Url } from 'app/runtime/base64-url';
 import {
   getReplayApiUrl,
   getReplayCalculatorApiUrl,
@@ -627,16 +628,7 @@ export class ReplayCalcService {
         return null;
       }
 
-      const base64 = encodedData
-        .replace(/\s/g, '+')
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
-      const padded = `${base64}${'='.repeat((4 - (base64.length % 4)) % 4)}`;
-      const binary = atob(padded);
-      const bytes = Uint8Array.from(binary, (character) =>
-        character.charCodeAt(0),
-      );
-      const parsed = JSON.parse(new TextDecoder().decode(bytes)) as unknown;
+      const parsed = JSON.parse(decodeBase64Url(encodedData)) as unknown;
       const expanded = this.expandCalculatorStateKeys(parsed);
       return this.isRecord(expanded) ? expanded : null;
     } catch {

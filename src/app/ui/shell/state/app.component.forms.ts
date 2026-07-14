@@ -69,6 +69,8 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
     showTriggerNamesInLogs: new FormControl(false),
     showPositionalArgsInLogs: new FormControl(true),
     keepSameBuffTargetsOnOptimization: new FormControl(false),
+    projectEndTurnEffectsOnOptimization: new FormControl(true),
+    recomputeParrotCopiesOnOptimization: new FormControl(true),
     ailmentEquipment: new FormControl(true),
     changeEquipmentUses: new FormControl(false),
     seed: new FormControl<number | null>(null),
@@ -205,4 +207,3 @@ export function createAppFormGroup(ctx: AppFormInitContext): FormGroup {
 
   return formGroup;
 }
-

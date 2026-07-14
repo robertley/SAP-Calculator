@@ -134,6 +134,7 @@ export class SimulationService {
       minSamplesBeforeElimination?: number;
       projectEndTurnLineup?: boolean;
       keepSameBuffTargets?: boolean;
+      recomputeParrotCopies?: boolean;
     },
     configOverrides?: Partial<SimulationConfig>,
   ): Worker | null {
@@ -348,6 +349,7 @@ export class SimulationService {
       minSamplesBeforeElimination?: number;
       projectEndTurnLineup?: boolean;
       keepSameBuffTargets?: boolean;
+      recomputeParrotCopies?: boolean;
     },
     configOverrides?: Partial<SimulationConfig>,
   ): PositioningOptimizationResult {
@@ -375,6 +377,7 @@ export class SimulationService {
         confidenceZ: options.confidenceZ,
         minSamplesBeforeElimination: options.minSamplesBeforeElimination,
         keepSameBuffTargets: options.keepSameBuffTargets,
+        recomputeParrotCopies: options.recomputeParrotCopies,
       },
       projectEndTurnLineup:
         options.projectEndTurnLineup === true

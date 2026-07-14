@@ -52,6 +52,29 @@
       </select>
     </div>
   </div>
+  <fieldset class="mb-3" *ngIf="mode === 'positioning-image'">
+    <legend class="form-label mb-2">Positioning behavior</legend>
+    <div class="form-check mb-2">
+      <input
+        id="projectEndTurnEffects"
+        type="checkbox"
+        class="form-check-input"
+        formControlName="projectEndTurnEffects"
+      />
+      <label class="form-check-label" for="projectEndTurnEffects">Project end-turn effects</label>
+      <div class="form-text">Re-target positional end-turn buffs and effects for every tested order.</div>
+    </div>
+    <div class="form-check">
+      <input
+        id="recomputeParrotCopies"
+        type="checkbox"
+        class="form-check-input"
+        formControlName="recomputeParrotCopies"
+      />
+      <label class="form-check-label" for="recomputeParrotCopies">Recompute Parrot copies by position</label>
+      <div class="form-text">Each Parrot copies the nearest pet ahead; a front-most Parrot copies nothing.</div>
+    </div>
+  </fieldset>
   <div class="d-flex align-items-end gap-2 flex-wrap mb-2">
     <button class="btn btn-primary" *ngIf="mode === 'import'" (click)="submit()" [disabled]="loading">
       {{ loading ? "Fetching..." : "Import Data" }}

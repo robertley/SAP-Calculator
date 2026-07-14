@@ -2,6 +2,7 @@ import {
   CustomPackConfig,
   PetConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
+import { encodeBase64Url } from 'app/runtime/base64-url';
 import {
   KEY_MAP,
   PACK_MAP,
@@ -1419,10 +1420,7 @@ export class ReplayCalcParser {
     const strippedState = this.stripDefaultValues(calculatorState);
     const truncatedState = this.truncateKeys(strippedState);
     const stateString = JSON.stringify(truncatedState);
-    const base64Data = btoa(stateString)
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/g, '');
+    const base64Data = encodeBase64Url(stateString);
     return `${baseUrl}#c=${base64Data}`;
   }
 

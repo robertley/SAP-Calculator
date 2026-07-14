@@ -220,9 +220,16 @@
               <button type="button" [class.active]="optimizeSide === 'opponent'" (click)="optimizeSide = 'opponent'">Opponent</button>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="keepSameBuffTargetsOnOptimization"
-                formControlName="keepSameBuffTargetsOnOptimization" [disabled]="app.simulationInProgress" />
-              <label class="form-check-label" for="keepSameBuffTargetsOnOptimization">Keep the same buff targets</label>
+              <input class="form-check-input" type="checkbox" id="projectEndTurnEffectsOnOptimization"
+                formControlName="projectEndTurnEffectsOnOptimization" [disabled]="app.simulationInProgress" />
+              <label class="form-check-label" for="projectEndTurnEffectsOnOptimization">Project end-turn effects</label>
+              <div class="form-text">Re-target positional end-turn buffs and effects for every tested order.</div>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="recomputeParrotCopiesOnOptimization"
+                formControlName="recomputeParrotCopiesOnOptimization" [disabled]="app.simulationInProgress" />
+              <label class="form-check-label" for="recomputeParrotCopiesOnOptimization">Recompute Parrot copies by position</label>
+              <div class="form-text">Each Parrot copies the nearest pet ahead; a front-most Parrot copies nothing.</div>
             </div>
           </div>
           <footer class="tool-pane-footer">

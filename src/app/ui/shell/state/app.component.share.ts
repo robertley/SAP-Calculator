@@ -1,6 +1,7 @@
 import { FormGroup } from '@angular/forms';
 import { cloneDeep } from 'lodash-es';
 import { KEY_MAP, REVERSE_KEY_MAP } from 'app/runtime/state/url-state-key-map';
+import { decodeBase64Url, encodeBase64Url } from 'app/runtime/base64-url';
 
 const PARROT_ABOM_SWALLOWED_KEY = 'abomParrotSwallowed';
 const EXPORT_TOKEN_PREFIX = 'SAPC1:';
@@ -62,6 +63,8 @@ const SHARE_DEFAULTS: RecordShape = {
   showTriggerNamesInLogs: false,
   showPositionalArgsInLogs: true,
   keepSameBuffTargetsOnOptimization: false,
+  projectEndTurnEffectsOnOptimization: true,
+  recomputeParrotCopiesOnOptimization: true,
   ailmentEquipment: false,
   changeEquipmentUses: false,
   logsEnabled: true,
@@ -126,28 +129,6 @@ function expandKeys(data: unknown): unknown {
     return newObj;
   }
   return data;
-}
-
-function toBase64Url(value: string): string {
-  const bytes = new TextEncoder().encode(value);
-  let binary = '';
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/g, '');
-}
-
-function fromBase64Url(value: string): string {
-  const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
-  const padLength = (4 - (base64.length % 4)) % 4;
-  const padded = `${base64}${'='.repeat(padLength)}`;
-  const binary = atob(padded);
-  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
 }
 
 function forEachPet(state: unknown, cb: (pet: RecordShape) => void): void {
@@ -430,7 +411,7 @@ function buildCompressedStateToken(rawValue: unknown): string {
   const compactValue = compactCalculatorState(cleanValue);
   const truncatedValue = truncateKeys(compactValue);
   const calculatorStateString = JSON.stringify(truncatedValue);
-  return `${EXPORT_TOKEN_PREFIX}${toBase64Url(calculatorStateString)}`;
+  return `${EXPORT_TOKEN_PREFIX}${encodeBase64Url(calculatorStateString)}`;
 }
 
 function buildLegacyJsonPayload(rawValue: unknown): string {
@@ -466,7 +447,7 @@ export function parseImportPayload(payload: string): unknown {
 
   if (raw.startsWith(EXPORT_TOKEN_PREFIX)) {
     const encoded = raw.slice(EXPORT_TOKEN_PREFIX.length);
-    const parsedCompressed = JSON.parse(fromBase64Url(encoded)) as unknown;
+    const parsedCompressed = JSON.parse(decodeBase64Url(encoded)) as unknown;
     return expandKeys(parsedCompressed);
   }
 

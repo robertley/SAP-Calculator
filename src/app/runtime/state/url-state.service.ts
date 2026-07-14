@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { REVERSE_KEY_MAP } from './url-state-key-map';
+import { decodeBase64Url } from '../base64-url';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -18,21 +19,6 @@ function expandKeys(data: unknown): unknown {
     return newObj;
   }
   return data;
-}
-
-function normalizeBase64Payload(payload: string): string {
-  const base64 = payload
-    .replace(/\s/g, '+')
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-  const padLength = (4 - (base64.length % 4)) % 4;
-  return `${base64}${'='.repeat(padLength)}`;
-}
-
-function decodeBase64Payload(payload: string): string {
-  const binary = atob(normalizeBase64Payload(payload));
-  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
 }
 
 function parseJsonPayload(payload: string): unknown {
@@ -69,7 +55,7 @@ export class UrlStateService {
       const parsedState =
         decodedData.trim().startsWith('{') || decodedData.trim().startsWith('[')
           ? (JSON.parse(decodedData) as unknown)
-          : parseJsonPayload(decodeBase64Payload(encodedData));
+          : parseJsonPayload(decodeBase64Url(encodedData));
 
       const fullKeyJson = expandKeys(parsedState);
       return isRecord(fullKeyJson) ? { state: fullKeyJson } : { state: null };
