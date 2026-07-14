@@ -144,6 +144,23 @@ export class CustomPackFormComponent implements OnInit {
     return this.formGroup.get(`tier${tier}Pets`).value.length;
   }
 
+  getShopCards(): Array<string | number> {
+    return ['foods', 'perks', 'spells'].flatMap((controlName) => {
+      const value = this.formGroup.get(controlName)?.value;
+      return Array.isArray(value)
+        ? value.filter(
+            (entry): entry is string | number =>
+              typeof entry === 'string' || typeof entry === 'number',
+          )
+        : [];
+    });
+  }
+
+  getShopCardsText(): string {
+    const cards = this.getShopCards();
+    return cards.length ? cards.join(', ') : 'No shop cards in this pack.';
+  }
+
   processCheckboxChange(tier: number, pet: string, checked: boolean) {
     let formControlValue = this.formGroup.get(`tier${tier}Pets`).value;
     if (checked) {

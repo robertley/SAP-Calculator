@@ -683,6 +683,34 @@ describe('ReplayCalcParser', () => {
     expect(state.customPacks[0].deckId).toBe('player-genesis-deck');
   });
 
+  it('keeps numeric shop-card IDs from a replay deck for copied custom-pack JSON', () => {
+    const parser = new ReplayCalcParser();
+    const battleJson: ReplayBattleJson = {
+      UserBoard: {
+        Pack: 0,
+        Mins: { Items: [] },
+      },
+      OpponentBoard: {
+        Pack: 0,
+        Mins: { Items: [] },
+      },
+    };
+    const buildModel = {
+      Bor: {
+        Deck: {
+          Id: 'shop-card-deck',
+          Title: 'Shop Card Pack',
+          Minions: ['624'],
+          Spells: [0, 117],
+        },
+      },
+    };
+
+    const state = parser.parseReplayForCalculator(battleJson, buildModel);
+
+    expect(state.customPacks[0].spells).toEqual([0, 117]);
+  });
+
   it('imports custom packs from both replay perspectives', () => {
     const parser = new ReplayCalcParser();
     const battleJson: ReplayBattleJson = {

@@ -348,8 +348,107 @@ export class ReplayCalcService {
           replayId,
           payload.T,
           timeoutMs,
+        ).pipe(
+          switchMap((calculatorResponse) =>
+            this.fetchReplayBattleByReplayId(
+              replayId,
+              payload.T,
+              timeoutMs,
+            ).pipe(
+              map((replayResponse) =>
+                this.mergeReplayDecksIntoCalculatorState(
+                  calculatorResponse,
+                  replayResponse,
+                ),
+              ),
+              // The calculator link remains a valid fallback when this API
+              // does not expose raw replay turns.
+              catchError(() => of(calculatorResponse)),
+            ),
+          ),
         ),
     );
+  }
+
+  private mergeReplayDecksIntoCalculatorState(
+    calculatorResponse: ReplayBattleResponse,
+    replayResponse: ReplayBattleResponse,
+  ): ReplayBattleResponse {
+    const calculatorState = calculatorResponse.calculatorState;
+    const battle = replayResponse.battle;
+    if (!calculatorState || !battle) {
+      return calculatorResponse;
+    }
+
+    const replayState = this.parser.parseReplayForCalculator(
+      battle,
+      replayResponse.genesisBuildModel,
+      undefined,
+      { abilityPetMap: replayResponse.abilityPetMap ?? null },
+    );
+    if (replayState.customPacks.length === 0) {
+      return calculatorResponse;
+    }
+
+    const calculatorPacks = Array.isArray(calculatorState['customPacks'])
+      ? calculatorState['customPacks']
+      : [];
+    const mergedPacks = calculatorPacks.map((pack) => {
+      if (!this.isRecord(pack)) {
+        return pack;
+      }
+      const deckId = this.toReplayId(pack['deckId']);
+      const name = typeof pack['name'] === 'string' ? pack['name'] : null;
+      const replayPack = replayState.customPacks.find(
+        (candidate) =>
+          (deckId !== null && candidate.deckId === deckId) ||
+          (name !== null && candidate.name === name),
+      );
+      if (!replayPack) {
+        return pack;
+      }
+
+      const existingSpells = Array.isArray(pack['spells'])
+        ? pack['spells']
+        : [];
+      return {
+        ...pack,
+        spells:
+          existingSpells.length > 0 ? existingSpells : replayPack.spells,
+      };
+    });
+    const existingPackKeys = new Set(
+      calculatorPacks
+        .filter((pack): pack is ReplayJsonObject => this.isRecord(pack))
+        .flatMap((pack) => {
+          const keys: string[] = [];
+          const deckId = this.toReplayId(pack['deckId']);
+          if (deckId !== null) {
+            keys.push(`id:${deckId}`);
+          }
+          if (typeof pack['name'] === 'string') {
+            keys.push(`name:${pack['name']}`);
+          }
+          return keys;
+        }),
+    );
+    for (const replayPack of replayState.customPacks) {
+      const alreadyIncluded =
+        (replayPack.deckId != null &&
+          existingPackKeys.has(`id:${replayPack.deckId}`)) ||
+        existingPackKeys.has(`name:${replayPack.name}`);
+      if (!alreadyIncluded) {
+        mergedPacks.push(replayPack);
+      }
+    }
+
+    return {
+      ...calculatorResponse,
+      calculatorState: {
+        ...calculatorState,
+        customPacks: mergedPacks,
+      },
+    };
   }
 
   private fetchReplayCalculatorByReplayId(

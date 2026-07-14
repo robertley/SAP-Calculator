@@ -48,6 +48,10 @@
 .pet-option span { min-width: 0; flex: 1; font-size: 0.75rem; line-height: 1.15; }
 .pet-option > i { display: none; color: var(--bs-primary); font-size: 0.7rem; }
 .pet-option.selected > i { display: block; }
+.shop-card-summary { display: grid; grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr); gap: 1rem; padding: 0.9rem 1.25rem; border-top: 1px solid var(--ui-border-1); background: var(--ui-surface-1); }
+.shop-card-summary > div { display: grid; gap: 0.15rem; }
+.shop-card-summary span { color: var(--ui-text-3); font-size: 0.73rem; }
+.shop-card-summary output { min-width: 0; padding: 0.5rem 0.65rem; color: var(--ui-text-2); background: var(--ui-surface-0); border: 1px solid var(--ui-border-1); border-radius: 0.45rem; font-family: var(--bs-font-monospace); font-size: 0.75rem; line-height: 1.4; overflow-wrap: anywhere; }
 
 @media (max-width: 767.98px) {
   .builder-header { align-items: stretch; flex-direction: column; }
@@ -58,6 +62,7 @@
   .selected-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .catalog-toolbar { align-items: stretch; flex-direction: column; }
   .catalog-search { width: 100%; }
+  .shop-card-summary { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) { .pet-option { transition: none; } }

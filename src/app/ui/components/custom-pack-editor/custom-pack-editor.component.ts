@@ -11,6 +11,10 @@ import {
 } from '@angular/forms';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
+import {
+  getCustomPackSpellItems,
+  normalizeCustomPackItems,
+} from 'app/runtime/custom-pack-form';
 import * as petJson from 'assets/data/pets.json';
 import { PACK_NAMES } from 'app/runtime/pack-names';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -114,6 +118,8 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
       // tier5Food: new FormControl([]),
       tier6Pets: new FormControl([], this.controlArrayLengthOf10()),
       // tier6Food: new FormControl([]),
+      foods: new FormControl([]),
+      perks: new FormControl([]),
       spells: new FormControl([]),
     });
 
@@ -202,9 +208,14 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
       if (firstBracket !== -1 && lastBracket > firstBracket) {
         jsonString = code.substring(firstBracket, lastBracket + 1);
       }
-      const parsedCode = JSON.parse(jsonString);
-      let parsed = this.parseMinions(parsedCode.Minions, parsedCode.MinionMap);
-      const parsedSpells = Array.isArray(parsedCode.Spells) ? parsedCode.Spells : [];
+      const parsedCode = this.asRecord(JSON.parse(jsonString));
+      if (!parsedCode) {
+        throw new Error('Custom pack code must be an object.');
+      }
+      let parsed = this.parseMinions(
+        this.getPackItems(parsedCode, 'Minions'),
+        this.getMinionMap(parsedCode.MinionMap),
+      );
       let formValue = {
         name: parsedCode.Title,
         tier1Pets: parsed.tierMinions.get(1),
@@ -213,7 +224,9 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
         tier4Pets: parsed.tierMinions.get(4),
         tier5Pets: parsed.tierMinions.get(5),
         tier6Pets: parsed.tierMinions.get(6),
-        spells: parsedSpells,
+        foods: this.getPackItems(parsedCode, 'Foods', 'Food'),
+        perks: this.getPackItems(parsedCode, 'Perks'),
+        spells: this.getPackItems(parsedCode, 'Spells'),
       };
       this.createNewPack();
       this.focusedGroup.patchValue(formValue);
@@ -282,21 +295,60 @@ export class CustomPackEditorComponent implements OnInit, OnDestroy {
       }
     }
 
-    const spellsControl = pack.get('spells');
-    const rawSpells = Array.isArray(spellsControl?.value)
-      ? spellsControl.value
-      : Array.isArray((pack as FormGroup)?.value?.spells)
-        ? (pack as FormGroup).value.spells
-        : [];
-    const spells = rawSpells.filter((spell: string | number | null) =>
-      Boolean(spell),
-    );
+    const spells = getCustomPackSpellItems({
+      foods: this.getPackControlItems(pack, 'foods'),
+      perks: this.getPackControlItems(pack, 'perks'),
+      spells: this.getPackControlItems(pack, 'spells'),
+    });
 
     return {
       Title: pack.get('name')?.value || 'Custom Pack',
       Minions: minions,
       ...(spells.length ? { Spells: spells } : {}),
     };
+  }
+
+  private getPackControlItems(
+    pack: AbstractControl,
+    controlName: 'foods' | 'perks' | 'spells',
+  ): Array<string | number> {
+    return this.getPackItems(
+      { [controlName]: pack.get(controlName)?.value },
+      controlName,
+    );
+  }
+
+  private getPackItems(
+    code: Record<string, unknown>,
+    ...keys: string[]
+  ): Array<string | number> {
+    for (const key of keys) {
+      const value = code[key];
+      const items = normalizeCustomPackItems(value);
+      if (items.length > 0 || Array.isArray(value)) {
+        return items;
+      }
+    }
+    return [];
+  }
+
+  private getMinionMap(value: unknown): { [id: string]: string } {
+    const minionMap = this.asRecord(value);
+    if (!minionMap) {
+      return {};
+    }
+
+    return Object.fromEntries(
+      Object.entries(minionMap).filter(
+        (entry): entry is [string, string] => typeof entry[1] === 'string',
+      ),
+    );
+  }
+
+  private asRecord(value: unknown): Record<string, unknown> | null {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : null;
   }
 
   private copyToClipboard(text: string) {

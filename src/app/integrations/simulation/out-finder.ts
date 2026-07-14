@@ -122,11 +122,17 @@ export function getOutFinderCatalog(
       }
     }
   }
-  const customPerks = new Set(customPack?.spells ?? []);
+  const customShopItems = new Set(
+    [
+      ...(customPack?.foods ?? []),
+      ...(customPack?.perks ?? []),
+      ...(customPack?.spells ?? []),
+    ].filter((entry): entry is string => typeof entry === 'string'),
+  );
   const packCode = PACK_NAME_TO_CODE[pack] ?? pack;
   const matchesPack = (entry: { Packs?: string[]; PacksRequired?: string[] }, name?: string) =>
     customPack
-      ? Boolean(name && (customPetTiers.has(name) || customPerks.has(name)))
+      ? Boolean(name && (customPetTiers.has(name) || customShopItems.has(name)))
       : [...(entry.Packs ?? []), ...(entry.PacksRequired ?? [])].includes(packCode);
 
   return {
@@ -153,7 +159,9 @@ export function getOutFinderCatalog(
         (entry) =>
           entry.Rollable === true &&
           Boolean(entry.Name) &&
-          (customPack ? customPerks.has(entry.Name ?? '') : matchesPack(entry, entry.Name)) &&
+          (customPack
+            ? customShopItems.has(entry.Name ?? '')
+            : matchesPack(entry, entry.Name)) &&
           (entry.Tier ?? Infinity) <= normalizedShopTier,
       )
       .map((entry) => ({ ...entry })),

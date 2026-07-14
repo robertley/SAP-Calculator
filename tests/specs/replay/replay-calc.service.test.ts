@@ -67,6 +67,76 @@ describe('ReplayCalcService', () => {
     expect(response.sapLibraryReplayId).toBe('db-replay-1');
   });
 
+  it('adds raw replay spells to custom packs from the calculator import path', async () => {
+    const encodedState = Buffer.from(
+      JSON.stringify({
+        pP: 'Replay Pack',
+        cp: [{ n: 'Replay Pack' }],
+      }),
+    ).toString('base64url');
+    const http = {
+      post: vi.fn((path: string) => {
+        if (path === '/replay-battle') {
+          return throwError({ status: 404 });
+        }
+        if (path === '/replays') {
+          return of({ replayId: 'db-replay-spells' });
+        }
+        return throwError(new Error(`unexpected post ${path}`));
+      }),
+      get: vi.fn((path: string) => {
+        if (path === '/replays/pid-spells/calculator?turn=1') {
+          return throwError({ status: 404 });
+        }
+        if (path === '/replays/db-replay-spells/calculator?turn=1') {
+          return of({
+            url: `https://sap-calculator.com/?c=${encodedState}`,
+          });
+        }
+        if (path === '/replays/db-replay-spells/turns') {
+          return of({
+            turns: [
+              {
+                turn: 1,
+                user: { pets: [] },
+                opponent: { pets: [] },
+              },
+            ],
+            genesisBuildModel: {
+              Bor: {
+                Deck: {
+                  Id: 'replay-pack-deck',
+                  Title: 'Replay Pack',
+                  Minions: ['624'],
+                  Spells: [0, 117],
+                },
+              },
+            },
+          });
+        }
+        if (path === '/replays/db-replay-spells/perspectives') {
+          return of({ perspectives: [] });
+        }
+        return throwError(new Error(`unexpected get ${path}`));
+      }),
+    } as unknown as HttpClient;
+    const service = new ReplayCalcService(http);
+
+    const response = await new Promise<ReplayBattleResponse>((resolve, reject) => {
+      service.fetchReplayBattle({ Pid: 'pid-spells', T: 1 }, 1000).subscribe({
+        next: resolve,
+        error: reject,
+      });
+    });
+
+    expect(response.calculatorState?.['customPacks']).toEqual([
+      {
+        name: 'Replay Pack',
+        spells: [0, 117],
+      },
+    ]);
+  });
+
   it('prefers direct replay battle payloads before falling back to turns', async () => {
     const http = {
       post: vi.fn((path: string) => {

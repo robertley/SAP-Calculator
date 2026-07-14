@@ -29,8 +29,15 @@ export interface CustomPackConfig {
   tier4Pets?: Array<string | null>;
   tier5Pets?: Array<string | null>;
   tier6Pets?: Array<string | null>;
-  spells?: string[];
+  /** Food cards in a custom-pack code. */
+  foods?: CustomPackItem[];
+  /** Perk cards in a custom-pack code. */
+  perks?: CustomPackItem[];
+  /** Legacy/general spell cards in a custom-pack code. */
+  spells?: CustomPackItem[];
 }
+
+export type CustomPackItem = string | number;
 
 export interface SimulationConfig {
   playerPack: string;

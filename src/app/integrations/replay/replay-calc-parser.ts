@@ -1,4 +1,5 @@
 import {
+  CustomPackItem,
   CustomPackConfig,
   PetConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
@@ -194,7 +195,7 @@ export interface ReplayCustomPack extends CustomPackConfig {
   tier4Pets: (string | null)[];
   tier5Pets: (string | null)[];
   tier6Pets: (string | null)[];
-  spells: string[];
+  spells: CustomPackItem[];
 }
 
 interface ReplayParsedToy {
@@ -1433,7 +1434,10 @@ export class ReplayCalcParser {
     }
 
     const minions = deck.Minions.map((id) => String(id));
-    const spells = Array.isArray(deck.Spells) ? deck.Spells.map(String) : [];
+    // Keep the replay's numeric spell IDs intact. SAP custom-pack JSON uses
+    // numeric IDs here, so coercing them to strings makes copied pack JSON
+    // differ from the source deck.
+    const spells = Array.isArray(deck.Spells) ? [...deck.Spells] : [];
     const tierPets: Record<number, string[]> = {
       1: [],
       2: [],
@@ -1531,7 +1535,17 @@ export class ReplayCalcParser {
     return (
       tierKeys.every((tierKey) =>
         this.stringArraysMatch(pack[tierKey], deckContents[tierKey]),
-      ) && this.stringArraysMatch(pack.spells, deckContents.spells)
+      ) && this.customPackItemsMatch(pack.spells, deckContents.spells)
+    );
+  }
+
+  private customPackItemsMatch(
+    left: ReadonlyArray<CustomPackItem>,
+    right: ReadonlyArray<CustomPackItem>,
+  ): boolean {
+    return (
+      left.length === right.length &&
+      left.every((value, index) => value === right[index])
     );
   }
 

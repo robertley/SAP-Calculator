@@ -1,5 +1,6 @@
 import { FormGroup } from '@angular/forms';
 import { SimulationConfig, CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
+import { normalizeCustomPackItems } from 'app/runtime/custom-pack-form';
 import { GameService } from './game.service';
 
 export type GameApiFormControlName =
@@ -232,7 +233,9 @@ function normalizeCustomPack(customPack: unknown): CustomPackConfig | null {
     tier4Pets: normalizeStringList(customPack.tier4Pets),
     tier5Pets: normalizeStringList(customPack.tier5Pets),
     tier6Pets: normalizeStringList(customPack.tier6Pets),
-    spells: normalizeStringList(customPack.spells),
+    foods: normalizeCustomPackItems(customPack.foods),
+    perks: normalizeCustomPackItems(customPack.perks),
+    spells: normalizeCustomPackItems(customPack.spells),
   };
 }
 
