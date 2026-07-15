@@ -29,7 +29,7 @@
     placeholder="Paste calculator or replay payload here..."
   ></textarea>
   <div class="d-flex align-items-end gap-3 flex-wrap mb-2" *ngIf="mode !== 'import'">
-    <div *ngIf="mode === 'odds-image' || mode === 'positioning-image'">
+    <div *ngIf="mode === 'odds-image'">
       <label for="oddsSimulations" class="form-label">Image Simulations</label>
       <input
         id="oddsSimulations"
@@ -88,14 +88,22 @@
     </button>
     <button
       class="btn btn-outline-success" *ngIf="mode === 'positioning-image'"
-      (click)="buildPositioningImage()"
+      (click)="buildPositioningImage('quick')"
       [disabled]="positioningImageLoading"
     >
       {{
         positioningImageLoading
           ? "Building Positioning..."
-          : "Build Positioning Image"
+          : "Build Quick Positioning Image"
       }}
+    </button>
+    <button
+      class="btn btn-outline-secondary" *ngIf="mode === 'positioning-image'"
+      (click)="buildPositioningImage('extended')"
+      [disabled]="positioningImageLoading"
+      title="Runs a more thorough positioning evaluation and takes longer"
+    >
+      Build Extended Positioning Image
     </button>
     <button
       class="btn btn-outline-primary"

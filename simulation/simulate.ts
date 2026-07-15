@@ -26,6 +26,16 @@ import {
   ReplayParseOptions,
   ReplayCalcParser,
 } from '../src/app/integrations/replay/replay-calc-parser';
+import {
+  PositioningOptimizationResult,
+  PositioningOptimizationSide,
+  runPositioningOptimization,
+} from '../src/app/integrations/simulation/positioning-optimizer';
+import {
+  BoardStrengthPrecision,
+  BoardStrengthResult,
+  runBoardStrengthEvaluation,
+} from '../src/app/integrations/simulation/board-strength-evaluator';
 
 class NodeInjector {
   private map = new Map<string | any, any>();
@@ -242,6 +252,162 @@ export function runReplayOddsFromCalculatorState(
   return runSimulation(config);
 }
 
+export type ReplayAnalysisPrecision = 'quick' | 'standard' | 'high';
+
+export interface ReplayPositioningOptions {
+  side: PositioningOptimizationSide;
+  precision?: ReplayAnalysisPrecision;
+  simulationCount?: number;
+  projectEndTurnEffects?: boolean;
+  recomputeParrotCopies?: boolean;
+}
+
+export interface ReplayPositioningResult {
+  precision: ReplayAnalysisPrecision;
+  simulationCount: number;
+  baseline: SimulationResult;
+  optimized: SimulationResult;
+  optimization: PositioningOptimizationResult;
+  optimizedCalculatorState: ReplayCalculatorState;
+}
+
+export interface ReplayStrengthResult {
+  precision: BoardStrengthPrecision;
+  player: BoardStrengthResult;
+  opponent: BoardStrengthResult;
+}
+
+export interface ReplayStrengthRange {
+  minStat?: number;
+  maxStat?: number;
+}
+
+const POSITIONING_SIMULATIONS: Readonly<Record<ReplayAnalysisPrecision, number>> = {
+  quick: 100,
+  standard: 250,
+  high: 500,
+};
+
+function normalizeSimulationCount(value: number | undefined, fallback: number): number {
+  if (value == null || !Number.isFinite(value)) {
+    return fallback;
+  }
+  return Math.max(1, Math.trunc(value));
+}
+
+function clonePetLineup(
+  lineup: ReplayCalculatorState['playerPets'],
+): ReplayCalculatorState['playerPets'] {
+  return (lineup ?? []).map((pet) =>
+    pet
+      ? {
+          ...pet,
+          equipment: pet.equipment ? { ...pet.equipment } : null,
+        }
+      : null,
+  );
+}
+
+export function runReplayPositioningFromCalculatorState(
+  calculatorState: ReplayCalculatorState,
+  options: ReplayPositioningOptions,
+): ReplayPositioningResult {
+  const precision = options.precision ?? 'quick';
+  const simulationCount = normalizeSimulationCount(
+    options.simulationCount,
+    POSITIONING_SIMULATIONS[precision],
+  );
+  const baseConfig = createSimulationConfigFromCalculatorState(
+    calculatorState,
+    simulationCount,
+  );
+  const logService = new LogService();
+  const runner = createSimulationRunner(logService);
+  const projectionRunner = createSimulationRunner(new LogService());
+  const baseline = runner.run(baseConfig);
+  const projectEndTurnEffects = options.projectEndTurnEffects !== false;
+  const recomputeParrotCopies = options.recomputeParrotCopies !== false;
+  const optimization = runPositioningOptimization({
+    baseConfig,
+    options: {
+      side: options.side,
+      maxSimulationsPerPermutation: simulationCount,
+      batchSize: Math.min(25, simulationCount),
+      minSamplesBeforeElimination: Math.min(50, simulationCount),
+      confidenceZ: 1.96,
+      keepSameBuffTargets: !projectEndTurnEffects,
+      recomputeParrotCopies,
+    },
+    simulateBatch: (config) => runner.run(config),
+    projectEndTurnLineup: projectEndTurnEffects
+      ? ({ baseConfig: projectionConfig, side, lineup }) =>
+          projectionRunner.projectLineupAfterEndTurn(
+            projectionConfig,
+            side,
+            lineup,
+          )
+      : undefined,
+  });
+  const optimizedLineup =
+    optimization.bestPermutation.simulationLineup.length > 0
+      ? optimization.bestPermutation.simulationLineup
+      : optimization.bestPermutation.lineup;
+  const optimizedCalculatorState: ReplayCalculatorState = {
+    ...calculatorState,
+    playerPets: clonePetLineup(
+      optimization.side === 'player'
+        ? optimizedLineup
+        : calculatorState.playerPets,
+    ),
+    opponentPets: clonePetLineup(
+      optimization.side === 'opponent'
+        ? optimizedLineup
+        : calculatorState.opponentPets,
+    ),
+  };
+  const optimized = runner.run(
+    createSimulationConfigFromCalculatorState(
+      optimizedCalculatorState,
+      simulationCount,
+    ),
+  );
+
+  return {
+    precision,
+    simulationCount,
+    baseline,
+    optimized,
+    optimization,
+    optimizedCalculatorState,
+  };
+}
+
+export function runReplayStrengthFromCalculatorState(
+  calculatorState: ReplayCalculatorState,
+  precision: BoardStrengthPrecision = 'quick',
+  range: ReplayStrengthRange = {},
+): ReplayStrengthResult {
+  const baseConfig = createSimulationConfigFromCalculatorState(calculatorState, 1);
+  const runner = createSimulationRunner(new LogService());
+  const evaluate = (side: 'player' | 'opponent'): BoardStrengthResult =>
+    runBoardStrengthEvaluation({
+      baseConfig,
+      options: {
+        side,
+        precision,
+        minStat: range.minStat,
+        maxStat: range.maxStat,
+      },
+      simulateBatch: (config) => runner.run(config),
+    });
+
+  return {
+    precision,
+    player: evaluate('player'),
+    opponent: evaluate('opponent'),
+  };
+}
+
 export function generateReplayCalculatorLink(
   calculatorState: ReplayCalculatorState,
   baseUrl?: string,
@@ -289,6 +455,8 @@ export * from '../src/app/integrations/pet/pet-factory.service';
 export * from '../src/app/integrations/equipment/equipment-factory.service';
 export * from '../src/app/integrations/toy/toy-factory.service';
 export * from '../src/app/integrations/replay/replay-calc-parser';
+export * from '../src/app/integrations/simulation/positioning-optimizer';
+export * from '../src/app/integrations/simulation/board-strength-evaluator';
 
 
 

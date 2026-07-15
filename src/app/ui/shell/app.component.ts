@@ -598,11 +598,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   ) => runSimulationImpl(this, count, configOverrides);
   readonly cancelSimulation = () => cancelSimulationImpl(this);
   readonly optimizePositioning = (side: 'player' | 'opponent') =>
-    optimizePositioningImpl(
-      this,
-      side,
-      this.formGroup.get('simulations').value ?? 1000,
-    );
+    optimizePositioningImpl(this, side);
   readonly findOuts = (side: OutFinderSide, shopTier: number) => {
     if (this.simulationInProgress) return;
     const count = Math.max(1, Number(this.formGroup.get('simulations')?.value ?? 100));

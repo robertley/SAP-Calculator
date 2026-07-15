@@ -212,6 +212,99 @@ Notes:
 - `simulationCount` defaults to `1000` if omitted.
 - This endpoint is intended for `!odds` parity with calculator parser behavior.
 
+### `POST /api/replay/positioning`
+
+Optimizes one side's board order and independently simulates the original and
+selected lineups. The response is JSON so clients can render their own output.
+
+Request body:
+
+```json
+{
+  "replay": { "Actions": [] },
+  "turnNumber": 8,
+  "side": "player",
+  "precision": "quick"
+}
+```
+
+Response fields include:
+
+```json
+{
+  "turnNumber": 8,
+  "side": "player",
+  "precision": "quick",
+  "optimizedOrder": [2, 0, 1, 3, 4],
+  "optimizedLineup": [],
+  "simulationLineup": [],
+  "baselineOdds": {
+    "winPercent": 42,
+    "drawPercent": 8,
+    "lossPercent": 50,
+    "scorePercent": 46
+  },
+  "optimizedOdds": {
+    "winPercent": 55,
+    "drawPercent": 7,
+    "lossPercent": 38,
+    "scorePercent": 58.5
+  },
+  "scoreDelta": 12.5,
+  "simulationsPerformed": {
+    "baseline": 100,
+    "optimization": 7200,
+    "optimized": 100,
+    "total": 7400
+  },
+  "calculatorLink": "https://sap-calculator.com/?c=..."
+}
+```
+
+Notes:
+- `side` defaults to `player` and accepts `player` or `opponent`.
+- `precision` defaults to `quick`; `standard` and `high` are also accepted.
+- `simulationCount` can override the precision preset.
+- `optimizedOrder` contains zero-based indexes into the original lineup.
+- End-turn projection and copied Parrot memory are enabled by default. Set
+  `projectEndTurnEffects` or `recomputeParrotCopies` to `false` to disable them.
+
+### `POST /api/replay/strength`
+
+Evaluates both replay boards against the BS1 benchmark ladder.
+
+Request body:
+
+```json
+{
+  "replay": { "Actions": [] },
+  "turnNumber": 8,
+  "precision": "quick"
+}
+```
+
+The response includes full `player` and `opponent` `BoardStrengthResult`
+objects (scores, 50% benchmarks, confidence estimates, sampled points, battle
+counts, and truncation flags), plus convenient summary fields:
+
+```json
+{
+  "turnNumber": 8,
+  "version": "BS1",
+  "precision": "quick",
+  "player": { "score": 37.2, "benchmark50": 34, "totalBattles": 4200 },
+  "opponent": { "score": 41.8, "benchmark50": 39, "totalBattles": 4475 },
+  "benchmarks": { "player50": 34, "opponent50": 39 },
+  "battleCounts": { "player": 4200, "opponent": 4475, "total": 8675 },
+  "truncated": false,
+  "warnings": []
+}
+```
+
+`precision` defaults to `quick` and accepts `quick`, `standard`, or `high`.
+When the automatic benchmark range reaches its cap, `truncated` is true and
+`warnings` identifies the affected side.
+
 ## Notes
 
 - Abomination support is handled on calc side through copied-ability owner inference.

@@ -22,6 +22,8 @@ import { ToyService } from '../toy/toy.service';
 import {
   PositioningOptimizerProgress,
   PositioningOptimizationResult,
+  PositioningOptimizationPrecision,
+  getPositioningSimulationCount,
   runPositioningOptimization,
 } from '../simulation/positioning-optimizer';
 import {
@@ -42,7 +44,7 @@ import {
 
 export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
-  simulationCount: number;
+  precision?: PositioningOptimizationPrecision;
   optimizationSide: 'player' | 'opponent';
   projectEndTurnEffects?: boolean;
   recomputeParrotCopies?: boolean;
@@ -208,6 +210,14 @@ export class ReplayPositioningImageService {
         parsedCalculatorState,
         getReplayImageCalculatorState(resolvedReplay, row.turn),
       );
+      const optimizationLineup =
+        input.optimizationSide === 'player'
+          ? calculatorState.playerPets
+          : calculatorState.opponentPets;
+      const simulationCount = getPositioningSimulationCount(
+        optimizationLineup,
+        input.precision ?? 'quick',
+      );
       const previousOutcome =
         turnIndex > 0
           ? this.getBattleOutcome(turnRows[turnIndex - 1].battle)
@@ -215,7 +225,7 @@ export class ReplayPositioningImageService {
       const baseConfig: SimulationConfig = {
         ...this.createSimulationConfigFromCalculatorState(
           calculatorState,
-          input.simulationCount,
+          simulationCount,
         ),
         playerLostLastBattle: previousOutcome === 2,
         opponentLostLastBattle: previousOutcome === 1,
@@ -223,7 +233,7 @@ export class ReplayPositioningImageService {
       const baselineResult = this.runLocalSimulation(baseConfig);
       const optimizationResult = await this.runOptimization(
         baseConfig,
-        input.simulationCount,
+        simulationCount,
         input.optimizationSide,
         input.projectEndTurnEffects !== false,
         input.recomputeParrotCopies !== false,
@@ -248,7 +258,7 @@ export class ReplayPositioningImageService {
       const optimizedConfig: SimulationConfig = {
         ...this.createSimulationConfigFromCalculatorState(
           linkedCalculatorState,
-          input.simulationCount,
+          simulationCount,
         ),
         playerLostLastBattle: previousOutcome === 2,
         opponentLostLastBattle: previousOutcome === 1,
@@ -286,7 +296,7 @@ export class ReplayPositioningImageService {
     this.emitProgress(input, 98, 'Rendering image...', 'rendering', totalTurns, totalTurns);
     return this.renderPositioningImage(
       optimizedRows,
-      input.simulationCount,
+      input.precision ?? 'quick',
       input.optimizationSide,
     );
   }
@@ -532,7 +542,7 @@ export class ReplayPositioningImageService {
 
   private async renderPositioningImage(
     rows: OptimizedTurnRow[],
-    simulationCount: number,
+    precision: PositioningOptimizationPrecision,
     optimizationSide: 'player' | 'opponent',
   ): Promise<ReplayPositioningImageResult> {
     const DELTA_COLUMN_WIDTH = 360;
@@ -593,7 +603,7 @@ export class ReplayPositioningImageService {
     ctx.font = '14px Arial';
     ctx.textAlign = 'left';
     ctx.fillText(
-      `Simulations per turn: ${simulationCount} | Optimization side: ${optimizationSide}`,
+      `Precision: ${precision === 'extended' ? 'Extended' : 'Quick'} (dynamic simulations) | Optimization side: ${optimizationSide}`,
       25,
       footerY + 24,
     );

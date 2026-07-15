@@ -6,6 +6,42 @@ import {
 import { refreshPositioningLineupMemory } from './positioning-lineup-memory';
 
 export type PositioningOptimizationSide = 'player' | 'opponent';
+export type PositioningOptimizationPrecision = 'quick' | 'extended';
+
+const POSITIONING_SIMULATION_BUDGETS: Readonly<
+  Record<PositioningOptimizationPrecision, { total: number; maximum: number }>
+> = {
+  quick: { total: 12_000, maximum: 1_000 },
+  extended: { total: 60_000, maximum: 5_000 },
+};
+
+/**
+ * Keeps optimizer work predictable as the number of meaningful board orders
+ * grows. Empty slots still matter because pets can be moved into them.
+ */
+export function getPositioningSimulationCount(
+  lineup: readonly (PetConfig | null | undefined)[],
+  precision: PositioningOptimizationPrecision = 'quick',
+): number {
+  const occupiedSlots = Math.min(
+    5,
+    lineup.reduce((count, pet) => count + (pet ? 1 : 0), 0),
+  );
+  const meaningfulOrders = permutationCount(5, occupiedSlots);
+  const profile = POSITIONING_SIMULATION_BUDGETS[precision];
+  return Math.max(
+    25,
+    Math.min(profile.maximum, Math.floor(profile.total / meaningfulOrders)),
+  );
+}
+
+function permutationCount(slotCount: number, occupiedSlots: number): number {
+  let result = 1;
+  for (let index = 0; index < occupiedSlots; index += 1) {
+    result *= slotCount - index;
+  }
+  return result;
+}
 
 export interface PositioningOptimizerOptions {
   side: PositioningOptimizationSide;

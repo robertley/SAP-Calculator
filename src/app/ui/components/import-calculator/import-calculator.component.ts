@@ -48,6 +48,7 @@ import {
   ReplayBoardStrengthImageService,
 } from 'app/integrations/replay/replay-board-strength-image.service';
 import { BoardStrengthPrecision } from 'app/integrations/simulation/board-strength-evaluator';
+import { PositioningOptimizationPrecision } from 'app/integrations/simulation/positioning-optimizer';
 import { TimedStatusController } from 'app/ui/shared/timed-status.controller';
 
 interface ReplayActionEntry {
@@ -470,7 +471,9 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.requestOddsImageDownload(request);
   }
 
-  buildPositioningImage() {
+  buildPositioningImage(
+    precision: PositioningOptimizationPrecision = 'quick',
+  ): void {
     this.errorMessage = '';
     this.clearStatus();
     const rawInput = this.formGroup.get('calcCode')?.value?.trim();
@@ -479,7 +482,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const simulationCount = this.getPositioningSimulationCount();
+    const simulationCount = this.getOddsSimulationCount();
     const requestedTurn = this.getRequestedTurn();
     const optimizationSide = this.getPositioningSide();
 
@@ -496,7 +499,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         simulationCount,
         optimizationSide,
         abilityPetMap: replayCodePayload.abilityPetMap ?? null,
-      });
+      }, undefined, precision);
       return;
     }
 
@@ -511,6 +514,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
           requestedTurn,
           simulationCount,
           optimizationSide,
+          precision,
         );
         return;
       }
@@ -525,6 +529,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         requestedTurn,
         simulationCount,
         optimizationSide,
+        precision,
       );
       return;
     }
@@ -539,10 +544,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         'Replay JSON must include Actions, turns, replay.raw_json.Actions, or UserBoard/OpponentBoard.';
       return;
     }
-    this.requestPositioningImageDownload({
-      ...request,
-      optimizationSide,
-    });
+    this.requestPositioningImageDownload(
+      { ...request, optimizationSide },
+      undefined,
+      precision,
+    );
   }
 
   buildBoardStrengthImage(precision: BoardStrengthPrecision = 'quick'): void {
@@ -839,6 +845,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     turnNumber: number,
     simulationCount: number,
     optimizationSide: 'player' | 'opponent',
+    precision: PositioningOptimizationPrecision,
   ): void {
     this.setPositioningImageLoading(true);
     this.replayCalcService
@@ -887,6 +894,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                       abilityPetMap: turnsResponse?.abilityPetMap ?? null,
                     },
                     replayId,
+                    precision,
                   );
                 })
                 .catch((error: unknown) => {
@@ -1318,6 +1326,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private requestPositioningImageDownload(
     request: OddsImageSourcePayload,
     replayId?: string,
+    precision: PositioningOptimizationPrecision = 'quick',
   ): void {
     this.cancelPositioningBuild();
     const abortController = new AbortController();
@@ -1326,7 +1335,7 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
     this.replayPositioningImageService
       .buildPositioningImage({
         replayPayload: request.replay,
-        simulationCount: request.simulationCount,
+        precision,
         optimizationSide: request.optimizationSide ?? 'player',
         projectEndTurnEffects:
           this.formGroup.get('projectEndTurnEffects')?.value !== false,
@@ -1604,10 +1613,6 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
   private getOddsSimulationCount(): number {
     const rawCount = Number(this.formGroup.get('oddsSimulations')?.value ?? 100);
     return Number.isFinite(rawCount) && rawCount > 0 ? Math.trunc(rawCount) : 100;
-  }
-
-  private getPositioningSimulationCount(): number {
-    return this.getOddsSimulationCount();
   }
 
   private getPositioningSide(): 'player' | 'opponent' {

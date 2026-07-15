@@ -14,6 +14,7 @@ import {
   PositioningOptimizationResult,
   PositioningOptimizationSide,
   PositioningPermutationStats,
+  getPositioningSimulationCount,
 } from 'app/integrations/simulation/positioning-optimizer';
 import { buildApiResponse as buildApiResponsePayload } from '../state/app.component.share';
 import {
@@ -703,13 +704,15 @@ export function cancelSimulation(ctx: AppSimulationContext): void {
 export function optimizePositioning(
   ctx: AppSimulationContext,
   side: PositioningOptimizationSide,
-  count: number = 1000,
 ): void {
   if (ctx.simulationInProgress) {
     return;
   }
 
-  const maxSimulationsPerPermutation = Math.max(1, Math.trunc(count || 1));
+  const petsKey = side === 'player' ? 'playerPets' : 'opponentPets';
+  const lineup = (ctx.formGroup.get(petsKey)?.value ?? []) as (PetConfig | null)[];
+  const maxSimulationsPerPermutation = getPositioningSimulationCount(lineup);
+  const count = maxSimulationsPerPermutation;
   const projectEndTurnEffects =
     ctx.formGroup.get('projectEndTurnEffectsOnOptimization')?.value !== false;
   const recomputeParrotCopies =

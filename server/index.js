@@ -7,6 +7,8 @@ const {
   parseReplayCalculatorState,
   generateReplayCalculatorLink,
   runReplayOddsFromCalculatorState,
+  runReplayPositioningFromCalculatorState,
+  runReplayStrengthFromCalculatorState,
 } = require("../simulation/dist/index.js");
 
 function loadEnvFile(envPath) {
@@ -241,6 +243,45 @@ function getBattleForTurn(replay, turnNumber) {
 
   const fallbackAction = battleActions[turnNumber - 1];
   return fallbackAction?.Battle ? safeParseBattle(fallbackAction.Battle) : null;
+}
+
+function parsePrecision(value) {
+  const precision = value == null ? "quick" : String(value).toLowerCase();
+  if (!["quick", "standard", "high"].includes(precision)) {
+    throw makeError(
+      "Precision must be `quick`, `standard`, or `high`.",
+      400,
+    );
+  }
+  return precision;
+}
+
+function parsePositioningSide(value) {
+  const side = value == null ? "player" : String(value).toLowerCase();
+  if (side !== "player" && side !== "opponent") {
+    throw makeError("Side must be `player` or `opponent`.", 400);
+  }
+  return side;
+}
+
+function toSideOdds(result, side) {
+  const totalBattles = result.playerWins + result.opponentWins + result.draws;
+  const wins = side === "player" ? result.playerWins : result.opponentWins;
+  const losses = side === "player" ? result.opponentWins : result.playerWins;
+  const toPercent = (value) =>
+    totalBattles > 0
+      ? Number(((value / totalBattles) * 100).toFixed(2))
+      : 0;
+  return {
+    wins,
+    draws: result.draws,
+    losses,
+    totalBattles,
+    winPercent: toPercent(wins),
+    drawPercent: toPercent(result.draws),
+    lossPercent: toPercent(losses),
+    scorePercent: toPercent(wins + result.draws * 0.5),
+  };
 }
 
 function getOpponentParticipationId(replay) {
@@ -835,6 +876,112 @@ const server = http.createServer(async (req, res) => {
       const statusCode = error.statusCode || 500;
       sendJson(res, statusCode, {
         error: error.message || "Failed to parse replay odds.",
+      });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/replay/positioning") {
+    try {
+      const body = await readJsonBody(req);
+      const { parsedState, turnNumber } = parseReplayCalculatorStateFromBody(body);
+      const side = parsePositioningSide(body?.side);
+      const precision = parsePrecision(body?.precision);
+      const simulationCount = toPositiveInteger(body?.simulationCount) || undefined;
+      const result = runReplayPositioningFromCalculatorState(parsedState, {
+        side,
+        precision,
+        simulationCount,
+        projectEndTurnEffects: body?.projectEndTurnEffects !== false,
+        recomputeParrotCopies: body?.recomputeParrotCopies !== false,
+      });
+      const baselineOdds = toSideOdds(result.baseline, side);
+      const optimizedOdds = toSideOdds(result.optimized, side);
+      const linkBaseUrl =
+        typeof body?.baseUrl === "string" && body.baseUrl.length > 0
+          ? body.baseUrl
+          : CALCULATOR_PUBLIC_BASE_URL;
+      const calculatorLink = generateReplayCalculatorLink(
+        result.optimizedCalculatorState,
+        linkBaseUrl,
+      );
+
+      sendJson(res, 200, {
+        turnNumber,
+        side,
+        precision: result.precision,
+        optimizedOrder: result.optimization.bestPermutation.order,
+        optimizedLineup: result.optimization.bestPermutation.lineup,
+        simulationLineup: result.optimization.bestPermutation.simulationLineup,
+        baselineOdds,
+        optimizedOdds,
+        scoreDelta: Number(
+          (optimizedOdds.scorePercent - baselineOdds.scorePercent).toFixed(2),
+        ),
+        simulationsPerformed: {
+          baseline: baselineOdds.totalBattles,
+          optimization: result.optimization.simulatedBattles,
+          optimized: optimizedOdds.totalBattles,
+          total:
+            baselineOdds.totalBattles +
+            result.optimization.simulatedBattles +
+            optimizedOdds.totalBattles,
+        },
+        permutations: {
+          total: result.optimization.totalPermutations,
+          pruned: result.optimization.prunedPermutations,
+        },
+        calculatorLink,
+      });
+    } catch (error) {
+      const statusCode = error.statusCode || 500;
+      sendJson(res, statusCode, {
+        error: error.message || "Failed to optimize replay positioning.",
+      });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/replay/strength") {
+    try {
+      const body = await readJsonBody(req);
+      const { parsedState, turnNumber } = parseReplayCalculatorStateFromBody(body);
+      const precision = parsePrecision(body?.precision);
+      const result = runReplayStrengthFromCalculatorState(parsedState, precision);
+      const warnings = [];
+      if (result.player.rangeTruncated) {
+        warnings.push(
+          `Player strength range was truncated at stat ${result.player.maxStat}.`,
+        );
+      }
+      if (result.opponent.rangeTruncated) {
+        warnings.push(
+          `Opponent strength range was truncated at stat ${result.opponent.maxStat}.`,
+        );
+      }
+
+      sendJson(res, 200, {
+        turnNumber,
+        version: result.player.version,
+        precision: result.precision,
+        player: result.player,
+        opponent: result.opponent,
+        benchmarks: {
+          player50: result.player.benchmark50,
+          opponent50: result.opponent.benchmark50,
+        },
+        battleCounts: {
+          player: result.player.totalBattles,
+          opponent: result.opponent.totalBattles,
+          total: result.player.totalBattles + result.opponent.totalBattles,
+        },
+        truncated: result.player.rangeTruncated || result.opponent.rangeTruncated,
+        warnings,
+      });
+    } catch (error) {
+      const statusCode = error.statusCode || 500;
+      sendJson(res, statusCode, {
+        error: error.message || "Failed to evaluate replay strength.",
       });
     }
     return;
