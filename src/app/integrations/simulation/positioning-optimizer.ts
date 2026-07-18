@@ -52,6 +52,8 @@ export interface PositioningOptimizerOptions {
   baseSeed: number;
   keepSameBuffTargets: boolean;
   recomputeParrotCopies: boolean;
+  successiveHalving: boolean;
+  successiveHalvingRate: number;
 }
 
 export interface PositioningOptimizerProgress {
@@ -127,6 +129,11 @@ export function runPositioningOptimization(
   const keepSameBuffTargets = params.options.keepSameBuffTargets === true;
   const recomputeParrotCopies =
     params.options.recomputeParrotCopies !== false;
+  const successiveHalving = params.options.successiveHalving === true;
+  const successiveHalvingRate = Math.min(
+    0.9,
+    Math.max(0.1, params.options.successiveHalvingRate ?? 0.5),
+  );
   const projectedLineupCache = new Map<string, (PetConfig | null)[]>();
 
   const maxSimulationsPerPermutation = Math.max(
@@ -315,6 +322,28 @@ export function runPositioningOptimization(
         if (candidate.upperBound < bestLowerBound) {
           candidate.eliminated = true;
         }
+      }
+    }
+
+    if (successiveHalving) {
+      const halvingCandidates = candidates.filter(
+        (candidate) => !candidate.eliminated,
+      );
+      if (halvingCandidates.length > 1) {
+        const survivors = Math.max(
+          1,
+          Math.ceil(halvingCandidates.length * successiveHalvingRate),
+        );
+        const rankedForScreening = [...halvingCandidates].sort(
+          (left, right) =>
+            right.score - left.score ||
+            right.lowerBound - left.lowerBound ||
+            right.wins - left.wins ||
+            left.losses - right.losses,
+        );
+        rankedForScreening.slice(survivors).forEach((candidate) => {
+          candidate.eliminated = true;
+        });
       }
     }
 

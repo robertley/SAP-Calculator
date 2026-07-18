@@ -10,7 +10,6 @@ describe('ReplayImageCanvasRendererService', () => {
     vi.stubGlobal('document', {
       createElement: vi.fn(() => canvas),
     });
-
     const renderer = new ReplayImageCanvasRendererService();
     const session = renderer.createSession({
       rowCount: 2,
@@ -69,6 +68,48 @@ describe('ReplayImageCanvasRendererService', () => {
     expect(fillText).toHaveBeenCalledWith('WIN', 157, 101);
     expect(fillText).toHaveBeenCalledWith('2', 552.5, 95);
     expect(fillText).toHaveBeenCalledWith('2', 887.5, 95);
+    vi.unstubAllGlobals();
+  });
+
+  it('can omit Player and Opponent role labels while retaining names', async () => {
+    const fillText = vi.fn();
+    const context = createContext({ fillText });
+    const canvas = createCanvas(context);
+    vi.stubGlobal('document', {
+      createElement: vi.fn(() => canvas),
+    });
+    class TestImage {
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      set src(_value: string) {
+        this.onerror?.();
+      }
+    }
+    vi.stubGlobal('Image', TestImage);
+
+    const renderer = new ReplayImageCanvasRendererService();
+    const session = renderer.createSession({ rowCount: 1 });
+    await renderer.drawBattleRow(session, {
+      index: 0,
+      turn: 1,
+      showSideRoles: false,
+      info: {
+        outcome: 3,
+        playerName: 'Alice',
+        opponentName: 'Bob',
+        playerLives: null,
+        opponentLives: null,
+        playerPets: [],
+        opponentPets: [],
+        playerToy: null,
+        opponentToy: null,
+      },
+    });
+
+    expect(fillText).toHaveBeenCalledWith('Alice', 415, 17);
+    expect(fillText).toHaveBeenCalledWith('Bob', 1010, 17);
+    expect(fillText).not.toHaveBeenCalledWith('Alice (Player)', 415, 17);
+    expect(fillText).not.toHaveBeenCalledWith('Bob (Opponent)', 1010, 17);
     vi.unstubAllGlobals();
   });
 });

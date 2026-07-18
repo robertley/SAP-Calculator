@@ -45,6 +45,8 @@ type OptimizePositioningStartMessage = {
     projectEndTurnLineup?: boolean;
     keepSameBuffTargets?: boolean;
     recomputeParrotCopies?: boolean;
+    successiveHalving?: boolean;
+    successiveHalvingRate?: number;
   };
 };
 
@@ -196,6 +198,13 @@ const createRunner = () => {
   };
 };
 
+let workerRuntime: ReturnType<typeof createRunner> | null = null;
+
+const getRunner = () => {
+  workerRuntime ??= createRunner();
+  return workerRuntime;
+};
+
 addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
   if (!data) {
     return;
@@ -211,7 +220,7 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
     const { config, options } = data;
 
     try {
-      const { runner } = createRunner();
+      const { runner } = getRunner();
       const result = runBoardStrengthEvaluation({
         baseConfig: config,
         options,
@@ -246,7 +255,7 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
     cancelRequested = false;
     const { config, options } = data;
     try {
-      const { runner } = createRunner();
+      const { runner } = getRunner();
       const result = runOutFinder({
         baseConfig: config,
         options,
@@ -277,7 +286,7 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
     const { config, options } = data;
 
     try {
-      const { runner } = createRunner();
+      const { runner } = getRunner();
       const result = runPositioningOptimization({
         baseConfig: config,
         options: {
@@ -288,6 +297,8 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
           minSamplesBeforeElimination: options.minSamplesBeforeElimination,
           keepSameBuffTargets: options.keepSameBuffTargets,
           recomputeParrotCopies: options.recomputeParrotCopies,
+          successiveHalving: options.successiveHalving,
+          successiveHalvingRate: options.successiveHalvingRate,
         },
         shouldAbort: () => cancelRequested,
         onProgress: (progress) => {
@@ -323,7 +334,7 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
   const { config, progressInterval, showTriggerNamesInLogs } = data;
 
   try {
-    const { runner, logService } = createRunner();
+    const { runner, logService } = getRunner();
     logService.setShowTriggerNamesInLogs(Boolean(showTriggerNamesInLogs));
 
     const result = runner.run(config, {

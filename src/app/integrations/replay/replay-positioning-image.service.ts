@@ -41,6 +41,14 @@ import {
   getReplayImageCalculatorState,
   mergeReplayImageCalculatorState,
 } from './replay-image-calculator-state';
+import { ReplaySimulationWorkerPool } from './replay-simulation-worker-pool';
+import {
+  ReplayImageBuildMetrics,
+  createReplayImageBuildMetrics,
+  getReplayImageEvaluationCache,
+  nowMilliseconds,
+  storeReplayImageEvaluationCache,
+} from './replay-image-evaluation-cache';
 
 export interface ReplayPositioningImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -77,6 +85,7 @@ export interface ReplayPositioningImagePreview {
 export interface ReplayPositioningImageResult {
   blob: Blob;
   preview: ReplayPositioningImagePreview;
+  metrics: ReplayImageBuildMetrics;
 }
 
 export function getOptimizedPositioningLineup(
@@ -170,6 +179,9 @@ export class ReplayPositioningImageService {
   async buildPositioningImage(
     input: ReplayPositioningImageBuildInput,
   ): Promise<ReplayPositioningImageResult> {
+    const startedAt = nowMilliseconds();
+    const metrics = createReplayImageBuildMetrics();
+    const precision = input.precision ?? 'quick';
     this.throwIfAborted(input.abortSignal);
     this.emitProgress(input, 0, 'Preparing replay turns...', 'preparing', 0, 0);
     const resolvedReplay = this.resolveReplayActionsContainer(input.replayPayload);
@@ -186,119 +198,168 @@ export class ReplayPositioningImageService {
       (replayActions ? buildReplayAbilityPetMapFromActions(replayActions) : null);
     const buildModel = this.getReplayBuildModel(resolvedReplay);
 
-    const optimizedRows: OptimizedTurnRow[] = [];
-    const totalTurns = turnRows.length;
-    for (let turnIndex = 0; turnIndex < turnRows.length; turnIndex += 1) {
-      const row = turnRows[turnIndex];
-      this.throwIfAborted(input.abortSignal);
-      this.emitProgress(
-        input,
-        this.computeOverallProgress(turnIndex, totalTurns, 0),
-        `Preparing turn ${turnIndex + 1}/${totalTurns}...`,
-        'optimizing',
-        turnIndex + 1,
-        totalTurns,
-      );
-      const parsedCalculatorState =
-        this.replayCalcService.parseReplayForCalculator(
-          row.battle,
-          buildModel ?? undefined,
-          undefined,
-          { abilityPetMap },
-        );
-      const calculatorState = mergeReplayImageCalculatorState(
-        parsedCalculatorState,
-        getReplayImageCalculatorState(resolvedReplay, row.turn),
-      );
-      const optimizationLineup =
-        input.optimizationSide === 'player'
-          ? calculatorState.playerPets
-          : calculatorState.opponentPets;
-      const simulationCount = getPositioningSimulationCount(
-        optimizationLineup,
-        input.precision ?? 'quick',
-      );
-      const previousOutcome =
-        turnIndex > 0
-          ? this.getBattleOutcome(turnRows[turnIndex - 1].battle)
-          : null;
-      const baseConfig: SimulationConfig = {
-        ...this.createSimulationConfigFromCalculatorState(
-          calculatorState,
-          simulationCount,
-        ),
-        playerLostLastBattle: previousOutcome === 2,
-        opponentLostLastBattle: previousOutcome === 1,
-      };
-      const baselineResult = this.runLocalSimulation(baseConfig);
-      const optimizationResult = await this.runOptimization(
-        baseConfig,
-        simulationCount,
-        input.optimizationSide,
-        input.projectEndTurnEffects !== false,
-        input.recomputeParrotCopies !== false,
-        input.abortSignal,
-        (turnPercent) => {
-          this.emitProgress(
-            input,
-            this.computeOverallProgress(turnIndex, totalTurns, turnPercent),
-            `Optimizing turn ${turnIndex + 1}/${totalTurns} (${Math.round(turnPercent)}%)`,
-            'optimizing',
-            turnIndex + 1,
-            totalTurns,
-          );
-        },
-      );
-      this.throwIfAborted(input.abortSignal);
-      const linkedCalculatorState =
-        buildOptimizedPositioningCalculatorState(
-          calculatorState,
-          optimizationResult,
-        );
-      const optimizedConfig: SimulationConfig = {
-        ...this.createSimulationConfigFromCalculatorState(
-          linkedCalculatorState,
-          simulationCount,
-        ),
-        playerLostLastBattle: previousOutcome === 2,
-        opponentLostLastBattle: previousOutcome === 1,
-      };
-      const optimizedResult = this.runLocalSimulation(optimizedConfig);
-      this.throwIfAborted(input.abortSignal);
-      const calculatorUrl =
-        this.replayCalcService.generateCalculatorLink(linkedCalculatorState);
-
-      const delta = this.buildDeltaSummary(
-        baselineResult,
-        optimizedResult,
-        input.optimizationSide,
-      );
-
-      optimizedRows.push({
-        turn: row.turn,
-        renderInfo: this.toRenderBattleInfo(
-          row.battle,
-          linkedCalculatorState,
-        ),
-        delta,
-        calculatorUrl,
-      });
-      this.emitProgress(
-        input,
-        this.computeOverallProgress(turnIndex + 1, totalTurns, 0),
-        `Completed turn ${turnIndex + 1}/${totalTurns}.`,
-        'optimizing',
-        turnIndex + 1,
-        totalTurns,
-      );
-    }
-
-    this.emitProgress(input, 98, 'Rendering image...', 'rendering', totalTurns, totalTurns);
-    return this.renderPositioningImage(
-      optimizedRows,
-      input.precision ?? 'quick',
-      input.optimizationSide,
+    const optimizedRows: Array<OptimizedTurnRow | null> = turnRows.map(
+      (): OptimizedTurnRow | null => null,
     );
+    const totalTurns = turnRows.length;
+    let workerPool: ReplaySimulationWorkerPool | null = null;
+    const getWorkerPool = (): ReplaySimulationWorkerPool | null => {
+      if (typeof Worker === 'undefined') {
+        return null;
+      }
+      workerPool ??= new ReplaySimulationWorkerPool(2);
+      return workerPool;
+    };
+    const turnProgress = turnRows.map((): number => 0);
+    try {
+      await Promise.all(
+        turnRows.map(async (row, turnIndex) => {
+          this.throwIfAborted(input.abortSignal);
+          const parsedCalculatorState =
+            this.replayCalcService.parseReplayForCalculator(
+              row.battle,
+              buildModel ?? undefined,
+              undefined,
+              { abilityPetMap },
+            );
+          const calculatorState = mergeReplayImageCalculatorState(
+            parsedCalculatorState,
+            getReplayImageCalculatorState(resolvedReplay, row.turn),
+          );
+          const optimizationLineup =
+            input.optimizationSide === 'player'
+              ? calculatorState.playerPets
+              : calculatorState.opponentPets;
+          const simulationCount = getPositioningSimulationCount(
+            optimizationLineup,
+            precision,
+          );
+          const previousOutcome =
+            turnIndex > 0
+              ? this.getBattleOutcome(turnRows[turnIndex - 1].battle)
+              : null;
+          const baseConfig: SimulationConfig = {
+            ...this.createSimulationConfigFromCalculatorState(
+              calculatorState,
+              simulationCount,
+            ),
+            playerLostLastBattle: previousOutcome === 2,
+            opponentLostLastBattle: previousOutcome === 1,
+          };
+          const baselineResult = this.runLocalSimulation(baseConfig);
+          metrics.simulationsRun += this.getSimulationResultCount(baselineResult);
+          const projectEndTurnEffects = input.projectEndTurnEffects !== false;
+          const recomputeParrotCopies = input.recomputeParrotCopies !== false;
+          const cacheFingerprint = JSON.stringify({
+            version: 2,
+            precision,
+            side: input.optimizationSide,
+            projectEndTurnEffects,
+            recomputeParrotCopies,
+            baseConfig,
+          });
+          let optimizationResult =
+            getReplayImageEvaluationCache<PositioningOptimizationResult>(
+              'positioning-v2',
+              cacheFingerprint,
+            );
+          if (optimizationResult && !optimizationResult.aborted) {
+            metrics.cacheHits += 1;
+            turnProgress[turnIndex] = 100;
+          } else {
+            metrics.cacheMisses += 1;
+            const taskWorkerPool = getWorkerPool();
+            if (taskWorkerPool) {
+              metrics.workerTasks += 1;
+            }
+            optimizationResult = await this.runOptimization(
+              baseConfig,
+              simulationCount,
+              precision,
+              input.optimizationSide,
+              projectEndTurnEffects,
+              recomputeParrotCopies,
+              taskWorkerPool,
+              input.abortSignal,
+              (turnPercent) => {
+                turnProgress[turnIndex] = turnPercent;
+                const aggregate = turnProgress.reduce(
+                  (sum, value) => sum + value,
+                  0,
+                );
+                this.emitProgress(
+                  input,
+                  3 + (aggregate / Math.max(1, totalTurns * 100)) * 94,
+                  `Optimizing turn ${turnIndex + 1}/${totalTurns} (${Math.round(turnPercent)}%)`,
+                  'optimizing',
+                  turnIndex + 1,
+                  totalTurns,
+                );
+              },
+            );
+            metrics.simulationsRun += optimizationResult.simulatedBattles;
+            if (!optimizationResult.aborted) {
+              const compactCacheResult: PositioningOptimizationResult = {
+                ...optimizationResult,
+                rankedPermutations: [optimizationResult.bestPermutation],
+              };
+              storeReplayImageEvaluationCache(
+                'positioning-v2',
+                cacheFingerprint,
+                compactCacheResult,
+              );
+            }
+          }
+          this.throwIfAborted(input.abortSignal);
+          const linkedCalculatorState =
+            buildOptimizedPositioningCalculatorState(
+              calculatorState,
+              optimizationResult,
+            );
+          const optimizedConfig: SimulationConfig = {
+            ...this.createSimulationConfigFromCalculatorState(
+              linkedCalculatorState,
+              simulationCount,
+            ),
+            playerLostLastBattle: previousOutcome === 2,
+            opponentLostLastBattle: previousOutcome === 1,
+          };
+          const optimizedResult = this.runLocalSimulation(optimizedConfig);
+          metrics.simulationsRun += this.getSimulationResultCount(optimizedResult);
+          const calculatorUrl =
+            this.replayCalcService.generateCalculatorLink(linkedCalculatorState);
+          optimizedRows[turnIndex] = {
+            turn: row.turn,
+            renderInfo: this.toRenderBattleInfo(
+              row.battle,
+              linkedCalculatorState,
+            ),
+            delta: this.buildDeltaSummary(
+              baselineResult,
+              optimizedResult,
+              input.optimizationSide,
+            ),
+            calculatorUrl,
+          };
+          turnProgress[turnIndex] = 100;
+        }),
+      );
+
+      this.emitProgress(input, 98, 'Rendering image...', 'rendering', totalTurns, totalTurns);
+      const completedRows = optimizedRows.filter(
+        (row): row is OptimizedTurnRow => row !== null,
+      );
+      const rendered = await this.renderPositioningImage(
+        completedRows,
+        precision,
+        input.optimizationSide,
+      );
+      metrics.durationMs = Math.round(nowMilliseconds() - startedAt);
+      console.info('[replay-positioning-image] build metrics', metrics);
+      return { ...rendered, metrics };
+    } finally {
+      workerPool?.close();
+    }
   }
 
   async buildPositioningImageBlob(
@@ -311,19 +372,31 @@ export class ReplayPositioningImageService {
   private runOptimization(
     baseConfig: SimulationConfig,
     simulationCount: number,
+    precision: PositioningOptimizationPrecision,
     optimizationSide: 'player' | 'opponent',
     projectEndTurnEffects: boolean,
     recomputeParrotCopies: boolean,
+    workerPool: ReplaySimulationWorkerPool | null,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
-    if (typeof Worker !== 'undefined') {
+    const quick = precision === 'quick';
+    const batchSize = Math.min(quick ? 10 : 25, simulationCount);
+    const minSamplesBeforeElimination = Math.min(
+      quick ? 10 : 50,
+      simulationCount,
+    );
+    if (workerPool) {
       return this.runOptimizationInWorker(
         baseConfig,
         simulationCount,
+        quick,
+        batchSize,
+        minSamplesBeforeElimination,
         optimizationSide,
         projectEndTurnEffects,
         recomputeParrotCopies,
+        workerPool,
         abortSignal,
         onProgress,
       );
@@ -338,11 +411,13 @@ export class ReplayPositioningImageService {
         options: {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
-          batchSize: Math.min(25, simulationCount),
-          minSamplesBeforeElimination: Math.min(50, simulationCount),
+          batchSize,
+          minSamplesBeforeElimination,
           confidenceZ: 1.96,
           keepSameBuffTargets: !projectEndTurnEffects,
           recomputeParrotCopies,
+          successiveHalving: quick,
+          successiveHalvingRate: 0.5,
         },
         shouldAbort: () => Boolean(abortSignal?.aborted),
         onProgress: (progress) => {
@@ -383,90 +458,21 @@ export class ReplayPositioningImageService {
   private runOptimizationInWorker(
     baseConfig: SimulationConfig,
     simulationCount: number,
+    quick: boolean,
+    batchSize: number,
+    minSamplesBeforeElimination: number,
     optimizationSide: 'player' | 'opponent',
     projectEndTurnEffects: boolean,
     recomputeParrotCopies: boolean,
+    workerPool: ReplaySimulationWorkerPool,
     abortSignal?: AbortSignal,
     onProgress?: (percent: number) => void,
   ): Promise<PositioningOptimizationResult> {
-    return new Promise<PositioningOptimizationResult>((resolve, reject) => {
-      const worker = new Worker(
-        new URL('../simulation/simulation.worker', import.meta.url),
-        { type: 'module' },
-      );
-
-      let settled = false;
-      const cleanup = () => {
-        worker.terminate();
-        abortSignal?.removeEventListener('abort', abortListener);
-      };
-      const finishResolve = (value: PositioningOptimizationResult) => {
-        if (settled) {
-          return;
-        }
-        settled = true;
-        cleanup();
-        resolve(value);
-      };
-      const finishReject = (error: Error) => {
-        if (settled) {
-          return;
-        }
-        settled = true;
-        cleanup();
-        reject(error);
-      };
-
-      const abortListener = () => {
-        try {
-          worker.postMessage({ type: 'cancel' });
-        } catch {
-          // ignore
-        }
-        finishReject(new Error('Positioning image build cancelled.'));
-      };
-      if (abortSignal?.aborted) {
-        finishReject(new Error('Positioning image build cancelled.'));
-        return;
-      }
-      abortSignal?.addEventListener('abort', abortListener, { once: true });
-
-      worker.onmessage = ({ data }) => {
-        if (!data || !data.type) {
-          return;
-        }
-        if (data.type === 'positioning-progress') {
-          const progress = data.progress as PositioningOptimizerProgress;
-          if (progress.totalBattlesEstimate > 0) {
-            const percent = Math.min(
-              100,
-              Math.max(
-                0,
-                (progress.completedBattles / progress.totalBattlesEstimate) * 100,
-              ),
-            );
-            onProgress?.(percent);
-          }
-          return;
-        }
-        if (data.type === 'positioning-result') {
-          finishResolve(data.result as PositioningOptimizationResult);
-          return;
-        }
-        if (data.type === 'positioning-aborted') {
-          finishReject(new Error('Positioning image build cancelled.'));
-          return;
-        }
-        if (data.type === 'error') {
-          finishReject(new Error(data.message || 'Worker optimization failed.'));
-        }
-      };
-
-      worker.onerror = (event) => {
-        finishReject(new Error(event.message || 'Worker optimization failed.'));
-      };
-
-      worker.postMessage({
+    return workerPool.run<
+      PositioningOptimizationResult,
+      PositioningOptimizerProgress
+    >(
+      {
         type: 'optimize-positioning-start',
         config: {
           ...baseConfig,
@@ -475,15 +481,38 @@ export class ReplayPositioningImageService {
         options: {
           side: optimizationSide,
           maxSimulationsPerPermutation: simulationCount,
-          batchSize: Math.min(25, simulationCount),
-          minSamplesBeforeElimination: Math.min(50, simulationCount),
+          batchSize,
+          minSamplesBeforeElimination,
           confidenceZ: 1.96,
           projectEndTurnLineup: projectEndTurnEffects,
           keepSameBuffTargets: !projectEndTurnEffects,
           recomputeParrotCopies,
+          successiveHalving: quick,
+          successiveHalvingRate: 0.5,
         },
-      });
-    });
+      },
+      {
+        progressType: 'positioning-progress',
+        resultType: 'positioning-result',
+        abortedType: 'positioning-aborted',
+        errorMessage: 'Positioning image build cancelled.',
+        abortSignal,
+        onProgress: (progress) => {
+          if (progress.totalBattlesEstimate <= 0) {
+            return;
+          }
+          onProgress?.(
+            Math.min(
+              100,
+              Math.max(
+                0,
+                (progress.completedBattles / progress.totalBattlesEstimate) * 100,
+              ),
+            ),
+          );
+        },
+      },
+    );
   }
 
   private buildDeltaSummary(
@@ -519,6 +548,10 @@ export class ReplayPositioningImageService {
     };
   }
 
+  private getSimulationResultCount(result: SimulationResult): number {
+    return result.playerWins + result.opponentWins + result.draws;
+  }
+
   private buildRenderPetsFromPetConfigLineup(
     lineup: (PetConfig | null)[],
   ): Array<RenderPetInfo | null> {
@@ -544,7 +577,7 @@ export class ReplayPositioningImageService {
     rows: OptimizedTurnRow[],
     precision: PositioningOptimizationPrecision,
     optimizationSide: 'player' | 'opponent',
-  ): Promise<ReplayPositioningImageResult> {
+  ): Promise<Omit<ReplayPositioningImageResult, 'metrics'>> {
     const DELTA_COLUMN_WIDTH = 360;
     const title =
       rows[0]?.renderInfo.playerName && rows[0]?.renderInfo.opponentName
@@ -564,6 +597,7 @@ export class ReplayPositioningImageService {
         index: i,
         turn: row.turn,
         info: row.renderInfo,
+        showSideRoles: false,
       });
 
       const deltaX = session.baseWidth + 10;
@@ -927,19 +961,6 @@ export class ReplayPositioningImageService {
     });
   }
 
-  private computeOverallProgress(
-    completedTurns: number,
-    totalTurns: number,
-    currentTurnPercent: number,
-  ): number {
-    if (totalTurns <= 0) {
-      return 0;
-    }
-    const perTurn = 95 / totalTurns;
-    const done = completedTurns * perTurn;
-    const inTurn = (Math.max(0, Math.min(100, currentTurnPercent)) / 100) * perTurn;
-    return 3 + Math.min(95, done + inTurn);
-  }
 }
 
 

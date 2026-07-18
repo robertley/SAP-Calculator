@@ -186,6 +186,30 @@ describe('positioning image row state', () => {
     });
   });
 
+  it('keeps replay-matched custom pack selections over generic API values', () => {
+    const fallback = new ReplayCalcParser().parseReplayForCalculator({
+      UserBoard: {
+        Pack: 'Custom',
+        Deck: { Id: 'player-deck', Title: 'ff', Minions: ['226'] },
+        Mins: { Items: [] },
+      },
+      OpponentBoard: {
+        Pack: 'Custom',
+        Deck: { Id: 'opponent-deck', Title: 'ff', Minions: ['74'] },
+        Mins: { Items: [] },
+      },
+    });
+
+    const merged = mergeReplayImageCalculatorState(fallback, {
+      playerPack: 'Custom',
+      opponentPack: 'Custom',
+      customPacks: fallback.customPacks,
+    });
+
+    expect(merged.playerPack).toBe('ff');
+    expect(merged.opponentPack).toBe('ff (2)');
+  });
+
   it('reorients reversed exact calculator sides with their toys', () => {
     const fallback = calculatorState();
     const exact = {

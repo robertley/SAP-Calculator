@@ -76,8 +76,10 @@ export class SpiderAbility extends Ability {
     const { tiger, pteranodon } = context;
     const owner = this.owner;
 
-    const possibleSpawnPets = this.petService
-      .getPetPoolByTier(owner.parent, 3)
+    const packSpawnPets = this.petService.getPetPoolByTier(owner.parent, 3);
+    const possibleSpawnPets = (packSpawnPets.length > 0
+      ? packSpawnPets
+      : [...(this.petService.allPets.get(3) ?? [])])
       .filter((pet) => pet && pet !== 'Spider');
     if (possibleSpawnPets.length == 0) {
       return;

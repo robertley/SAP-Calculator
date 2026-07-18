@@ -137,6 +137,56 @@ describe('ReplayCalcService', () => {
     ]);
   });
 
+  it('selects the imported custom deck for each replay side', () => {
+    const service = new ReplayCalcService(null as unknown as HttpClient);
+    const calculatorResponse: ReplayBattleResponse = {
+      calculatorState: {
+        playerPack: 'Custom',
+        opponentPack: 'Custom',
+        customPacks: [
+          { name: 'ff', tier3Pets: ['Flying Fish'] },
+          { name: 'ff (2)', tier3Pets: ['Hirola'] },
+        ],
+      },
+    };
+    const replayResponse: ReplayBattleResponse = {
+      battle: {
+        UserBoard: {
+          Pack: 'Custom',
+          Deck: {
+            Id: 'player-deck',
+            Title: 'ff',
+            Minions: ['226'],
+          },
+          Mins: { Items: [] },
+        },
+        OpponentBoard: {
+          Pack: 'Custom',
+          Deck: {
+            Id: 'opponent-deck',
+            Title: 'ff',
+            Minions: ['74'],
+          },
+          Mins: { Items: [] },
+        },
+      },
+    };
+    const replayServiceWithDeckMerger = service as unknown as {
+      mergeReplayDecksIntoCalculatorState: (
+        calculator: ReplayBattleResponse,
+        replay: ReplayBattleResponse,
+      ) => ReplayBattleResponse;
+    };
+
+    const response = replayServiceWithDeckMerger.mergeReplayDecksIntoCalculatorState(
+      calculatorResponse,
+      replayResponse,
+    );
+
+    expect(response.calculatorState?.['playerPack']).toBe('ff');
+    expect(response.calculatorState?.['opponentPack']).toBe('ff (2)');
+  });
+
   it('prefers direct replay battle payloads before falling back to turns', async () => {
     const http = {
       post: vi.fn((path: string) => {

@@ -1368,7 +1368,11 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
           return;
         }
         this.setPositioningPreview(result, replayId);
-        this.setStatus('Positioning image ready. Preview and download below.', 'success');
+        this.setStatus(
+          `Positioning image ready in ${(result.metrics.durationMs / 1000).toFixed(1)}s ` +
+            `(${result.metrics.cacheHits} cached, ${result.metrics.simulationsRun.toLocaleString()} simulations).`,
+          'success',
+        );
       })
       .catch((error) => {
         const message = error instanceof Error ? error.message : '';
@@ -1412,7 +1416,8 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         if (abortController.signal.aborted) return;
         this.setBoardStrengthPreview(result, replayId);
         this.setStatus(
-          'Board strength image ready. Preview and download below.',
+          `Board strength image ready in ${(result.metrics.durationMs / 1000).toFixed(1)}s ` +
+            `(${result.metrics.cacheHits} cached, ${result.metrics.simulationsRun.toLocaleString()} simulations).`,
           'success',
         );
       })

@@ -41,6 +41,14 @@ import {
   getReplayImageCalculatorState,
   mergeReplayImageCalculatorState,
 } from './replay-image-calculator-state';
+import { ReplaySimulationWorkerPool } from './replay-simulation-worker-pool';
+import {
+  ReplayImageBuildMetrics,
+  createReplayImageBuildMetrics,
+  getReplayImageEvaluationCache,
+  nowMilliseconds,
+  storeReplayImageEvaluationCache,
+} from './replay-image-evaluation-cache';
 
 export interface ReplayBoardStrengthImageBuildInput {
   replayPayload: Record<string, unknown>;
@@ -75,6 +83,7 @@ export interface ReplayBoardStrengthImagePreview {
 export interface ReplayBoardStrengthImageResult {
   blob: Blob;
   preview: ReplayBoardStrengthImagePreview;
+  metrics: ReplayImageBuildMetrics;
 }
 
 interface ReplayActionEntry {
@@ -123,6 +132,8 @@ export class ReplayBoardStrengthImageService {
     input: ReplayBoardStrengthImageBuildInput,
   ): Promise<ReplayBoardStrengthImageResult> {
     const precision = input.precision ?? 'quick';
+    const startedAt = nowMilliseconds();
+    const metrics = createReplayImageBuildMetrics();
     this.throwIfAborted(input.abortSignal);
     this.emitProgress(input, 0, 'Preparing replay turns...', 'preparing', 0, 0);
     const resolvedReplay = this.resolveReplayActionsContainer(
@@ -200,51 +211,89 @@ export class ReplayBoardStrengthImageService {
     );
     const results = new Map<string, BoardStrengthResult>();
     const taskList = [...tasks.values()];
-    for (let index = 0; index < taskList.length; index += 1) {
-      const task = taskList[index];
-      this.throwIfAborted(input.abortSignal);
-      const result = await this.runEvaluation(
-        task.config,
-        task.side,
-        precision,
-        input.abortSignal,
-        (progress) => {
-          const taskProgress = this.getEvaluationProgress(progress, precision);
-          const percent =
-            5 + ((index + taskProgress) / Math.max(1, taskList.length)) * 90;
-          this.emitProgress(
-            input,
-            percent,
-            `Turn ${task.turn}: evaluating ${task.side} board (${progress.currentStat}/${progress.currentStat})...`,
-            'evaluating',
-            task.turn,
-            turnRows.length,
-            task.side,
+    let workerPool: ReplaySimulationWorkerPool | null = null;
+    const getWorkerPool = (): ReplaySimulationWorkerPool | null => {
+      if (typeof Worker === 'undefined') {
+        return null;
+      }
+      workerPool ??= new ReplaySimulationWorkerPool(2);
+      return workerPool;
+    };
+    const taskProgress = taskList.map(() => 0);
+    try {
+      await Promise.all(
+        taskList.map(async (task, index) => {
+          this.throwIfAborted(input.abortSignal);
+          const cacheFingerprint = `${precision}:${task.key}`;
+          const cached = getReplayImageEvaluationCache<BoardStrengthResult>(
+            'board-strength-v1',
+            cacheFingerprint,
           );
-        },
+          if (cached && !cached.aborted) {
+            metrics.cacheHits += 1;
+            taskProgress[index] = 1;
+            results.set(task.key, cached);
+            return;
+          }
+          metrics.cacheMisses += 1;
+          const taskWorkerPool = getWorkerPool();
+          if (taskWorkerPool) {
+            metrics.workerTasks += 1;
+          }
+          const result = await this.runEvaluation(
+            task.config,
+            task.side,
+            precision,
+            input.abortSignal,
+            (progress) => {
+              taskProgress[index] = this.getEvaluationProgress(progress, precision);
+              const aggregateProgress = taskProgress.reduce(
+                (sum, value) => sum + value,
+                0,
+              );
+              const percent =
+                5 + (aggregateProgress / Math.max(1, taskList.length)) * 90;
+              this.emitProgress(
+                input,
+                percent,
+                `Turn ${task.turn}: evaluating ${task.side} board (stat ${progress.currentStat})...`,
+                'evaluating',
+                task.turn,
+                turnRows.length,
+                task.side,
+              );
+            },
+            taskWorkerPool,
+          );
+          taskProgress[index] = 1;
+          metrics.simulationsRun += result.totalBattles;
+          results.set(task.key, result);
+          if (!result.aborted) {
+            storeReplayImageEvaluationCache(
+              'board-strength-v1',
+              cacheFingerprint,
+              result,
+            );
+          }
+        }),
       );
-      results.set(task.key, result);
+
+      this.throwIfAborted(input.abortSignal);
       this.emitProgress(
         input,
-        5 + ((index + 1) / Math.max(1, taskList.length)) * 90,
-        `Turn ${task.turn}: ${task.side} strength ${result.score.toFixed(1)}.`,
-        'evaluating',
-        task.turn,
+        98,
+        'Rendering board strength image...',
+        'rendering',
         turnRows.length,
-        task.side,
+        turnRows.length,
       );
+      const rendered = await this.renderImage(preparedRows, results);
+      metrics.durationMs = Math.round(nowMilliseconds() - startedAt);
+      console.info('[replay-strength-image] build metrics', metrics);
+      return { ...rendered, metrics };
+    } finally {
+      workerPool?.close();
     }
-
-    this.throwIfAborted(input.abortSignal);
-    this.emitProgress(
-      input,
-      98,
-      'Rendering board strength image...',
-      'rendering',
-      turnRows.length,
-      turnRows.length,
-    );
-    return this.renderImage(preparedRows, results);
   }
 
   async buildBoardStrengthImageBlob(
@@ -259,14 +308,23 @@ export class ReplayBoardStrengthImageService {
     precision: BoardStrengthPrecision,
     abortSignal: AbortSignal | undefined,
     onProgress: (progress: BoardStrengthProgress) => void,
+    workerPool: ReplaySimulationWorkerPool | null,
   ): Promise<BoardStrengthResult> {
-    if (typeof Worker !== 'undefined') {
-      return this.runEvaluationInWorker(
-        config,
-        side,
-        precision,
-        abortSignal,
-        onProgress,
+    if (workerPool) {
+      return workerPool.run<BoardStrengthResult, BoardStrengthProgress>(
+        {
+          type: 'board-strength-start',
+          config,
+          options: { side, precision },
+        },
+        {
+          progressType: 'board-strength-progress',
+          resultType: 'board-strength-result',
+          abortedType: 'board-strength-aborted',
+          errorMessage: 'Board strength image build cancelled.',
+          abortSignal,
+          onProgress,
+        },
       );
     }
     return Promise.resolve(
@@ -278,70 +336,6 @@ export class ReplayBoardStrengthImageService {
         simulateBatch: (batchConfig) => this.runLocalSimulation(batchConfig),
       }),
     );
-  }
-
-  private runEvaluationInWorker(
-    config: SimulationConfig,
-    side: BoardStrengthSide,
-    precision: BoardStrengthPrecision,
-    abortSignal: AbortSignal | undefined,
-    onProgress: (progress: BoardStrengthProgress) => void,
-  ): Promise<BoardStrengthResult> {
-    return new Promise<BoardStrengthResult>((resolve, reject) => {
-      const worker = new Worker(
-        new URL('../simulation/simulation.worker', import.meta.url),
-        { type: 'module' },
-      );
-      let settled = false;
-      const cleanup = () => {
-        worker.terminate();
-        abortSignal?.removeEventListener('abort', abortListener);
-      };
-      const finishResolve = (result: BoardStrengthResult) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        resolve(result);
-      };
-      const finishReject = (error: Error) => {
-        if (settled) return;
-        settled = true;
-        cleanup();
-        reject(error);
-      };
-      const abortListener = () => {
-        finishReject(new Error('Board strength image build cancelled.'));
-      };
-      if (abortSignal?.aborted) {
-        finishReject(new Error('Board strength image build cancelled.'));
-        return;
-      }
-      abortSignal?.addEventListener('abort', abortListener, { once: true });
-      worker.onmessage = ({ data }) => {
-        if (!data?.type) return;
-        if (data.type === 'board-strength-progress') {
-          onProgress(data.progress as BoardStrengthProgress);
-        } else if (data.type === 'board-strength-result') {
-          finishResolve(data.result as BoardStrengthResult);
-        } else if (data.type === 'board-strength-aborted') {
-          finishReject(new Error('Board strength image build cancelled.'));
-        } else if (data.type === 'error') {
-          finishReject(
-            new Error(data.message || 'Board strength evaluation failed.'),
-          );
-        }
-      };
-      worker.onerror = (event) => {
-        finishReject(
-          new Error(event.message || 'Board strength evaluation failed.'),
-        );
-      };
-      worker.postMessage({
-        type: 'board-strength-start',
-        config,
-        options: { side, precision },
-      });
-    });
   }
 
   private runLocalSimulation(config: SimulationConfig): SimulationResult {
@@ -374,7 +368,7 @@ export class ReplayBoardStrengthImageService {
   private async renderImage(
     rows: PreparedStrengthRow[],
     results: Map<string, BoardStrengthResult>,
-  ): Promise<ReplayBoardStrengthImageResult> {
+  ): Promise<Omit<ReplayBoardStrengthImageResult, 'metrics'>> {
     const firstInfo = rows[0]?.renderInfo;
     const title =
       firstInfo?.playerName && firstInfo?.opponentName

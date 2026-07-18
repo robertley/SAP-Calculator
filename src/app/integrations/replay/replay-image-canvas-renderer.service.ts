@@ -55,6 +55,7 @@ export interface ReplayImageBattleRowOptions {
   playerPets?: Array<ReplayImagePetInfo | null>;
   opponentPets?: Array<ReplayImagePetInfo | null>;
   backgroundColor?: string;
+  showSideRoles?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -140,16 +141,18 @@ export class ReplayImageCanvasRendererService {
     ctx.fillStyle = '#000000';
     ctx.font = 'bold 13px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(
-      info.playerName ? `${info.playerName} (Player)` : 'Player',
-      415,
-      rowStartY + 17,
-    );
-    ctx.fillText(
-      info.opponentName ? `${info.opponentName} (Opponent)` : 'Opponent',
-      1010,
-      rowStartY + 17,
-    );
+    const playerLabel = options.showSideRoles === false
+      ? info.playerName
+      : info.playerName ? `${info.playerName} (Player)` : 'Player';
+    const opponentLabel = options.showSideRoles === false
+      ? info.opponentName
+      : info.opponentName ? `${info.opponentName} (Opponent)` : 'Opponent';
+    if (playerLabel) {
+      ctx.fillText(playerLabel, 415, rowStartY + 17);
+    }
+    if (opponentLabel) {
+      ctx.fillText(opponentLabel, 1010, rowStartY + 17);
+    }
 
     ctx.fillStyle = '#000000';
     ctx.font = '24px Arial';

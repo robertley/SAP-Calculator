@@ -445,11 +445,33 @@ export class ReplayCalcService {
       }
     }
 
+    const mergedPackNames = new Set(
+      mergedPacks
+        .filter((pack): pack is ReplayJsonObject => this.isRecord(pack))
+        .map((pack) => pack['name'])
+        .filter((name): name is string => typeof name === 'string'),
+    );
+    const selectReplayCustomPack = (
+      calculatorSelection: unknown,
+      replaySelection: string,
+    ): unknown =>
+      mergedPackNames.has(replaySelection)
+        ? replaySelection
+        : calculatorSelection;
+
     return {
       ...calculatorResponse,
       calculatorState: {
         ...calculatorState,
         customPacks: mergedPacks,
+        playerPack: selectReplayCustomPack(
+          calculatorState['playerPack'],
+          replayState.playerPack,
+        ),
+        opponentPack: selectReplayCustomPack(
+          calculatorState['opponentPack'],
+          replayState.opponentPack,
+        ),
         playerPets: this.mergeReplayPetEquipment(
           calculatorState['playerPets'],
           replayState.playerPets,

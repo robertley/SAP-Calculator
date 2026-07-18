@@ -120,9 +120,32 @@ export function mergeReplayImageCalculatorState(
     return fallback;
   }
   const oriented = orientReplayImageCalculatorState(fallback, exact);
+  const customPacks = oriented.customPacks ?? fallback.customPacks;
+  const customPackNames = new Set(customPacks.map((pack) => pack.name));
+  const resolvePackSelection = (
+    exactSelection: string | undefined,
+    fallbackSelection: string,
+  ): string => {
+    if (
+      customPackNames.has(fallbackSelection) &&
+      (!exactSelection || !customPackNames.has(exactSelection))
+    ) {
+      return fallbackSelection;
+    }
+    return exactSelection ?? fallbackSelection;
+  };
   return {
     ...fallback,
     ...oriented,
+    customPacks,
+    playerPack: resolvePackSelection(
+      oriented.playerPack,
+      fallback.playerPack,
+    ),
+    opponentPack: resolvePackSelection(
+      oriented.opponentPack,
+      fallback.opponentPack,
+    ),
     playerPets: normalizeLineup(oriented.playerPets) ?? fallback.playerPets,
     opponentPets:
       normalizeLineup(oriented.opponentPets) ?? fallback.opponentPets,
