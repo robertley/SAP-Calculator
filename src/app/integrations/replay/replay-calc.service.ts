@@ -12,6 +12,7 @@ import {
   ReplayMetaBoards,
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
+  buildReplayPerkNameByPetIdFromActions,
 } from './replay-calc-parser';
 import { PACK_MAP } from './replay-calc-schema';
 import { REVERSE_KEY_MAP } from 'app/runtime/state/url-state-key-map';
@@ -38,6 +39,7 @@ export interface ReplayBattleResponse {
   genesisBuildModel?: ReplayBuildModelJson;
   opponentGenesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
+  perkNameByPetId?: Record<string, string> | null;
   sapLibraryReplayId?: string;
   sapLibraryReplayUrl?: string;
   error?: string;
@@ -209,6 +211,7 @@ export interface ReplayTurnsResponse {
   turns?: ReplayTurnActionLike[] | null;
   genesisBuildModel?: ReplayBuildModelJson;
   abilityPetMap?: Record<string, string | number> | null;
+  perkNameByPetId?: Record<string, string> | null;
   perspectives?: ReplayPerspectiveResponse[] | null;
   error?: string;
 }
@@ -384,11 +387,11 @@ export class ReplayCalcService {
       battle,
       replayResponse.genesisBuildModel,
       undefined,
-      { abilityPetMap: replayResponse.abilityPetMap ?? null },
+      {
+        abilityPetMap: replayResponse.abilityPetMap ?? null,
+        perkNameByPetId: replayResponse.perkNameByPetId ?? null,
+      },
     );
-    if (replayState.customPacks.length === 0) {
-      return calculatorResponse;
-    }
 
     const calculatorPacks = Array.isArray(calculatorState['customPacks'])
       ? calculatorState['customPacks']
@@ -447,8 +450,45 @@ export class ReplayCalcService {
       calculatorState: {
         ...calculatorState,
         customPacks: mergedPacks,
+        playerPets: this.mergeReplayPetEquipment(
+          calculatorState['playerPets'],
+          replayState.playerPets,
+        ),
+        opponentPets: this.mergeReplayPetEquipment(
+          calculatorState['opponentPets'],
+          replayState.opponentPets,
+        ),
       },
     };
+  }
+
+  private mergeReplayPetEquipment(
+    calculatorPets: unknown,
+    replayPets: ReplayCalculatorState['playerPets'],
+  ): unknown {
+    if (!Array.isArray(calculatorPets)) {
+      return calculatorPets;
+    }
+
+    return calculatorPets.map((calculatorPet, index) => {
+      const replayPet = replayPets[index];
+      const replayEquipmentName = replayPet?.equipment?.name;
+      if (!replayEquipmentName || !this.isRecord(calculatorPet)) {
+        return calculatorPet;
+      }
+
+      const calculatorEquipment = this.isRecord(calculatorPet['equipment'])
+        ? calculatorPet['equipment']
+        : null;
+      if (calculatorEquipment?.['name'] === replayEquipmentName) {
+        return calculatorPet;
+      }
+
+      return {
+        ...calculatorPet,
+        equipment: { name: replayEquipmentName },
+      };
+    });
   }
 
   private fetchReplayCalculatorByReplayId(
@@ -1069,6 +1109,22 @@ export class ReplayCalcService {
       }
     }
 
+    let perkNameByPetId = turnsResponse?.perkNameByPetId ?? null;
+    for (const raw of perspectiveRaws) {
+      const actions = this.getReplayPerspectiveActions(raw);
+      if (actions.length === 0) {
+        continue;
+      }
+      const inferredPerkNameByPetId =
+        buildReplayPerkNameByPetIdFromActions(actions, requestedTurn);
+      if (Object.keys(inferredPerkNameByPetId).length > 0) {
+        perkNameByPetId = {
+          ...(perkNameByPetId ?? {}),
+          ...inferredPerkNameByPetId,
+        };
+      }
+    }
+
     const battleFromTurn: ReplayJsonObject = hasRawSides
       ? {
         UserBoard: this.mapReplayTurnsSide(selectedTurn?.user, replayMeta?.pack),
@@ -1117,6 +1173,8 @@ export class ReplayCalcService {
       battleFromTurn.Opponent = battleJson.Opponent;
     }
 
+    this.applyReplayPerkNamesToBattle(battleFromTurn, perkNameByPetId);
+
     const sapLibraryReplayId =
       this.extractSapLibraryReplayIdFromTurnsResponse(turnsResponse);
 
@@ -1129,11 +1187,43 @@ export class ReplayCalcService {
         playerPerspectiveBuildModel,
       opponentGenesisBuildModel: opponentPerspectiveBuildModel,
       abilityPetMap,
+      perkNameByPetId,
       sapLibraryReplayId,
       sapLibraryReplayUrl: sapLibraryReplayId
         ? getSapLibraryReplayUrl(sapLibraryReplayId)
         : undefined,
     };
+  }
+
+  private applyReplayPerkNamesToBattle(
+    battle: ReplayJsonObject,
+    perkNameByPetId: Record<string, string> | null,
+  ): void {
+    if (!perkNameByPetId) {
+      return;
+    }
+
+    for (const side of ['UserBoard', 'OpponentBoard'] as const) {
+      const board = battle[side];
+      if (!this.isRecord(board)) {
+        continue;
+      }
+      const mins = board['Mins'];
+      if (!this.isRecord(mins) || !Array.isArray(mins['Items'])) {
+        continue;
+      }
+
+      mins['Items'].forEach((item) => {
+        if (!this.isRecord(item)) {
+          return;
+        }
+        const petId = this.toReplayId(item['Enu']);
+        const perkName = petId ? perkNameByPetId[petId] : undefined;
+        if (perkName) {
+          item['Perk'] = perkName;
+        }
+      });
+    }
   }
 
   private extractSapLibraryReplayIdFromIndexResponse(

@@ -9,6 +9,7 @@ const {
   runReplayOddsFromCalculatorState,
   runReplayPositioningFromCalculatorState,
   runReplayStrengthFromCalculatorState,
+  buildReplayPerkNameByPetIdFromActions,
 } = require("../simulation/dist/index.js");
 
 function loadEnvFile(envPath) {
@@ -748,12 +749,21 @@ const server = http.createServer(async (req, res) => {
         sapPassword,
       );
 
+      const perkNameByPetId = {
+        ...buildReplayPerkNameByPetIdFromActions(replay?.Actions, turnNumber),
+        ...buildReplayPerkNameByPetIdFromActions(
+          opponentReplay?.Actions,
+          turnNumber,
+        ),
+      };
+
       sendJson(res, 200, {
         battle,
         genesisBuildModel: replay.GenesisBuildModel || null,
         genesisModeModel: replay.GenesisModeModel || null,
         opponentGenesisBuildModel: opponentReplay?.GenesisBuildModel || null,
         abilityPetMap: buildReplayAbilityPetMap(replay, opponentReplay),
+        perkNameByPetId,
       });
     } catch (error) {
       const statusCode = error.statusCode || 500;

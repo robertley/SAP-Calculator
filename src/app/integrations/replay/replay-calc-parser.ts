@@ -4,6 +4,7 @@ import {
   PetConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
 import { encodeBase64Url } from 'app/runtime/base64-url';
+import * as foodJson from 'assets/data/food.json';
 import {
   KEY_MAP,
   PACK_MAP,
@@ -115,6 +116,8 @@ export interface ReplayMetaBoards {
 
 export interface ReplayParseOptions {
   abilityPetMap?: Record<string, string | number> | null;
+  /** Replay-derived perk names keyed by the raw pet enum. */
+  perkNameByPetId?: Record<string, string> | null;
 }
 
 export interface ReplayActionJson {
@@ -123,6 +126,7 @@ export interface ReplayActionJson {
   Build?: string | Record<string, unknown> | null;
   Battle?: string | Record<string, unknown> | null;
   Mode?: string | Record<string, unknown> | null;
+  Response?: string | Record<string, unknown> | null;
 }
 
 export interface ReplayActionsContainerJson {
@@ -525,6 +529,88 @@ function parseJsonValue(raw: unknown): unknown {
   }
 }
 
+interface ReplayFoodEntryJson {
+  Id?: number | string | null;
+  Name?: string | null;
+  Ability?: string | null;
+}
+
+const replayFoodEntries =
+  (foodJson as unknown as { default?: ReplayFoodEntryJson[] }).default ??
+  (foodJson as unknown as ReplayFoodEntryJson[]);
+
+// The replay API stores the food-card enum in a spell response, while the
+// pet snapshot stores the resulting perk under a separate enum. Resolve the
+// former from canonical food metadata so newly added perk foods do not need a
+// second hand-maintained replay mapping.
+const REPLAY_PERK_FOOD_NAMES_BY_SPELL_ID = new Map<string, string>(
+  replayFoodEntries
+    .filter(
+      (entry): entry is ReplayFoodEntryJson & { Id: number | string; Name: string } =>
+        entry?.Id !== null &&
+        entry?.Id !== undefined &&
+        typeof entry?.Name === 'string' &&
+        /^Give one pet the .+ perk\.$/i.test(entry?.Ability ?? ''),
+    )
+    .map((entry) => [String(entry.Id), entry.Name]),
+);
+
+function getReplayEntityKey(value: unknown): string | null {
+  const record = asRecord(value);
+  if (!record) {
+    return null;
+  }
+
+  const boardId = record['BoId'] ?? record['boId'];
+  const uniqueId = record['Uni'] ?? record['uni'];
+  if (boardId === null || boardId === undefined || uniqueId === null || uniqueId === undefined) {
+    return null;
+  }
+
+  return `${String(boardId)}:${String(uniqueId)}`;
+}
+
+function buildReplayPetIdByEntityKey(
+  battleJson: ReplayBattleJson,
+): Map<string, string> {
+  const petIdByEntityKey = new Map<string, string>();
+  for (const board of [battleJson.UserBoard, battleJson.OpponentBoard]) {
+    const items = board?.Mins?.Items ?? [];
+    for (const pet of items) {
+      if (!pet) {
+        continue;
+      }
+      const petId = toReplayId(pet.Enu);
+      const entityKey = getReplayEntityKey(pet['Id']);
+      if (petId && entityKey) {
+        petIdByEntityKey.set(entityKey, petId);
+      }
+    }
+  }
+  return petIdByEntityKey;
+}
+
+function getReplaySpellPerkTarget(
+  action: ReplayActionJson,
+): { perkName: string; targetKey: string } | null {
+  if (action.Type !== 8) {
+    return null;
+  }
+
+  const response = asRecord(parseJsonValue(action.Response));
+  const responseEvent = asRecord(response?.['Event']);
+  const event = asRecord(responseEvent?.['Event']) ?? responseEvent;
+  const spell = asRecord(event?.['Spell']);
+  const target = asRecord(event?.['Target']);
+  const spellId = toReplayId(spell?.['Enu']);
+  const perkName = spellId
+    ? REPLAY_PERK_FOOD_NAMES_BY_SPELL_ID.get(spellId)
+    : undefined;
+  const targetKey = getReplayEntityKey(target);
+
+  return perkName && targetKey ? { perkName, targetKey } : null;
+}
+
 function parseBattleAction(raw: unknown): ReplayBattleJson | null {
   const parsed = parseJsonValue(raw);
   if (!isRecord(parsed)) {
@@ -701,6 +787,38 @@ export function buildReplayAbilityPetMapFromActions(
   return buildReplayAbilityPetMapFromCounts(abilityOwnerCounts);
 }
 
+export function buildReplayPerkNameByPetIdFromActions(
+  actions: ReadonlyArray<ReplayActionJson> | null | undefined,
+  turnNumber: number,
+): Record<string, string> {
+  const battleJson = selectReplayBattleFromActions(actions, turnNumber);
+  if (!battleJson) {
+    return {};
+  }
+
+  const petIdByEntityKey = buildReplayPetIdByEntityKey(battleJson);
+  const perkNameByPetId: Record<string, string> = {};
+
+  (actions ?? []).forEach((action) => {
+    const actionTurn = toFiniteNumber(action.Turn);
+    if (actionTurn !== null && actionTurn > turnNumber) {
+      return;
+    }
+
+    const spellPerkTarget = getReplaySpellPerkTarget(action);
+    if (!spellPerkTarget) {
+      return;
+    }
+
+    const petId = petIdByEntityKey.get(spellPerkTarget.targetKey);
+    if (petId) {
+      perkNameByPetId[petId] = spellPerkTarget.perkName;
+    }
+  });
+
+  return perkNameByPetId;
+}
+
 export function parseReplayForCalculatorFromActions(
   actions: ReadonlyArray<ReplayActionJson> | null | undefined,
   turnNumber: number,
@@ -718,6 +836,14 @@ export function parseReplayForCalculatorFromActions(
     ...inferredAbilityPetMap,
     ...(options?.abilityPetMap ?? {}),
   };
+  const inferredPerkNameByPetId = buildReplayPerkNameByPetIdFromActions(
+    actions,
+    turnNumber,
+  );
+  const mergedPerkNameByPetId = {
+    ...inferredPerkNameByPetId,
+    ...(options?.perkNameByPetId ?? {}),
+  };
 
   const parser = new ReplayCalcParser();
   return parser.parseReplayForCalculator(
@@ -727,6 +853,7 @@ export function parseReplayForCalculatorFromActions(
     {
       ...options,
       abilityPetMap: mergedAbilityPetMap,
+      perkNameByPetId: mergedPerkNameByPetId,
     },
   );
 }
@@ -1204,11 +1331,16 @@ export class ReplayCalcParser {
       })();
 
       const perkValue = petJson.Perk;
-      const perkName =
-        perkValue !== null && perkValue !== undefined
-          ? PERKS_BY_ID.get(String(perkValue)) ||
-          (typeof perkValue === 'string' ? perkValue : 'Unknown Perk')
+      const replayPerkName =
+        petId !== null
+          ? options?.perkNameByPetId?.[String(petId)] ?? null
           : null;
+      const perkName =
+        replayPerkName ??
+        (perkValue !== null && perkValue !== undefined
+          ? PERKS_BY_ID.get(String(perkValue)) ||
+            (typeof perkValue === 'string' ? perkValue : 'Unknown Perk')
+          : null);
 
       const parsedPet: PetConfig = {
         name: petName,

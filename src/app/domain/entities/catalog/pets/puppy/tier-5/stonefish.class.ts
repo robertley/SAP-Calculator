@@ -52,10 +52,13 @@ export class StonefishAbility extends Ability {
   }
 
   private executeAbility(context: AbilityContext): void {
-    const { gameApi, triggerPet, tiger, pteranodon } = context;
+    const { tiger, pteranodon } = context;
     const owner = this.owner;
 
-    let targetResp = owner.parent.getSpecificPet(owner, triggerPet);
+    // PostRemovalFaint receives the fainted pet as its trigger pet. Stonefish
+    // must instead target the pet that caused its faint, which is recorded by
+    // combat damage before the faint is removed from the board.
+    let targetResp = owner.parent.getSpecificPet(owner, owner.killedBy);
     let target = targetResp.pet;
     if (target == null || !target.alive) {
       return;

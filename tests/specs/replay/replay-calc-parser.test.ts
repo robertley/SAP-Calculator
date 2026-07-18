@@ -63,6 +63,55 @@ describe('ReplayCalcParser', () => {
     expect(abomination?.abominationSwallowedPet1Level).toBe(2);
   });
 
+  it('recovers a perk-food purchase when the battle snapshot uses a stale perk enum', () => {
+    const actions = [
+      {
+        Type: 8,
+        Turn: 6,
+        Response: JSON.stringify({
+          Event: {
+            Event: {
+              Spell: { Enu: 211 },
+              Target: { BoId: 'user-board', Uni: 44 },
+            },
+          },
+        }),
+      },
+      {
+        Type: 0,
+        Turn: 7,
+        Battle: JSON.stringify({
+          UserBoard: {
+            Pack: 3,
+            Mins: {
+              Items: [
+                {
+                  Enu: 386,
+                  Lvl: 1,
+                  At: { Perm: 7 },
+                  Hp: { Perm: 5 },
+                  Perk: 125,
+                  Abil: [{ Enu: 416, Lvl: 1 }],
+                  Id: { BoId: 'user-board', Uni: 44 },
+                  Poi: { x: 4 },
+                },
+              ],
+            },
+          },
+          OpponentBoard: {
+            Pack: 3,
+            Mins: { Items: [] },
+          },
+        }),
+      },
+    ];
+
+    const state = parseReplayForCalculatorFromActions(actions, 7);
+    const visitor = state?.playerPets.find((pet) => pet?.name === 'Visitor');
+
+    expect(visitor?.equipment?.name).toBe('Geechee Red Pea');
+  });
+
   it('infers missing copied-ability owner from nearby mapped abilities', () => {
     const parser = new ReplayCalcParser();
     const battleJson: ReplayBattleJson = {

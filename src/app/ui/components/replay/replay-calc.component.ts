@@ -18,6 +18,7 @@ import {
   ReplayBuildModelJson,
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
+  buildReplayPerkNameByPetIdFromActions,
   selectReplayBattleFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 import { buildReplayCode } from 'app/integrations/replay/replay-code';
@@ -185,6 +186,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
                   battleJson,
                   response?.genesisBuildModel,
                   response?.abilityPetMap ?? null,
+                  response?.perkNameByPetId ?? null,
                   response?.sapLibraryReplayUrl,
                   turnNumber,
                 );
@@ -230,6 +232,10 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
         abilityPetMap:
           parsedInput?.AbilityPetMap ??
           buildReplayAbilityPetMapFromActions(parsedInput.Actions),
+        perkNameByPetId: buildReplayPerkNameByPetIdFromActions(
+          parsedInput.Actions,
+          turnNumber,
+        ),
       };
     } else {
       this.errorMessage =
@@ -241,6 +247,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
       battleJson,
       parsedInput?.GenesisBuildModel,
       parseOptions?.abilityPetMap ?? null,
+      parseOptions?.perkNameByPetId ?? null,
       undefined,
       Number(this.formGroup.get('turn').value ?? parsedInput?.T),
     );
@@ -284,6 +291,7 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
     battleJson: ReplayBattleJson,
     genesisBuildModel?: ReplayBuildModelJson,
     abilityPetMap?: Record<string, string | number> | null,
+    perkNameByPetId?: Record<string, string> | null,
     sapLibraryReplayUrl?: string,
     turnNumber?: number,
   ) {
@@ -291,7 +299,10 @@ export class ReplayCalcComponent implements OnInit, OnDestroy {
       battleJson,
       genesisBuildModel,
       undefined,
-      { abilityPetMap: abilityPetMap ?? null },
+      {
+        abilityPetMap: abilityPetMap ?? null,
+        perkNameByPetId: perkNameByPetId ?? null,
+      },
     );
     this.calculatorLink =
       this.replayCalcService.generateCalculatorLink(calculatorState);

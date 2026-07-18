@@ -21,6 +21,7 @@ import {
   ReplayMetaBoards,
   ReplayParseOptions,
   buildReplayAbilityPetMapFromActions,
+  buildReplayPerkNameByPetIdFromActions,
 } from 'app/integrations/replay/replay-calc-parser';
 import {
   REPLAY_IMAGE_CALCULATOR_STATES_KEY,
@@ -290,7 +291,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                   battleJson,
                   response?.genesisBuildModel,
                   undefined,
-                  { abilityPetMap: response?.abilityPetMap ?? null },
+                  {
+                    abilityPetMap: response?.abilityPetMap ?? null,
+                    perkNameByPetId: response?.perkNameByPetId ?? null,
+                  },
                   { resetBattle: true, suppressSuccessStatus: true },
                 );
               },
@@ -362,6 +366,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
         opponentBoard: parsedInput?.OpponentBoard,
       }, {
         abilityPetMap,
+        perkNameByPetId: buildReplayPerkNameByPetIdFromActions(
+          parsedInput.Actions,
+          turnNumber,
+        ),
       });
       return;
     }
@@ -391,7 +399,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
             response.battle,
             response.genesisBuildModel,
             undefined,
-            { abilityPetMap: response.abilityPetMap ?? null },
+            {
+              abilityPetMap: response.abilityPetMap ?? null,
+              perkNameByPetId: response.perkNameByPetId ?? null,
+            },
             { resetBattle: true },
           );
           return;
@@ -731,7 +742,10 @@ export class ImportCalculatorComponent implements OnInit, OnDestroy {
                 battleJson,
                 response?.genesisBuildModel,
                 undefined,
-                { abilityPetMap: response?.abilityPetMap ?? null },
+                {
+                  abilityPetMap: response?.abilityPetMap ?? null,
+                  perkNameByPetId: response?.perkNameByPetId ?? null,
+                },
                 { resetBattle: true, suppressSuccessStatus: true },
               );
             },
