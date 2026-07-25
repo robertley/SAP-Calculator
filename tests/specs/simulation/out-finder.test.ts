@@ -103,10 +103,98 @@ describe('Out Finder', () => {
       },
     });
 
+    expect(result.maxItems).toBe(1);
     expect(result.baseline.simulations).toBe(5);
+    expect(result.candidates.every((candidate) => candidate.steps.length === 1)).toBe(true);
     expect(result.candidates.every((candidate) => candidate.simulations >= 2)).toBe(true);
     expect(result.candidates.filter((candidate) => candidate.simulations === 5)).toHaveLength(3);
     expect(result.rankedCandidates[0].winDelta).toBe(1);
+  });
+
+  it('chains multiple purchases when maxItems allows combinations', () => {
+    const base = config([{ name: 'Ant', attack: 2, health: 1 }, null, null, null, null]);
+    // Reward boards purely by how many pets they hold, so deeper chains always win.
+    const result = runOutFinder({
+      baseConfig: base,
+      options: {
+        side: 'player',
+        maxItems: 3,
+        screeningSimulations: 2,
+        deepScreeningSimulations: 2,
+        maxSimulationsPerCandidate: 4,
+        finalistCount: 9,
+        batchSize: 2,
+        beamWidth: 3,
+        expansionPetNames: 5,
+      },
+      simulateBatch: (batch) => {
+        const count = batch.simulationCount ?? 0;
+        const occupied = batch.playerPets.filter(Boolean).length;
+        const wins = occupied >= 4 ? count : 0;
+        return { playerWins: wins, opponentWins: count - wins, draws: 0 };
+      },
+    });
+
+    const depths = new Set(result.candidates.map((candidate) => candidate.steps.length));
+    expect([...depths].sort()).toEqual([1, 2, 3]);
+    expect(result.maxItems).toBe(3);
+    // Chains are built by applying each step to the previous step's board.
+    const chained = result.candidates.find((candidate) => candidate.steps.length === 3)!;
+    expect(chained.lineup).toEqual(chained.steps[2].lineup);
+    expect(chained.lineup.filter(Boolean)).toHaveLength(4);
+    expect(result.rankedCandidates[0].steps.length).toBe(3);
+  });
+
+  it('never tests the same resulting board twice across depths', () => {
+    const seen: string[] = [];
+    const result = runOutFinder({
+      baseConfig: config([{ name: 'Ant', attack: 2, health: 1 }, null, null, null, null]),
+      options: {
+        side: 'player',
+        maxItems: 2,
+        screeningSimulations: 1,
+        deepScreeningSimulations: 1,
+        maxSimulationsPerCandidate: 1,
+        finalistCount: 2,
+        batchSize: 1,
+        beamWidth: 2,
+        expansionPetNames: 3,
+      },
+      simulateBatch: (batch) => {
+        seen.push(JSON.stringify(batch.playerPets));
+        return { playerWins: 0, opponentWins: batch.simulationCount ?? 0, draws: 0 };
+      },
+    });
+
+    expect(result.candidates.length).toBeGreaterThan(0);
+    expect(new Set(seen).size).toBe(seen.length);
+  });
+
+  it('reserves finalist slots for each purchase count', () => {
+    const result = runOutFinder({
+      baseConfig: config([{ name: 'Ant', attack: 2, health: 1 }, null, null, null, null]),
+      options: {
+        side: 'player',
+        maxItems: 2,
+        screeningSimulations: 2,
+        deepScreeningSimulations: 2,
+        maxSimulationsPerCandidate: 6,
+        finalistCount: 4,
+        batchSize: 2,
+        beamWidth: 2,
+        expansionPetNames: 3,
+      },
+      simulateBatch: (batch) => {
+        const count = batch.simulationCount ?? 0;
+        // Two-item boards strictly dominate, so without quotas they'd take every slot.
+        const wins = batch.playerPets.filter(Boolean).length >= 3 ? count : 0;
+        return { playerWins: wins, opponentWins: count - wins, draws: 0 };
+      },
+    });
+
+    const fullySampled = result.candidates.filter((candidate) => candidate.simulations === 6);
+    expect(fullySampled.some((candidate) => candidate.steps.length === 1)).toBe(true);
+    expect(fullySampled.some((candidate) => candidate.steps.length === 2)).toBe(true);
   });
 
   it('stops after the baseline when the current board wins every simulation', () => {

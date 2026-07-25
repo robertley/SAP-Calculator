@@ -12,6 +12,11 @@ import { BoardStrengthDialogComponent } from '../../components/board-strength-di
 import { ImportCalculatorComponent } from '../../components/import-calculator/import-calculator.component';
 import type { AppShellControlsFacade } from './app-shell-controls.facade';
 import { getEquipmentIconPath, getPetIconPath } from 'app/runtime/asset-catalog';
+import type {
+  OutFinderAction,
+  OutFinderCandidateResult,
+  OutFinderResult,
+} from 'app/integrations/simulation/out-finder';
 
 type ToolsWorkspaceTab =
   | 'optimize'
@@ -83,6 +88,8 @@ export class AppShellControlsComponent {
   optimizeSide: 'player' | 'opponent' = 'player';
   outFinderSide: 'player' | 'opponent' = 'player';
   outFinderShopTier = 6;
+  outFinderMaxItems = 1;
+  outFinderItemFilter: number | null = null;
   saveSide: 'player' | 'opponent' = 'player';
   toolsDialogOpen = false;
   optimizationDialogOpen = false;
@@ -153,11 +160,28 @@ export class AppShellControlsComponent {
   }
 
   runOutFinder(): void {
-    this.app.findOuts(this.outFinderSide, this.outFinderShopTier);
+    this.outFinderItemFilter = null;
+    this.app.findOuts(this.outFinderSide, this.outFinderShopTier, this.outFinderMaxItems);
   }
 
   onOutFinderScopeChanged(): void {
+    this.outFinderItemFilter = null;
     this.app.clearOutFinderResult();
+  }
+
+  /** Item counts actually present in the results, for the filter chips. */
+  outFinderItemCounts(result: OutFinderResult): number[] {
+    return [...new Set(result.rankedCandidates.map((candidate) => candidate.steps.length))].sort(
+      (a, b) => a - b,
+    );
+  }
+
+  filteredOutCandidates(result: OutFinderResult): OutFinderCandidateResult[] {
+    return this.outFinderItemFilter == null
+      ? result.rankedCandidates
+      : result.rankedCandidates.filter(
+          (candidate) => candidate.steps.length === this.outFinderItemFilter,
+        );
   }
 
   formatOutDelta(value: number): string {
@@ -165,11 +189,30 @@ export class AppShellControlsComponent {
     return `${percentagePoints >= 0 ? '+' : ''}${percentagePoints.toFixed(1)}pp`;
   }
 
-  outActionLabel(replacedIndex: number | null, targetIndex: number, type: 'pet' | 'food'): string {
-    if (type === 'food') return targetIndex < 0 ? 'All pets' : `Pet ${targetIndex + 1}`;
-    return replacedIndex == null
-      ? `Add at position ${targetIndex + 1}`
-      : `Replace pet ${replacedIndex + 1} · position ${targetIndex + 1}`;
+  outStepLabel(step: OutFinderAction): string {
+    if (step.outcomeDescription) return step.outcomeDescription;
+    if (step.type === 'food') {
+      return step.targetIndex < 0 ? 'All pets' : `Pet ${step.targetIndex + 1}`;
+    }
+    return step.replacedIndex == null
+      ? `Add at position ${step.targetIndex + 1}`
+      : `Replace pet ${step.replacedIndex + 1} · position ${step.targetIndex + 1}`;
+  }
+
+  outCandidateName(candidate: OutFinderCandidateResult): string {
+    return candidate.steps.map((step) => step.name).join(' + ');
+  }
+
+  outCandidateDetail(candidate: OutFinderCandidateResult): string {
+    return candidate.steps
+      .map((step) => `${step.name}: ${this.outStepLabel(step)}`)
+      .join(' · ');
+  }
+
+  isPreviewOnly(candidate: OutFinderCandidateResult): boolean {
+    return candidate.steps.some(
+      (step) => step.outcomeDescription?.startsWith('Lucky targets:') === true,
+    );
   }
 
   outIcon(type: 'pet' | 'food', name: string): string {

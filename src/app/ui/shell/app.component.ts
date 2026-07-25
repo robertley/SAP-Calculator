@@ -599,7 +599,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly cancelSimulation = () => cancelSimulationImpl(this);
   readonly optimizePositioning = (side: 'player' | 'opponent') =>
     optimizePositioningImpl(this, side);
-  readonly findOuts = (side: OutFinderSide, shopTier: number) => {
+  readonly findOuts = (side: OutFinderSide, shopTier: number, maxItems = 1) => {
     if (this.simulationInProgress) return;
     const count = Math.max(1, Number(this.formGroup.get('simulations')?.value ?? 100));
     this.outFinderResult = null;
@@ -653,6 +653,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       {
         side,
+        maxItems,
         maxSimulationsPerCandidate: count,
         screeningSimulations: Math.min(25, count),
         finalistCount: 20,
@@ -685,11 +686,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     formArray.updateValueAndValidity();
     this.afterPositioningApplied();
     this.outFinderResult = null;
-    const isLuckyFoodOutcome = candidate.outcomeDescription?.startsWith('Lucky targets:') === true;
+    const label = candidate.steps.map((step) => step.name).join(' + ');
+    const isLuckyFoodOutcome = candidate.steps.some(
+      (step) => step.outcomeDescription?.startsWith('Lucky targets:') === true,
+    );
     this.setStatus(
       isLuckyFoodOutcome
-        ? `${candidate.name}'s lucky outcome previewed on the ${side} board.`
-        : `${candidate.name} applied to the ${side} board.`,
+        ? `${label}'s lucky outcome previewed on the ${side} board.`
+        : `${label} applied to the ${side} board.`,
       'success',
     );
     this.markForCheck();

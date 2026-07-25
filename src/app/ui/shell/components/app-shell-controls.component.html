@@ -241,7 +241,7 @@
 
         <section class="tool-pane out-finder-pane" *ngIf="activeToolsTab === 'outs'">
           <div class="tool-pane-heading">
-            <span class="dialog-eyebrow">One purchase</span>
+            <span class="dialog-eyebrow">{{ outFinderMaxItems === 1 ? 'One purchase' : 'Up to ' + outFinderMaxItems + ' purchases' }}</span>
             <h3>Out Finder</h3>
             <p>Test rollable pet and food purchases available at the selected shop tier.</p>
           </div>
@@ -266,6 +266,16 @@
                 <option [ngValue]="6">Tier 6</option>
               </select>
             </label>
+            <label class="out-finder-tier-field" for="outFinderMaxItems">
+              <span class="dialog-field-label">Purchases</span>
+              <select id="outFinderMaxItems" class="form-select" [(ngModel)]="outFinderMaxItems"
+                [ngModelOptions]="{ standalone: true }" [disabled]="app.simulationInProgress"
+                (ngModelChange)="onOutFinderScopeChanged()">
+                <option [ngValue]="1">1 item</option>
+                <option [ngValue]="2">Up to 2 items</option>
+                <option [ngValue]="3">Up to 3 items</option>
+              </select>
+            </label>
             <button type="button" class="btn btn-primary" (click)="runOutFinder()" [disabled]="app.simulationInProgress">
               {{ app.simulationInProgress ? 'Testing outs…' : 'Find outs' }}
             </button>
@@ -277,22 +287,37 @@
             <span>{{ result.candidates.length }} candidates</span>
             <span>Baseline {{ result.baseline.winRate * 100 | number:'1.1-1' }}% win</span>
           </div>
+          <div class="out-finder-filter" *ngIf="app.outFinderResult as result">
+            <ng-container *ngIf="outFinderItemCounts(result).length > 1">
+              <span class="dialog-field-label">Show</span>
+              <div class="side-segmented-control" role="group" aria-label="Filter outs by purchase count">
+                <button type="button" [class.active]="outFinderItemFilter === null" (click)="outFinderItemFilter = null">Any</button>
+                <button type="button" *ngFor="let count of outFinderItemCounts(result)"
+                  [class.active]="outFinderItemFilter === count" (click)="outFinderItemFilter = count">
+                  {{ count }} item{{ count === 1 ? '' : 's' }}
+                </button>
+              </div>
+            </ng-container>
+          </div>
           <div class="out-finder-empty" *ngIf="!app.outFinderResult && !app.simulationInProgress">
-            Results compare one shop action against the current board. Pet outs preserve the other pets' relative order.
+            Results compare shop actions against the current board. Pet outs preserve the other pets' relative order.
+            Multi-item searches use a beam search, so they find strong combinations but are not exhaustive.
           </div>
           <div class="out-finder-results" *ngIf="app.outFinderResult as result">
-            <div class="out-finder-empty" *ngIf="!result.rankedCandidates.length">
+            <div class="out-finder-empty" *ngIf="!filteredOutCandidates(result).length">
               {{ result.stopReason === 'baseline-perfect'
                 ? 'No outs needed: the current board won every baseline simulation.'
                 : 'No improving outs found at this shop tier.' }}
             </div>
-            <div class="out-finder-result" *ngFor="let candidate of result.rankedCandidates | slice:0:20; index as rank"
+            <div class="out-finder-result" *ngFor="let candidate of filteredOutCandidates(result) | slice:0:20; index as rank"
               [class.out-finder-result-improves]="true">
               <span class="out-finder-rank">{{ rank + 1 }}</span>
-              <img [src]="outIcon(candidate.type, candidate.name)" alt="" loading="lazy">
+              <span class="out-finder-icons">
+                <img *ngFor="let step of candidate.steps" [src]="outIcon(step.type, step.name)" alt="" loading="lazy">
+              </span>
               <span class="out-finder-name">
-                <strong>{{ candidate.name }}</strong>
-                <small>{{ candidate.type === 'pet' ? 'Pet' : 'Food' }} · {{ candidate.outcomeDescription || outActionLabel(candidate.replacedIndex, candidate.targetIndex, candidate.type) }}</small>
+                <strong>{{ outCandidateName(candidate) }}</strong>
+                <small>{{ outCandidateDetail(candidate) }}</small>
               </span>
               <span class="out-finder-odds">
                 <strong>{{ candidate.winRate * 100 | number:'1.1-1' }}%</strong>
@@ -300,7 +325,7 @@
               </span>
               <span class="out-finder-delta" [class.positive]="candidate.winDelta > 0">{{ formatOutDelta(candidate.winDelta) }}</span>
               <button type="button" class="btn btn-sm btn-outline-primary" (click)="app.applyOut(candidate)">
-                {{ candidate.outcomeDescription?.startsWith('Lucky targets:') ? 'Preview' : 'Apply' }}
+                {{ isPreviewOnly(candidate) ? 'Preview' : 'Apply' }}
               </button>
             </div>
           </div>

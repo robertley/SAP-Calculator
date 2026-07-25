@@ -60,7 +60,7 @@ export interface AppShellControlsFacade {
   simulate: (count?: number) => void;
   cancelSimulation: () => void;
   optimizePositioning: (side: 'player' | 'opponent') => void;
-  findOuts: (side: 'player' | 'opponent', shopTier: number) => void;
+  findOuts: (side: 'player' | 'opponent', shopTier: number, maxItems?: number) => void;
   clearOutFinderResult: () => void;
   applyOut: (candidate: OutFinderCandidateResult) => void;
   randomize: () => void;
@@ -291,7 +291,7 @@ export function createAppShellControlsFacade(
     simulate: (count) => app.simulate(count),
     cancelSimulation: () => app.cancelSimulation(),
     optimizePositioning: (side) => app.optimizePositioning(side),
-    findOuts: (side, shopTier) => app.findOuts(side, shopTier),
+    findOuts: (side, shopTier, maxItems) => app.findOuts(side, shopTier, maxItems),
     clearOutFinderResult: () => app.clearOutFinderResult(),
     applyOut: (candidate) => app.applyOut(candidate),
     randomize: () => app.randomize(),

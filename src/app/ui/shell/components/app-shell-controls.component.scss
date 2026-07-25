@@ -114,16 +114,21 @@
 .out-finder-tier-field { display: grid; gap: 0.25rem; margin: 0; }
 .out-finder-tier-field .form-select { min-width: 7.25rem; }
 .out-finder-summary { gap: 1rem; padding: 0.65rem 1.35rem; color: var(--ui-text-3); background: var(--ui-surface-1); font-size: 0.76rem; }
+.out-finder-filter:not(:empty) { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1.35rem; border-bottom: 1px solid var(--ui-border-1); }
+.out-finder-filter .dialog-field-label { margin: 0; }
 .out-finder-empty { max-width: 31rem; padding: 1.5rem 1.35rem; color: var(--ui-text-3); font-size: 0.85rem; line-height: 1.55; }
 .out-finder-results { display: grid; }
-.out-finder-result { display: grid; grid-template-columns: 1.5rem 2.5rem minmax(8rem, 1fr) 4rem 4.5rem auto; gap: 0.65rem; min-height: 4rem; padding: 0.55rem 1.35rem; border-top: 1px solid var(--ui-border-1); }
+.out-finder-result { display: grid; grid-template-columns: 1.5rem minmax(2.5rem, auto) minmax(8rem, 1fr) 4rem 4.5rem auto; gap: 0.65rem; min-height: 4rem; padding: 0.55rem 1.35rem; border-top: 1px solid var(--ui-border-1); }
 .out-finder-result:first-child { border-top: 0; }
 .out-finder-result-improves { background: color-mix(in srgb, var(--bs-success) 5%, transparent); }
-.out-finder-result > img { width: 2.4rem; height: 2.4rem; object-fit: contain; }
+.out-finder-icons { display: flex; align-items: center; }
+.out-finder-icons img { width: 2.4rem; height: 2.4rem; object-fit: contain; }
+.out-finder-icons img + img { margin-left: -0.7rem; }
 .out-finder-rank { color: var(--ui-text-3); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
 .out-finder-name,
 .out-finder-odds { display: grid; }
 .out-finder-name strong { font-size: 0.86rem; }
+.out-finder-name small { overflow-wrap: anywhere; }
 .out-finder-name small,
 .out-finder-odds small { color: var(--ui-text-3); font-size: 0.7rem; }
 .out-finder-odds { text-align: right; }
@@ -196,7 +201,7 @@
   .picker-hint { font-size: 0; }
   .out-finder-controls { align-items: stretch; flex-direction: column; }
   .out-finder-tier-field .form-select { width: 100%; }
-  .out-finder-result { grid-template-columns: 1.25rem 2.25rem minmax(7rem, 1fr) auto; }
+  .out-finder-result { grid-template-columns: 1.25rem minmax(2.25rem, auto) minmax(6rem, 1fr) auto; }
   .out-finder-odds { display: none; }
   .out-finder-delta { text-align: left; }
 }
