@@ -61,6 +61,7 @@ export class ChocolateCakeAbility extends Ability {
       message: `${owner.name} gained ${expGain} exp. (Chocolate Cake)${this.equipment.multiplierMessage}`,
       type: 'equipment',
       player: owner.parent,
+      sourcePet: owner,
     });
 
     owner.increaseExp(expGain);

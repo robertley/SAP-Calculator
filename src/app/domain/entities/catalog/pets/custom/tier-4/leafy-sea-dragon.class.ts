@@ -57,6 +57,8 @@ export class LeafySeaDragonAbility extends Ability {
     const expGain = this.level;
     const healthGain = this.level * 4;
     const adjacent = getAdjacentAlivePets(owner);
+    const message = `${owner.name} gave ${adjacent.length} adjacent friend${adjacent.length === 1 ? '' : 's'} +${expGain} experience, +${healthGain} health, and removed itself.`;
+    logAbility(this.logService, owner, message, tiger, pteranodon);
 
     adjacent.forEach((friend) => {
       friend.increaseExp(expGain);
@@ -64,9 +66,6 @@ export class LeafySeaDragonAbility extends Ability {
     });
 
     owner.parent.removePet(owner);
-
-    const message = `${owner.name} gave ${adjacent.length} adjacent friend${adjacent.length === 1 ? '' : 's'} +${expGain} experience, +${healthGain} health, and removed itself.`;
-    logAbility(this.logService, owner, message, tiger, pteranodon);
 
     this.triggerTigerExecution(context);
   }

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { runSimulation, SimulationConfig } from '../../../simulation/simulate';
+import {
+  expandCompactCalculatorState,
+  parseImportPayload,
+} from 'app/ui/shell/state/app.component.share';
 
 describe('knockout and faint ordering', () => {
   it('resolves the defeated pet faint before the killer knockout effect', () => {
@@ -52,5 +56,33 @@ describe('knockout and faint ordering', () => {
     expect(warthogFaintIndex).toBeGreaterThan(-1);
     expect(firstRhinoKnockoutIndex).toBeGreaterThan(-1);
     expect(warthogFaintIndex).toBeLessThan(firstRhinoKnockoutIndex);
+  });
+
+  it('registers a death caused by a faint ability before a pending knockout', () => {
+    const payload =
+      'SAPC1:eyJwVEwiOiIxIiwib1RMIjoiMSIsInBIVEwiOiIxIiwib0hUTCI6IjEiLCJ0Ijo4LCJwR1MiOjExLCJwIjpbeyJuIjoiU3dhbiIsImEiOjIsImgiOjQsImUiOjEsImVxIjp7Im4iOiJDYWtlIn19LHsibiI6IlJoaW5vIiwiYSI6NiwiaCI6N30seyJuIjoiUGFycm90IiwiYSI6MTIsImgiOjE3LCJlcSI6eyJuIjoiNDEifSwicENQIjoiUmhpbm8ifSx7Im4iOiJEb2RvIiwiYSI6OSwiaCI6NywiZSI6MiwiZXEiOnsibiI6IkhvbmV5In19LHsibiI6Ildvcm0iLCJhIjo0LCJoIjo3LCJlIjoyLCJlcSI6eyJuIjoiQ2FrZSJ9fV0sIm8iOlt7Im4iOiJCYWRnZXIiLCJhIjo3LCJoIjo3LCJlIjoyfSx7Im4iOiJUdXJ0bGUiLCJhIjozLCJoIjo2fSx7Im4iOiJFbGVwaGFudCIsImEiOjgsImgiOjE0LCJlIjoxfSx7Im4iOiJCbG93ZmlzaCIsImEiOjUsImgiOjEwLCJlIjoxfSx7Im4iOiJSYWJiaXQiLCJhIjozLCJoIjo2LCJlIjoxLCJ0YyI6Mn1dLCJtIjp0cnVlLCJwUkEiOjMsIm9SQSI6MSwic2ltIjoxMDAwfQ';
+    const expanded = expandCompactCalculatorState(
+      parseImportPayload(payload),
+    ) as SimulationConfig;
+    const messages = (
+      runSimulation({
+        ...expanded,
+        simulationCount: 1,
+        logsEnabled: true,
+        maxLoggedBattles: 1,
+      }).battles?.[0]?.logs ?? []
+    ).map((log) => String(log.message ?? ''));
+
+    const turtleFaintIndex = messages.indexOf('Turtle fainted.');
+    const turtleMelonIndex = messages.indexOf(
+      'Turtle gave Elephant Melon.',
+    );
+    const rhinoKnockoutIndex = messages.findIndex((message) =>
+      message.startsWith('Rhino sniped'),
+    );
+
+    expect(turtleFaintIndex).toBeGreaterThan(-1);
+    expect(turtleMelonIndex).toBeGreaterThan(turtleFaintIndex);
+    expect(rhinoKnockoutIndex).toBeGreaterThan(turtleMelonIndex);
   });
 });

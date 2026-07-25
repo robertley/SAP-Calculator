@@ -41,6 +41,9 @@ export class AbilityResolutionCoordinator {
     this.abilityQueueService.processQueue(this.getGameApi(), {
       filter,
       onExecute: this.onExecute,
+      afterExecute: options.synchronizeDeaths
+        ? () => this.synchronizeDeaths()
+        : undefined,
     });
   }
 

@@ -130,14 +130,16 @@ export class HatchingChickAbility extends Ability {
       return;
     }
 
-    target.increaseExp(1);
     this.logService.createLog({
       message: `${owner.name} gave ${target.name} +1 experience.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: context.tiger,
       pteranodon: context.pteranodon,
     });
+    target.increaseExp(1);
     this.triggerTigerExecution(context);
   }
 

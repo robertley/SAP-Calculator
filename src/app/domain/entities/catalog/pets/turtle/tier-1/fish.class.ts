@@ -78,6 +78,7 @@ export class FishAbility extends Ability {
         .join(', ')} ${power} attack and ${power} health.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
       randomEvent: targetsResp.random,
       tiger: context.tiger,
       pteranodon: context.pteranodon,

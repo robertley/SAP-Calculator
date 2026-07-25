@@ -76,7 +76,6 @@ export class LeviathanAbility extends Ability {
       owner.parent,
     );
 
-    fish.increaseExp(expGain);
     const summonResult = owner.parent.summonPet(
       fish,
       owner.savedPosition,
@@ -89,10 +88,13 @@ export class LeviathanAbility extends Ability {
         message: `${owner.name} summoned ${fish.name} (${power}/${power}) and granted ${expGain} exp.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: fish,
         tiger,
         pteranodon,
         randomEvent: summonResult.randomEvent,
       });
+      fish.increaseExp(expGain);
     }
 
     this.triggerTigerExecution(context);

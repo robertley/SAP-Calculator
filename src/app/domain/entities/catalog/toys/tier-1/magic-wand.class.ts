@@ -32,6 +32,7 @@ export class MagicWand extends Toy {
       message: `${this.name} gave ${target.name} ${this.level} exp.`,
       type: 'ability',
       player: this.parent,
+      targetPet: target,
       puma: puma,
       randomEvent: random,
     });
@@ -92,6 +93,8 @@ export class MagicWandAbility extends Ability {
       message: `Magic Wand Ability gave ${target.name} ${this.level} exp.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: tiger,
       pteranodon: pteranodon,
       randomEvent: random,

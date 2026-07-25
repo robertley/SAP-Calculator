@@ -71,6 +71,8 @@ export class OgopogoAbility extends Ability {
         message: `${owner.name} gave ${target.name} +1 experience.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: tiger,
         randomEvent: targetResp.random,
       });

@@ -74,6 +74,8 @@ export class CyclopsAbility extends Ability {
       message: `${owner.name} gave ${manaTarget.name} ${manaGain} mana.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: manaTarget,
       tiger: tiger,
       randomEvent: manaTargetResp.random,
     });
@@ -89,6 +91,8 @@ export class CyclopsAbility extends Ability {
         message: `${owner.name} gave ${expTarget.name} 1 exp.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: expTarget,
         tiger: tiger,
         randomEvent: expTargetResp.random,
       });

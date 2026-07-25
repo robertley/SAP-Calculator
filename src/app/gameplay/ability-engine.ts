@@ -37,7 +37,6 @@ export class AbilityEngine {
   }
 
   abilityCycle() {
-    this.emptyFrontSpaceCheck();
     let processedEvents = 0;
     const maxEventsPerCycle = 100000;
     while (true) {
@@ -53,9 +52,14 @@ export class AbilityEngine {
 
           if (petsWereRemoved) {
             this.resetClearFrontFlags();
-            this.emptyFrontSpaceCheck();
             continue;
           }
+
+          // Post-removal faint events must finish before EmptyFrontSpace is
+          // evaluated. At this point the next queued event is in the
+          // post-removal board-cleanup phase (priority 27 or later), so the
+          // board state produced by faint summons is final for this check.
+          this.emptyFrontSpaceCheck();
         }
 
         const event = this.abilityService.getNextHighestPriorityEvent();
@@ -91,8 +95,13 @@ export class AbilityEngine {
       const petRemoved = this.removeDeadPets();
       if (petRemoved) {
         this.resetClearFrontFlags();
-        this.emptyFrontSpaceCheck();
+        // Removing pets queues PostRemovalFaint/PostRemovalFriendFaints
+        // events. Resolve those before checking whether the front remains
+        // empty.
+        continue;
       }
+
+      this.emptyFrontSpaceCheck();
 
       if (!this.abilityService.hasGlobalEvents) {
         this.player.checkGoldenSpawn();

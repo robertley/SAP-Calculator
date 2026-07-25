@@ -64,14 +64,16 @@ export class PoodleMothAbility extends Ability {
     }
 
     const expGain = 3;
-    triggerPet.increaseExp(expGain);
     this.logService.createLog({
       message: `${owner.name} gave ${triggerPet.name} +${expGain} experience after transforming.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: triggerPet,
       tiger: tiger,
       pteranodon: pteranodon,
     });
+    triggerPet.increaseExp(expGain);
 
     this.triggerTigerExecution(context);
   }

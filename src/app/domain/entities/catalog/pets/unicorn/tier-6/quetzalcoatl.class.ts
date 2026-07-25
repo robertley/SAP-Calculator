@@ -86,15 +86,17 @@ export class QuetzalcoatlAbility extends Ability {
         () => getRandomInt(0, candidates.length - 1),
       );
       const target = candidates[choice.index];
-      target.increaseExp(2);
       this.logService.createLog({
         message: `${owner.name} gave ${target.name} +2 experience.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: context.tiger,
         pteranodon: context.pteranodon,
         randomEvent: choice.randomEvent,
       });
+      target.increaseExp(2);
     }
     this.triggerTigerExecution(context);
   }

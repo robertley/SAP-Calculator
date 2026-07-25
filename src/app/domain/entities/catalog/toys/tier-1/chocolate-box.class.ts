@@ -10,23 +10,25 @@ export class ChocolateBox extends Toy {
     const opponent = getOpponent(gameApi, this.parent);
 
     for (const pet of this.parent.petArray) {
-      pet.increaseExp(1);
       this.logService.createLog({
         message: `${this.name} gave ${pet.name} 1 exp.`,
         type: 'ability',
         player: this.parent,
+        targetPet: pet,
         puma: puma,
       });
+      pet.increaseExp(1);
     }
 
     for (const pet of opponent.petArray) {
-      pet.increaseExp(2);
       this.logService.createLog({
         message: `${this.name} gave ${pet.name} 2 exp.`,
         type: 'ability',
         player: this.parent,
+        targetPet: pet,
         puma: puma,
       });
+      pet.increaseExp(2);
     }
   }
 }

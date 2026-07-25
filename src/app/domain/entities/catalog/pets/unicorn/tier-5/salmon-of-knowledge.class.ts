@@ -76,6 +76,8 @@ export class SalmonOfKnowledgeAbility extends Ability {
         message: `${owner.name} gave ${target.name} ${power} exp.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: tiger,
         randomEvent: friendlyTargets.random || enemyTargets.random,
       });

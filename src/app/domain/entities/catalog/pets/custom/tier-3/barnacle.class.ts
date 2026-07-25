@@ -61,13 +61,13 @@ export class BarnacleAbility extends Ability {
 
     if (rolls === 0) {
       const expGain = this.level;
-      owner.increaseExp(expGain);
-
       this.logService.createLog({
         message: `${owner.name} gained +${expGain} experience (EndTurn, no rolls).`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
       });
+      owner.increaseExp(expGain);
     }
 
     this.triggerTigerExecution(context);

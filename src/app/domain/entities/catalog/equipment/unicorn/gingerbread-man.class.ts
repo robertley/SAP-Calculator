@@ -48,6 +48,7 @@ export class GingerbreadManAbility extends Ability {
       message: `${owner.name} gained ${expGain} experience (Gingerbread Man)${this.equipment.multiplierMessage}.`,
       type: 'equipment',
       player: owner.parent,
+      sourcePet: owner,
     });
 
     owner.increaseExp(expGain);

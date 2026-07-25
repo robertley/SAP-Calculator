@@ -66,6 +66,7 @@ export class WyvernAbility extends Ability {
       message: `${owner.name} will grant ${rewards} extra shop reward${rewards === 1 ? '' : 's'}.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
       tiger: context.tiger,
       pteranodon: context.pteranodon,
     });

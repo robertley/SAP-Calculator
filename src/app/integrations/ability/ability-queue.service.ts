@@ -98,6 +98,7 @@ export class AbilityQueueService {
       shuffle?: boolean;
       filter?: (event: AbilityEvent) => boolean;
       onExecute?: (event: AbilityEvent) => void;
+      afterExecute?: (event: AbilityEvent) => void;
     },
   ) {
     if (options?.filter) {
@@ -105,6 +106,7 @@ export class AbilityQueueService {
       while (event) {
         options.onExecute?.(event);
         this.executeEvent(event, gameApi);
+        options.afterExecute?.(event);
         event = this.takeNextMatchingEvent(options.filter);
       }
       return;

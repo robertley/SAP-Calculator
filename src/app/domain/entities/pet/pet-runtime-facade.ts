@@ -329,6 +329,7 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
         message: `${this.name} leveled up to level ${nextLevel}.`,
         type: 'ability',
         player: this.parent,
+        sourcePet: this as unknown as Pet,
       });
       this.abilityService.triggerLevelUpEvents(
         this as unknown as Pet,

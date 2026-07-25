@@ -79,6 +79,8 @@ export class BassAbility extends Ability {
       message: `${owner.name} gave ${target.name} +${expGain} experience.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: tiger,
       pteranodon: pteranodon,
       randomEvent: targetResp.random,

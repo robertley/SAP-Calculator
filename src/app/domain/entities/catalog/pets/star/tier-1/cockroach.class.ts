@@ -94,14 +94,16 @@ export class CockroachAbility extends Ability {
       });
 
       let targetResp = owner.parent.getSpecificPet(owner, newCockroach);
-      targetResp.pet.increaseExp(expToGain);
       this.logService.createLog({
         message: `${owner.name} gave ${targetResp.pet.name} +${expToGain} exp.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: targetResp.pet,
         tiger: tiger,
         randomEvent: targetResp.random,
       });
+      targetResp.pet.increaseExp(expToGain);
     }
 
     // Tiger system: trigger Tiger execution at the end

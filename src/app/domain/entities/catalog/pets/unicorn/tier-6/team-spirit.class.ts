@@ -69,6 +69,8 @@ export class TeamSpiritAbility extends Ability {
         message: `${owner.name} gave ${target.name} ${power.attack} attack and ${power.health} health.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: tiger,
         randomEvent: targetResp.random,
       });

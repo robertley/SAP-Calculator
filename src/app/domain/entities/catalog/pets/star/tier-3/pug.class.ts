@@ -66,6 +66,8 @@ export class PugAbility extends Ability {
       message: `${owner.name} gave ${target.name} ${power} exp.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: tiger,
       randomEvent: targetsAheadResp.random,
     });

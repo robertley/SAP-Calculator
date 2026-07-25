@@ -75,12 +75,6 @@ export class TsuchinokoAbility extends Ability {
       return;
     }
     expTarget.increaseExp(this.level);
-    this.logService.createLog({
-      message: `${owner.name} gave ${expTarget.name} +${this.level} experience.`,
-      type: 'ability',
-      player: owner.parent,
-      tiger: tiger,
-    });
 
     // Tiger system: trigger Tiger execution at the end
     this.triggerTigerExecution(context);

@@ -10,6 +10,7 @@ type ProcessQueueOptions = {
   shuffle?: boolean;
   filter?: (event: AbilityEvent) => boolean;
   onExecute?: (event: AbilityEvent) => void;
+  afterExecute?: (event: AbilityEvent) => void;
 };
 
 function getAbilityExecutorTarget(event: AbilityEvent) {
@@ -26,11 +27,13 @@ function executeAndNotify(
   event: AbilityEvent,
   gameApi: GameAPI,
   onExecute?: (event: AbilityEvent) => void,
+  afterExecute?: (event: AbilityEvent) => void,
 ): void {
   if (onExecute) {
     onExecute(event);
   }
   executeEventWithTransform(event, gameApi);
+  afterExecute?.(event);
 }
 
 function executeFilteredEvents(
@@ -38,6 +41,7 @@ function executeFilteredEvents(
   gameApi: GameAPI,
   filter: (event: AbilityEvent) => boolean,
   onExecute?: (event: AbilityEvent) => void,
+  afterExecute?: (event: AbilityEvent) => void,
 ): void {
   let nextIndex = queue.findIndex(filter);
   while (nextIndex !== -1) {
@@ -45,7 +49,7 @@ function executeFilteredEvents(
     if (!event) {
       break;
     }
-    executeAndNotify(event, gameApi, onExecute);
+    executeAndNotify(event, gameApi, onExecute, afterExecute);
     nextIndex = queue.findIndex(filter);
   }
 }
@@ -129,13 +133,23 @@ export function processEventQueue(
   // Queue order is maintained by AbilityQueueService.addEventToQueue.
   // Do not re-sort here or we will lose trigger priority ordering.
   if (options?.filter) {
-    executeFilteredEvents(queue, gameApi, options.filter, options.onExecute);
+    executeFilteredEvents(
+      queue,
+      gameApi,
+      options.filter,
+      options.onExecute,
+      options.afterExecute,
+    );
     return;
   }
 
   while (queue.length > 0) {
     const event = queue.shift()!;
-    executeAndNotify(event, gameApi, options?.onExecute);
+    executeAndNotify(
+      event,
+      gameApi,
+      options?.onExecute,
+      options?.afterExecute,
+    );
   }
 }
-

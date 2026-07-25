@@ -68,7 +68,11 @@ export function awardExperienceWithLog(options: {
     options.owner,
     options.context,
     message,
-    options.extras,
+    {
+      ...options.extras,
+      sourcePet: options.owner,
+      targetPet: options.target,
+    },
   );
   options.target.increaseExp(options.amount);
 }

@@ -77,6 +77,8 @@ export class ClownfishAbility extends Ability {
       message: `${owner.name} gave ${target.name} ${power} attack and ${power} health.`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: tiger,
       randomEvent: targetResp.random,
     });

@@ -69,6 +69,8 @@ export class JellyfishAbility extends Ability {
       message: `${owner.name} gave ${target.name} attack by ${power} and health by ${power}`,
       type: 'ability',
       player: owner.parent,
+      sourcePet: owner,
+      targetPet: target,
       tiger: tiger,
       randomEvent: targetResp.random,
     });

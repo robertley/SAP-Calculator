@@ -76,15 +76,17 @@ export class FlounderAbility extends Ability {
     const expGain = this.level;
     const targetsResp = owner.parent.nearestPetsBehind(2, owner);
     for (const target of targetsResp.pets) {
-      target.increaseExp(expGain);
       this.logService.createLog({
         message: `${owner.name} gave ${target.name} ${expGain} exp.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: context.tiger,
         pteranodon: context.pteranodon,
         randomEvent: targetsResp.random,
       });
+      target.increaseExp(expGain);
     }
 
     this.triggeredThisTurn = true;

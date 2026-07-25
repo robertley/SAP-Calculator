@@ -64,6 +64,8 @@ export class BlobfishAbility extends Ability {
         message: `${owner.name} gave ${target.name} ${power} exp.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: tiger,
         randomEvent: targetsResp.random,
       });

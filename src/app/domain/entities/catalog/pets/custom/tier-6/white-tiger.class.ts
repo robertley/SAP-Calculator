@@ -61,6 +61,8 @@ export class WhiteTigerAbility extends Ability {
         message: `${owner.name} gave ${target.name} +3 experience.`,
         type: 'ability',
         player: owner.parent,
+        sourcePet: owner,
+        targetPet: target,
         tiger: tiger,
         pteranodon: pteranodon,
         randomEvent: targetsBehindResp.random,
