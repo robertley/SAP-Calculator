@@ -1,6 +1,11 @@
 {
   "permissions": {
-    "allow": ["Bash(grep:*)", "Bash(find:*)"],
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(python -c ' *)",
+      "Bash(awk -F'/' '{print $6}')"
+    ],
     "deny": [],
     "ask": []
   }

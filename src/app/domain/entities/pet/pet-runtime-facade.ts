@@ -176,7 +176,10 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
   setFaintEventIfPresent() {
     this.abilityService.triggerFaintEvents(this as unknown as Pet);
     if (this.mana > 0) {
-      if (this.suppressManaSnipeOnFaint) {
+      if (
+        this.suppressManaSnipeOnFaint &&
+        !(this.equipment instanceof Dazed)
+      ) {
         return;
       }
       this.abilityService.setManaEvent({
