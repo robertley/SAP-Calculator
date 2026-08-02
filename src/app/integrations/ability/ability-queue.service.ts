@@ -3,6 +3,7 @@ import { AbilityEvent } from 'app/domain/interfaces/ability-event.interface';
 import {
   AbilityCustomParams,
   AbilityTrigger,
+  AbilityType,
 } from 'app/domain/entities/ability.class';
 import { Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
@@ -79,6 +80,14 @@ export class AbilityQueueService {
       return eventPriorityDiff;
     }
 
+    if (a.pet === b.pet) {
+      const sourcePriorityDiff =
+        this.getAbilitySourcePriority(a) - this.getAbilitySourcePriority(b);
+      if (sourcePriorityDiff !== 0) {
+        return sourcePriorityDiff;
+      }
+    }
+
     const aTieBreaker = a.tieBreaker ?? 0;
     const bTieBreaker = b.tieBreaker ?? 0;
     return aTieBreaker - bTieBreaker;
@@ -127,12 +136,13 @@ export class AbilityQueueService {
     }
 
     const first = matching[0];
-    const phaseOrderEvents =
+    const phaseOrderEvents = this.getSourceEligibleEvents(
       first.abilityType === 'BeforeStartBattle'
         ? matching.filter(
             (event) => event.abilityType === first.abilityType,
           )
-        : [];
+        : [],
+    );
     if (phaseOrderEvents.length > 1) {
       const ordered = [...phaseOrderEvents].sort((a, b) =>
         this.describeEvent(a).localeCompare(this.describeEvent(b)),
@@ -166,12 +176,17 @@ export class AbilityQueueService {
         event.priority === eventPriority,
     );
 
-    let selected = first;
+    const eligibleTied = this.getSourceEligibleEvents(tied);
+
+    let selected = eligibleTied[0] ?? first;
     const distinctDescriptions = new Set(
-      tied.map((event) => this.describeEvent(event)),
+      eligibleTied.map((event) => this.describeEvent(event)),
     );
-    if (tied.length > 1 && distinctDescriptions.size === tied.length) {
-      const ordered = [...tied].sort((a, b) =>
+    if (
+      eligibleTied.length > 1 &&
+      distinctDescriptions.size === eligibleTied.length
+    ) {
+      const ordered = [...eligibleTied].sort((a, b) =>
         this.describeEvent(a).localeCompare(this.describeEvent(b)),
       );
       const decision = chooseRandomOption(
@@ -196,7 +211,7 @@ export class AbilityQueueService {
           return selectedIndex;
         },
       );
-      selected = ordered[decision.index] ?? first;
+      selected = ordered[decision.index] ?? selected;
       this.markEventRandom(selected);
     }
 
@@ -230,6 +245,28 @@ export class AbilityQueueService {
       randomEvent: true,
       randomEventReason: 'tie-broken',
     };
+  }
+
+  private getAbilitySourcePriority(event: AbilityEvent): number {
+    if (event.abilitySourceType === 'Pet') {
+      return 0;
+    }
+    if (event.abilitySourceType === 'Equipment') {
+      return 1;
+    }
+    return 2;
+  }
+
+  private getSourceEligibleEvents(events: AbilityEvent[]): AbilityEvent[] {
+    return events.filter((event) => {
+      if (event.abilitySourceType !== 'Equipment' || !event.pet) {
+        return true;
+      }
+      return !events.some(
+        (other) =>
+          other.pet === event.pet && other.abilitySourceType === 'Pet',
+      );
+    });
   }
 
   // NEW: Legacy support
@@ -286,7 +323,11 @@ export class AbilityQueueService {
     triggerPet?: Pet,
     customParams?: AbilityCustomParams,
   ): void {
-    if (pet.hasTrigger(trigger)) {
+    const abilitySourceTypes: AbilityType[] = ['Pet', 'Equipment'];
+    for (const abilitySourceType of abilitySourceTypes) {
+      if (!pet.hasTrigger(trigger, abilitySourceType)) {
+        continue;
+      }
       let eventPriority = this.getPetEventPriority(pet);
       if (trigger === 'BeforeThisAttacks' || trigger === 'BeforeFirstAttack') {
         eventPriority += AbilityQueueService.BEFORE_ATTACK_PRIORITY_BONUS;
@@ -309,6 +350,7 @@ export class AbilityQueueService {
         pet: pet,
         triggerPet: triggerPet,
         abilityType: trigger,
+        abilitySourceType,
         tieBreaker: getRandomFloat(),
         customParams: eventCustomParams,
       };

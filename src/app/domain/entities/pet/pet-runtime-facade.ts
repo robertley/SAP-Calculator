@@ -1,9 +1,6 @@
 import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import { Log } from 'app/domain/interfaces/log.interface';
 import { Dazed } from 'app/domain/entities/catalog/equipment/ailments/dazed.class';
-import { Crisp } from 'app/domain/entities/catalog/equipment/ailments/crisp.class';
-import { Toasty } from 'app/domain/entities/catalog/equipment/ailments/toasty.class';
-import { EquipmentDamageHandler } from 'app/domain/entities/combat/equipment-damage.handler';
 import {
   attackPet as attackPetImpl,
   calculateDamage as calculateDamageImpl,
@@ -69,41 +66,6 @@ export abstract class PetRuntimeFacade extends PetTargetingRuntimeFacade {
     random: boolean = false,
   ) {
     attackPetImpl(this.asPet(), pet, jumpAttack, power, random);
-  }
-
-  applyCrisp() {
-    const parent = this.parent;
-    const opponent = parent?.opponent;
-    if (!parent || !opponent) {
-      return;
-    }
-    const manticoreMult = opponent.getManticoreMult();
-    for (let pet of parent.petArray) {
-      if (pet.equipment instanceof Crisp) {
-        EquipmentDamageHandler.applyDamage({
-          pet,
-          baseDamage: 6,
-          perkName: 'Crisp',
-          manticoreMultipliers: manticoreMult,
-          logService: this.logService,
-          afterDamage: (target) => target.removePerk(),
-        });
-      } else if (pet.equipment instanceof Toasty && pet.equipment.uses > 0) {
-        EquipmentDamageHandler.applyDamage({
-          pet,
-          baseDamage: 1,
-          perkName: 'Toasty',
-          manticoreMultipliers: manticoreMult,
-          logService: this.logService,
-          afterDamage: (target) => {
-            target.equipment.uses--;
-            if (target.equipment.uses <= 0) {
-              target.removePerk();
-            }
-          },
-        });
-      }
-    }
   }
 
   snipePet(

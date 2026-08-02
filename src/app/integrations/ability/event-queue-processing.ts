@@ -109,6 +109,7 @@ export function executeEventWithTransform(
       undefined,
       undefined,
       event.customParams || customParams,
+      event.abilitySourceType,
     );
   }
 }

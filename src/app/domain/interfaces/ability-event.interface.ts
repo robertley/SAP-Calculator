@@ -1,6 +1,7 @@
 import {
   AbilityCustomParams,
   AbilityTrigger,
+  AbilityType,
 } from 'app/domain/entities/ability.class';
 import { Pet } from 'app/domain/entities/pet.class';
 import { Player } from 'app/domain/entities/player.class';
@@ -17,6 +18,7 @@ export interface AbilityEvent {
   pet?: Pet;
   triggerPet?: Pet; // Pet that triggered this ability (e.g., the pet that fainted)
   abilityType?: AbilityTrigger; // Track which ability type this event belongs to
+  abilitySourceType?: AbilityType; // Pet abilities resolve before equipment abilities for equal-priority events
   tieBreaker?: number; // Random number for tie breaking
   customParams?: AbilityCustomParams; // Custom parameters to pass through context
 }

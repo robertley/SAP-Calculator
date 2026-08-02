@@ -264,11 +264,6 @@ export function attackPet(
 
   // unified friend attack events (includes friendAttacks, friendAheadAttacks, and enemyAttacks)
   self.triggerAttackEventsFor();
-  self.applyCrisp();
-  const opponentPet = self.parent.opponent?.petArray?.[0];
-  if (opponentPet) {
-    opponentPet.applyCrisp();
-  }
 }
 
 export function snipePet(

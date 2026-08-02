@@ -78,6 +78,7 @@ export abstract class PetAbilityFacade {
     tiger?: boolean,
     pteranodon?: boolean,
     customParams?: AbilityCustomParams,
+    abilitySourceType?: AbilityType,
   ): void {
     if (this.transformed && this.transformedInto) {
       this.transformedInto.executeAbilities(
@@ -87,42 +88,49 @@ export abstract class PetAbilityFacade {
         tiger,
         pteranodon,
         customParams,
+        abilitySourceType,
       );
       return;
     }
 
-    const matchingPetAbilities = this.getAbilitiesWithTrigger(trigger, 'Pet');
-    for (const ability of matchingPetAbilities) {
-      ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
-      if (this.transformed && this.transformedInto) {
-        this.transformedInto.executeAbilities(
-          trigger,
-          gameApi,
-          triggerPet,
-          tiger,
-          pteranodon,
-          customParams,
-        );
-        return;
+    if (abilitySourceType !== 'Equipment') {
+      const matchingPetAbilities = this.getAbilitiesWithTrigger(trigger, 'Pet');
+      for (const ability of matchingPetAbilities) {
+        ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
+        if (this.transformed && this.transformedInto) {
+          this.transformedInto.executeAbilities(
+            trigger,
+            gameApi,
+            triggerPet,
+            tiger,
+            pteranodon,
+            customParams,
+            abilitySourceType,
+          );
+          return;
+        }
       }
     }
 
-    const matchingEquipmentAbilities = this.getAbilitiesWithTrigger(
-      trigger,
-      'Equipment',
-    );
-    for (const ability of matchingEquipmentAbilities) {
-      ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
-      if (this.transformed && this.transformedInto) {
-        this.transformedInto.executeAbilities(
-          trigger,
-          gameApi,
-          triggerPet,
-          tiger,
-          pteranodon,
-          customParams,
-        );
-        return;
+    if (abilitySourceType !== 'Pet') {
+      const matchingEquipmentAbilities = this.getAbilitiesWithTrigger(
+        trigger,
+        'Equipment',
+      );
+      for (const ability of matchingEquipmentAbilities) {
+        ability.execute(gameApi, triggerPet, tiger, pteranodon, customParams);
+        if (this.transformed && this.transformedInto) {
+          this.transformedInto.executeAbilities(
+            trigger,
+            gameApi,
+            triggerPet,
+            tiger,
+            pteranodon,
+            customParams,
+            abilitySourceType,
+          );
+          return;
+        }
       }
     }
   }

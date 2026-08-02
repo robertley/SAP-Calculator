@@ -27,6 +27,29 @@ describe('Out Finder', () => {
     expect(catalog.pets.every((pet) => pet.exp === 0 && pet.equipment === null)).toBe(true);
   });
 
+  it('excludes custom-exclusive pets that only require an official pack', () => {
+    const cases = [
+      { pack: 'Puppy', included: 'Beetle', customExclusive: 'Flying Squirrel' },
+      { pack: 'Star', included: 'Chihuahua', customExclusive: 'Duckling' },
+      { pack: 'Golden', included: 'Bulldog', customExclusive: 'Hermit Crab' },
+      { pack: 'Unicorn', included: 'Baku', customExclusive: 'Amphisbaena' },
+      { pack: 'Danger', included: 'African Wild Dog', customExclusive: 'Dugong' },
+    ];
+
+    for (const { pack, included, customExclusive } of cases) {
+      const catalog = getOutFinderCatalog(
+        { ...config([]), playerPack: pack },
+        'player',
+      );
+      const names = catalog.pets.map((pet) => pet.name);
+
+      expect(names, `${pack} should contain ${included}`).toContain(included);
+      expect(names, `${pack} should exclude ${customExclusive}`).not.toContain(
+        customExclusive,
+      );
+    }
+  });
+
   it('limits the catalog to the chosen shop tier', () => {
     const tierOne = getOutFinderCatalog(config([]), 'player', 1);
     const tierSix = getOutFinderCatalog(config([]), 'player', 6);

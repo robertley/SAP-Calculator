@@ -142,10 +142,12 @@ export function getOutFinderCatalog(
     ].filter((entry): entry is string => typeof entry === 'string'),
   );
   const packCode = PACK_NAME_TO_CODE[pack] ?? pack;
-  const matchesPack = (entry: { Packs?: string[]; PacksRequired?: string[] }, name?: string) =>
+  const matchesPack = (entry: { Packs?: string[] }, name?: string) =>
     customPack
       ? Boolean(name && (customPetTiers.has(name) || customShopItems.has(name)))
-      : [...(entry.Packs ?? []), ...(entry.PacksRequired ?? [])].includes(packCode);
+      // PacksRequired describes content dependencies, not shop-pool membership.
+      // Custom-exclusive items can require an official pack without belonging to it.
+      : (entry.Packs ?? []).includes(packCode);
 
   return {
     pack,

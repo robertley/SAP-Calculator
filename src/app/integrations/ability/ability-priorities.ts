@@ -88,6 +88,26 @@ export const ABILITY_PRIORITIES: Readonly<Record<string, number>> = {
 
   // Special summons
   GoldenRetrieverSummons: 28, // e.g., no pet/toy/equipment uses this trigger yet
+
+  // Before-attack phase order. Phase execution filters these ahead of normal
+  // events; these values define the order within that phase.
+  BeforeThisAttacks: 30,
+  BeforeFirstAttack: 30,
+  BeforeFriendAttacks: 31,
+  BeforeFriendlyAttack: 31,
+  BeforeAdjacentFriendAttacked: 31,
+
+  // After-attack phase order. The attacker's own "After attack" ability must
+  // resolve before all abilities observing another pet's attack. Those
+  // observers share one group before normal-order events resume.
+  ThisAttacked: 30,
+  ThisFirstAttack: 30,
+  FriendAttacked: 31,
+  FriendAheadAttacked: 31,
+  FriendlyAttacked: 31,
+  AdjacentFriendAttacked: 31,
+  AnyoneAttack: 31,
+  EnemyAttacked: 31,
 };
 
 // Phase triggers (handled by explicit phase filters in AbilityService).
