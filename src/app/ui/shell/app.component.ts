@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Injector, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, signal, } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation, signal, } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { AbstractControl, FormArray, FormGroup, FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -13,7 +13,6 @@ import {
   SimulationConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
 import { LogService } from 'app/integrations/log.service';
-import { AbilityService } from 'app/integrations/ability/ability.service';
 import { GameService } from 'app/runtime/state/game.service';
 import { PetService } from 'app/integrations/pet/pet.service';
 import { ToyService } from 'app/integrations/toy/toy.service';
@@ -31,6 +30,11 @@ import { InfoComponent } from 'app/ui/components/info/info.component';
 import { ImportCalculatorComponent } from 'app/ui/components/import-calculator/import-calculator.component';
 import { ReportABugComponent } from 'app/ui/components/report-a-bug/report-a-bug.component';
 import { ExportCalculatorComponent } from 'app/ui/components/export-calculator/export-calculator.component';
+import {
+  FightOptimizerApplyScope,
+  FightOptimizerReportComponent,
+} from 'app/ui/components/fight-optimizer-report/fight-optimizer-report.component';
+import type { FightOptimizerResult } from 'sap-battle-engine';
 import { AppShellControlsComponent } from './components/app-shell-controls.component';
 import { AppShellBattleResultsComponent } from './components/app-shell-battle-results.component';
 import { createAppShellControlsFacade } from './components/app-shell-controls.facade';
@@ -46,7 +50,6 @@ import {
   loadTeamPresets as loadTeamPresetsImpl,
   saveTeam as saveTeamImpl,
 } from './state/app.component.team-state';
-import { InjectorService } from 'app/integrations/injector.service';
 import {
   BattleDiffScope,
   BattleDiffRow,
@@ -55,9 +58,8 @@ import {
   BattleLogGroup,
   BattleLogRow,
   BattleTimelineRow,
-  PositioningDeltaSummary,
-  PositioningOptimizationBaseline,
   LogMessagePart,
+  applyFightOptimizerLineup as applyFightOptimizerLineupImpl,
   buildApiResponse as buildApiResponseImpl,
   refreshBattleDiff as refreshBattleDiffImpl,
   getDrawPercent as getDrawPercentImpl,
@@ -128,6 +130,7 @@ import {
     ExportCalculatorComponent,
     AppShellControlsComponent,
     AppShellBattleResultsComponent,
+    FightOptimizerReportComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -174,8 +177,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   simulationCancelRequested = false;
   simulationWorker: Worker | null = null;
   simulationRunId = 0;
-  pendingPositioningOptimizationBaseline: PositioningOptimizationBaseline | null = null;
-  positioningDeltaSummary: PositioningDeltaSummary | null = null;
+  fightOptimizerResult: FightOptimizerResult | null = null;
+  fightOptimizerInputFingerprint: string | null = null;
   outFinderResult: OutFinderResult | null = null;
   battles: Battle[] = [];
   battleRandomEvents: LogMessagePart[][] = [];
@@ -235,16 +238,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: 'death', label: 'Death' },
     { value: 'random', label: 'Random' },
   ];
-  readonly fightAttackIconSrc = '/assets/art/Public/Public/Icons/fist-from-textmap.png';
-  readonly fightHealthIconSrc = '/assets/art/Public/Public/Icons/heart-from-textmap.png';
+  readonly fightAttackIconSrc = 'assets/art/Public/Public/Icons/fist-from-textmap.png';
+  readonly fightHealthIconSrc = 'assets/art/Public/Public/Icons/heart-from-textmap.png';
   readonly fightExpIconSrc =
-    '/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/xp.png';
+    'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/xp.png';
   readonly fightManaIconSrc =
-    '/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/mana.png';
+    'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/mana.png';
   readonly fightSnipeIconSrc =
-    '/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/snipe.png';
+    'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/snipe.png';
   readonly fightTrumpetIconSrc =
-    '/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/trumpet.png';
+    'assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/trumpet.png';
 
   playerPetsControls: AbstractControl[] = [];
   opponentPetsControls: AbstractControl[] = [];
@@ -312,9 +315,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     onFightAnimationScrubImpl(this, rawValue);
   constructor(
     public logService: LogService,
-    private injector: Injector,
     private cdr: ChangeDetectorRef,
-    private abilityService: AbilityService,
     public gameService: GameService,
     public petService: PetService,
     public toyService: ToyService,
@@ -326,9 +327,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private teamPresetsService: TeamPresetsService,
     public overlayState: AppShellOverlayStateService,
   ) {
-    InjectorService.setInjector(this.injector);
-    this.player = new Player(logService, abilityService, gameService);
-    this.opponent = new Player(logService, abilityService, gameService);
+    this.player = new Player();
+    this.opponent = new Player();
     this.opponent.isOpponent = true;
     this.gameService.init(this.player, this.opponent);
     this.petService.init();
@@ -597,8 +597,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     configOverrides?: Partial<SimulationConfig>,
   ) => runSimulationImpl(this, count, configOverrides);
   readonly cancelSimulation = () => cancelSimulationImpl(this);
-  readonly optimizePositioning = (side: 'player' | 'opponent') =>
-    optimizePositioningImpl(this, side);
+  readonly optimizePositioning = (maxSimulations = 10_000) =>
+    optimizePositioningImpl(this, maxSimulations);
+  readonly applyFightOptimizerLineup = (scope: FightOptimizerApplyScope) =>
+    applyFightOptimizerLineupImpl(this, scope);
+  readonly clearFightOptimizerResult = () => {
+    this.fightOptimizerResult = null;
+    this.fightOptimizerInputFingerprint = null;
+    this.markForCheck();
+  };
   readonly findOuts = (side: OutFinderSide, shopTier: number, maxItems = 1) => {
     if (this.simulationInProgress) return;
     const count = Math.max(1, Number(this.formGroup.get('simulations')?.value ?? 100));
@@ -976,18 +983,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get losePercent() {
     return getLosePercentImpl(this);
-  }
-
-  get positioningDeltaSideLabel(): 'Player' | 'Opponent' {
-    return this.positioningDeltaSummary?.side === 'opponent'
-      ? 'Opponent'
-      : 'Player';
-  }
-
-  formatSignedPercentDelta(value: number): string {
-    const normalized = Number.isFinite(value) ? value : 0;
-    const sign = normalized >= 0 ? '+' : '-';
-    return `${sign}${Math.abs(normalized).toFixed(2)}`;
   }
 
   get validCustomPacks() {

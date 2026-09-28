@@ -1,0 +1,122 @@
+name: Update sap-battle-engine
+
+on:
+  # schedule:
+  #   - cron: "17 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-sap-battle-engine
+  cancel-in-progress: false
+
+jobs:
+  update-engine:
+    runs-on: ubuntu-latest
+    env:
+      ENGINE_BRANCH: main
+      ENGINE_REPOSITORY: lgtyqz/sap-battle-engine
+      ENGINE_SPEC: github:lgtyqz/sap-battle-engine
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Use project Node.js version
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Resolve current engine commit
+        id: engine
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          remote_sha="$(git ls-remote "https://github.com/${ENGINE_REPOSITORY}.git" "refs/heads/${ENGINE_BRANCH}" | awk 'NR == 1 { print $1 }')"
+          if [[ ! "${remote_sha}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Could not resolve a full commit SHA for ${ENGINE_REPOSITORY}@${ENGINE_BRANCH}." >&2
+            exit 1
+          fi
+
+          package_sha="$(node -p "(require('./package.json').dependencies['sap-battle-engine'].split('#')[1] || '')")"
+          lock_sha="$(node -p "((require('./package-lock.json').packages['node_modules/sap-battle-engine'].resolved || '').split('#')[1] || '')")"
+
+          echo "Remote ${ENGINE_BRANCH}: ${remote_sha}"
+          echo "package.json: ${package_sha:-not pinned}"
+          echo "package-lock.json: ${lock_sha:-not pinned}"
+          echo "sha=${remote_sha}" >> "${GITHUB_OUTPUT}"
+
+          if [[ "${package_sha}" == "${remote_sha}" && "${lock_sha}" == "${remote_sha}" ]]; then
+            echo "needs-update=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "needs-update=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Update package files
+        if: steps.engine.outputs.needs-update == 'true'
+        run: npm install --package-lock-only --legacy-peer-deps --save "${ENGINE_SPEC}#${{ steps.engine.outputs.sha }}"
+
+      - name: Verify immutable engine resolution
+        if: steps.engine.outputs.needs-update == 'true'
+        env:
+          ENGINE_SHA: ${{ steps.engine.outputs.sha }}
+        run: |
+          node <<'NODE'
+          const expectedSha = process.env.ENGINE_SHA;
+          const expectedSpec = `${process.env.ENGINE_SPEC}#${expectedSha}`;
+          const packageJson = require('./package.json');
+          const packageLock = require('./package-lock.json');
+          const packageSpec = packageJson.dependencies['sap-battle-engine'];
+          const lockEntry = packageLock.packages['node_modules/sap-battle-engine'];
+
+          if (packageSpec !== expectedSpec) {
+            throw new Error(`package.json resolved ${packageSpec}; expected ${expectedSpec}`);
+          }
+          if (!lockEntry?.resolved?.endsWith(`#${expectedSha}`)) {
+            throw new Error(`package-lock.json did not resolve ${expectedSha}`);
+          }
+          NODE
+
+      - name: Install updated dependencies
+        if: steps.engine.outputs.needs-update == 'true'
+        run: npm ci --legacy-peer-deps
+
+      - name: Run tests
+        if: steps.engine.outputs.needs-update == 'true'
+        run: npm run test:vitest
+
+      - name: Lint
+        if: steps.engine.outputs.needs-update == 'true'
+        run: npm run lint
+
+      - name: Build
+        if: steps.engine.outputs.needs-update == 'true'
+        run: npm run build
+
+      - name: Commit and push package files
+        if: steps.engine.outputs.needs-update == 'true'
+        env:
+          ENGINE_SHA: ${{ steps.engine.outputs.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json
+
+          if git diff --cached --quiet; then
+            echo "The package files already match ${ENGINE_SHA}."
+            exit 0
+          fi
+
+          git commit -m "chore(deps): update sap-battle-engine to ${ENGINE_SHA:0:12}"
+          git push origin "HEAD:${DEFAULT_BRANCH}"

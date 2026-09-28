@@ -3,9 +3,10 @@ import {
   SimulationConfig,
   SimulationResult,
 } from 'app/domain/interfaces/simulation-config.interface';
-import * as foodJson from 'assets/data/food.json';
-import * as perksJson from 'assets/data/perks.json';
-import * as petsJson from 'assets/data/pets.json';
+import { food as foodJson } from 'app/runtime/content-catalogs';
+import { perks as perksJson } from 'app/runtime/content-catalogs';
+import { pets as petsJson } from 'app/runtime/content-catalogs';
+import { clonePetConfigEquipment } from '../equipment/pet-config-equipment';
 
 export type OutFinderSide = 'player' | 'opponent';
 export type OutFinderActionType = 'pet' | 'food';
@@ -660,7 +661,9 @@ function normalizeLineup(lineup: (PetConfig | null)[] | undefined): (PetConfig |
 }
 
 function clonePet(pet: PetConfig | null): PetConfig | null {
-  return pet ? { ...pet, equipment: pet.equipment ? { ...pet.equipment } : null } : null;
+  return pet
+    ? { ...pet, equipment: clonePetConfigEquipment(pet.equipment) }
+    : null;
 }
 
 function dedupeActions(actions: OutFinderAction[]): OutFinderAction[] {

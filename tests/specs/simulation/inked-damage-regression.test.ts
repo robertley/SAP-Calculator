@@ -38,7 +38,7 @@ describe('Inked damage reduction', () => {
     );
   });
 
-  it('still reduces ability damage from an Inked pet by 3', () => {
+  it('does not reduce positive ability damage from an Inked pet below 1', () => {
     const config = createBaseConfig('Star');
 
     config.playerPets[0] = createPet('Pig', {
@@ -77,6 +77,6 @@ describe('Inked damage reduction', () => {
     );
 
     expect(snipeLog).toBeDefined();
-    expect(String(snipeLog?.message ?? '')).toContain('Firefly sniped Pig for 0.');
+    expect(String(snipeLog?.message ?? '')).toContain('Firefly sniped Pig for 1.');
   });
 });

@@ -1,0 +1,639 @@
+[
+  {
+    "key": "Ambrosia",
+    "name": "Ambrosia",
+    "tier": 4,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Baguette",
+    "name": "Baguette",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Banana",
+    "name": "Banana",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Blackberry",
+    "name": "Blackberry",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Bloated",
+    "name": "Bloated",
+    "positive": false
+  },
+  {
+    "key": "Blueberry",
+    "name": "Blueberry",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Bok Choy",
+    "name": "Bok Choy",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Bread",
+    "name": "Bread",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Brussels Sprout",
+    "name": "Brussels Sprout",
+    "tier": 3,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Cake",
+    "name": "Cake",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Cake Slice",
+    "name": "Cake Slice",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Caramel",
+    "name": "Caramel",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Carrot",
+    "name": "Carrot",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Cashew Nut",
+    "name": "Cashew Nut",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Cauliflower",
+    "name": "Cauliflower",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Cheese",
+    "name": "Cheese",
+    "tier": 4,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Cherry",
+    "name": "Cherry",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Chili",
+    "name": "Chili",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Chocolate Cake",
+    "name": "Chocolate Cake",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Churros",
+    "name": "Churros",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Cocoa Bean",
+    "name": "Cocoa Bean",
+    "tier": 5,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Coconut",
+    "name": "Coconut",
+    "tier": 7,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Cod Roe",
+    "name": "Cod Roe",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Cold",
+    "name": "Cold",
+    "uses": 1,
+    "positive": false
+  },
+  {
+    "key": "Confused",
+    "name": "Confused",
+    "positive": false
+  },
+  {
+    "key": "Corncob",
+    "name": "Corncob",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Cowardly",
+    "name": "Cowardly",
+    "positive": false
+  },
+  {
+    "key": "Crisp",
+    "name": "Crisp",
+    "positive": false
+  },
+  {
+    "key": "Croissant",
+    "name": "Croissant",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Cucumber",
+    "name": "Cucumber",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Cursed",
+    "name": "Cursed",
+    "positive": false
+  },
+  {
+    "key": "Dazed",
+    "name": "Dazed",
+    "positive": false
+  },
+  {
+    "key": "Donut",
+    "name": "Donut",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Durian",
+    "name": "Durian",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Easter Egg",
+    "name": "Easter Egg",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Egg",
+    "name": "Egg",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Eggplant",
+    "name": "Eggplant",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Eucalyptus",
+    "name": "Eucalyptus",
+    "tier": 2,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Faint Bread",
+    "name": "Faint Bread",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Fairy Dust",
+    "name": "Fairy Dust",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Fig",
+    "name": "Fig",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Fortune Cookie",
+    "name": "Fortune Cookie",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Garlic",
+    "name": "Garlic",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Geechee Red Pea",
+    "name": "Geechee Red Pea",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Gingerbread Man",
+    "name": "Gingerbread Man",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Golden Egg",
+    "name": "Golden Egg",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Grapes",
+    "name": "Grapes",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Gros Michel Banana",
+    "name": "Gros Michel Banana",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Guava",
+    "name": "Guava",
+    "tier": 3,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Health Potion",
+    "name": "Health Potion",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Honey",
+    "name": "Honey",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Honeydew Melon",
+    "name": "Honeydew Melon",
+    "tier": 5,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Icky",
+    "name": "Icky",
+    "uses": 2,
+    "positive": false
+  },
+  {
+    "key": "Inked",
+    "name": "Inked",
+    "positive": false
+  },
+  {
+    "key": "Kiwano",
+    "name": "Kiwano",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Kiwifruit",
+    "name": "Kiwifruit",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Lemon",
+    "name": "Lemon",
+    "tier": 5,
+    "uses": 2,
+    "positive": true
+  },
+  {
+    "key": "Lime",
+    "name": "Lime",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Love Potion",
+    "name": "Love Potion",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Macaron",
+    "name": "Macaron",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Magic Beans",
+    "name": "Magic Beans",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Maple Syrup",
+    "name": "Maple Syrup",
+    "tier": 4,
+    "uses": 3,
+    "positive": true
+  },
+  {
+    "key": "Meat Bone",
+    "name": "Meat Bone",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Melon",
+    "name": "Melon",
+    "tier": 6,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Melon Slice",
+    "name": "Melon Slice",
+    "tier": 4,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Mild Chili",
+    "name": "Mild Chili",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Mushroom",
+    "name": "Mushroom",
+    "tier": 6,
+    "positive": true
+  },
+  {
+    "key": "Nachos",
+    "name": "Nachos",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Onion",
+    "name": "Onion",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Oyster Mushroom",
+    "name": "Oyster Mushroom",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Pancakes",
+    "name": "Pancakes",
+    "tier": 6,
+    "positive": true
+  },
+  {
+    "key": "Peanut",
+    "name": "Peanut",
+    "tier": 7,
+    "positive": true
+  },
+  {
+    "key": "Peanut Butter",
+    "name": "Peanut Butter",
+    "tier": 7,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Pepper",
+    "name": "Pepper",
+    "tier": 5,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Pie",
+    "name": "Pie",
+    "tier": 4,
+    "positive": true
+  },
+  {
+    "key": "Pineapple",
+    "name": "Pineapple",
+    "tier": 3,
+    "uses": 3,
+    "positive": true
+  },
+  {
+    "key": "Pita Bread",
+    "name": "Pita Bread",
+    "tier": 6,
+    "positive": true
+  },
+  {
+    "key": "Popcorn",
+    "name": "Popcorn",
+    "tier": 6,
+    "positive": true
+  },
+  {
+    "key": "Potato",
+    "name": "Potato",
+    "tier": 4,
+    "uses": 2,
+    "positive": true
+  },
+  {
+    "key": "Radish",
+    "name": "Radish",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Rambutan",
+    "name": "Rambutan",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Rice",
+    "name": "Rice",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Sad",
+    "name": "Sad",
+    "positive": false
+  },
+  {
+    "key": "Salt",
+    "name": "Salt",
+    "tier": 4,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Sardinian Currant",
+    "name": "Sardinian Currant",
+    "tier": 6,
+    "positive": true
+  },
+  {
+    "key": "Sausage",
+    "name": "Sausage",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Seaweed",
+    "name": "Seaweed",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Silly",
+    "name": "Silly",
+    "positive": false
+  },
+  {
+    "key": "Skewer",
+    "name": "Skewer",
+    "tier": 5,
+    "positive": true
+  },
+  {
+    "key": "Sleepy",
+    "name": "Sleepy",
+    "positive": false
+  },
+  {
+    "key": "Spooked",
+    "name": "Spooked",
+    "positive": false
+  },
+  {
+    "key": "Squash",
+    "name": "Squash",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Steak",
+    "name": "Steak",
+    "tier": 6,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Strawberry",
+    "name": "Strawberry",
+    "tier": 1,
+    "uses": 2,
+    "positive": true
+  },
+  {
+    "key": "Sudduth Tomato",
+    "name": "Sudduth Tomato",
+    "tier": 2,
+    "positive": true
+  },
+  {
+    "key": "Tasty",
+    "name": "Tasty",
+    "positive": false
+  },
+  {
+    "key": "Toasty",
+    "name": "Toasty",
+    "uses": 1,
+    "positive": false
+  },
+  {
+    "key": "Tomato",
+    "name": "Tomato",
+    "tier": 6,
+    "positive": true
+  },
+  {
+    "key": "Unagi",
+    "name": "Unagi",
+    "tier": 1,
+    "positive": true
+  },
+  {
+    "key": "Walnut",
+    "name": "Walnut",
+    "tier": 1,
+    "uses": 1,
+    "positive": true
+  },
+  {
+    "key": "Weak",
+    "name": "Weak",
+    "positive": false
+  },
+  {
+    "key": "Webbed",
+    "name": "Webbed",
+    "positive": false
+  },
+  {
+    "key": "White Okra",
+    "name": "White Okra",
+    "tier": 6,
+    "uses": 2,
+    "positive": true
+  },
+  {
+    "key": "White Truffle",
+    "name": "White Truffle",
+    "tier": 3,
+    "positive": true
+  },
+  {
+    "key": "Yggdrasil Fruit",
+    "name": "Yggdrasil Fruit",
+    "tier": 6,
+    "positive": true
+  }
+]

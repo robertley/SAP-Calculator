@@ -1,31 +1,21 @@
 /// <reference lib="webworker" />
 
-import { Injector } from '@angular/core';
-import { SimulationRunner } from 'app/gameplay/simulation-runner';
 import {
   SimulationConfig,
-  SimulationResult,
 } from 'app/domain/interfaces/simulation-config.interface';
 import { LogService } from '../log.service';
-import { GameService } from 'app/runtime/state/game.service';
-import { AbilityService } from '../ability/ability.service';
-import { PetService } from '../pet/pet.service';
-import { EquipmentService } from '../equipment/equipment.service';
-import { ToyService } from '../toy/toy.service';
-import { EquipmentFactoryService } from '../equipment/equipment-factory.service';
-import { ToyFactoryService } from '../toy/toy-factory.service';
-import { PetFactoryService } from '../pet/pet-factory.service';
-import { AbilityQueueService } from '../ability/ability-queue.service';
-import { ToyEventService } from '../ability/toy-event.service';
-import { AttackEventService } from '../ability/attack-event.service';
-import { FaintEventService } from '../ability/faint-event.service';
-import { InjectorService } from '../injector.service';
+import { CalculatorBattleEngine } from './battle-engine';
 import { runPositioningOptimization } from './positioning-optimizer';
 import { OutFinderOptions, runOutFinder } from './out-finder';
 import {
   BoardStrengthOptions,
   runBoardStrengthEvaluation,
 } from './board-strength-evaluator';
+import {
+  FightOptimizerOptions,
+  optimizeFight,
+} from 'sap-battle-engine';
+import { MAX_DISPLAYED_BATTLES } from './simulation.constants';
 
 type StartMessage = {
   type: 'start';
@@ -49,6 +39,19 @@ type OptimizePositioningStartMessage = {
     successiveHalvingRate?: number;
   };
 };
+type OptimizeFightStartMessage = {
+  type: 'optimize-fight-start';
+  config: SimulationConfig;
+  options: Pick<
+    FightOptimizerOptions,
+    | 'seed'
+    | 'initialSimulations'
+    | 'refinementSimulations'
+    | 'collectAllBestResponses'
+    | 'maxSimulations'
+    | 'maxResponseSteps'
+  >;
+};
 
 type BoardStrengthStartMessage = {
   type: 'board-strength-start';
@@ -65,6 +68,7 @@ type CancelMessage = { type: 'cancel' };
 
 type IncomingMessage =
   | StartMessage
+  | OptimizeFightStartMessage
   | OptimizePositioningStartMessage
   | OutFinderStartMessage
   | BoardStrengthStartMessage
@@ -72,130 +76,9 @@ type IncomingMessage =
 
 let cancelRequested = false;
 
-const sanitizeResult = (result: SimulationResult): SimulationResult => {
-  if (!result || !Array.isArray(result.battles)) {
-    return result;
-  }
-
-  const sanitizedBattles = result.battles.map((battle) => {
-    const logs = Array.isArray(battle?.logs)
-      ? battle.logs.map((log) => ({
-          message: log?.message ?? '',
-          rawMessage: log?.rawMessage,
-          type: log?.type ?? 'board',
-          randomEvent: log?.randomEvent,
-          randomEventReason: log?.randomEventReason,
-          tiger: log?.tiger,
-          puma: log?.puma,
-          pteranodon: log?.pteranodon,
-          pantherMultiplier: log?.pantherMultiplier,
-          count: log?.count,
-          bold: log?.bold,
-          decorated: log?.decorated,
-          sourceIndex: log?.sourceIndex,
-          targetIndex: log?.targetIndex,
-          playerIsOpponent: log?.player?.isOpponent ?? log?.playerIsOpponent,
-          targetIsOpponent: log?.targetPet?.parent?.isOpponent,
-        }))
-      : [];
-
-    return {
-      winner: battle?.winner ?? 'draw',
-      logs,
-    };
-  });
-
-  return {
-    playerWins: result.playerWins ?? 0,
-    opponentWins: result.opponentWins ?? 0,
-    draws: result.draws ?? 0,
-    battles: sanitizedBattles,
-    randomDecisions: Array.isArray(result.randomDecisions)
-      ? result.randomDecisions
-      : [],
-    randomOverrideError: result.randomOverrideError ?? null,
-  };
-};
-
 const createRunner = () => {
   const logService = new LogService();
-  const gameService = new GameService();
-  const abilityQueueService = new AbilityQueueService();
-  const toyEventService = new ToyEventService(gameService, logService);
-  const attackEventService = new AttackEventService(abilityQueueService);
-  const faintEventService = new FaintEventService(
-    abilityQueueService,
-    toyEventService,
-  );
-  const abilityService = new AbilityService(
-    gameService,
-    logService,
-    toyEventService,
-    abilityQueueService,
-    attackEventService,
-    faintEventService,
-  );
-  const equipmentFactory = new EquipmentFactoryService(
-    logService,
-    abilityService,
-    gameService,
-  );
-  const equipmentService = new EquipmentService(
-    logService,
-    abilityService,
-    gameService,
-    equipmentFactory,
-  );
-  const toyFactory = new ToyFactoryService(logService, abilityService);
-  const petFactory = new PetFactoryService(
-    logService,
-    abilityService,
-    gameService,
-    equipmentService,
-  );
-  const petService = new PetService(
-    logService,
-    abilityService,
-    gameService,
-    petFactory,
-  );
-  const toyService = new ToyService(
-    logService,
-    abilityService,
-    gameService,
-    equipmentService,
-    petService,
-    toyFactory,
-  );
-
-  type InjectedToken = unknown;
-  const injectorShim = {
-    get: (token: InjectedToken) => {
-      if (token === PetService) return petService;
-      if (token === EquipmentService) return equipmentService;
-      if (token === LogService) return logService;
-      if (token === AbilityQueueService) return abilityQueueService;
-      if (token === ToyService) return toyService;
-      if (token === GameService) return gameService;
-      if (token === AbilityService) return abilityService;
-      return null;
-    },
-  };
-  InjectorService.setInjector(injectorShim as unknown as Injector);
-
-  petService.init();
-
-  return {
-    runner: new SimulationRunner(
-      logService,
-      gameService,
-      abilityService,
-      petService,
-      equipmentService,
-      toyService,
-    ),
-    logService,
-  };
+  return { runner: new CalculatorBattleEngine(logService), logService };
 };
 
 let workerRuntime: ReturnType<typeof createRunner> | null = null;
@@ -212,6 +95,34 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
 
   if (data.type === 'cancel') {
     cancelRequested = true;
+    return;
+  }
+
+  if (data.type === 'optimize-fight-start') {
+    cancelRequested = false;
+    const { config, options } = data;
+    try {
+      const result = optimizeFight(config, {
+        ...options,
+        shouldAbort: () => cancelRequested,
+        onProgress: (progress) => {
+          postMessage({ type: 'fight-optimizer-progress', progress });
+        },
+      });
+      postMessage({
+        type:
+          result.termination === 'cancelled'
+            ? 'fight-optimizer-aborted'
+            : 'fight-optimizer-result',
+        result,
+      });
+    } catch (error) {
+      postMessage({
+        type: 'error',
+        message:
+          error instanceof Error ? error.message : 'Fight optimization failed.',
+      });
+    }
     return;
   }
 
@@ -337,18 +248,22 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
     const { runner, logService } = getRunner();
     logService.setShowTriggerNamesInLogs(Boolean(showTriggerNamesInLogs));
 
-    const result = runner.run(config, {
-      progressInterval: progressInterval ?? 50,
-      shouldAbort: () => cancelRequested,
-      onProgress: (progress) => {
-        postMessage({ type: 'progress', ...progress });
+    const result = runner.run(
+      config,
+      {
+        progressInterval: progressInterval ?? 50,
+        shouldAbort: () => cancelRequested,
+        onProgress: (progress) => {
+          postMessage({ type: 'progress', ...progress });
+        },
       },
-    });
+      MAX_DISPLAYED_BATTLES,
+    );
 
     if (cancelRequested) {
-      postMessage({ type: 'aborted', result: sanitizeResult(result) });
+      postMessage({ type: 'aborted', result: result });
     } else {
-      postMessage({ type: 'result', result: sanitizeResult(result) });
+      postMessage({ type: 'result', result: result });
     }
   } catch (error) {
     postMessage({
@@ -358,5 +273,3 @@ addEventListener('message', ({ data }: MessageEvent<IncomingMessage>) => {
     });
   }
 });
-
-

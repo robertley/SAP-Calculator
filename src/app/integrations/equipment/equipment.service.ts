@@ -1,47 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Equipment } from 'app/domain/entities/equipment.class';
-import { LogService } from '../log.service';
-import { AbilityService } from '../ability/ability.service';
-import { GameService } from 'app/runtime/state/game.service';
-import { EquipmentFactoryService } from './equipment-factory.service';
-import { coerceLogService } from 'app/runtime/log-service-fallback';
+import defaults from './equipment-editor-defaults.json';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class EquipmentService {
-  private cachedEquipment: Map<string, Equipment> | null = null;
-  private cachedAilments: Map<string, Equipment> | null = null;
-
-  constructor(
-    private logService: LogService,
-    private abilityService: AbilityService,
-    private gameService: GameService,
-    private equipmentFactory: EquipmentFactoryService,
-  ) {
-    this.logService = coerceLogService(this.logService);
-  }
-
-  getInstanceOfAllEquipment() {
-    if (!this.cachedEquipment) {
-      this.cachedEquipment = this.equipmentFactory.getAllEquipment();
+  private equipment = new Map<string, Equipment>();
+  private ailments = new Map<string, Equipment>();
+  constructor() {
+    for (const entry of defaults) {
+      const equipment: Equipment = { name: entry.name, tier: entry.tier, uses: entry.uses, originalUses: entry.uses };
+      (entry.positive ? this.equipment : this.ailments).set(entry.key, equipment);
     }
-    return this.cachedEquipment;
   }
 
-  getInstanceOfAllAilments() {
-    if (!this.cachedAilments) {
-      this.cachedAilments = this.equipmentFactory.getAllAilments();
-    }
-    return this.cachedAilments;
-  }
-
-  isEquipmentRandom(name: string): boolean {
-    const all = this.getInstanceOfAllEquipment();
-    const ailment = this.getInstanceOfAllAilments();
-    return (all.get(name)?.hasRandomEvents ?? false) || (ailment.get(name)?.hasRandomEvents ?? false);
-  }
-
+  getInstanceOfAllEquipment(): Map<string, Equipment> { return this.equipment; }
+  getInstanceOfAllAilments(): Map<string, Equipment> { return this.ailments; }
   private static readonly USEFUL_PERKS: Map<string, number> = new Map([
     //T1
     ['Honey', 1],

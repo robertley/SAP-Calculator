@@ -4,7 +4,7 @@ import {
   PetConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
 import { encodeBase64Url } from 'app/runtime/base64-url';
-import * as foodJson from 'assets/data/food.json';
+import { food as foodJson } from 'app/runtime/content-catalogs';
 import {
   KEY_MAP,
   PACK_MAP,

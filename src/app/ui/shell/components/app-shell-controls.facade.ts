@@ -1,14 +1,12 @@
 import { FormArray, FormGroup } from '@angular/forms';
 import { getPackIconPath, getPetIconPath } from 'app/runtime/asset-catalog';
 import { RandomDecisionCapture } from 'app/domain/interfaces/simulation-config.interface';
-import {
-  LogMessagePart,
-  PositioningDeltaSummary,
-} from '../simulation/app.component.simulation';
+import { LogMessagePart } from '../simulation/app.component.simulation';
 import type { SelectionType } from 'app/ui/components/item-selection-dialog/item-selection-dialog.types';
 import type { AppComponent } from '../app.component';
 import type { Player } from 'app/domain/entities/player.class';
 import type { OutFinderCandidateResult, OutFinderResult } from 'app/integrations/simulation/out-finder';
+import type { FightOptimizerResult, OptimizerSide } from 'sap-battle-engine';
 
 export interface AppShellControlsFacade {
   renderEpoch: number;
@@ -27,8 +25,7 @@ export interface AppShellControlsFacade {
   winPercent: number;
   drawPercent: number;
   losePercent: number;
-  positioningDeltaSummary: PositioningDeltaSummary | null;
-  positioningDeltaSideLabel: 'Player' | 'Opponent';
+  fightOptimizerResult: FightOptimizerResult | null;
   outFinderResult: OutFinderResult | null;
   theme: 'light' | 'dark';
   soundMenuOpen: boolean;
@@ -59,13 +56,14 @@ export interface AppShellControlsFacade {
   trackByIndex: (index: number) => number;
   simulate: (count?: number) => void;
   cancelSimulation: () => void;
-  optimizePositioning: (side: 'player' | 'opponent') => void;
+  optimizePositioning: (maxSimulations?: number) => void;
+  applyFightOptimizerLineup: (scope: OptimizerSide | 'both') => void;
+  clearFightOptimizerResult: () => void;
   findOuts: (side: 'player' | 'opponent', shopTier: number, maxItems?: number) => void;
   clearOutFinderResult: () => void;
   applyOut: (candidate: OutFinderCandidateResult) => void;
   randomize: () => void;
   undoRandomize: () => void;
-  formatSignedPercentDelta: (value: number) => string;
   toggleTheme: () => void;
   toggleSoundMenu: () => void;
   setSoundVolume: (value: number | string) => void;
@@ -175,16 +173,12 @@ export function createAppShellControlsFacade(
     get losePercent() {
       return app.losePercent;
     },
-    get positioningDeltaSummary() {
-      return app.positioningDeltaSummary;
-    },
-    get positioningDeltaSideLabel() {
-      return app.positioningDeltaSideLabel;
+    get fightOptimizerResult() {
+      return app.fightOptimizerResult;
     },
     get outFinderResult() {
       return app.outFinderResult;
     },
-    formatSignedPercentDelta: (value) => app.formatSignedPercentDelta(value),
     get theme() {
       return app.theme;
     },
@@ -290,7 +284,11 @@ export function createAppShellControlsFacade(
     openSelectionDialog: (type, side) => app.openSelectionDialog(type, side),
     simulate: (count) => app.simulate(count),
     cancelSimulation: () => app.cancelSimulation(),
-    optimizePositioning: (side) => app.optimizePositioning(side),
+    optimizePositioning: (maxSimulations) =>
+      app.optimizePositioning(maxSimulations),
+    applyFightOptimizerLineup: (scope) =>
+      app.applyFightOptimizerLineup(scope),
+    clearFightOptimizerResult: () => app.clearFightOptimizerResult(),
     findOuts: (side, shopTier, maxItems) => app.findOuts(side, shopTier, maxItems),
     clearOutFinderResult: () => app.clearOutFinderResult(),
     applyOut: (candidate) => app.applyOut(candidate),

@@ -88,12 +88,10 @@ export class CalculatorStateService {
       komodoShuffle: false,
       mana: false,
       seed: null,
+      plainCopies: false,
       showAdvanced: false,
       showTriggerNamesInLogs: false,
       showPositionalArgsInLogs: true,
-      keepSameBuffTargetsOnOptimization: false,
-      projectEndTurnEffectsOnOptimization: true,
-      recomputeParrotCopiesOnOptimization: true,
       ailmentEquipment: false,
     };
   }
@@ -141,4 +139,3 @@ export class CalculatorStateService {
     return null;
   }
 }
-

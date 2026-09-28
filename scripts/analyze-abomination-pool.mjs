@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.cwd();
-const PETS_JSON = path.join(ROOT, 'src', 'assets', 'data', 'pets.json');
+import { catalogs } from 'sap-battle-engine';
 const OUTPUT_DIR = path.join(ROOT, 'tmp');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'abomination-pool-report.json');
 const DEFAULT_MIN_TIER = null;
@@ -288,7 +288,7 @@ function buildTierCounts(pets) {
 
 function main() {
   const options = parseOptions(process.argv.slice(2));
-  const allPets = readJson(PETS_JSON);
+  const allPets = catalogs.pets;
   const rollablePets = allPets.filter(
     (pet) => pet?.Rollable === true && typeof pet?.Name === 'string' && pet.Name,
   );

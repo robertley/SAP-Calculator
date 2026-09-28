@@ -18,22 +18,18 @@
     "watch": "node ./node_modules/@angular/cli/bin/ng build --watch --configuration development",
     "test": "node ./node_modules/@angular/cli/bin/ng test",
     "test:vitest": "vitest run --config config/vitest.config.ts",
-    "test:vitest:generated": "vitest run --config config/vitest.config.ts tests/generated",
     "test:vitest:meta": "vitest run --config config/vitest.config.ts tests/meta",
-    "test:vitest:specs": "vitest run --config config/vitest.config.ts tests --exclude tests/generated/** --exclude tests/meta/**",
-    "generate:entity-tests": "node scripts/generate-entity-tests.mjs",
-    "generate:pilot-specs": "node scripts/generate-pilot-specs.mjs",
+    "test:vitest:specs": "vitest run --config config/vitest.config.ts tests/specs",
+    "update:art-assets": "node scripts/update-art-assets.mjs",
     "analyze:abomination-pool": "node scripts/analyze-abomination-pool.mjs",
     "search:a:flex-pet": "node scripts/search-a-flex-pet.mjs",
     "search:b:combinations": "node scripts/search-b-combinations.mjs",
     "search:c:triplets": "node scripts/search-c-triplets.mjs",
     "search:evolution:pool": "node simulation/dist/cli.js preset-pool --pretty",
-    "search:evolution:run": "python scripts/evolution/ray_pytorch_evolution.py",
-    "test:vitest:specs:pilot": "vitest run --config config/vitest.config.ts tests/specs/pilot",
-    "test:vitest:generated:ci": "npm run generate:entity-tests && npm run test:vitest:meta && npm run test:vitest:generated"
+    "search:evolution:run": "python scripts/evolution/ray_pytorch_evolution.py"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
   },
   "browserslist": [
     "last 1 Chrome version",
@@ -46,22 +42,19 @@
   ],
   "private": true,
   "dependencies": {
-    "@angular/animations": "^21.1.0",
     "@angular/cdk": "^21.1.0",
     "@angular/common": "^21.1.0",
     "@angular/compiler": "^21.1.0",
     "@angular/core": "^21.1.0",
     "@angular/forms": "^21.1.0",
-    "@angular/material": "^21.1.0",
     "@angular/platform-browser": "^21.1.0",
     "@angular/platform-browser-dynamic": "^21.1.0",
-    "@angular/router": "^21.1.0",
     "@types/bootstrap": "^5.2.6",
     "@types/lodash-es": "^4.17.12",
     "bootstrap": "^5.3.1",
-    "firebase": "^12.8.0",
     "lodash-es": "^4.17.21",
     "rxjs": "~6.6.0",
+    "sap-battle-engine": "github:lgtyqz/sap-battle-engine#f9b18fe18315be682fbc3f895f4cfc88b68909ad",
     "tslib": "^2.3.0",
     "zone.js": "~0.16.0"
   },
@@ -86,7 +79,6 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "sharp": "^0.34.5",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },

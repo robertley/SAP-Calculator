@@ -358,23 +358,11 @@ def gather_vocab(teams: List[TeamSide]) -> Tuple[List[str], List[str]]:
 
 
 def load_global_catalog_pools(workspace: str) -> Tuple[List[str], List[str], List[str]]:
-    data_dir = os.path.join(workspace, "src", "assets", "data")
-    pets_path = os.path.join(data_dir, "pets.json")
-    perks_path = os.path.join(data_dir, "perks.json")
-    toys_path = os.path.join(data_dir, "toys.json")
+    catalogs = json.loads(subprocess.check_output(["node", os.path.join(workspace, "scripts", "lib", "engine-catalog.cjs")], text=True))
+    pets_path, perks_path, toys_path = "pets", "perks", "toys"
 
     def _load_rows(path: str) -> List[Dict[str, Any]]:
-        if not os.path.exists(path):
-            return []
-        with open(path, "r", encoding="utf-8") as f:
-            rows = json.load(f)
-        if not isinstance(rows, list):
-            return []
-        parsed_rows: List[Dict[str, Any]] = []
-        for row in rows:
-            if isinstance(row, dict):
-                parsed_rows.append(row)
-        return parsed_rows
+        return catalogs[path]
 
     def _load_names(path: str, key: str) -> List[str]:
         names: List[str] = []

@@ -3,7 +3,7 @@
 Battle calculator for Super Auto Pets with support for official packs, custom packs, toys, replay import, detailed logs, and headless simulation.
 
 ## Requirements
-- Node.js `>=20`
+- Node.js 22.12+ (recommended for the Angular 21 toolchain)
 - npm
 
 ## Setup
@@ -28,26 +28,16 @@ npm run build
 ```
 
 ## Architecture
-The codebase is organized into explicit layers under `src/app`:
+Battle mechanics and canonical content metadata come from [sap-battle-engine](https://github.com/lgtyqz/sap-battle-engine). The calculator contains the Angular editor, replay parsing, analysis workflows, and presentation.
 
-- `src/app/domain`
-  - Core entities and interfaces (`Pet`, `Equipment`, `Toy`, `Player`, ability model, simulation interfaces).
-  - Catalog implementation classes in `src/app/domain/entities/catalog/**` for pets/equipment/toys.
-- `src/app/gameplay`
-  - Pure battle execution pipeline (`SimulationRunner`, `EventProcessor`, `AbilityEngine`, randomness controls).
-- `src/app/integrations`
-  - Registries, factories, and orchestration services that wire content into runtime.
-  - Includes `ability`, `pet`, `equipment`, `toy`, `simulation`, `replay`, and logging integrations.
-- `src/app/runtime`
-  - App/runtime utilities and persisted state services (`game`, URL state, local storage, calculator state).
-- `src/app/ui`
-  - Standalone Angular UI shell and feature components.
-  - Main shell is `src/app/ui/shell/app.component.ts`, composed from small workflow/view modules.
+- `src/app/domain`: lightweight board-editor models and interfaces.
+- `src/app/integrations/simulation/battle-engine.ts`: adapts the engine's structured events for calculator logs and animation.
+- `src/app/integrations`: editor catalogs, replay services, positioning/strength analysis, and log formatting.
+- `src/app/runtime`: form mapping, asset presentation, persistence, and URL state.
+- `src/app/ui`: Angular shell and feature components.
+- `simulation/`: headless library and CLI; the engine stays an external dependency of these bundles.
 
-At repo root:
-- `simulation/`: Node/headless entrypoints and CLI bundle.
-- `server/`: Optional replay proxy backend (`/api/health`, `/api/replay-battle`).
-- `tests/`: Vitest specs, meta checks, generated coverage, and pilot suites.
+See [the engine dependency guide](docs/BATTLE_ENGINE.md) for package provenance and updates.
 
 ## Typography Rollout (Lapsus Pro)
 Lapsus typography is controlled in stages from `src/app/ui/shell/app.component.ts` via `lapsusTypographyStage`.
@@ -59,22 +49,15 @@ Lapsus typography is controlled in stages from `src/app/ui/shell/app.component.t
 To advance rollout, change `lapsusTypographyStage` from `1` to `2` or `3` and apply style rules by stage-specific class (`lapsus-stage-1`, `lapsus-stage-2`, `lapsus-stage-3`).
 
 ## Simulation Flow
-1. `SimulationService` builds `SimulationConfig` from UI state.
-2. It runs via `simulation.worker.ts` (preferred) or directly in-process.
-3. `SimulationRunner` initializes player state and content through services.
-4. `EventProcessor` + `AbilityEngine` resolve combat events and triggers.
-5. `LogService` captures battle logs (optional, configurable).
+1. `SimulationService` builds a `SimulationConfig` from UI state.
+2. The worker (or synchronous fallback) uses an isolated `sap-battle-engine` instance.
+3. The engine resolves battles and returns structured events, board snapshots, outcomes, and optional random decisions/draws.
+4. The calculator formats events for its existing log and animation views.
 
-Positioning optimization is implemented in `src/app/integrations/simulation/positioning-optimizer.ts` and can also run in the worker.
+Positioning, Out Finder, and board-strength workflows remain in `src/app/integrations/simulation` and delegate every battle to the dependency.
 
-## Content Wiring (Pets/Equipment/Toys)
-Content classes live in `src/app/domain/entities/catalog/**` and must be registered to become usable:
-
-- Pets: pack registries in `src/app/integrations/pet/registries/`, aggregated by `src/app/integrations/pet/pet-registry.ts`
-- Equipment/Ailments: `src/app/integrations/equipment/equipment-registry.ts`
-- Toys: `src/app/integrations/toy/toy-registry.ts`
-
-Data files used by UI/selectors live in `src/assets/data` (`pets.json`, `food.json`, `toys.json`, etc.).
+## Content Updates
+Change mechanics and canonical pets, toys, food, and perks in the battle-engine repository, then update the pinned Git revision here and keep editor equipment metadata aligned with the engine catalogs. Asset files and UI-specific categories remain in this repository.
 
 ## Testing
 Primary test runner is Vitest.
@@ -87,13 +70,6 @@ Useful subsets:
 ```bash
 npm run test:vitest:meta
 npm run test:vitest:specs
-npm run test:vitest:specs:pilot
-```
-
-Generated coverage utilities:
-```bash
-npm run generate:entity-tests
-npm run test:vitest:generated
 ```
 
 Legacy Angular/Karma tests are still available:

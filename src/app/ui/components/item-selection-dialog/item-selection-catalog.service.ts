@@ -15,11 +15,11 @@ import {
 } from 'app/runtime/asset-catalog';
 import { PACK_NAMES } from 'app/runtime/pack-names';
 import {
-  ABILITY_PRIORITIES,
+  TRIGGER_DISPLAY_ORDER,
   ATTACK_TRIGGERS,
   IN_SHOP_TRIGGERS,
   PHASE_TRIGGERS,
-} from 'app/integrations/ability/ability-priorities';
+} from './trigger-filter-categories';
 import { SelectionItem, SelectionType } from './item-selection-dialog.types';
 
 export interface IndexedSelectionItem extends SelectionItem {
@@ -62,7 +62,7 @@ const reservedNonPriorityTriggerKeys = new Set<string>([
   ...attackTriggerKeys,
   ...inShopTriggerKeys,
 ]);
-const regularPriorityTriggers = Object.entries(ABILITY_PRIORITIES)
+const regularPriorityTriggers = Object.entries(TRIGGER_DISPLAY_ORDER)
   .sort((left, right) => left[1] - right[1])
   .map(([trigger]) => trigger)
   .filter((trigger) => !reservedNonPriorityTriggerKeys.has(normalizeTriggerKey(trigger)));

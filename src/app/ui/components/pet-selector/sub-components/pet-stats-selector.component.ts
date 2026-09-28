@@ -47,6 +47,18 @@ import { supportsTimesHurtPet } from '../pet-selector.constants';
         />
       </div>
 
+      <!-- Plain Copy -->
+      <div class="col-12 mb-2" *ngIf="plainCopies">
+        <label class="form-check plain-copy-toggle">
+          <input
+            class="form-check-input"
+            formControlName="plainCopy"
+            type="checkbox"
+          />
+          <span class="form-check-label">Plain Copy (No Ability)</span>
+        </label>
+      </div>
+
       <!-- Mana and Triggers -->
       <ng-container *ngIf="mana || triggersConsumed">
         <div class="col-12" *ngIf="mana && !triggersConsumed">
@@ -179,6 +191,7 @@ export class PetStatsSelectorComponent {
   @Input() formGroup!: FormGroup;
   @Input() petName: string | null = null;
   @Input() mana = false;
+  @Input() plainCopies = false;
   @Input() triggersConsumed = false;
   @Input() attackHealthMax = 100;
 

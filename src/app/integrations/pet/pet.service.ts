@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Pet } from 'app/domain/entities/pet.class';
-import { LogService } from '../log.service';
-import { PetFactoryService, PetForm } from './pet-factory.service';
+import { PetForm } from './pet-form.interface';
+import { EquipmentService } from '../equipment/equipment.service';
+import { cloneEquipmentWithUses } from 'app/runtime/equipment-clone';
 import { Player } from 'app/domain/entities/player.class';
-import { AbilityService } from '../ability/ability.service';
-import { GameService } from 'app/runtime/state/game.service';
 import { getRandomInt } from 'app/runtime/random';
 import { FormArray } from '@angular/forms';
-import { Mouse } from 'app/domain/entities/catalog/pets/custom/tier-1/mouse.class';
-import { PET_REGISTRY } from './pet-registry';
 import { BASE_PACK_NAMES, BasePackName, PackName } from 'app/runtime/pack-names';
-import * as petJson from 'assets/data/pets.json';
-import { chooseRandomOption } from 'app/runtime/random-decision-state';
-import { CustomPackConfig } from 'app/domain/interfaces/simulation-config.interface';
-import { coerceLogService } from 'app/runtime/log-service-fallback';
+import { pets as petJson } from 'app/runtime/content-catalogs';
 
 interface PetJsonEntry {
+  Attack?: number;
+  Health?: number;
   Name: string;
   Tier: number | string;
   Packs?: string[];
@@ -58,15 +54,8 @@ export class PetService {
   tokenPetsMap: Map<number, string[]> = new Map();
   readonly basePackPetsByName: Record<PackName, Map<number, string[]>>;
   startOfBattlePets: string[] = [];
-  faintPetsByTier: Map<number, string[]> = new Map();
 
-  constructor(
-    private logService: LogService,
-    private abilityService: AbilityService,
-    private gameService: GameService,
-    private petFactory: PetFactoryService,
-  ) {
-    this.logService = coerceLogService(this.logService);
+  constructor(private equipmentService: EquipmentService) {
     this.basePackPetsByName = {
       Turtle: this.turtlePackPets,
       Puppy: this.puppyPackPets,
@@ -86,34 +75,6 @@ export class PetService {
       }
       this.playerCustomPackPets.set(customPack.get('name').value, pack);
     }
-  }
-
-  setCustomPackPools(customPacks: CustomPackConfig[] = []) {
-    this.playerCustomPackPets.clear();
-    for (const customPack of customPacks) {
-      const packName = `${customPack?.name ?? ''}`.trim();
-      if (!packName) {
-        continue;
-      }
-      const pack = new Map<number, string[]>();
-      for (const tier of ALL_TIERS) {
-        const tierKey = `tier${tier}Pets` as keyof CustomPackConfig;
-        const tierPets = customPack?.[tierKey];
-        const normalized = this.normalizePetNameList(tierPets);
-        pack.set(tier, normalized);
-      }
-      this.playerCustomPackPets.set(packName, pack);
-    }
-  }
-
-  private normalizePetNameList(value: unknown): string[] {
-    if (!Array.isArray(value)) {
-      return [];
-    }
-    return value
-      .filter((petName): petName is string => typeof petName === 'string')
-      .map((petName) => petName.trim())
-      .filter((petName) => petName.length > 0);
   }
 
   private isValidTier(value: number): boolean {
@@ -183,17 +144,8 @@ export class PetService {
   }
 
 
-  isPetRandom(name: string): boolean {
-    return this.petDataMap.get(name)?.Random === true;
-  }
-
-  private petDataMap: Map<string, PetJsonEntry> = new Map();
-
   private populatePackMaps(pets: PetJsonEntry[]) {
     for (const pet of pets) {
-      if (pet.Name) {
-        this.petDataMap.set(pet.Name, pet);
-      }
       const tier = Number(pet.Tier);
       if (!this.isValidTier(tier)) {
         continue;
@@ -284,105 +236,11 @@ export class PetService {
     return Array.from(names);
   }
 
-  private buildFaintPetsByTier(pets: PetJsonEntry[]): Map<number, string[]> {
-    const faintMap = new Map<number, string[]>();
-    for (const tier of ALL_TIERS) {
-      faintMap.set(tier, []);
-    }
-    for (const pet of pets) {
-      const tier = Number(pet.Tier);
-      if (!this.isValidTier(tier)) {
-        continue;
-      }
-      if (pet.Rollable !== true) {
-        continue;
-      }
-      if (!Array.isArray(pet.Abilities)) {
-        continue;
-      }
-      const hasFaintAbility = pet.Abilities.some((ability) => {
-        const about = ability?.About;
-        return typeof about === 'string' && about.includes('Faint:');
-      });
-      if (!hasFaintAbility) {
-        continue;
-      }
-      faintMap.get(tier)?.push(pet.Name);
-    }
-    this.deduplicateTierMap(faintMap);
-    return faintMap;
-  }
-
-  getFaintPetNamesByTiers(tiers: number[]): string[] {
-    if (!this.faintPetsByTier?.size) {
-      this.faintPetsByTier = this.buildFaintPetsByTier(
-        this.getPetEntriesFromJson(),
-      );
-    }
-    return [
-      ...new Set(
-        tiers.flatMap((tier) => this.faintPetsByTier.get(tier) ?? []),
-      ),
-    ];
-  }
-
-  private getPackFaintPetNamesByTier(parent: Player, tier: number): string[] {
-    const packPetNames = new Set(this.getPetPoolByTier(parent, tier));
-    return (this.faintPetsByTier.get(tier) ?? []).filter((petName) =>
-      packPetNames.has(petName),
-    );
-  }
-
-  private getRandomFaintPetPool(
-    parent: Player,
-    tier?: number,
-    fromAnyPack = false,
-    fallbackAcrossTiers = true,
-  ): string[] {
-    if (fromAnyPack) {
-      if (tier && this.faintPetsByTier.get(tier)) {
-        return [...(this.faintPetsByTier.get(tier) ?? [])];
-      }
-      return Array.from(this.faintPetsByTier.values()).flat();
-    }
-
-    const requestedTiers =
-      tier && this.faintPetsByTier.get(tier) ? [tier] : [...ALL_TIERS];
-    const packTierPool = requestedTiers.flatMap((targetTier) =>
-      this.getPackFaintPetNamesByTier(parent, targetTier),
-    );
-    if (packTierPool.length) {
-      return [...new Set(packTierPool)];
-    }
-
-    if (tier && fallbackAcrossTiers) {
-      const packAnyTierPool = ALL_TIERS.flatMap((targetTier) =>
-        this.getPackFaintPetNamesByTier(parent, targetTier),
-      );
-      if (packAnyTierPool.length) {
-        return [...new Set(packAnyTierPool)];
-      }
-    }
-
-    if (tier && this.faintPetsByTier.get(tier)) {
-      return [...(this.faintPetsByTier.get(tier) ?? [])];
-    }
-    return Array.from(this.faintPetsByTier.values()).flat();
-  }
-
-  getSummonPetNames(): string[] {
-    if (!this.tokenPetsMap?.size) {
-      this.init();
-    }
-    return [...new Set(Array.from(this.tokenPetsMap.values()).flat())];
-  }
-
   init() {
     this.resetPackMaps();
     const pets = this.getPetEntriesFromJson();
     this.populatePackMaps(pets);
     this.startOfBattlePets = this.buildStartOfBattlePets(pets);
-    this.faintPetsByTier = this.buildFaintPetsByTier(pets);
     this.setAllPets();
   }
 
@@ -404,192 +262,27 @@ export class PetService {
   }
 
   createPet(petForm: PetForm, parent: Player): Pet {
-    const result = this.petFactory.createPetFromForm(
-      petForm,
-      parent,
-      this,
-      PET_REGISTRY,
-    );
-    if (result) {
-      return result;
-    }
-    const equipment = this.petFactory.resolveEquipmentFromForm(
-      petForm.equipment,
+    const metadata = this.getPetEntriesFromJson().find((entry) => entry.Name === petForm.name);
+    const pet = Object.assign(new Pet(), petForm, { parent });
+    pet.exp = petForm.exp ?? 0;
+    pet.attack = petForm.attack ?? (metadata?.Attack ?? 1) + pet.exp;
+    pet.health = petForm.health ?? (metadata?.Health ?? 1) + pet.exp;
+    pet.mana = petForm.mana ?? 0;
+    pet.tier = Number(metadata?.Tier ?? 1);
+    const name = typeof petForm.equipment === 'string' ? petForm.equipment : petForm.equipment?.name;
+    pet.equipment = cloneEquipmentWithUses(
+      this.equipmentService.getInstanceOfAllEquipment().get(name) ?? this.equipmentService.getInstanceOfAllAilments().get(name),
       petForm.equipmentUses,
     );
-    // Fallback
-    return new Mouse(
-      this.logService,
-      this.abilityService,
-      parent,
-      petForm.health,
-      petForm.attack,
-      petForm.mana,
-      petForm.exp,
-      equipment,
-      petForm.triggersConsumed,
-    );
+    pet.equipmentUsesOverride = petForm.equipmentUses;
+    return pet;
   }
 
-  createDefaultVersionOfPet(
-    pet: Pet,
-    attack: number = null,
-    health: number = null,
-  ) {
-    return this.petFactory.createPet(pet, this, attack, health);
-  }
-
-  getRandomPet(parent: Player) {
-    const tierOptions = ALL_TIERS.map((value) => ({
-      id: `tier-${value}`,
-      label: `Tier ${value}`,
-    }));
-    const tierDecision = chooseRandomOption(
-      {
-        key: 'pet.random-tier',
-        label: 'Random pet tier',
-        options: tierOptions,
-      },
-      () => getRandomInt(0, tierOptions.length - 1),
-    );
-    let tier = tierDecision.index + 1;
-    let pets = this.getPetPoolByTier(parent, tier);
-
-    if (parent.allPets && parent.tokenPets) {
-      const tokens = this.tokenPetsMap.get(tier) || [];
-      pets.push(...tokens);
-      // Deduplicate in case some tokens are also in the pack (though unlikely)
-      pets = [...new Set(pets)];
-    }
-
-    if (!pets || pets.length === 0) {
-      // Fallback if tier has no pets in this configuration
-      pets = [RANDOM_PET_FALLBACK]; // Very safe fallback
-    }
-    const petDecision = chooseRandomOption(
-      {
-        key: 'pet.random-pool',
-        label: `Random pet from tier ${tier}`,
-        options: pets.map((name) => ({ id: name, label: name })),
-      },
-      () => getRandomInt(0, pets.length - 1),
-    );
-    let pet = pets[petDecision.index];
-    const expOptions = [0, 1, 2, 3, 4, 5].map((value) => ({
-      id: `${value}`,
-      label: `${value} experience`,
-    }));
-    const expDecision = chooseRandomOption(
-      {
-        key: 'pet.random-exp',
-        label: `Random experience for ${pet}`,
-        options: expOptions,
-      },
-      () => getRandomInt(0, expOptions.length - 1),
-    );
-    return this.createPet(
-      {
-        attack: null,
-        equipment: null,
-        exp: expDecision.index,
-        health: null,
-        name: pet,
-        mana: null,
-      },
-      parent,
-    );
-  }
-
-  getRandomFaintPet(
-    parent: Player,
-    options: {
-      tier?: number;
-      excludeNames?: string[];
-      sourcePet?: Pet;
-      fromAnyPack?: boolean;
-      fallbackAcrossTiers?: boolean;
-    } = {},
-  ): Pet {
-    if (!this.faintPetsByTier?.size) {
-      this.faintPetsByTier = this.buildFaintPetsByTier(
-        this.getPetEntriesFromJson(),
-      );
-    }
-
-    const tier = options.tier;
-    const excludeNames = options.excludeNames ?? [];
-    const fromAnyPack = options.fromAnyPack ?? false;
-    const fallbackAcrossTiers = options.fallbackAcrossTiers ?? true;
-
-    const faintPets = this.getRandomFaintPetPool(
-      parent,
-      tier,
-      fromAnyPack,
-      fallbackAcrossTiers,
-    );
-
-    const excludeSet = new Set(excludeNames.map((name) => name?.toLowerCase()));
-    const filteredFaintPets = faintPets.filter(
-      (name) => !excludeSet.has(name.toLowerCase()),
-    );
-
-    // Fallback to all tiers (still excluding) if tier-specific pool is exhausted
-    let pool = filteredFaintPets;
-    if (!pool.length && tier && fallbackAcrossTiers) {
-      const allFiltered = this.getRandomFaintPetPool(
-        parent,
-        undefined,
-        fromAnyPack,
-        fallbackAcrossTiers,
-      )
-        .filter((name: string) => !excludeSet.has(name.toLowerCase()));
-      if (allFiltered.length) {
-        pool = allFiltered;
-      }
-    }
-
-    // Final fallback to original list to avoid crashes if everything was excluded
-    if (!pool.length) {
-      pool = faintPets;
-    }
-
-    const decision = chooseRandomOption(
-      {
-        key: 'pet.random-faint-pet',
-        label: `${this.describeRandomFaintPetOwner(parent, options.sourcePet)} -> Random faint pet summon`,
-        options: pool.map((name) => ({ id: name, label: name })),
-      },
-      () => getRandomInt(0, pool.length - 1),
-    );
-    let petName = pool[decision.index];
-    return this.createPet(
-      {
-        name: petName,
-        attack: null,
-        equipment: null,
-        exp: 0,
-        health: null,
-        mana: null,
-      },
-      parent,
-    );
-  }
-
-  private describeRandomFaintPetOwner(parent: Player, sourcePet?: Pet): string {
-    const ownerSide = parent?.isOpponent ? 'opponent team' : 'player team';
-    if (!sourcePet) {
-      return ownerSide;
-    }
-    const sourceSide = sourcePet.parent?.isOpponent ? 'O' : 'P';
-    const sourcePosition = Number.isFinite(sourcePet.savedPosition)
-      ? sourcePet.savedPosition + 1
-      : 0;
-    return `${sourceSide}${sourcePosition} ${sourcePet.name} (owner: ${ownerSide})`;
+  getRandomPet(parent: Player): Pet {
+    const tier = getRandomInt(1, 6);
+    const pool = this.getPetPoolByTier(parent, tier);
+    if (parent.allPets && parent.tokenPets) pool.push(...(this.tokenPetsMap.get(tier) ?? []));
+    const names = [...new Set(pool)];
+    return this.createPet({ name: names[getRandomInt(0, names.length - 1)] ?? 'Ant', exp: getRandomInt(0, 5) }, parent);
   }
 }
-
-
-
-
-
-

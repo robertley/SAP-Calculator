@@ -5,17 +5,15 @@ import { Log } from 'app/domain/interfaces/log.interface';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
 import { LogService } from 'app/integrations/log.service';
 import { SimulationService } from 'app/integrations/simulation/simulation.service';
+import { MAX_DISPLAYED_BATTLES } from 'app/integrations/simulation/simulation.constants';
 import {
   RandomDecisionCapture,
-  PetConfig,
   SimulationConfig,
 } from 'app/domain/interfaces/simulation-config.interface';
-import {
-  PositioningOptimizationResult,
-  PositioningOptimizationSide,
-  PositioningPermutationStats,
-  getPositioningSimulationCount,
-} from 'app/integrations/simulation/positioning-optimizer';
+import type {
+  FightOptimizerResult,
+  OptimizerSide,
+} from 'sap-battle-engine';
 import { buildApiResponse as buildApiResponsePayload } from '../state/app.component.share';
 import {
   EMPTY_DIFF_SUMMARY,
@@ -74,21 +72,6 @@ export interface BattleLogGroup {
   collapsed: boolean;
 }
 
-export interface PositioningOptimizationBaseline {
-  side: PositioningOptimizationSide;
-  playerWins: number;
-  opponentWins: number;
-  draws: number;
-  totalBattles: number;
-}
-
-export interface PositioningDeltaSummary {
-  side: PositioningOptimizationSide;
-  winDeltaPercent: number;
-  drawDeltaPercent: number;
-  lossDeltaPercent: number;
-}
-
 export interface AppSimulationContext {
   formGroup: FormGroup;
   localStorageService: LocalStorageService;
@@ -133,8 +116,8 @@ export interface AppSimulationContext {
   randomOverrideError?: string | null;
   showRandomOverrides?: boolean;
   refreshFightAnimationFromViewBattle?: () => void;
-  pendingPositioningOptimizationBaseline?: PositioningOptimizationBaseline | null;
-  positioningDeltaSummary?: PositioningDeltaSummary | null;
+  fightOptimizerResult?: FightOptimizerResult | null;
+  fightOptimizerInputFingerprint?: string | null;
 }
 
 const logPartsCache = new WeakMap<
@@ -583,8 +566,6 @@ export function buildApiResponse(ctx: AppSimulationContext): void {
 
 export function simulate(ctx: AppSimulationContext, count: number = 1000): void {
   try {
-    ctx.pendingPositioningOptimizationBaseline = null;
-    ctx.positioningDeltaSummary = null;
     if (ctx.api) {
       runSimulation(ctx, count);
       return;
@@ -601,8 +582,6 @@ export function runSimulation(
   count: number = 1000,
   configOverrides?: Partial<SimulationConfig>,
 ): void {
-  ctx.pendingPositioningOptimizationBaseline = null;
-  ctx.positioningDeltaSummary = null;
   ctx.simulationBattleAmt = count;
   ctx.localStorageService.setFormStorage(ctx.formGroup);
 
@@ -695,56 +674,47 @@ export function cancelSimulation(ctx: AppSimulationContext): void {
   cleanupWorker(ctx);
   ctx.simulationInProgress = false;
   ctx.simulationCancelRequested = false;
-  ctx.pendingPositioningOptimizationBaseline = null;
-  ctx.positioningDeltaSummary = null;
   ctx.setStatus?.('Simulation cancelled.', 'error');
   ctx.markForCheck?.();
 }
 
 export function optimizePositioning(
   ctx: AppSimulationContext,
-  side: PositioningOptimizationSide,
+  maxSimulations = 10_000,
 ): void {
   if (ctx.simulationInProgress) {
     return;
   }
 
-  const petsKey = side === 'player' ? 'playerPets' : 'opponentPets';
-  const lineup = (ctx.formGroup.get(petsKey)?.value ?? []) as (PetConfig | null)[];
-  const maxSimulationsPerPermutation = getPositioningSimulationCount(lineup);
-  const count = maxSimulationsPerPermutation;
-  const projectEndTurnEffects =
-    ctx.formGroup.get('projectEndTurnEffectsOnOptimization')?.value !== false;
-  const recomputeParrotCopies =
-    ctx.formGroup.get('recomputeParrotCopiesOnOptimization')?.value !== false;
-  ctx.positioningDeltaSummary = null;
-  ctx.pendingPositioningOptimizationBaseline =
-    buildOptimizationBaselineFromCurrentResults(ctx, side);
+  const requestedBudget = Math.trunc(maxSimulations);
+  const simulationBudget =
+    Number.isSafeInteger(requestedBudget) && requestedBudget > 0
+      ? requestedBudget
+      : 10_000;
+  ctx.fightOptimizerResult = null;
+  ctx.fightOptimizerInputFingerprint = JSON.stringify(ctx.formGroup.value);
 
   const runId = startAsyncRun(
     ctx,
-    `0 / ${maxSimulationsPerPermutation * 120}`,
-    `Optimizing ${side} positioning...`,
+    `0 / ${simulationBudget} simulations`,
+    'Optimizing both positionings...',
   );
 
-  const worker = ctx.simulationService.runPositioningOptimizationInWorker(
+  const worker = ctx.simulationService.runFightOptimizationInWorker(
     ctx.formGroup,
-    count,
-    ctx.player,
-    ctx.opponent,
     {
       onProgress: (progress) => {
         if (!isCurrentRun(ctx, runId)) {
           return;
         }
-        const percent = progress.totalBattlesEstimate
-          ? Math.floor(
-              (progress.completedBattles / progress.totalBattlesEstimate) * 100,
-            )
-          : 0;
-        ctx.simulationProgress = percent;
+        ctx.simulationProgress = Math.min(
+          99,
+          Math.floor((progress.simulations / simulationBudget) * 100),
+        );
         ctx.simulationProgressLabel =
-          `${progress.completedBattles} / ${progress.totalBattlesEstimate} sims`;
+          `${progress.simulations} simulations · ` +
+          `${progress.evaluatedMatchups}/${progress.potentialMatchups} matchups · ` +
+          `${progress.completedResponses} responses`;
         ctx.markForCheck?.();
       },
       onResult: (result) => {
@@ -752,33 +722,25 @@ export function optimizePositioning(
           return;
         }
         cleanupWorker(ctx);
-        applyOptimizedLineup(ctx, result);
-        ctx.pendingPositioningOptimizationBaseline =
-          ctx.pendingPositioningOptimizationBaseline ??
-          buildOptimizationBaselineFromOptimizerResult(result);
+        ctx.fightOptimizerResult = result;
+        console.log(result);
         ctx.simulationInProgress = false;
         ctx.simulationCancelRequested = false;
         ctx.simulationProgress = 100;
         ctx.simulationProgressLabel =
-          `${result.simulatedBattles} / ${result.simulatedBattles} sims`;
-        const bestScorePct = (result.bestPermutation.score * 100).toFixed(1);
+          `${result.stats.simulations} simulations · ${result.steps.length} responses`;
         ctx.setStatus?.(
-          `${capitalizeSide(side)} optimized (${bestScorePct}% score). Running verification sim...`,
+          `Positioning optimization finished (${result.termination}). Review the optimization report below.`,
           'success',
         );
         ctx.markForCheck?.();
-        runSimulationAsync(ctx, count);
       },
       onAborted: (result) => {
         if (!isCurrentRun(ctx, runId)) {
           return;
         }
         cleanupWorker(ctx);
-        if (result.bestPermutation) {
-          applyOptimizedLineup(ctx, result);
-        }
-        ctx.pendingPositioningOptimizationBaseline = null;
-        ctx.positioningDeltaSummary = null;
+        ctx.fightOptimizerResult = result;
         endAsyncRun(ctx, 'Positioning optimization cancelled.', 'error');
       },
       onError: (message) => {
@@ -786,8 +748,6 @@ export function optimizePositioning(
           return;
         }
         cleanupWorker(ctx);
-        ctx.pendingPositioningOptimizationBaseline = null;
-        ctx.positioningDeltaSummary = null;
         endAsyncRun(
           ctx,
           message || 'Positioning optimization failed.',
@@ -796,18 +756,69 @@ export function optimizePositioning(
       },
     },
     {
-      side,
-      maxSimulationsPerPermutation,
-      batchSize: Math.min(25, maxSimulationsPerPermutation),
-      minSamplesBeforeElimination: Math.min(50, maxSimulationsPerPermutation),
-      confidenceZ: 1.96,
-      projectEndTurnLineup: projectEndTurnEffects,
-      keepSameBuffTargets: !projectEndTurnEffects,
-      recomputeParrotCopies,
+      maxSimulations: simulationBudget,
     },
   );
 
   ctx.simulationWorker = worker;
+}
+
+export function applyFightOptimizerLineup(
+  ctx: AppSimulationContext,
+  scope: OptimizerSide | 'both',
+): void {
+  const result = ctx.fightOptimizerResult;
+  if (!result || ctx.simulationInProgress) {
+    return;
+  }
+  if (
+    ctx.fightOptimizerInputFingerprint !== JSON.stringify(ctx.formGroup.value)
+  ) {
+    ctx.fightOptimizerResult = null;
+    ctx.fightOptimizerInputFingerprint = null;
+    ctx.setStatus?.(
+      'The matchup changed after this optimization. Run it again before applying a lineup.',
+      'error',
+    );
+    ctx.markForCheck?.();
+    return;
+  }
+
+  if (scope === 'player' || scope === 'both') {
+    applyFightOptimizerSide(
+      ctx.formGroup.get('playerPets') as FormArray | null,
+      result.finalPosition.playerOrder,
+    );
+  }
+  if (scope === 'opponent' || scope === 'both') {
+    applyFightOptimizerSide(
+      ctx.formGroup.get('opponentPets') as FormArray | null,
+      result.finalPosition.opponentOrder,
+    );
+  }
+  ctx.afterPositioningApplied?.();
+  ctx.fightOptimizerResult = null;
+  ctx.fightOptimizerInputFingerprint = null;
+  const label = scope === 'both' ? 'both optimized lineups' : `the optimized ${scope} lineup`;
+  ctx.setStatus?.(`Applied ${label}.`, 'success');
+  ctx.markForCheck?.();
+}
+
+function applyFightOptimizerSide(
+  formArray: FormArray | null,
+  order: number[],
+): void {
+  if (!formArray || order.length !== formArray.length) {
+    return;
+  }
+  const controls = formArray.controls.slice();
+  order.forEach((sourceIndex, targetIndex) => {
+    const control = controls[sourceIndex];
+    if (control) {
+      formArray.setControl(targetIndex, control);
+    }
+  });
+  formArray.updateValueAndValidity();
 }
 
 function cleanupWorker(ctx: AppSimulationContext): void {
@@ -815,287 +826,6 @@ function cleanupWorker(ctx: AppSimulationContext): void {
     ctx.simulationWorker.terminate();
   }
   ctx.simulationWorker = null;
-}
-
-function applyOptimizedLineup(
-  ctx: AppSimulationContext,
-  result: PositioningOptimizationResult,
-): void {
-  const key = result.side === 'player' ? 'playerPets' : 'opponentPets';
-  const formArray = ctx.formGroup.get(key) as FormArray | null;
-  if (!formArray || !result.bestPermutation) {
-    return;
-  }
-
-  reorderFormArrayByLineup(formArray, result.bestPermutation.lineup);
-  applyProjectedLineupToFormArray(
-    formArray,
-    result.bestPermutation.simulationLineup,
-  );
-  ctx.afterPositioningApplied?.();
-}
-
-function reorderFormArrayByLineup(
-  formArray: FormArray,
-  lineup: (PetConfig | null)[],
-): void {
-  const controls = formArray.controls.slice();
-  const sourceValues = controls.map((control) => control.value);
-  const usedSourceIndices = new Set<number>();
-
-  for (let targetIndex = 0; targetIndex < controls.length; targetIndex += 1) {
-    const targetPet = lineup[targetIndex] ?? null;
-    const sourceIndex = findNextMatchingSourceIndex(
-      sourceValues,
-      targetPet,
-      usedSourceIndices,
-    );
-    if (sourceIndex === -1) {
-      continue;
-    }
-    usedSourceIndices.add(sourceIndex);
-    formArray.setControl(targetIndex, controls[sourceIndex]);
-  }
-  formArray.updateValueAndValidity();
-}
-
-function applyProjectedLineupToFormArray(
-  formArray: FormArray,
-  lineup: (PetConfig | null)[],
-): void {
-  for (let index = 0; index < formArray.length; index += 1) {
-    const control = formArray.at(index) as FormGroup | null;
-    if (!control) {
-      continue;
-    }
-    control.patchValue(
-      buildPetFormPatch(control.value as Record<string, unknown>, lineup[index] ?? null),
-      { emitEvent: false },
-    );
-  }
-  formArray.updateValueAndValidity({ emitEvent: false });
-}
-
-function buildPetFormPatch(
-  currentValue: Record<string, unknown>,
-  pet: PetConfig | null,
-): Record<string, unknown> {
-  if (!pet || !pet.name) {
-    return currentValue;
-  }
-
-  const rawEquipment = pet.equipment;
-  const equipmentName =
-    rawEquipment && typeof rawEquipment === 'object'
-      ? typeof (rawEquipment as { name?: unknown }).name === 'string'
-        ? (rawEquipment as { name: string }).name
-        : null
-      : typeof rawEquipment === 'string'
-        ? rawEquipment
-        : null;
-  const equipmentUses =
-    typeof pet.equipmentUses === 'number'
-      ? pet.equipmentUses
-      : rawEquipment && typeof rawEquipment === 'object'
-        ? typeof (rawEquipment as { uses?: unknown }).uses === 'number'
-          ? ((rawEquipment as { uses?: unknown }).uses as number | null | undefined) ?? null
-          : null
-        : null;
-
-  return {
-    ...currentValue,
-    ...pet,
-    equipment: equipmentName,
-    equipmentUses,
-  };
-}
-
-function findNextMatchingSourceIndex(
-  sourceValues: unknown[],
-  targetPet: PetConfig | null,
-  usedSourceIndices: Set<number>,
-): number {
-  const targetSignature = buildPetSignature(targetPet);
-  for (let i = 0; i < sourceValues.length; i += 1) {
-    if (usedSourceIndices.has(i)) {
-      continue;
-    }
-    if (buildPetSignature(sourceValues[i] ?? null) === targetSignature) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-function buildPetSignature(pet: unknown): string {
-  if (!pet || typeof pet !== 'object') {
-    return 'empty';
-  }
-  const petRecord = pet as Record<string, unknown>;
-  if (typeof petRecord.name !== 'string' || !petRecord.name) {
-    return 'empty';
-  }
-
-  const rawEquipment = petRecord.equipment;
-  const equipmentName =
-    rawEquipment && typeof rawEquipment === 'object'
-      ? typeof (rawEquipment as { name?: unknown }).name === 'string'
-        ? (rawEquipment as { name: string }).name
-        : null
-      : rawEquipment ?? null;
-
-  const signature = {
-    name: petRecord.name ?? null,
-    attack: petRecord.attack ?? null,
-    health: petRecord.health ?? null,
-    exp: petRecord.exp ?? null,
-    equipment: equipmentName ?? null,
-    equipmentUses: petRecord.equipmentUses ?? null,
-    belugaSwallowedPet: petRecord.belugaSwallowedPet ?? null,
-    parrotCopyPet: petRecord.parrotCopyPet ?? null,
-    mana: petRecord.mana ?? null,
-    triggersConsumed: petRecord.triggersConsumed ?? null,
-    foodsEaten: petRecord.foodsEaten ?? null,
-    timesGaveHealth: petRecord.timesGaveHealth ?? null,
-    battlesFought: petRecord.battlesFought ?? null,
-    timesHurt: petRecord.timesHurt ?? null,
-  };
-
-  return JSON.stringify(signature);
-}
-
-function capitalizeSide(side: PositioningOptimizationSide): string {
-  return side.charAt(0).toUpperCase() + side.slice(1);
-}
-
-function countTotalBattles(
-  playerWins: number,
-  opponentWins: number,
-  draws: number,
-): number {
-  return playerWins + opponentWins + draws;
-}
-
-function toPercent(part: number, total: number): number {
-  if (total <= 0) {
-    return 0;
-  }
-  return (part / total) * 100;
-}
-
-function roundToNearestCent(value: number): number {
-  return Math.round(value * 100) / 100;
-}
-
-function buildOptimizationBaselineFromCurrentResults(
-  ctx: AppSimulationContext,
-  side: PositioningOptimizationSide,
-): PositioningOptimizationBaseline | null {
-  if (!ctx.simulated) {
-    return null;
-  }
-  const totalBattles = countTotalBattles(
-    ctx.playerWinner,
-    ctx.opponentWinner,
-    ctx.draw,
-  );
-  if (totalBattles <= 0) {
-    return null;
-  }
-  return {
-    side,
-    playerWins: ctx.playerWinner,
-    opponentWins: ctx.opponentWinner,
-    draws: ctx.draw,
-    totalBattles,
-  };
-}
-
-function findIdentityPermutationStats(
-  permutations: PositioningPermutationStats[],
-): PositioningPermutationStats | null {
-  const identityPermutation = permutations.find((permutation) =>
-    permutation.order.every((value, index) => value === index),
-  );
-  if (identityPermutation) {
-    return identityPermutation;
-  }
-  return permutations.find((permutation) => permutation.simulations > 0) ?? null;
-}
-
-function buildOptimizationBaselineFromOptimizerResult(
-  result: PositioningOptimizationResult,
-): PositioningOptimizationBaseline | null {
-  const baselinePermutation = findIdentityPermutationStats(
-    result.rankedPermutations,
-  );
-  if (!baselinePermutation || baselinePermutation.simulations <= 0) {
-    return null;
-  }
-
-  if (result.side === 'player') {
-    return {
-      side: result.side,
-      playerWins: baselinePermutation.wins,
-      opponentWins: baselinePermutation.losses,
-      draws: baselinePermutation.draws,
-      totalBattles: baselinePermutation.simulations,
-    };
-  }
-
-  return {
-    side: result.side,
-    playerWins: baselinePermutation.losses,
-    opponentWins: baselinePermutation.wins,
-    draws: baselinePermutation.draws,
-    totalBattles: baselinePermutation.simulations,
-  };
-}
-
-function buildPositioningDeltaSummary(
-  baseline: PositioningOptimizationBaseline,
-  result: {
-    playerWins: number;
-    opponentWins: number;
-    draws: number;
-  },
-): PositioningDeltaSummary | null {
-  const optimizedTotalBattles = countTotalBattles(
-    result.playerWins,
-    result.opponentWins,
-    result.draws,
-  );
-  if (optimizedTotalBattles <= 0 || baseline.totalBattles <= 0) {
-    return null;
-  }
-
-  const baselineWinsForSide =
-    baseline.side === 'player' ? baseline.playerWins : baseline.opponentWins;
-  const optimizedWinsForSide =
-    baseline.side === 'player' ? result.playerWins : result.opponentWins;
-  const baselineLossesForSide =
-    baseline.side === 'player' ? baseline.opponentWins : baseline.playerWins;
-  const optimizedLossesForSide =
-    baseline.side === 'player' ? result.opponentWins : result.playerWins;
-  const winDeltaPercent = roundToNearestCent(
-    toPercent(optimizedWinsForSide, optimizedTotalBattles) -
-      toPercent(baselineWinsForSide, baseline.totalBattles),
-  );
-  const drawDeltaPercent = roundToNearestCent(
-    toPercent(result.draws, optimizedTotalBattles) -
-      toPercent(baseline.draws, baseline.totalBattles),
-  );
-  const lossDeltaPercent = roundToNearestCent(
-    toPercent(optimizedLossesForSide, optimizedTotalBattles) -
-      toPercent(baselineLossesForSide, baseline.totalBattles),
-  );
-
-  return {
-    side: baseline.side,
-    winDeltaPercent,
-    drawDeltaPercent,
-    lossDeltaPercent,
-  };
 }
 
 function applySimulationResult(
@@ -1109,11 +839,6 @@ function applySimulationResult(
     randomOverrideError?: string | null;
   },
 ): void {
-  const baseline = ctx.pendingPositioningOptimizationBaseline ?? null;
-  ctx.pendingPositioningOptimizationBaseline = null;
-  ctx.positioningDeltaSummary = baseline
-    ? buildPositioningDeltaSummary(baseline, result)
-    : null;
   ctx.playerWinner = result.playerWins;
   ctx.opponentWinner = result.opponentWins;
   ctx.draw = result.draws;
@@ -1270,10 +995,11 @@ export function refreshBattleDiff(ctx: AppSimulationContext): void {
 
 export function refreshFilteredBattles(ctx: AppSimulationContext): void {
   const filter = ctx.formGroup.get('logFilter')?.value ?? null;
-  ctx.filteredBattlesCache =
+  const filteredBattles =
     filter == null
       ? ctx.battles
       : ctx.battles.filter((battle) => battle.winner === filter);
+  ctx.filteredBattlesCache = filteredBattles.slice(0, MAX_DISPLAYED_BATTLES);
 }
 
 export function formatRandomEvents(
@@ -1351,6 +1077,3 @@ export {
   parseLogMessage,
   summarizeBattleForDiff,
 } from './app.component.simulation-log';
-
-
-

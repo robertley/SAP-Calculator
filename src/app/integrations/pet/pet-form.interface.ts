@@ -6,6 +6,7 @@ export interface PetForm extends PetMemoryState {
   attack?: number | null;
   health?: number | null;
   mana?: number | null;
+  plainCopy?: boolean;
   triggersConsumed?: number;
   foodsEaten?: number;
   timesGaveHealth?: number;

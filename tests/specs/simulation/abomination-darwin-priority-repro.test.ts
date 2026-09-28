@@ -3,18 +3,18 @@ import {
   expandCompactCalculatorState,
   parseImportPayload,
 } from 'app/ui/shell/state/app.component.share';
-import { runSimulation } from '../../../simulation/simulate';
+import { createBattleEngine } from 'sap-battle-engine';
 import { SimulationConfig } from '../../../src/app/domain/interfaces/simulation-config.interface';
 
 function getMessages(config: SimulationConfig): string[] {
-  const logs = runSimulation({
+  const logs = createBattleEngine({ entropy: () => 0.5 }).runSimulation({
     ...config,
     simulationCount: 1,
     logsEnabled: true,
     maxLoggedBattles: 1,
     showTriggerNamesInLogs: true,
   }).battles?.[0]?.logs;
-  return (logs ?? []).map((log: any) => String(log?.message ?? ''));
+  return (logs ?? []).map((log) => String(log?.message ?? ''));
 }
 
 function findFirstIndexAfter(

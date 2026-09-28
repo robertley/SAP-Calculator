@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { getDefaultTeams } from './team-presets.defaults';
-import { PetForm } from './pet/pet-factory.service';
+import { PetForm } from './pet/pet-form.interface';
 
 export interface TeamPreset {
   id: string;
@@ -27,6 +27,7 @@ export interface TeamPreset {
   komodoShuffle?: boolean;
   mana?: boolean;
   seed?: number | null;
+  plainCopies?: boolean;
   triggersConsumed?: boolean;
   changeEquipmentUses?: boolean;
   playerRollAmount?: number;

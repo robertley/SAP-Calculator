@@ -1,1 +1,1 @@
-export const MAX_LOGGED_BATTLES = 100;
+export const MAX_DISPLAYED_BATTLES = 100;

@@ -1,23 +1,10 @@
+import { CalculatorBattleEngine } from 'app/integrations/simulation/battle-engine';
 import { describe, expect, it } from 'vitest';
 import {
   expandCompactCalculatorState,
   parseImportPayload,
 } from 'app/ui/shell/state/app.component.share';
-import { SimulationRunner } from 'app/gameplay/simulation-runner';
 import { LogService } from 'app/integrations/log.service';
-import { GameService } from 'app/runtime/state/game.service';
-import { AbilityService } from 'app/integrations/ability/ability.service';
-import { AbilityQueueService } from 'app/integrations/ability/ability-queue.service';
-import { AttackEventService } from 'app/integrations/ability/attack-event.service';
-import { FaintEventService } from 'app/integrations/ability/faint-event.service';
-import { ToyEventService } from 'app/integrations/ability/toy-event.service';
-import { PetService } from 'app/integrations/pet/pet.service';
-import { EquipmentService } from 'app/integrations/equipment/equipment.service';
-import { ToyService } from 'app/integrations/toy/toy.service';
-import { PetFactoryService } from 'app/integrations/pet/pet-factory.service';
-import { EquipmentFactoryService } from 'app/integrations/equipment/equipment-factory.service';
-import { ToyFactoryService } from 'app/integrations/toy/toy-factory.service';
-import { InjectorService } from 'app/integrations/injector.service';
 import { getOptimizedPositioningLineup } from 'app/integrations/replay/replay-positioning-image.service';
 import {
   PetConfig,
@@ -25,94 +12,8 @@ import {
 } from '../../../src/app/domain/interfaces/simulation-config.interface';
 import { runPositioningOptimization } from '../../../src/app/integrations/simulation/positioning-optimizer';
 
-class NodeInjector {
-  private map = new Map<unknown, unknown>();
-
-  register(token: unknown, instance: unknown): void {
-    const key =
-      typeof token === 'function' && 'name' in token
-        ? String((token as { name?: unknown }).name ?? '')
-        : token;
-    this.map.set(key, instance);
-  }
-
-  get(token: unknown): unknown {
-    const key =
-      typeof token === 'function' && 'name' in token
-        ? String((token as { name?: unknown }).name ?? '')
-        : token;
-    return this.map.get(key);
-  }
-}
-
-function createSimulationRunner(logService: LogService): SimulationRunner {
-  const gameService = new GameService();
-  const abilityQueueService = new AbilityQueueService();
-  const toyEventService = new ToyEventService(gameService, logService);
-  const attackEventService = new AttackEventService(abilityQueueService);
-  const faintEventService = new FaintEventService(
-    abilityQueueService,
-    toyEventService,
-  );
-  const abilityService = new AbilityService(
-    gameService,
-    logService,
-    toyEventService,
-    abilityQueueService,
-    attackEventService,
-    faintEventService,
-  );
-  const equipmentFactory = new EquipmentFactoryService(
-    logService,
-    abilityService,
-    gameService,
-  );
-  const equipmentService = new EquipmentService(
-    logService,
-    abilityService,
-    gameService,
-    equipmentFactory,
-  );
-  const petFactory = new PetFactoryService(
-    logService,
-    abilityService,
-    gameService,
-    equipmentService,
-  );
-  const petService = new PetService(
-    logService,
-    abilityService,
-    gameService,
-    petFactory,
-  );
-  const injector = new NodeInjector();
-  injector.register(PetService, petService);
-  injector.register(EquipmentService, equipmentService);
-  injector.register(AbilityService, abilityService);
-  injector.register(LogService, logService);
-  injector.register(AbilityQueueService, abilityQueueService);
-  const toyFactory = new ToyFactoryService(logService, abilityService);
-  const toyService = new ToyService(
-    logService,
-    abilityService,
-    gameService,
-    equipmentService,
-    petService,
-    toyFactory,
-  );
-  injector.register(ToyService, toyService);
-  injector.register(PetFactoryService, petFactory);
-  InjectorService.setInjector(injector as never);
-  petService.init();
-
-  return new SimulationRunner(
-    logService,
-    gameService,
-    abilityService,
-    petService,
-    equipmentService,
-    toyService,
-  );
+function createSimulationRunner(logService: LogService): CalculatorBattleEngine {
+  return new CalculatorBattleEngine(logService);
 }
 
 function clonePet(pet: PetConfig | null): PetConfig | null {

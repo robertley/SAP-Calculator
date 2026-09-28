@@ -263,6 +263,7 @@ export function initPetForms(
         ),
       sarcasticFringeheadSwallowedPet: new FormControl(),
       mana: new FormControl(pet?.mana ?? 0),
+      plainCopy: new FormControl(pet?.plainCopy ?? false),
       triggersConsumed: new FormControl(pet?.triggersConsumed ?? 0),
       foodsEaten: new FormControl(pet?.foodsEaten ?? 0),
       timesGaveHealth: new FormControl(pet?.timesGaveHealth ?? 0),

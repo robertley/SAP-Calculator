@@ -37,6 +37,8 @@ export class PetSelectorPackFiltering {
   @Input()
   mana: boolean;
   @Input()
+  plainCopies: boolean;
+  @Input()
   triggersConsumed: boolean;
   @Input()
   formGroup: FormGroup;

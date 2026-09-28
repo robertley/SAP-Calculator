@@ -1,4 +1,5 @@
 import { PetConfig } from 'app/domain/interfaces/simulation-config.interface';
+import { clonePetConfigEquipment } from '../equipment/pet-config-equipment';
 import { ReplayCalculatorState } from './replay-calc-parser';
 
 export const REPLAY_IMAGE_CALCULATOR_STATES_KEY =
@@ -33,7 +34,7 @@ function normalizeLineup(
           health: 0,
           exp: 0,
           ...pet,
-          equipment: pet.equipment ? { ...pet.equipment } : null,
+          equipment: clonePetConfigEquipment(pet.equipment),
         }
       : null,
   );

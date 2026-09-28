@@ -50,12 +50,51 @@ function makeLoadFormGroup(): MockFormGroup {
     playerHardToyLevel: new MockControl(1),
     opponentHardToy: new MockControl(null),
     opponentHardToyLevel: new MockControl(1),
+    plainCopies: new MockControl(false),
     playerPets: new MockFormArray(),
     opponentPets: new MockFormArray(),
   });
 }
 
-describe('team preset toy level resolution', () => {
+describe('team preset restoration', () => {
+  it('restores the plain-copy UI and pet flags', () => {
+    const formGroup = makeLoadFormGroup();
+    const player = { setPet: vi.fn() };
+    const opponent = { setPet: vi.fn() };
+    const petService = { createPet: vi.fn(() => ({ name: 'Ant' })) };
+    const equipmentService = {
+      getInstanceOfAllEquipment: vi.fn(() => new Map()),
+      getInstanceOfAllAilments: vi.fn(() => new Map()),
+    };
+
+    loadTeamPreset({
+      side: 'player',
+      selectedTeamId: 'plain-copy-team',
+      savedTeams: [
+        {
+          id: 'plain-copy-team',
+          name: 'Plain copy team',
+          createdAt: 1,
+          plainCopies: true,
+          pets: [{ name: 'Ant', exp: 0, plainCopy: true }],
+        },
+      ],
+      formGroup: formGroup as unknown as LoadTeamPresetOptions['formGroup'],
+      player: player as unknown as LoadTeamPresetOptions['player'],
+      opponent: opponent as unknown as LoadTeamPresetOptions['opponent'],
+      petService: petService as unknown as LoadTeamPresetOptions['petService'],
+      equipmentService:
+        equipmentService as unknown as LoadTeamPresetOptions['equipmentService'],
+      initPetForms: vi.fn(),
+    });
+
+    expect((formGroup.get('plainCopies') as MockControl).value).toBe(true);
+    expect(petService.createPet).toHaveBeenCalledWith(
+      expect.objectContaining({ name: 'Ant', plainCopy: true }),
+      player,
+    );
+  });
+
   it('keeps toy level aligned with the fallback toy name source', () => {
     const formGroup = makeLoadFormGroup();
     const player = { setPet: vi.fn() };

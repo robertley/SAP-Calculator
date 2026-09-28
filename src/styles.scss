@@ -3,7 +3,7 @@
   font-family: "Lapsus Pro";
   src:
     local("Lapsus Pro"),
-    url("/assets/fonts/LapsusPro-Regular.otf") format("opentype");
+    url("assets/fonts/LapsusPro-Regular.otf") format("opentype");
   font-style: normal;
   font-weight: 400;
   font-display: swap;
@@ -14,7 +14,7 @@
   src:
     local("Lapsus Pro Bold"),
     local("Lapsus Pro"),
-    url("/assets/fonts/LapsusPro-Bold.otf") format("opentype");
+    url("assets/fonts/LapsusPro-Bold.otf") format("opentype");
   font-style: normal;
   font-weight: 700;
   font-display: swap;

@@ -52,14 +52,6 @@
             <span class="results-segment results-segment-draw" [style.width.%]="app.drawPercent"></span>
             <span class="results-segment results-segment-opponent" [style.width.%]="app.losePercent"></span>
           </div>
-          <div class="optimization-delta" *ngIf="app.positioningDeltaSummary">
-            <span class="optimization-delta-label">{{ app.positioningDeltaSideLabel }} optimize delta:</span>
-            <span class="optimization-delta-value optimization-delta-value-win">Win {{ app.formatSignedPercentDelta(app.positioningDeltaSummary.winDeltaPercent) }}pp</span>
-            <span class="optimization-delta-separator">&#183;</span>
-            <span class="optimization-delta-value">Draw {{ app.formatSignedPercentDelta(app.positioningDeltaSummary.drawDeltaPercent) }}pp</span>
-            <span class="optimization-delta-separator">&#183;</span>
-            <span class="optimization-delta-value optimization-delta-value-loss">Loss {{ app.formatSignedPercentDelta(app.positioningDeltaSummary.lossDeltaPercent) }}pp</span>
-          </div>
         </div>
       </ng-container>
       <ng-template #resultsPlaceholder>
@@ -115,7 +107,7 @@
         </div>
       </div>
       <div class="external-meta top-controls-meta-text">
-        Shortcuts: Alt+S simulate, Alt+R randomize, Alt+P/O optimize, Alt+A controls, Alt+T theme
+        Shortcuts: Alt+S simulate, Alt+R randomize, Alt+P optimize, Alt+A controls, Alt+T theme
       </div>
     </div>
   </div>
@@ -154,7 +146,8 @@
         <span class="tool-dialog-icon" aria-hidden="true">
           <img src="assets/art/Public/Public/Pets/Crane.png" alt="">
         </span>
-        <span><strong>Optimize positioning</strong><small>Find the strongest board order</small></span>
+        <span><strong>Optimize positioning</strong><small>Search both boards for best responses</small></span>
+        <b class="tool-action-count" *ngIf="app.fightOptimizerResult">{{ app.fightOptimizerResult.steps.length }}</b>
       </button>
       <button type="button" class="tool-dialog-action" (click)="selectToolsTab('outs')"
         [class.active]="activeToolsTab === 'outs'">
@@ -212,29 +205,20 @@
 
       <main class="tools-workspace-content">
         <section class="tool-pane" *ngIf="activeToolsTab === 'optimize'">
-          <div class="tool-pane-heading"><span class="dialog-eyebrow">Board order</span><h3>Optimize positioning</h3><p>Test board orders and apply the strongest lineup.</p></div>
+          <div class="tool-pane-heading"><span class="dialog-eyebrow">Best-response search</span><h3>Optimize fight positioning</h3><p>Alternate between the strongest sampled responses for both current boards.</p></div>
           <div class="optimization-dialog-body">
-            <label class="dialog-field-label" for="optimizeSide">Optimize</label>
-            <div class="side-segmented-control" role="group" aria-label="Side to optimize">
-              <button type="button" [class.active]="optimizeSide === 'player'" (click)="optimizeSide = 'player'">Player</button>
-              <button type="button" [class.active]="optimizeSide === 'opponent'" (click)="optimizeSide = 'opponent'">Opponent</button>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="projectEndTurnEffectsOnOptimization"
-                formControlName="projectEndTurnEffectsOnOptimization" [disabled]="app.simulationInProgress" />
-              <label class="form-check-label" for="projectEndTurnEffectsOnOptimization">Project end-turn effects</label>
-              <div class="form-text">Re-target positional end-turn buffs and effects for every tested order.</div>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="recomputeParrotCopiesOnOptimization"
-                formControlName="recomputeParrotCopiesOnOptimization" [disabled]="app.simulationInProgress" />
-              <label class="form-check-label" for="recomputeParrotCopiesOnOptimization">Recompute Parrot copies by position</label>
-              <div class="form-text">Each Parrot copies the nearest pet ahead; a front-most Parrot copies nothing.</div>
+            <label class="dialog-field-label" for="optimizerMaxSimulations">Battle budget</label>
+            <input id="optimizerMaxSimulations" class="form-control" type="number" min="1" step="1000"
+              [(ngModel)]="optimizerMaxSimulations" [ngModelOptions]="{ standalone: true }"
+              [disabled]="app.simulationInProgress" />
+            <div class="form-text">The engine starts with sampled matchups, refines mixed responses, and stops when it finds a response cycle, an unbeaten sampled side, or reaches this budget.</div>
+            <div class="optimization-report-hint">
+              The complete trace, matchup estimates, candidate orders, statistics, and raw result will appear in a separate report below the toolbar. Nothing is applied to the editor until you choose an Apply action there.
             </div>
           </div>
           <footer class="tool-pane-footer">
             <button type="button" class="btn btn-primary" (click)="runOptimization()" [disabled]="app.simulationInProgress">
-              Optimize {{ optimizeSide === 'player' ? 'Player' : 'Opponent' }}
+              Optimize Matchup
             </button>
           </footer>
         </section>
@@ -527,6 +511,13 @@
                 <label class="form-check-label advanced-label-with-icon" for="triggersConsumed">
                   <span class="advanced-icon pheasant-icon" aria-hidden="true"></span>
                   Triggers Consumed
+                </label>
+              </div>
+              <div class="form-check" title="Show per-pet controls for copies with no native ability.">
+                <input class="form-check-input" type="checkbox" value="" id="plainCopies"
+                  formControlName="plainCopies" />
+                <label class="form-check-label" for="plainCopies">
+                  Plain Copies
                 </label>
               </div>
               <div class="form-check" title="Show debug details: trigger names and random reason labels.">

@@ -1,6 +1,6 @@
-import * as perks from 'assets/data/perks.json';
-import * as toys from 'assets/data/toys.json';
-import * as petsByTier from 'assets/data/pets.json';
+import { perks as perks } from 'app/runtime/content-catalogs';
+import { toys as toys } from 'app/runtime/content-catalogs';
+import { pets as petsByTier } from 'app/runtime/content-catalogs';
 
 export const PETS_BY_ID = new Map<string, string>();
 export const PETS_META_BY_ID = new Map<

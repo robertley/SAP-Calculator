@@ -1,27 +1,15 @@
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { SimulationRunner } from 'app/gameplay/simulation-runner';
+import { CalculatorBattleEngine } from './battle-engine';
 import {
   SimulationConfig,
   SimulationResult,
 } from 'app/domain/interfaces/simulation-config.interface';
-import { AbilityService } from '../ability/ability.service';
-import { EquipmentService } from '../equipment/equipment.service';
-import { GameService } from 'app/runtime/state/game.service';
 import { LogService } from '../log.service';
-import { PetService } from '../pet/pet.service';
-import { ToyService } from '../toy/toy.service';
 import { Player } from 'app/domain/entities/player.class';
-import { MAX_LOGGED_BATTLES } from './simulation.constants';
-import {
-  PositioningOptimizationResult,
-  PositioningOptimizationSide,
-  PositioningOptimizerProgress,
-  runPositioningOptimization,
-} from './positioning-optimizer';
+import { MAX_DISPLAYED_BATTLES } from './simulation.constants';
 import {
   buildSimulationConfigFromForm,
-  syncGameApiFromForm,
 } from 'app/runtime/state/simulation-form-mapper';
 import {
   BoardStrengthOptions,
@@ -35,6 +23,21 @@ import {
   OutFinderResult,
   runOutFinder,
 } from './out-finder';
+import type {
+  FightOptimizerOptions,
+  FightOptimizerResult,
+  OptimizerProgress,
+} from 'sap-battle-engine';
+
+export type FightOptimizationRequestOptions = Pick<
+  FightOptimizerOptions,
+  | 'seed'
+  | 'initialSimulations'
+  | 'refinementSimulations'
+  | 'collectAllBestResponses'
+  | 'maxSimulations'
+  | 'maxResponseSteps'
+>;
 
 @Injectable({
   providedIn: 'root',
@@ -42,11 +45,6 @@ import {
 export class SimulationService {
   constructor(
     private logService: LogService,
-    private gameService: GameService,
-    private abilityService: AbilityService,
-    private petService: PetService,
-    private equipmentService: EquipmentService,
-    private toyService: ToyService,
   ) {}
 
   runSimulationInWorker(
@@ -71,7 +69,7 @@ export class SimulationService {
     configOverrides?: Partial<SimulationConfig>,
   ): Worker | null {
     if (typeof Worker === 'undefined') {
-      const result = this.runSimulation(formGroup, count, player, opponent);
+      const result = this.runSimulation(formGroup, count, player, opponent, configOverrides);
       callbacks.onResult?.(result);
       return null;
     }
@@ -115,44 +113,40 @@ export class SimulationService {
     return worker;
   }
 
-  runPositioningOptimizationInWorker(
+  runFightOptimizationInWorker(
     formGroup: FormGroup,
-    count: number,
-    player: Player,
-    opponent: Player,
     callbacks: {
-      onProgress?: (progress: PositioningOptimizerProgress) => void;
-      onResult?: (result: PositioningOptimizationResult) => void;
-      onAborted?: (result: PositioningOptimizationResult) => void;
+      onProgress?: (progress: OptimizerProgress) => void;
+      onResult?: (result: FightOptimizerResult) => void;
+      onAborted?: (result: FightOptimizerResult) => void;
       onError?: (message: string) => void;
     },
-    options: {
-      side: PositioningOptimizationSide;
-      batchSize?: number;
-      maxSimulationsPerPermutation?: number;
-      confidenceZ?: number;
-      minSamplesBeforeElimination?: number;
-      projectEndTurnLineup?: boolean;
-      keepSameBuffTargets?: boolean;
-      recomputeParrotCopies?: boolean;
-    },
-    configOverrides?: Partial<SimulationConfig>,
+    options: FightOptimizationRequestOptions = {},
   ): Worker | null {
     if (typeof Worker === 'undefined') {
-      const result = this.runPositioningOptimization(
-        formGroup,
-        count,
-        player,
-        opponent,
-        options,
-        configOverrides,
-      );
-      callbacks.onResult?.(result);
+      const config = this.buildConfig(formGroup, 1);
+      void import('sap-battle-engine')
+        .then(({ optimizeFight }) =>
+          optimizeFight(config, { ...options, onProgress: callbacks.onProgress }),
+        )
+        .then((result) => {
+          if (result.termination === 'cancelled') {
+            callbacks.onAborted?.(result);
+          } else {
+            callbacks.onResult?.(result);
+          }
+        })
+        .catch((error: unknown) => {
+          callbacks.onError?.(
+            error instanceof Error
+              ? error.message
+              : 'Fight optimization failed.',
+          );
+        });
       return null;
     }
 
-    const config = this.buildConfig(formGroup, count, configOverrides);
-
+    const config = this.buildConfig(formGroup, 1);
     const worker = new Worker(
       new URL('./simulation.worker', import.meta.url),
       { type: 'module' },
@@ -162,27 +156,20 @@ export class SimulationService {
       if (!data || !data.type) {
         return;
       }
-      if (data.type === 'positioning-progress') {
-        callbacks.onProgress?.(data.progress as PositioningOptimizerProgress);
-      } else if (data.type === 'positioning-result') {
-        callbacks.onResult?.(data.result as PositioningOptimizationResult);
-      } else if (data.type === 'positioning-aborted') {
-        callbacks.onAborted?.(data.result as PositioningOptimizationResult);
+      if (data.type === 'fight-optimizer-progress') {
+        callbacks.onProgress?.(data.progress as OptimizerProgress);
+      } else if (data.type === 'fight-optimizer-result') {
+        callbacks.onResult?.(data.result as FightOptimizerResult);
+      } else if (data.type === 'fight-optimizer-aborted') {
+        callbacks.onAborted?.(data.result as FightOptimizerResult);
       } else if (data.type === 'error') {
-        callbacks.onError?.(data.message || 'Worker optimization failed.');
+        callbacks.onError?.(data.message || 'Fight optimization failed.');
       }
     };
-
     worker.onerror = (event) => {
-      callbacks.onError?.(event.message || 'Worker optimization failed.');
+      callbacks.onError?.(event.message || 'Fight optimization failed.');
     };
-
-    worker.postMessage({
-      type: 'optimize-positioning-start',
-      config,
-      options,
-    });
-
+    worker.postMessage({ type: 'optimize-fight-start', config, options });
     return worker;
   }
 
@@ -201,14 +188,7 @@ export class SimulationService {
   ): Worker | null {
     const config = this.buildConfig(formGroup, count);
     if (typeof Worker === 'undefined') {
-      const runner = new SimulationRunner(
-        this.logService,
-        this.gameService,
-        this.abilityService,
-        this.petService,
-        this.equipmentService,
-        this.toyService,
-      );
+      const runner = new CalculatorBattleEngine(this.logService);
       const result = runOutFinder({
         baseConfig: config,
         options,
@@ -311,87 +291,10 @@ export class SimulationService {
     configOverrides?: Partial<SimulationConfig>,
   ): SimulationResult {
     const config = this.buildConfig(formGroup, count, configOverrides);
-    const wasLoggingEnabled = this.logService.isEnabled();
-    const wasDeferringDecorations = this.logService.isDeferDecorations();
-    this.logService.setEnabled(config.logsEnabled !== false);
-    this.logService.setDeferDecorations(true);
 
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService,
-    );
+    const runner = new CalculatorBattleEngine(this.logService);
 
-    const result = runner.run(config);
-
-    // Restore GameService to UI players
-    this.gameService.init(player, opponent);
-    syncGameApiFromForm(this.gameService, formGroup);
-    this.logService.setEnabled(wasLoggingEnabled);
-    this.logService.setDeferDecorations(wasDeferringDecorations);
-
-    return result;
-  }
-
-  runPositioningOptimization(
-    formGroup: FormGroup,
-    count: number,
-    player: Player,
-    opponent: Player,
-    options: {
-      side: PositioningOptimizationSide;
-      batchSize?: number;
-      maxSimulationsPerPermutation?: number;
-      confidenceZ?: number;
-      minSamplesBeforeElimination?: number;
-      projectEndTurnLineup?: boolean;
-      keepSameBuffTargets?: boolean;
-      recomputeParrotCopies?: boolean;
-    },
-    configOverrides?: Partial<SimulationConfig>,
-  ): PositioningOptimizationResult {
-    const config = this.buildConfig(formGroup, count, configOverrides);
-    const wasLoggingEnabled = this.logService.isEnabled();
-    const wasDeferringDecorations = this.logService.isDeferDecorations();
-    this.logService.setEnabled(false);
-    this.logService.setDeferDecorations(true);
-
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService,
-    );
-
-    const result = runPositioningOptimization({
-      baseConfig: config,
-      options: {
-        side: options.side,
-        batchSize: options.batchSize,
-        maxSimulationsPerPermutation: options.maxSimulationsPerPermutation,
-        confidenceZ: options.confidenceZ,
-        minSamplesBeforeElimination: options.minSamplesBeforeElimination,
-        keepSameBuffTargets: options.keepSameBuffTargets,
-        recomputeParrotCopies: options.recomputeParrotCopies,
-      },
-      projectEndTurnLineup:
-        options.projectEndTurnLineup === true
-          ? ({ lineup }) =>
-              runner.projectLineupAfterEndTurn(config, options.side, lineup)
-          : undefined,
-      simulateBatch: (batchConfig) => runner.run(batchConfig),
-    });
-
-    this.gameService.init(player, opponent);
-    syncGameApiFromForm(this.gameService, formGroup);
-
-    this.logService.setEnabled(wasLoggingEnabled);
-    this.logService.setDeferDecorations(wasDeferringDecorations);
+    const result = runner.run(config, undefined, MAX_DISPLAYED_BATTLES);
 
     return result;
   }
@@ -406,29 +309,14 @@ export class SimulationService {
       logsEnabled: false,
       maxLoggedBattles: 0,
     });
-    const wasLoggingEnabled = this.logService.isEnabled();
-    const wasDeferringDecorations = this.logService.isDeferDecorations();
-    this.logService.setEnabled(false);
-    this.logService.setDeferDecorations(true);
 
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService,
-    );
+    const runner = new CalculatorBattleEngine(this.logService);
     const result = runBoardStrengthEvaluation({
       baseConfig: config,
       options,
       simulateBatch: (batchConfig) => runner.run(batchConfig),
     });
 
-    this.gameService.init(player, opponent);
-    syncGameApiFromForm(this.gameService, formGroup);
-    this.logService.setEnabled(wasLoggingEnabled);
-    this.logService.setDeferDecorations(wasDeferringDecorations);
     return result;
   }
 
@@ -440,11 +328,8 @@ export class SimulationService {
     return buildSimulationConfigFromForm(
       formGroup,
       count,
-      { maxLoggedBattles: MAX_LOGGED_BATTLES },
+      { maxLoggedBattles: count },
       configOverrides,
     );
   }
 }
-
-
-

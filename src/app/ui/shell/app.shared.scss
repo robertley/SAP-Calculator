@@ -1035,47 +1035,47 @@ $night: #33377a;
 }
 
 .advanced-icon.roll-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/roll.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/roll.png");
 }
 
 .advanced-icon.gold-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/gold.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/gold.png");
 }
 
 .advanced-icon.mana-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/mana.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/mana.png");
 }
 
 .advanced-icon.transform-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/transform.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/transform.png");
 }
 
 .advanced-icon.cycle-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/cycle.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/cycle.png");
 }
 
 .advanced-icon.summon-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/summon.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/summon.png");
 }
 
 .advanced-icon.token-icon {
-  background-image: url("/assets/art/Public/Public/Pets/Bee.png");
+  background-image: url("../../../assets/art/Public/Public/Pets/Bee.png");
 }
 
 .advanced-icon.komodo-icon {
-  background-image: url("/assets/art/Public/Public/Pets/Komodo.png");
+  background-image: url("../../../assets/art/Public/Public/Pets/Komodo.png");
 }
 
 .advanced-icon.perk-icon {
-  background-image: url("/assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/perk.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/TextMap-resources.assets-31-split/perk.png");
 }
 
 .advanced-icon.pheasant-icon {
-  background-image: url("/assets/art/Public/Public/Icons/triggers-from-textmap.png");
+  background-image: url("../../../assets/art/Public/Public/Icons/triggers-from-textmap.png");
 }
 
 .advanced-icon.abomination-icon {
-  background-image: url("/assets/art/Public/Public/Pets/Shoggoth.png");
+  background-image: url("../../../assets/art/Public/Public/Pets/Shoggoth.png");
 }
 
 .small-w-input label {
@@ -1397,40 +1397,6 @@ $night: #33377a;
 
 .modern-results-bar .results-segment-opponent {
   background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
-}
-
-.optimization-delta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
-  font-size: 0.76rem;
-  color: var(--ui-text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.optimization-delta-label {
-  color: var(--ui-text-2);
-  font-weight: 700;
-}
-
-.optimization-delta-value {
-  font-weight: 700;
-  color: var(--ui-text-2);
-}
-
-.optimization-delta-value-win {
-  color: var(--ui-success);
-}
-
-.optimization-delta-value-loss {
-  color: var(--ui-danger);
-}
-
-.optimization-delta-separator {
-  color: var(--ui-text-3);
 }
 
 .top-controls-meta-text {

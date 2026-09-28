@@ -1,0 +1,221 @@
+<section *ngIf="result as optimization" class="fight-optimizer-report card mb-3" aria-labelledby="fight-optimizer-title">
+  <header class="optimizer-report-header" [class.optimizer-report-header-minimized]="minimized">
+    <div>
+      <span class="optimizer-report-eyebrow">Positioning solver output</span>
+      <h2 id="fight-optimizer-title">Fight optimization report</h2>
+      <p *ngIf="!minimized">{{ terminationDescription(optimization) }}</p>
+      <p *ngIf="minimized" class="optimizer-minimized-summary">
+        <span>{{ optimization.stats.simulations | number }} simulations</span>
+        <span>{{ optimization.steps.length | number }} total response steps</span>
+        <span *ngIf="optimization.cycle">{{ optimization.cycle.length | number }}-step cycle</span>
+        <ng-container *ngIf="optimization.finalPosition.matchup as matchup">
+          <strong class="player-side-text">Player {{ matchup.playerWinPercent | number:'1.1-1' }}%</strong>
+          <strong>Draw {{ matchup.drawPercent | number:'1.1-1' }}%</strong>
+          <strong class="opponent-side-text">Opponent {{ matchup.opponentWinPercent | number:'1.1-1' }}%</strong>
+        </ng-container>
+      </p>
+    </div>
+    <div class="optimizer-report-header-actions">
+      <span class="optimizer-termination" [class.optimizer-termination-incomplete]="optimization.termination === 'simulation-budget' || optimization.termination === 'step-limit' || optimization.termination === 'cancelled'">
+        {{ terminationLabel(optimization) }}
+      </span>
+      <button
+        type="button"
+        class="optimizer-collapse-toggle"
+        (click)="toggleMinimized()"
+        [attr.aria-expanded]="!minimized"
+        [attr.aria-label]="minimized ? 'Expand optimization report' : 'Minimize optimization report'"
+        [attr.title]="minimized ? 'Expand report' : 'Minimize report'"
+        aria-controls="fight-optimizer-body"
+      >
+        <span aria-hidden="true">{{ minimized ? '+' : '−' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="fight-optimizer-body" [hidden]="minimized">
+  <div class="optimizer-stat-grid">
+    <div><span>Evidence</span><strong>{{ optimization.evidence | titlecase }}</strong></div>
+    <div><span>Simulations</span><strong>{{ optimization.stats.simulations | number }}</strong></div>
+    <div><span>Matchups</span><strong>{{ optimization.stats.evaluatedMatchups | number }} / {{ optimization.stats.potentialMatchups | number }}</strong></div>
+    <div><span>Total responses</span><strong>{{ optimization.steps.length | number }}</strong></div>
+    <div><span>Engine calls</span><strong>{{ optimization.stats.engineCalls | number }}</strong></div>
+    <div><span>Cache hits</span><strong>{{ optimization.stats.cacheHits | number }}</strong></div>
+    <div><span>Seed</span><strong>{{ optimization.stats.seed }}</strong></div>
+    <div><span>Elapsed</span><strong>{{ optimization.stats.elapsedMs / 1000 | number:'1.2-2' }}s</strong></div>
+  </div>
+
+  <div *ngIf="optimization.finalPosition.matchup as matchup" class="optimizer-final-matchup">
+    <span>Final sampled matchup</span>
+    <strong class="player-side-text">Player {{ matchup.playerWinPercent | number:'1.1-1' }}%</strong>
+    <strong>Draw {{ matchup.drawPercent | number:'1.1-1' }}%</strong>
+    <strong class="opponent-side-text">Opponent {{ matchup.opponentWinPercent | number:'1.1-1' }}%</strong>
+    <small>{{ matchup.simulations | number }} simulations</small>
+  </div>
+
+  <div class="optimizer-lineups">
+    <article class="optimizer-lineup" data-side="player">
+      <div class="optimizer-lineup-heading">
+        <div><span>Final response state</span><h3 class="player-side-text">Player</h3></div>
+        <small>Back → Front · Source slots {{ formatDisplayedOrder(optimization.finalPosition.playerOrder, 'player') }}</small>
+      </div>
+      <div class="optimizer-pets">
+        <div *ngFor="let displayPet of finalLineups.player" class="optimizer-pet" [class.optimizer-pet-empty]="!displayPet.pet?.name">
+          <span class="optimizer-pet-position">{{ displayPet.position }}</span>
+          <img *ngIf="petIcon(displayPet.pet) as icon" [src]="icon" width="42" height="42" alt="" />
+          <div><strong>{{ displayPet.pet?.name || 'Empty' }}</strong><small *ngIf="displayPet.pet?.name">{{ displayPet.pet?.attack ?? 0 }}/{{ displayPet.pet?.health ?? 0 }}<ng-container *ngIf="equipmentName(displayPet.pet) as equipment"> · {{ equipment }}</ng-container></small></div>
+        </div>
+      </div>
+    </article>
+
+    <article class="optimizer-lineup" data-side="opponent">
+      <div class="optimizer-lineup-heading">
+        <div><span>Final response state</span><h3 class="opponent-side-text">Opponent</h3></div>
+        <small>Front → Back · Source slots {{ formatDisplayedOrder(optimization.finalPosition.opponentOrder, 'opponent') }}</small>
+      </div>
+      <div class="optimizer-pets">
+        <div *ngFor="let displayPet of finalLineups.opponent" class="optimizer-pet" [class.optimizer-pet-empty]="!displayPet.pet?.name">
+          <span class="optimizer-pet-position">{{ displayPet.position }}</span>
+          <img *ngIf="petIcon(displayPet.pet) as icon" [src]="icon" width="42" height="42" alt="" />
+          <div><strong>{{ displayPet.pet?.name || 'Empty' }}</strong><small *ngIf="displayPet.pet?.name">{{ displayPet.pet?.attack ?? 0 }}/{{ displayPet.pet?.health ?? 0 }}<ng-container *ngIf="equipmentName(displayPet.pet) as equipment"> · {{ equipment }}</ng-container></small></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <div class="optimizer-apply-actions">
+    <span>Apply a final response state to the editor:</span>
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="applyLineup.emit('player')">Apply Player</button>
+    <button type="button" class="btn btn-outline-danger btn-sm" (click)="applyLineup.emit('opponent')">Apply Opponent</button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="applyLineup.emit('both')">Apply Both</button>
+  </div>
+
+  <div class="optimizer-report-details">
+    <details open (toggle)="refreshTraceConnectors()">
+      <summary>{{ optimization.cycle ? 'Response cycle' : 'Best-response trace' }} <span>{{ traceSteps.length }}</span></summary>
+      <div #optimizerTrace class="optimizer-trace">
+        <svg *ngIf="traceConnectors.length" class="optimizer-trace-connectors" [attr.width]="traceConnectorWidth" [attr.height]="traceConnectorHeight" [attr.viewBox]="'0 0 ' + traceConnectorWidth + ' ' + traceConnectorHeight" aria-hidden="true">
+          <defs>
+            <marker id="optimizer-trace-player-arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path class="optimizer-trace-player-arrowhead" d="M 0 0 L 6 3 L 0 6 z"></path>
+            </marker>
+            <marker id="optimizer-trace-opponent-arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path class="optimizer-trace-opponent-arrowhead" d="M 0 0 L 6 3 L 0 6 z"></path>
+            </marker>
+          </defs>
+          <path *ngFor="let connector of traceConnectors" class="optimizer-trace-connector" [class.optimizer-trace-connector-player]="connector.side === 'player'" [class.optimizer-trace-connector-opponent]="connector.side === 'opponent'" [attr.d]="connector.path" [attr.marker-end]="'url(#optimizer-trace-' + connector.side + '-arrowhead)'"></path>
+        </svg>
+        <article *ngFor="let traceStep of traceSteps; index as traceIndex" class="optimizer-trace-step">
+          <ng-container *ngIf="traceStep.step as step">
+          <header class="optimizer-trace-step-header">
+            <span>{{ optimization.cycle ? 'Cycle step' : 'Step' }} {{ traceIndex + 1 }}</span>
+            <strong [class.player-side-text]="step.side === 'player'" [class.opponent-side-text]="step.side === 'opponent'">
+              {{ sideLabel(step.side) }} responds
+            </strong>
+            <small>{{ step.matchup.simulations | number }} samples</small>
+          </header>
+
+          <div *ngIf="traceChanges(optimization, traceStep.stepIndex) as changes" class="optimizer-trace-movement" [class.optimizer-trace-movement-player]="step.side === 'player'" [class.optimizer-trace-movement-opponent]="step.side === 'opponent'">
+            <span class="optimizer-trace-movement-label">Position changes</span>
+            <div *ngIf="changes.length; else unchangedPosition" class="optimizer-trace-moves">
+              <div *ngFor="let change of changes" class="optimizer-trace-move" [attr.aria-label]="change.pet.name + ' moved from position ' + change.fromPosition + ' to position ' + change.toPosition">
+                <span class="optimizer-trace-move-sprite">
+                  <img *ngIf="petIcon(change.pet) as icon" class="optimizer-trace-move-pet-art" [src]="icon" width="30" height="30" alt="" />
+                  <img *ngIf="equipmentIcon(change.pet) as icon" class="optimizer-trace-move-equipment" [src]="icon" width="14" height="14" alt="" />
+                </span>
+                <strong>{{ change.pet.name }}</strong>
+                <span class="optimizer-trace-position optimizer-trace-position-from">{{ change.fromPosition }}</span>
+                <span class="optimizer-trace-arrow" aria-hidden="true">→</span>
+                <span class="optimizer-trace-position optimizer-trace-position-to">{{ change.toPosition }}</span>
+              </div>
+            </div>
+            <ng-template #unchangedPosition><span class="optimizer-trace-unchanged">{{ sideLabel(step.side) }} order unchanged</span></ng-template>
+          </div>
+
+          <div class="optimizer-trace-matchup">
+            <section class="optimizer-trace-team" data-side="player" aria-label="Player lineup, back to front">
+              <h4 class="player-side-text">Player <small>Back → Front</small></h4>
+              <div class="optimizer-trace-pets">
+                <div *ngFor="let displayPet of traceLineup(optimization, 'player', step.playerPosition)" class="optimizer-trace-pet" [class.optimizer-trace-pet-empty]="!displayPet.pet?.name" [attr.data-position]="displayPet.position">
+                  <span class="optimizer-trace-pet-position">{{ displayPet.position }}</span>
+                  <div class="optimizer-trace-sprite">
+                    <img *ngIf="petIcon(displayPet.pet) as icon" class="optimizer-trace-pet-art" [src]="icon" width="48" height="48" [alt]="displayPet.pet?.name || ''" />
+                    <img *ngIf="equipmentIcon(displayPet.pet) as icon" class="optimizer-trace-equipment" [src]="icon" width="22" height="22" [alt]="equipmentName(displayPet.pet) || ''" [attr.title]="equipmentName(displayPet.pet)" />
+                  </div>
+                  <strong>{{ displayPet.pet?.attack ?? 0 }} / {{ displayPet.pet?.health ?? 0 }}</strong>
+                  <small [attr.title]="displayPet.pet?.name">{{ displayPet.pet?.name || 'Empty' }}</small>
+                </div>
+              </div>
+            </section>
+
+            <div class="optimizer-trace-odds" aria-label="Sampled matchup result">
+              <strong class="player-side-text">{{ step.matchup.playerWinPercent | number:'1.1-1' }}%</strong>
+              <span>Player</span>
+              <strong>{{ step.matchup.drawPercent | number:'1.1-1' }}%</strong>
+              <span>Draw</span>
+              <strong class="opponent-side-text">{{ step.matchup.opponentWinPercent | number:'1.1-1' }}%</strong>
+              <span>Opponent</span>
+            </div>
+
+            <section class="optimizer-trace-team" data-side="opponent" aria-label="Opponent lineup, front to back">
+              <h4 class="opponent-side-text">Opponent <small>Front → Back</small></h4>
+              <div class="optimizer-trace-pets">
+                <div *ngFor="let displayPet of traceLineup(optimization, 'opponent', step.opponentPosition)" class="optimizer-trace-pet" [class.optimizer-trace-pet-empty]="!displayPet.pet?.name" [attr.data-position]="displayPet.position">
+                  <span class="optimizer-trace-pet-position">{{ displayPet.position }}</span>
+                  <div class="optimizer-trace-sprite">
+                    <img *ngIf="petIcon(displayPet.pet) as icon" class="optimizer-trace-pet-art" [src]="icon" width="48" height="48" [alt]="displayPet.pet?.name || ''" />
+                    <img *ngIf="equipmentIcon(displayPet.pet) as icon" class="optimizer-trace-equipment" [src]="icon" width="22" height="22" [alt]="equipmentName(displayPet.pet) || ''" [attr.title]="equipmentName(displayPet.pet)" />
+                  </div>
+                  <strong>{{ displayPet.pet?.attack ?? 0 }} / {{ displayPet.pet?.health ?? 0 }}</strong>
+                  <small [attr.title]="displayPet.pet?.name">{{ displayPet.pet?.name || 'Empty' }}</small>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <footer class="optimizer-trace-step-footer">
+            <span>Searched {{ step.searchedPositions | number }} positions · {{ step.searchComplete ? 'complete' : 'early stop' }}<ng-container *ngIf="step.refined"> · refined</ng-container></span>
+            <span>{{ step.bestResponses.length | number }} tied best response<ng-container *ngIf="step.bestResponses.length !== 1">s</ng-container></span>
+          </footer>
+          </ng-container>
+        </article>
+      </div>
+    </details>
+
+    <details>
+      <summary>Evaluated matchups <span>{{ optimization.matchups.length }}</span></summary>
+      <div class="optimizer-table-wrap optimizer-table-wrap-tall">
+        <table class="optimizer-table">
+          <thead><tr><th>Player order</th><th>Opponent order</th><th>Player</th><th>Draw</th><th>Opponent</th><th>Samples</th><th>Uniform sample</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let matchup of optimization.matchups">
+              <td>#{{ matchup.playerPosition + 1 }}</td>
+              <td>#{{ matchup.opponentPosition + 1 }}</td>
+              <td>{{ matchup.playerWinPercent | number:'1.1-1' }}%</td>
+              <td>{{ matchup.drawPercent | number:'1.1-1' }}%</td>
+              <td>{{ matchup.opponentWinPercent | number:'1.1-1' }}%</td>
+              <td>{{ matchup.simulations }}</td>
+              <td>{{ matchup.sampledOutcome || 'mixed' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary>Candidate orders <span>{{ optimization.positionings.player.length + optimization.positionings.opponent.length }}</span></summary>
+      <div class="optimizer-positioning-columns">
+        <div><h4>Player</h4><code *ngFor="let positioning of optimization.positionings.player">{{ formatPosition(positioning) }}</code></div>
+        <div><h4>Opponent</h4><code *ngFor="let positioning of optimization.positionings.opponent">{{ formatPosition(positioning) }}</code></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>Raw optimizer result</summary>
+      <pre>{{ optimization }}</pre>
+    </details>
+  </div>
+
+  <p class="optimizer-sampling-note">This is a sampled alternating best-response search, not a minimax proof. A budget-limited result may omit viable counters that were not evaluated.</p>
+  </div>
+</section>

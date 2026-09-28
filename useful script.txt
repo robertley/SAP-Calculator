@@ -1,0 +1,4 @@
+nvm use 22                             
+npx ng cache clean
+npm install --legacy-peer-deps
+npm start

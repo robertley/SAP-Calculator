@@ -15,7 +15,7 @@ import {
   getCustomPackSpellItems,
   normalizeCustomPackItems,
 } from 'app/runtime/custom-pack-form';
-import * as petJson from 'assets/data/pets.json';
+import { pets as petJson } from 'app/runtime/content-catalogs';
 import { PACK_NAMES } from 'app/runtime/pack-names';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CustomPackFormComponent } from './custom-pack-form/custom-pack-form.component';

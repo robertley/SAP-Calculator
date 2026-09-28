@@ -1,4 +1,5 @@
 import { PetConfig } from 'app/domain/interfaces/simulation-config.interface';
+import { clonePetConfigEquipment } from '../equipment/pet-config-equipment';
 
 const PARROT_MEMORY_PREFIX = 'parrotCopyPet';
 const ABOMINATION_MEMORY_PREFIX = 'abominationSwallowedPet';
@@ -9,7 +10,7 @@ function clonePet(pet: PetConfig | null): PetConfig | null {
   }
   return {
     ...pet,
-    equipment: pet.equipment ? { ...pet.equipment } : null,
+    equipment: clonePetConfigEquipment(pet.equipment),
   };
 }
 

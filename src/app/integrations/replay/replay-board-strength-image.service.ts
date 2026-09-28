@@ -1,15 +1,9 @@
 import { Injectable } from '@angular/core';
-import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
 import {
   SimulationConfig,
   SimulationResult,
 } from 'app/domain/interfaces/simulation-config.interface';
-import { SimulationRunner } from 'app/gameplay/simulation-runner';
-import { GameService } from 'app/runtime/state/game.service';
-import { AbilityService } from '../ability/ability.service';
-import { EquipmentService } from '../equipment/equipment.service';
-import { LogService } from '../log.service';
-import { PetService } from '../pet/pet.service';
+import { CalculatorBattleEngine } from '../simulation/battle-engine';
 import {
   BoardStrengthPrecision,
   BoardStrengthProgress,
@@ -19,12 +13,12 @@ import {
   getBoardStrengthPrecisionProfile,
   runBoardStrengthEvaluation,
 } from '../simulation/board-strength-evaluator';
-import { ToyService } from '../toy/toy.service';
 import {
   getEquipmentIconPath,
   getPetIconPath,
   getToyIconPath,
 } from 'app/runtime/asset-catalog';
+import { getPetConfigEquipmentName } from '../equipment/pet-config-equipment';
 import {
   ReplayBattleJson,
   ReplayBuildModelJson,
@@ -119,12 +113,6 @@ interface StrengthEvaluationTask {
 export class ReplayBoardStrengthImageService {
   constructor(
     private replayCalcService: ReplayCalcService,
-    private logService: LogService,
-    private gameService: GameService,
-    private abilityService: AbilityService,
-    private petService: PetService,
-    private equipmentService: EquipmentService,
-    private toyService: ToyService,
     private replayImageRenderer: ReplayImageCanvasRendererService,
   ) {}
 
@@ -339,30 +327,8 @@ export class ReplayBoardStrengthImageService {
   }
 
   private runLocalSimulation(config: SimulationConfig): SimulationResult {
-    const previousGameApi = this.gameService.gameApi
-      ? ({ ...this.gameService.gameApi } as GameAPI)
-      : null;
-    const wasEnabled = this.logService.isEnabled();
-    const wasDeferDecorations = this.logService.isDeferDecorations();
-    const wasShowTriggerNames = this.logService.isShowTriggerNamesInLogs();
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService,
-    );
-    try {
-      return runner.run(config);
-    } finally {
-      if (previousGameApi) {
-        this.gameService.gameApi = previousGameApi;
-      }
-      this.logService.setEnabled(wasEnabled);
-      this.logService.setDeferDecorations(wasDeferDecorations);
-      this.logService.setShowTriggerNamesInLogs(wasShowTriggerNames);
-    }
+    const runner = new CalculatorBattleEngine();
+    return runner.run(config);
   }
 
   private async renderImage(
@@ -490,10 +456,11 @@ export class ReplayBoardStrengthImageService {
   ): Array<ReplayImagePetInfo | null> {
     return pets.map((pet) => {
       if (!pet?.name) return null;
+      const equipmentName = getPetConfigEquipmentName(pet.equipment);
       return {
         imagePath: getPetIconPath(pet.name),
-        perkImagePath: pet.equipment?.name
-          ? getEquipmentIconPath(pet.equipment.name)
+        perkImagePath: equipmentName
+          ? getEquipmentIconPath(equipmentName)
           : null,
         attack: this.toNumberOrFallback(pet.attack, 0),
         health: this.toNumberOrFallback(pet.health, 0),

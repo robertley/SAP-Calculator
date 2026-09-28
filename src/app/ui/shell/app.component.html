@@ -74,6 +74,7 @@
               <app-pet-selector [pet]="boardFacade.player.getPet(4 - i)" [player]="boardFacade.player" [opponent]="boardFacade.opponent" [index]="4 - i"
                 #playerPetSelector [formGroup]="boardFacade.makeFormGroup(pet)" [ailments]="true"
                 [allPets]="boardFacade.allPets" [mana]="boardFacade.mana"
+                [plainCopies]="boardFacade.plainCopies"
                 [triggersConsumed]="boardFacade.triggersConsumed" [allowEquipmentUseOverrides]="
                   boardFacade.changeEquipmentUses
                 " [showTokenPets]="boardFacade.tokenPets" [flipImage]="true"
@@ -176,6 +177,7 @@
               <app-pet-selector [pet]="boardFacade.opponent.getPet(i)" [player]="boardFacade.opponent" [opponent]="boardFacade.player" [index]="i"
                 #opponentPetSelector [formGroup]="boardFacade.makeFormGroup(pet)" [ailments]="true"
                 [allPets]="boardFacade.allPets" [mana]="boardFacade.mana"
+                [plainCopies]="boardFacade.plainCopies"
                 [triggersConsumed]="boardFacade.triggersConsumed" [allowEquipmentUseOverrides]="
                   boardFacade.changeEquipmentUses
                 " [showTokenPets]="boardFacade.tokenPets" [flipImage]="false"
@@ -218,6 +220,7 @@
         <div class="mobile-pet-editor-body" *ngIf="mobilePetEditorControl as editorControl">
           <app-pet-selector [pet]="mobilePetEditorPlayer?.getPet(slot.index)" [player]="mobilePetEditorPlayer" [opponent]="mobilePetEditorOpponent" [index]="slot.index"
             [formGroup]="editorControl" [ailments]="true" [allPets]="boardFacade.allPets" [mana]="boardFacade.mana" [triggersConsumed]="boardFacade.triggersConsumed"
+            [plainCopies]="boardFacade.plainCopies"
             [allowEquipmentUseOverrides]="boardFacade.changeEquipmentUses" [showTokenPets]="boardFacade.tokenPets" [flipImage]="slot.side === 'player'"
             [customPacks]="boardFacade.customPacks"></app-pet-selector>
         </div>
@@ -238,6 +241,11 @@
     </div>
 
     <app-shell-controls [app]="controlsFacade" [renderEpoch]="controlsFacade.renderEpoch"></app-shell-controls>
+
+    <app-fight-optimizer-report
+      [result]="fightOptimizerResult"
+      (applyLineup)="applyFightOptimizerLineup($event)"
+    ></app-fight-optimizer-report>
 
     <app-shell-battle-results [app]="battleResultsFacade" [renderEpoch]="battleResultsFacade.renderEpoch"></app-shell-battle-results>
 

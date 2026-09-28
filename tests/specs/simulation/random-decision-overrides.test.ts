@@ -76,15 +76,12 @@ describe('random decision overrides', () => {
     expect(experienceLogs.length).toBeGreaterThan(0);
     expect(experienceLogs[0]?.randomEvent).toBe(true);
 
-    const orderDecision = (capture.randomDecisions ?? []).find(
+    const phaseOrderDecision = (capture.randomDecisions ?? []).find(
       (decision) =>
         decision.key === 'ability-queue.phase-order' &&
         decision.label.includes('BeforeStartBattle'),
     );
-    expect(orderDecision?.options.map((option) => option.id)).toEqual([
-      'P1 Team Spirit',
-      'P3 Clownfish',
-    ]);
+    expect(phaseOrderDecision).toBeUndefined();
     const flyingFishDecision = (capture.randomDecisions ?? []).find(
       (decision) =>
         decision.key === 'ability-queue.tie-order' &&
@@ -98,19 +95,6 @@ describe('random decision overrides', () => {
       'P5 Flying Fish -> P3 Clownfish',
     ]);
 
-    const forced = runSimulation({
-      ...baseConfig,
-      randomDecisionOverrides: [
-        {
-          index: orderDecision!.index,
-          key: orderDecision!.key,
-          label: orderDecision!.label,
-          optionId: 'P1 Team Spirit',
-        },
-      ],
-      strictRandomOverrideValidation: true,
-    });
-    expect(forced.randomOverrideError ?? null).toBeNull();
     const forcedXpTarget = runSimulation({
       ...baseConfig,
       randomDecisionOverrides: [
@@ -259,9 +243,9 @@ describe('random decision overrides', () => {
       'Hummingbird',
       'Peacock Spider',
       'Pied Tamarin',
+      'Pink Robin',
       'Togian Babirusa',
       'Volcano Snail',
-      'Pink Robin',
     ];
     const config: SimulationConfig = {
       playerPack: 'Unicorn',

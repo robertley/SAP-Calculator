@@ -2,6 +2,7 @@
 import base64
 import binascii
 import json
+import subprocess
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -9,8 +10,6 @@ from typing import Any, Dict, List, Optional
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 ROOT = SCRIPT_DIR.parent
-PETS_PATH = ROOT / "src" / "assets" / "data" / "pets.json"
-PERKS_PATH = ROOT / "src" / "assets" / "data" / "perks.json"
 
 DEFAULT_CONFIG_PATHS = [
     SCRIPT_DIR / "make-team.config.json",
@@ -362,8 +361,9 @@ def main() -> None:
             "Put a valid SAP battle JSON template there (see docs/REPLAY_JSON_GENERATOR.md)."
         )
 
-    pets_by_name = build_name_to_id_map(load_json(PETS_PATH))
-    perks_by_name = build_name_to_id_map(load_json(PERKS_PATH))
+    catalogs = json.loads(subprocess.check_output(["node", str(SCRIPT_DIR / "lib" / "engine-catalog.cjs")], text=True))
+    pets_by_name = build_name_to_id_map(catalogs["pets"])
+    perks_by_name = build_name_to_id_map(catalogs["perks"])
 
     hats_by_name = {
         normalize_name(k): int(v)

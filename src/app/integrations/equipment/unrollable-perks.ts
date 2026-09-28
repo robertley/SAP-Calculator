@@ -1,4 +1,4 @@
-import * as foodJson from 'assets/data/food.json';
+import { food as foodJson } from 'app/runtime/content-catalogs';
 
 interface FoodJsonEntry {
   Name?: string;

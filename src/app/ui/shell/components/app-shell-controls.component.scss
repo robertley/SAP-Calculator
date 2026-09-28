@@ -102,6 +102,9 @@
 .tool-pane-heading h3 { margin: 0.1rem 0 0.2rem; font-size: 1.2rem; }
 .tool-pane-heading p { margin: 0; color: var(--ui-text-3); font-size: 0.82rem; }
 .tool-pane .optimization-dialog-body { padding: 1.35rem; }
+.optimization-dialog-body { display: grid; gap: 0.65rem; }
+.optimization-dialog-body .form-control { max-width: 14rem; }
+.optimization-report-hint { margin-top: 0.45rem; padding: 0.8rem 0.9rem; color: var(--ui-text-3); background: var(--ui-surface-1); border: 1px solid var(--ui-border-1); border-radius: 0.65rem; font-size: 0.78rem; line-height: 1.5; }
 .tool-pane-footer { display: flex; justify-content: flex-end; padding: 1rem 1.35rem; border-top: 1px solid var(--ui-border-1); }
 .tool-pane > .random-overrides-panel { margin: 1.2rem 1.35rem; }
 .tool-pane-strength app-board-strength-dialog { display: block; }

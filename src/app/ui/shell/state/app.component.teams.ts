@@ -7,7 +7,7 @@ import {
   TeamPresetsService,
 } from 'app/integrations/team-presets.service';
 import { cloneEquipment } from 'app/runtime/equipment-clone';
-import { PetForm } from 'app/integrations/pet/pet-factory.service';
+import { PetForm } from 'app/integrations/pet/pet-form.interface';
 
 export function saveTeamPreset(options: {
   side: 'player' | 'opponent';
@@ -56,6 +56,7 @@ export function saveTeamPreset(options: {
   const seedValue = options.formGroup.get('seed')?.value;
   const seed =
     seedValue === '' || seedValue == null ? null : Number(seedValue);
+  const plainCopies = Boolean(options.formGroup.get('plainCopies').value);
   const triggersConsumed = Boolean(
     options.formGroup.get('triggersConsumed').value,
   );
@@ -109,6 +110,7 @@ export function saveTeamPreset(options: {
     existing.komodoShuffle = komodoShuffle;
     existing.mana = mana;
     existing.seed = Number.isFinite(seed) ? Math.trunc(seed) : null;
+    existing.plainCopies = plainCopies;
     existing.triggersConsumed = triggersConsumed;
     existing.changeEquipmentUses = changeEquipmentUses;
     existing.playerRollAmount = playerRollAmount;
@@ -142,6 +144,7 @@ export function saveTeamPreset(options: {
       komodoShuffle,
       mana,
       seed: Number.isFinite(seed) ? Math.trunc(seed) : null,
+      plainCopies,
       triggersConsumed,
       changeEquipmentUses,
       playerRollAmount,
@@ -203,6 +206,9 @@ export function loadTeamPreset(options: {
   }
   if (team.seed != null || team.seed === null) {
     options.formGroup.get('seed')?.setValue(team.seed ?? null);
+  }
+  if (team.plainCopies != null) {
+    options.formGroup.get('plainCopies').setValue(team.plainCopies);
   }
   if (team.triggersConsumed != null) {
     options.formGroup.get('triggersConsumed').setValue(team.triggersConsumed);
@@ -358,6 +364,7 @@ export function loadTeamPreset(options: {
         sarcasticFringeheadSwallowedPet:
           petData.sarcasticFringeheadSwallowedPet ?? null,
         mana: petData.mana ?? 0,
+        plainCopy: petData.plainCopy ?? false,
         triggersConsumed: petData.triggersConsumed ?? 0,
         foodsEaten: petData.foodsEaten ?? 0,
         timesGaveHealth: petData.timesGaveHealth ?? 0,
@@ -441,6 +448,7 @@ function sanitizePetFormValue(petValue: unknown): PetForm | null {
     sarcasticFringeheadSwallowedPet:
       (petRecord.sarcasticFringeheadSwallowedPet as string | null) ?? null,
     mana: (petRecord.mana as number | null) ?? 0,
+    plainCopy: petRecord.plainCopy === true,
     triggersConsumed: (petRecord.triggersConsumed as number | null) ?? 0,
     foodsEaten: (petRecord.foodsEaten as number | null) ?? 0,
     timesGaveHealth: (petRecord.timesGaveHealth as number | null) ?? 0,

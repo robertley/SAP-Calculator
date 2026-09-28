@@ -9,15 +9,15 @@
 }
 
 .stat-attack {
-  background-image: url("/assets/art/Public/Public/Icons/fist-from-textmap.png");
+  background-image: url("../../../../assets/art/Public/Public/Icons/fist-from-textmap.png");
 }
 
 .stat-health {
-  background-image: url("/assets/art/Public/Public/Icons/heart-from-textmap.png");
+  background-image: url("../../../../assets/art/Public/Public/Icons/heart-from-textmap.png");
 }
 
 .stat-mana {
-  background-image: url("/assets/art/Public/Public/Icons/mana-from-textmap.png");
+  background-image: url("../../../../assets/art/Public/Public/Icons/mana-from-textmap.png");
 }
 
 .stat-input {
@@ -46,6 +46,23 @@
 .single-stat-input {
   width: calc(50% - 7.5px);
   margin: 0 auto;
+}
+
+.plain-copy-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0;
+  color: #f8f9fa;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.plain-copy-toggle .form-check-input {
+  float: none;
+  margin-right: 6px;
 }
 
 .pet-art {

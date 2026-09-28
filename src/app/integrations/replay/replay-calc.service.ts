@@ -17,6 +17,7 @@ import {
 import { PACK_MAP } from './replay-calc-schema';
 import { REVERSE_KEY_MAP } from 'app/runtime/state/url-state-key-map';
 import { decodeBase64Url } from 'app/runtime/base64-url';
+import { getPetConfigEquipmentName } from '../equipment/pet-config-equipment';
 import {
   getReplayApiUrl,
   getReplayCalculatorApiUrl,
@@ -494,7 +495,9 @@ export class ReplayCalcService {
 
     return calculatorPets.map((calculatorPet, index) => {
       const replayPet = replayPets[index];
-      const replayEquipmentName = replayPet?.equipment?.name;
+      const replayEquipmentName = getPetConfigEquipmentName(
+        replayPet?.equipment,
+      );
       if (!replayEquipmentName || !this.isRecord(calculatorPet)) {
         return calculatorPet;
       }

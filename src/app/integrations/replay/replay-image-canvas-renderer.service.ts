@@ -164,7 +164,7 @@ export class ReplayImageCanvasRendererService {
     );
 
     const heartIcon = await loadImage(
-      '/assets/art/Public/Public/Icons/heart-from-textmap.png',
+      'assets/art/Public/Public/Icons/heart-from-textmap.png',
     );
     if (heartIcon) {
       ctx.drawImage(heartIcon, turnIconSize, baseY, petWidth, petWidth);

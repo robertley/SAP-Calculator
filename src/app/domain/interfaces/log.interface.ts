@@ -1,9 +1,13 @@
+import type { BoardSnapshot } from 'sap-battle-engine';
 import { Player } from 'app/domain/entities/player.class';
 import { Pet } from 'app/domain/entities/pet.class';
 
 export type RandomEventReason = 'deterministic' | 'tie-broken' | 'true-random';
 
 export interface Log {
+  board?: BoardSnapshot;
+  sequence?: number;
+  battle?: number;
   message: string;
   type:
     | 'attack'

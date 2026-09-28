@@ -6,23 +6,17 @@ import {
   ReplayCalculatorState,
   buildReplayAbilityPetMapFromActions,
 } from './replay-calc-parser';
-import { SimulationRunner } from 'app/gameplay/simulation-runner';
+import { CalculatorBattleEngine } from '../simulation/battle-engine';
 import {
   SimulationConfig,
   SimulationResult,
 } from 'app/domain/interfaces/simulation-config.interface';
-import { LogService } from '../log.service';
-import { GameService } from 'app/runtime/state/game.service';
-import { GameAPI } from 'app/domain/interfaces/gameAPI.interface';
-import { AbilityService } from '../ability/ability.service';
-import { PetService } from '../pet/pet.service';
-import { EquipmentService } from '../equipment/equipment.service';
-import { ToyService } from '../toy/toy.service';
 import { getToyIconPath } from 'app/runtime/asset-catalog';
 import { TOYS_BY_ID } from './replay-calc-schema';
 import { getToyName, resolveToyId } from './replay-calc-parser-utils';
-import * as petsData from 'assets/data/pets.json';
-import * as perksData from 'assets/data/perks.json';
+import { getPetConfigEquipmentName } from '../equipment/pet-config-equipment';
+import { pets as petsData } from 'app/runtime/content-catalogs';
+import { perks as perksData } from 'app/runtime/content-catalogs';
 import {
   ReplayImageBattleInfo,
   ReplayImageCanvasRendererService,
@@ -161,12 +155,6 @@ function normalizeLookupKey(value: unknown): string {
 export class ReplayOddsImageService {
   constructor(
     private replayCalcService: ReplayCalcService,
-    private logService: LogService,
-    private gameService: GameService,
-    private abilityService: AbilityService,
-    private petService: PetService,
-    private equipmentService: EquipmentService,
-    private toyService: ToyService,
     private replayImageRenderer: ReplayImageCanvasRendererService,
   ) {}
 
@@ -279,32 +267,8 @@ export class ReplayOddsImageService {
   }
 
   private runLocalSimulation(config: SimulationConfig): SimulationResult {
-    const previousGameApi = this.gameService.gameApi
-      ? ({ ...this.gameService.gameApi } as GameAPI)
-      : null;
-    const wasEnabled = this.logService.isEnabled();
-    const wasDeferDecorations = this.logService.isDeferDecorations();
-    const wasShowTriggerNames = this.logService.isShowTriggerNamesInLogs();
-
-    const runner = new SimulationRunner(
-      this.logService,
-      this.gameService,
-      this.abilityService,
-      this.petService,
-      this.equipmentService,
-      this.toyService,
-    );
-
-    try {
-      return runner.run(config);
-    } finally {
-      if (previousGameApi) {
-        this.gameService.gameApi = previousGameApi;
-      }
-      this.logService.setEnabled(wasEnabled);
-      this.logService.setDeferDecorations(wasDeferDecorations);
-      this.logService.setShowTriggerNamesInLogs(wasShowTriggerNames);
-    }
+    const runner = new CalculatorBattleEngine();
+    return runner.run(config);
   }
 
   private createSimulationConfigFromCalculatorState(
@@ -590,13 +554,13 @@ export class ReplayOddsImageService {
         return null;
       }
       const petNameId = PET_NAME_ID_BY_KEY.get(normalizeLookupKey(pet.name)) ?? null;
-      const equipmentName = pet?.equipment?.name ?? null;
+      const equipmentName = getPetConfigEquipmentName(pet.equipment);
       const perkNameId = equipmentName
         ? (PERK_NAME_ID_BY_KEY.get(normalizeLookupKey(equipmentName)) ?? null)
         : null;
       return {
-        imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
-        perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
+        imagePath: petNameId ? `assets/art/Public/Public/Pets/${petNameId}.png` : null,
+        perkImagePath: perkNameId ? `assets/art/Public/Public/Food/${perkNameId}.png` : null,
         attack: this.toNumberOrFallback(pet.attack, 0),
         health: this.toNumberOrFallback(pet.health, 0),
         tempAttack: 0,
@@ -704,8 +668,8 @@ export class ReplayOddsImageService {
         this.toNumberOrFallback(poi?.['x'], this.toNumberOrFallback(item['slot'], 0));
       const position = Math.max(0, Math.min(4, Math.trunc(rawPosition)));
       pets[position] = {
-        imagePath: petNameId ? `/assets/art/Public/Public/Pets/${petNameId}.png` : null,
-        perkImagePath: perkNameId ? `/assets/art/Public/Public/Food/${perkNameId}.png` : null,
+        imagePath: petNameId ? `assets/art/Public/Public/Pets/${petNameId}.png` : null,
+        perkImagePath: perkNameId ? `assets/art/Public/Public/Food/${perkNameId}.png` : null,
         attack,
         health,
         tempAttack,

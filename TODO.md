@@ -1,0 +1,5 @@
+- Change positioning solver to use the new solver from sap-battle-engine
+- Set up script to automatically pull the latest assets from the Teamwood Google Drive
+- Might need to rethink approach on countering: not all counters to a given position are created equal
+  - There might be a better positioning than one that leads to a cycle
+- Positioning needs to account for End Turn effects (e.g. Monkey, Parrot, Snail)

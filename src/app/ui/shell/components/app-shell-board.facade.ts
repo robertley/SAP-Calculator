@@ -24,6 +24,7 @@ export interface AppShellBoardFacade {
   opponentHardToyName: string;
   allPets: boolean;
   mana: boolean;
+  plainCopies: boolean;
   triggersConsumed: boolean;
   changeEquipmentUses: boolean;
   tokenPets: boolean;
@@ -111,6 +112,9 @@ export function createAppShellBoardFacade(
     },
     get mana() {
       return Boolean(app.formGroup.get('mana')?.value);
+    },
+    get plainCopies() {
+      return Boolean(app.formGroup.get('plainCopies')?.value);
     },
     get triggersConsumed() {
       return Boolean(app.formGroup.get('triggersConsumed')?.value);

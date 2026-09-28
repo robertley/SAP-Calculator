@@ -8,7 +8,7 @@ export interface AppKeyboardShortcutContext {
   undoState: unknown;
   player: Player;
   opponent: Player;
-  optimizePositioning: (side: 'player' | 'opponent') => void;
+  optimizePositioning: (maxSimulations?: number) => void;
   simulate: (count?: number) => void;
   randomize: (player?: Player) => void;
   undoRandomize: () => void;
@@ -55,14 +55,7 @@ export function handleGlobalKeyboardShortcuts(
       if (ctx.simulationInProgress) {
         return;
       }
-      ctx.optimizePositioning('player');
-      event.preventDefault();
-      return;
-    case 'o':
-      if (ctx.simulationInProgress) {
-        return;
-      }
-      ctx.optimizePositioning('opponent');
+      ctx.optimizePositioning();
       event.preventDefault();
       return;
     case 'a':
@@ -75,7 +68,7 @@ export function handleGlobalKeyboardShortcuts(
       return;
     case 'h':
       ctx.setStatus(
-        'Shortcuts: Alt+S Simulate, Alt+R Randomize, Alt+P/O Optimize, Alt+A Scenario, Alt+T Theme.',
+        'Shortcuts: Alt+S Simulate, Alt+R Randomize, Alt+P Optimize, Alt+A Scenario, Alt+T Theme.',
       );
       event.preventDefault();
       return;

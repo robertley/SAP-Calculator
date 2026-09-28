@@ -427,8 +427,8 @@ function resetSimulationState(ctx: AppUiContext): void {
   ctx.playerWinner = 0;
   ctx.opponentWinner = 0;
   ctx.draw = 0;
-  ctx.pendingPositioningOptimizationBaseline = null;
-  ctx.positioningDeltaSummary = null;
+  ctx.fightOptimizerResult = null;
+  ctx.fightOptimizerInputFingerprint = null;
   ctx.apiResponse = null;
   ctx.battleStarted = false;
   ctx.currBattle = null;

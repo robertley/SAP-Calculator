@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   refreshBattleDiff,
+  refreshFilteredBattles,
   refreshViewBattleTimeline,
 } from '../../../src/app/ui/shell/simulation/app.component.simulation';
+import type { AppSimulationContext } from '../../../src/app/ui/shell/simulation/app.component.simulation';
+import type { Battle } from '../../../src/app/domain/interfaces/battle.interface';
 
 describe('Battle analysis views', () => {
   it('builds trigger timeline rows with source/target/reason', () => {
@@ -76,7 +79,46 @@ describe('Battle analysis views', () => {
       rightOnly: 1,
     });
   });
+
+  it.each([
+    ['player', 0],
+    ['opponent', 100],
+    ['draw', 220],
+  ] as const)(
+    'filters %s battles before applying the display limit',
+    (winner, expectedFirstIndex) => {
+      const battles = [
+        ...createBattles('player', 100, 0),
+        ...createBattles('opponent', 120, 100),
+        ...createBattles('draw', 110, 220),
+      ];
+      const ctx = {
+        battles,
+        filteredBattlesCache: [],
+        formGroup: {
+          get: () => ({ value: winner }),
+        },
+      } as unknown as AppSimulationContext;
+
+      refreshFilteredBattles(ctx);
+
+      expect(ctx.filteredBattlesCache).toHaveLength(100);
+      expect(
+        ctx.filteredBattlesCache.every((battle) => battle.winner === winner),
+      ).toBe(true);
+      expect(ctx.filteredBattlesCache[0]).toBe(battles[expectedFirstIndex]);
+    },
+  );
 });
 
-
-
+function createBattles(
+  winner: Battle['winner'],
+  count: number,
+  offset: number,
+): Battle[] {
+  return Array.from({ length: count }, (_, index) => ({
+    winner,
+    logs: [],
+    seed: offset + index,
+  })) as Battle[];
+}

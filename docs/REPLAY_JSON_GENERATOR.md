@@ -60,7 +60,7 @@ mitmproxy --allow-hosts teamwood.games -s .\scripts\mitmproxy-plugin.py
 - This script edits `UserBoard` and `OpponentBoard` from your template.
 - Team arrays are back-most to front-most.
 - `team_2` is mirrored to match SAP replay orientation.
-- Pet/perk IDs are resolved from `src/assets/data/pets.json` and `src/assets/data/perks.json`.
+- Pet/perk IDs are resolved from the `sap-battle-engine` catalogs via `scripts/lib/engine-catalog.cjs`.
 - Ability IDs, hats, and backgrounds are provided via config (`abilitiesByPet`, `hats`, `backgrounds`).
 - If `calculatorState` or `calculatorStateFile` is set, it overrides `team_1` and `team_2`.
 - Supported calculator-state inputs:

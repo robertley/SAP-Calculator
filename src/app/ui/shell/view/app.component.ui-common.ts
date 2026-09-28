@@ -6,9 +6,8 @@ import { Battle } from 'app/domain/interfaces/battle.interface';
 import { Log } from 'app/domain/interfaces/log.interface';
 import {
   LogMessagePart,
-  PositioningDeltaSummary,
-  PositioningOptimizationBaseline,
 } from '../simulation/app.component.simulation';
+import type { FightOptimizerResult } from 'sap-battle-engine';
 import { LocalStorageService } from 'app/runtime/state/local-storage.service';
 import { UrlStateService } from 'app/runtime/state/url-state.service';
 import { CalculatorStateService } from 'app/runtime/state/calculator-state.service';
@@ -21,7 +20,7 @@ import { PetSelectorComponent } from 'app/ui/components/pet-selector/pet-selecto
 import { Player } from 'app/domain/entities/player.class';
 import { shouldShowRollInputs } from '../state/app.component.rolls';
 import { BATTLE_BACKGROUND_BASE } from './app.ui.constants';
-import * as foodJson from 'assets/data/food.json';
+import { food as foodJson } from 'app/runtime/content-catalogs';
 import { AppShellOverlayStateService } from '../state/app-shell-overlay-state.service';
 
 export interface AppUiContext {
@@ -67,8 +66,8 @@ export interface AppUiContext {
   playerWinner?: number;
   opponentWinner?: number;
   draw?: number;
-  pendingPositioningOptimizationBaseline?: PositioningOptimizationBaseline | null;
-  positioningDeltaSummary?: PositioningDeltaSummary | null;
+  fightOptimizerResult?: FightOptimizerResult | null;
+  fightOptimizerInputFingerprint?: string | null;
   apiResponse?: string | null;
   battleStarted?: boolean;
   currBattle?: Battle | null;

@@ -1,6 +1,6 @@
-import * as petsJson from 'assets/data/pets.json';
-import * as toysJson from 'assets/data/toys.json';
-import * as perksJson from 'assets/data/perks.json';
+import { pets as petsJson } from 'app/runtime/content-catalogs';
+import { toys as toysJson } from 'app/runtime/content-catalogs';
+import { perks as perksJson } from 'app/runtime/content-catalogs';
 
 interface NameIdEntry {
   Name?: string;
